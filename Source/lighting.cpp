@@ -559,7 +559,7 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 	}
 
 	if (nXPos >= 0 && nXPos < MAXDUNX && nYPos >= 0 && nYPos < MAXDUNY) {
-		dLight[nXPos][nYPos] = 0;
+		grid[nXPos][nYPos].dLight = 0;
 	}
 
 	mult = xoff + 8 * yoff;
@@ -571,8 +571,8 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 				temp_y = nYPos + y;
 				v = lightradius[nRadius][radius_block];
 				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < dLight[temp_x][temp_y]) {
-						dLight[temp_x][temp_y] = v;
+					if (v < grid[temp_x][temp_y].dLight) {
+						grid[temp_x][temp_y].dLight = v;
 					}
 				}
 			}
@@ -588,8 +588,8 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 				temp_y = nYPos - x;
 				v = lightradius[nRadius][radius_block];
 				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < dLight[temp_x][temp_y]) {
-						dLight[temp_x][temp_y] = v;
+					if (v < grid[temp_x][temp_y].dLight) {
+						grid[temp_x][temp_y].dLight = v;
 					}
 				}
 			}
@@ -605,8 +605,8 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 				temp_y = nYPos - y;
 				v = lightradius[nRadius][radius_block];
 				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < dLight[temp_x][temp_y]) {
-						dLight[temp_x][temp_y] = v;
+					if (v < grid[temp_x][temp_y].dLight) {
+						grid[temp_x][temp_y].dLight = v;
 					}
 				}
 			}
@@ -622,8 +622,8 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 				temp_y = nYPos + x;
 				v = lightradius[nRadius][radius_block];
 				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < dLight[temp_x][temp_y]) {
-						dLight[temp_x][temp_y] = v;
+					if (v < grid[temp_x][temp_y].dLight) {
+						grid[temp_x][temp_y].dLight = v;
 					}
 				}
 			}
@@ -657,7 +657,7 @@ void DoUnLight(int nXPos, int nYPos, int nRadius)
 	for (y = min_y; y < max_y; y++) {
 		for (x = min_x; x < max_x; x++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY)
-				dLight[x][y] = dPreLight[x][y];
+				grid[x][y].dLight = grid[x][y].dPreLight;
 		}
 	}
 }
@@ -687,7 +687,7 @@ void DoUnVision(int nXPos, int nYPos, int nRadius)
 
 	for (i = x1; i < x2; i++) {
 		for (j = y1; j < y2; j++) {
-			dFlags[i][j] &= ~(BFLAG_VISIBLE | BFLAG_LIT);
+			grid[i][j].dFlags &= ~(BFLAG_VISIBLE | BFLAG_LIT);
 		}
 	}
 }
@@ -700,15 +700,15 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 
 	if (nXPos >= 0 && nXPos <= MAXDUNX && nYPos >= 0 && nYPos <= MAXDUNY) {
 		if (doautomap) {
-			if (dFlags[nXPos][nYPos] >= 0) {
+			if (grid[nXPos][nYPos].dFlags >= 0) {
 				SetAutomapView(nXPos, nXPos);
 			}
-			dFlags[nXPos][nYPos] |= BFLAG_EXPLORED;
+			grid[nXPos][nYPos].dFlags |= BFLAG_EXPLORED;
 		}
 		if (visible) {
-			dFlags[nXPos][nYPos] |= BFLAG_LIT;
+			grid[nXPos][nYPos].dFlags |= BFLAG_LIT;
 		}
-		dFlags[nXPos][nYPos] |= BFLAG_VISIBLE;
+		grid[nXPos][nYPos].dFlags |= BFLAG_VISIBLE;
 	}
 
 	for (v = 0; v < 4; v++) {
@@ -755,23 +755,23 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 					break;
 				}
 				if (nCrawlX >= 0 && nCrawlX < MAXDUNX && nCrawlY >= 0 && nCrawlY < MAXDUNY) {
-					nBlockerFlag = nBlockTable[dPiece[nCrawlX][nCrawlY]];
+					nBlockerFlag = nBlockTable[grid[nCrawlX][nCrawlY].dPiece];
 					if ((x1adj + nCrawlX >= 0 && x1adj + nCrawlX < MAXDUNX && y1adj + nCrawlY >= 0 && y1adj + nCrawlY < MAXDUNY
-					        && !nBlockTable[dPiece[x1adj + nCrawlX][y1adj + nCrawlY]])
+					        && !nBlockTable[grid[x1adj + nCrawlX][y1adj + nCrawlY].dPiece])
 					    || (x2adj + nCrawlX >= 0 && x2adj + nCrawlX < MAXDUNX && y2adj + nCrawlY >= 0 && y2adj + nCrawlY < MAXDUNY
-					           && !nBlockTable[dPiece[x2adj + nCrawlX][y2adj + nCrawlY]])) {
+					           && !nBlockTable[grid[x2adj + nCrawlX][y2adj + nCrawlY].dPiece])) {
 						if (doautomap) {
-							if (dFlags[nCrawlX][nCrawlY] >= 0) {
+							if (grid[nCrawlX][nCrawlY].dFlags >= 0) {
 								SetAutomapView(nCrawlX, nCrawlY);
 							}
-							dFlags[nCrawlX][nCrawlY] |= BFLAG_EXPLORED;
+							grid[nCrawlX][nCrawlY].dFlags |= BFLAG_EXPLORED;
 						}
 						if (visible) {
-							dFlags[nCrawlX][nCrawlY] |= BFLAG_LIT;
+							grid[nCrawlX][nCrawlY].dFlags |= BFLAG_LIT;
 						}
-						dFlags[nCrawlX][nCrawlY] |= BFLAG_VISIBLE;
+						grid[nCrawlX][nCrawlY].dFlags |= BFLAG_VISIBLE;
 						if (!nBlockerFlag) {
-							nTrans = dTransVal[nCrawlX][nCrawlY];
+							nTrans = grid[nCrawlX][nCrawlY].dTransVal;
 							if (nTrans != 0) {
 								TransList[nTrans] = TRUE;
 							}

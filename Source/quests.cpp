@@ -307,7 +307,7 @@ void CheckQuestKill(int m, BOOL sendmsg)
 
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
-				if (dPiece[i][j] == 370) {
+				if (grid[i][j].dPiece == 370) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
@@ -393,7 +393,7 @@ void DrawWarLord(int x, int y)
 			} else {
 				v = 6;
 			}
-			dungeon[i][j] = v;
+			dgrid[i][j].dungeon = v;
 			sp += 2;
 		}
 	}
@@ -424,7 +424,7 @@ void DrawSChamber(int q, int x, int y)
 			} else {
 				v = 3;
 			}
-			dungeon[i][j] = v;
+			dgrid[i][j].dungeon = v;
 			sp += 2;
 		}
 	}
@@ -453,7 +453,7 @@ void DrawLTBanner(int x, int y)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				pdungeon[x + i][y + j] = *sp;
+				dgrid[x + i][y + j].pdungeon = *sp;
 			}
 			sp += 2;
 		}
@@ -479,7 +479,7 @@ void DrawBlind(int x, int y)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				pdungeon[x + i][y + j] = *sp;
+				dgrid[x + i][y + j].pdungeon = *sp;
 			}
 			sp += 2;
 		}
@@ -505,7 +505,7 @@ void DrawBlood(int x, int y)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				dungeon[x + i][y + j] = *sp;
+				dgrid[x + i][y + j].dungeon = *sp;
 			}
 			sp += 2;
 		}

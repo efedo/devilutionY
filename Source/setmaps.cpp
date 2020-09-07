@@ -124,7 +124,7 @@ void DRLG_SetMapTrans(char *sFileName)
 
 	for (j = 0; j < y; j++) {
 		for (i = 0; i < x; i++) {
-			dTransVal[16 + i][16 + j] = *d;
+			grid[16 + i][16 + j].dTransVal = *d;
 			d += 2;
 		}
 	}

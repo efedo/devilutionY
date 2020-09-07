@@ -177,7 +177,7 @@ static void PlacePlayer(int pnum)
 		plr[pnum]._px = nx;
 		plr[pnum]._py = ny;
 
-		dPlayer[nx][ny] = pnum + 1;
+		grid[nx][ny].dPlayer = pnum + 1;
 
 		if (pnum == myplr) {
 			ViewX = nx;

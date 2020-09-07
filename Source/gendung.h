@@ -12,9 +12,15 @@ DEVILUTION_BEGIN_NAMESPACE
 extern "C" {
 #endif
 
-extern BYTE dungeon[DMAXX][DMAXY];
-extern BYTE pdungeon[DMAXX][DMAXY];
-extern char dflags[DMAXX][DMAXY];
+class DTile {
+public:
+	BYTE dungeon;
+	BYTE pdungeon;
+	char dflags;
+};
+
+extern DTile dgrid[DMAXX][DMAXY];
+
 extern int setpc_x;
 extern int setpc_y;
 extern int setpc_w;
@@ -60,20 +66,35 @@ extern int LvlViewY;
 extern int MicroTileLen;
 extern char TransVal;
 extern BOOLEAN TransList[256];
-extern int dPiece[MAXDUNX][MAXDUNY];
-extern MICROS dpiece_defs_map_2[MAXDUNX][MAXDUNY];
+
 extern MICROS dpiece_defs_map_1[MAXDUNX * MAXDUNY];
-extern char dTransVal[MAXDUNX][MAXDUNY];
-extern char dLight[MAXDUNX][MAXDUNY];
-extern char dPreLight[MAXDUNX][MAXDUNY];
-extern char dFlags[MAXDUNX][MAXDUNY];
-extern char dPlayer[MAXDUNX][MAXDUNY];
-extern int dMonster[MAXDUNX][MAXDUNY];
-extern char dDead[MAXDUNX][MAXDUNY];
-extern char dObject[MAXDUNX][MAXDUNY];
-extern char dItem[MAXDUNX][MAXDUNY];
-extern char dMissile[MAXDUNX][MAXDUNY];
-extern char dSpecial[MAXDUNX][MAXDUNY];
+
+class Tile {
+public:
+	int dPiece;
+	MICROS dpiece_defs_map_2;
+	char dTransVal;
+	char dLight;
+	char dPreLight;
+	char dFlags;
+	char dPlayer;
+	int dMonster;
+	char dDead;
+	char dObject;
+	char dItem;
+	char dMissile;
+	char dSpecial;
+};
+
+class Grid {
+public:
+	auto &operator[](const size_t n) { return tiles[n]; }
+private:
+	Tile tiles[MAXDUNX][MAXDUNY];
+};
+
+extern Grid grid;
+
 extern int themeCount;
 extern THEME_LOC themeLoc[MAXTHEMES];
 

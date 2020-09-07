@@ -266,9 +266,9 @@ void sync_monster(int pnum, const TSyncMonster *p)
 				monster[ndx]._msquelch = UCHAR_MAX;
 			}
 		}
-	} else if (dMonster[p->_mx][p->_my] == 0) {
+	} else if (grid[p->_mx][p->_my].dMonster == 0) {
 		M_ClearSquares(ndx);
-		dMonster[p->_mx][p->_my] = ndx + 1;
+		grid[p->_mx][p->_my].dMonster = ndx + 1;
 		monster[ndx]._mx = p->_mx;
 		monster[ndx]._my = p->_my;
 		decode_enemy(ndx, p->_menemy);

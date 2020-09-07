@@ -581,7 +581,7 @@ void DeltaLoadLevel()
 				}
 				item[ii]._ix = x;
 				item[ii]._iy = y;
-				dItem[x][y] = ii + 1;
+				grid[x][y].dItem = ii + 1;
 				RespawnItem(ii, FALSE);
 				numitems++;
 			}

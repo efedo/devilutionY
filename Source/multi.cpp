@@ -442,7 +442,7 @@ void multi_process_network_packets()
 				if (currlevel == plr[dwID].plrlevel && !plr[dwID]._pLvlChanging) {
 					dx = abs(plr[dwID]._px - pkt->px);
 					dy = abs(plr[dwID]._py - pkt->py);
-					if ((dx > 3 || dy > 3) && dPlayer[pkt->px][pkt->py] == 0) {
+					if ((dx > 3 || dy > 3) && grid[pkt->px][pkt->py].dPlayer == 0) {
 						FixPlrWalkTags(dwID);
 						plr[dwID]._poldx = plr[dwID]._px;
 						plr[dwID]._poldy = plr[dwID]._py;

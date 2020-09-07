@@ -37,7 +37,7 @@ void AddWarpMissile(int i, int x, int y)
 	int mi;
 
 	missiledata[MIS_TOWN].mlSFX = -1;
-	dMissile[x][y] = 0;
+	grid[x][y].dMissile = 0;
 	mi = AddMissile(0, 0, x, y, 0, MIS_TOWN, 0, i, 0, 0);
 
 	if (mi != -1) {

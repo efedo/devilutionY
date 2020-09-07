@@ -73,7 +73,7 @@ void InitDead()
 
 void AddDead(int dx, int dy, char dv, int ddir)
 {
-	dDead[dx][dy] = (dv & 0x1F) + (ddir << 5);
+	grid[dx][dy].dDead = (dv & 0x1F) + (ddir << 5);
 }
 
 void SetDead()
@@ -86,7 +86,7 @@ void SetDead()
 		if (monster[mi]._uniqtype != 0) {
 			for (dx = 0; dx < MAXDUNX; dx++) {
 				for (dy = 0; dy < MAXDUNY; dy++) {
-					if ((dDead[dx][dy] & 0x1F) == monster[mi]._udeadval)
+					if ((grid[dx][dy].dDead & 0x1F) == monster[mi]._udeadval)
 						ChangeLightXY(monster[mi].mlid, dx, dy);
 				}
 			}

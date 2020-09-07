@@ -154,7 +154,7 @@ void InitTownerInfo(int i, int w, int sel, int t, int x, int y, int ao, int tp)
 	towner[i]._ttype = t;
 	towner[i]._tx = x;
 	towner[i]._ty = y;
-	dMonster[x][y] = i + 1;
+	grid[x][y].dMonster = i + 1;
 	towner[i]._tAnimOrder = ao;
 	towner[i]._tTenPer = tp;
 	towner[i]._tSeed = GetRndSeed();
@@ -345,12 +345,12 @@ void InitCows()
 
 		xo = x + cowoffx[dir];
 		yo = y + cowoffy[dir];
-		if (dMonster[x][yo] == 0)
-			dMonster[x][yo] = -(numtowners + 1);
-		if (dMonster[xo][y] == 0)
-			dMonster[xo][y] = -(numtowners + 1);
-		if (dMonster[xo][yo] == 0)
-			dMonster[xo][yo] = -(numtowners + 1);
+		if (grid[x][yo].dMonster == 0)
+			grid[x][yo].dMonster = -(numtowners + 1);
+		if (grid[xo][y].dMonster == 0)
+			grid[xo][y].dMonster = -(numtowners + 1);
+		if (grid[xo][yo].dMonster == 0)
+			grid[xo][yo].dMonster = -(numtowners + 1);
 
 		numtowners++;
 	}

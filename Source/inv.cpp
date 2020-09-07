@@ -1664,8 +1664,8 @@ void SyncGetItem(int x, int y, int idx, WORD ci, int iseed)
 {
 	int i, ii;
 
-	if (dItem[x][y]) {
-		ii = dItem[x][y] - 1;
+	if (grid[x][y].dItem) {
+		ii = grid[x][y].dItem - 1;
 		if (item[ii].IDidx == idx
 		    && item[ii]._iSeed == iseed
 		    && item[ii]._iCreateInfo == ci) {
@@ -1700,17 +1700,17 @@ BOOL CanPut(int x, int y)
 {
 	char oi, oi2;
 
-	if (dItem[x][y])
+	if (grid[x][y].dItem)
 		return FALSE;
-	if (nSolidTable[dPiece[x][y]])
+	if (nSolidTable[grid[x][y].dPiece])
 		return FALSE;
 
-	if (dObject[x][y] != 0) {
-		if (object[dObject[x][y] > 0 ? dObject[x][y] - 1 : -1 - dObject[x][y]]._oSolidFlag)
+	if (grid[x][y].dObject != 0) {
+		if (object[grid[x][y].dObject > 0 ? grid[x][y].dObject - 1 : -1 - grid[x][y].dObject]._oSolidFlag)
 			return FALSE;
 	}
 
-	oi = dObject[x + 1][y + 1];
+	oi = grid[x + 1][y + 1].dObject;
 	if (oi > 0 && object[oi - 1]._oSelFlag != 0) {
 		return FALSE;
 	}
@@ -1718,16 +1718,16 @@ BOOL CanPut(int x, int y)
 		return FALSE;
 	}
 
-	oi = dObject[x + 1][y];
+	oi = grid[x + 1][y].dObject;
 	if (oi > 0) {
-		oi2 = dObject[x][y + 1];
+		oi2 = grid[x][y + 1].dObject;
 		if (oi2 > 0 && object[oi - 1]._oSelFlag != 0 && object[oi2 - 1]._oSelFlag != 0)
 			return FALSE;
 	}
 
-	if (currlevel == 0 && dMonster[x][y] != 0)
+	if (currlevel == 0 && grid[x][y].dMonster != 0)
 		return FALSE;
-	if (currlevel == 0 && dMonster[x + 1][y + 1] != 0)
+	if (currlevel == 0 && grid[x + 1][y + 1].dMonster != 0)
 		return FALSE;
 
 	return TRUE;
@@ -1826,7 +1826,7 @@ int InvPutItem(int pnum, int x, int y)
 	//}
 
 	ii = itemavail[0];
-	dItem[x][y] = ii + 1;
+	grid[x][y].dItem = ii + 1;
 	itemavail[0] = itemavail[MAXITEMS - (numitems + 1)];
 	itemactive[numitems] = ii;
 	item[ii] = plr[pnum].HoldItem;
@@ -1893,7 +1893,7 @@ int SyncPutItem(int pnum, int x, int y, int idx, WORD icreateinfo, int iseed, in
 	CanPut(x, y);
 
 	ii = itemavail[0];
-	dItem[x][y] = ii + 1;
+	grid[x][y].dItem = ii + 1;
 	itemavail[0] = itemavail[MAXITEMS - (numitems + 1)];
 	itemactive[numitems] = ii;
 

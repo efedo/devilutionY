@@ -525,12 +525,12 @@ BOOL MonstPlace(int xp, int yp)
 
 	if (xp < 0 || xp >= MAXDUNX
 	    || yp < 0 || yp >= MAXDUNY
-	    || dMonster[xp][yp]
-	    || dPlayer[xp][yp]) {
+	    || grid[xp][yp].dMonster
+	    || grid[xp][yp].dPlayer) {
 		return FALSE;
 	}
 
-	f = dFlags[xp][yp];
+	f = grid[xp][yp].dFlags;
 
 	if (f & BFLAG_VISIBLE) {
 		return FALSE;
@@ -547,7 +547,7 @@ void PlaceMonster(int i, int mtype, int x, int y)
 {
 	int rd;
 
-	dMonster[x][y] = i + 1;
+	grid[x][y].dMonster = i + 1;
 
 	rd = random_(90, 8);
 	InitMonster(i, rd, mtype, x, y);
@@ -656,7 +656,7 @@ void PlaceUniqueMonst(int uniqindex, int miniontype, int unpackfilesize)
 		done = FALSE;
 		for (yp = 0; yp < MAXDUNY && !done; yp++) {
 			for (xp = 0; xp < MAXDUNX && !done; xp++) {
-				done = dPiece[xp][yp] == 367;
+				done = grid[xp][yp].dPiece == 367;
 			}
 		}
 	}
@@ -857,7 +857,7 @@ void PlaceGroup(int mtype, int num, int leaderf, int leader)
 		j = 0;
 		for (try2 = 0; j < num && try2 < 100; xp += offset_x[random_(94, 8)], yp += offset_x[random_(94, 8)]) { /// BUGFIX: `yp += offset_y`
 			if (!MonstPlace(xp, yp)
-			    || (dTransVal[xp][yp] != dTransVal[x1][y1])
+			    || (grid[xp][yp].dTransVal != grid[x1][y1].dTransVal)
 			    || (leaderf & 2) && ((abs(xp - x1) >= 4) || (abs(yp - y1) >= 4))) {
 				try2++;
 				continue;
@@ -1078,7 +1078,7 @@ int AddMonster(int x, int y, int dir, int mtype, BOOL InMap)
 	if (nummonsters < MAXMONSTERS) {
 		int i = monstactive[nummonsters++];
 		if (InMap)
-			dMonster[x][y] = i + 1;
+			grid[x][y].dMonster = i + 1;
 		InitMonster(i, dir, mtype, x, y);
 		return i;
 	}
@@ -1134,7 +1134,7 @@ void M_Enemy(int i)
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
 			if (!plr[pnum].plractive || currlevel != plr[pnum].plrlevel || plr[pnum]._pLvlChanging || (plr[pnum]._pHitPoints == 0 && gbMaxPlayers != 1))
 				continue;
-			if (dTransVal[Monst->_mx][Monst->_my] == dTransVal[plr[pnum]._px][plr[pnum]._py])
+			if (grid[Monst->_mx][Monst->_my].dTransVal == dTransVal[plr[pnum]._px][plr[pnum]._py])
 				sameroom = TRUE;
 			else
 				sameroom = FALSE;
@@ -1168,7 +1168,7 @@ void M_Enemy(int i)
 		           || (!(Monst->_mFlags & MFLAG_GOLEM) && !(monster[mi]._mFlags & MFLAG_GOLEM)))) {
 			continue;
 		}
-		sameroom = dTransVal[Monst->_mx][Monst->_my] == dTransVal[monster[mi]._mx][monster[mi]._my];
+		sameroom = grid[Monst->_mx][Monst->_my].dTransVal == dTransVal[monster[mi]._mx][monster[mi]._my];
 		if (abs(Monst->_mx - monster[mi]._mx) > abs(Monst->_my - monster[mi]._my))
 			dist = Monst->_mx - monster[mi]._mx;
 		else
@@ -1250,7 +1250,7 @@ void M_StartWalk(int i, int xvel, int yvel, int xadd, int yadd, int EndDir)
 	int fx = xadd + monster[i]._mx;
 	int fy = yadd + monster[i]._my;
 
-	dMonster[fx][fy] = -(i + 1);
+	grid[fx][fy].dMonster = -(i + 1);
 	monster[i]._mmode = MM_WALK;
 	monster[i]._moldx = monster[i]._mx;
 	monster[i]._moldy = monster[i]._my;
@@ -1282,7 +1282,7 @@ void M_StartWalk2(int i, int xvel, int yvel, int xoff, int yoff, int xadd, int y
 	monster[i]._my = fy;
 	monster[i]._mfutx = fx;
 	monster[i]._mfuty = fy;
-	dMonster[fx][fy] = i + 1;
+	grid[fx][fy].dMonster = i + 1;
 	if (monster[i]._uniqtype != 0)
 		ChangeLightXY(monster[i].mlid, monster[i]._mx, monster[i]._my);
 	monster[i]._mxoff = xoff;
@@ -1309,10 +1309,10 @@ void M_StartWalk3(int i, int xvel, int yvel, int xoff, int yoff, int xadd, int y
 		ChangeLightXY(monster[i].mlid, x, y);
 
 	dMonster[monster[i]._mx][monster[i]._my] = -(i + 1);
-	dMonster[fx][fy] = -(i + 1);
+	grid[fx][fy].dMonster = -(i + 1);
 	monster[i]._mVar4 = x;
 	monster[i]._mVar5 = y;
-	dFlags[x][y] |= BFLAG_MONSTLR;
+	grid[x][y].dFlags |= BFLAG_MONSTLR;
 	monster[i]._moldx = monster[i]._mx;
 	monster[i]._moldy = monster[i]._my;
 	monster[i]._mfutx = fx;
@@ -1417,16 +1417,16 @@ void M_ClearSquares(int i)
 	for (y = my - 1; y <= my + 1; y++) {
 		if (y >= 0 && y < MAXDUNY) {
 			for (x = mx - 1; x <= mx + 1; x++) {
-				if (x >= 0 && x < MAXDUNX && (dMonster[x][y] == m1 || dMonster[x][y] == m2))
-					dMonster[x][y] = 0;
+				if (x >= 0 && x < MAXDUNX && (grid[x][y].dMonster == m1 || grid[x][y].dMonster == m2))
+					grid[x][y].dMonster = 0;
 			}
 		}
 	}
 
 	if (mx + 1 < MAXDUNX)
-		dFlags[mx + 1][my] &= ~BFLAG_MONSTLR;
+		grid[mx + 1][my].dFlags &= ~BFLAG_MONSTLR;
 	if (my + 1 < MAXDUNY)
-		dFlags[mx][my + 1] &= ~BFLAG_MONSTLR;
+		grid[mx][my + 1].dFlags &= ~BFLAG_MONSTLR;
 }
 
 void M_GetKnockback(int i)
@@ -1523,7 +1523,7 @@ void M_DiabloDeath(int i, BOOL sendmsg)
 		monster[k]._mx = _moldx;
 		monster[k]._mfutx = _moldx;
 		M_ClearSquares(k);
-		dMonster[pmonster->_mx][pmonster->_my] = k + 1;
+		grid[pmonster->_mx][pmonster->_my].dMonster = k + 1;
 	}
 	AddLight(Monst->_mx, Monst->_my, 8);
 	DoVision(Monst->_mx, Monst->_my, 8, FALSE, TRUE);
@@ -1631,7 +1631,7 @@ void MonstStartKill(int i, int pnum, BOOL sendmsg)
 	Monst->_mfutx = Monst->_moldx;
 	Monst->_mfuty = Monst->_moldy;
 	M_ClearSquares(i);
-	dMonster[Monst->_mx][Monst->_my] = i + 1;
+	grid[Monst->_mx][Monst->_my].dMonster = i + 1;
 	CheckQuestKill(i, sendmsg);
 	M_FallenFear(Monst->_mx, Monst->_my);
 	if (Monst->MType->mtype >= MT_NACID && Monst->MType->mtype <= MT_XACID)
@@ -1720,7 +1720,7 @@ void M_SyncStartKill(int i, int x, int y, int pnum)
 		return;
 	}
 
-	if (dMonster[x][y] == 0) {
+	if (grid[x][y].dMonster == 0) {
 		M_ClearSquares(i);
 		monster[i]._mx = x;
 		monster[i]._my = y;
@@ -2114,7 +2114,7 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 			plr[pnum]._py = newy;
 			FixPlayerLocation(pnum, plr[pnum]._pdir);
 			FixPlrWalkTags(pnum);
-			dPlayer[newx][newy] = pnum + 1;
+			grid[newx][newy].dPlayer = pnum + 1;
 			SetPlayerOld(pnum);
 		}
 	}
@@ -2431,8 +2431,8 @@ void M_Teleport(int i)
 
 	if (tren) {
 		M_ClearSquares(i);
-		dMonster[Monst->_mx][Monst->_my] = 0;
-		dMonster[x][y] = i + 1;
+		grid[Monst->_mx][Monst->_my].dMonster = 0;
+		grid[x][y].dMonster = i + 1;
 		Monst->_moldx = x;
 		Monst->_moldy = y;
 		Monst->_mdir = M_GetDir(i);
@@ -2864,7 +2864,7 @@ void MAI_Zombie(int i)
 
 	mx = Monst->_mx;
 	my = Monst->_my;
-	if (!(dFlags[mx][my] & BFLAG_VISIBLE)) {
+	if (!(grid[mx][my].dFlags & BFLAG_VISIBLE)) {
 		return;
 	}
 
@@ -2997,7 +2997,7 @@ void MAI_Snake(int i)
 		if (abs(mx) < 3 && abs(my) < 3 && LineClearF1(PosOkMonst, i, Monst->_mx, Monst->_my, fx, fy) && Monst->_mVar1 != MM_CHARGE) {
 			if (AddMissile(Monst->_mx, Monst->_my, fx, fy, md, MIS_RHINO, pnum, i, 0, 0) != -1) {
 				PlayEffect(i, 0);
-				dMonster[Monst->_mx][Monst->_my] = -(i + 1);
+				grid[Monst->_mx][Monst->_my].dMonster = -(i + 1);
 				Monst->_mmode = MM_CHARGE;
 			}
 		} else if (Monst->_mVar1 == MM_DELAY || random_(106, 100) >= 35 - 2 * Monst->_mint) {
@@ -3096,7 +3096,7 @@ void MAI_Bat(int i)
 	    && v < 4 * Monst->_mint + 33
 	    && LineClearF1(PosOkMonst, i, Monst->_mx, Monst->_my, fx, fy)) {
 		if (AddMissile(Monst->_mx, Monst->_my, fx, fy, md, MIS_RHINO, pnum, i, 0, 0) != -1) {
-			dMonster[Monst->_mx][Monst->_my] = -(i + 1);
+			grid[Monst->_mx][Monst->_my].dMonster = -(i + 1);
 			Monst->_mmode = MM_CHARGE;
 		}
 	} else if (abs(xd) >= 2 || abs(yd) >= 2) {
@@ -3212,7 +3212,7 @@ void MAI_Sneak(int i)
 	if (Monst->_mmode == MM_STAND) {
 		mx = Monst->_mx;
 		my = Monst->_my;
-		if (dLight[mx][my] != lightmax) {
+		if (grid[mx][my].dLight != lightmax) {
 			mx -= Monst->_menemyx;
 			my -= Monst->_menemyy;
 
@@ -3368,7 +3368,7 @@ void MAI_Fallen(int i)
 		for (y = -rad; y <= rad; y++) {
 			for (x = -rad; x <= rad; x++) {
 				if (y >= 0 && y < MAXDUNY && x >= 0 && x < MAXDUNX) {
-					m = dMonster[x + Monst->_mx][y + Monst->_my];
+					m = grid[x + Monst->_mx][y + Monst->_my].dMonster;
 					if (m > 0) {
 						m--;
 						if (monster[m]._mAi == AI_FALLEN) {
@@ -3445,7 +3445,7 @@ void MAI_Round(int i, BOOL special)
 		if (Monst->_msquelch < UCHAR_MAX)
 			MonstCheckDoors(i);
 		v = random_(114, 100);
-		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && dTransVal[Monst->_mx][Monst->_my] == dTransVal[fx][fy]) {
+		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && grid[Monst->_mx][Monst->_my].dTransVal == grid[fx][fy].dTransVal) {
 			if (Monst->_mgoal == MGOAL_MOVE || (abs(mx) >= 4 || abs(my) >= 4) && random_(115, 4) == 0) {
 				if (Monst->_mgoal != MGOAL_MOVE) {
 					Monst->_mgoalvar1 = 0;
@@ -3456,7 +3456,7 @@ void MAI_Round(int i, BOOL special)
 					dist = abs(mx);
 				else
 					dist = abs(my);
-				if (Monst->_mgoalvar1++ >= 2 * dist && DirOK(i, md) || dTransVal[Monst->_mx][Monst->_my] != dTransVal[fx][fy]) {
+				if (Monst->_mgoalvar1++ >= 2 * dist && DirOK(i, md) || grid[Monst->_mx][Monst->_my].dTransVal != grid[fx][fy].dTransVal) {
 					Monst->_mgoal = MGOAL_NORMAL;
 				} else if (!M_RoundWalk(i, md, &Monst->_mgoalvar2)) {
 					M_StartDelay(i, random_(125, 10) + 10);
@@ -3577,7 +3577,7 @@ void MAI_Scav(int i)
 	}
 	if (Monst->_mgoal == MGOAL_HEALING && Monst->_mgoalvar3 != 0) {
 		Monst->_mgoalvar3--;
-		if (dDead[Monst->_mx][Monst->_my]) {
+		if (grid[Monst->_mx][Monst->_my].dDead) {
 			M_StartEat(i);
 			if (!(Monst->_mFlags & MFLAG_NOHEAL))
 				Monst->_mhitpoints += 64;
@@ -3594,7 +3594,7 @@ void MAI_Scav(int i)
 							// BUGFIX: incorrect check of offset against limits of the dungeon
 							if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
 								continue;
-							done = dDead[Monst->_mx + x][Monst->_my + y] != 0
+							done = grid[Monst->_mx + x][Monst->_my + y].dDead != 0
 							    && LineClearF(
 							           CheckNoSolid,
 							           Monst->_mx,
@@ -3611,7 +3611,7 @@ void MAI_Scav(int i)
 							// BUGFIX: incorrect check of offset against limits of the dungeon
 							if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
 								continue;
-							done = dDead[Monst->_mx + x][Monst->_my + y] != 0
+							done = grid[Monst->_mx + x][Monst->_my + y].dDead != 0
 							    && LineClearF(
 							           CheckNoSolid,
 							           Monst->_mx,
@@ -3698,7 +3698,7 @@ void MAI_RoundRanged(int i, int missile_type, BOOL checkdoors, int dam, int less
 		if (checkdoors && Monst->_msquelch < UCHAR_MAX)
 			MonstCheckDoors(i);
 		v = random_(121, 10000);
-		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && dTransVal[Monst->_mx][Monst->_my] == dTransVal[fx][fy]) {
+		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && grid[Monst->_mx][Monst->_my].dTransVal == grid[fx][fy].dTransVal) {
 			if (Monst->_mgoal == MGOAL_MOVE || ((abs(mx) >= 3 || abs(my) >= 3) && random_(122, 4 << lessmissiles) == 0)) {
 				if (Monst->_mgoal != MGOAL_MOVE) {
 					Monst->_mgoalvar1 = 0;
@@ -3790,7 +3790,7 @@ void MAI_RR2(int i, int mistype, int dam)
 		if (Monst->_msquelch < UCHAR_MAX)
 			MonstCheckDoors(i);
 		v = random_(121, 100);
-		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && dTransVal[Monst->_mx][Monst->_my] == dTransVal[fx][fy]) {
+		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && grid[Monst->_mx][Monst->_my].dTransVal == grid[fx][fy].dTransVal) {
 			if (Monst->_mgoal == MGOAL_MOVE || (abs(mx) >= 3 || abs(my) >= 3)) {
 				if (Monst->_mgoal != MGOAL_MOVE) {
 					Monst->_mgoalvar1 = 0;
@@ -3941,7 +3941,7 @@ void MAI_SkelKing(int i)
 		if (Monst->_msquelch < UCHAR_MAX)
 			MonstCheckDoors(i);
 		v = random_(126, 100);
-		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && dTransVal[Monst->_mx][Monst->_my] == dTransVal[fx][fy]) {
+		if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && grid[Monst->_mx][Monst->_my].dTransVal == grid[fx][fy].dTransVal) {
 			if (Monst->_mgoal == MGOAL_MOVE || (abs(mx) >= 3 || abs(my) >= 3) && random_(127, 4) == 0) {
 				if (Monst->_mgoal != MGOAL_MOVE) {
 					Monst->_mgoalvar1 = 0;
@@ -3953,7 +3953,7 @@ void MAI_SkelKing(int i)
 				} else {
 					dist = abs(my);
 				}
-				if (Monst->_mgoalvar1++ >= 2 * dist && DirOK(i, md) || dTransVal[Monst->_mx][Monst->_my] != dTransVal[fx][fy]) {
+				if (Monst->_mgoalvar1++ >= 2 * dist && DirOK(i, md) || grid[Monst->_mx][Monst->_my].dTransVal != grid[fx][fy].dTransVal) {
 					Monst->_mgoal = MGOAL_NORMAL;
 				} else if (!M_RoundWalk(i, md, &Monst->_mgoalvar2)) {
 					M_StartDelay(i, random_(125, 10) + 10);
@@ -4021,7 +4021,7 @@ void MAI_Rhino(int i)
 				} else {
 					dist = abs(my);
 				}
-				if (Monst->_mgoalvar1++ >= 2 * dist || dTransVal[Monst->_mx][Monst->_my] != dTransVal[fx][fy]) {
+				if (Monst->_mgoalvar1++ >= 2 * dist || grid[Monst->_mx][Monst->_my].dTransVal != grid[fx][fy].dTransVal) {
 					Monst->_mgoal = MGOAL_NORMAL;
 				} else if (!M_RoundWalk(i, md, &Monst->_mgoalvar2)) {
 					M_StartDelay(i, random_(125, 10) + 10);
@@ -4037,7 +4037,7 @@ void MAI_Rhino(int i)
 					if (Monst->MData->snd_special)
 						PlayEffect(i, 3);
 					Monst->_mmode = MM_CHARGE;
-					dMonster[Monst->_mx][Monst->_my] = -1 - i;
+					grid[Monst->_mx][Monst->_my].dMonster = -1 - i;
 				}
 			} else {
 				if (abs(mx) >= 2 || abs(my) >= 2) {
@@ -4091,7 +4091,7 @@ void MAI_Counselor(int i)
 				dist = abs(mx);
 			else
 				dist = abs(my);
-			if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && dTransVal[Monst->_mx][Monst->_my] == dTransVal[fx][fy]) {
+			if ((abs(mx) >= 2 || abs(my) >= 2) && Monst->_msquelch == UCHAR_MAX && grid[Monst->_mx][Monst->_my].dTransVal == grid[fx][fy].dTransVal) {
 				if (Monst->_mgoalvar1++ < 2 * dist || !DirOK(i, md)) {
 					M_RoundWalk(i, md, &Monst->_mgoalvar2);
 				} else {
@@ -4152,13 +4152,13 @@ void MAI_Garbud(int i)
 
 	if (Monst->mtalkmsg < TEXT_GARBUD4
 	    && Monst->mtalkmsg > TEXT_DOOM10
-	    && !(dFlags[_mx][_my] & BFLAG_VISIBLE)
+	    && !(grid[_mx][_my].dFlags & BFLAG_VISIBLE)
 	    && Monst->_mgoal == MGOAL_TALKING) {
 		Monst->_mgoal = MGOAL_INQUIRING;
 		Monst->mtalkmsg++;
 	}
 
-	if (dFlags[_mx][_my] & BFLAG_VISIBLE) {
+	if (grid[_mx][_my].dFlags & BFLAG_VISIBLE) {
 #ifndef SPAWN
 		if (Monst->mtalkmsg == TEXT_GARBUD4) {
 			if (!effect_is_playing(USFX_GARBUD4) && Monst->_mgoal == MGOAL_TALKING) {
@@ -4195,12 +4195,12 @@ void MAI_Zhar(int i)
 	mx = Monst->_mx;
 	my = Monst->_my;
 	md = M_GetDir(i);
-	if (Monst->mtalkmsg == TEXT_ZHAR1 && !(dFlags[mx][my] & BFLAG_VISIBLE) && Monst->_mgoal == MGOAL_TALKING) {
+	if (Monst->mtalkmsg == TEXT_ZHAR1 && !(grid[mx][my].dFlags & BFLAG_VISIBLE) && Monst->_mgoal == MGOAL_TALKING) {
 		Monst->mtalkmsg = TEXT_ZHAR2;
 		Monst->_mgoal = MGOAL_INQUIRING;
 	}
 
-	if (dFlags[mx][my] & BFLAG_VISIBLE) {
+	if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 		_mx = Monst->_mx - Monst->_menemyx;
 		_my = Monst->_my - Monst->_menemyy;
 		if (abs(_mx) > abs(_my))
@@ -4244,7 +4244,7 @@ void MAI_SnotSpil(int i)
 	my = Monst->_my;
 	md = M_GetDir(i);
 
-	if (Monst->mtalkmsg == TEXT_BANNER10 && !(dFlags[mx][my] & BFLAG_VISIBLE) && Monst->_mgoal == MGOAL_TALKING) {
+	if (Monst->mtalkmsg == TEXT_BANNER10 && !(grid[mx][my].dFlags & BFLAG_VISIBLE) && Monst->_mgoal == MGOAL_TALKING) {
 		Monst->mtalkmsg = TEXT_BANNER11;
 		Monst->_mgoal = MGOAL_INQUIRING;
 	}
@@ -4254,7 +4254,7 @@ void MAI_SnotSpil(int i)
 		Monst->_mgoal = MGOAL_NORMAL;
 	}
 
-	if (dFlags[mx][my] & BFLAG_VISIBLE) {
+	if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 #ifndef SPAWN
 		if (Monst->mtalkmsg == TEXT_BANNER12) {
 			if (!effect_is_playing(USFX_SNOT3) && Monst->_mgoal == MGOAL_TALKING) {
@@ -4295,7 +4295,7 @@ void MAI_Lazurus(int i)
 	mx = Monst->_mx;
 	my = Monst->_my;
 	md = M_GetDir(i);
-	if (dFlags[mx][my] & BFLAG_VISIBLE) {
+	if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 		if (gbMaxPlayers == 1) {
 			if (Monst->mtalkmsg == TEXT_VILE13 && Monst->_mgoal == MGOAL_INQUIRING && plr[myplr]._px == TEXT_VILE13 && plr[myplr]._py == 46) {
 				PlayInGameMovie("gendata\\fprst3.smk");
@@ -4347,7 +4347,7 @@ void MAI_Lazhelp(int i)
 	_my = Monst->_my;
 	md = M_GetDir(i);
 
-	if (dFlags[_mx][_my] & BFLAG_VISIBLE) {
+	if (grid[_mx][_my].dFlags & BFLAG_VISIBLE) {
 		if (gbMaxPlayers == 1) {
 			if (quests[Q_BETRAYER]._qvar1 <= 5) {
 				Monst->_mgoal = MGOAL_INQUIRING;
@@ -4382,12 +4382,12 @@ void MAI_Lachdanan(int i)
 	_my = Monst->_my;
 	md = M_GetDir(i);
 #ifndef SPAWN
-	if (Monst->mtalkmsg == TEXT_VEIL9 && !(dFlags[_mx][_my] & BFLAG_VISIBLE) && monster[i]._mgoal == MGOAL_TALKING) {
+	if (Monst->mtalkmsg == TEXT_VEIL9 && !(grid[_mx][_my].dFlags & BFLAG_VISIBLE) && monster[i]._mgoal == MGOAL_TALKING) {
 		Monst->mtalkmsg = TEXT_VEIL10;
 		monster[i]._mgoal = MGOAL_INQUIRING;
 	}
 
-	if (dFlags[_mx][_my] & BFLAG_VISIBLE) {
+	if (grid[_mx][_my].dFlags & BFLAG_VISIBLE) {
 		if (Monst->mtalkmsg == TEXT_VEIL11) {
 			if (!effect_is_playing(USFX_LACH3) && Monst->_mgoal == MGOAL_TALKING) {
 				Monst->mtalkmsg = 0;
@@ -4420,7 +4420,7 @@ void MAI_Warlord(int i)
 	mx = Monst->_mx;
 	my = Monst->_my;
 	md = M_GetDir(i);
-	if (dFlags[mx][my] & BFLAG_VISIBLE) {
+	if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 		if (Monst->mtalkmsg == TEXT_WARLRD9 && Monst->_mgoal == MGOAL_INQUIRING)
 			Monst->_mmode = MM_TALK;
 #ifndef SPAWN
@@ -4494,7 +4494,7 @@ void ProcessMonsters()
 		mx = Monst->_mx;
 		my = Monst->_my;
 #ifndef SPAWN
-		if (dFlags[mx][my] & BFLAG_VISIBLE && Monst->_msquelch == 0) {
+		if (grid[mx][my].dFlags & BFLAG_VISIBLE && Monst->_msquelch == 0) {
 			if (Monst->MType->mtype == MT_CLEAVER) {
 				PlaySFX(USFX_CLEAVER);
 			}
@@ -4516,7 +4516,7 @@ void ProcessMonsters()
 			}
 			Monst->_menemyx = plr[Monst->_menemy]._pfutx;
 			Monst->_menemyy = plr[Monst->_menemy]._pfuty;
-			if (dFlags[mx][my] & BFLAG_VISIBLE) {
+			if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 				Monst->_msquelch = 255;
 				Monst->_lastx = plr[Monst->_menemy]._pfutx;
 				Monst->_lasty = plr[Monst->_menemy]._pfuty;
@@ -4642,11 +4642,11 @@ BOOL DirOK(int i, int mdir)
 	if (fy < 0 || fy >= MAXDUNY || fx < 0 || fx >= MAXDUNX || !PosOkMonst(i, fx, fy))
 		return FALSE;
 	if (mdir == DIR_E) {
-		if (SolidLoc(fx, fy + 1) || dFlags[fx][fy + 1] & BFLAG_MONSTLR)
+		if (SolidLoc(fx, fy + 1) || grid[fx][fy + 1].dFlags & BFLAG_MONSTLR)
 			return FALSE;
 	}
 	if (mdir == DIR_W) {
-		if (SolidLoc(fx + 1, fy) || dFlags[fx + 1][fy] & BFLAG_MONSTLR)
+		if (SolidLoc(fx + 1, fy) || grid[fx + 1][fy].dFlags & BFLAG_MONSTLR)
 			return FALSE;
 	}
 	if (mdir == DIR_N) {
@@ -4670,7 +4670,7 @@ BOOL DirOK(int i, int mdir)
 		for (y = fy - 3; y <= fy + 3; y++) {
 			if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
 				continue;
-			mi = dMonster[x][y];
+			mi = grid[x][y].dMonster;
 			if (mi < 0)
 				mi = -mi;
 			if (mi != 0)
@@ -4688,12 +4688,12 @@ BOOL DirOK(int i, int mdir)
 
 BOOL PosOkMissile(int x, int y)
 {
-	return !nMissileTable[dPiece[x][y]] && !(dFlags[x][y] & BFLAG_MONSTLR);
+	return !nMissileTable[grid[x][y].dPiece] && !(grid[x][y].dFlags & BFLAG_MONSTLR);
 }
 
 BOOL CheckNoSolid(int x, int y)
 {
-	return nSolidTable[dPiece[x][y]] == FALSE;
+	return nSolidTable[grid[x][y].dPiece] == FALSE;
 }
 
 BOOL LineClearF(BOOL (*Clear)(int, int), int x1, int y1, int x2, int y2)
@@ -5082,7 +5082,7 @@ void MissToMonst(int i, int x, int y)
 	Monst = &monster[m];
 	oldx = Miss->_mix;
 	oldy = Miss->_miy;
-	dMonster[x][y] = m + 1;
+	grid[x][y].dMonster = m + 1;
 	Monst->_mdir = Miss->_mimfnum;
 	Monst->_mx = x;
 	Monst->_my = y;
@@ -5097,11 +5097,11 @@ void MissToMonst(int i, int x, int y)
 	}
 
 	if (!(Monst->_mFlags & MFLAG_TARGETS_MONSTER)) {
-		pnum = dPlayer[oldx][oldy] - 1;
-		if (dPlayer[oldx][oldy] > 0) {
+		pnum = grid[oldx][oldy].dPlayer - 1;
+		if (grid[oldx][oldy].dPlayer > 0) {
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
-				M_TryH2HHit(m, dPlayer[oldx][oldy] - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
-				if (pnum == dPlayer[oldx][oldy] - 1 && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
+				M_TryH2HHit(m, grid[oldx][oldy].dPlayer - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
+				if (pnum == grid[oldx][oldy].dPlayer - 1 && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
 					if (plr[pnum]._pmode != 7 && plr[pnum]._pmode != 8)
 						StartPlrHit(pnum, 0, TRUE);
 					newx = oldx + offset_x[Monst->_mdir];
@@ -5111,23 +5111,23 @@ void MissToMonst(int i, int x, int y)
 						plr[pnum]._py = newy;
 						FixPlayerLocation(pnum, plr[pnum]._pdir);
 						FixPlrWalkTags(pnum);
-						dPlayer[newx][newy] = pnum + 1;
+						grid[newx][newy].dPlayer = pnum + 1;
 						SetPlayerOld(pnum);
 					}
 				}
 			}
 		}
 	} else {
-		if (dMonster[oldx][oldy] > 0) {
+		if (grid[oldx][oldy].dMonster > 0) {
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
-				M_TryM2MHit(m, dMonster[oldx][oldy] - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
+				M_TryM2MHit(m, grid[oldx][oldy].dMonster - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
 				if (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE) {
 					newx = oldx + offset_x[Monst->_mdir];
 					newy = oldy + offset_y[Monst->_mdir];
-					if (PosOkMonst(dMonster[oldx][oldy] - 1, newx, newy)) {
-						m = dMonster[oldx][oldy];
-						dMonster[newx][newy] = m;
-						dMonster[oldx][oldy] = 0;
+					if (PosOkMonst(grid[oldx][oldy].dMonster - 1, newx, newy)) {
+						m = grid[oldx][oldy].dMonster;
+						grid[newx][newy].dMonster = m;
+						grid[oldx][oldy].dMonster = 0;
 						m--;
 						monster[m]._mx = newx;
 						monster[m]._mfutx = newx;
@@ -5146,15 +5146,15 @@ BOOL PosOkMonst(int i, int x, int y)
 	BOOL ret, fire;
 
 	fire = FALSE;
-	ret = !SolidLoc(x, y) && !dPlayer[x][y] && !dMonster[x][y];
-	if (ret && dObject[x][y]) {
-		oi = dObject[x][y] > 0 ? dObject[x][y] - 1 : -(dObject[x][y] + 1);
+	ret = !SolidLoc(x, y) && !grid[x][y].dPlayer && !grid[x][y].dMonster;
+	if (ret && grid[x][y].dObject) {
+		oi = grid[x][y].dObject > 0 ? grid[x][y].dObject - 1 : -(grid[x][y].dObject + 1);
 		if (object[oi]._oSolidFlag)
 			ret = FALSE;
 	}
 
-	if (ret && dMissile[x][y] && i >= 0) {
-		mi = dMissile[x][y];
+	if (ret && grid[x][y].dMissile && i >= 0) {
+		mi = grid[x][y].dMissile;
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = TRUE;
@@ -5179,14 +5179,14 @@ BOOL PosOkMonst2(int i, int x, int y)
 
 	fire = FALSE;
 	ret = !SolidLoc(x, y);
-	if (ret && dObject[x][y]) {
-		oi = dObject[x][y] > 0 ? dObject[x][y] - 1 : -(dObject[x][y] + 1);
+	if (ret && grid[x][y].dObject) {
+		oi = grid[x][y].dObject > 0 ? grid[x][y].dObject - 1 : -(grid[x][y].dObject + 1);
 		if (object[oi]._oSolidFlag)
 			ret = FALSE;
 	}
 
-	if (ret && dMissile[x][y] && i >= 0) {
-		mi = dMissile[x][y];
+	if (ret && grid[x][y].dMissile && i >= 0) {
+		mi = grid[x][y].dMissile;
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = TRUE;
@@ -5213,8 +5213,8 @@ BOOL PosOkMonst3(int i, int x, int y)
 	ret = TRUE;
 	isdoor = FALSE;
 
-	if (ret && dObject[x][y] != 0) {
-		oi = dObject[x][y] > 0 ? dObject[x][y] - 1 : -(dObject[x][y] + 1);
+	if (ret && grid[x][y].dObject != 0) {
+		oi = grid[x][y].dObject > 0 ? grid[x][y].dObject - 1 : -(grid[x][y].dObject + 1);
 		objtype = object[oi]._otype;
 		isdoor = objtype == OBJ_L1LDOOR || objtype == OBJ_L1RDOOR
 		    || objtype == OBJ_L2LDOOR || objtype == OBJ_L2RDOOR
@@ -5224,10 +5224,10 @@ BOOL PosOkMonst3(int i, int x, int y)
 		}
 	}
 	if (ret) {
-		ret = (!SolidLoc(x, y) || isdoor) && dPlayer[x][y] == 0 && dMonster[x][y] == 0;
+		ret = (!SolidLoc(x, y) || isdoor) && grid[x][y].dPlayer == 0 && grid[x][y].dMonster == 0;
 	}
-	if (ret && dMissile[x][y] != 0 && i >= 0) {
-		mi = dMissile[x][y];
+	if (ret && grid[x][y].dMissile != 0 && i >= 0) {
+		mi = grid[x][y].dMissile;
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = TRUE;
@@ -5290,7 +5290,7 @@ int M_SpawnSkel(int x, int y, int dir)
 
 void ActivateSpawn(int i, int x, int y, int dir)
 {
-	dMonster[x][y] = i + 1;
+	grid[x][y].dMonster = i + 1;
 	monster[i]._mx = x;
 	monster[i]._my = y;
 	monster[i]._mfutx = x;
@@ -5416,7 +5416,7 @@ void SpawnGolum(int i, int x, int y, int mi)
 	if ((DWORD)i >= MAXMONSTERS)
 		app_fatal("SpawnGolum: Invalid monster %d", i);
 
-	dMonster[x][y] = i + 1;
+	grid[x][y].dMonster = i + 1;
 	monster[i]._mx = x;
 	monster[i]._my = y;
 	monster[i]._mfutx = x;

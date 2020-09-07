@@ -110,41 +110,41 @@ void LoadGame(BOOL firstflag)
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			dLight[i][j] = BLoad();
+			grid[i][j].dLight = BLoad();
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			dFlags[i][j] = BLoad();
+			grid[i][j].dFlags = BLoad();
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			dPlayer[i][j] = BLoad();
+			grid[i][j].dPlayer = BLoad();
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			dItem[i][j] = BLoad();
+			grid[i][j].dItem = BLoad();
 	}
 
 	if (leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dMonster[i][j] = WLoad();
+				grid[i][j].dMonster = WLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dDead[i][j] = BLoad();
+				grid[i][j].dDead = BLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dObject[i][j] = BLoad();
+				grid[i][j].dObject = BLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dLight[i][j] = BLoad();
+				grid[i][j].dLight = BLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dPreLight[i][j] = BLoad();
+				grid[i][j].dPreLight = BLoad();
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
@@ -152,7 +152,7 @@ void LoadGame(BOOL firstflag)
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dMissile[i][j] = BLoad();
+				grid[i][j].dMissile = BLoad();
 		}
 	}
 
@@ -906,41 +906,41 @@ void SaveGame()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(dLight[i][j]);
+			BSave(grid[i][j].dLight);
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(dFlags[i][j] & ~(BFLAG_MISSILE | BFLAG_VISIBLE | BFLAG_DEAD_PLAYER));
+			BSave(grid[i][j].dFlags & ~(BFLAG_MISSILE | BFLAG_VISIBLE | BFLAG_DEAD_PLAYER));
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(dPlayer[i][j]);
+			BSave(grid[i][j].dPlayer);
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(dItem[i][j]);
+			BSave(grid[i][j].dItem);
 	}
 
 	if (leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				WSave(dMonster[i][j]);
+				WSave(grid[i][j].dMonster);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dDead[i][j]);
+				BSave(grid[i][j].dDead);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dObject[i][j]);
+				BSave(grid[i][j].dObject);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dLight[i][j]);
+				BSave(grid[i][j].dLight);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dPreLight[i][j]);
+				BSave(grid[i][j].dPreLight);
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
@@ -948,7 +948,7 @@ void SaveGame()
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dMissile[i][j]);
+				BSave(grid[i][j].dMissile);
 		}
 	}
 
@@ -1561,7 +1561,7 @@ void SaveLevel()
 	if (leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dDead[i][j]);
+				BSave(grid[i][j].dDead);
 		}
 	}
 
@@ -1591,29 +1591,29 @@ void SaveLevel()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(dFlags[i][j] & ~(BFLAG_MISSILE | BFLAG_VISIBLE | BFLAG_DEAD_PLAYER));
+			BSave(grid[i][j].dFlags & ~(BFLAG_MISSILE | BFLAG_VISIBLE | BFLAG_DEAD_PLAYER));
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(dItem[i][j]);
+			BSave(grid[i][j].dItem);
 	}
 
 	if (leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				WSave(dMonster[i][j]);
+				WSave(grid[i][j].dMonster);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dObject[i][j]);
+				BSave(grid[i][j].dObject);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dLight[i][j]);
+				BSave(grid[i][j].dLight);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dPreLight[i][j]);
+				BSave(grid[i][j].dPreLight);
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
@@ -1621,7 +1621,7 @@ void SaveLevel()
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(dMissile[i][j]);
+				BSave(grid[i][j].dMissile);
 		}
 	}
 
@@ -1650,7 +1650,7 @@ void LoadLevel()
 	if (leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dDead[i][j] = BLoad();
+				grid[i][j].dDead = BLoad();
 		}
 		SetDead();
 	}
@@ -1683,29 +1683,29 @@ void LoadLevel()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			dFlags[i][j] = BLoad();
+			grid[i][j].dFlags = BLoad();
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			dItem[i][j] = BLoad();
+			grid[i][j].dItem = BLoad();
 	}
 
 	if (leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dMonster[i][j] = WLoad();
+				grid[i][j].dMonster = WLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dObject[i][j] = BLoad();
+				grid[i][j].dObject = BLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dLight[i][j] = BLoad();
+				grid[i][j].dLight = BLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dPreLight[i][j] = BLoad();
+				grid[i][j].dPreLight = BLoad();
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
@@ -1713,7 +1713,7 @@ void LoadLevel()
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				dMissile[i][j] = 0; /// BUGFIX: supposed to load saved missiles with "BLoad()"?
+				grid[i][j].dMissile = 0; /// BUGFIX: supposed to load saved missiles with "BLoad()"?
 		}
 	}
 

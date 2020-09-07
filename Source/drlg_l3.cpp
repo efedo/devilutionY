@@ -88,8 +88,8 @@ static void InitL3Dungeon()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			dungeon[i][j] = 0;
-			dflags[i][j] = 0;
+			dgrid[i][j].dungeon = 0;
+			dgrid[i][j].dflags = 0;
 		}
 	}
 }
@@ -105,7 +105,7 @@ static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 	v = 0;
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			v += dungeon[i][j];
+			v += dgrid[i][j].dungeon;
 		}
 	}
 
@@ -115,23 +115,23 @@ static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 
 	for (j = y1 + 1; j < y2; j++) {
 		for (i = x1 + 1; i < x2; i++) {
-			dungeon[i][j] = 1;
+			dgrid[i][j].dungeon = 1;
 		}
 	}
 	for (j = y1; j <= y2; j++) {
 		if (random_(0, 2) != 0) {
-			dungeon[x1][j] = 1;
+			dgrid[x1][j].dungeon = 1;
 		}
 		if (random_(0, 2) != 0) {
-			dungeon[x2][j] = 1;
+			dgrid[x2][j].dungeon = 1;
 		}
 	}
 	for (i = x1; i <= x2; i++) {
 		if (random_(0, 2) != 0) {
-			dungeon[i][y1] = 1;
+			dgrid[i][y1].dungeon = 1;
 		}
 		if (random_(0, 2) != 0) {
-			dungeon[i][y2] = 1;
+			dgrid[i][y2].dungeon = 1;
 		}
 	}
 
@@ -226,7 +226,7 @@ static void DRLG_L3FloorArea(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			dungeon[i][j] = 1;
+			dgrid[i][j].dungeon = 1;
 		}
 	}
 }
@@ -237,19 +237,19 @@ static void DRLG_L3FillDiags()
 
 	for (j = 0; j < DMAXY - 1; j++) {
 		for (i = 0; i < DMAXX - 1; i++) {
-			v = dungeon[i + 1][j + 1] + 2 * dungeon[i][j + 1] + 4 * dungeon[i + 1][j] + 8 * dungeon[i][j];
+			v = dgrid[i + 1][j + 1].dungeon + 2 * dgrid[i][j + 1].dungeon + 4 * dgrid[i + 1][j].dungeon + 8 * dgrid[i][j].dungeon;
 			if (v == 6) {
 				if (random_(0, 2) == 0) {
-					dungeon[i][j] = 1;
+					dgrid[i][j].dungeon = 1;
 				} else {
-					dungeon[i + 1][j + 1] = 1;
+					dgrid[i + 1][j + 1].dungeon = 1;
 				}
 			}
 			if (v == 9) {
 				if (random_(0, 2) == 0) {
-					dungeon[i + 1][j] = 1;
+					dgrid[i + 1][j].dungeon = 1;
 				} else {
-					dungeon[i][j + 1] = 1;
+					dgrid[i][j + 1].dungeon = 1;
 				}
 			}
 		}
@@ -262,11 +262,11 @@ static void DRLG_L3FillSingles()
 
 	for (j = 1; j < DMAXY - 1; j++) {
 		for (i = 1; i < DMAXX - 1; i++) {
-			if (dungeon[i][j] == 0
-			    && dungeon[i][j - 1] + dungeon[i - 1][j - 1] + dungeon[i + 1][j - 1] == 3
-			    && dungeon[i + 1][j] + dungeon[i - 1][j] == 2
-			    && dungeon[i][j + 1] + dungeon[i - 1][j + 1] + dungeon[i + 1][j + 1] == 3) {
-				dungeon[i][j] = 1;
+			if (dgrid[i][j].dungeon == 0
+			    && dgrid[i][j - 1].dungeon + dgrid[i - 1][j - 1].dungeon + dgrid[i + 1][j - 1].dungeon == 3
+			    && dgrid[i + 1][j].dungeon + dgrid[i - 1][j].dungeon == 2
+			    && dgrid[i][j + 1].dungeon + dgrid[i - 1][j + 1].dungeon + dgrid[i + 1][j + 1].dungeon == 3) {
+				dgrid[i][j].dungeon = 1;
 			}
 		}
 	}
@@ -279,7 +279,7 @@ static void DRLG_L3FillStraights()
 	for (j = 0; j < DMAXY - 1; j++) {
 		xs = 0;
 		for (i = 0; i < 37; i++) {
-			if (dungeon[i][j] == 0 && dungeon[i][j + 1] == 1) {
+			if (dgrid[i][j].dungeon == 0 && dgrid[i][j + 1].dungeon == 1) {
 				if (xs == 0) {
 					xc = i;
 				}
@@ -288,7 +288,7 @@ static void DRLG_L3FillStraights()
 				if (xs > 3 && random_(0, 2) != 0) {
 					for (k = xc; k < i; k++) {
 						rv = random_(0, 2);
-						dungeon[k][j] = rv;
+						dgrid[k][j].dungeon = rv;
 					}
 				}
 				xs = 0;
@@ -298,7 +298,7 @@ static void DRLG_L3FillStraights()
 	for (j = 0; j < DMAXY - 1; j++) {
 		xs = 0;
 		for (i = 0; i < 37; i++) {
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 0) {
+			if (dgrid[i][j].dungeon == 1 && dgrid[i][j + 1].dungeon == 0) {
 				if (xs == 0) {
 					xc = i;
 				}
@@ -307,7 +307,7 @@ static void DRLG_L3FillStraights()
 				if (xs > 3 && random_(0, 2) != 0) {
 					for (k = xc; k < i; k++) {
 						rv = random_(0, 2);
-						dungeon[k][j + 1] = rv;
+						dgrid[k][j + 1].dungeon = rv;
 					}
 				}
 				xs = 0;
@@ -317,7 +317,7 @@ static void DRLG_L3FillStraights()
 	for (i = 0; i < DMAXX - 1; i++) {
 		ys = 0;
 		for (j = 0; j < 37; j++) {
-			if (dungeon[i][j] == 0 && dungeon[i + 1][j] == 1) {
+			if (dgrid[i][j].dungeon == 0 && dgrid[i + 1][j].dungeon == 1) {
 				if (ys == 0) {
 					yc = j;
 				}
@@ -326,7 +326,7 @@ static void DRLG_L3FillStraights()
 				if (ys > 3 && random_(0, 2) != 0) {
 					for (k = yc; k < j; k++) {
 						rv = random_(0, 2);
-						dungeon[i][k] = rv;
+						dgrid[i][k].dungeon = rv;
 					}
 				}
 				ys = 0;
@@ -336,7 +336,7 @@ static void DRLG_L3FillStraights()
 	for (i = 0; i < DMAXX - 1; i++) {
 		ys = 0;
 		for (j = 0; j < 37; j++) {
-			if (dungeon[i][j] == 1 && dungeon[i + 1][j] == 0) {
+			if (dgrid[i][j].dungeon == 1 && dgrid[i + 1][j].dungeon == 0) {
 				if (ys == 0) {
 					yc = j;
 				}
@@ -345,7 +345,7 @@ static void DRLG_L3FillStraights()
 				if (ys > 3 && random_(0, 2) != 0) {
 					for (k = yc; k < j; k++) {
 						rv = random_(0, 2);
-						dungeon[i + 1][k] = rv;
+						dgrid[i + 1][k].dungeon = rv;
 					}
 				}
 				ys = 0;
@@ -359,10 +359,10 @@ static void DRLG_L3Edges()
 	int i, j;
 
 	for (j = 0; j < DMAXY; j++) {
-		dungeon[DMAXX - 1][j] = 0;
+		dgrid[DMAXX - 1][j].dungeon = 0;
 	}
 	for (i = 0; i < DMAXX; i++) {
-		dungeon[i][DMAXY - 1] = 0;
+		dgrid[i][DMAXY - 1].dungeon = 0;
 	}
 }
 
@@ -374,7 +374,7 @@ static int DRLG_L3GetFloorArea()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			gfa += dungeon[i][j];
+			gfa += dgrid[i][j].dungeon;
 		}
 	}
 
@@ -387,7 +387,7 @@ static void DRLG_L3MakeMegas()
 
 	for (j = 0; j < DMAXY - 1; j++) {
 		for (i = 0; i < DMAXX - 1; i++) {
-			v = dungeon[i + 1][j + 1] + 2 * dungeon[i][j + 1] + 4 * dungeon[i + 1][j] + 8 * dungeon[i][j];
+			v = dgrid[i + 1][j + 1].dungeon + 2 * dgrid[i][j + 1].dungeon + 4 * dgrid[i + 1][j].dungeon + 8 * dgrid[i][j].dungeon;
 			if (v == 6) {
 				rv = random_(0, 2);
 				if (rv == 0) {
@@ -404,12 +404,12 @@ static void DRLG_L3MakeMegas()
 					v = 14;
 				}
 			}
-			dungeon[i][j] = L3ConvTbl[v];
+			dgrid[i][j].dungeon = L3ConvTbl[v];
 		}
-		dungeon[DMAXX - 1][j] = 8;
+		dgrid[DMAXX - 1][j].dungeon = 8;
 	}
 	for (i = 0; i < DMAXX; i++) {
-		dungeon[i][DMAXY - 1] = 8;
+		dgrid[i][DMAXY - 1].dungeon = 8;
 	}
 }
 
@@ -434,13 +434,13 @@ static void DRLG_L3River()
 			rx = 0;
 			ry = 0;
 			i = 0;
-			// BUGFIX: Replace with `(ry >= DMAXY || dungeon[rx][ry] < 25 || dungeon[rx][ry] > 28) && i < 100` (fixed)
-			while ((ry >= DMAXY || dungeon[rx][ry] < 25 || dungeon[rx][ry] > 28) && i < 100) {
+			// BUGFIX: Replace with `(ry >= DMAXY || dgrid[rx][ry].dungeon < 25 || dgrid[rx][ry].dungeon > 28) && i < 100` (fixed)
+			while ((ry >= DMAXY || dgrid[rx][ry].dungeon < 25 || dgrid[rx][ry].dungeon > 28) && i < 100) {
 				rx = random_(0, DMAXX);
 				ry = random_(0, DMAXY);
 				i++;
 				// BUGFIX: Move `ry < DMAXY` check before dungeon checks (fixed)
-				while (ry < DMAXY && (dungeon[rx][ry] < 25 || dungeon[rx][ry] > 28)) {
+				while (ry < DMAXY && (dgrid[rx][ry].dungeon < 25 || dgrid[rx][ry].dungeon > 28)) {
 					rx++;
 					if (rx >= DMAXX) {
 						rx = 0;
@@ -454,7 +454,7 @@ static void DRLG_L3River()
 			if (i >= 100) {
 				return;
 			}
-			switch (dungeon[rx][ry]) {
+			switch (dgrid[rx][ry].dungeon) {
 			case 25:
 				dir = 3;
 				nodir = 2;
@@ -506,7 +506,7 @@ static void DRLG_L3River()
 				if (dir == 3 && rx > 0) {
 					rx--;
 				}
-				if (dungeon[rx][ry] == 7) {
+				if (dgrid[rx][ry].dungeon == 7) {
 					dircheck = 0;
 					if (dir < 2) {
 						river[2][riveramt] = (BYTE)random_(0, 2) + 17;
@@ -564,7 +564,7 @@ static void DRLG_L3River()
 				}
 			}
 			// BUGFIX: Check `ry >= 2` (fixed)
-			if (dir == 0 && ry >= 2 && dungeon[rx][ry - 1] == 10 && dungeon[rx][ry - 2] == 8) {
+			if (dir == 0 && ry >= 2 && dgrid[rx][ry - 1].dungeon == 10 && dgrid[rx][ry - 2].dungeon == 8) {
 				river[0][riveramt] = rx;
 				river[1][riveramt] = ry - 1;
 				river[2][riveramt] = 24;
@@ -577,7 +577,7 @@ static void DRLG_L3River()
 				bail = TRUE;
 			}
 			// BUGFIX: Check `ry + 2 < DMAXY` (fixed)
-			if (dir == 1 && ry + 2 < DMAXY && dungeon[rx][ry + 1] == 2 && dungeon[rx][ry + 2] == 8) {
+			if (dir == 1 && ry + 2 < DMAXY && dgrid[rx][ry + 1].dungeon == 2 && dgrid[rx][ry + 2].dungeon == 8) {
 				river[0][riveramt] = rx;
 				river[1][riveramt] = ry + 1;
 				river[2][riveramt] = 42;
@@ -590,7 +590,7 @@ static void DRLG_L3River()
 				bail = TRUE;
 			}
 			// BUGFIX: Check `rx + 2 < DMAXX` (fixed)
-			if (dir == 2 && rx + 2 < DMAXX && dungeon[rx + 1][ry] == 4 && dungeon[rx + 2][ry] == 8) {
+			if (dir == 2 && rx + 2 < DMAXX && dgrid[rx + 1][ry].dungeon == 4 && dgrid[rx + 2][ry].dungeon == 8) {
 				river[0][riveramt] = rx + 1;
 				river[1][riveramt] = ry;
 				river[2][riveramt] = 43;
@@ -603,7 +603,7 @@ static void DRLG_L3River()
 				bail = TRUE;
 			}
 			// BUGFIX: Check `rx >= 2` (fixed)
-			if (dir == 3 && rx >= 2 && dungeon[rx - 1][ry] == 9 && dungeon[rx - 2][ry] == 8) {
+			if (dir == 3 && rx >= 2 && dgrid[rx - 1][ry].dungeon == 9 && dgrid[rx - 2][ry].dungeon == 8) {
 				river[0][riveramt] = rx - 1;
 				river[1][riveramt] = ry;
 				river[2][riveramt] = 23;
@@ -626,13 +626,13 @@ static void DRLG_L3River()
 				lpcnt++;
 				bridge = random_(0, riveramt);
 				if ((river[2][bridge] == 15 || river[2][bridge] == 16)
-				    && dungeon[river[0][bridge]][river[1][bridge] - 1] == 7
-				    && dungeon[river[0][bridge]][river[1][bridge] + 1] == 7) {
+				    && dgrid[river[0][bridge].dungeon][river[1][bridge] - 1] == 7
+				    && dgrid[river[0][bridge].dungeon][river[1][bridge] + 1] == 7) {
 					found = 1;
 				}
 				if ((river[2][bridge] == 17 || river[2][bridge] == 18)
-				    && dungeon[river[0][bridge] - 1][river[1][bridge]] == 7
-				    && dungeon[river[0][bridge] + 1][river[1][bridge]] == 7) {
+				    && dgrid[river[0][bridge].dungeon - 1][river[1][bridge]] == 7
+				    && dgrid[river[0][bridge].dungeon + 1][river[1][bridge]] == 7) {
 					found = 2;
 				}
 				for (i = 0; i < riveramt && found != 0; i++) {
@@ -656,7 +656,7 @@ static void DRLG_L3River()
 				}
 				rivercnt++;
 				for (bridge = 0; bridge <= riveramt; bridge++) {
-					dungeon[river[0][bridge]][river[1][bridge]] = river[2][bridge];
+					dgrid[river[0][bridge].dungeon][river[1][bridge]] = river[2][bridge];
 				}
 			} else {
 				bail = FALSE;
@@ -678,15 +678,15 @@ static BOOL DRLG_L3SpawnEdge(int x, int y, int *totarea)
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
 		return TRUE;
 	}
-	if (dungeon[x][y] & 0x80) {
+	if (dgrid[x][y].dungeon & 0x80) {
 		return FALSE;
 	}
-	if (dungeon[x][y] > 15) {
+	if (dgrid[x][y].dungeon > 15) {
 		return TRUE;
 	}
 
-	i = dungeon[x][y];
-	dungeon[x][y] |= 0x80;
+	i = dgrid[x][y].dungeon;
+	dgrid[x][y].dungeon |= 0x80;
 	*totarea += 1;
 
 	if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == TRUE) {
@@ -728,15 +728,15 @@ static BOOL DRLG_L3Spawn(int x, int y, int *totarea)
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
 		return TRUE;
 	}
-	if (dungeon[x][y] & 0x80) {
+	if (dgrid[x][y].dungeon & 0x80) {
 		return FALSE;
 	}
-	if (dungeon[x][y] > 15) {
+	if (dgrid[x][y].dungeon > 15) {
 		return TRUE;
 	}
 
-	i = dungeon[x][y];
-	dungeon[x][y] |= 0x80;
+	i = dgrid[x][y].dungeon;
+	dgrid[x][y].dungeon |= 0x80;
 	*totarea += 1;
 
 	if (i != 8) {
@@ -784,10 +784,10 @@ static void DRLG_L3Pool()
 
 	for (duny = 0; duny < DMAXY; duny++) {
 		for (dunx = 0; dunx < DMAXY; dunx++) {
-			if (dungeon[dunx][duny] != 8) {
+			if (dgrid[dunx][duny].dungeon != 8) {
 				continue;
 			}
-			dungeon[dunx][duny] |= 0x80;
+			dgrid[dunx][duny].dungeon |= 0x80;
 			totarea = 1;
 			if (dunx + 1 < DMAXX) {
 				found = DRLG_L3Spawn(dunx + 1, duny, &totarea);
@@ -813,13 +813,13 @@ static void DRLG_L3Pool()
 			for (j = std::max(duny - totarea, 0); j < std::min(duny + totarea, DMAXY); j++) {
 				for (i = std::max(dunx - totarea, 0); i < std::min(dunx + totarea, DMAXX); i++) {
 					// BUGFIX: In the following swap the order to first do the
-					// index checks and only then access dungeon[i][j] (fixed)
-					if (dungeon[i][j] & 0x80) {
-						dungeon[i][j] &= ~0x80;
+					// index checks and only then access dgrid[i][j].dungeon (fixed)
+					if (dgrid[i][j].dungeon & 0x80) {
+						dgrid[i][j].dungeon &= ~0x80;
 						if (totarea > 4 && poolchance < 25 && !found) {
-							k = poolsub[dungeon[i][j]];
+							k = poolsub[dgrid[i][j].dungeon];
 							if (k != 0 && k <= 37) {
-								dungeon[i][j] = k;
+								dgrid[i][j].dungeon = k;
 							}
 							lavapool = TRUE;
 						}
@@ -836,16 +836,16 @@ static void DRLG_L3PoolFix()
 
 	for (duny = 1; duny < DMAXY - 1; duny++) {     // BUGFIX: Change '0' to '1' and 'DMAXY' to 'DMAXY - 1' (fixed)
 		for (dunx = 1; dunx < DMAXX - 1; dunx++) { // BUGFIX: Change '0' to '1' and 'DMAXX' to 'DMAXX - 1' (fixed)
-			if (dungeon[dunx][duny] == 8) {
-				if (dungeon[dunx - 1][duny - 1] >= 25 && dungeon[dunx - 1][duny - 1] <= 41
-				    && dungeon[dunx - 1][duny] >= 25 && dungeon[dunx - 1][duny] <= 41
-				    && dungeon[dunx - 1][duny + 1] >= 25 && dungeon[dunx - 1][duny + 1] <= 41
-				    && dungeon[dunx][duny - 1] >= 25 && dungeon[dunx][duny - 1] <= 41
-				    && dungeon[dunx][duny + 1] >= 25 && dungeon[dunx][duny + 1] <= 41
-				    && dungeon[dunx + 1][duny - 1] >= 25 && dungeon[dunx + 1][duny - 1] <= 41
-				    && dungeon[dunx + 1][duny] >= 25 && dungeon[dunx + 1][duny] <= 41
-				    && dungeon[dunx + 1][duny + 1] >= 25 && dungeon[dunx + 1][duny + 1] <= 41) {
-					dungeon[dunx][duny] = 33;
+			if (dgrid[dunx][duny].dungeon == 8) {
+				if (dgrid[dunx - 1][duny - 1].dungeon >= 25 && dgrid[dunx - 1][duny - 1].dungeon <= 41
+				    && dgrid[dunx - 1][duny].dungeon >= 25 && dgrid[dunx - 1][duny].dungeon <= 41
+				    && dgrid[dunx - 1][duny + 1].dungeon >= 25 && dgrid[dunx - 1][duny + 1].dungeon <= 41
+				    && dgrid[dunx][duny - 1].dungeon >= 25 && dgrid[dunx][duny - 1].dungeon <= 41
+				    && dgrid[dunx][duny + 1].dungeon >= 25 && dgrid[dunx][duny + 1].dungeon <= 41
+				    && dgrid[dunx + 1][duny - 1].dungeon >= 25 && dgrid[dunx + 1][duny - 1].dungeon <= 41
+				    && dgrid[dunx + 1][duny].dungeon >= 25 && dgrid[dunx + 1][duny].dungeon <= 41
+				    && dgrid[dunx + 1][duny + 1].dungeon >= 25 && dgrid[dunx + 1][duny + 1].dungeon <= 41) {
+					dgrid[dunx][duny].dungeon = 33;
 				}
 			}
 		}
@@ -887,10 +887,10 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && dungeon[xx + sx][yy + sy] != miniset[ii]) {
+					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = FALSE;
 					}
-					if (dflags[xx + sx][yy + sy] != 0) {
+					if (dgrid[xx + sx][yy + sy].dflags != 0) {
 						found = FALSE;
 					}
 					ii++;
@@ -914,7 +914,7 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 		for (yy = 0; yy < sh; yy++) {
 			for (xx = 0; xx < sw; xx++) {
 				if (miniset[ii] != 0) {
-					dungeon[xx + sx][yy + sy] = miniset[ii];
+					dgrid[xx + sx][yy + sy].dungeon = miniset[ii];
 				}
 				ii++;
 			}
@@ -947,10 +947,10 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && dungeon[xx + sx][yy + sy] != miniset[ii]) {
+					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = FALSE;
 					}
-					if (dflags[xx + sx][yy + sy] != 0) {
+					if (dgrid[xx + sx][yy + sy].dflags != 0) {
 						found = FALSE;
 					}
 					ii++;
@@ -960,16 +960,16 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 			if (miniset[kk] >= 84 && miniset[kk] <= 100 && found == TRUE) {
 				// BUGFIX: accesses to dungeon can go out of bounds (fixed)
 				// BUGFIX: Comparisons vs 100 should use same tile as comparisons vs 84.
-				if (sx - 1 >= 0 && dungeon[sx - 1][sy] >= 84 && dungeon[sx - 1][sy] <= 100) {
+				if (sx - 1 >= 0 && dgrid[sx - 1][sy].dungeon >= 84 && dgrid[sx - 1][sy].dungeon <= 100) {
 					found = FALSE;
 				}
-				if (sx + 1 < 40 && sx - 1 >= 0 && dungeon[sx + 1][sy] >= 84 && dungeon[sx - 1][sy] <= 100) {
+				if (sx + 1 < 40 && sx - 1 >= 0 && dgrid[sx + 1][sy].dungeon >= 84 && dgrid[sx - 1][sy].dungeon <= 100) {
 					found = FALSE;
 				}
-				if (sy + 1 < 40 && sx - 1 >= 0 && dungeon[sx][sy + 1] >= 84 && dungeon[sx - 1][sy] <= 100) {
+				if (sy + 1 < 40 && sx - 1 >= 0 && dgrid[sx][sy + 1].dungeon >= 84 && dgrid[sx - 1][sy].dungeon <= 100) {
 					found = FALSE;
 				}
-				if (sy - 1 >= 0 && sx - 1 >= 0 && dungeon[sx][sy - 1] >= 84 && dungeon[sx - 1][sy] <= 100) {
+				if (sy - 1 >= 0 && sx - 1 >= 0 && dgrid[sx][sy - 1].dungeon >= 84 && dgrid[sx - 1][sy].dungeon <= 100) {
 					found = FALSE;
 				}
 			}
@@ -977,7 +977,7 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
-							dungeon[xx + sx][yy + sy] = miniset[kk];
+							dgrid[xx + sx][yy + sy].dungeon = miniset[kk];
 						}
 						kk++;
 					}
@@ -989,24 +989,24 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 
 static BOOL WoodVertU(int i, int y)
 {
-	if ((dungeon[i + 1][y] > 152 || dungeon[i + 1][y] < 130)
-	    && (dungeon[i - 1][y] > 152 || dungeon[i - 1][y] < 130)) {
-		if (dungeon[i][y] == 7) {
+	if ((dgrid[i + 1][y].dungeon > 152 || dgrid[i + 1][y].dungeon < 130)
+	    && (dgrid[i - 1][y].dungeon > 152 || dgrid[i - 1][y].dungeon < 130)) {
+		if (dgrid[i][y].dungeon == 7) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 10) {
+		if (dgrid[i][y].dungeon == 10) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 126) {
+		if (dgrid[i][y].dungeon == 126) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 129) {
+		if (dgrid[i][y].dungeon == 129) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 134) {
+		if (dgrid[i][y].dungeon == 134) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 136) {
+		if (dgrid[i][y].dungeon == 136) {
 			return TRUE;
 		}
 	}
@@ -1016,18 +1016,18 @@ static BOOL WoodVertU(int i, int y)
 
 static BOOL WoodVertD(int i, int y)
 {
-	if ((dungeon[i + 1][y] > 152 || dungeon[i + 1][y] < 130)
-	    && (dungeon[i - 1][y] > 152 || dungeon[i - 1][y] < 130)) {
-		if (dungeon[i][y] == 7) {
+	if ((dgrid[i + 1][y].dungeon > 152 || dgrid[i + 1][y].dungeon < 130)
+	    && (dgrid[i - 1][y].dungeon > 152 || dgrid[i - 1][y].dungeon < 130)) {
+		if (dgrid[i][y].dungeon == 7) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 2) {
+		if (dgrid[i][y].dungeon == 2) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 134) {
+		if (dgrid[i][y].dungeon == 134) {
 			return TRUE;
 		}
-		if (dungeon[i][y] == 136) {
+		if (dgrid[i][y].dungeon == 136) {
 			return TRUE;
 		}
 	}
@@ -1037,24 +1037,24 @@ static BOOL WoodVertD(int i, int y)
 
 static BOOL WoodHorizL(int x, int j)
 {
-	if ((dungeon[x][j + 1] > 152 || dungeon[x][j + 1] < 130)
-	    && (dungeon[x][j - 1] > 152 || dungeon[x][j - 1] < 130)) {
-		if (dungeon[x][j] == 7) {
+	if ((dgrid[x][j + 1].dungeon > 152 || dgrid[x][j + 1].dungeon < 130)
+	    && (dgrid[x][j - 1].dungeon > 152 || dgrid[x][j - 1].dungeon < 130)) {
+		if (dgrid[x][j].dungeon == 7) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 9) {
+		if (dgrid[x][j].dungeon == 9) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 121) {
+		if (dgrid[x][j].dungeon == 121) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 124) {
+		if (dgrid[x][j].dungeon == 124) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 135) {
+		if (dgrid[x][j].dungeon == 135) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 137) {
+		if (dgrid[x][j].dungeon == 137) {
 			return TRUE;
 		}
 	}
@@ -1064,18 +1064,18 @@ static BOOL WoodHorizL(int x, int j)
 
 static BOOL WoodHorizR(int x, int j)
 {
-	if ((dungeon[x][j + 1] > 152 || dungeon[x][j + 1] < 130)
-	    && (dungeon[x][j - 1] > 152 || dungeon[x][j - 1] < 130)) {
-		if (dungeon[x][j] == 7) {
+	if ((dgrid[x][j + 1].dungeon > 152 || dgrid[x][j + 1].dungeon < 130)
+	    && (dgrid[x][j - 1].dungeon > 152 || dgrid[x][j - 1].dungeon < 130)) {
+		if (dgrid[x][j].dungeon == 7) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 4) {
+		if (dgrid[x][j].dungeon == 4) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 135) {
+		if (dgrid[x][j].dungeon == 135) {
 			return TRUE;
 		}
-		if (dungeon[x][j] == 137) {
+		if (dgrid[x][j].dungeon == 137) {
 			return TRUE;
 		}
 	}
@@ -1089,17 +1089,17 @@ void AddFenceDoors()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 7) {
-				if (dungeon[i - 1][j] <= 152 && dungeon[i - 1][j] >= 130
-				    && dungeon[i + 1][j] <= 152 && dungeon[i + 1][j] >= 130) {
-					dungeon[i][j] = 146;
+			if (dgrid[i][j].dungeon == 7) {
+				if (dgrid[i - 1][j].dungeon <= 152 && dgrid[i - 1][j].dungeon >= 130
+				    && dgrid[i + 1][j].dungeon <= 152 && dgrid[i + 1][j].dungeon >= 130) {
+					dgrid[i][j].dungeon = 146;
 					continue;
 				}
 			}
-			if (dungeon[i][j] == 7) {
-				if (dungeon[i][j - 1] <= 152 && dungeon[i][j - 1] >= 130
-				    && dungeon[i][j + 1] <= 152 && dungeon[i][j + 1] >= 130) {
-					dungeon[i][j] = 147;
+			if (dgrid[i][j].dungeon == 7) {
+				if (dgrid[i][j - 1].dungeon <= 152 && dgrid[i][j - 1].dungeon >= 130
+				    && dgrid[i][j + 1].dungeon <= 152 && dgrid[i][j + 1].dungeon >= 130) {
+					dgrid[i][j].dungeon = 147;
 					continue;
 				}
 			}
@@ -1113,41 +1113,41 @@ void FenceDoorFix()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 146) {
-				if (dungeon[i + 1][j] > 152 || dungeon[i + 1][j] < 130
-				    || dungeon[i - 1][j] > 152 || dungeon[i - 1][j] < 130) {
-					dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 146) {
+				if (dgrid[i + 1][j].dungeon > 152 || dgrid[i + 1][j].dungeon < 130
+				    || dgrid[i - 1][j].dungeon > 152 || dgrid[i - 1][j].dungeon < 130) {
+					dgrid[i][j].dungeon = 7;
 					continue;
 				}
 			}
-			if (dungeon[i][j] == 146) {
-				if (dungeon[i + 1][j] != 130 && dungeon[i - 1][j] != 130
-				    && dungeon[i + 1][j] != 132 && dungeon[i - 1][j] != 132
-				    && dungeon[i + 1][j] != 133 && dungeon[i - 1][j] != 133
-				    && dungeon[i + 1][j] != 134 && dungeon[i - 1][j] != 134
-				    && dungeon[i + 1][j] != 136 && dungeon[i - 1][j] != 136
-				    && dungeon[i + 1][j] != 138 && dungeon[i - 1][j] != 138
-				    && dungeon[i + 1][j] != 140 && dungeon[i - 1][j] != 140) {
-					dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 146) {
+				if (dgrid[i + 1][j].dungeon != 130 && dgrid[i - 1][j].dungeon != 130
+				    && dgrid[i + 1][j].dungeon != 132 && dgrid[i - 1][j].dungeon != 132
+				    && dgrid[i + 1][j].dungeon != 133 && dgrid[i - 1][j].dungeon != 133
+				    && dgrid[i + 1][j].dungeon != 134 && dgrid[i - 1][j].dungeon != 134
+				    && dgrid[i + 1][j].dungeon != 136 && dgrid[i - 1][j].dungeon != 136
+				    && dgrid[i + 1][j].dungeon != 138 && dgrid[i - 1][j].dungeon != 138
+				    && dgrid[i + 1][j].dungeon != 140 && dgrid[i - 1][j].dungeon != 140) {
+					dgrid[i][j].dungeon = 7;
 					continue;
 				}
 			}
-			if (dungeon[i][j] == 147) {
-				if (dungeon[i][j + 1] > 152 || dungeon[i][j + 1] < 130
-				    || dungeon[i][j - 1] > 152 || dungeon[i][j - 1] < 130) {
-					dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 147) {
+				if (dgrid[i][j + 1].dungeon > 152 || dgrid[i][j + 1].dungeon < 130
+				    || dgrid[i][j - 1].dungeon > 152 || dgrid[i][j - 1].dungeon < 130) {
+					dgrid[i][j].dungeon = 7;
 					continue;
 				}
 			}
-			if (dungeon[i][j] == 147) {
-				if (dungeon[i][j + 1] != 131 && dungeon[i][j - 1] != 131
-				    && dungeon[i][j + 1] != 132 && dungeon[i][j - 1] != 132
-				    && dungeon[i][j + 1] != 133 && dungeon[i][j - 1] != 133
-				    && dungeon[i][j + 1] != 135 && dungeon[i][j - 1] != 135
-				    && dungeon[i][j + 1] != 137 && dungeon[i][j - 1] != 137
-				    && dungeon[i][j + 1] != 138 && dungeon[i][j - 1] != 138
-				    && dungeon[i][j + 1] != 139 && dungeon[i][j - 1] != 139) {
-					dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 147) {
+				if (dgrid[i][j + 1].dungeon != 131 && dgrid[i][j - 1].dungeon != 131
+				    && dgrid[i][j + 1].dungeon != 132 && dgrid[i][j - 1].dungeon != 132
+				    && dgrid[i][j + 1].dungeon != 133 && dgrid[i][j - 1].dungeon != 133
+				    && dgrid[i][j + 1].dungeon != 135 && dgrid[i][j - 1].dungeon != 135
+				    && dgrid[i][j + 1].dungeon != 137 && dgrid[i][j - 1].dungeon != 137
+				    && dgrid[i][j + 1].dungeon != 138 && dgrid[i][j - 1].dungeon != 138
+				    && dgrid[i][j + 1].dungeon != 139 && dgrid[i][j - 1].dungeon != 139) {
+					dgrid[i][j].dungeon = 7;
 					continue;
 				}
 			}
@@ -1162,77 +1162,77 @@ static void DRLG_L3Wood()
 
 	for (j = 1; j < DMAXY - 1; j++) {     // BUGFIX: Change '0' to '1' (fixed)
 		for (i = 1; i < DMAXX - 1; i++) { // BUGFIX: Change '0' to '1' (fixed)
-			if (dungeon[i][j] == 10 && random_(0, 2) != 0) {
+			if (dgrid[i][j].dungeon == 10 && random_(0, 2) != 0) {
 				x = i;
-				while (dungeon[x][j] == 10) {
+				while (dgrid[x][j].dungeon == 10) {
 					x++;
 				}
 				x--;
 				if (x - i > 0) {
-					dungeon[i][j] = 127;
+					dgrid[i][j].dungeon = 127;
 					for (xx = i + 1; xx < x; xx++) {
 						if (random_(0, 2) != 0) {
-							dungeon[xx][j] = 126;
+							dgrid[xx][j].dungeon = 126;
 						} else {
-							dungeon[xx][j] = 129;
+							dgrid[xx][j].dungeon = 129;
 						}
 					}
-					dungeon[x][j] = 128;
+					dgrid[x][j].dungeon = 128;
 				}
 			}
-			if (dungeon[i][j] == 9 && random_(0, 2) != 0) {
+			if (dgrid[i][j].dungeon == 9 && random_(0, 2) != 0) {
 				y = j;
-				while (dungeon[i][y] == 9) {
+				while (dgrid[i][y].dungeon == 9) {
 					y++;
 				}
 				y--;
 				if (y - j > 0) {
-					dungeon[i][j] = 123;
+					dgrid[i][j].dungeon = 123;
 					for (yy = j + 1; yy < y; yy++) {
 						if (random_(0, 2) != 0) {
-							dungeon[i][yy] = 121;
+							dgrid[i][yy].dungeon = 121;
 						} else {
-							dungeon[i][yy] = 124;
+							dgrid[i][yy].dungeon = 124;
 						}
 					}
-					dungeon[i][y] = 122;
+					dgrid[i][y].dungeon = 122;
 				}
 			}
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] == 10 && dungeon[i][j + 1] == 9 && random_(0, 2) != 0) {
-				dungeon[i][j] = 125;
+			if (dgrid[i][j].dungeon == 11 && dgrid[i + 1][j].dungeon == 10 && dgrid[i][j + 1].dungeon == 9 && random_(0, 2) != 0) {
+				dgrid[i][j].dungeon = 125;
 				x = i + 1;
-				while (dungeon[x][j] == 10) {
+				while (dgrid[x][j].dungeon == 10) {
 					x++;
 				}
 				x--;
 				for (xx = i + 1; xx < x; xx++) {
 					if (random_(0, 2) != 0) {
-						dungeon[xx][j] = 126;
+						dgrid[xx][j].dungeon = 126;
 					} else {
-						dungeon[xx][j] = 129;
+						dgrid[xx][j].dungeon = 129;
 					}
 				}
-				dungeon[x][j] = 128;
+				dgrid[x][j].dungeon = 128;
 				y = j + 1;
-				while (dungeon[i][y] == 9) {
+				while (dgrid[i][y].dungeon == 9) {
 					y++;
 				}
 				y--;
 				for (yy = j + 1; yy < y; yy++) {
 					if (random_(0, 2) != 0) {
-						dungeon[i][yy] = 121;
+						dgrid[i][yy].dungeon = 121;
 					} else {
-						dungeon[i][yy] = 124;
+						dgrid[i][yy].dungeon = 124;
 					}
 				}
-				dungeon[i][y] = 122;
+				dgrid[i][y].dungeon = 122;
 			}
 		}
 	}
 
 	for (j = 1; j < DMAXY; j++) {     // BUGFIX: Change '0' to '1' (fixed)
 		for (i = 1; i < DMAXX; i++) { // BUGFIX: Change '0' to '1' (fixed)
-			if (dungeon[i][j] == 7 && random_(0, 1) == 0 && SkipThemeRoom(i, j)) {
+			if (dgrid[i][j].dungeon == 7 && random_(0, 1) == 0 && SkipThemeRoom(i, j)) {
 				rt = random_(0, 2);
 				if (rt == 0) {
 					y1 = j;
@@ -1248,10 +1248,10 @@ static void DRLG_L3Wood()
 					}
 					y2--;
 					skip = TRUE;
-					if (dungeon[i][y1] == 7) {
+					if (dgrid[i][y1].dungeon == 7) {
 						skip = FALSE;
 					}
-					if (dungeon[i][y2] == 7) {
+					if (dgrid[i][y2].dungeon == 7) {
 						skip = FALSE;
 					}
 					if (y2 - y1 > 1 && skip) {
@@ -1260,30 +1260,30 @@ static void DRLG_L3Wood()
 							if (y == rp) {
 								continue;
 							}
-							if (dungeon[i][y] == 7) {
+							if (dgrid[i][y].dungeon == 7) {
 								if (random_(0, 2) != 0) {
-									dungeon[i][y] = 135;
+									dgrid[i][y].dungeon = 135;
 								} else {
-									dungeon[i][y] = 137;
+									dgrid[i][y].dungeon = 137;
 								}
 							}
-							if (dungeon[i][y] == 10) {
-								dungeon[i][y] = 131;
+							if (dgrid[i][y].dungeon == 10) {
+								dgrid[i][y].dungeon = 131;
 							}
-							if (dungeon[i][y] == 126) {
-								dungeon[i][y] = 133;
+							if (dgrid[i][y].dungeon == 126) {
+								dgrid[i][y].dungeon = 133;
 							}
-							if (dungeon[i][y] == 129) {
-								dungeon[i][y] = 133;
+							if (dgrid[i][y].dungeon == 129) {
+								dgrid[i][y].dungeon = 133;
 							}
-							if (dungeon[i][y] == 2) {
-								dungeon[i][y] = 139;
+							if (dgrid[i][y].dungeon == 2) {
+								dgrid[i][y].dungeon = 139;
 							}
-							if (dungeon[i][y] == 134) {
-								dungeon[i][y] = 138;
+							if (dgrid[i][y].dungeon == 134) {
+								dgrid[i][y].dungeon = 138;
 							}
-							if (dungeon[i][y] == 136) {
-								dungeon[i][y] = 138;
+							if (dgrid[i][y].dungeon == 136) {
+								dgrid[i][y].dungeon = 138;
 							}
 						}
 					}
@@ -1302,10 +1302,10 @@ static void DRLG_L3Wood()
 					}
 					x2--;
 					skip = TRUE;
-					if (dungeon[x1][j] == 7) {
+					if (dgrid[x1][j].dungeon == 7) {
 						skip = FALSE;
 					}
-					if (dungeon[x2][j] == 7) {
+					if (dgrid[x2][j].dungeon == 7) {
 						skip = FALSE;
 					}
 					if (x2 - x1 > 1 && skip) {
@@ -1314,30 +1314,30 @@ static void DRLG_L3Wood()
 							if (x == rp) {
 								continue;
 							}
-							if (dungeon[x][j] == 7) {
+							if (dgrid[x][j].dungeon == 7) {
 								if (random_(0, 2) != 0) {
-									dungeon[x][j] = 134;
+									dgrid[x][j].dungeon = 134;
 								} else {
-									dungeon[x][j] = 136;
+									dgrid[x][j].dungeon = 136;
 								}
 							}
-							if (dungeon[x][j] == 9) {
-								dungeon[x][j] = 130;
+							if (dgrid[x][j].dungeon == 9) {
+								dgrid[x][j].dungeon = 130;
 							}
-							if (dungeon[x][j] == 121) {
-								dungeon[x][j] = 132;
+							if (dgrid[x][j].dungeon == 121) {
+								dgrid[x][j].dungeon = 132;
 							}
-							if (dungeon[x][j] == 124) {
-								dungeon[x][j] = 132;
+							if (dgrid[x][j].dungeon == 124) {
+								dgrid[x][j].dungeon = 132;
 							}
-							if (dungeon[x][j] == 4) {
-								dungeon[x][j] = 140;
+							if (dgrid[x][j].dungeon == 4) {
+								dgrid[x][j].dungeon = 140;
 							}
-							if (dungeon[x][j] == 135) {
-								dungeon[x][j] = 138;
+							if (dgrid[x][j].dungeon == 135) {
+								dgrid[x][j].dungeon = 138;
 							}
-							if (dungeon[x][j] == 137) {
-								dungeon[x][j] = 138;
+							if (dgrid[x][j].dungeon == 137) {
+								dgrid[x][j].dungeon = 138;
 							}
 						}
 					}
@@ -1368,10 +1368,10 @@ BOOL DRLG_L3Anvil()
 		ii = 2;
 		for (yy = 0; yy < sh && found == TRUE; yy++) {
 			for (xx = 0; xx < sw && found == TRUE; xx++) {
-				if (L3ANVIL[ii] != 0 && dungeon[xx + sx][yy + sy] != L3ANVIL[ii]) {
+				if (L3ANVIL[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != L3ANVIL[ii]) {
 					found = FALSE;
 				}
-				if (dflags[xx + sx][yy + sy] != 0) {
+				if (dgrid[xx + sx][yy + sy].dflags != 0) {
 					found = FALSE;
 				}
 				ii++;
@@ -1396,9 +1396,9 @@ BOOL DRLG_L3Anvil()
 	for (yy = 0; yy < sh; yy++) {
 		for (xx = 0; xx < sw; xx++) {
 			if (L3ANVIL[ii] != 0) {
-				dungeon[xx + sx][yy + sy] = L3ANVIL[ii];
+				dgrid[xx + sx][yy + sy].dungeon = L3ANVIL[ii];
 			}
-			dflags[xx + sx][yy + sy] |= DLRG_PROTECTED;
+			dgrid[xx + sx][yy + sy].dflags |= DLRG_PROTECTED;
 			ii++;
 		}
 	}
@@ -1417,15 +1417,15 @@ void FixL3Warp()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 125 && dungeon[i + 1][j] == 125 && dungeon[i][j + 1] == 125 && dungeon[i + 1][j + 1] == 125) {
-				dungeon[i][j] = 156;
-				dungeon[i + 1][j] = 155;
-				dungeon[i][j + 1] = 153;
-				dungeon[i + 1][j + 1] = 154;
+			if (dgrid[i][j].dungeon == 125 && dgrid[i + 1][j].dungeon == 125 && dgrid[i][j + 1].dungeon == 125 && dgrid[i + 1][j + 1].dungeon == 125) {
+				dgrid[i][j].dungeon = 156;
+				dgrid[i + 1][j].dungeon = 155;
+				dgrid[i][j + 1].dungeon = 153;
+				dgrid[i + 1][j + 1].dungeon = 154;
 				return;
 			}
-			if (dungeon[i][j] == 5 && dungeon[i + 1][j + 1] == 7) {
-				dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 5 && dgrid[i + 1][j + 1].dungeon == 7) {
+				dgrid[i][j].dungeon = 7;
 			}
 		}
 	}
@@ -1437,22 +1437,22 @@ void FixL3HallofHeroes()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 5 && dungeon[i + 1][j + 1] == 7) {
-				dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 5 && dgrid[i + 1][j + 1].dungeon == 7) {
+				dgrid[i][j].dungeon = 7;
 			}
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 5 && dungeon[i + 1][j + 1] == 12 && dungeon[i + 1][j] == 7) {
-				dungeon[i][j] = 7;
-				dungeon[i][j + 1] = 7;
-				dungeon[i + 1][j + 1] = 7;
+			if (dgrid[i][j].dungeon == 5 && dgrid[i + 1][j + 1].dungeon == 12 && dgrid[i + 1][j].dungeon == 7) {
+				dgrid[i][j].dungeon = 7;
+				dgrid[i][j + 1].dungeon = 7;
+				dgrid[i + 1][j + 1].dungeon = 7;
 			}
-			if (dungeon[i][j] == 5 && dungeon[i + 1][j + 1] == 12 && dungeon[i][j + 1] == 7) {
-				dungeon[i][j] = 7;
-				dungeon[i + 1][j] = 7;
-				dungeon[i + 1][j + 1] = 7;
+			if (dgrid[i][j].dungeon == 5 && dgrid[i + 1][j + 1].dungeon == 12 && dgrid[i][j + 1].dungeon == 7) {
+				dgrid[i][j].dungeon = 7;
+				dgrid[i + 1][j].dungeon = 7;
+				dgrid[i + 1][j + 1].dungeon = 7;
 			}
 		}
 	}
@@ -1479,7 +1479,7 @@ BOOL DRLG_L3Lockout()
 	t = 0;
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] != 0) {
+			if (dgrid[i][j].dungeon != 0) {
 				lockout[i][j] = TRUE;
 				fx = i;
 				fy = j;
@@ -1582,11 +1582,11 @@ static void DRLG_L3(int entry)
 	DRLG_L3River();
 
 	if (QuestStatus(Q_ANVIL)) {
-		dungeon[setpc_x + 7][setpc_y + 5] = 7;
-		dungeon[setpc_x + 8][setpc_y + 5] = 7;
-		dungeon[setpc_x + 9][setpc_y + 5] = 7;
-		if (dungeon[setpc_x + 10][setpc_y + 5] == 17 || dungeon[setpc_x + 10][setpc_y + 5] == 18) {
-			dungeon[setpc_x + 10][setpc_y + 5] = 45;
+		dgrid[setpc_x + 7][setpc_y + 5].dungeon = 7;
+		dgrid[setpc_x + 8][setpc_y + 5].dungeon = 7;
+		dgrid[setpc_x + 9][setpc_y + 5].dungeon = 7;
+		if (dgrid[setpc_x + 10][setpc_y + 5].dungeon == 17 || dgrid[setpc_x + 10][setpc_y + 5].dungeon == 18) {
+			dgrid[setpc_x + 10][setpc_y + 5].dungeon = 45;
 		}
 	}
 
@@ -1622,7 +1622,7 @@ static void DRLG_L3(int entry)
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			pdungeon[i][j] = dungeon[i][j];
+			dgrid[i][j].pdungeon = dgrid[i][j].dungeon;
 		}
 	}
 
@@ -1646,10 +1646,10 @@ static void DRLG_L3Pass3()
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
 		for (i = 0; i < MAXDUNX; i += 2) {
-			dPiece[i][j] = v1;
-			dPiece[i + 1][j] = v2;
-			dPiece[i][j + 1] = v3;
-			dPiece[i + 1][j + 1] = v4;
+			grid[i][j].dPiece = v1;
+			grid[i + 1][j].dPiece = v2;
+			grid[i][j + 1].dPiece = v3;
+			grid[i + 1][j + 1].dPiece = v4;
 		}
 	}
 
@@ -1657,7 +1657,7 @@ static void DRLG_L3Pass3()
 	for (j = 0; j < DMAXY; j++) {
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
-			lv = dungeon[i][j] - 1;
+			lv = dgrid[i][j].dungeon - 1;
 			if (lv >= 0) {
 				MegaTiles = (WORD *)&pMegaTiles[lv * 8];
 				v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
@@ -1670,10 +1670,10 @@ static void DRLG_L3Pass3()
 				v3 = 0;
 				v4 = 0;
 			}
-			dPiece[xx][yy] = v1;
-			dPiece[xx + 1][yy] = v2;
-			dPiece[xx][yy + 1] = v3;
-			dPiece[xx + 1][yy + 1] = v4;
+			grid[xx][yy].dPiece = v1;
+			grid[xx + 1][yy].dPiece = v2;
+			grid[xx][yy + 1].dPiece = v3;
+			grid[xx + 1][yy + 1].dPiece = v4;
 			xx += 2;
 		}
 		yy += 2;
@@ -1696,13 +1696,13 @@ void CreateL3Dungeon(DWORD rseed, int entry)
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] >= 56 && dPiece[i][j] <= 147) {
+			if (grid[i][j].dPiece >= 56 && grid[i][j].dPiece <= 147) {
 				DoLighting(i, j, 7, -1);
-			} else if (dPiece[i][j] >= 154 && dPiece[i][j] <= 161) {
+			} else if (grid[i][j].dPiece >= 154 && grid[i][j].dPiece <= 161) {
 				DoLighting(i, j, 7, -1);
-			} else if (dPiece[i][j] == 150) {
+			} else if (grid[i][j].dPiece == 150) {
 				DoLighting(i, j, 7, -1);
-			} else if (dPiece[i][j] == 152) {
+			} else if (grid[i][j].dPiece == 152) {
 				DoLighting(i, j, 7, -1);
 			}
 		}
@@ -1733,17 +1733,17 @@ void LoadL3Dungeon(char *sFileName, int vx, int vy)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				dungeon[i][j] = *lm;
+				dgrid[i][j].dungeon = *lm;
 			} else {
-				dungeon[i][j] = 7;
+				dgrid[i][j].dungeon = 7;
 			}
 			lm += 2;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 0) {
-				dungeon[i][j] = 8;
+			if (dgrid[i][j].dungeon == 0) {
+				dgrid[i][j].dungeon = 8;
 			}
 		}
 	}
@@ -1758,13 +1758,13 @@ void LoadL3Dungeon(char *sFileName, int vx, int vy)
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] >= 56 && dPiece[i][j] <= 147) {
+			if (grid[i][j].dPiece >= 56 && grid[i][j].dPiece <= 147) {
 				DoLighting(i, j, 7, -1);
-			} else if (dPiece[i][j] >= 154 && dPiece[i][j] <= 161) {
+			} else if (grid[i][j].dPiece >= 154 && grid[i][j].dPiece <= 161) {
 				DoLighting(i, j, 7, -1);
-			} else if (dPiece[i][j] == 150) {
+			} else if (grid[i][j].dPiece == 150) {
 				DoLighting(i, j, 7, -1);
-			} else if (dPiece[i][j] == 152) {
+			} else if (grid[i][j].dPiece == 152) {
 				DoLighting(i, j, 7, -1);
 			}
 		}
@@ -1791,17 +1791,17 @@ void LoadPreL3Dungeon(char *sFileName, int vx, int vy)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				dungeon[i][j] = *lm;
+				dgrid[i][j].dungeon = *lm;
 			} else {
-				dungeon[i][j] = 7;
+				dgrid[i][j].dungeon = 7;
 			}
 			lm += 2;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 0) {
-				dungeon[i][j] = 8;
+			if (dgrid[i][j].dungeon == 0) {
+				dgrid[i][j].dungeon = 8;
 			}
 		}
 	}

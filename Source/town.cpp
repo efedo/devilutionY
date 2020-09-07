@@ -39,10 +39,10 @@ void T_FillSector(BYTE *P3Tiles, BYTE *pSector, int xi, int yi, int w, int h)
 				v3 = 0;
 				v4 = 0;
 			}
-			dPiece[xx][yy] = v1;
-			dPiece[xx + 1][yy] = v2;
-			dPiece[xx][yy + 1] = v3;
-			dPiece[xx + 1][yy + 1] = v4;
+			grid[xx][yy].dPiece = v1;
+			grid[xx + 1][yy].dPiece = v2;
+			grid[xx][yy + 1].dPiece = v3;
+			grid[xx + 1][yy + 1].dPiece = v4;
 			xx += 2;
 			ii += 2;
 		}
@@ -68,10 +68,10 @@ void T_FillTile(BYTE *P3Tiles, int xx, int yy, int t)
 	v3 = SDL_SwapLE16(*(Tiles + 2)) + 1;
 	v4 = SDL_SwapLE16(*(Tiles + 3)) + 1;
 
-	dPiece[xx][yy] = v1;
-	dPiece[xx + 1][yy] = v2;
-	dPiece[xx][yy + 1] = v3;
-	dPiece[xx + 1][yy + 1] = v4;
+	grid[xx][yy].dPiece = v1;
+	grid[xx + 1][yy].dPiece = v2;
+	grid[xx][yy + 1].dPiece = v3;
+	grid[xx + 1][yy + 1].dPiece = v4;
 }
 
 /**
@@ -84,10 +84,10 @@ void T_Pass3()
 
 	for (yy = 0; yy < MAXDUNY; yy += 2) {
 		for (xx = 0; xx < MAXDUNX; xx += 2) {
-			dPiece[xx][yy] = 0;
-			dPiece[xx + 1][yy] = 0;
-			dPiece[xx][yy + 1] = 0;
-			dPiece[xx + 1][yy + 1] = 0;
+			grid[xx][yy].dPiece = 0;
+			grid[xx + 1][yy].dPiece = 0;
+			grid[xx][yy + 1].dPiece = 0;
+			grid[xx + 1][yy + 1].dPiece = 0;
 		}
 	}
 
@@ -184,36 +184,36 @@ void CreateTown(int entry)
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {
-			if (dPiece[x][y] == 360) {
-				dSpecial[x][y] = 1;
-			} else if (dPiece[x][y] == 358) {
-				dSpecial[x][y] = 2;
-			} else if (dPiece[x][y] == 129) {
-				dSpecial[x][y] = 6;
-			} else if (dPiece[x][y] == 130) {
-				dSpecial[x][y] = 7;
-			} else if (dPiece[x][y] == 128) {
-				dSpecial[x][y] = 8;
-			} else if (dPiece[x][y] == 117) {
-				dSpecial[x][y] = 9;
-			} else if (dPiece[x][y] == 157) {
-				dSpecial[x][y] = 10;
-			} else if (dPiece[x][y] == 158) {
-				dSpecial[x][y] = 11;
-			} else if (dPiece[x][y] == 156) {
-				dSpecial[x][y] = 12;
-			} else if (dPiece[x][y] == 162) {
-				dSpecial[x][y] = 13;
-			} else if (dPiece[x][y] == 160) {
-				dSpecial[x][y] = 14;
-			} else if (dPiece[x][y] == 214) {
-				dSpecial[x][y] = 15;
-			} else if (dPiece[x][y] == 212) {
-				dSpecial[x][y] = 16;
-			} else if (dPiece[x][y] == 217) {
-				dSpecial[x][y] = 17;
-			} else if (dPiece[x][y] == 216) {
-				dSpecial[x][y] = 18;
+			if (grid[x][y].dPiece == 360) {
+				grid[x][y].dSpecial = 1;
+			} else if (grid[x][y].dPiece == 358) {
+				grid[x][y].dSpecial = 2;
+			} else if (grid[x][y].dPiece == 129) {
+				grid[x][y].dSpecial = 6;
+			} else if (grid[x][y].dPiece == 130) {
+				grid[x][y].dSpecial = 7;
+			} else if (grid[x][y].dPiece == 128) {
+				grid[x][y].dSpecial = 8;
+			} else if (grid[x][y].dPiece == 117) {
+				grid[x][y].dSpecial = 9;
+			} else if (grid[x][y].dPiece == 157) {
+				grid[x][y].dSpecial = 10;
+			} else if (grid[x][y].dPiece == 158) {
+				grid[x][y].dSpecial = 11;
+			} else if (grid[x][y].dPiece == 156) {
+				grid[x][y].dSpecial = 12;
+			} else if (grid[x][y].dPiece == 162) {
+				grid[x][y].dSpecial = 13;
+			} else if (grid[x][y].dPiece == 160) {
+				grid[x][y].dSpecial = 14;
+			} else if (grid[x][y].dPiece == 214) {
+				grid[x][y].dSpecial = 15;
+			} else if (grid[x][y].dPiece == 212) {
+				grid[x][y].dSpecial = 16;
+			} else if (grid[x][y].dPiece == 217) {
+				grid[x][y].dSpecial = 17;
+			} else if (grid[x][y].dPiece == 216) {
+				grid[x][y].dSpecial = 18;
 			}
 		}
 	}

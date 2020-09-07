@@ -5,19 +5,19 @@ TEST(Drlg_l1, DRLG_Init_Globals_4flag) {
 	dvl::lightflag = false;
 	dvl::light4flag = true;
 	dvl::DRLG_Init_Globals();
-	EXPECT_EQ(dvl::dLight[0][0], 3);
+	EXPECT_EQ(dvl::grid[0][0].dLight, 3);
 }
 
 TEST(Drlg_l1, DRLG_Init_Globals_noflag) {
 	dvl::lightflag = false;
 	dvl::light4flag = false;
 	dvl::DRLG_Init_Globals();
-	EXPECT_EQ(dvl::dLight[0][0], 15);
+	EXPECT_EQ(dvl::grid[0][0].dLight, 15);
 }
 
 TEST(Drlg_l1, DRLG_Init_Globals) {
 	dvl::lightflag = true;
 	dvl::DRLG_Init_Globals();
-	EXPECT_EQ(dvl::dLight[0][0], 0);
+	EXPECT_EQ(dvl::grid[0][0].dLight, 0);
 }
 

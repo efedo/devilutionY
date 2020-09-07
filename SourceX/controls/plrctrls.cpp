@@ -110,9 +110,9 @@ void FindItemOrObject()
 	// As the player can not stand on the edge fo the map this is safe from OOB
 	for (int xx = -1; xx < 2; xx++) {
 		for (int yy = -1; yy < 2; yy++) {
-			if (dItem[mx + xx][my + yy] <= 0)
+			if (grid[mx + xx][my + yy].dItem <= 0)
 				continue;
-			int i = dItem[mx + xx][my + yy] - 1;
+			int i = grid[mx + xx][my + yy].dItem - 1;
 			if (item[i]._itype == ITYPE_NONE
 			    || item[i]._iSelFlag == 0)
 				continue;
@@ -133,9 +133,9 @@ void FindItemOrObject()
 
 	for (int xx = -1; xx < 2; xx++) {
 		for (int yy = -1; yy < 2; yy++) {
-			if (dObject[mx + xx][my + yy] == 0)
+			if (grid[mx + xx][my + yy].dObject == 0)
 				continue;
-			int o = dObject[mx + xx][my + yy] > 0 ? dObject[mx + xx][my + yy] - 1 : -(dObject[mx + xx][my + yy] + 1);
+			int o = grid[mx + xx][my + yy].dObject > 0 ? grid[mx + xx][my + yy].dObject - 1 : -(grid[mx + xx][my + yy].dObject + 1);
 			if (object[o]._oSelFlag == 0)
 				continue;
 			if (xx == 0 && yy == 0 && object[o]._oDoorFlag)
@@ -185,9 +185,9 @@ bool CanTargetMonster(int mi)
 
 	const int mx = monst._mx;
 	const int my = monst._my;
-	if (!(dFlags[mx][my] & BFLAG_LIT)) // not visable
+	if (!(grid[mx][my].dFlags & BFLAG_LIT)) // not visable
 		return false;
-	if (dMonster[mx][my] == 0)
+	if (grid[mx][my].dMonster == 0)
 		return false;
 
 	return true;
@@ -263,8 +263,8 @@ void FindMeleeTarget()
 			if (!PosOkPlayer(myplr, dx, dy)) {
 				visited[dx][dy] = true;
 
-				if (dMonster[dx][dy] != 0) {
-					const int mi = dMonster[dx][dy] > 0 ? dMonster[dx][dy] - 1 : -(dMonster[dx][dy] + 1);
+				if (grid[dx][dy].dMonster != 0) {
+					const int mi = grid[dx][dy].dMonster > 0 ? grid[dx][dy].dMonster - 1 : -(grid[dx][dy].dMonster + 1);
 					if (CanTargetMonster(mi)) {
 						const bool newCanTalk = CanTalkToMonst(mi);
 						if (pcursmonst != -1 && !canTalk && newCanTalk)
@@ -321,8 +321,8 @@ void CheckPlayerNearby()
 			continue;
 		const int mx = plr[i]._pfutx;
 		const int my = plr[i]._pfuty;
-		if (dPlayer[mx][my] == 0
-		    || !(dFlags[mx][my] & BFLAG_LIT)
+		if (grid[mx][my].dPlayer == 0
+		    || !(grid[mx][my].dFlags & BFLAG_LIT)
 		    || (plr[i]._pHitPoints == 0 && spl != SPL_RESURRECT))
 			continue;
 
@@ -793,7 +793,7 @@ bool IsPathBlocked(int x, int y, int dir)
 	d2x = x + kOffsets[d2][0];
 	d2y = y + kOffsets[d2][1];
 
-	if (!nSolidTable[dPiece[d1x][d1y]] && !nSolidTable[dPiece[d2x][d2y]])
+	if (!nSolidTable[grid[d1x][d1y].dPiece] && !nSolidTable[grid[d2x][d2y].dPiece])
 		return false;
 
 	return !PosOkPlayer(myplr, d1x, d1y) && !PosOkPlayer(myplr, d2x, d2y);

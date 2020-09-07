@@ -205,17 +205,17 @@ void InitItemGFX()
 
 BOOL ItemPlace(int xp, int yp)
 {
-	if (dMonster[xp][yp] != 0)
+	if (grid[xp][yp].dMonster != 0)
 		return FALSE;
-	if (dPlayer[xp][yp] != 0)
+	if (grid[xp][yp].dPlayer != 0)
 		return FALSE;
-	if (dItem[xp][yp] != 0)
+	if (grid[xp][yp].dItem != 0)
 		return FALSE;
-	if (dObject[xp][yp] != 0)
+	if (grid[xp][yp].dObject != 0)
 		return FALSE;
-	if (dFlags[xp][yp] & BFLAG_POPULATED)
+	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
 		return FALSE;
-	if (nSolidTable[dPiece[xp][yp]])
+	if (nSolidTable[grid[xp][yp].dPiece])
 		return FALSE;
 
 	return TRUE;
@@ -238,7 +238,7 @@ void AddInitItems()
 		}
 		item[i]._ix = x;
 		item[i]._iy = y;
-		dItem[x][y] = i + 1;
+		grid[x][y].dItem = i + 1;
 		item[i]._iSeed = GetRndSeed();
 		SetRndSeed(item[i]._iSeed);
 		if (random_(12, 2))
@@ -967,35 +967,35 @@ BOOL ItemSpaceOk(int i, int j)
 	if (i < 0 || i + 1 >= MAXDUNX || j < 0 || j + 1 >= MAXDUNY)
 		return FALSE;
 
-	if (dMonster[i][j] != 0)
+	if (grid[i][j].dMonster != 0)
 		return FALSE;
 
-	if (dPlayer[i][j] != 0)
+	if (grid[i][j].dPlayer != 0)
 		return FALSE;
 
-	if (dItem[i][j] != 0)
+	if (grid[i][j].dItem != 0)
 		return FALSE;
 
-	if (dObject[i][j] != 0) {
-		oi = dObject[i][j] > 0 ? dObject[i][j] - 1 : -(dObject[i][j] + 1);
+	if (grid[i][j].dObject != 0) {
+		oi = grid[i][j].dObject > 0 ? grid[i][j].dObject - 1 : -(grid[i][j].dObject + 1);
 		if (object[oi]._oSolidFlag)
 			return FALSE;
 	}
 
-	if (dObject[i + 1][j + 1] > 0 && object[dObject[i + 1][j + 1] - 1]._oSelFlag != 0)
+	if (grid[i + 1][j + 1].dObject > 0 && object[grid[i + 1][j + 1].dObject - 1]._oSelFlag != 0)
 		return FALSE;
 
-	if (dObject[i + 1][j + 1] < 0 && object[-(dObject[i + 1][j + 1] + 1)]._oSelFlag != 0)
+	if (grid[i + 1][j + 1].dObject < 0 && object[-(grid[i + 1][j + 1].dObject + 1)]._oSelFlag != 0)
 		return FALSE;
 
-	if (dObject[i + 1][j] > 0
-	    && dObject[i][j + 1] > 0
-	    && object[dObject[i + 1][j] - 1]._oSelFlag != 0
-	    && object[dObject[i][j + 1] - 1]._oSelFlag != 0) {
+	if (grid[i + 1][j].dObject > 0
+	    && grid[i][j + 1].dObject > 0
+	    && object[grid[i + 1][j].dObject - 1]._oSelFlag != 0
+	    && object[grid[i][j + 1].dObject - 1]._oSelFlag != 0) {
 		return FALSE;
 	}
 
-	return !nSolidTable[dPiece[i][j]];
+	return !nSolidTable[grid[i][j].dPiece];
 }
 
 BOOL GetItemSpace(int x, int y, char inum)
@@ -1047,7 +1047,7 @@ BOOL GetItemSpace(int x, int y, char inum)
 	yy += y - 1;
 	item[inum]._ix = xx;
 	item[inum]._iy = yy;
-	dItem[xx][yy] = inum + 1;
+	grid[xx][yy].dItem = inum + 1;
 
 	return TRUE;
 }
@@ -1066,7 +1066,7 @@ void GetSuperItemSpace(int x, int y, char inum)
 					if (ItemSpaceOk(xx, yy)) {
 						item[inum]._ix = xx;
 						item[inum]._iy = yy;
-						dItem[xx][yy] = inum + 1;
+						grid[xx][yy].dItem = inum + 1;
 						return;
 					}
 				}
@@ -2348,7 +2348,7 @@ void SpawnQuestItem(int itemid, int x, int y, int randarea, int selflag)
 		itemactive[numitems] = i;
 		item[i]._ix = x;
 		item[i]._iy = y;
-		dItem[x][y] = i + 1;
+		grid[x][y].dItem = i + 1;
 		GetItemAttrs(i, itemid, currlevel);
 		SetupItem(i);
 		item[i]._iPostDraw = TRUE;
@@ -2380,7 +2380,7 @@ void SpawnRock()
 		yy = object[ii]._oy;
 		item[i]._ix = xx;
 		item[i]._iy = yy;
-		dItem[xx][item[i]._iy] = i + 1;
+		grid[xx][item[i].dItem._iy] = i + 1;
 		GetItemAttrs(i, IDI_ROCK, currlevel);
 		SetupItem(i);
 		item[i]._iSelFlag = 2;
@@ -2436,10 +2436,10 @@ void ItemDoppel()
 
 	if (gbMaxPlayers != 1) {
 		for (idoppelx = 16; idoppelx < 96; idoppelx++) {
-			if (dItem[idoppelx][idoppely]) {
-				i = &item[dItem[idoppelx][idoppely] - 1];
+			if (grid[idoppelx][idoppely].dItem) {
+				i = &item[grid[idoppelx][idoppely].dItem - 1];
 				if (i->_ix != idoppelx || i->_iy != idoppely)
-					dItem[idoppelx][idoppely] = 0;
+					grid[idoppelx][idoppely].dItem = 0;
 			}
 		}
 		idoppely++;

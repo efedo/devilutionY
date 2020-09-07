@@ -962,7 +962,7 @@ BOOL SolidLoc(int x, int y)
 		return FALSE;
 	}
 
-	return nSolidTable[dPiece[x][y]];
+	return nSolidTable[grid[x][y].dPiece];
 }
 
 BOOL PlrDirOK(int pnum, int dir)
@@ -977,17 +977,17 @@ BOOL PlrDirOK(int pnum, int dir)
 	px = plr[pnum]._px + offset_x[dir];
 	py = plr[pnum]._py + offset_y[dir];
 
-	if (px < 0 || !dPiece[px][py] || !PosOkPlayer(pnum, px, py)) {
+	if (px < 0 || !grid[px][py].dPiece || !PosOkPlayer(pnum, px, py)) {
 		return FALSE;
 	}
 
 	isOk = TRUE;
 	if (dir == DIR_E) {
-		isOk = !SolidLoc(px, py + 1) && !(dFlags[px][py + 1] & BFLAG_PLAYERLR);
+		isOk = !SolidLoc(px, py + 1) && !(grid[px][py + 1].dFlags & BFLAG_PLAYERLR);
 	}
 
 	if (isOk && dir == DIR_W) {
-		isOk = !SolidLoc(px + 1, py) && !(dFlags[px + 1][py] & BFLAG_PLAYERLR);
+		isOk = !SolidLoc(px + 1, py) && !(grid[px + 1][py].dFlags & BFLAG_PLAYERLR);
 	}
 
 	return isOk;
@@ -999,7 +999,7 @@ void PlrClrTrans(int x, int y)
 
 	for (i = y - 1; i <= y + 1; i++) {
 		for (j = x - 1; j <= x + 1; j++) {
-			TransList[dTransVal[j][i]] = FALSE;
+			TransList[grid[j][i].dTransVal] = FALSE;
 		}
 	}
 }
@@ -1013,8 +1013,8 @@ void PlrDoTrans(int x, int y)
 	} else {
 		for (i = y - 1; i <= y + 1; i++) {
 			for (j = x - 1; j <= x + 1; j++) {
-				if (!nSolidTable[dPiece[j][i]] && dTransVal[j][i]) {
-					TransList[dTransVal[j][i]] = TRUE;
+				if (!nSolidTable[grid[j][i].dPiece] && grid[j][i].dTransVal) {
+					TransList[grid[j][i].dTransVal] = TRUE;
 				}
 			}
 		}
@@ -1199,7 +1199,7 @@ void StartWalk(int pnum, int xvel, int yvel, int xadd, int yadd, int EndDir, int
 		ScrollInfo._sdy = plr[pnum]._py - ViewY;
 	}
 
-	dPlayer[px][py] = -(pnum + 1);
+	grid[px][py].dPlayer = -(pnum + 1);
 	plr[pnum]._pmode = PM_WALK;
 	plr[pnum]._pxvel = xvel;
 	plr[pnum]._pyvel = yvel;
@@ -1348,10 +1348,10 @@ void StartWalk3(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int 
 	}
 
 	dPlayer[plr[pnum]._px][plr[pnum]._py] = -1 - pnum;
-	dPlayer[px][py] = -1 - pnum;
+	grid[px][py].dPlayer = -1 - pnum;
 	plr[pnum]._pVar4 = x;
 	plr[pnum]._pVar5 = y;
-	dFlags[x][y] |= BFLAG_PLAYERLR;
+	grid[x][y].dFlags |= BFLAG_PLAYERLR;
 	plr[pnum]._pxoff = xoff;
 	plr[pnum]._pyoff = yoff;
 
@@ -1522,15 +1522,15 @@ void FixPlrWalkTags(int pnum)
 	dy = plr[pnum]._poldy;
 	for (y = dy - 1; y <= dy + 1; y++) {
 		for (x = dx - 1; x <= dx + 1; x++) {
-			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && (dPlayer[x][y] == pp || dPlayer[x][y] == pn)) {
-				dPlayer[x][y] = 0;
+			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && (grid[x][y].dPlayer == pp || grid[x][y].dPlayer == pn)) {
+				grid[x][y].dPlayer = 0;
 			}
 		}
 	}
 
 	if (dx >= 0 && dx < MAXDUNX - 1 && dy >= 0 && dy < MAXDUNY - 1) {
-		dFlags[dx + 1][dy] &= ~BFLAG_PLAYERLR;
-		dFlags[dx][dy + 1] &= ~BFLAG_PLAYERLR;
+		grid[dx + 1][dy].dFlags &= ~BFLAG_PLAYERLR;
+		grid[dx][dy + 1].dFlags &= ~BFLAG_PLAYERLR;
 	}
 }
 
@@ -1544,14 +1544,14 @@ void RemovePlrFromMap(int pnum)
 
 	for (y = 1; y < MAXDUNY; y++)
 		for (x = 1; x < MAXDUNX; x++)
-			if (dPlayer[x][y - 1] == pn || dPlayer[x - 1][y] == pn)
-				if (dFlags[x][y] & BFLAG_PLAYERLR)
-					dFlags[x][y] &= ~BFLAG_PLAYERLR;
+			if (grid[x][y - 1].dPlayer == pn || grid[x - 1][y].dPlayer == pn)
+				if (grid[x][y].dFlags & BFLAG_PLAYERLR)
+					grid[x][y].dFlags &= ~BFLAG_PLAYERLR;
 
 	for (y = 0; y < MAXDUNY; y++)
 		for (x = 0; x < MAXDUNX; x++)
-			if (dPlayer[x][y] == pp || dPlayer[x][y] == pn)
-				dPlayer[x][y] = 0;
+			if (grid[x][y].dPlayer == pp || grid[x][y].dPlayer == pn)
+				grid[x][y].dPlayer = 0;
 }
 
 void StartPlrHit(int pnum, int dam, BOOL forcehit)
@@ -1609,7 +1609,7 @@ void RespawnDeadItem(ItemStruct *itm, int x, int y)
 	}
 
 	ii = itemavail[0];
-	dItem[x][y] = ii + 1;
+	grid[x][y].dItem = ii + 1;
 	itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 	itemactive[numitems] = ii;
 	item[ii] = *itm;
@@ -1684,7 +1684,7 @@ void StartPlayerKill(int pnum, int earflag)
 	if (plr[pnum].plrlevel == currlevel) {
 		FixPlayerLocation(pnum, p->_pdir);
 		RemovePlrFromMap(pnum);
-		dFlags[p->_px][p->_py] |= BFLAG_DEAD_PLAYER;
+		grid[p->_px][p->_py].dFlags |= BFLAG_DEAD_PLAYER;
 		SetPlayerOld(pnum);
 
 		if (pnum == myplr) {
@@ -1917,7 +1917,7 @@ void RemovePlrMissiles(int pnum)
 		AddDead(monster[myplr]._mx, monster[myplr]._my, (monster[myplr].MType)->mdeadval, monster[myplr]._mdir);
 		mx = monster[myplr]._mx;
 		my = monster[myplr]._my;
-		dMonster[mx][my] = 0;
+		grid[mx][my].dMonster = 0;
 		monster[myplr]._mDelFlag = TRUE;
 		DeleteMonsterList();
 	}
@@ -2569,10 +2569,10 @@ BOOL PlrHitObj(int pnum, int mx, int my)
 {
 	int oi;
 
-	if (dObject[mx][my] > 0) {
-		oi = dObject[mx][my] - 1;
+	if (grid[mx][my].dObject > 0) {
+		oi = grid[mx][my].dObject - 1;
 	} else {
-		oi = -dObject[mx][my] - 1;
+		oi = -grid[mx][my].dObject - 1;
 	}
 
 	if (object[oi]._oBreak == 1) {
@@ -2614,11 +2614,11 @@ BOOL PM_DoAttack(int pnum)
 		dx = plr[pnum]._px + offset_x[dir];
 		dy = plr[pnum]._py + offset_y[dir];
 
-		if (dMonster[dx][dy]) {
-			if (dMonster[dx][dy] > 0) {
-				m = dMonster[dx][dy] - 1;
+		if (grid[dx][dy].dMonster) {
+			if (grid[dx][dy].dMonster > 0) {
+				m = grid[dx][dy].dMonster - 1;
 			} else {
-				m = -(dMonster[dx][dy] + 1);
+				m = -(grid[dx][dy].dMonster + 1);
 			}
 			if (CanTalkToMonst(m)) {
 				plr[pnum]._pVar1 = 0;
@@ -2634,23 +2634,23 @@ BOOL PM_DoAttack(int pnum)
 		}
 
 		didhit = FALSE;
-		if (dMonster[dx][dy]) {
-			m = dMonster[dx][dy];
-			if (dMonster[dx][dy] > 0) {
-				m = dMonster[dx][dy] - 1;
+		if (grid[dx][dy].dMonster) {
+			m = grid[dx][dy].dMonster;
+			if (grid[dx][dy].dMonster > 0) {
+				m = grid[dx][dy].dMonster - 1;
 			} else {
-				m = -(dMonster[dx][dy] + 1);
+				m = -(grid[dx][dy].dMonster + 1);
 			}
 			didhit = PlrHitMonst(pnum, m);
-		} else if (dPlayer[dx][dy] && !FriendlyMode) {
-			BYTE p = dPlayer[dx][dy];
-			if (dPlayer[dx][dy] > 0) {
-				p = dPlayer[dx][dy] - 1;
+		} else if (grid[dx][dy].dPlayer && !FriendlyMode) {
+			BYTE p = grid[dx][dy].dPlayer;
+			if (grid[dx][dy].dPlayer > 0) {
+				p = grid[dx][dy].dPlayer - 1;
 			} else {
-				p = -(dPlayer[dx][dy] + 1);
+				p = -(grid[dx][dy].dPlayer + 1);
 			}
 			didhit = PlrHitPlr(pnum, p);
-		} else if (dObject[dx][dy] > 0) {
+		} else if (grid[dx][dy].dObject > 0) {
 			didhit = PlrHitObj(pnum, dx, dy);
 		}
 
@@ -3486,36 +3486,36 @@ BOOL PosOkPlayer(int pnum, int x, int y)
 	char bv;
 
 	PosOK = FALSE;
-	if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && !SolidLoc(x, y) && dPiece[x][y]) {
+	if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && !SolidLoc(x, y) && grid[x][y].dPiece) {
 
-		if (dPlayer[x][y]) {
-			if (dPlayer[x][y] > 0) {
-				p = dPlayer[x][y] - 1;
+		if (grid[x][y].dPlayer) {
+			if (grid[x][y].dPlayer > 0) {
+				p = grid[x][y].dPlayer - 1;
 			} else {
-				p = -(dPlayer[x][y] + 1);
+				p = -(grid[x][y].dPlayer + 1);
 			}
 			if (p != pnum && p < MAX_PLRS && plr[p]._pHitPoints) {
 				return FALSE;
 			}
 		}
 
-		if (dMonster[x][y]) {
+		if (grid[x][y].dMonster) {
 			if (currlevel == 0) {
 				return FALSE;
 			}
-			if (dMonster[x][y] <= 0) {
+			if (grid[x][y].dMonster <= 0) {
 				return FALSE;
 			}
-			if ((monster[dMonster[x][y] - 1]._mhitpoints >> 6) > 0) {
+			if ((monster[grid[x][y].dMonster - 1]._mhitpoints >> 6) > 0) {
 				return FALSE;
 			}
 		}
 
-		if (dObject[x][y]) {
-			if (dObject[x][y] > 0) {
-				bv = dObject[x][y] - 1;
+		if (grid[x][y].dObject) {
+			if (grid[x][y].dObject > 0) {
+				bv = grid[x][y].dObject - 1;
 			} else {
-				bv = -(dObject[x][y] + 1);
+				bv = -(grid[x][y].dObject + 1);
 			}
 			if (object[bv]._oSolidFlag) {
 				return FALSE;
@@ -3780,7 +3780,7 @@ void SyncInitPlrPos(int pnum)
 
 	plr[pnum]._px = x;
 	plr[pnum]._py = y;
-	dPlayer[x][y] = pnum + 1;
+	grid[x][y].dPlayer = pnum + 1;
 
 	if (pnum == myplr) {
 		plr[pnum]._pfutx = x;

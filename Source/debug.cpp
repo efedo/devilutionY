@@ -37,13 +37,13 @@ void CheckDungeonClear()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dMonster[i][j] != 0)
+			if (grid[i][j].dMonster != 0)
 				app_fatal("Monsters not cleared");
-			if (dPlayer[i][j] != 0)
+			if (grid[i][j].dPlayer != 0)
 				app_fatal("Players not cleared");
 
-			dMonsDbg[currlevel][i][j] = dFlags[i][j] & BFLAG_VISIBLE;
-			dFlagDbg[currlevel][i][j] = dFlags[i][j] & BFLAG_POPULATED;
+			dMonsDbg[currlevel][i][j] = grid[i][j].dFlags & BFLAG_VISIBLE;
+			dFlagDbg[currlevel][i][j] = grid[i][j].dFlags & BFLAG_POPULATED;
 		}
 	}
 }
@@ -214,7 +214,7 @@ void GetDebugMonster()
 
 	mi1 = pcursmonst;
 	if (mi1 == -1) {
-		mi2 = dMonster[cursmx][cursmy];
+		mi2 = grid[cursmx][cursmy].dMonster;
 		if (mi2 != 0) {
 			mi1 = mi2 - 1;
 			if (mi2 <= 0)

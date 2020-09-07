@@ -126,17 +126,17 @@ void FreeObjectGFX()
 
 BOOL RndLocOk(int xp, int yp)
 {
-	if (dMonster[xp][yp])
+	if (grid[xp][yp].dMonster)
 		return FALSE;
-	if (dPlayer[xp][yp])
+	if (grid[xp][yp].dPlayer)
 		return FALSE;
-	if (dObject[xp][yp])
+	if (grid[xp][yp].dObject)
 		return FALSE;
-	if (dFlags[xp][yp] & BFLAG_POPULATED)
+	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
 		return FALSE;
-	if (nSolidTable[dPiece[xp][yp]])
+	if (nSolidTable[grid[xp][yp].dPiece])
 		return FALSE;
-	if (leveltype != DTYPE_CATHEDRAL || dPiece[xp][yp] <= 126 || dPiece[xp][yp] >= 144)
+	if (leveltype != DTYPE_CATHEDRAL || grid[xp][yp].dPiece <= 126 || grid[xp][yp].dPiece >= 144)
 		return TRUE;
 	return FALSE;
 }
@@ -258,7 +258,7 @@ void AddTortures()
 
 	for (oy = 0; oy < MAXDUNY; oy++) {
 		for (ox = 0; ox < MAXDUNX; ox++) {
-			if (dPiece[ox][oy] == 367) {
+			if (grid[ox][oy].dPiece == 367) {
 				AddObject(OBJ_TORTURE1, ox, oy + 1);
 				AddObject(OBJ_TORTURE3, ox + 2, oy - 1);
 				AddObject(OBJ_TORTURE2, ox, oy + 3);
@@ -320,7 +320,7 @@ void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, in
 		yp = 2 * setpc_y + 40;
 		AddObject(OBJ_BLOODBOOK, xp, yp);
 	}
-	ob = dObject[xp][yp] - 1;
+	ob = grid[xp][yp].dObject - 1;
 	SetObjMapRange(ob, x1, y1, x2, y2, leverid);
 	SetBookMsg(ob, msg);
 	leverid++;
@@ -380,7 +380,7 @@ void AddL1Objs(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j < y2; j++) {
 		for (i = x1; i < x2; i++) {
-			pn = dPiece[i][j];
+			pn = grid[i][j].dPiece;
 			if (pn == 270)
 				AddObject(OBJ_L1LIGHT, i, j);
 			if (pn == 44 || pn == 51 || pn == 214)
@@ -397,7 +397,7 @@ void AddL2Objs(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j < y2; j++) {
 		for (i = x1; i < x2; i++) {
-			pn = dPiece[i][j];
+			pn = grid[i][j].dPiece;
 			if (pn == 13 || pn == 541)
 				AddObject(OBJ_L2LDOOR, i, j);
 			if (pn == 17 || pn == 542)
@@ -412,7 +412,7 @@ void AddL3Objs(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j < y2; j++) {
 		for (i = x1; i < x2; i++) {
-			pn = dPiece[i][j];
+			pn = grid[i][j].dPiece;
 			if (pn == 531)
 				AddObject(OBJ_L3LDOOR, i, j);
 			if (pn == 534)
@@ -423,7 +423,7 @@ void AddL3Objs(int x1, int y1, int x2, int y2)
 
 BOOL WallTrapLocOk(int xp, int yp)
 {
-	if (dFlags[xp][yp] & BFLAG_POPULATED)
+	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
 		return FALSE;
 	return TRUE;
 }
@@ -437,17 +437,17 @@ void AddL2Torches()
 			if (!WallTrapLocOk(i, j))
 				continue;
 
-			pn = dPiece[i][j];
+			pn = grid[i][j].dPiece;
 			if (pn == 1 && random_(145, 3) == 0)
 				AddObject(OBJ_TORCHL2, i, j);
 
 			if (pn == 5 && random_(145, 3) == 0)
 				AddObject(OBJ_TORCHR2, i, j);
 
-			if (pn == 37 && random_(145, 10) == 0 && dObject[i - 1][j] == 0)
+			if (pn == 37 && random_(145, 10) == 0 && grid[i - 1][j].dObject == 0)
 				AddObject(OBJ_TORCHL, i - 1, j);
 
-			if (pn == 41 && random_(145, 10) == 0 && dObject[i][j - 1] == 0)
+			if (pn == 41 && random_(145, 10) == 0 && grid[i][j - 1].dObject == 0)
 				AddObject(OBJ_TORCHR, i, j - 1);
 		}
 	}
@@ -455,10 +455,10 @@ void AddL2Torches()
 
 BOOL TorchLocOK(int xp, int yp)
 {
-	if (dFlags[xp][yp] & BFLAG_POPULATED)
+	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
 		return FALSE;
 
-	if (nTrapTable[dPiece[xp][yp]] != FALSE)
+	if (nTrapTable[grid[xp][yp].dPiece] != FALSE)
 		return TRUE;
 	else
 		return FALSE;
@@ -481,36 +481,36 @@ void AddObjTraps()
 		rndv = 25;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dObject[i][j] <= 0 || random_(144, 100) >= rndv)
+			if (grid[i][j].dObject <= 0 || random_(144, 100) >= rndv)
 				continue;
 
-			oi = dObject[i][j] - 1;
+			oi = grid[i][j].dObject - 1;
 			if (!AllObjects[object[oi]._otype].oTrapFlag)
 				continue;
 
 			if (random_(144, 2) == 0) {
 				xp = i - 1;
-				while (!nSolidTable[dPiece[xp][j]])
+				while (!nSolidTable[grid[xp][j].dPiece])
 					xp--;
 
 				if (!TorchLocOK(xp, j) || i - xp <= 1)
 					continue;
 
 				AddObject(OBJ_TRAPL, xp, j);
-				oi_trap = dObject[xp][j] - 1;
+				oi_trap = grid[xp][j].dObject - 1;
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
 				object[oi]._oTrapFlag = TRUE;
 			} else {
 				yp = j - 1;
-				while (!nSolidTable[dPiece[i][yp]])
+				while (!nSolidTable[grid[i][yp].dPiece])
 					yp--;
 
 				if (!TorchLocOK(i, yp) || j - yp <= 1)
 					continue;
 
 				AddObject(OBJ_TRAPR, i, yp);
-				oi_trap = dObject[i][yp] - 1;
+				oi_trap = grid[i][yp].dObject - 1;
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
 				object[oi]._oTrapFlag = TRUE;
@@ -526,8 +526,8 @@ void AddChestTraps()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dObject[i][j] > 0) {
-				oi = dObject[i][j] - 1;
+			if (grid[i][j].dObject > 0) {
+				oi = grid[i][j].dObject - 1;
 				if (object[oi]._otype >= OBJ_CHEST1 && object[oi]._otype <= OBJ_CHEST3 && !object[oi]._oTrapFlag && random_(0, 100) < 10) {
 					object[oi]._otype += OBJ_BOOKCASER;
 					object[oi]._oTrapFlag = TRUE;
@@ -657,13 +657,13 @@ void AddHookedBodies(int freq)
 		jj = 16 + j * 2;
 		for (i = 0; i < 40; i++) {
 			ii = 16 + i * 2;
-			if (dungeon[i][j] != 1 && dungeon[i][j] != 2)
+			if (dgrid[i][j].dungeon != 1 && dgrid[i][j].dungeon != 2)
 				continue;
 			if (random_(0, freq) != 0)
 				continue;
 			if (!SkipThemeRoom(i, j))
 				continue;
-			if (dungeon[i][j] == 1 && dungeon[i + 1][j] == 6) {
+			if (dgrid[i][j].dungeon == 1 && dgrid[i + 1][j].dungeon == 6) {
 				switch (random_(0, 3)) {
 				case 0:
 					AddObject(OBJ_TORTURE1, ii + 1, jj);
@@ -677,7 +677,7 @@ void AddHookedBodies(int freq)
 				}
 				continue;
 			}
-			if (dungeon[i][j] == 2 && dungeon[i][j + 1] == 6) {
+			if (dgrid[i][j].dungeon == 2 && dgrid[i][j + 1].dungeon == 6) {
 				switch (random_(0, 2)) {
 				case 0:
 					AddObject(OBJ_TORTURE3, ii, jj);
@@ -913,7 +913,7 @@ void DeleteObject_(int oi, int i)
 
 	ox = object[oi]._ox;
 	oy = object[oi]._oy;
-	dObject[ox][oy] = 0;
+	grid[ox][oy].dObject = 0;
 	objectavail[-nobjects + MAXOBJECTS] = oi;
 	nobjects--;
 	if (nobjects > 0 && i != nobjects)
@@ -976,11 +976,11 @@ void AddL1Door(int i, int x, int y, int ot)
 {
 	object[i]._oDoorFlag = TRUE;
 	if (ot == 1) {
-		object[i]._oVar1 = dPiece[x][y];
-		object[i]._oVar2 = dPiece[x][y - 1];
+		object[i]._oVar1 = grid[x][y].dPiece;
+		object[i]._oVar2 = grid[x][y - 1].dPiece;
 	} else {
-		object[i]._oVar1 = dPiece[x][y];
-		object[i]._oVar2 = dPiece[x - 1][y];
+		object[i]._oVar1 = grid[x][y].dPiece;
+		object[i]._oVar2 = grid[x - 1][y].dPiece;
 	}
 	object[i]._oVar4 = 0;
 }
@@ -1159,9 +1159,9 @@ void AddPurifyingFountain(int i)
 
 	ox = object[i]._ox;
 	oy = object[i]._oy;
-	dObject[ox][oy - 1] = -1 - i;
-	dObject[ox - 1][oy] = -1 - i;
-	dObject[ox - 1][oy - 1] = -1 - i;
+	grid[ox][oy - 1].dObject = -1 - i;
+	grid[ox - 1][oy].dObject = -1 - i;
+	grid[ox - 1][oy - 1].dObject = -1 - i;
 	object[i]._oRndSeed = GetRndSeed();
 }
 
@@ -1191,9 +1191,9 @@ void AddMurkyFountain(int i)
 
 	ox = object[i]._ox;
 	oy = object[i]._oy;
-	dObject[ox][oy - 1] = -1 - i;
-	dObject[ox - 1][oy] = -1 - i;
-	dObject[ox - 1][oy - 1] = -1 - i;
+	grid[ox][oy - 1].dObject = -1 - i;
+	grid[ox - 1][oy].dObject = -1 - i;
+	grid[ox - 1][oy - 1].dObject = -1 - i;
 	object[i]._oRndSeed = GetRndSeed();
 }
 
@@ -1306,9 +1306,9 @@ void AddMushPatch()
 	if (nobjects < MAXOBJECTS) {
 		i = objectavail[0];
 		GetRndObjLoc(5, &x, &y);
-		dObject[x + 1][y + 1] = -1 - i;
-		dObject[x + 2][y + 1] = -1 - i;
-		dObject[x + 1][y + 2] = -1 - i;
+		grid[x + 1][y + 1].dObject = -1 - i;
+		grid[x + 2][y + 1].dObject = -1 - i;
+		grid[x + 1][y + 2].dObject = -1 - i;
 		AddObject(OBJ_MUSHPATCH, x + 2, y + 2);
 	}
 }
@@ -1331,7 +1331,7 @@ void AddObject(int ot, int ox, int oy)
 	oi = objectavail[0];
 	objectavail[0] = objectavail[126 - nobjects];
 	objectactive[nobjects] = oi;
-	dObject[ox][oy] = oi + 1;
+	grid[ox][oy].dObject = oi + 1;
 	SetupObject(oi, ox, oy, ot);
 	switch (ot) {
 	case OBJ_L1LIGHT:
@@ -1555,10 +1555,10 @@ void Obj_Door(int i)
 	} else {
 		dx = object[i]._ox;
 		dy = object[i]._oy;
-		dok = !dMonster[dx][dy];
-		dok = dok & !dItem[dx][dy];
-		dok = dok & !dDead[dx][dy];
-		dok = dok & !dPlayer[dx][dy];
+		dok = !grid[dx][dy].dMonster;
+		dok = dok & !grid[dx][dy].dItem;
+		dok = dok & !grid[dx][dy].dDead;
+		dok = dok & !grid[dx][dy].dPlayer;
 		object[i]._oSelFlag = 2;
 		object[i]._oVar4 = dok ? 1 : 2;
 		object[i]._oMissFlag = TRUE;
@@ -1606,7 +1606,7 @@ void Obj_FlameTrap(int i)
 			x = object[i]._ox - 2;
 			y = object[i]._oy;
 			for (j = 0; j < 5; j++) {
-				if (dPlayer[x][y] || dMonster[x][y])
+				if (grid[x][y].dPlayer || grid[x][y].dMonster)
 					object[i]._oVar4 = 1;
 				x++;
 			}
@@ -1614,7 +1614,7 @@ void Obj_FlameTrap(int i)
 			x = object[i]._ox;
 			y = object[i]._oy - 2;
 			for (k = 0; k < 5; k++) {
-				if (dPlayer[x][y] || dMonster[x][y])
+				if (grid[x][y].dPlayer || grid[x][y].dMonster)
 					object[i]._oVar4 = 1;
 				y++;
 			}
@@ -1666,7 +1666,7 @@ void Obj_Trap(int i)
 			dy = object[oti]._oy;
 			for (y = dy - 1; y <= object[oti]._oy + 1; y++) {
 				for (x = object[oti]._ox - 1; x <= object[oti]._ox + 1; x++) {
-					if (dPlayer[x][y]) {
+					if (grid[x][y].dPlayer) {
 						dx = x;
 						dy = y;
 					}
@@ -1808,9 +1808,9 @@ void ObjSetMicro(int dx, int dy, int pn)
 	MICROS *defs;
 	int i;
 
-	dPiece[dx][dy] = pn;
+	grid[dx][dy].dPiece = pn;
 	pn--;
-	defs = &dpiece_defs_map_2[dx][dy];
+	defs = &grid[dx][dy].dpiece_defs_map_2;
 	if (leveltype != DTYPE_HELL) {
 		v = (WORD *)pLevelPieces + 10 * pn;
 		for (i = 0; i < 10; i++) {
@@ -1829,12 +1829,12 @@ void objects_set_door_piece(int x, int y)
 	int pn;
 	long v1, v2;
 
-	pn = dPiece[x][y] - 1;
+	pn = grid[x][y].dPiece - 1;
 
 	v1 = *((WORD *)pLevelPieces + 10 * pn + 8);
 	v2 = *((WORD *)pLevelPieces + 10 * pn + 9);
-	dpiece_defs_map_2[x][y].mt[0] = SDL_SwapLE16(v1);
-	dpiece_defs_map_2[x][y].mt[1] = SDL_SwapLE16(v2);
+	grid[x][y].dpiece_defs_map_2.mt[0] = SDL_SwapLE16(v1);
+	grid[x][y].dpiece_defs_map_2.mt[1] = SDL_SwapLE16(v2);
 }
 
 void ObjSetMini(int x, int y, int v)
@@ -1863,39 +1863,39 @@ void ObjL1Special(int x1, int y1, int x2, int y2)
 
 	for (i = y1; i <= y2; ++i) {
 		for (j = x1; j <= x2; ++j) {
-			dSpecial[j][i] = 0;
-			if (dPiece[j][i] == 12)
-				dSpecial[j][i] = 1;
-			if (dPiece[j][i] == 11)
-				dSpecial[j][i] = 2;
-			if (dPiece[j][i] == 71)
-				dSpecial[j][i] = 1;
-			if (dPiece[j][i] == 253)
-				dSpecial[j][i] = 3;
-			if (dPiece[j][i] == 267)
-				dSpecial[j][i] = 6;
-			if (dPiece[j][i] == 259)
-				dSpecial[j][i] = 5;
-			if (dPiece[j][i] == 249)
-				dSpecial[j][i] = 2;
-			if (dPiece[j][i] == 325)
-				dSpecial[j][i] = 2;
-			if (dPiece[j][i] == 321)
-				dSpecial[j][i] = 1;
-			if (dPiece[j][i] == 255)
-				dSpecial[j][i] = 4;
-			if (dPiece[j][i] == 211)
-				dSpecial[j][i] = 1;
-			if (dPiece[j][i] == 344)
-				dSpecial[j][i] = 2;
-			if (dPiece[j][i] == 341)
-				dSpecial[j][i] = 1;
-			if (dPiece[j][i] == 331)
-				dSpecial[j][i] = 2;
-			if (dPiece[j][i] == 418)
-				dSpecial[j][i] = 1;
-			if (dPiece[j][i] == 421)
-				dSpecial[j][i] = 2;
+			grid[j][i].dSpecial = 0;
+			if (grid[j][i].dPiece == 12)
+				grid[j][i].dSpecial = 1;
+			if (grid[j][i].dPiece == 11)
+				grid[j][i].dSpecial = 2;
+			if (grid[j][i].dPiece == 71)
+				grid[j][i].dSpecial = 1;
+			if (grid[j][i].dPiece == 253)
+				grid[j][i].dSpecial = 3;
+			if (grid[j][i].dPiece == 267)
+				grid[j][i].dSpecial = 6;
+			if (grid[j][i].dPiece == 259)
+				grid[j][i].dSpecial = 5;
+			if (grid[j][i].dPiece == 249)
+				grid[j][i].dSpecial = 2;
+			if (grid[j][i].dPiece == 325)
+				grid[j][i].dSpecial = 2;
+			if (grid[j][i].dPiece == 321)
+				grid[j][i].dSpecial = 1;
+			if (grid[j][i].dPiece == 255)
+				grid[j][i].dSpecial = 4;
+			if (grid[j][i].dPiece == 211)
+				grid[j][i].dSpecial = 1;
+			if (grid[j][i].dPiece == 344)
+				grid[j][i].dSpecial = 2;
+			if (grid[j][i].dPiece == 341)
+				grid[j][i].dSpecial = 1;
+			if (grid[j][i].dPiece == 331)
+				grid[j][i].dSpecial = 2;
+			if (grid[j][i].dPiece == 418)
+				grid[j][i].dSpecial = 1;
+			if (grid[j][i].dPiece == 421)
+				grid[j][i].dSpecial = 2;
 		}
 	}
 }
@@ -1906,32 +1906,32 @@ void ObjL2Special(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			dSpecial[i][j] = 0;
-			if (dPiece[i][j] == 541)
-				dSpecial[i][j] = 5;
-			if (dPiece[i][j] == 178)
-				dSpecial[i][j] = 5;
-			if (dPiece[i][j] == 551)
-				dSpecial[i][j] = 5;
-			if (dPiece[i][j] == 542)
-				dSpecial[i][j] = 6;
-			if (dPiece[i][j] == 553)
-				dSpecial[i][j] = 6;
-			if (dPiece[i][j] == 13)
-				dSpecial[i][j] = 5;
-			if (dPiece[i][j] == 17)
-				dSpecial[i][j] = 6;
+			grid[i][j].dSpecial = 0;
+			if (grid[i][j].dPiece == 541)
+				grid[i][j].dSpecial = 5;
+			if (grid[i][j].dPiece == 178)
+				grid[i][j].dSpecial = 5;
+			if (grid[i][j].dPiece == 551)
+				grid[i][j].dSpecial = 5;
+			if (grid[i][j].dPiece == 542)
+				grid[i][j].dSpecial = 6;
+			if (grid[i][j].dPiece == 553)
+				grid[i][j].dSpecial = 6;
+			if (grid[i][j].dPiece == 13)
+				grid[i][j].dSpecial = 5;
+			if (grid[i][j].dPiece == 17)
+				grid[i][j].dSpecial = 6;
 		}
 	}
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			if (dPiece[i][j] == 132) {
-				dSpecial[i][j + 1] = 2;
-				dSpecial[i][j + 2] = 1;
+			if (grid[i][j].dPiece == 132) {
+				grid[i][j + 1].dSpecial = 2;
+				grid[i][j + 2].dSpecial = 1;
 			}
-			if (dPiece[i][j] == 135 || dPiece[i][j] == 139) {
-				dSpecial[i + 1][j] = 3;
-				dSpecial[i + 2][j] = 4;
+			if (grid[i][j].dPiece == 135 || grid[i][j].dPiece == 139) {
+				grid[i + 1][j].dSpecial = 3;
+				grid[i + 2][j].dSpecial = 4;
 			}
 		}
 	}
@@ -1941,7 +1941,7 @@ void DoorSet(int oi, int dx, int dy)
 {
 	int pn;
 
-	pn = dPiece[dx][dy];
+	pn = grid[dx][dy].dPiece;
 	if (pn == 43)
 		ObjSetMicro(dx, dy, 392);
 	if (pn == 45)
@@ -2007,7 +2007,7 @@ void OperateL1RDoor(int pnum, int oi, BOOL sendflag)
 		if (!deltaload)
 			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
 		ObjSetMicro(xp, yp, 395);
-		dSpecial[xp][yp] = 8;
+		grid[xp][yp].dSpecial = 8;
 		objects_set_door_piece(xp, yp - 1);
 		object[oi]._oAnimFrame += 2;
 		object[oi]._oPreFlag = TRUE;
@@ -2020,7 +2020,7 @@ void OperateL1RDoor(int pnum, int oi, BOOL sendflag)
 
 	if (!deltaload)
 		PlaySfxLoc(IS_DOORCLOS, xp, object[oi]._oy);
-	if (((dDead[xp][yp] != 0 ? 0 : 1) & (dMonster[xp][yp] != 0 ? 0 : 1) & (dItem[xp][yp] != 0 ? 0 : 1)) != 0) {
+	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
 		if (pnum == myplr && sendflag)
 			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
 		object[oi]._oVar4 = 0;
@@ -2029,7 +2029,7 @@ void OperateL1RDoor(int pnum, int oi, BOOL sendflag)
 		if (object[oi]._oVar2 != 50) {
 			ObjSetMicro(xp - 1, yp, object[oi]._oVar2);
 		} else {
-			if (dPiece[xp - 1][yp] == 396)
+			if (grid[xp - 1][yp].dPiece == 396)
 				ObjSetMicro(xp - 1, yp, 411);
 			else
 				ObjSetMicro(xp - 1, yp, 50);
@@ -2063,7 +2063,7 @@ void OperateL1LDoor(int pnum, int oi, BOOL sendflag)
 			ObjSetMicro(xp, yp, 408);
 		else
 			ObjSetMicro(xp, yp, 393);
-		dSpecial[xp][yp] = 7;
+		grid[xp][yp].dSpecial = 7;
 		objects_set_door_piece(xp - 1, yp);
 		object[oi]._oAnimFrame += 2;
 		object[oi]._oPreFlag = TRUE;
@@ -2076,7 +2076,7 @@ void OperateL1LDoor(int pnum, int oi, BOOL sendflag)
 
 	if (!deltaload)
 		PlaySfxLoc(IS_DOORCLOS, xp, object[oi]._oy);
-	if (((dDead[xp][yp] != 0 ? 0 : 1) & (dMonster[xp][yp] != 0 ? 0 : 1) & (dItem[xp][yp] != 0 ? 0 : 1)) != 0) {
+	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
 		if (pnum == myplr && sendflag)
 			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
 		object[oi]._oVar4 = 0;
@@ -2085,7 +2085,7 @@ void OperateL1LDoor(int pnum, int oi, BOOL sendflag)
 		if (object[oi]._oVar2 != 50) {
 			ObjSetMicro(xp, yp - 1, object[oi]._oVar2);
 		} else {
-			if (dPiece[xp][yp - 1] == 396)
+			if (grid[xp][yp - 1].dPiece == 396)
 				ObjSetMicro(xp, yp - 1, 412);
 			else
 				ObjSetMicro(xp, yp - 1, 50);
@@ -2125,7 +2125,7 @@ void OperateL2RDoor(int pnum, int oi, BOOL sendflag)
 
 	if (!deltaload)
 		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((dDead[xp][yp] != 0 ? 0 : 1) & (dMonster[xp][yp] != 0 ? 0 : 1) & (dItem[xp][yp] != 0 ? 0 : 1)) != 0) {
+	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
 		if (pnum == myplr && sendflag)
 			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
 		object[oi]._oVar4 = 0;
@@ -2166,7 +2166,7 @@ void OperateL2LDoor(int pnum, int oi, BOOL sendflag)
 
 	if (!deltaload)
 		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((dDead[xp][yp] != 0 ? 0 : 1) & (dMonster[xp][yp] != 0 ? 0 : 1) & (dItem[xp][yp] != 0 ? 0 : 1)) != 0) {
+	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
 		if (pnum == myplr && sendflag)
 			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
 		object[oi]._oVar4 = 0;
@@ -2208,7 +2208,7 @@ void OperateL3RDoor(int pnum, int oi, BOOL sendflag)
 
 	if (!deltaload)
 		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((dDead[xp][yp] != 0 ? 0 : 1) & (dMonster[xp][yp] != 0 ? 0 : 1) & (dItem[xp][yp] != 0 ? 0 : 1)) != 0) {
+	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
 		if (pnum == myplr && sendflag)
 			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
 		object[oi]._oVar4 = 0;
@@ -2250,7 +2250,7 @@ void OperateL3LDoor(int pnum, int oi, BOOL sendflag)
 
 	if (!deltaload)
 		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((dDead[xp][yp] != 0 ? 0 : 1) & (dMonster[xp][yp] != 0 ? 0 : 1) & (dItem[xp][yp] != 0 ? 0 : 1)) != 0) {
+	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
 		if (pnum == myplr && sendflag)
 			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
 		object[oi]._oVar4 = 0;
@@ -2271,14 +2271,14 @@ void MonstCheckDoors(int m)
 
 	mx = monster[m]._mx;
 	my = monster[m]._my;
-	if (dObject[mx - 1][my - 1]
-	    || dObject[mx][my - 1]
-	    || dObject[mx + 1][my - 1]
-	    || dObject[mx - 1][my]
-	    || dObject[mx + 1][my]
-	    || dObject[mx - 1][my + 1]
-	    || dObject[mx][my + 1]
-	    || dObject[mx + 1][my + 1]) {
+	if (grid[mx - 1][my - 1].dObject
+	    || grid[mx][my - 1].dObject
+	    || grid[mx + 1][my - 1].dObject
+	    || grid[mx - 1][my].dObject
+	    || grid[mx + 1][my].dObject
+	    || grid[mx - 1][my + 1].dObject
+	    || grid[mx][my + 1].dObject
+	    || grid[mx + 1][my + 1].dObject) {
 		for (i = 0; i < nobjects; ++i) {
 			oi = objectactive[i];
 			if ((object[oi]._otype == OBJ_L1LDOOR || object[oi]._otype == OBJ_L1RDOOR) && !object[oi]._oVar4) {
@@ -2315,8 +2315,8 @@ void ObjChangeMap(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			ObjSetMini(i, j, pdungeon[i][j]);
-			dungeon[i][j] = pdungeon[i][j];
+			ObjSetMini(i, j, dgrid[i][j].pdungeon);
+			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
 	if (leveltype == DTYPE_CATHEDRAL) {
@@ -2335,8 +2335,8 @@ void ObjChangeMapResync(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			ObjSetMini(i, j, pdungeon[i][j]);
-			dungeon[i][j] = pdungeon[i][j];
+			ObjSetMini(i, j, dgrid[i][j].pdungeon);
+			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
 	if (leveltype == DTYPE_CATHEDRAL) {
@@ -2415,7 +2415,7 @@ void OperateBook(int pnum, int i)
 				do_add_missile = TRUE;
 			}
 			if (do_add_missile) {
-				object[dObject[35][36] - 1]._oVar5++;
+				object[grid[35][36].dObject - 1]._oVar5++;
 				AddMissile(plr[pnum]._px, plr[pnum]._py, dx, dy, plr[pnum]._pdir, MIS_RNDTELEPORT, 0, pnum, 0, 0);
 				missile_added = TRUE;
 				do_add_missile = FALSE;
@@ -3224,8 +3224,8 @@ void OperateShrine(int pnum, int i, int sType)
 			j++;
 			if (j > MAXDUNX * 112)
 				break;
-			lv = dPiece[xx][yy];
-		} while (nSolidTable[lv] || dObject[xx][yy] || dMonster[xx][yy]);
+			lv = grid[xx][yy].dPiece;
+		} while (nSolidTable[lv] || grid[xx][yy].dObject || grid[xx][yy].dMonster);
 		AddMissile(plr[pnum]._px, plr[pnum]._py, xx, yy, plr[pnum]._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * leveltype);
 		if (pnum != myplr)
 			return;
@@ -4073,12 +4073,12 @@ void BreakBarrel(int pnum, int i, int dam, BOOL forcebreak, BOOL sendmsg)
 		PlaySfxLoc(IS_BARLFIRE, object[i]._ox, object[i]._oy);
 		for (yp = object[i]._oy - 1; yp <= object[i]._oy + 1; yp++) {
 			for (xp = object[i]._ox - 1; xp <= object[i]._ox + 1; xp++) {
-				if (dMonster[xp][yp] > 0)
-					MonsterTrapHit(dMonster[xp][yp] - 1, 1, 4, 0, 1, FALSE);
-				if (dPlayer[xp][yp] > 0)
-					PlayerMHit(dPlayer[xp][yp] - 1, -1, 0, 8, 16, 1, FALSE, 0);
-				if (dObject[xp][yp] > 0) {
-					oi = dObject[xp][yp] - 1;
+				if (grid[xp][yp].dMonster > 0)
+					MonsterTrapHit(grid[xp][yp].dMonster - 1, 1, 4, 0, 1, FALSE);
+				if (grid[xp][yp].dPlayer > 0)
+					PlayerMHit(grid[xp][yp].dPlayer - 1, -1, 0, 8, 16, 1, FALSE, 0);
+				if (grid[xp][yp].dObject > 0) {
+					oi = grid[xp][yp].dObject - 1;
 					if (object[oi]._otype == OBJ_BARRELEX && object[oi]._oBreak != -1)
 						BreakBarrel(pnum, oi, dam, TRUE, sendmsg);
 				}
@@ -4149,12 +4149,12 @@ void SyncL1Doors(int i)
 			ObjSetMicro(x, y, 408);
 		else
 			ObjSetMicro(x, y, 393);
-		dSpecial[x][y] = 7;
+		grid[x][y].dSpecial = 7;
 		objects_set_door_piece(x - 1, y);
 		y--;
 	} else {
 		ObjSetMicro(x, y, 395);
-		dSpecial[x][y] = 8;
+		grid[x][y].dSpecial = 8;
 		objects_set_door_piece(x, y - 1);
 		x--;
 	}

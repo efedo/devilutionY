@@ -313,56 +313,56 @@ void CheckCursMove()
 
 	if (leveltype != DTYPE_TOWN) {
 		if (pcurstemp != -1) {
-			if (!flipflag && mx + 2 < MAXDUNX && my + 1 < MAXDUNY && dMonster[mx + 2][my + 1] != 0 && dFlags[mx + 2][my + 1] & BFLAG_LIT) {
-				mi = dMonster[mx + 2][my + 1] > 0 ? dMonster[mx + 2][my + 1] - 1 : -(dMonster[mx + 2][my + 1] + 1);
+			if (!flipflag && mx + 2 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 2][my + 1].dMonster != 0 && grid[mx + 2][my + 1].dFlags & BFLAG_LIT) {
+				mi = grid[mx + 2][my + 1].dMonster > 0 ? grid[mx + 2][my + 1].dMonster - 1 : -(grid[mx + 2][my + 1].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 4) {
 					cursmx = mx + 2; /// BUGFIX: 'mx + 2' (fixed)
 					cursmy = my + 1; /// BUGFIX: 'my + 1' (fixed)
 					pcursmonst = mi;
 				}
 			}
-			if (flipflag && mx + 1 < MAXDUNX && my + 2 < MAXDUNY && dMonster[mx + 1][my + 2] != 0 && dFlags[mx + 1][my + 2] & BFLAG_LIT) {
-				mi = dMonster[mx + 1][my + 2] > 0 ? dMonster[mx + 1][my + 2] - 1 : -(dMonster[mx + 1][my + 2] + 1);
+			if (flipflag && mx + 1 < MAXDUNX && my + 2 < MAXDUNY && grid[mx + 1][my + 2].dMonster != 0 && grid[mx + 1][my + 2].dFlags & BFLAG_LIT) {
+				mi = grid[mx + 1][my + 2].dMonster > 0 ? grid[mx + 1][my + 2].dMonster - 1 : -(grid[mx + 1][my + 2].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 4) {
 					cursmx = mx + 1;
 					cursmy = my + 2;
 					pcursmonst = mi;
 				}
 			}
-			if (mx + 2 < MAXDUNX && my + 2 < MAXDUNY && dMonster[mx + 2][my + 2] != 0 && dFlags[mx + 2][my + 2] & BFLAG_LIT) {
-				mi = dMonster[mx + 2][my + 2] > 0 ? dMonster[mx + 2][my + 2] - 1 : -(dMonster[mx + 2][my + 2] + 1);
+			if (mx + 2 < MAXDUNX && my + 2 < MAXDUNY && grid[mx + 2][my + 2].dMonster != 0 && grid[mx + 2][my + 2].dFlags & BFLAG_LIT) {
+				mi = grid[mx + 2][my + 2].dMonster > 0 ? grid[mx + 2][my + 2].dMonster - 1 : -(grid[mx + 2][my + 2].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 4) {
 					cursmx = mx + 2;
 					cursmy = my + 2;
 					pcursmonst = mi;
 				}
 			}
-			if (mx + 1 < MAXDUNX && !flipflag && dMonster[mx + 1][my] != 0 && dFlags[mx + 1][my] & BFLAG_LIT) {
-				mi = dMonster[mx + 1][my] > 0 ? dMonster[mx + 1][my] - 1 : -(dMonster[mx + 1][my] + 1);
+			if (mx + 1 < MAXDUNX && !flipflag && grid[mx + 1][my].dMonster != 0 && grid[mx + 1][my].dFlags & BFLAG_LIT) {
+				mi = grid[mx + 1][my].dMonster > 0 ? grid[mx + 1][my].dMonster - 1 : -(grid[mx + 1][my].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 2) {
 					cursmx = mx + 1;
 					cursmy = my;
 					pcursmonst = mi;
 				}
 			}
-			if (my + 1 < MAXDUNY && flipflag && dMonster[mx][my + 1] != 0 && dFlags[mx][my + 1] & BFLAG_LIT) {
-				mi = dMonster[mx][my + 1] > 0 ? dMonster[mx][my + 1] - 1 : -(dMonster[mx][my + 1] + 1);
+			if (my + 1 < MAXDUNY && flipflag && grid[mx][my + 1].dMonster != 0 && grid[mx][my + 1].dFlags & BFLAG_LIT) {
+				mi = grid[mx][my + 1].dMonster > 0 ? grid[mx][my + 1].dMonster - 1 : -(grid[mx][my + 1].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 2) {
 					cursmx = mx;
 					cursmy = my + 1;
 					pcursmonst = mi;
 				}
 			}
-			if (dMonster[mx][my] != 0 && dFlags[mx][my] & BFLAG_LIT) {
-				mi = dMonster[mx][my] > 0 ? dMonster[mx][my] - 1 : -(dMonster[mx][my] + 1);
+			if (grid[mx][my].dMonster != 0 && grid[mx][my].dFlags & BFLAG_LIT) {
+				mi = grid[mx][my].dMonster > 0 ? grid[mx][my].dMonster - 1 : -(grid[mx][my].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 1) {
 					cursmx = mx;
 					cursmy = my;
 					pcursmonst = mi;
 				}
 			}
-			if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && dMonster[mx + 1][my + 1] != 0 && dFlags[mx + 1][my + 1] & BFLAG_LIT) {
-				mi = dMonster[mx + 1][my + 1] > 0 ? dMonster[mx + 1][my + 1] - 1 : -(dMonster[mx + 1][my + 1] + 1);
+			if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dMonster != 0 && grid[mx + 1][my + 1].dFlags & BFLAG_LIT) {
+				mi = grid[mx + 1][my + 1].dMonster > 0 ? grid[mx + 1][my + 1].dMonster - 1 : -(grid[mx + 1][my + 1].dMonster + 1);
 				if (mi == pcurstemp && monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 2) {
 					cursmx = mx + 1;
 					cursmy = my + 1;
@@ -381,56 +381,56 @@ void CheckCursMove()
 				return;
 			}
 		}
-		if (!flipflag && mx + 2 < MAXDUNX && my + 1 < MAXDUNY && dMonster[mx + 2][my + 1] != 0 && dFlags[mx + 2][my + 1] & BFLAG_LIT) {
-			mi = dMonster[mx + 2][my + 1] > 0 ? dMonster[mx + 2][my + 1] - 1 : -(dMonster[mx + 2][my + 1] + 1);
+		if (!flipflag && mx + 2 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 2][my + 1].dMonster != 0 && grid[mx + 2][my + 1].dFlags & BFLAG_LIT) {
+			mi = grid[mx + 2][my + 1].dMonster > 0 ? grid[mx + 2][my + 1].dMonster - 1 : -(grid[mx + 2][my + 1].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 4) {
 				cursmx = mx + 2;
 				cursmy = my + 1;
 				pcursmonst = mi;
 			}
 		}
-		if (flipflag && mx + 1 < MAXDUNX && my + 2 < MAXDUNY && dMonster[mx + 1][my + 2] != 0 && dFlags[mx + 1][my + 2] & BFLAG_LIT) {
-			mi = dMonster[mx + 1][my + 2] > 0 ? dMonster[mx + 1][my + 2] - 1 : -(dMonster[mx + 1][my + 2] + 1);
+		if (flipflag && mx + 1 < MAXDUNX && my + 2 < MAXDUNY && grid[mx + 1][my + 2].dMonster != 0 && grid[mx + 1][my + 2].dFlags & BFLAG_LIT) {
+			mi = grid[mx + 1][my + 2].dMonster > 0 ? grid[mx + 1][my + 2].dMonster - 1 : -(grid[mx + 1][my + 2].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 4) {
 				cursmx = mx + 1;
 				cursmy = my + 2;
 				pcursmonst = mi;
 			}
 		}
-		if (mx + 2 < MAXDUNX && my + 2 < MAXDUNY && dMonster[mx + 2][my + 2] != 0 && dFlags[mx + 2][my + 2] & BFLAG_LIT) {
-			mi = dMonster[mx + 2][my + 2] > 0 ? dMonster[mx + 2][my + 2] - 1 : -(dMonster[mx + 2][my + 2] + 1);
+		if (mx + 2 < MAXDUNX && my + 2 < MAXDUNY && grid[mx + 2][my + 2].dMonster != 0 && grid[mx + 2][my + 2].dFlags & BFLAG_LIT) {
+			mi = grid[mx + 2][my + 2].dMonster > 0 ? grid[mx + 2][my + 2].dMonster - 1 : -(grid[mx + 2][my + 2].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 4) {
 				cursmx = mx + 2;
 				cursmy = my + 2;
 				pcursmonst = mi;
 			}
 		}
-		if (!flipflag && mx + 1 < MAXDUNX && dMonster[mx + 1][my] != 0 && dFlags[mx + 1][my] & BFLAG_LIT) {
-			mi = dMonster[mx + 1][my] > 0 ? dMonster[mx + 1][my] - 1 : -(dMonster[mx + 1][my] + 1);
+		if (!flipflag && mx + 1 < MAXDUNX && grid[mx + 1][my].dMonster != 0 && grid[mx + 1][my].dFlags & BFLAG_LIT) {
+			mi = grid[mx + 1][my].dMonster > 0 ? grid[mx + 1][my].dMonster - 1 : -(grid[mx + 1][my].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 2) {
 				cursmx = mx + 1;
 				cursmy = my;
 				pcursmonst = mi;
 			}
 		}
-		if (flipflag && my + 1 < MAXDUNY && dMonster[mx][my + 1] != 0 && dFlags[mx][my + 1] & BFLAG_LIT) {
-			mi = dMonster[mx][my + 1] > 0 ? dMonster[mx][my + 1] - 1 : -(dMonster[mx][my + 1] + 1);
+		if (flipflag && my + 1 < MAXDUNY && grid[mx][my + 1].dMonster != 0 && grid[mx][my + 1].dFlags & BFLAG_LIT) {
+			mi = grid[mx][my + 1].dMonster > 0 ? grid[mx][my + 1].dMonster - 1 : -(grid[mx][my + 1].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 2) {
 				cursmx = mx;
 				cursmy = my + 1;
 				pcursmonst = mi;
 			}
 		}
-		if (dMonster[mx][my] != 0 && dFlags[mx][my] & BFLAG_LIT) {
-			mi = dMonster[mx][my] > 0 ? dMonster[mx][my] - 1 : -(dMonster[mx][my] + 1);
+		if (grid[mx][my].dMonster != 0 && grid[mx][my].dFlags & BFLAG_LIT) {
+			mi = grid[mx][my].dMonster > 0 ? grid[mx][my].dMonster - 1 : -(grid[mx][my].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 1) {
 				cursmx = mx;
 				cursmy = my;
 				pcursmonst = mi;
 			}
 		}
-		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && dMonster[mx + 1][my + 1] != 0 && dFlags[mx + 1][my + 1] & BFLAG_LIT) {
-			mi = dMonster[mx + 1][my + 1] > 0 ? dMonster[mx + 1][my + 1] - 1 : -(dMonster[mx + 1][my + 1] + 1);
+		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dMonster != 0 && grid[mx + 1][my + 1].dFlags & BFLAG_LIT) {
+			mi = grid[mx + 1][my + 1].dMonster > 0 ? grid[mx + 1][my + 1].dMonster - 1 : -(grid[mx + 1][my + 1].dMonster + 1);
 			if (monster[mi]._mhitpoints >> 6 > 0 && monster[mi].MData->mSelFlag & 2) {
 				cursmx = mx + 1;
 				cursmy = my + 1;
@@ -446,23 +446,23 @@ void CheckCursMove()
 			pcursmonst = -1;
 		}
 	} else {
-		if (!flipflag && mx + 1 < MAXDUNX && dMonster[mx + 1][my] > 0) {
-			pcursmonst = dMonster[mx + 1][my] - 1;
+		if (!flipflag && mx + 1 < MAXDUNX && grid[mx + 1][my].dMonster > 0) {
+			pcursmonst = grid[mx + 1][my].dMonster - 1;
 			cursmx = mx + 1;
 			cursmy = my;
 		}
-		if (flipflag && my + 1 < MAXDUNY && dMonster[mx][my + 1] > 0) {
-			pcursmonst = dMonster[mx][my + 1] - 1;
+		if (flipflag && my + 1 < MAXDUNY && grid[mx][my + 1].dMonster > 0) {
+			pcursmonst = grid[mx][my + 1].dMonster - 1;
 			cursmx = mx;
 			cursmy = my + 1;
 		}
-		if (dMonster[mx][my] > 0) {
-			pcursmonst = dMonster[mx][my] - 1;
+		if (grid[mx][my].dMonster > 0) {
+			pcursmonst = grid[mx][my].dMonster - 1;
 			cursmx = mx;
 			cursmy = my;
 		}
-		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && dMonster[mx + 1][my + 1] > 0) {
-			pcursmonst = dMonster[mx + 1][my + 1] - 1;
+		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dMonster > 0) {
+			pcursmonst = grid[mx + 1][my + 1].dMonster - 1;
 			cursmx = mx + 1;
 			cursmy = my + 1;
 		}
@@ -472,31 +472,31 @@ void CheckCursMove()
 	}
 
 	if (pcursmonst == -1) {
-		if (!flipflag && mx + 1 < MAXDUNX && dPlayer[mx + 1][my] != 0) {
-			bv = dPlayer[mx + 1][my] > 0 ? dPlayer[mx + 1][my] - 1 : -(dPlayer[mx + 1][my] + 1);
+		if (!flipflag && mx + 1 < MAXDUNX && grid[mx + 1][my].dPlayer != 0) {
+			bv = grid[mx + 1][my].dPlayer > 0 ? grid[mx + 1][my].dPlayer - 1 : -(grid[mx + 1][my].dPlayer + 1);
 			if (bv != myplr && plr[bv]._pHitPoints != 0) {
 				cursmx = mx + 1;
 				cursmy = my;
 				pcursplr = bv;
 			}
 		}
-		if (flipflag && my + 1 < MAXDUNY && dPlayer[mx][my + 1] != 0) {
-			bv = dPlayer[mx][my + 1] > 0 ? dPlayer[mx][my + 1] - 1 : -(dPlayer[mx][my + 1] + 1);
+		if (flipflag && my + 1 < MAXDUNY && grid[mx][my + 1].dPlayer != 0) {
+			bv = grid[mx][my + 1].dPlayer > 0 ? grid[mx][my + 1].dPlayer - 1 : -(grid[mx][my + 1].dPlayer + 1);
 			if (bv != myplr && plr[bv]._pHitPoints != 0) {
 				cursmx = mx;
 				cursmy = my + 1;
 				pcursplr = bv;
 			}
 		}
-		if (dPlayer[mx][my] != 0) {
-			bv = dPlayer[mx][my] > 0 ? dPlayer[mx][my] - 1 : -(dPlayer[mx][my] + 1);
+		if (grid[mx][my].dPlayer != 0) {
+			bv = grid[mx][my].dPlayer > 0 ? grid[mx][my].dPlayer - 1 : -(grid[mx][my].dPlayer + 1);
 			if (bv != myplr) {
 				cursmx = mx;
 				cursmy = my;
 				pcursplr = bv;
 			}
 		}
-		if (dFlags[mx][my] & BFLAG_DEAD_PLAYER) {
+		if (grid[mx][my].dFlags & BFLAG_DEAD_PLAYER) {
 			for (i = 0; i < MAX_PLRS; i++) {
 				if (plr[i]._px == mx && plr[i]._py == my && i != myplr) {
 					cursmx = mx;
@@ -508,7 +508,7 @@ void CheckCursMove()
 		if (pcurs == CURSOR_RESURRECT) {
 			for (xx = -1; xx < 2; xx++) {
 				for (yy = -1; yy < 2; yy++) {
-					if (mx + xx < MAXDUNX && my + yy < MAXDUNY && dFlags[mx + xx][my + yy] & BFLAG_DEAD_PLAYER) {
+					if (mx + xx < MAXDUNX && my + yy < MAXDUNY && grid[mx + xx][my + yy].dFlags & BFLAG_DEAD_PLAYER) {
 						for (i = 0; i < MAX_PLRS; i++) {
 							if (plr[i]._px == mx + xx && plr[i]._py == my + yy && i != myplr) {
 								cursmx = mx + xx;
@@ -520,8 +520,8 @@ void CheckCursMove()
 				}
 			}
 		}
-		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && dPlayer[mx + 1][my + 1] != 0) {
-			bv = dPlayer[mx + 1][my + 1] > 0 ? dPlayer[mx + 1][my + 1] - 1 : -(dPlayer[mx + 1][my + 1] + 1);
+		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dPlayer != 0) {
+			bv = grid[mx + 1][my + 1].dPlayer > 0 ? grid[mx + 1][my + 1].dPlayer - 1 : -(grid[mx + 1][my + 1].dPlayer + 1);
 			if (bv != myplr && plr[bv]._pHitPoints != 0) {
 				cursmx = mx + 1;
 				cursmy = my + 1;
@@ -530,32 +530,32 @@ void CheckCursMove()
 		}
 	}
 	if (pcursmonst == -1 && pcursplr == -1) {
-		if (!flipflag && mx + 1 < MAXDUNX && dObject[mx + 1][my] != 0) {
-			bv = dObject[mx + 1][my] > 0 ? dObject[mx + 1][my] - 1 : -(dObject[mx + 1][my] + 1);
+		if (!flipflag && mx + 1 < MAXDUNX && grid[mx + 1][my].dObject != 0) {
+			bv = grid[mx + 1][my].dObject > 0 ? grid[mx + 1][my].dObject - 1 : -(grid[mx + 1][my].dObject + 1);
 			if (object[bv]._oSelFlag >= 2) {
 				cursmx = mx + 1;
 				cursmy = my;
 				pcursobj = bv;
 			}
 		}
-		if (flipflag && my + 1 < MAXDUNY && dObject[mx][my + 1] != 0) {
-			bv = dObject[mx][my + 1] > 0 ? dObject[mx][my + 1] - 1 : -(dObject[mx][my + 1] + 1);
+		if (flipflag && my + 1 < MAXDUNY && grid[mx][my + 1].dObject != 0) {
+			bv = grid[mx][my + 1].dObject > 0 ? grid[mx][my + 1].dObject - 1 : -(grid[mx][my + 1].dObject + 1);
 			if (object[bv]._oSelFlag >= 2) {
 				cursmx = mx;
 				cursmy = my + 1;
 				pcursobj = bv;
 			}
 		}
-		if (dObject[mx][my] != 0) {
-			bv = dObject[mx][my] > 0 ? dObject[mx][my] - 1 : -(dObject[mx][my] + 1);
+		if (grid[mx][my].dObject != 0) {
+			bv = grid[mx][my].dObject > 0 ? grid[mx][my].dObject - 1 : -(grid[mx][my].dObject + 1);
 			if (object[bv]._oSelFlag == 1 || object[bv]._oSelFlag == 3) {
 				cursmx = mx;
 				cursmy = my;
 				pcursobj = bv;
 			}
 		}
-		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && dObject[mx + 1][my + 1] != 0) {
-			bv = dObject[mx + 1][my + 1] > 0 ? dObject[mx + 1][my + 1] - 1 : -(dObject[mx + 1][my + 1] + 1);
+		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dObject != 0) {
+			bv = grid[mx + 1][my + 1].dObject > 0 ? grid[mx + 1][my + 1].dObject - 1 : -(grid[mx + 1][my + 1].dObject + 1);
 			if (object[bv]._oSelFlag >= 2) {
 				cursmx = mx + 1;
 				cursmy = my + 1;
@@ -564,32 +564,32 @@ void CheckCursMove()
 		}
 	}
 	if (pcursplr == -1 && pcursobj == -1 && pcursmonst == -1) {
-		if (!flipflag && mx + 1 < MAXDUNX && dItem[mx + 1][my] > 0) {
-			bv = dItem[mx + 1][my] - 1;
+		if (!flipflag && mx + 1 < MAXDUNX && grid[mx + 1][my].dItem > 0) {
+			bv = grid[mx + 1][my].dItem - 1;
 			if (item[bv]._iSelFlag >= 2) {
 				cursmx = mx + 1;
 				cursmy = my;
 				pcursitem = bv;
 			}
 		}
-		if (flipflag && my + 1 < MAXDUNY && dItem[mx][my + 1] > 0) {
-			bv = dItem[mx][my + 1] - 1;
+		if (flipflag && my + 1 < MAXDUNY && grid[mx][my + 1].dItem > 0) {
+			bv = grid[mx][my + 1].dItem - 1;
 			if (item[bv]._iSelFlag >= 2) {
 				cursmx = mx;
 				cursmy = my + 1;
 				pcursitem = bv;
 			}
 		}
-		if (dItem[mx][my] > 0) {
-			bv = dItem[mx][my] - 1;
+		if (grid[mx][my].dItem > 0) {
+			bv = grid[mx][my].dItem - 1;
 			if (item[bv]._iSelFlag == 1 || item[bv]._iSelFlag == 3) {
 				cursmx = mx;
 				cursmy = my;
 				pcursitem = bv;
 			}
 		}
-		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && dItem[mx + 1][my + 1] > 0) {
-			bv = dItem[mx + 1][my + 1] - 1;
+		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dItem > 0) {
+			bv = grid[mx + 1][my + 1].dItem - 1;
 			if (item[bv]._iSelFlag >= 2) {
 				cursmx = mx + 1;
 				cursmy = my + 1;

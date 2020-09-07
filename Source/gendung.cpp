@@ -7,9 +7,13 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE dungeon[DMAXX][DMAXY];
-BYTE pdungeon[DMAXX][DMAXY];
-char dflags[DMAXX][DMAXY];
+//BYTE dgrid[DMAXX][DMAXY].dungeon;
+//BYTE dgrid[DMAXX][DMAXY].pdungeon;
+//char dgrid[DMAXX][DMAXY].dflags;
+
+DTile dgrid[DMAXX][DMAXY];
+Grid grid;
+
 int setpc_x;
 int setpc_y;
 int setpc_w;
@@ -70,20 +74,21 @@ int LvlViewY;
 int MicroTileLen;
 char TransVal;
 BOOLEAN TransList[256];
-int dPiece[MAXDUNX][MAXDUNY];
-MICROS dpiece_defs_map_2[MAXDUNX][MAXDUNY];
+
+//int grid[MAXDUNX][MAXDUNY].dPiece;
+//MICROS grid[MAXDUNX][MAXDUNY].dpiece_defs_map_2;
 MICROS dpiece_defs_map_1[MAXDUNX * MAXDUNY];
-char dTransVal[MAXDUNX][MAXDUNY];
-char dLight[MAXDUNX][MAXDUNY];
-char dPreLight[MAXDUNX][MAXDUNY];
-char dFlags[MAXDUNX][MAXDUNY];
-char dPlayer[MAXDUNX][MAXDUNY];
-int dMonster[MAXDUNX][MAXDUNY];
-char dDead[MAXDUNX][MAXDUNY];
-char dObject[MAXDUNX][MAXDUNY];
-char dItem[MAXDUNX][MAXDUNY];
-char dMissile[MAXDUNX][MAXDUNY];
-char dSpecial[MAXDUNX][MAXDUNY];
+//char grid[MAXDUNX][MAXDUNY].dTransVal;
+//char grid[MAXDUNX][MAXDUNY].dLight;
+//char grid[MAXDUNX][MAXDUNY].dPreLight;
+//char grid[MAXDUNX][MAXDUNY].dFlags;
+//char grid[MAXDUNX][MAXDUNY].dPlayer;
+//int grid[MAXDUNX][MAXDUNY].dMonster;
+//char grid[MAXDUNX][MAXDUNY].dDead;
+//char grid[MAXDUNX][MAXDUNY].dObject;
+//char grid[MAXDUNX][MAXDUNY].dItem;
+//char grid[MAXDUNX][MAXDUNY].dMissile;
+//char grid[MAXDUNX][MAXDUNY].dSpecial;
 int themeCount;
 THEME_LOC themeLoc[MAXTHEMES];
 
@@ -159,8 +164,8 @@ void SetDungeonMicros()
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {
-			lv = dPiece[x][y];
-			pMap = &dpiece_defs_map_2[x][y];
+			lv = grid[x][y].dPiece;
+			pMap = &grid[x][y].dpiece_defs_map_2;
 			if (lv != 0) {
 				lv--;
 				if (leveltype != DTYPE_HELL && leveltype != DTYPE_TOWN)
@@ -195,7 +200,7 @@ void DRLG_MRectTrans(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			dTransVal[i][j] = TransVal;
+			grid[i][j].dTransVal = TransVal;
 		}
 	}
 
@@ -208,7 +213,7 @@ void DRLG_RectTrans(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			dTransVal[i][j] = TransVal;
+			grid[i][j].dTransVal = TransVal;
 		}
 	}
 	TransVal++;
@@ -216,7 +221,7 @@ void DRLG_RectTrans(int x1, int y1, int x2, int y2)
 
 void DRLG_CopyTrans(int sx, int sy, int dx, int dy)
 {
-	dTransVal[dx][dy] = dTransVal[sx][sy];
+	grid[dx][dy].dTransVal = grid[sx][sy].dTransVal;
 }
 
 #ifndef SPAWN
@@ -270,7 +275,7 @@ void DRLG_SetPC()
 
 	for (j = 0; j < h; j++) {
 		for (i = 0; i < w; i++) {
-			dFlags[i + x][j + y] |= BFLAG_POPULATED;
+			grid[i + x][j + y].dFlags |= BFLAG_POPULATED;
 		}
 	}
 }
@@ -287,7 +292,7 @@ void Make_SetPC(int x, int y, int w, int h)
 
 	for (j = 0; j < dh; j++) {
 		for (i = 0; i < dw; i++) {
-			dFlags[i + dx][j + dy] |= BFLAG_POPULATED;
+			grid[i + dx][j + dy].dFlags |= BFLAG_POPULATED;
 		}
 	}
 }
@@ -319,7 +324,7 @@ BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 	for (ii = 0; ii < maxSize; ii++) {
 		if (xFlag) {
 			for (xx = x; xx < x + maxSize; xx++) {
-				if (dungeon[xx][y + ii] != floor) {
+				if (dgrid[xx][y + ii].dungeon != floor) {
 					if (xx >= minSize) {
 						break;
 					}
@@ -335,7 +340,7 @@ BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 		}
 		if (yFlag) {
 			for (yy = y; yy < y + maxSize; yy++) {
-				if (dungeon[x + ii][yy] != floor) {
+				if (dgrid[x + ii][yy].dungeon != floor) {
 					if (yy >= minSize) {
 						break;
 					}
@@ -390,16 +395,16 @@ void DRLG_CreateThemeRoom(int themeIndex)
 				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
-					dungeon[xx][yy] = 2;
+					dgrid[xx][yy].dungeon = 2;
 				} else if (xx == themeLoc[themeIndex].x
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
 				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
-					dungeon[xx][yy] = 1;
+					dgrid[xx][yy].dungeon = 1;
 				} else {
-					dungeon[xx][yy] = 3;
+					dgrid[xx][yy].dungeon = 3;
 				}
 			}
 			if (leveltype == DTYPE_CAVES) {
@@ -409,16 +414,16 @@ void DRLG_CreateThemeRoom(int themeIndex)
 				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
-					dungeon[xx][yy] = 134;
+					dgrid[xx][yy].dungeon = 134;
 				} else if (xx == themeLoc[themeIndex].x
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
 				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
-					dungeon[xx][yy] = 137;
+					dgrid[xx][yy].dungeon = 137;
 				} else {
-					dungeon[xx][yy] = 7;
+					dgrid[xx][yy].dungeon = 7;
 				}
 			}
 			if (leveltype == DTYPE_HELL) {
@@ -428,16 +433,16 @@ void DRLG_CreateThemeRoom(int themeIndex)
 				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
-					dungeon[xx][yy] = 2;
+					dgrid[xx][yy].dungeon = 2;
 				} else if (xx == themeLoc[themeIndex].x
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
 				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
-					dungeon[xx][yy] = 1;
+					dgrid[xx][yy].dungeon = 1;
 				} else {
-					dungeon[xx][yy] = 6;
+					dgrid[xx][yy].dungeon = 6;
 				}
 			}
 		}
@@ -511,7 +516,7 @@ void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rnd
 	memset(themeLoc, 0, sizeof(*themeLoc));
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == floor && !random_(0, freq) && DRLG_WillThemeRoomFit(floor, i, j, minSize, maxSize, &themeW, &themeH)) {
+			if (dgrid[i][j].dungeon == floor && !random_(0, freq) && DRLG_WillThemeRoomFit(floor, i, j, minSize, maxSize, &themeW, &themeH)) {
 				if (rndSize) {
 					min = minSize - 2;
 					max = maxSize - 2;
@@ -552,10 +557,10 @@ void DRLG_HoldThemeRooms()
 			for (x = themeLoc[i].x; x < themeLoc[i].x + themeLoc[i].width - 1; x++) {
 				xx = 2 * x + 16;
 				yy = 2 * y + 16;
-				dFlags[xx][yy] |= BFLAG_POPULATED;
-				dFlags[xx + 1][yy] |= BFLAG_POPULATED;
-				dFlags[xx][yy + 1] |= BFLAG_POPULATED;
-				dFlags[xx + 1][yy + 1] |= BFLAG_POPULATED;
+				grid[xx][yy].dFlags |= BFLAG_POPULATED;
+				grid[xx + 1][yy].dFlags |= BFLAG_POPULATED;
+				grid[xx][yy + 1].dFlags |= BFLAG_POPULATED;
+				grid[xx + 1][yy + 1].dFlags |= BFLAG_POPULATED;
 			}
 		}
 	}

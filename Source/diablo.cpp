@@ -1342,7 +1342,7 @@ void PressChar(int vkey)
 		if (debug_mode_key_inverted_v) {
 			sprintf(tempstr, "PX = %i  PY = %i", plr[myplr]._px, plr[myplr]._py);
 			NetSendCmdString(1 << myplr, tempstr);
-			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursmx, cursmy, dungeon[cursmx][cursmy]);
+			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursmx, cursmy, dgrid[cursmx][cursmy].dungeon);
 			NetSendCmdString(1 << myplr, tempstr);
 		}
 		return;
@@ -1580,7 +1580,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		} else {
 			for (i = 0; i < MAXDUNX; i++) {
 				for (j = 0; j < MAXDUNY; j++)
-					dFlags[i][j] |= BFLAG_LIT;
+					grid[i][j].dFlags |= BFLAG_LIT;
 			}
 
 			InitTowners();

@@ -105,7 +105,7 @@ void InitAutomap()
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++)
-			dFlags[x][y] &= ~BFLAG_EXPLORED;
+			grid[x][y].dFlags &= ~BFLAG_EXPLORED;
 	}
 }
 
@@ -580,7 +580,7 @@ WORD GetAutomapType(int x, int y, BOOL view)
 		return 0;
 	}
 
-	rv = automaptype[(BYTE)dungeon[x][y]];
+	rv = automaptype[(BYTE)dgrid[x][y].dungeon];
 	if (rv == 7) {
 		if ((GetAutomapType(x - 1, y, FALSE) >> 8) & MAPFLAG_HORZARCH) {
 			if ((GetAutomapType(x, y - 1, FALSE) >> 8) & MAPFLAG_VERTARCH) {

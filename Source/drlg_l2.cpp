@@ -279,10 +279,10 @@ static BOOL DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int c
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && dungeon[xx + sx][yy + sy] != miniset[ii]) {
+					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = FALSE;
 					}
-					if (dflags[xx + sx][yy + sy] != 0) {
+					if (dgrid[xx + sx][yy + sy].dflags != 0) {
 						found = FALSE;
 					}
 					ii++;
@@ -306,7 +306,7 @@ static BOOL DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int c
 		for (yy = 0; yy < sh; yy++) {
 			for (xx = 0; xx < sw; xx++) {
 				if (miniset[ii] != 0) {
-					dungeon[xx + sx][yy + sy] = miniset[ii];
+					dgrid[xx + sx][yy + sy].dungeon = miniset[ii];
 				}
 				ii++;
 			}
@@ -346,10 +346,10 @@ static void DRLG_L2PlaceRndSet(BYTE *miniset, int rndper)
 			}
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && dungeon[xx + sx][yy + sy] != miniset[ii]) {
+					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = FALSE;
 					}
-					if (dflags[xx + sx][yy + sy] != 0) {
+					if (dgrid[xx + sx][yy + sy].dflags != 0) {
 						found = FALSE;
 					}
 					ii++;
@@ -360,7 +360,7 @@ static void DRLG_L2PlaceRndSet(BYTE *miniset, int rndper)
 				for (yy = std::max(sy - sh, 0); yy < std::min(sy + 2 * sh, DMAXY) && found == TRUE; yy++) {
 					for (xx = std::max(sx - sw, 0); xx < std::min(sx + 2 * sw, DMAXX); xx++) {
 						// BUGFIX: yy and xx can go out of bounds (fixed)
-						if (dungeon[xx][yy] == miniset[kk]) {
+						if (dgrid[xx][yy].dungeon == miniset[kk]) {
 							found = FALSE;
 						}
 					}
@@ -370,7 +370,7 @@ static void DRLG_L2PlaceRndSet(BYTE *miniset, int rndper)
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
-							dungeon[xx + sx][yy + sy] = miniset[kk];
+							dgrid[xx + sx][yy + sy].dungeon = miniset[kk];
 						}
 						kk++;
 					}
@@ -388,7 +388,7 @@ static void DRLG_L2Subs()
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
 			if ((x < nSx1 || x > nSx2) && (y < nSy1 || y > nSy2) && random_(0, 4) == 0) {
-				c = BTYPESL2[dungeon[x][y]];
+				c = BTYPESL2[dgrid[x][y].dungeon];
 				if (c != 0) {
 					rv = random_(0, 16);
 					k = -1;
@@ -403,14 +403,14 @@ static void DRLG_L2Subs()
 					}
 					for (j = y - 2; j < y + 2; j++) {
 						for (i = x - 2; i < x + 2; i++) {
-							if (dungeon[i][j] == k) {
+							if (dgrid[i][j].dungeon == k) {
 								j = y + 3;
 								i = x + 2;
 							}
 						}
 					}
 					if (j < y + 3) {
-						dungeon[x][y] = k;
+						dgrid[x][y].dungeon = k;
 					}
 				}
 			}
@@ -426,10 +426,10 @@ static void DRLG_L2Shadows()
 
 	for (y = 1; y < DMAXY; y++) {
 		for (x = 1; x < DMAXX; x++) {
-			sd[0][0] = BSTYPESL2[dungeon[x][y]];
-			sd[1][0] = BSTYPESL2[dungeon[x - 1][y]];
-			sd[0][1] = BSTYPESL2[dungeon[x][y - 1]];
-			sd[1][1] = BSTYPESL2[dungeon[x - 1][y - 1]];
+			sd[0][0] = BSTYPESL2[dgrid[x][y].dungeon];
+			sd[1][0] = BSTYPESL2[dgrid[x - 1][y].dungeon];
+			sd[0][1] = BSTYPESL2[dgrid[x][y - 1].dungeon];
+			sd[1][1] = BSTYPESL2[dgrid[x - 1][y - 1].dungeon];
 			for (i = 0; i < 2; i++) {
 				if (SPATSL2[i].strig == sd[0][0]) {
 					patflag = TRUE;
@@ -444,13 +444,13 @@ static void DRLG_L2Shadows()
 					}
 					if (patflag == TRUE) {
 						if (SPATSL2[i].nv1 != 0) {
-							dungeon[x - 1][y - 1] = SPATSL2[i].nv1;
+							dgrid[x - 1][y - 1].dungeon = SPATSL2[i].nv1;
 						}
 						if (SPATSL2[i].nv2 != 0) {
-							dungeon[x][y - 1] = SPATSL2[i].nv2;
+							dgrid[x][y - 1].dungeon = SPATSL2[i].nv2;
 						}
 						if (SPATSL2[i].nv3 != 0) {
-							dungeon[x - 1][y] = SPATSL2[i].nv3;
+							dgrid[x - 1][y].dungeon = SPATSL2[i].nv3;
 						}
 					}
 				}
@@ -466,7 +466,7 @@ void InitDungeon()
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			predungeon[i][j] = 32;
-			dflags[i][j] = 0;
+			dgrid[i][j].dflags = 0;
 		}
 	}
 }
@@ -510,10 +510,10 @@ static void DRLG_L2SetRoom(int rx1, int ry1)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				dungeon[i + rx1][j + ry1] = *sp;
-				dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
+				dgrid[i + rx1][j + ry1].dungeon = *sp;
+				dgrid[i + rx1][j + ry1].dflags |= DLRG_PROTECTED;
 			} else {
-				dungeon[i + rx1][j + ry1] = 3;
+				dgrid[i + rx1][j + ry1].dungeon = 3;
 			}
 			sp += 2;
 		}
@@ -539,7 +539,7 @@ static void DefineRoom(int nX1, int nY1, int nX2, int nY2, BOOL ForceHW)
 		for (i = nX1; i < nX2; i++) {
 			/// BUGFIX: Should loop j between nY1 and nY2 instead of always using nY1.
 			while (i < nY2) {
-				dflags[i][nY1] |= DLRG_PROTECTED;
+				dgrid[i][nY1].dflags |= DLRG_PROTECTED;
 				i++;
 			}
 		}
@@ -991,7 +991,7 @@ static void DoPatternCheck(int i, int j)
 			x++;
 		}
 		if (nOk == 254) {
-			dungeon[i][j] = Patterns[k][9];
+			dgrid[i][j].dungeon = Patterns[k][9];
 		}
 	}
 }
@@ -1002,20 +1002,20 @@ static void L2TileFix()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 3) {
-				dungeon[i][j + 1] = 1;
+			if (dgrid[i][j].dungeon == 1 && dgrid[i][j + 1].dungeon == 3) {
+				dgrid[i][j + 1].dungeon = 1;
 			}
-			if (dungeon[i][j] == 3 && dungeon[i][j + 1] == 1) {
-				dungeon[i][j + 1] = 3;
+			if (dgrid[i][j].dungeon == 3 && dgrid[i][j + 1].dungeon == 1) {
+				dgrid[i][j + 1].dungeon = 3;
 			}
-			if (dungeon[i][j] == 3 && dungeon[i + 1][j] == 7) {
-				dungeon[i + 1][j] = 3;
+			if (dgrid[i][j].dungeon == 3 && dgrid[i + 1][j].dungeon == 7) {
+				dgrid[i + 1][j].dungeon = 3;
 			}
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 3) {
-				dungeon[i + 1][j] = 2;
+			if (dgrid[i][j].dungeon == 2 && dgrid[i + 1][j].dungeon == 3) {
+				dgrid[i + 1][j].dungeon = 2;
 			}
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] == 14) {
-				dungeon[i + 1][j] = 16;
+			if (dgrid[i][j].dungeon == 11 && dgrid[i + 1][j].dungeon == 14) {
+				dgrid[i + 1][j].dungeon = 16;
 			}
 		}
 	}
@@ -1492,10 +1492,10 @@ static void DRLG_L2Pass3()
 
 	for (j = 0; j < MAXDUNY; j += 2) {
 		for (i = 0; i < MAXDUNX; i += 2) {
-			dPiece[i][j] = v1;
-			dPiece[i + 1][j] = v2;
-			dPiece[i][j + 1] = v3;
-			dPiece[i + 1][j + 1] = v4;
+			grid[i][j].dPiece = v1;
+			grid[i + 1][j].dPiece = v2;
+			grid[i][j + 1].dPiece = v3;
+			grid[i + 1][j + 1].dPiece = v4;
 		}
 	}
 
@@ -1503,16 +1503,16 @@ static void DRLG_L2Pass3()
 	for (j = 0; j < DMAXY; j++) {
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
-			lv = dungeon[i][j] - 1;
+			lv = dgrid[i][j].dungeon - 1;
 			MegaTiles = (WORD *)&pMegaTiles[lv * 8];
 			v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
 			v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
 			v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
 			v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
-			dPiece[xx][yy] = v1;
-			dPiece[xx + 1][yy] = v2;
-			dPiece[xx][yy + 1] = v3;
-			dPiece[xx + 1][yy + 1] = v4;
+			grid[xx][yy].dPiece = v1;
+			grid[xx + 1][yy].dPiece = v2;
+			grid[xx][yy + 1].dPiece = v3;
+			grid[xx + 1][yy + 1].dPiece = v4;
 			xx += 2;
 		}
 		yy += 2;
@@ -1521,40 +1521,40 @@ static void DRLG_L2Pass3()
 
 static void DRLG_L2FTVR(int i, int j, int x, int y, int d)
 {
-	if (dTransVal[x][y] != 0 || dungeon[i][j] != 3) {
+	if (grid[x][y].dTransVal != 0 || dgrid[i][j].dungeon != 3) {
 		if (d == 1) {
-			dTransVal[x][y] = TransVal;
-			dTransVal[x][y + 1] = TransVal;
+			grid[x][y].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = TransVal;
 		}
 		if (d == 2) {
-			dTransVal[x + 1][y] = TransVal;
-			dTransVal[x + 1][y + 1] = TransVal;
+			grid[x + 1][y].dTransVal = TransVal;
+			grid[x + 1][y + 1].dTransVal = TransVal;
 		}
 		if (d == 3) {
-			dTransVal[x][y] = TransVal;
-			dTransVal[x + 1][y] = TransVal;
+			grid[x][y].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = TransVal;
 		}
 		if (d == 4) {
-			dTransVal[x][y + 1] = TransVal;
-			dTransVal[x + 1][y + 1] = TransVal;
+			grid[x][y + 1].dTransVal = TransVal;
+			grid[x + 1][y + 1].dTransVal = TransVal;
 		}
 		if (d == 5) {
-			dTransVal[x + 1][y + 1] = TransVal;
+			grid[x + 1][y + 1].dTransVal = TransVal;
 		}
 		if (d == 6) {
-			dTransVal[x][y + 1] = TransVal;
+			grid[x][y + 1].dTransVal = TransVal;
 		}
 		if (d == 7) {
-			dTransVal[x + 1][y] = TransVal;
+			grid[x + 1][y].dTransVal = TransVal;
 		}
 		if (d == 8) {
-			dTransVal[x][y] = TransVal;
+			grid[x][y].dTransVal = TransVal;
 		}
 	} else {
-		dTransVal[x][y] = TransVal;
-		dTransVal[x + 1][y] = TransVal;
-		dTransVal[x][y + 1] = TransVal;
-		dTransVal[x + 1][y + 1] = TransVal;
+		grid[x][y].dTransVal = TransVal;
+		grid[x + 1][y].dTransVal = TransVal;
+		grid[x][y + 1].dTransVal = TransVal;
+		grid[x + 1][y + 1].dTransVal = TransVal;
 		DRLG_L2FTVR(i + 1, j, x + 2, y, 1);
 		DRLG_L2FTVR(i - 1, j, x - 2, y, 2);
 		DRLG_L2FTVR(i, j + 1, x, y + 2, 3);
@@ -1574,7 +1574,7 @@ static void DRLG_L2FloodTVal()
 	for (j = 0; j < DMAXY; j++) {
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 3 && dTransVal[xx][yy] == 0) {
+			if (dgrid[i][j].dungeon == 3 && grid[xx][yy].dTransVal == 0) {
 				DRLG_L2FTVR(i, j, xx, yy, 0);
 				TransVal++;
 			}
@@ -1592,26 +1592,26 @@ static void DRLG_L2TransFix()
 	for (j = 0; j < DMAXY; j++) {
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 14 && dungeon[i][j - 1] == 10) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+			if (dgrid[i][j].dungeon == 14 && dgrid[i][j - 1].dungeon == 10) {
+				grid[xx + 1][yy].dTransVal = grid[xx][yy].dTransVal;
+				grid[xx + 1][yy + 1].dTransVal = grid[xx][yy].dTransVal;
 			}
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 11) {
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+			if (dgrid[i][j].dungeon == 15 && dgrid[i + 1][j].dungeon == 11) {
+				grid[xx][yy + 1].dTransVal = grid[xx][yy].dTransVal;
+				grid[xx + 1][yy + 1].dTransVal = grid[xx][yy].dTransVal;
 			}
-			if (dungeon[i][j] == 10) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+			if (dgrid[i][j].dungeon == 10) {
+				grid[xx + 1][yy].dTransVal = grid[xx][yy].dTransVal;
+				grid[xx + 1][yy + 1].dTransVal = grid[xx][yy].dTransVal;
 			}
-			if (dungeon[i][j] == 11) {
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+			if (dgrid[i][j].dungeon == 11) {
+				grid[xx][yy + 1].dTransVal = grid[xx][yy].dTransVal;
+				grid[xx + 1][yy + 1].dTransVal = grid[xx][yy].dTransVal;
 			}
-			if (dungeon[i][j] == 16) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+			if (dgrid[i][j].dungeon == 16) {
+				grid[xx + 1][yy].dTransVal = grid[xx][yy].dTransVal;
+				grid[xx][yy + 1].dTransVal = grid[xx][yy].dTransVal;
+				grid[xx + 1][yy + 1].dTransVal = grid[xx][yy].dTransVal;
 			}
 			xx += 2;
 		}
@@ -1625,23 +1625,23 @@ static void L2DirtFix()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 13 && dungeon[i + 1][j] != 11) {
-				dungeon[i][j] = 146;
+			if (dgrid[i][j].dungeon == 13 && dgrid[i + 1][j].dungeon != 11) {
+				dgrid[i][j].dungeon = 146;
 			}
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] != 11) {
-				dungeon[i][j] = 144;
+			if (dgrid[i][j].dungeon == 11 && dgrid[i + 1][j].dungeon != 11) {
+				dgrid[i][j].dungeon = 144;
 			}
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] != 11) {
-				dungeon[i][j] = 148;
+			if (dgrid[i][j].dungeon == 15 && dgrid[i + 1][j].dungeon != 11) {
+				dgrid[i][j].dungeon = 148;
 			}
-			if (dungeon[i][j] == 10 && dungeon[i][j + 1] != 10) {
-				dungeon[i][j] = 143;
+			if (dgrid[i][j].dungeon == 10 && dgrid[i][j + 1].dungeon != 10) {
+				dgrid[i][j].dungeon = 143;
 			}
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] != 10) {
-				dungeon[i][j] = 146;
+			if (dgrid[i][j].dungeon == 13 && dgrid[i][j + 1].dungeon != 10) {
+				dgrid[i][j].dungeon = 146;
 			}
-			if (dungeon[i][j] == 14 && dungeon[i][j + 1] != 15) {
-				dungeon[i][j] = 147;
+			if (dgrid[i][j].dungeon == 14 && dgrid[i][j + 1].dungeon != 15) {
+				dgrid[i][j].dungeon = 147;
 			}
 		}
 	}
@@ -1654,60 +1654,60 @@ void L2LockoutFix()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 4 && dungeon[i - 1][j] != 3) {
-				dungeon[i][j] = 1;
+			if (dgrid[i][j].dungeon == 4 && dgrid[i - 1][j].dungeon != 3) {
+				dgrid[i][j].dungeon = 1;
 			}
-			if (dungeon[i][j] == 5 && dungeon[i][j - 1] != 3) {
-				dungeon[i][j] = 2;
+			if (dgrid[i][j].dungeon == 5 && dgrid[i][j - 1].dungeon != 3) {
+				dgrid[i][j].dungeon = 2;
 			}
 		}
 	}
 	for (j = 1; j < DMAXY - 1; j++) {
 		for (i = 1; i < DMAXX - 1; i++) {
-			if (dflags[i][j] & DLRG_PROTECTED) {
+			if (dgrid[i][j].dflags & DLRG_PROTECTED) {
 				continue;
 			}
-			if ((dungeon[i][j] == 2 || dungeon[i][j] == 5) && dungeon[i][j - 1] == 3 && dungeon[i][j + 1] == 3) {
+			if ((dgrid[i][j].dungeon == 2 || dgrid[i][j].dungeon == 5) && dgrid[i][j - 1].dungeon == 3 && dgrid[i][j + 1].dungeon == 3) {
 				doorok = FALSE;
 				while (1) {
-					if (dungeon[i][j] != 2 && dungeon[i][j] != 5) {
+					if (dgrid[i][j].dungeon != 2 && dgrid[i][j].dungeon != 5) {
 						break;
 					}
-					if (dungeon[i][j - 1] != 3 || dungeon[i][j + 1] != 3) {
+					if (dgrid[i][j - 1].dungeon != 3 || dgrid[i][j + 1].dungeon != 3) {
 						break;
 					}
-					if (dungeon[i][j] == 5) {
+					if (dgrid[i][j].dungeon == 5) {
 						doorok = TRUE;
 					}
 					i++;
 				}
-				if (!doorok && !(dflags[i - 1][j] & DLRG_PROTECTED)) {
-					dungeon[i - 1][j] = 5;
+				if (!doorok && !(dgrid[i - 1][j].dflags & DLRG_PROTECTED)) {
+					dgrid[i - 1][j].dungeon = 5;
 				}
 			}
 		}
 	}
 	for (j = 1; j < DMAXX - 1; j++) { /* check: might be flipped */
 		for (i = 1; i < DMAXY - 1; i++) {
-			if (dflags[j][i] & DLRG_PROTECTED) {
+			if (dgrid[j][i].dflags & DLRG_PROTECTED) {
 				continue;
 			}
-			if ((dungeon[j][i] == 1 || dungeon[j][i] == 4) && dungeon[j - 1][i] == 3 && dungeon[j + 1][i] == 3) {
+			if ((dgrid[j][i].dungeon == 1 || dgrid[j][i].dungeon == 4) && dgrid[j - 1][i].dungeon == 3 && dgrid[j + 1][i].dungeon == 3) {
 				doorok = FALSE;
 				while (1) {
-					if (dungeon[j][i] != 1 && dungeon[j][i] != 4) {
+					if (dgrid[j][i].dungeon != 1 && dgrid[j][i].dungeon != 4) {
 						break;
 					}
-					if (dungeon[j - 1][i] != 3 || dungeon[j + 1][i] != 3) {
+					if (dgrid[j - 1][i].dungeon != 3 || dgrid[j + 1][i].dungeon != 3) {
 						break;
 					}
-					if (dungeon[j][i] == 4) {
+					if (dgrid[j][i].dungeon == 4) {
 						doorok = TRUE;
 					}
 					i++;
 				}
-				if (!doorok && !(dflags[j][i - 1] & DLRG_PROTECTED)) {
-					dungeon[j][i - 1] = 4;
+				if (!doorok && !(dgrid[j][i - 1].dflags & DLRG_PROTECTED)) {
+					dgrid[j][i - 1].dungeon = 4;
 				}
 			}
 		}
@@ -1720,11 +1720,11 @@ void L2DoorFix()
 
 	for (j = 1; j < DMAXY; j++) {
 		for (i = 1; i < DMAXX; i++) {
-			if (dungeon[i][j] == 4 && dungeon[i][j - 1] == 3) {
-				dungeon[i][j] = 7;
+			if (dgrid[i][j].dungeon == 4 && dgrid[i][j - 1].dungeon == 3) {
+				dgrid[i][j].dungeon = 7;
 			}
-			if (dungeon[i][j] == 5 && dungeon[i - 1][j] == 3) {
-				dungeon[i][j] = 9;
+			if (dgrid[i][j].dungeon == 5 && dgrid[i - 1][j].dungeon == 3) {
+				dgrid[i][j].dungeon = 9;
 			}
 		}
 	}
@@ -1897,7 +1897,7 @@ static void DRLG_L2(int entry)
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			pdungeon[i][j] = dungeon[i][j];
+			dgrid[i][j].pdungeon = dgrid[i][j].dungeon;
 		}
 	}
 
@@ -1911,34 +1911,34 @@ static void DRLG_InitL2Vals()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 541) {
+			if (grid[i][j].dPiece == 541) {
 				pc = 5;
-			} else if (dPiece[i][j] == 178) {
+			} else if (grid[i][j].dPiece == 178) {
 				pc = 5;
-			} else if (dPiece[i][j] == 551) {
+			} else if (grid[i][j].dPiece == 551) {
 				pc = 5;
-			} else if (dPiece[i][j] == 542) {
+			} else if (grid[i][j].dPiece == 542) {
 				pc = 6;
-			} else if (dPiece[i][j] == 553) {
+			} else if (grid[i][j].dPiece == 553) {
 				pc = 6;
-			} else if (dPiece[i][j] == 13) {
+			} else if (grid[i][j].dPiece == 13) {
 				pc = 5;
-			} else if (dPiece[i][j] == 17) {
+			} else if (grid[i][j].dPiece == 17) {
 				pc = 6;
 			} else {
 				continue;
 			}
-			dSpecial[i][j] = pc;
+			grid[i][j].dSpecial = pc;
 		}
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 132) {
-				dSpecial[i][j + 1] = 2;
-				dSpecial[i][j + 2] = 1;
-			} else if (dPiece[i][j] == 135 || dPiece[i][j] == 139) {
-				dSpecial[i + 1][j] = 3;
-				dSpecial[i + 2][j] = 4;
+			if (grid[i][j].dPiece == 132) {
+				grid[i][j + 1].dSpecial = 2;
+				grid[i][j + 2].dSpecial = 1;
+			} else if (grid[i][j].dPiece == 135 || grid[i][j].dPiece == 139) {
+				grid[i + 1][j].dSpecial = 3;
+				grid[i + 2][j].dSpecial = 4;
 			}
 		}
 	}
@@ -1955,8 +1955,8 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			dungeon[i][j] = 12;
-			dflags[i][j] = 0;
+			dgrid[i][j].dungeon = 12;
+			dgrid[i][j].dflags = 0;
 		}
 	}
 
@@ -1969,18 +1969,18 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				dungeon[i][j] = *lm;
-				dflags[i][j] |= DLRG_PROTECTED;
+				dgrid[i][j].dungeon = *lm;
+				dgrid[i][j].dflags |= DLRG_PROTECTED;
 			} else {
-				dungeon[i][j] = 3;
+				dgrid[i][j].dungeon = 3;
 			}
 			lm += 2;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 0) {
-				dungeon[i][j] = 12;
+			if (dgrid[i][j].dungeon == 0) {
+				dgrid[i][j].dungeon = 12;
 			}
 		}
 	}
@@ -1991,38 +1991,38 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			pc = 0;
-			if (dPiece[i][j] == 541) {
+			if (grid[i][j].dPiece == 541) {
 				pc = 5;
 			}
-			if (dPiece[i][j] == 178) {
+			if (grid[i][j].dPiece == 178) {
 				pc = 5;
 			}
-			if (dPiece[i][j] == 551) {
+			if (grid[i][j].dPiece == 551) {
 				pc = 5;
 			}
-			if (dPiece[i][j] == 542) {
+			if (grid[i][j].dPiece == 542) {
 				pc = 6;
 			}
-			if (dPiece[i][j] == 553) {
+			if (grid[i][j].dPiece == 553) {
 				pc = 6;
 			}
-			if (dPiece[i][j] == 13) {
+			if (grid[i][j].dPiece == 13) {
 				pc = 5;
 			}
-			if (dPiece[i][j] == 17) {
+			if (grid[i][j].dPiece == 17) {
 				pc = 6;
 			}
-			dSpecial[i][j] = pc;
+			grid[i][j].dSpecial = pc;
 		}
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 132) {
-				dSpecial[i][j + 1] = 2;
-				dSpecial[i][j + 2] = 1;
-			} else if (dPiece[i][j] == 135 || dPiece[i][j] == 139) {
-				dSpecial[i + 1][j] = 3;
-				dSpecial[i + 2][j] = 4;
+			if (grid[i][j].dPiece == 132) {
+				grid[i][j + 1].dSpecial = 2;
+				grid[i][j + 2].dSpecial = 1;
+			} else if (grid[i][j].dPiece == 135 || grid[i][j].dPiece == 139) {
+				grid[i + 1][j].dSpecial = 3;
+				grid[i + 2][j].dSpecial = 4;
 			}
 		}
 	}
@@ -2045,8 +2045,8 @@ void LoadPreL2Dungeon(char *sFileName, int vx, int vy)
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			dungeon[i][j] = 12;
-			dflags[i][j] = 0;
+			dgrid[i][j].dungeon = 12;
+			dgrid[i][j].dflags = 0;
 		}
 	}
 
@@ -2059,24 +2059,24 @@ void LoadPreL2Dungeon(char *sFileName, int vx, int vy)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				dungeon[i][j] = *lm;
-				dflags[i][j] |= DLRG_PROTECTED;
+				dgrid[i][j].dungeon = *lm;
+				dgrid[i][j].dflags |= DLRG_PROTECTED;
 			} else {
-				dungeon[i][j] = 3;
+				dgrid[i][j].dungeon = 3;
 			}
 			lm += 2;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 0) {
-				dungeon[i][j] = 12;
+			if (dgrid[i][j].dungeon == 0) {
+				dgrid[i][j].dungeon = 12;
 			}
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			pdungeon[i][j] = dungeon[i][j];
+			dgrid[i][j].pdungeon = dgrid[i][j].dungeon;
 		}
 	}
 
