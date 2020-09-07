@@ -983,9 +983,11 @@ void ToggleLighting()
 	lightflag ^= TRUE;
 
 	if (lightflag != 0) {
-		memset(dLight, 0, sizeof(dLight));
+		grid.clearLight();
+		//memset(dLight, 0, sizeof(dLight));
 	} else {
-		memcpy(dLight, dPreLight, sizeof(dLight));
+		//memcpy(dLight, dPreLight, sizeof(dLight));
+		grid.prelightToLight();
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].plractive && plr[i].plrlevel == currlevel) {
 				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
@@ -1156,7 +1158,8 @@ void ProcessLightList()
 
 void SavePreLighting()
 {
-	memcpy(dPreLight, dLight, sizeof(dPreLight));
+	grid.lightToPrelight();
+	//memcpy(dPreLight, dLight, sizeof(dPreLight));
 }
 
 void InitVision()

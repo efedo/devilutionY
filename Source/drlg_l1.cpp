@@ -470,15 +470,6 @@ static void DRLG_FreeL1SP()
 void DRLG_Init_Globals()
 {
 	char c;
-
-	memset(dFlags, 0, sizeof(dFlags));
-	memset(dPlayer, 0, sizeof(dPlayer));
-	memset(dMonster, 0, sizeof(dMonster));
-	memset(dDead, 0, sizeof(dDead));
-	memset(dObject, 0, sizeof(dObject));
-	memset(dItem, 0, sizeof(dItem));
-	memset(dMissile, 0, sizeof(dMissile));
-	memset(dSpecial, 0, sizeof(dSpecial));
 	if (!lightflag) {
 		if (light4flag)
 			c = 3;
@@ -487,7 +478,7 @@ void DRLG_Init_Globals()
 	} else {
 		c = 0;
 	}
-	memset(dLight, c, sizeof(dLight));
+	grid.init(c);
 }
 
 static void DRLG_InitL1Vals()

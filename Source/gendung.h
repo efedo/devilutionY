@@ -19,7 +19,38 @@ public:
 	char dflags;
 };
 
-extern DTile dgrid[DMAXX][DMAXY];
+class DGrid {
+public:
+	auto &operator[](const size_t n)
+	{
+		return tiles[n];
+	}
+
+	void init()
+	{
+		for (int j = 0; j < DMAXY; j++) {
+			for (int i = 0; i < DMAXX; i++) {
+				DTile &tile = tiles[i][j];
+				tile.dungeon = 0;
+				tile.dflags = 0;
+			}
+		}
+	}
+
+	void copytopdungeon()
+	{
+		for (int j = 0; j < DMAXY; j++) {
+			for (int i = 0; i < DMAXX; i++) {
+				tiles[i][j].pdungeon = tiles[i][j].dungeon;
+			}
+		}
+	}
+
+private:
+	DTile tiles[DMAXX][DMAXY];
+};
+
+extern DGrid dgrid;
 
 extern int setpc_x;
 extern int setpc_y;
@@ -89,6 +120,71 @@ public:
 class Grid {
 public:
 	auto &operator[](const size_t n) { return tiles[n]; }
+	void clearTrans() {
+		for (int j = 0; j < MAXDUNY; j++) {
+			for (int i = 0; i < MAXDUNX; i++) {
+				tiles[i][j].dTransVal = 0;
+			}
+		}
+	}
+	void clearLight()
+	{
+		for (int j = 0; j < MAXDUNY; j++) {
+			for (int i = 0; i < MAXDUNX; i++) {
+				tiles[i][j].dLight = 0;
+			}
+		}
+	}
+	void prelightToLight()
+	{
+		for (int j = 0; j < MAXDUNY; j++) {
+			for (int i = 0; i < MAXDUNX; i++) {
+				tiles[i][j].dLight = tiles[i][j].dPreLight;
+			}
+		}
+	}
+	void lightToPrelight()
+	{
+		for (int j = 0; j < MAXDUNY; j++) {
+			for (int i = 0; i < MAXDUNX; i++) {
+				tiles[i][j].dPreLight = tiles[i][j].dLight;
+			}
+		}
+	}
+	void init(char light) // (Dung)
+	{
+		for (int j = 0; j < MAXDUNY; j++) {
+			for (int i = 0; i < MAXDUNX; i++) {
+				Tile &tile = tiles[i][j];
+				tile.dPlayer = 0;
+				tile.dMonster = 0;
+				tile.dDead = 0;
+				tile.dObject = 0;
+				tile.dItem = 0;
+				tile.dMissile = 0;
+				tile.dSpecial = 0;
+				tile.dLight = light;
+			}
+		}
+	}
+
+	void initTown() // (Dung)
+	{
+		for (int j = 0; j < MAXDUNY; j++) {
+			for (int i = 0; i < MAXDUNX; i++) {
+				Tile &tile = tiles[i][j];
+				tile.dLight = 0;
+				tile.dFlags = 0;
+				tile.dPlayer = 0;
+				tile.dMonster = 0;
+				tile.dObject = 0;
+				tile.dItem = 0;
+				tile.dSpecial = 0;
+			}
+		}
+	}
+
+
 private:
 	Tile tiles[MAXDUNX][MAXDUNY];
 };

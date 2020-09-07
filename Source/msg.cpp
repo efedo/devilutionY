@@ -504,7 +504,7 @@ void DeltaLoadLevel()
 				} else {
 					decode_enemy(i, sgLevels[currlevel].monster[i]._menemy);
 					if (monster[i]._mx && monster[i]._mx != 1 || monster[i]._my)
-						dMonster[monster[i]._mx][monster[i]._my] = i + 1;
+						grid[monster[i]._mx][monster[i]._my].dMonster = i + 1;
 					if (i < MAX_PLRS) {
 						MAI_Golum(i);
 						monster[i]._mFlags |= (MFLAG_TARGETS_MONSTER | MFLAG_GOLEM);
@@ -526,8 +526,8 @@ void DeltaLoadLevel()
 				    sgLevels[currlevel].item[i].wCI,
 				    sgLevels[currlevel].item[i].dwSeed);
 				if (ii != -1) {
-					if (dItem[item[ii]._ix][item[ii]._iy] == ii + 1)
-						dItem[item[ii]._ix][item[ii]._iy] = 0;
+					if (grid[item[ii]._ix][item[ii]._iy].dItem == ii + 1)
+						grid[item[ii]._ix][item[ii]._iy].dItem = 0;
 					DeleteItem(ii, i);
 				}
 			}
@@ -2367,7 +2367,7 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 					NewPlrAnim(pnum, plr[pnum]._pDAnim[0], plr[pnum]._pDFrames, 1, plr[pnum]._pDWidth);
 					plr[pnum]._pAnimFrame = plr[pnum]._pAnimLen - 1;
 					plr[pnum]._pVar8 = plr[pnum]._pAnimLen << 1;
-					dFlags[plr[pnum]._px][plr[pnum]._py] |= BFLAG_DEAD_PLAYER;
+					grid[plr[pnum]._px][plr[pnum]._py].dFlags |= BFLAG_DEAD_PLAYER;
 				}
 
 				plr[pnum]._pvid = AddVision(plr[pnum]._px, plr[pnum]._py, plr[pnum]._pLightRad, pnum == myplr);

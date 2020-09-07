@@ -1648,11 +1648,11 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		if (plr[i].plractive && plr[i].plrlevel == currlevel && (!plr[i]._pLvlChanging || i == myplr)) {
 			if (plr[i]._pHitPoints > 0) {
 				if (gbMaxPlayers == 1)
-					dPlayer[plr[i]._px][plr[i]._py] = i + 1;
+					grid[plr[i]._px][plr[i]._py].dPlayer = i + 1;
 				else
 					SyncInitPlrPos(i);
 			} else {
-				dFlags[plr[i]._px][plr[i]._py] |= BFLAG_DEAD_PLAYER;
+				grid[plr[i]._px][plr[i]._py].dFlags |= BFLAG_DEAD_PLAYER;
 			}
 		}
 	}

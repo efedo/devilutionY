@@ -82,16 +82,17 @@ const BYTE L3ANVIL[244] = {
 
 static void InitL3Dungeon()
 {
-	int i, j;
+	dgrid.init();
+	//int i, j;
 
-	memset(dungeon, 0, sizeof(dungeon));
+	//memset(dungeon, 0, sizeof(dungeon));
 
-	for (j = 0; j < DMAXY; j++) {
-		for (i = 0; i < DMAXX; i++) {
-			dgrid[i][j].dungeon = 0;
-			dgrid[i][j].dflags = 0;
-		}
-	}
+	//for (j = 0; j < DMAXY; j++) {
+	//	for (i = 0; i < DMAXX; i++) {
+	//		dgrid[i][j].dungeon = 0;
+	//		dgrid[i][j].dflags = 0;
+	//	}
+	//}
 }
 
 static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
@@ -626,13 +627,13 @@ static void DRLG_L3River()
 				lpcnt++;
 				bridge = random_(0, riveramt);
 				if ((river[2][bridge] == 15 || river[2][bridge] == 16)
-				    && dgrid[river[0][bridge].dungeon][river[1][bridge] - 1] == 7
-				    && dgrid[river[0][bridge].dungeon][river[1][bridge] + 1] == 7) {
+				    && dgrid[river[0][bridge]][river[1][bridge] - 1].dungeon == 7
+				    && dgrid[river[0][bridge]][river[1][bridge] + 1].dungeon == 7) {
 					found = 1;
 				}
 				if ((river[2][bridge] == 17 || river[2][bridge] == 18)
-				    && dgrid[river[0][bridge].dungeon - 1][river[1][bridge]] == 7
-				    && dgrid[river[0][bridge].dungeon + 1][river[1][bridge]] == 7) {
+				    && dgrid[river[0][bridge] - 1][river[1][bridge]].dungeon == 7
+				    && dgrid[river[0][bridge] + 1][river[1][bridge]].dungeon == 7) {
 					found = 2;
 				}
 				for (i = 0; i < riveramt && found != 0; i++) {
@@ -656,7 +657,7 @@ static void DRLG_L3River()
 				}
 				rivercnt++;
 				for (bridge = 0; bridge <= riveramt; bridge++) {
-					dgrid[river[0][bridge].dungeon][river[1][bridge]] = river[2][bridge];
+					dgrid[river[0][bridge]][river[1][bridge]].dungeon = river[2][bridge];
 				}
 			} else {
 				bail = FALSE;
@@ -1806,7 +1807,8 @@ void LoadPreL3Dungeon(char *sFileName, int vx, int vy)
 		}
 	}
 
-	memcpy(pdungeon, dungeon, sizeof(pdungeon));
+	dgrid.copytopdungeon();
+	//memcpy(pdungeon, dungeon, sizeof(pdungeon));
 	mem_free_dbg(pLevelMap);
 }
 

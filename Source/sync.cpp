@@ -261,7 +261,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 			md = GetDirection(monster[ndx]._mx, monster[ndx]._my, p->_mx, p->_my);
 			if (DirOK(ndx, md)) {
 				M_ClearSquares(ndx);
-				dMonster[monster[ndx]._mx][monster[ndx]._my] = ndx + 1;
+				grid[monster[ndx]._mx][monster[ndx]._my].dMonster = ndx + 1;
 				M_WalkDir(ndx, md);
 				monster[ndx]._msquelch = UCHAR_MAX;
 			}

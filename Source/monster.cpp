@@ -836,7 +836,7 @@ void PlaceGroup(int mtype, int num, int leaderf, int leader)
 		while (placed) {
 			nummonsters--;
 			placed--;
-			dMonster[monster[nummonsters]._mx][monster[nummonsters]._my] = 0;
+			grid[monster[nummonsters]._mx][monster[nummonsters]._my].dMonster = 0;
 		}
 
 		if (leaderf & 1) {
@@ -1134,7 +1134,7 @@ void M_Enemy(int i)
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
 			if (!plr[pnum].plractive || currlevel != plr[pnum].plrlevel || plr[pnum]._pLvlChanging || (plr[pnum]._pHitPoints == 0 && gbMaxPlayers != 1))
 				continue;
-			if (grid[Monst->_mx][Monst->_my].dTransVal == dTransVal[plr[pnum]._px][plr[pnum]._py])
+			if (grid[Monst->_mx][Monst->_my].dTransVal == grid[plr[pnum]._px][plr[pnum]._py].dTransVal)
 				sameroom = TRUE;
 			else
 				sameroom = FALSE;
@@ -1168,7 +1168,7 @@ void M_Enemy(int i)
 		           || (!(Monst->_mFlags & MFLAG_GOLEM) && !(monster[mi]._mFlags & MFLAG_GOLEM)))) {
 			continue;
 		}
-		sameroom = grid[Monst->_mx][Monst->_my].dTransVal == dTransVal[monster[mi]._mx][monster[mi]._my];
+		sameroom = grid[Monst->_mx][Monst->_my].dTransVal == grid[monster[mi]._mx][monster[mi]._my].dTransVal;
 		if (abs(Monst->_mx - monster[mi]._mx) > abs(Monst->_my - monster[mi]._my))
 			dist = Monst->_mx - monster[mi]._mx;
 		else
@@ -1273,7 +1273,7 @@ void M_StartWalk2(int i, int xvel, int yvel, int xoff, int yoff, int xadd, int y
 	int fx = xadd + monster[i]._mx;
 	int fy = yadd + monster[i]._my;
 
-	dMonster[monster[i]._mx][monster[i]._my] = -(i + 1);
+	grid[monster[i]._mx][monster[i]._my].dMonster = -(i + 1);
 	monster[i]._mVar1 = monster[i]._mx;
 	monster[i]._mVar2 = monster[i]._my;
 	monster[i]._moldx = monster[i]._mx;
@@ -1308,7 +1308,7 @@ void M_StartWalk3(int i, int xvel, int yvel, int xoff, int yoff, int xadd, int y
 	if (monster[i]._uniqtype != 0)
 		ChangeLightXY(monster[i].mlid, x, y);
 
-	dMonster[monster[i]._mx][monster[i]._my] = -(i + 1);
+	grid[monster[i]._mx][monster[i]._my].dMonster = -(i + 1);
 	grid[fx][fy].dMonster = -(i + 1);
 	monster[i]._mVar4 = x;
 	monster[i]._mVar5 = y;
@@ -1448,7 +1448,7 @@ void M_GetKnockback(int i)
 		monster[i]._moldx = monster[i]._mx;
 		monster[i]._moldy = monster[i]._my;
 		M_ClearSquares(i);
-		dMonster[monster[i]._mx][monster[i]._my] = i + 1;
+		grid[monster[i]._mx][monster[i]._my].dMonster = i + 1;
 	}
 }
 
@@ -1484,7 +1484,7 @@ void M_StartHit(int i, int pnum, int dam)
 			monster[i]._mfutx = monster[i]._moldx;
 			monster[i]._mfuty = monster[i]._moldy;
 			M_ClearSquares(i);
-			dMonster[monster[i]._mx][monster[i]._my] = i + 1;
+			grid[monster[i]._mx][monster[i]._my].dMonster = i + 1;
 		}
 	}
 }
@@ -1581,7 +1581,7 @@ void M2MStartHit(int mid, int i, int dam)
 			monster[mid]._mfutx = monster[mid]._moldx;
 			monster[mid]._mfuty = monster[mid]._moldy;
 			M_ClearSquares(mid);
-			dMonster[monster[mid]._mx][monster[mid]._my] = mid + 1;
+			grid[monster[mid]._mx][monster[mid]._my].dMonster = mid + 1;
 		}
 	}
 }
@@ -1686,7 +1686,7 @@ void M2MStartKill(int i, int mid)
 	monster[mid]._mfutx = monster[mid]._moldx;
 	monster[mid]._mfuty = monster[mid]._moldy;
 	M_ClearSquares(mid);
-	dMonster[monster[mid]._mx][monster[mid]._my] = mid + 1;
+	grid[monster[mid]._mx][monster[mid]._my].dMonster = mid + 1;
 	CheckQuestKill(mid, TRUE);
 	M_FallenFear(monster[mid]._mx, monster[mid]._my);
 	if (monster[mid].MType->mtype >= MT_NACID && monster[mid].MType->mtype <= MT_XACID)
@@ -1861,10 +1861,10 @@ BOOL M_DoWalk(int i)
 
 	rv = FALSE;
 	if (monster[i]._mVar8 == monster[i].MType->Anims[MA_WALK].Frames) {
-		dMonster[monster[i]._mx][monster[i]._my] = 0;
+		grid[monster[i]._mx][monster[i]._my].dMonster = 0;
 		monster[i]._mx += monster[i]._mVar1;
 		monster[i]._my += monster[i]._mVar2;
-		dMonster[monster[i]._mx][monster[i]._my] = i + 1;
+		grid[monster[i]._mx][monster[i]._my].dMonster = i + 1;
 		if (monster[i]._uniqtype != 0)
 			ChangeLightXY(monster[i].mlid, monster[i]._mx, monster[i]._my);
 		M_StartStand(i, monster[i]._mdir);
@@ -1893,7 +1893,7 @@ BOOL M_DoWalk2(int i)
 		app_fatal("M_DoWalk2: Monster %d \"%s\" MType NULL", i, monster[i].mName);
 
 	if (monster[i]._mVar8 == monster[i].MType->Anims[MA_WALK].Frames) {
-		dMonster[monster[i]._mVar1][monster[i]._mVar2] = 0;
+		grid[monster[i]._mVar1][monster[i]._mVar2].dMonster = 0;
 		if (monster[i]._uniqtype != 0)
 			ChangeLightXY(monster[i].mlid, monster[i]._mx, monster[i]._my);
 		M_StartStand(i, monster[i]._mdir);
@@ -1924,11 +1924,11 @@ BOOL M_DoWalk3(int i)
 		app_fatal("M_DoWalk3: Monster %d \"%s\" MType NULL", i, monster[i].mName);
 
 	if (monster[i]._mVar8 == monster[i].MType->Anims[MA_WALK].Frames) {
-		dMonster[monster[i]._mx][monster[i]._my] = 0;
+		grid[monster[i]._mx][monster[i]._my].dMonster = 0;
 		monster[i]._mx = monster[i]._mVar1;
 		monster[i]._my = monster[i]._mVar2;
-		dFlags[monster[i]._mVar4][monster[i]._mVar5] &= ~BFLAG_MONSTLR;
-		dMonster[monster[i]._mx][monster[i]._my] = i + 1;
+		grid[monster[i]._mVar4][monster[i]._mVar5].dFlags &= ~BFLAG_MONSTLR;
+		grid[monster[i]._mx][monster[i]._my].dMonster = i + 1;
 		if (monster[i]._uniqtype)
 			ChangeLightXY(monster[i].mlid, monster[i]._mx, monster[i]._my);
 		M_StartStand(i, monster[i]._mdir);
@@ -2579,7 +2579,7 @@ BOOL M_DoDeath(int i)
 		else
 			AddDead(monster[i]._mx, monster[i]._my, monster[i]._udeadval, (direction)monster[i]._mdir);
 
-		dMonster[monster[i]._mx][monster[i]._my] = 0;
+		grid[monster[i]._mx][monster[i]._my].dMonster = 0;
 		monster[i]._mDelFlag = TRUE;
 
 		M_UpdateLeader(i);
@@ -2640,7 +2640,7 @@ BOOL M_DoStone(int i)
 		app_fatal("M_DoStone: Invalid monster %d", i);
 
 	if (!monster[i]._mhitpoints) {
-		dMonster[monster[i]._mx][monster[i]._my] = 0;
+		grid[monster[i]._mx][monster[i]._my].dMonster = 0;
 		monster[i]._mDelFlag = TRUE;
 	}
 
@@ -3895,7 +3895,7 @@ void MAI_Golum(int i)
 			monster[monster[i]._menemy]._lasty = monster[i]._my;
 			for (j = 0; j < 5; j++) {
 				for (k = 0; k < 5; k++) {
-					_menemy = dMonster[monster[i]._mx + k - 2][monster[i]._my + j - 2];
+					_menemy = grid[monster[i]._mx + k - 2][monster[i]._my + j - 2].dMonster;
 					if (_menemy > 0)
 						monster[_menemy]._msquelch = UCHAR_MAX;
 				}

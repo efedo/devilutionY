@@ -174,13 +174,7 @@ void CreateTown(int entry)
 	}
 
 	T_Pass3();
-	memset(dLight, 0, sizeof(dLight));
-	memset(dFlags, 0, sizeof(dFlags));
-	memset(dPlayer, 0, sizeof(dPlayer));
-	memset(dMonster, 0, sizeof(dMonster));
-	memset(dObject, 0, sizeof(dObject));
-	memset(dItem, 0, sizeof(dItem));
-	memset(dSpecial, 0, sizeof(dSpecial));
+	grid.initTown();
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {

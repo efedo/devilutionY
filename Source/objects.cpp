@@ -1050,7 +1050,7 @@ void AddL3Door(int i, int x, int y, int ot)
 
 void AddSarc(int i)
 {
-	dObject[object[i]._ox][object[i]._oy - 1] = -(i + 1);
+	grid[object[i]._ox][object[i]._oy - 1].dObject = -(i + 1);
 	object[i]._oVar1 = random_(153, 10);
 	object[i]._oRndSeed = GetRndSeed();
 	if (object[i]._oVar1 >= 8)
@@ -1637,7 +1637,7 @@ void Obj_Trap(int i)
 
 	otrig = FALSE;
 	if (!object[i]._oVar4) {
-		oti = dObject[object[i]._oVar1][object[i]._oVar2] - 1;
+		oti = grid[object[i]._oVar1][object[i]._oVar2].dObject - 1;
 		switch (object[oti]._otype) {
 		case OBJ_L1LDOOR:
 		case OBJ_L1RDOOR:
@@ -2793,7 +2793,7 @@ void TryDisarm(int pnum, int i)
 					checkflag = TRUE;
 				if (oti == OBJ_TRAPR)
 					checkflag = TRUE;
-				if (checkflag && dObject[object[oi]._oVar1][object[oi]._oVar2] - 1 == i) {
+				if (checkflag && grid[object[oi]._oVar1][object[oi]._oVar2].dObject - 1 == i) {
 					object[oi]._oVar4 = 1;
 					object[i]._oTrapFlag = FALSE;
 				}

@@ -114,10 +114,10 @@ BOOL TFit_Obj5(int t)
 		if (grid[xp][yp].dTransVal == themes[t].ttval && !nSolidTable[grid[xp][yp].dPiece]) {
 			found = TRUE;
 			for (i = 0; found && i < 25; i++) {
-				if (nSolidTable[dPiece[xp + trm5x[i]][yp + trm5y[i]]]) {
+				if (nSolidTable[grid[xp + trm5x[i]][yp + trm5y[i]].dPiece]) {
 					found = FALSE;
 				}
-				if (dTransVal[xp + trm5x[i]][yp + trm5y[i]] != themes[t].ttval) {
+				if (grid[xp + trm5x[i]][yp + trm5y[i]].dTransVal != themes[t].ttval) {
 					found = FALSE;
 				}
 			}
@@ -186,11 +186,11 @@ BOOL CheckThemeObj3(int xp, int yp, int t, int f)
 	for (i = 0; i < 9; i++) {
 		if (xp + trm3x[i] < 0 || yp + trm3y[i] < 0)
 			return FALSE;
-		if (nSolidTable[dPiece[xp + trm3x[i]][yp + trm3y[i]]])
+		if (nSolidTable[grid[xp + trm3x[i]][yp + trm3y[i]].dPiece])
 			return FALSE;
-		if (dTransVal[xp + trm3x[i]][yp + trm3y[i]] != themes[t].ttval)
+		if (grid[xp + trm3x[i]][yp + trm3y[i]].dTransVal != themes[t].ttval)
 			return FALSE;
-		if (dObject[xp + trm3x[i]][yp + trm3y[i]])
+		if (grid[xp + trm3x[i]][yp + trm3y[i]].dObject)
 			return FALSE;
 		if (f != -1 && !random_(0, f))
 			return FALSE;
@@ -357,7 +357,7 @@ BOOL CheckThemeRoom(int tv)
 	int i, j, tarea;
 
 	for (i = 0; i < numtrigs; i++) {
-		if (dTransVal[trigs[i]._tx][trigs[i]._ty] == tv)
+		if (grid[trigs[i]._tx][trigs[i]._ty].dTransVal == tv)
 			return FALSE;
 	}
 

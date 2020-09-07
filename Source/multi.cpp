@@ -451,7 +451,7 @@ void multi_process_network_packets()
 						plr[dwID]._py = pkt->py;
 						plr[dwID]._pfutx = pkt->px;
 						plr[dwID]._pfuty = pkt->py;
-						dPlayer[plr[dwID]._px][plr[dwID]._py] = dwID + 1;
+						grid[plr[dwID]._px][plr[dwID]._py].dPlayer = dwID + 1;
 					}
 					dx = abs(plr[dwID]._pfutx - plr[dwID]._px);
 					dy = abs(plr[dwID]._pfuty - plr[dwID]._py);
@@ -931,7 +931,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 			NewPlrAnim(pnum, plr[pnum]._pDAnim[0], plr[pnum]._pDFrames, 1, plr[pnum]._pDWidth);
 			plr[pnum]._pAnimFrame = plr[pnum]._pAnimLen - 1;
 			plr[pnum]._pVar8 = 2 * plr[pnum]._pAnimLen;
-			dFlags[plr[pnum]._px][plr[pnum]._py] |= BFLAG_DEAD_PLAYER;
+			grid[plr[pnum]._px][plr[pnum]._py].dFlags |= BFLAG_DEAD_PLAYER;
 		}
 	}
 }

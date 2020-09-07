@@ -1478,7 +1478,7 @@ void InvGetItem(int pnum, int ii)
 		dropGoldValue = 0;
 	}
 
-	if (dItem[item[ii]._ix][item[ii]._iy] != 0) {
+	if (grid[item[ii]._ix][item[ii]._iy].dItem != 0) {
 		if (myplr == pnum && pcurs >= CURSOR_FIRSTITEM)
 			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, plr[myplr]._px, plr[myplr]._py);
 		item[ii]._iCreateInfo &= ~0x8000;
@@ -1486,7 +1486,7 @@ void InvGetItem(int pnum, int ii)
 		CheckQuestItem(pnum);
 		CheckBookLevel(pnum);
 		CheckItemStats(pnum);
-		dItem[item[ii]._ix][item[ii]._iy] = 0;
+		grid[item[ii]._ix][item[ii]._iy].dItem = 0;
 		i = 0;
 		while (i < numitems) {
 			if (itemactive[i] == ii) {
@@ -1517,7 +1517,7 @@ void AutoGetItem(int pnum, int ii)
 	}
 
 	if (ii != MAXITEMS) {
-		if (dItem[item[ii]._ix][item[ii]._iy] == 0)
+		if (grid[item[ii]._ix][item[ii]._iy].dItem == 0)
 			return;
 	}
 
@@ -1609,7 +1609,7 @@ void AutoGetItem(int pnum, int ii)
 		}
 	}
 	if (done) {
-		dItem[item[ii]._ix][item[ii]._iy] = 0;
+		grid[item[ii]._ix][item[ii]._iy].dItem = 0;
 		i = 0;
 		while (i < numitems) {
 			if (itemactive[i] == ii) {
@@ -1678,7 +1678,7 @@ void SyncGetItem(int x, int y, int idx, WORD ci, int iseed)
 	}
 
 	if (ii != -1) {
-		dItem[item[ii]._ix][item[ii]._iy] = 0;
+		grid[item[ii]._ix][item[ii]._iy].dItem = 0;
 		i = 0;
 		while (i < numitems) {
 			if (itemactive[i] == ii) {

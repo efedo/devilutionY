@@ -1068,7 +1068,7 @@ void StartStand(int pnum, int dir)
 		plr[pnum]._pmode = PM_STAND;
 		FixPlayerLocation(pnum, dir);
 		FixPlrWalkTags(pnum);
-		dPlayer[plr[pnum]._px][plr[pnum]._py] = pnum + 1;
+		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 		SetPlayerOld(pnum);
 	} else {
 		SyncPlrKill(pnum, -1);
@@ -1269,12 +1269,12 @@ void StartWalk2(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int 
 		ScrollInfo._sdy = plr[pnum]._py - ViewY;
 	}
 
-	dPlayer[plr[pnum]._px][plr[pnum]._py] = -1 - pnum;
+	grid[plr[pnum]._px][plr[pnum]._py].dPlayer = -1 - pnum;
 	plr[pnum]._pVar1 = plr[pnum]._px;
 	plr[pnum]._pVar2 = plr[pnum]._py;
 	plr[pnum]._px = px;
 	plr[pnum]._py = py;
-	dPlayer[plr[pnum]._px][plr[pnum]._py] = pnum + 1;
+	grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 	plr[pnum]._pxoff = xoff;
 	plr[pnum]._pyoff = yoff;
 
@@ -1347,7 +1347,7 @@ void StartWalk3(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int 
 		ScrollInfo._sdy = plr[pnum]._py - ViewY;
 	}
 
-	dPlayer[plr[pnum]._px][plr[pnum]._py] = -1 - pnum;
+	grid[plr[pnum]._px][plr[pnum]._py].dPlayer = -1 - pnum;
 	grid[px][py].dPlayer = -1 - pnum;
 	plr[pnum]._pVar4 = x;
 	plr[pnum]._pVar5 = y;
@@ -1590,7 +1590,7 @@ void StartPlrHit(int pnum, int dam, BOOL forcehit)
 		FixPlayerLocation(pnum, pd);
 		plr[pnum]._pVar8 = 1;
 		FixPlrWalkTags(pnum);
-		dPlayer[plr[pnum]._px][plr[pnum]._py] = pnum + 1;
+		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 		SetPlayerOld(pnum);
 	}
 }
@@ -1949,7 +1949,7 @@ void InitLevelChange(int pnum)
 	RemovePlrFromMap(pnum);
 	SetPlayerOld(pnum);
 	if (pnum == myplr) {
-		dPlayer[plr[myplr]._px][plr[myplr]._py] = myplr + 1;
+		grid[plr[myplr]._px][plr[myplr]._py].dPlayer = myplr + 1;
 	} else {
 		plr[pnum]._pLvlVisited[plr[pnum].plrlevel] = TRUE;
 	}
@@ -2076,10 +2076,10 @@ BOOL PM_DoWalk(int pnum)
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
-		dPlayer[plr[pnum]._px][plr[pnum]._py] = 0;
+		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = 0;
 		plr[pnum]._px += plr[pnum]._pVar1;
 		plr[pnum]._py += plr[pnum]._pVar2;
-		dPlayer[plr[pnum]._px][plr[pnum]._py] = pnum + 1;
+		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 
 		if (leveltype != DTYPE_TOWN) {
 			ChangeLightXY(plr[pnum]._plid, plr[pnum]._px, plr[pnum]._py);
@@ -2132,7 +2132,7 @@ BOOL PM_DoWalk2(int pnum)
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
-		dPlayer[plr[pnum]._pVar1][plr[pnum]._pVar2] = 0;
+		grid[plr[pnum]._pVar1][plr[pnum]._pVar2].dPlayer = 0;
 
 		if (leveltype != DTYPE_TOWN) {
 			ChangeLightXY(plr[pnum]._plid, plr[pnum]._px, plr[pnum]._py);
@@ -2184,11 +2184,11 @@ BOOL PM_DoWalk3(int pnum)
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
-		dPlayer[plr[pnum]._px][plr[pnum]._py] = 0;
-		dFlags[plr[pnum]._pVar4][plr[pnum]._pVar5] &= ~BFLAG_PLAYERLR;
+		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = 0;
+		grid[plr[pnum]._pVar4][plr[pnum]._pVar5].dFlags &= ~BFLAG_PLAYERLR;
 		plr[pnum]._px = plr[pnum]._pVar1;
 		plr[pnum]._py = plr[pnum]._pVar2;
-		dPlayer[plr[pnum]._px][plr[pnum]._py] = pnum + 1;
+		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 
 		if (leveltype != DTYPE_TOWN) {
 			ChangeLightXY(plr[pnum]._plid, plr[pnum]._px, plr[pnum]._py);
@@ -2938,7 +2938,7 @@ BOOL PM_DoDeath(int pnum)
 
 		plr[pnum]._pAnimDelay = 10000;
 		plr[pnum]._pAnimFrame = plr[pnum]._pAnimLen;
-		dFlags[plr[pnum]._px][plr[pnum]._py] |= BFLAG_DEAD_PLAYER;
+		grid[plr[pnum]._px][plr[pnum]._py].dFlags |= BFLAG_DEAD_PLAYER;
 	}
 
 	if (plr[pnum]._pVar8 < 100) {
@@ -3125,7 +3125,7 @@ void CheckNewPath(int pnum)
 			i = plr[pnum].destParam1;
 			x = abs(plr[pnum]._px - object[i]._ox);
 			y = abs(plr[pnum]._py - object[i]._oy);
-			if (y > 1 && dObject[object[i]._ox][object[i]._oy - 1] == -1 - i) {
+			if (y > 1 && grid[object[i]._ox][object[i]._oy - 1].dObject == -1 - i) {
 				y = abs(plr[pnum]._py - object[i]._oy + 1);
 			}
 			if (x <= 1 && y <= 1) {
@@ -3141,7 +3141,7 @@ void CheckNewPath(int pnum)
 			i = plr[pnum].destParam1;
 			x = abs(plr[pnum]._px - object[i]._ox);
 			y = abs(plr[pnum]._py - object[i]._oy);
-			if (y > 1 && dObject[object[i]._ox][object[i]._oy - 1] == -1 - i) {
+			if (y > 1 && grid[object[i]._ox][object[i]._oy - 1].dObject == -1 - i) {
 				y = abs(plr[pnum]._py - object[i]._oy + 1);
 			}
 			if (x <= 1 && y <= 1) {
@@ -3221,7 +3221,7 @@ void CheckNewPath(int pnum)
 			i = plr[pnum].destParam1;
 			x = abs(plr[pnum]._px - object[i]._ox);
 			y = abs(plr[pnum]._py - object[i]._oy);
-			if (y > 1 && dObject[object[i]._ox][object[i]._oy - 1] == -1 - i) {
+			if (y > 1 && grid[object[i]._ox][object[i]._oy - 1].dObject == -1 - i) {
 				y = abs(plr[pnum]._py - object[i]._oy + 1);
 			}
 			if (x <= 1 && y <= 1) {
