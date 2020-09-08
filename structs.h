@@ -764,7 +764,7 @@ typedef struct TCmdGolem {
 	BYTE _mdir;
 	char _menemy;
 	int _mhitpoints;
-	BYTE _currlevel;
+	BYTE currlevel;
 } TCmdGolem;
 
 typedef struct TCmdQuest {

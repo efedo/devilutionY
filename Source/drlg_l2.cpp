@@ -1386,7 +1386,7 @@ static BOOL CreateDungeon()
 	ForceH = 0;
 	ForceHW = FALSE;
 
-	switch (currlevel) {
+	switch (level.currlevel) {
 	case 5:
 		if (quests[Q_BLOOD]._qactive) {
 			ForceHW = TRUE;
@@ -1753,7 +1753,7 @@ static void DRLG_L2(int entry)
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 1, 0);
 			if (doneflag) {
 				doneflag = DRLG_L2PlaceMiniSet(DSTAIRS, 1, 1, -1, -1, 0, 1);
-				if (doneflag && currlevel == 5) {
+				if (doneflag && level.currlevel == 5) {
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 0, 6);
 				}
 			}
@@ -1762,7 +1762,7 @@ static void DRLG_L2(int entry)
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 0, 0);
 			if (doneflag) {
 				doneflag = DRLG_L2PlaceMiniSet(DSTAIRS, 1, 1, -1, -1, 1, 1);
-				if (doneflag && currlevel == 5) {
+				if (doneflag && level.currlevel == 5) {
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 0, 6);
 				}
 			}
@@ -1771,7 +1771,7 @@ static void DRLG_L2(int entry)
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 0, 0);
 			if (doneflag) {
 				doneflag = DRLG_L2PlaceMiniSet(DSTAIRS, 1, 1, -1, -1, 0, 1);
-				if (doneflag && currlevel == 5) {
+				if (doneflag && level.currlevel == 5) {
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 1, 6);
 				}
 			}
@@ -2086,20 +2086,20 @@ void LoadPreL2Dungeon(char *sFileName, int vx, int vy)
 void CreateL2Dungeon(DWORD rseed, int entry)
 {
 	if (gbMaxPlayers == 1) {
-		if (currlevel == 7 && !quests[Q_BLIND]._qactive) {
-			currlevel = 6;
+		if (level.currlevel == 7 && !quests[Q_BLIND]._qactive) {
+			level.currlevel = 6;
 			CreateL2Dungeon(glSeedTbl[6], 4);
-			currlevel = 7;
+			level.currlevel = 7;
 		}
-		if (currlevel == 8) {
+		if (level.currlevel == 8) {
 			if (!quests[Q_BLIND]._qactive) {
-				currlevel = 6;
+				level.currlevel = 6;
 				CreateL2Dungeon(glSeedTbl[6], 4);
-				currlevel = 8;
+				level.currlevel = 8;
 			} else {
-				currlevel = 7;
+				level.currlevel = 7;
 				CreateL2Dungeon(glSeedTbl[7], 4);
-				currlevel = 8;
+				level.currlevel = 8;
 			}
 		}
 	}

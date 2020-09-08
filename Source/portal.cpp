@@ -15,7 +15,6 @@ int WarpDropY[MAXPORTAL] = { 40, 40, 40, 40 };
 void InitPortals()
 {
 	int i;
-
 	for (i = 0; i < MAXPORTAL; i++) {
 		if (delta_portal_inited(i))
 			portal[i].open = FALSE;
@@ -43,7 +42,7 @@ void AddWarpMissile(int i, int x, int y)
 	if (mi != -1) {
 		SetMissDir(mi, 1);
 
-		if (currlevel != 0)
+		if (level.currlevel != 0)
 			missile[mi]._mlid = AddLight(missile[mi]._mix, missile[mi]._miy, 15);
 
 		missiledata[MIS_TOWN].mlSFX = LS_SENTINEL;
@@ -57,12 +56,12 @@ void SyncPortals()
 	for (i = 0; i < MAXPORTAL; i++) {
 		if (!portal[i].open)
 			continue;
-		if (currlevel == 0)
+		if (level.currlevel == 0)
 			AddWarpMissile(i, WarpDropX[i], WarpDropY[i]);
 		else {
-			int lvl = currlevel;
-			if (setlevel)
-				lvl = setlvlnum;
+			int lvl = level.currlevel;
+			if (level.setlevel)
+				lvl = level.setlvlnum;
 			if (portal[i].level == lvl)
 				AddWarpMissile(i, portal[i].x, portal[i].y);
 		}
@@ -94,10 +93,10 @@ void DeactivatePortal(int i)
 
 BOOL PortalOnLevel(int i)
 {
-	if (portal[i].level == currlevel)
+	if (portal[i].level == level.currlevel)
 		return TRUE;
 	else
-		return currlevel == 0;
+		return level.currlevel == 0;
 }
 
 void RemovePortalMissile(int id)
@@ -126,23 +125,23 @@ void SetCurrentPortal(int p)
 
 void GetPortalLevel()
 {
-	if (currlevel) {
-		setlevel = FALSE;
-		currlevel = 0;
+	if (level.currlevel) {
+		level.setlevel = FALSE;
+		level.currlevel = 0;
 		plr[myplr].plrlevel = 0;
-		leveltype = DTYPE_TOWN;
+		level.leveltype = DTYPE_TOWN;
 	} else {
 		if (portal[portalindex].setlvl) {
-			setlevel = TRUE;
-			setlvlnum = portal[portalindex].level;
-			currlevel = portal[portalindex].level;
-			plr[myplr].plrlevel = setlvlnum;
-			leveltype = portal[portalindex].ltype;
+			level.setlevel = TRUE;
+			level.setlvlnum = portal[portalindex].level;
+			level.currlevel = portal[portalindex].level;
+			plr[myplr].plrlevel = level.setlvlnum;
+			level.leveltype = portal[portalindex].ltype;
 		} else {
-			setlevel = FALSE;
-			currlevel = portal[portalindex].level;
-			plr[myplr].plrlevel = currlevel;
-			leveltype = portal[portalindex].ltype;
+			level.setlevel = FALSE;
+			level.currlevel = portal[portalindex].level;
+			plr[myplr].plrlevel = level.currlevel;
+			level.leveltype = portal[portalindex].ltype;
 		}
 		if (portalindex == myplr) {
 			NetSendCmd(TRUE, CMD_DEACTIVATEPORTAL);
@@ -153,7 +152,7 @@ void GetPortalLevel()
 
 void GetPortalLvlPos()
 {
-	if (currlevel == 0) {
+	if (level.currlevel == 0) {
 		ViewX = WarpDropX[portalindex] + 1;
 		ViewY = WarpDropY[portalindex] + 1;
 	} else {

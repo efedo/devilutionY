@@ -15,9 +15,9 @@ extern "C" {
 extern int missileactive[MAXMISSILES];
 extern int missileavail[MAXMISSILES];
 extern MissileStruct missile[MAXMISSILES];
+extern ChainStruct chain[MAXMISSILES];
 extern int nummissiles;
 extern BOOL ManashieldFlag;
-extern ChainStruct chain[MAXMISSILES];
 extern BOOL MissilePreFlag;
 extern int numchains;
 

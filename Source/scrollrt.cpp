@@ -354,7 +354,7 @@ static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, i
 {
 	int l, frames;
 
-	if (grid[x][y].dFlags & BFLAG_LIT || plr[myplr]._pInfraFlag || !setlevel && !currlevel) {
+	if (grid[x][y].dFlags & BFLAG_LIT || plr[myplr]._pInfraFlag || !level.setlevel && !level.currlevel) {
 		if (!pCelBuff) {
 			// app_fatal("Drawing player %d \"%s\": NULL Cel Buffer", pnum, plr[pnum]._pName);
 			return;
@@ -433,7 +433,7 @@ void DrawDeadPlayer(int x, int y, int sx, int sy)
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i];
-		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)currlevel && p->_px == x && p->_py == y) {
+		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && p->_px == x && p->_py == y) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
 				// app_fatal("Drawing dead player %d \"%s\": NULL Cel Buffer", i, p->_pName);
@@ -527,8 +527,8 @@ static void drawCell(int x, int y, int sx, int sy)
 	dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
 	pMap = &grid[x][y].dpiece_defs_map_2;
 	level_piece_id = grid[x][y].dPiece;
-	cel_transparency_active = (BYTE)(nTransTable[level_piece_id] & TransList[grid[x][y].dTransVal]);
-	cel_foliage_active = !nSolidTable[level_piece_id];
+	cel_transparency_active = (BYTE)(pieces[level_piece_id].nTransTable & TransList[grid[x][y].dTransVal]);
+	cel_foliage_active = !pieces[level_piece_id].nSolidTable;
 	for (int i = 0; i<MicroTileLen>> 1; i++) {
 		level_cel_block = pMap->mt[2 * i];
 		if (level_cel_block != 0) {
@@ -614,7 +614,7 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 	mi = grid[x][y + oy].dMonster;
 	mi = mi > 0 ? mi - 1 : -(mi + 1);
 
-	if (leveltype == DTYPE_TOWN) {
+	if (level.leveltype == DTYPE_TOWN) {
 		px = sx - towner[mi]._tAnimWidth2;
 		if (mi == pcursmonst) {
 			CelBlitOutline(166, px, sy, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
@@ -744,7 +744,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	DrawObject(sx, sy, dx, dy, 0);
 	DrawItem(sx, sy, dx, dy, 0);
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		bArch = grid[sx][sy].dSpecial;
 		if (bArch != 0) {
 			cel_transparency_active = TransList[bMap];
@@ -781,7 +781,7 @@ static void scrollrt_drawFloor(int x, int y, int sx, int sy, int rows, int colum
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY) {
 				level_piece_id = grid[x][y].dPiece;
 				if (level_piece_id != 0) {
-					if (!nSolidTable[level_piece_id])
+					if (!pieces[level_piece_id].nSolidTable)
 						drawFloor(x, y, sx, sy);
 				} else {
 					world_draw_black_tile(sx, sy);
@@ -810,8 +810,8 @@ static void scrollrt_drawFloor(int x, int y, int sx, int sy, int rows, int colum
 	}
 }
 
-#define IsWall(x, y) (grid[x][y].dPiece == 0 || nSolidTable[grid[x][y].dPiece] || grid[x][y].dSpecial != 0)
-#define IsWalkable(x, y) (grid[x][y].dPiece != 0 && !nSolidTable[grid[x][y].dPiece])
+#define IsWall(x, y) (grid[x][y].dPiece == 0 || pieces[grid[x][y].dPiece].nSolidTable || grid[x][y].dSpecial != 0)
+#define IsWalkable(x, y) (grid[x][y].dPiece != 0 && !pieces[grid[x][y].dPiece].nSolidTable)
 
 /**
  * @brief Render a row of tile

@@ -19,6 +19,8 @@ char BLoad();
 int WLoad();
 int ILoad();
 BOOL OLoad();
+
+
 void LoadItems(const int n, ItemStruct *pItem);
 void LoadItemData(ItemStruct *pItem);
 void SaveItem(ItemStruct *pItem);
@@ -34,6 +36,8 @@ void LoadQuest(int i);
 void LoadLighting(int i);
 void LoadVision(int i);
 void LoadPortal(int i);
+
+
 void SaveGame();
 void BSave(char v);
 void WSave(int v);

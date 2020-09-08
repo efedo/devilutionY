@@ -13,7 +13,6 @@ extern int storenumh;
 extern int stextlhold;
 extern ItemStruct boyitem;
 extern int stextshold;
-extern ItemStruct premiumitem[SMITH_PREMIUM_ITEMS];
 extern BYTE *pSTextBoxCels;
 extern int premiumlevel;
 extern int talker;
@@ -22,10 +21,8 @@ extern char stextsize;
 extern int stextsmax;
 extern ItemStruct storehold[48];
 extern int gossipstart;
-extern ItemStruct witchitem[20];
 extern BOOL stextscrl;
 extern int numpremium;
-extern ItemStruct healitem[20];
 extern ItemStruct golditem;
 extern char storehidx[48];
 extern BYTE *pSTextSlidCels;
@@ -37,10 +34,19 @@ extern BYTE *pSPentSpn2Cels;
 extern BYTE PentSpn2Frame;
 extern int stextsval;
 extern int boylevel;
-extern ItemStruct smithitem[SMITH_ITEMS];
 extern int stextdown;
 extern char stextscrlubtn;
 extern char stextflag;
+
+// Smith
+extern ItemStruct smithitem[SMITH_ITEMS];
+extern ItemStruct premiumitem[SMITH_PREMIUM_ITEMS];
+
+// Healer
+extern ItemStruct healitem[20];
+
+// With
+extern ItemStruct witchitem[20];
 
 void InitStores();
 void PentSpn2Spin();

@@ -398,10 +398,10 @@ void GetTempLevelNames(char *szTemp)
 {
 	// BUGFIX: function call has no purpose
 	pfile_get_save_num_from_name(plr[myplr]._pName);
-	if (setlevel)
-		sprintf(szTemp, "temps%02d", setlvlnum);
+	if (level.setlevel)
+		sprintf(szTemp, "temps%02d", level.setlvlnum);
 	else
-		sprintf(szTemp, "templ%02d", currlevel);
+		sprintf(szTemp, "templ%02d", level.currlevel);
 }
 
 void GetPermLevelNames(char *szPerm)
@@ -417,10 +417,10 @@ void GetPermLevelNames(char *szPerm)
 	has_file = mpqapi_has_file(szPerm);
 	pfile_flush(TRUE, save_num);
 	if (!has_file) {
-		if (setlevel)
-			sprintf(szPerm, "perms%02d", setlvlnum);
+		if (level.setlevel)
+			sprintf(szPerm, "perms%02d", level.setlvlnum);
 		else
-			sprintf(szPerm, "perml%02d", currlevel);
+			sprintf(szPerm, "perml%02d", level.currlevel);
 	}
 }
 

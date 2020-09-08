@@ -146,7 +146,7 @@ static void PlacePlayer(int pnum)
 	DWORD i;
 	BOOL done;
 
-	if (plr[pnum].plrlevel == currlevel) {
+	if (plr[pnum].plrlevel == level.currlevel) {
 		for (i = 0; i < 8; i++) {
 			nx = plr[pnum]._px + plrxoff2[i];
 			ny = plr[pnum]._py + plryoff2[i];
@@ -227,7 +227,7 @@ void DoResurrect(int pnum, int rid)
 
 		CalcPlrInv(rid, TRUE);
 
-		if (plr[rid].plrlevel == currlevel) {
+		if (plr[rid].plrlevel == level.currlevel) {
 			StartStand(rid, plr[rid]._pdir);
 		} else {
 			plr[rid]._pmode = PM_STAND;

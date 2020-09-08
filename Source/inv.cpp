@@ -1702,7 +1702,7 @@ BOOL CanPut(int x, int y)
 
 	if (grid[x][y].dItem)
 		return FALSE;
-	if (nSolidTable[grid[x][y].dPiece])
+	if (pieces[grid[x][y].dPiece].nSolidTable)
 		return FALSE;
 
 	if (grid[x][y].dObject != 0) {
@@ -1725,9 +1725,9 @@ BOOL CanPut(int x, int y)
 			return FALSE;
 	}
 
-	if (currlevel == 0 && grid[x][y].dMonster != 0)
+	if (level.currlevel == 0 && grid[x][y].dMonster != 0)
 		return FALSE;
-	if (currlevel == 0 && grid[x + 1][y + 1].dMonster != 0)
+	if (level.currlevel == 0 && grid[x + 1][y + 1].dMonster != 0)
 		return FALSE;
 
 	return TRUE;
@@ -2036,7 +2036,7 @@ BOOL UseScroll()
 
 	if (pcurs != CURSOR_HAND)
 		return FALSE;
-	if (leveltype == DTYPE_TOWN && !spelldata[plr[myplr]._pRSpell].sTownSpell)
+	if (level.leveltype == DTYPE_TOWN && !spelldata[plr[myplr]._pRSpell].sTownSpell)
 		return FALSE;
 
 	for (i = 0; i < plr[myplr]._pNumInv; i++) {
@@ -2176,11 +2176,11 @@ BOOL UseInvItem(int pnum, int cii)
 		dropGoldValue = 0;
 	}
 
-	if (Item->_iMiscId == IMISC_SCROLL && currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
+	if (Item->_iMiscId == IMISC_SCROLL && level.currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
 		return TRUE;
 	}
 
-	if (Item->_iMiscId == IMISC_SCROLLT && currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
+	if (Item->_iMiscId == IMISC_SCROLLT && level.currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
 		return TRUE;
 	}
 

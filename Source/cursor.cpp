@@ -12,7 +12,7 @@ int cursH;
 int pcursmonst = -1;
 int icursW28;
 int icursH28;
-BYTE *pCursCels;
+BYTE *pCursCels; // Cursor cel image
 
 /** inv_item value */
 char pcursinvitem;
@@ -169,7 +169,7 @@ void CheckRportal()
 				trigflag = TRUE;
 				ClearPanel();
 				strcpy(infostr, "Portal to");
-				if (!setlevel)
+				if (!level.setlevel)
 					strcpy(tempstr, "The Unholy Altar");
 				else
 					strcpy(tempstr, "level 15");
@@ -311,7 +311,7 @@ void CheckCursMove()
 		return;
 	}
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		if (pcurstemp != -1) {
 			if (!flipflag && mx + 2 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 2][my + 1].dMonster != 0 && grid[mx + 2][my + 1].dFlags & BFLAG_LIT) {
 				mi = grid[mx + 2][my + 1].dMonster > 0 ? grid[mx + 2][my + 1].dMonster - 1 : -(grid[mx + 2][my + 1].dMonster + 1);

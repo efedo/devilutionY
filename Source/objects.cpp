@@ -87,8 +87,8 @@ void InitObjectGFX()
 
 	for (i = 0; AllObjects[i].oload != -1; i++) {
 		if (AllObjects[i].oload == 1
-		    && (int)currlevel >= AllObjects[i].ominlvl
-		    && (int)currlevel <= AllObjects[i].omaxlvl) {
+		    && (int)level.currlevel >= AllObjects[i].ominlvl
+		    && (int)level.currlevel <= AllObjects[i].omaxlvl) {
 			fileload[AllObjects[i].ofindex] = TRUE;
 		}
 		if (AllObjects[i].otheme != THEME_NONE) {
@@ -134,9 +134,9 @@ BOOL RndLocOk(int xp, int yp)
 		return FALSE;
 	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
 		return FALSE;
-	if (nSolidTable[grid[xp][yp].dPiece])
+	if (pieces[grid[xp][yp].dPiece].nSolidTable)
 		return FALSE;
-	if (leveltype != DTYPE_CATHEDRAL || grid[xp][yp].dPiece <= 126 || grid[xp][yp].dPiece >= 144)
+	if (level.leveltype != DTYPE_CATHEDRAL || grid[xp][yp].dPiece <= 126 || grid[xp][yp].dPiece >= 144)
 		return TRUE;
 	return FALSE;
 }
@@ -458,7 +458,7 @@ BOOL TorchLocOK(int xp, int yp)
 	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
 		return FALSE;
 
-	if (nTrapTable[grid[xp][yp].dPiece] != FALSE)
+	if (pieces[grid[xp][yp].dPiece].nTrapTable != FALSE)
 		return TRUE;
 	else
 		return FALSE;
@@ -471,13 +471,13 @@ void AddObjTraps()
 	int xp, yp;
 	int rndv;
 
-	if (currlevel == 1)
+	if (level.currlevel == 1)
 		rndv = 10;
-	if (currlevel >= 2)
+	if (level.currlevel >= 2)
 		rndv = 15;
-	if (currlevel >= 5)
+	if (level.currlevel >= 5)
 		rndv = 20;
-	if (currlevel >= 7)
+	if (level.currlevel >= 7)
 		rndv = 25;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
@@ -490,7 +490,7 @@ void AddObjTraps()
 
 			if (random_(144, 2) == 0) {
 				xp = i - 1;
-				while (!nSolidTable[grid[xp][j].dPiece])
+				while (!pieces[grid[xp][j].dPiece].nSolidTable)
 					xp--;
 
 				if (!TorchLocOK(xp, j) || i - xp <= 1)
@@ -503,7 +503,7 @@ void AddObjTraps()
 				object[oi]._oTrapFlag = TRUE;
 			} else {
 				yp = j - 1;
-				while (!nSolidTable[grid[i][yp].dPiece])
+				while (!pieces[grid[i][yp].dPiece].nSolidTable)
 					yp--;
 
 				if (!TorchLocOK(i, yp) || j - yp <= 1)
@@ -531,7 +531,7 @@ void AddChestTraps()
 				if (object[oi]._otype >= OBJ_CHEST1 && object[oi]._otype <= OBJ_CHEST3 && !object[oi]._oTrapFlag && random_(0, 100) < 10) {
 					object[oi]._otype += OBJ_BOOKCASER;
 					object[oi]._oTrapFlag = TRUE;
-					if (leveltype == DTYPE_CATACOMBS) {
+					if (level.leveltype == DTYPE_CATACOMBS) {
 						object[oi]._oVar4 = random_(0, 2);
 					} else {
 						object[oi]._oVar4 = random_(0, 3);
@@ -749,22 +749,22 @@ void InitObjects()
 	BYTE *mem;
 
 	ClrAllObjects();
-	if (currlevel == 16) {
+	if (level.currlevel == 16) {
 		AddDiabObjs();
 	} else {
 		InitObjFlag = TRUE;
 		GetRndSeed();
-		if (currlevel == 9 && gbMaxPlayers == 1)
+		if (level.currlevel == 9 && gbMaxPlayers == 1)
 			AddSlainHero();
-		if (currlevel == quests[Q_MUSHROOM]._qlevel && quests[Q_MUSHROOM]._qactive == QUEST_INIT)
+		if (level.currlevel == quests[Q_MUSHROOM]._qlevel && quests[Q_MUSHROOM]._qactive == QUEST_INIT)
 			AddMushPatch();
-		if (currlevel == 4)
+		if (level.currlevel == 4)
 			AddStoryBooks();
-		if (currlevel == 8)
+		if (level.currlevel == 8)
 			AddStoryBooks();
-		if (currlevel == 12)
+		if (level.currlevel == 12)
 			AddStoryBooks();
-		if (leveltype == DTYPE_CATHEDRAL) {
+		if (level.leveltype == DTYPE_CATHEDRAL) {
 			if (QuestStatus(Q_BUTCHER))
 				AddTortures();
 			if (QuestStatus(Q_PWATER))
@@ -775,7 +775,7 @@ void InitObjects()
 			AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 			InitRndBarrels();
 		}
-		if (leveltype == DTYPE_CATACOMBS) {
+		if (level.leveltype == DTYPE_CATACOMBS) {
 			if (QuestStatus(Q_ROCK))
 				InitRndLocObj5x5(1, 1, OBJ_STAND);
 			if (QuestStatus(Q_SCHAMB))
@@ -810,11 +810,11 @@ void InitObjects()
 			}
 			InitRndBarrels();
 		}
-		if (leveltype == DTYPE_CAVES) {
+		if (level.leveltype == DTYPE_CAVES) {
 			AddL3Objs(0, 0, MAXDUNX, MAXDUNY);
 			InitRndBarrels();
 		}
-		if (leveltype == DTYPE_HELL) {
+		if (level.leveltype == DTYPE_HELL) {
 			if (QuestStatus(Q_WARLORD)) {
 				if (plr[myplr]._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLOODWAR;
@@ -837,9 +837,9 @@ void InitObjects()
 		InitRndLocObj(5, 10, OBJ_CHEST1);
 		InitRndLocObj(3, 6, OBJ_CHEST2);
 		InitRndLocObj(1, 5, OBJ_CHEST3);
-		if (leveltype != DTYPE_HELL)
+		if (level.leveltype != DTYPE_HELL)
 			AddObjTraps();
-		if (leveltype > DTYPE_CATHEDRAL)
+		if (level.leveltype > DTYPE_CATHEDRAL)
 			AddChestTraps();
 		InitObjFlag = FALSE;
 	}
@@ -861,7 +861,7 @@ void SetMapObjects(BYTE *pMap, int startx, int starty)
 	InitObjFlag = TRUE;
 
 	for (i = 0; AllObjects[i].oload != -1; i++) {
-		if (AllObjects[i].oload == 1 && leveltype == AllObjects[i].olvltype)
+		if (AllObjects[i].oload == 1 && level.leveltype == AllObjects[i].olvltype)
 			fileload[AllObjects[i].ofindex] = TRUE;
 	}
 
@@ -1002,7 +1002,7 @@ void AddChest(int i, int t)
 	switch (t) {
 	case OBJ_CHEST1:
 	case OBJ_TCHEST1:
-		if (setlevel) {
+		if (level.setlevel) {
 			object[i]._oVar1 = 1;
 			break;
 		}
@@ -1010,7 +1010,7 @@ void AddChest(int i, int t)
 		break;
 	case OBJ_TCHEST2:
 	case OBJ_CHEST2:
-		if (setlevel) {
+		if (level.setlevel) {
 			object[i]._oVar1 = 2;
 			break;
 		}
@@ -1018,7 +1018,7 @@ void AddChest(int i, int t)
 		break;
 	case OBJ_TCHEST3:
 	case OBJ_CHEST3:
-		if (setlevel) {
+		if (level.setlevel) {
 			object[i]._oVar1 = 3;
 			break;
 		}
@@ -1075,7 +1075,7 @@ void AddTrap(int i, int ot)
 {
 	int mt;
 
-	mt = currlevel / 3 + 1;
+	mt = level.currlevel / 3 + 1;
 	mt = random_(148, mt);
 	if (mt == 0)
 		object[i]._oVar3 = MIS_ARROW;
@@ -1114,7 +1114,7 @@ void AddShrine(int i)
 
 	object[i]._oPreFlag = TRUE;
 	for (j = 0; j < NUM_SHRINETYPE; j++) {
-		if (currlevel < shrinemin[j] || currlevel > shrinemax[j]) {
+		if (level.currlevel < shrinemin[j] || level.currlevel > shrinemax[j]) {
 			slist[j] = 0;
 		} else {
 			slist[j] = 1;
@@ -1211,7 +1211,7 @@ void AddDecap(int i)
 
 void AddVilebook(int i)
 {
-	if (setlevel && setlvlnum == SL_VILEBETRAYER) {
+	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
 		object[i]._oAnimFrame = 4;
 	}
 }
@@ -1245,13 +1245,13 @@ void AddStoryBook(int i)
 	bookframe = random_(0, 3);
 
 	object[i]._oVar1 = bookframe;
-	if (currlevel == 4)
+	if (level.currlevel == 4)
 		object[i]._oVar2 = StoryText[bookframe][0];
-	if (currlevel == 8)
+	if (level.currlevel == 8)
 		object[i]._oVar2 = StoryText[bookframe][1];
-	if (currlevel == 12)
+	if (level.currlevel == 12)
 		object[i]._oVar2 = StoryText[bookframe][2];
-	object[i]._oVar3 = (currlevel >> 2) + 3 * bookframe - 1;
+	object[i]._oVar3 = (level.currlevel >> 2) + 3 * bookframe - 1;
 	object[i]._oAnimFrame = 5 - 2 * bookframe;
 	object[i]._oVar4 = object[i]._oAnimFrame + 1;
 }
@@ -1475,7 +1475,7 @@ void Obj_Light(int i, int lr)
 		if (!lightflag) {
 			for (p = 0; p < MAX_PLRS && !turnon; p++) {
 				if (plr[p].plractive) {
-					if (currlevel == plr[p].plrlevel) {
+					if (level.currlevel == plr[p].plrlevel) {
 						dx = abs(plr[p]._px - ox);
 						dy = abs(plr[p]._py - oy);
 						if (dx < tr && dy < tr)
@@ -1692,13 +1692,13 @@ void Obj_BCrossDamage(int i)
 
 	fire_resist = plr[myplr]._pFireResist;
 	if (fire_resist > 0)
-		damage[leveltype - 1] -= fire_resist * damage[leveltype - 1] / 100;
+		damage[level.leveltype - 1] -= fire_resist * damage[level.leveltype - 1] / 100;
 
 	if (plr[myplr]._px != object[i]._ox || plr[myplr]._py != object[i]._oy - 1)
 		return;
 
-	plr[myplr]._pHitPoints -= damage[leveltype - 1];
-	plr[myplr]._pHPBase -= damage[leveltype - 1];
+	plr[myplr]._pHitPoints -= damage[level.leveltype - 1];
+	plr[myplr]._pHPBase -= damage[level.leveltype - 1];
 	if (plr[myplr]._pHitPoints >> 6 <= 0) {
 		SyncPlrKill(myplr, 0);
 	} else {
@@ -1811,7 +1811,7 @@ void ObjSetMicro(int dx, int dy, int pn)
 	grid[dx][dy].dPiece = pn;
 	pn--;
 	defs = &grid[dx][dy].dpiece_defs_map_2;
-	if (leveltype != DTYPE_HELL) {
+	if (level.leveltype != DTYPE_HELL) {
 		v = (WORD *)pLevelPieces + 10 * pn;
 		for (i = 0; i < 10; i++) {
 			defs->mt[i] = SDL_SwapLE16(v[(i & 1) - (i & 0xE) + 8]);
@@ -1983,7 +1983,7 @@ void RedoPlayerVision()
 	int p;
 
 	for (p = 0; p < MAX_PLRS; p++) {
-		if (plr[p].plractive && currlevel == plr[p].plrlevel) {
+		if (plr[p].plractive && level.currlevel == plr[p].plrlevel) {
 			ChangeVisionXY(plr[p]._pvid, plr[p]._px, plr[p]._py);
 		}
 	}
@@ -2319,11 +2319,11 @@ void ObjChangeMap(int x1, int y1, int x2, int y2)
 			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
-	if (leveltype == DTYPE_CATHEDRAL) {
+	if (level.leveltype == DTYPE_CATHEDRAL) {
 		ObjL1Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 		AddL1Objs(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 	}
-	if (leveltype == DTYPE_CATACOMBS) {
+	if (level.leveltype == DTYPE_CATACOMBS) {
 		ObjL2Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 		AddL2Objs(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 	}
@@ -2339,10 +2339,10 @@ void ObjChangeMapResync(int x1, int y1, int x2, int y2)
 			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
-	if (leveltype == DTYPE_CATHEDRAL) {
+	if (level.leveltype == DTYPE_CATHEDRAL) {
 		ObjL1Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 	}
-	if (leveltype == DTYPE_CATACOMBS) {
+	if (level.leveltype == DTYPE_CATACOMBS) {
 		ObjL2Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 	}
 }
@@ -2370,7 +2370,7 @@ void OperateLever(int pnum, int i)
 		object[i]._oSelFlag = 0;
 		object[i]._oAnimFrame++;
 		mapflag = TRUE;
-		if (currlevel == 16) {
+		if (level.currlevel == 16) {
 			for (j = 0; j < nobjects; j++) {
 				oi = objectactive[j];
 				if (object[oi]._otype == OBJ_SWITCHSKL
@@ -2396,7 +2396,7 @@ void OperateBook(int pnum, int i)
 
 	if (object[i]._oSelFlag == 0)
 		return;
-	if (setlevel && setlvlnum == SL_VILEBETRAYER) {
+	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
 		do_add_missile = FALSE;
 		missile_added = FALSE;
 		for (j = 0; j < nobjects; j++) {
@@ -2426,10 +2426,10 @@ void OperateBook(int pnum, int i)
 	}
 	object[i]._oSelFlag = 0;
 	object[i]._oAnimFrame++;
-	if (!setlevel)
+	if (!level.setlevel)
 		return;
 
-	if (setlvlnum == SL_BONECHAMB) {
+	if (level.setlvlnum == SL_BONECHAMB) {
 		plr[myplr]._pMemSpells |= ((__int64)1 << (SPL_GUARDIAN - 1));
 		if (plr[pnum]._pSplLvl[SPL_GUARDIAN] < 15)
 			plr[myplr]._pSplLvl[SPL_GUARDIAN]++;
@@ -2449,7 +2449,7 @@ void OperateBook(int pnum, int i)
 		    0,
 		    0);
 	}
-	if (setlevel && setlvlnum == SL_VILEBETRAYER) {
+	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
 		ObjChangeMapResync(
 		    object[i]._oVar1,
 		    object[i]._oVar2,
@@ -2542,7 +2542,7 @@ void OperateChest(int pnum, int i, BOOL sendmsg)
 		object[i]._oAnimFrame += 2;
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
-			if (setlevel) {
+			if (level.setlevel) {
 				for (j = 0; j < object[i]._oVar1; j++) {
 					CreateRndItem(object[i]._ox, object[i]._oy, TRUE, sendmsg, FALSE);
 				}
@@ -2783,7 +2783,7 @@ void TryDisarm(int pnum, int i)
 	if (pnum == myplr)
 		SetCursor_(CURSOR_HAND);
 	if (object[i]._oTrapFlag) {
-		trapdisper = 2 * plr[pnum]._pDexterity - 5 * currlevel;
+		trapdisper = 2 * plr[pnum]._pDexterity - 5 * level.currlevel;
 		if (random_(154, 100) <= trapdisper) {
 			for (j = 0; j < nobjects; j++) {
 				checkflag = FALSE;
@@ -3007,7 +3007,7 @@ void OperateShrine(int pnum, int i, int sType)
 		    -1,
 		    pnum,
 		    0,
-		    2 * leveltype);
+		    2 * level.leveltype);
 		if (pnum != myplr)
 			return;
 		InitDiabloMsg(EMSG_SHRINE_MAGICAL);
@@ -3137,7 +3137,7 @@ void OperateShrine(int pnum, int i, int sType)
 		    -1,
 		    pnum,
 		    0,
-		    2 * leveltype);
+		    2 * level.leveltype);
 		if (pnum != myplr)
 			return;
 		plr[pnum]._pMana = plr[pnum]._pMaxMana;
@@ -3201,7 +3201,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr)
 			return;
-		if (2 * currlevel < 7) {
+		if (2 * level.currlevel < 7) {
 			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_FULLMANA, FALSE, TRUE);
 			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_FULLHEAL, FALSE, TRUE);
 		} else {
@@ -3225,8 +3225,8 @@ void OperateShrine(int pnum, int i, int sType)
 			if (j > MAXDUNX * 112)
 				break;
 			lv = grid[xx][yy].dPiece;
-		} while (nSolidTable[lv] || grid[xx][yy].dObject || grid[xx][yy].dMonster);
-		AddMissile(plr[pnum]._px, plr[pnum]._py, xx, yy, plr[pnum]._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * leveltype);
+		} while (pieces[lv].nSolidTable || grid[xx][yy].dObject || grid[xx][yy].dMonster);
+		AddMissile(plr[pnum]._px, plr[pnum]._py, xx, yy, plr[pnum]._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * level.leveltype);
 		if (pnum != myplr)
 			return;
 		InitDiabloMsg(EMSG_SHRINE_HOLY);
@@ -3263,7 +3263,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		for (j = 0; j < NUM_INV_GRID_ELEM; j++) {
 			if (!plr[pnum].InvGrid[j]) {
-				r = 5 * leveltype + random_(160, 10 * leveltype);
+				r = 5 * level.leveltype + random_(160, 10 * level.leveltype);
 				t = plr[pnum]._pNumInv; // check
 				plr[pnum].InvList[t] = golditem;
 				plr[pnum].InvList[t]._iSeed = GetRndSeed();
@@ -3488,13 +3488,13 @@ void OperateArmorStand(int pnum, int i, BOOL sendmsg)
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
 			uniqueRnd = random_(0, 2);
-			if (currlevel <= 5) {
+			if (level.currlevel <= 5) {
 				CreateTypeItem(object[i]._ox, object[i]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, sendmsg, FALSE);
-			} else if (currlevel >= 6 && currlevel <= 9) {
+			} else if (level.currlevel >= 6 && level.currlevel <= 9) {
 				CreateTypeItem(object[i]._ox, object[i]._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, sendmsg, FALSE);
-			} else if (currlevel >= 10 && currlevel <= 12) {
+			} else if (level.currlevel >= 10 && level.currlevel <= 12) {
 				CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, sendmsg, FALSE);
-			} else if (currlevel >= 13 && currlevel <= 16) {
+			} else if (level.currlevel >= 13 && level.currlevel <= 16) {
 				CreateTypeItem(object[i]._ox, object[i]._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, sendmsg, FALSE);
 			}
 			if (pnum == myplr)
@@ -3513,7 +3513,7 @@ int FindValidShrine(int i)
 		done = FALSE;
 		while (!done) {
 			rv = random_(0, NUM_SHRINETYPE);
-			if (currlevel >= shrinemin[rv] && currlevel <= shrinemax[rv] && rv != 8)
+			if (level.currlevel >= shrinemin[rv] && level.currlevel <= shrinemax[rv] && rv != 8)
 				done = TRUE;
 		}
 
@@ -3614,7 +3614,7 @@ BOOL OperateFountains(int pnum, int i)
 		    -1,
 		    pnum,
 		    0,
-		    2 * leveltype);
+		    2 * level.leveltype);
 		applied = TRUE;
 		if (pnum == myplr)
 			NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
@@ -3697,7 +3697,7 @@ void OperateWeaponRack(int pnum, int i, BOOL sendmsg)
 	if (deltaload)
 		return;
 
-	if (leveltype > 1)
+	if (level.leveltype > 1)
 		CreateTypeItem(object[i]._ox, object[i]._oy, TRUE, weaponType, IMISC_NONE, sendmsg, FALSE);
 	else
 		CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, weaponType, IMISC_NONE, sendmsg, FALSE);
@@ -4335,10 +4335,10 @@ void GetObjectStr(int i)
 			strcpy(infostr, "Blocked Door");
 		break;
 	case OBJ_BOOK2L:
-		if (setlevel) {
-			if (setlvlnum == SL_BONECHAMB) {
+		if (level.setlevel) {
+			if (level.setlvlnum == SL_BONECHAMB) {
 				strcpy(infostr, "Ancient Tome");
-			} else if (setlvlnum == SL_VILEBETRAYER) {
+			} else if (level.setlvlnum == SL_VILEBETRAYER) {
 				strcpy(infostr, "Book of Vileness");
 			}
 		}

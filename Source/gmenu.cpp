@@ -49,7 +49,7 @@ const BYTE lfontkern[] = {
 
 void gmenu_draw_pause()
 {
-	if (currlevel != 0)
+	if (level.currlevel != 0)
 		RedBack();
 	if (!sgpCurrentMenu) {
 		light_table_index = 0;

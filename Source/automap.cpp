@@ -74,7 +74,7 @@ void InitAutomap()
 
 	memset(automaptype, 0, sizeof(automaptype));
 
-	switch (leveltype) {
+	switch (level.leveltype) {
 	case DTYPE_CATHEDRAL:
 		pAFile = LoadFileInMem("Levels\\L1Data\\L1.AMP", &dwTiles);
 		break;
@@ -195,7 +195,7 @@ void DrawAutomap()
 	int i, j, d;
 	int mapx, mapy;
 
-	if (leveltype == DTYPE_TOWN) {
+	if (level.leveltype == DTYPE_TOWN) {
 		DrawAutomapText();
 		return;
 	}
@@ -609,10 +609,10 @@ void DrawAutomapText()
 			nextline = 50;
 		}
 	}
-	if (setlevel) {
-		PrintGameStr(8, nextline, quest_level_names[(BYTE)setlvlnum], COL_GOLD);
-	} else if (currlevel) {
-		sprintf(desc, "Level: %i", currlevel);
+	if (level.setlevel) {
+		PrintGameStr(8, nextline, quest_level_names[(BYTE)level.setlvlnum], COL_GOLD);
+	} else if (level.currlevel) {
+		sprintf(desc, "Level: %i", level.currlevel);
 		PrintGameStr(8, nextline, desc, COL_GOLD);
 	}
 }

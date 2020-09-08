@@ -86,7 +86,7 @@ void SetupTownStores()
 {
 	int i, l;
 
-	SetRndSeed(glSeedTbl[currlevel] * SDL_GetTicks());
+	SetRndSeed(glSeedTbl[level.currlevel] * SDL_GetTicks());
 	if (gbMaxPlayers == 1) {
 		l = 0;
 		for (i = 0; i < NUMLEVELS; i++) {
@@ -1556,7 +1556,7 @@ void STextESC()
 {
 	if (qtextflag) {
 		qtextflag = FALSE;
-		if (leveltype == DTYPE_TOWN)
+		if (level.leveltype == DTYPE_TOWN)
 			stream_stop();
 	} else {
 		switch (stextflag) {
@@ -2642,7 +2642,7 @@ void STextEnter()
 {
 	if (qtextflag) {
 		qtextflag = FALSE;
-		if (leveltype == DTYPE_TOWN)
+		if (level.leveltype == DTYPE_TOWN)
 			stream_stop();
 	} else {
 		PlaySFX(IS_TITLSLCT);
@@ -2726,7 +2726,7 @@ void CheckStoreBtn()
 
 	if (qtextflag) {
 		qtextflag = FALSE;
-		if (leveltype == DTYPE_TOWN)
+		if (level.leveltype == DTYPE_TOWN)
 			stream_stop();
 	} else if (stextsel != -1 && MouseY >= 32 && MouseY <= 320) {
 		if (!stextsize) {

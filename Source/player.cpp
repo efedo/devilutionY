@@ -157,7 +157,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 		switch (i) {
 		case PFILE_STAND:
 			szCel = "AS";
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				szCel = "ST";
 			}
 			pData = p->_pNData;
@@ -165,14 +165,14 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			break;
 		case PFILE_WALK:
 			szCel = "AW";
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				szCel = "WL";
 			}
 			pData = p->_pWData;
 			pAnim = (BYTE *)p->_pWAnim;
 			break;
 		case PFILE_ATTACK:
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				continue;
 			}
 			szCel = "AT";
@@ -180,7 +180,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			pAnim = (BYTE *)p->_pAAnim;
 			break;
 		case PFILE_HIT:
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				continue;
 			}
 			szCel = "HT";
@@ -188,7 +188,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			pAnim = (BYTE *)p->_pHAnim;
 			break;
 		case PFILE_LIGHTNING:
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				continue;
 			}
 			szCel = "LM";
@@ -196,7 +196,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			pAnim = (BYTE *)p->_pLAnim;
 			break;
 		case PFILE_FIRE:
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				continue;
 			}
 			szCel = "FM";
@@ -204,7 +204,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			pAnim = (BYTE *)p->_pFAnim;
 			break;
 		case PFILE_MAGIC:
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				continue;
 			}
 			szCel = "QM";
@@ -220,7 +220,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			pAnim = (BYTE *)p->_pDAnim;
 			break;
 		case PFILE_BLOCK:
-			if (leveltype == DTYPE_TOWN) {
+			if (level.leveltype == DTYPE_TOWN) {
 				continue;
 			}
 			if (!p->_pBlockFlag) {
@@ -440,7 +440,7 @@ void SetPlrAnims(int pnum)
 
 	pc = plr[pnum]._pClass;
 
-	if (leveltype == DTYPE_TOWN) {
+	if (level.leveltype == DTYPE_TOWN) {
 		plr[pnum]._pNFrames = PlrGFXAnimLens[pc][7];
 		plr[pnum]._pWFrames = PlrGFXAnimLens[pc][8];
 		plr[pnum]._pDFrames = PlrGFXAnimLens[pc][4];
@@ -460,7 +460,7 @@ void SetPlrAnims(int pnum)
 	gn = plr[pnum]._pgfxnum & 0xF;
 	if (pc == PC_WARRIOR) {
 		if (gn == ANIM_ID_BOW) {
-			if (leveltype != DTYPE_TOWN) {
+			if (level.leveltype != DTYPE_TOWN) {
 				plr[pnum]._pNFrames = 8;
 			}
 			plr[pnum]._pAWidth = 96;
@@ -858,7 +858,7 @@ void InitPlayer(int pnum, BOOL FirstTime)
 		plr[pnum].pManaShield = FALSE;
 	}
 
-	if (plr[pnum].plrlevel == currlevel || leveldebug) {
+	if (plr[pnum].plrlevel == level.currlevel || leveldebug) {
 
 		SetPlrAnims(pnum);
 
@@ -884,7 +884,7 @@ void InitPlayer(int pnum, BOOL FirstTime)
 		plr[pnum]._pdir = DIR_S;
 
 		if (pnum == myplr) {
-			if (!FirstTime || currlevel != 0) {
+			if (!FirstTime || level.currlevel != 0) {
 				plr[pnum]._px = ViewX;
 				plr[pnum]._py = ViewY;
 			}
@@ -962,7 +962,7 @@ BOOL SolidLoc(int x, int y)
 		return FALSE;
 	}
 
-	return nSolidTable[grid[x][y].dPiece];
+	return pieces[grid[x][y].dPiece].nSolidTable;
 }
 
 BOOL PlrDirOK(int pnum, int dir)
@@ -1008,12 +1008,12 @@ void PlrDoTrans(int x, int y)
 {
 	int i, j;
 
-	if (leveltype != DTYPE_CATHEDRAL && leveltype != DTYPE_CATACOMBS) {
+	if (level.leveltype != DTYPE_CATHEDRAL && level.leveltype != DTYPE_CATACOMBS) {
 		TransList[1] = TRUE;
 	} else {
 		for (i = y - 1; i <= y + 1; i++) {
 			for (j = x - 1; j <= x + 1; j++) {
-				if (!nSolidTable[grid[j][i].dPiece] && grid[j][i].dTransVal) {
+				if (!pieces[grid[j][i].dPiece].nSolidTable && grid[j][i].dTransVal) {
 					TransList[grid[j][i].dTransVal] = TRUE;
 				}
 			}
@@ -1355,7 +1355,7 @@ void StartWalk3(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int 
 	plr[pnum]._pxoff = xoff;
 	plr[pnum]._pyoff = yoff;
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		ChangeLightXY(plr[pnum]._plid, x, y);
 		PM_ChangeLightOff(pnum);
 	}
@@ -1471,7 +1471,7 @@ void StartSpell(int pnum, int d, int cx, int cy)
 		return;
 	}
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		switch (spelldata[plr[pnum]._pSpell].sType) {
 		case STYPE_FIRE:
 			if (!(plr[pnum]._pGFXLoad & PFILE_FIRE)) {
@@ -1681,7 +1681,7 @@ void StartPlayerKill(int pnum, int earflag)
 		CalcPlrInv(pnum, FALSE);
 	}
 
-	if (plr[pnum].plrlevel == currlevel) {
+	if (plr[pnum].plrlevel == level.currlevel) {
 		FixPlayerLocation(pnum, p->_pdir);
 		RemovePlrFromMap(pnum);
 		grid[p->_px][p->_py].dFlags |= BFLAG_DEAD_PLAYER;
@@ -1887,7 +1887,7 @@ void SyncPlrKill(int pnum, int earflag)
 {
 	int ma, i;
 
-	if (plr[pnum]._pHitPoints == 0 && currlevel == 0) {
+	if (plr[pnum]._pHitPoints == 0 && level.currlevel == 0) {
 		SetPlayerHitPoints(pnum, 64);
 		return;
 	}
@@ -1912,7 +1912,7 @@ void RemovePlrMissiles(int pnum)
 	int i, am;
 	int mx, my;
 
-	if (currlevel != 0 && pnum == myplr && (monster[myplr]._mx != 1 || monster[myplr]._my != 0)) {
+	if (level.currlevel != 0 && pnum == myplr && (monster[myplr]._mx != 1 || monster[myplr]._my != 0)) {
 		M_StartKill(myplr, myplr);
 		AddDead(monster[myplr]._mx, monster[myplr]._my, (monster[myplr].MType)->mdeadval, monster[myplr]._mdir);
 		mx = monster[myplr]._mx;
@@ -1984,10 +1984,10 @@ void StartNewLvl(int pnum, int fom, int lvl)
 		plr[pnum].plrlevel = lvl;
 		break;
 	case WM_DIABSETLVL:
-		setlvlnum = lvl;
+		level.setlvlnum = lvl;
 		break;
 	case WM_DIABTWARPUP:
-		plr[myplr].pTownWarps |= 1 << (leveltype - 2);
+		plr[myplr].pTownWarps |= 1 << (level.leveltype - 2);
 		plr[pnum].plrlevel = lvl;
 		break;
 	case WM_DIABRETOWN:
@@ -2071,7 +2071,7 @@ BOOL PM_DoWalk(int pnum)
 	}
 
 	anim_len = 8;
-	if (currlevel != 0) {
+	if (level.currlevel != 0) {
 		anim_len = AnimLenFromClass[plr[pnum]._pClass];
 	}
 
@@ -2081,7 +2081,7 @@ BOOL PM_DoWalk(int pnum)
 		plr[pnum]._py += plr[pnum]._pVar2;
 		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 
-		if (leveltype != DTYPE_TOWN) {
+		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightXY(plr[pnum]._plid, plr[pnum]._px, plr[pnum]._py);
 			ChangeVisionXY(plr[pnum]._pvid, plr[pnum]._px, plr[pnum]._py);
 		}
@@ -2099,7 +2099,7 @@ BOOL PM_DoWalk(int pnum)
 
 		ClearPlrPVars(pnum);
 
-		if (leveltype != DTYPE_TOWN) {
+		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightOff(plr[pnum]._plid, 0, 0);
 		}
 		rv = TRUE;
@@ -2127,14 +2127,14 @@ BOOL PM_DoWalk2(int pnum)
 	}
 
 	anim_len = 8;
-	if (currlevel != 0) {
+	if (level.currlevel != 0) {
 		anim_len = AnimLenFromClass[plr[pnum]._pClass];
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
 		grid[plr[pnum]._pVar1][plr[pnum]._pVar2].dPlayer = 0;
 
-		if (leveltype != DTYPE_TOWN) {
+		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightXY(plr[pnum]._plid, plr[pnum]._px, plr[pnum]._py);
 			ChangeVisionXY(plr[pnum]._pvid, plr[pnum]._px, plr[pnum]._py);
 		}
@@ -2151,7 +2151,7 @@ BOOL PM_DoWalk2(int pnum)
 		}
 
 		ClearPlrPVars(pnum);
-		if (leveltype != DTYPE_TOWN) {
+		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightOff(plr[pnum]._plid, 0, 0);
 		}
 		rv = TRUE;
@@ -2179,7 +2179,7 @@ BOOL PM_DoWalk3(int pnum)
 	}
 
 	anim_len = 8;
-	if (currlevel != 0) {
+	if (level.currlevel != 0) {
 		anim_len = AnimLenFromClass[plr[pnum]._pClass];
 	}
 
@@ -2190,7 +2190,7 @@ BOOL PM_DoWalk3(int pnum)
 		plr[pnum]._py = plr[pnum]._pVar2;
 		grid[plr[pnum]._px][plr[pnum]._py].dPlayer = pnum + 1;
 
-		if (leveltype != DTYPE_TOWN) {
+		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightXY(plr[pnum]._plid, plr[pnum]._px, plr[pnum]._py);
 			ChangeVisionXY(plr[pnum]._pvid, plr[pnum]._px, plr[pnum]._py);
 		}
@@ -2208,7 +2208,7 @@ BOOL PM_DoWalk3(int pnum)
 
 		ClearPlrPVars(pnum);
 
-		if (leveltype != DTYPE_TOWN) {
+		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightOff(plr[pnum]._plid, 0, 0);
 		}
 		rv = TRUE;
@@ -2822,7 +2822,7 @@ BOOL PM_DoSpell(int pnum)
 
 	plr[pnum]._pVar8++;
 
-	if (leveltype == DTYPE_TOWN) {
+	if (level.leveltype == DTYPE_TOWN) {
 		if (plr[pnum]._pVar8 > plr[pnum]._pSFrames) {
 			StartWalkStand(pnum);
 			ClearPlrPVars(pnum);
@@ -2998,7 +2998,7 @@ void CheckNewPath(int pnum)
 				}
 			}
 
-			if (currlevel != 0) {
+			if (level.currlevel != 0) {
 				xvel3 = PWVel[plr[pnum]._pClass][0];
 				xvel = PWVel[plr[pnum]._pClass][1];
 				yvel = PWVel[plr[pnum]._pClass][2];
@@ -3368,7 +3368,7 @@ void ProcessPlayers()
 	ValidatePlayer();
 
 	for (pnum = 0; pnum < MAX_PLRS; pnum++) {
-		if (plr[pnum].plractive && currlevel == plr[pnum].plrlevel && (pnum == myplr || !plr[pnum]._pLvlChanging)) {
+		if (plr[pnum].plractive && level.currlevel == plr[pnum].plrlevel && (pnum == myplr || !plr[pnum]._pLvlChanging)) {
 			CheckCheatStats(pnum);
 
 			if (!PlrDeathModeOK(pnum) && (plr[pnum]._pHitPoints >> 6) <= 0) {
@@ -3376,7 +3376,7 @@ void ProcessPlayers()
 			}
 
 			if (pnum == myplr) {
-				if ((plr[pnum]._pIFlags & ISPL_DRAINLIFE) && currlevel != 0) {
+				if ((plr[pnum]._pIFlags & ISPL_DRAINLIFE) && level.currlevel != 0) {
 					plr[pnum]._pHitPoints -= 4;
 					plr[pnum]._pHPBase -= 4;
 					if ((plr[pnum]._pHitPoints >> 6) <= 0) {
@@ -3500,7 +3500,7 @@ BOOL PosOkPlayer(int pnum, int x, int y)
 		}
 
 		if (grid[x][y].dMonster) {
-			if (currlevel == 0) {
+			if (level.currlevel == 0) {
 				return FALSE;
 			}
 			if (grid[x][y].dMonster <= 0) {
@@ -3613,7 +3613,7 @@ void CheckPlrSpell()
 		return;
 	}
 
-	if (leveltype == DTYPE_TOWN && !spelldata[rspell].sTownSpell) {
+	if (level.leveltype == DTYPE_TOWN && !spelldata[rspell].sTownSpell) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
 #ifndef SPAWN
@@ -3751,7 +3751,7 @@ void SyncInitPlrPos(int pnum)
 	plr[pnum]._ptargx = plr[pnum]._px;
 	plr[pnum]._ptargy = plr[pnum]._py;
 
-	if (gbMaxPlayers == 1 || plr[pnum].plrlevel != currlevel) {
+	if (gbMaxPlayers == 1 || plr[pnum].plrlevel != level.currlevel) {
 		return;
 	}
 
@@ -3770,7 +3770,7 @@ void SyncInitPlrPos(int pnum)
 				y = yy + plr[pnum]._py;
 				for (xx = -range; xx <= range && !posOk; xx++) {
 					x = xx + plr[pnum]._px;
-					if (PosOkPlayer(pnum, x, y) && !PosOkPortal(currlevel, x, y)) {
+					if (PosOkPlayer(pnum, x, y) && !PosOkPortal(level.currlevel, x, y)) {
 						posOk = TRUE;
 					}
 				}
@@ -4084,7 +4084,7 @@ void PlayDungMsgs()
 		app_fatal("PlayDungMsgs: illegal player %d", myplr);
 	}
 
-	if (currlevel == 1 && !plr[myplr]._pLvlVisited[1] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_CATHEDRAL)) {
+	if (level.currlevel == 1 && !plr[myplr]._pLvlVisited[1] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_CATHEDRAL)) {
 		sfxdelay = 40;
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR97;
@@ -4096,7 +4096,7 @@ void PlayDungMsgs()
 #endif
 		}
 		plr[myplr].pDungMsgs = plr[myplr].pDungMsgs | DMSG_CATHEDRAL;
-	} else if (currlevel == 5 && !plr[myplr]._pLvlVisited[5] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_CATACOMBS)) {
+	} else if (level.currlevel == 5 && !plr[myplr]._pLvlVisited[5] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_CATACOMBS)) {
 		sfxdelay = 40;
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR96B;
@@ -4108,7 +4108,7 @@ void PlayDungMsgs()
 #endif
 		}
 		plr[myplr].pDungMsgs |= DMSG_CATACOMBS;
-	} else if (currlevel == 9 && !plr[myplr]._pLvlVisited[9] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_CAVES)) {
+	} else if (level.currlevel == 9 && !plr[myplr]._pLvlVisited[9] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_CAVES)) {
 		sfxdelay = 40;
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR98;
@@ -4120,7 +4120,7 @@ void PlayDungMsgs()
 #endif
 		}
 		plr[myplr].pDungMsgs |= DMSG_CAVES;
-	} else if (currlevel == 13 && !plr[myplr]._pLvlVisited[13] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_HELL)) {
+	} else if (level.currlevel == 13 && !plr[myplr]._pLvlVisited[13] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_HELL)) {
 		sfxdelay = 40;
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR99;
@@ -4132,7 +4132,7 @@ void PlayDungMsgs()
 #endif
 		}
 		plr[myplr].pDungMsgs |= DMSG_HELL;
-	} else if (currlevel == 16 && !plr[myplr]._pLvlVisited[15] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
+	} else if (level.currlevel == 16 && !plr[myplr]._pLvlVisited[15] && gbMaxPlayers == 1 && !(plr[myplr].pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
 		sfxdelay = 40;
 #ifndef SPAWN
 		if (plr[myplr]._pClass == PC_WARRIOR || plr[myplr]._pClass == PC_ROGUE || plr[myplr]._pClass == PC_SORCERER) {

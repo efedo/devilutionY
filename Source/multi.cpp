@@ -439,7 +439,7 @@ void multi_process_network_packets()
 			plr[dwID]._pBaseMag = pkt->bmag;
 			plr[dwID]._pBaseDex = pkt->bdex;
 			if (!cond && plr[dwID].plractive && plr[dwID]._pHitPoints) {
-				if (currlevel == plr[dwID].plrlevel && !plr[dwID]._pLvlChanging) {
+				if (level.currlevel == plr[dwID].plrlevel && !plr[dwID]._pLvlChanging) {
 					dx = abs(plr[dwID]._px - pkt->px);
 					dy = abs(plr[dwID]._py - pkt->py);
 					if ((dx > 3 || dy > 3) && grid[pkt->px][pkt->py].dPlayer == 0) {
@@ -766,9 +766,9 @@ void SetupLocalCoords()
 	int x, y;
 
 	if (!leveldebug || gbMaxPlayers > 1) {
-		currlevel = 0;
-		leveltype = DTYPE_TOWN;
-		setlevel = FALSE;
+		level.currlevel = 0;
+		level.leveltype = DTYPE_TOWN;
+		level.setlevel = FALSE;
 	}
 	x = 75;
 	y = 68;
@@ -786,7 +786,7 @@ void SetupLocalCoords()
 	plr[myplr]._pfuty = y;
 	plr[myplr]._ptargx = x;
 	plr[myplr]._ptargy = y;
-	plr[myplr].plrlevel = currlevel;
+	plr[myplr].plrlevel = level.currlevel;
 	plr[myplr]._pLvlChanging = TRUE;
 	plr[myplr].pLvlLoad = 0;
 	plr[myplr]._pmode = PM_NEWLVL;
@@ -921,7 +921,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 	LoadPlrGFX(pnum, PFILE_STAND);
 	SyncInitPlr(pnum);
 
-	if (plr[pnum].plrlevel == currlevel) {
+	if (plr[pnum].plrlevel == level.currlevel) {
 		if (plr[pnum]._pHitPoints >> 6 > 0) {
 			StartStand(pnum, 0);
 		} else {

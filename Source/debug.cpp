@@ -42,8 +42,8 @@ void CheckDungeonClear()
 			if (grid[i][j].dPlayer != 0)
 				app_fatal("Players not cleared");
 
-			dMonsDbg[currlevel][i][j] = grid[i][j].dFlags & BFLAG_VISIBLE;
-			dFlagDbg[currlevel][i][j] = grid[i][j].dFlags & BFLAG_POPULATED;
+			dMonsDbg[level.currlevel][i][j] = grid[i][j].dFlags & BFLAG_VISIBLE;
+			dFlagDbg[level.currlevel][i][j] = grid[i][j].dFlags & BFLAG_POPULATED;
 		}
 	}
 }

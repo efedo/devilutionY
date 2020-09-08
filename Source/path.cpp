@@ -155,16 +155,16 @@ BOOL path_solid_pieces(PATHNODE *pPath, int dx, int dy)
 	BOOL rv = TRUE;
 	switch (path_directions[3 * (dy - pPath->y) + 3 - pPath->x + 1 + dx]) {
 	case 5:
-		rv = !nSolidTable[grid[dx][dy + 1].dPiece] && !nSolidTable[grid[dx + 1][dy].dPiece];
+		rv = !pieces[grid[dx][dy + 1].dPiece].nSolidTable && !pieces[grid[dx + 1][dy].dPiece].nSolidTable;
 		break;
 	case 6:
-		rv = !nSolidTable[grid[dx][dy + 1].dPiece] && !nSolidTable[grid[dx - 1][dy].dPiece];
+		rv = !pieces[grid[dx][dy + 1].dPiece].nSolidTable && !pieces[grid[dx - 1][dy].dPiece].nSolidTable;
 		break;
 	case 7:
-		rv = !nSolidTable[grid[dx][dy - 1].dPiece] && !nSolidTable[grid[dx - 1][dy].dPiece];
+		rv = !pieces[grid[dx][dy - 1].dPiece].nSolidTable && !pieces[grid[dx - 1][dy].dPiece].nSolidTable;
 		break;
 	case 8:
-		rv = !nSolidTable[grid[dx + 1][dy].dPiece] && !nSolidTable[grid[dx][dy - 1].dPiece];
+		rv = !pieces[grid[dx + 1][dy].dPiece].nSolidTable && !pieces[grid[dx][dy - 1].dPiece].nSolidTable;
 		break;
 	}
 	return rv;

@@ -70,21 +70,56 @@ extern int tile_defs[MAXTILES];
 extern WORD level_frame_types[MAXTILES];
 extern int level_frame_sizes[MAXTILES];
 extern int nlevel_frames;
-extern BOOLEAN nBlockTable[MAXTILES + 1];
-extern BOOLEAN nSolidTable[MAXTILES + 1];
-extern BOOLEAN nTransTable[MAXTILES + 1];
-extern BOOLEAN nMissileTable[MAXTILES + 1];
-extern BOOLEAN nTrapTable[MAXTILES + 1];
+
+class PieceProperties {
+public:
+	BOOLEAN nBlockTable;   // List of light blocking dPieces
+	BOOLEAN nSolidTable;   // List of path blocking dPieces
+	BOOLEAN nTransTable;   // List of transparent dPieces
+	BOOLEAN nMissileTable; // List of missile blocking dPieces
+	BOOLEAN nTrapTable;
+};
+
+class PieceInventory {
+public:
+	auto &operator[](const size_t n)
+	{
+		return list[n];
+	}
+	void clear()
+	{
+		for (int i = 0; i != MAXTILES + 1; ++i) {
+			PieceProperties & piece = list[i];
+			piece.nBlockTable = 0;
+			piece.nSolidTable = 0;
+			piece.nTransTable = 0;
+			piece.nMissileTable = 0;
+			piece.nTrapTable = 0;
+		}
+	}
+private:
+	PieceProperties list[MAXTILES + 1];
+};
+
+extern PieceInventory pieces;
+
 extern int dminx;
 extern int dminy;
 extern int dmaxx;
 extern int dmaxy;
 extern int gnDifficulty;
-extern BYTE leveltype;
-extern BYTE currlevel;
-extern BOOLEAN setlevel;
-extern BYTE setlvlnum;
-extern char setlvltype;
+
+class Level {
+public:
+	BYTE leveltype;
+	BYTE currlevel;
+	BOOLEAN setlevel;
+	BYTE setlvlnum;
+	char setlvltype;
+};
+
+extern Level level;
+
 extern int ViewX;
 extern int ViewY;
 extern int ViewBX;

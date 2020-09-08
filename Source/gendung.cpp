@@ -31,33 +31,22 @@ int tile_defs[MAXTILES];
 WORD level_frame_types[MAXTILES];
 int level_frame_sizes[MAXTILES];
 int nlevel_frames;
-/**
- * List of light blocking dPieces
- */
-BOOLEAN nBlockTable[MAXTILES + 1];
-/**
- * List of path blocking dPieces
- */
-BOOLEAN nSolidTable[MAXTILES + 1];
-/**
- * List of transparent dPieces
- */
-BOOLEAN nTransTable[MAXTILES + 1];
-/**
- * List of missile blocking dPieces
- */
-BOOLEAN nMissileTable[MAXTILES + 1];
-BOOLEAN nTrapTable[MAXTILES + 1];
+
+PieceInventory pieces;
+
 int dminx;
 int dminy;
 int dmaxx;
 int dmaxy;
 int gnDifficulty;
-BYTE leveltype;
-BYTE currlevel;
-BOOLEAN setlevel;
-BYTE setlvlnum;
-char setlvltype;
+//BYTE level.leveltype;
+//BYTE level.currlevel;
+//BOOLEAN level.setlevel;
+//BYTE setlvlnum;
+//char setlvltype;
+
+Level level;
+
 int ViewX;
 int ViewY;
 int ViewBX;
@@ -95,13 +84,9 @@ void FillSolidBlockTbls()
 	BYTE *pSBFile, *pTmp;
 	int i;
 
-	memset(nBlockTable, 0, sizeof(nBlockTable));
-	memset(nSolidTable, 0, sizeof(nSolidTable));
-	memset(nTransTable, 0, sizeof(nTransTable));
-	memset(nMissileTable, 0, sizeof(nMissileTable));
-	memset(nTrapTable, 0, sizeof(nTrapTable));
+	pieces.clear();
 
-	switch (leveltype) {
+	switch (level.leveltype) {
 	case DTYPE_TOWN:
 		pSBFile = LoadFileInMem("Levels\\TownData\\Town.SOL", &dwTiles);
 		break;
@@ -126,15 +111,15 @@ void FillSolidBlockTbls()
 	for (i = 1; i <= dwTiles; i++) {
 		bv = *pTmp++;
 		if (bv & 1)
-			nSolidTable[i] = TRUE;
+			pieces[i].nSolidTable = TRUE;
 		if (bv & 2)
-			nBlockTable[i] = TRUE;
+			pieces[i].nBlockTable = TRUE;
 		if (bv & 4)
-			nMissileTable[i] = TRUE;
+			pieces[i].nMissileTable = TRUE;
 		if (bv & 8)
-			nTransTable[i] = TRUE;
+			pieces[i].nTransTable = TRUE;
 		if (bv & 0x80)
-			nTrapTable[i] = TRUE;
+			pieces[i].nTrapTable = TRUE;
 		block_lvid[i] = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
 	}
 
@@ -147,10 +132,10 @@ void SetDungeonMicros()
 	WORD *pPiece;
 	MICROS *pMap;
 
-	if (leveltype == DTYPE_TOWN) {
+	if (level.leveltype == DTYPE_TOWN) {
 		MicroTileLen = 16;
 		blocks = 16;
-	} else if (leveltype != DTYPE_HELL) {
+	} else if (level.leveltype != DTYPE_HELL) {
 		MicroTileLen = 10;
 		blocks = 10;
 	} else {
@@ -164,7 +149,7 @@ void SetDungeonMicros()
 			pMap = &grid[x][y].dpiece_defs_map_2;
 			if (lv != 0) {
 				lv--;
-				if (leveltype != DTYPE_HELL && leveltype != DTYPE_TOWN)
+				if (level.leveltype != DTYPE_HELL && level.leveltype != DTYPE_TOWN)
 					pPiece = (WORD *)&pLevelPieces[20 * lv];
 				else
 					pPiece = (WORD *)&pLevelPieces[32 * lv];
@@ -384,7 +369,7 @@ void DRLG_CreateThemeRoom(int themeIndex)
 
 	for (yy = themeLoc[themeIndex].y; yy < themeLoc[themeIndex].y + themeLoc[themeIndex].height; yy++) {
 		for (xx = themeLoc[themeIndex].x; xx < themeLoc[themeIndex].x + themeLoc[themeIndex].width; xx++) {
-			if (leveltype == DTYPE_CATACOMBS) {
+			if (level.leveltype == DTYPE_CATACOMBS) {
 				if (yy == themeLoc[themeIndex].y
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width
@@ -403,7 +388,7 @@ void DRLG_CreateThemeRoom(int themeIndex)
 					dgrid[xx][yy].dungeon = 3;
 				}
 			}
-			if (leveltype == DTYPE_CAVES) {
+			if (level.leveltype == DTYPE_CAVES) {
 				if (yy == themeLoc[themeIndex].y
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width
@@ -422,7 +407,7 @@ void DRLG_CreateThemeRoom(int themeIndex)
 					dgrid[xx][yy].dungeon = 7;
 				}
 			}
-			if (leveltype == DTYPE_HELL) {
+			if (level.leveltype == DTYPE_HELL) {
 				if (yy == themeLoc[themeIndex].y
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width
@@ -444,26 +429,26 @@ void DRLG_CreateThemeRoom(int themeIndex)
 		}
 	}
 
-	if (leveltype == DTYPE_CATACOMBS) {
+	if (level.leveltype == DTYPE_CATACOMBS) {
 		dgrid[themeLoc[themeIndex].x][themeLoc[themeIndex].y].dungeon = 8;
 		dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y].dungeon = 7;
 		dgrid[themeLoc[themeIndex].x][themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1].dungeon = 9;
 		dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1].dungeon = 6;
 	}
-	if (leveltype == DTYPE_CAVES) {
+	if (level.leveltype == DTYPE_CAVES) {
 		dgrid[themeLoc[themeIndex].x][themeLoc[themeIndex].y].dungeon = 150;
 		dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y].dungeon = 151;
 		dgrid[themeLoc[themeIndex].x][themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1].dungeon = 152;
 		dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1].dungeon = 138;
 	}
-	if (leveltype == DTYPE_HELL) {
+	if (level.leveltype == DTYPE_HELL) {
 		dgrid[themeLoc[themeIndex].x][themeLoc[themeIndex].y].dungeon = 9;
 		dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y].dungeon = 16;
 		dgrid[themeLoc[themeIndex].x][themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1].dungeon = 15;
 		dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1].dungeon = 12;
 	}
 
-	if (leveltype == DTYPE_CATACOMBS) {
+	if (level.leveltype == DTYPE_CATACOMBS) {
 		switch (random_(0, 2)) {
 		case 0:
 			dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2].dungeon = 4;
@@ -473,7 +458,7 @@ void DRLG_CreateThemeRoom(int themeIndex)
 			break;
 		}
 	}
-	if (leveltype == DTYPE_CAVES) {
+	if (level.leveltype == DTYPE_CAVES) {
 		switch (random_(0, 2)) {
 		case 0:
 			dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2].dungeon = 147;
@@ -483,7 +468,7 @@ void DRLG_CreateThemeRoom(int themeIndex)
 			break;
 		}
 	}
-	if (leveltype == DTYPE_HELL) {
+	if (level.leveltype == DTYPE_HELL) {
 		switch (random_(0, 2)) {
 		case 0:
 			dgrid[themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1][themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1].dungeon = 53;
@@ -531,7 +516,7 @@ void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rnd
 				themeLoc[themeCount].y = j + 1;
 				themeLoc[themeCount].width = themeW;
 				themeLoc[themeCount].height = themeH;
-				if (leveltype == DTYPE_CAVES)
+				if (level.leveltype == DTYPE_CAVES)
 					DRLG_RectTrans(2 * i + 20, 2 * j + 20, 2 * (i + themeW) + 15, 2 * (j + themeH) + 15);
 				else
 					DRLG_MRectTrans(i + 1, j + 1, i + themeW, j + themeH);
@@ -578,9 +563,9 @@ BOOL SkipThemeRoom(int x, int y)
 void InitLevels()
 {
 	if (!leveldebug) {
-		currlevel = 0;
-		leveltype = DTYPE_TOWN;
-		setlevel = FALSE;
+		level.currlevel = 0;
+		level.leveltype = DTYPE_TOWN;
+		level.setlevel = FALSE;
 	}
 }
 

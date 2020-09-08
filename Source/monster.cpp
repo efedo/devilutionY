@@ -198,14 +198,14 @@ void GetLevelMTypes()
 #endif
 
 	AddMonsterType(MT_GOLEM, 2);
-	if (currlevel == 16) {
+	if (level.currlevel == 16) {
 		AddMonsterType(MT_ADVOCATE, 1);
 		AddMonsterType(MT_RBLACK, 1);
 		AddMonsterType(MT_DIABLO, 2);
 		return;
 	}
 
-	if (!setlevel) {
+	if (!level.setlevel) {
 		if (QuestStatus(Q_BUTCHER))
 			AddMonsterType(MT_CLEAVER, 2);
 		if (QuestStatus(Q_GARBUD))
@@ -219,7 +219,7 @@ void GetLevelMTypes()
 		if (QuestStatus(Q_WARLORD))
 			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 4);
 
-		if (gbMaxPlayers != 1 && currlevel == quests[Q_SKELKING]._qlevel) {
+		if (gbMaxPlayers != 1 && level.currlevel == quests[Q_SKELKING]._qlevel) {
 
 			AddMonsterType(MT_SKING, 4);
 
@@ -229,7 +229,7 @@ void GetLevelMTypes()
 					minl = 15 * monsterdata[i].mMinDLvl / 30 + 1;
 					maxl = 15 * monsterdata[i].mMaxDLvl / 30 + 1;
 
-					if (currlevel >= minl && currlevel <= maxl) {
+					if (level.currlevel >= minl && level.currlevel <= maxl) {
 						if (MonstAvailTbl[i] & mamask) {
 							skeltypes[nt++] = i;
 						}
@@ -244,7 +244,7 @@ void GetLevelMTypes()
 			minl = 15 * monsterdata[i].mMinDLvl / 30 + 1;
 			maxl = 15 * monsterdata[i].mMaxDLvl / 30 + 1;
 
-			if (currlevel >= minl && currlevel <= maxl) {
+			if (level.currlevel >= minl && level.currlevel <= maxl) {
 				if (MonstAvailTbl[i] & mamask) {
 					typelist[nt++] = i;
 				}
@@ -275,7 +275,7 @@ void GetLevelMTypes()
 		}
 
 	} else {
-		if (setlvlnum == SL_SKELKING) {
+		if (level.setlvlnum == SL_SKELKING) {
 			AddMonsterType(MT_SKING, 4);
 		}
 	}
@@ -759,12 +759,12 @@ void PlaceQuestMonsters()
 	int skeltype;
 	BYTE *setp;
 
-	if (!setlevel) {
+	if (!level.setlevel) {
 		if (QuestStatus(Q_BUTCHER)) {
 			PlaceUniqueMonst(UMT_BUTCHER, 0, 0);
 		}
 
-		if (currlevel == quests[Q_SKELKING]._qlevel && gbMaxPlayers != 1) {
+		if (level.currlevel == quests[Q_SKELKING]._qlevel && gbMaxPlayers != 1) {
 			skeltype = 0;
 
 			for (skeltype = 0; skeltype < nummtypes; skeltype++) {
@@ -809,7 +809,7 @@ void PlaceQuestMonsters()
 			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
-		if (currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		if (level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
 			AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 			AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
 			PlaceUniqueMonst(UMT_LAZURUS, 0, 0);
@@ -819,7 +819,7 @@ void PlaceQuestMonsters()
 			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
 			mem_free_dbg(setp);
 		}
-	} else if (setlvlnum == SL_SKELKING) {
+	} else if (level.setlvlnum == SL_SKELKING) {
 		PlaceUniqueMonst(UMT_SKELKING, 0, 0);
 	}
 }
@@ -929,18 +929,18 @@ void InitMonsters()
 	numscattypes = 0;
 	if (gbMaxPlayers != 1)
 		CheckDungeonClear();
-	if (!setlevel) {
+	if (!level.setlevel) {
 		AddMonster(1, 0, 0, 0, FALSE);
 		AddMonster(1, 0, 0, 0, FALSE);
 		AddMonster(1, 0, 0, 0, FALSE);
 		AddMonster(1, 0, 0, 0, FALSE);
 	}
 #ifndef SPAWN
-	if (!setlevel && currlevel == 16)
+	if (!level.setlevel && level.currlevel == 16)
 		LoadDiabMonsts();
 #endif
 	nt = numtrigs;
-	if (currlevel == 15)
+	if (level.currlevel == 15)
 		nt = 1;
 	for (i = 0; i < nt; i++) {
 		for (s = -2; s < 2; s++) {
@@ -951,7 +951,7 @@ void InitMonsters()
 #ifndef SPAWN
 	PlaceQuestMonsters();
 #endif
-	if (!setlevel) {
+	if (!level.setlevel) {
 #ifndef SPAWN
 		PlaceUniques();
 #endif
@@ -974,9 +974,9 @@ void InitMonsters()
 		}
 		while (nummonsters < totalmonsters) {
 			mtype = scattertypes[random_(95, numscattypes)];
-			if (currlevel == 1 || random_(95, 2) == 0)
+			if (level.currlevel == 1 || random_(95, 2) == 0)
 				na = 1;
-			else if (currlevel == 2)
+			else if (level.currlevel == 2)
 				na = random_(95, 2) + 2;
 			else
 				na = random_(95, 3) + 3;
@@ -998,7 +998,7 @@ void PlaceUniques()
 	BOOL done;
 
 	for (u = 0; UniqMonst[u].mtype != -1; u++) {
-		if (UniqMonst[u].mlevel != currlevel)
+		if (UniqMonst[u].mlevel != level.currlevel)
 			continue;
 		done = FALSE;
 		for (mt = 0; mt < nummtypes; mt++) {
@@ -1034,7 +1034,7 @@ void SetMapMonsters(BYTE *pMap, int startx, int starty)
 	AddMonster(1, 0, 0, 0, FALSE);
 	AddMonster(1, 0, 0, 0, FALSE);
 	AddMonster(1, 0, 0, 0, FALSE);
-	if (setlevel && setlvlnum == SL_VILEBETRAYER) {
+	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
 		AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 		AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
 		AddMonsterType(UniqMonst[UMT_BLACKJADE].mtype, 4);
@@ -1132,7 +1132,7 @@ void M_Enemy(int i)
 	Monst = monster + i;
 	if (!(Monst->_mFlags & MFLAG_GOLEM)) {
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
-			if (!plr[pnum].plractive || currlevel != plr[pnum].plrlevel || plr[pnum]._pLvlChanging || (plr[pnum]._pHitPoints == 0 && gbMaxPlayers != 1))
+			if (!plr[pnum].plractive || level.currlevel != plr[pnum].plrlevel || plr[pnum]._pLvlChanging || (plr[pnum]._pHitPoints == 0 && gbMaxPlayers != 1))
 				continue;
 			if (grid[Monst->_mx][Monst->_my].dTransVal == grid[plr[pnum]._px][plr[pnum]._py].dTransVal)
 				sameroom = TRUE;
@@ -1457,7 +1457,7 @@ void M_StartHit(int i, int pnum, int dam)
 	if (pnum >= 0)
 		monster[i].mWhoHit |= 1 << pnum;
 	if (pnum == myplr) {
-		delta_monster_hp(i, monster[i]._mhitpoints, currlevel);
+		delta_monster_hp(i, monster[i]._mhitpoints, level.currlevel);
 		NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, i, dam);
 	}
 	PlayEffect(i, 1);
@@ -1554,7 +1554,7 @@ void M2MStartHit(int mid, int i, int dam)
 	if (i >= 0)
 		monster[i].mWhoHit |= 1 << i;
 
-	delta_monster_hp(mid, monster[mid]._mhitpoints, currlevel);
+	delta_monster_hp(mid, monster[mid]._mhitpoints, level.currlevel);
 	NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, mid, dam);
 	PlayEffect(mid, 1);
 
@@ -1651,7 +1651,7 @@ void M2MStartKill(int i, int mid)
 	if (!monster[i].MType)
 		app_fatal("M2MStartKill: Monster %d \"%s\" MType NULL", mid, monster[mid].mName);
 
-	delta_kill_monster(mid, monster[mid]._mx, monster[mid]._my, currlevel);
+	delta_kill_monster(mid, monster[mid]._mx, monster[mid]._my, level.currlevel);
 	NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, monster[mid]._mx, monster[mid]._my, mid);
 
 	monster[mid].mWhoHit |= 1 << i;
@@ -1700,11 +1700,11 @@ void M_StartKill(int i, int pnum)
 	}
 
 	if (myplr == pnum) {
-		delta_kill_monster(i, monster[i]._mx, monster[i]._my, currlevel);
+		delta_kill_monster(i, monster[i]._mx, monster[i]._my, level.currlevel);
 		if (i != pnum) {
 			NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, monster[i]._mx, monster[i]._my, i);
 		} else {
-			NetSendCmdLocParam1(FALSE, CMD_KILLGOLEM, monster[i]._mx, monster[i]._my, currlevel);
+			NetSendCmdLocParam1(FALSE, CMD_KILLGOLEM, monster[i]._mx, monster[i]._my, level.currlevel);
 		}
 	}
 
@@ -2021,11 +2021,11 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 	    - plr[pnum]._pDexterity / 5;
 	if (hit < 15)
 		hit = 15;
-	if (currlevel == 14 && hit < 20)
+	if (level.currlevel == 14 && hit < 20)
 		hit = 20;
-	if (currlevel == 15 && hit < 25)
+	if (level.currlevel == 15 && hit < 25)
 		hit = 25;
-	if (currlevel == 16 && hit < 30)
+	if (level.currlevel == 16 && hit < 30)
 		hit = 30;
 	if ((plr[pnum]._pmode == PM_STAND || plr[pnum]._pmode == PM_ATTACK) && plr[pnum]._pBlockFlag) {
 		blkper = random_(98, 100);
@@ -4688,12 +4688,12 @@ BOOL DirOK(int i, int mdir)
 
 BOOL PosOkMissile(int x, int y)
 {
-	return !nMissileTable[grid[x][y].dPiece] && !(grid[x][y].dFlags & BFLAG_MONSTLR);
+	return !pieces[grid[x][y].dPiece].nMissileTable && !(grid[x][y].dFlags & BFLAG_MONSTLR);
 }
 
 BOOL CheckNoSolid(int x, int y)
 {
-	return nSolidTable[grid[x][y].dPiece] == FALSE;
+	return pieces[grid[x][y].dPiece].nSolidTable == FALSE;
 }
 
 BOOL LineClearF(BOOL (*Clear)(int, int), int x1, int y1, int x2, int y2)
@@ -5440,7 +5440,7 @@ void SpawnGolum(int i, int x, int y, int mi)
 		    monster[i]._mdir,
 		    monster[i]._menemy,
 		    monster[i]._mhitpoints,
-		    currlevel);
+		    level.currlevel);
 	}
 }
 

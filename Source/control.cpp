@@ -303,7 +303,7 @@ void DrawSpell()
 		if (tlvl <= 0)
 			st = RSPLTYPE_INVALID;
 	}
-	if (currlevel == 0 && st != RSPLTYPE_INVALID && !spelldata[spl].sTownSpell)
+	if (level.currlevel == 0 && st != RSPLTYPE_INVALID && !spelldata[spl].sTownSpell)
 		st = RSPLTYPE_INVALID;
 	if (plr[myplr]._pRSpell < 0)
 		st = RSPLTYPE_INVALID;
@@ -359,7 +359,7 @@ void DrawSpellList()
 					trans = RSPLTYPE_INVALID;
 				SetSpellTrans(trans);
 			}
-			if (currlevel == 0 && !spelldata[j].sTownSpell)
+			if (level.currlevel == 0 && !spelldata[j].sTownSpell)
 				SetSpellTrans(RSPLTYPE_INVALID);
 			DrawSpellCel(x, y, pSpellCels, SpellITbl[j], SPLICONLENGTH);
 			lx = x - BORDER_LEFT;
@@ -967,7 +967,7 @@ void control_check_btn_press()
 
 void DoAutoMap()
 {
-	if (currlevel != 0 || gbMaxPlayers != 1) {
+	if (level.currlevel != 0 || gbMaxPlayers != 1) {
 		if (!automapflag)
 			StartAutomap();
 		else
@@ -1229,7 +1229,7 @@ void DrawInfoBox()
 		else if (pcursobj != -1)
 			GetObjectStr(pcursobj);
 		if (pcursmonst != -1) {
-			if (leveltype != DTYPE_TOWN) {
+			if (level.leveltype != DTYPE_TOWN) {
 				infoclr = COL_WHITE;
 				strcpy(infostr, monster[pcursmonst].mName);
 				ClearPanel();
@@ -1729,7 +1729,7 @@ void RedBack()
 	int w, h;
 	BYTE *dst, *tbl;
 
-	if (leveltype != DTYPE_HELL) {
+	if (level.leveltype != DTYPE_HELL) {
 		dst = &gpBuffer[SCREENXY(0, 0)];
 		tbl = &pLightTbl[idx];
 		for (h = VIEWPORT_HEIGHT; h; h--, dst += BUFFER_WIDTH - SCREEN_WIDTH) {
@@ -1770,7 +1770,7 @@ char GetSBookTrans(int ii, BOOL townok)
 			st = RSPLTYPE_INVALID;
 		}
 	}
-	if (townok && currlevel == 0 && st != RSPLTYPE_INVALID && !spelldata[ii].sTownSpell) {
+	if (townok && level.currlevel == 0 && st != RSPLTYPE_INVALID && !spelldata[ii].sTownSpell) {
 		st = RSPLTYPE_INVALID;
 	}
 

@@ -755,11 +755,11 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 					break;
 				}
 				if (nCrawlX >= 0 && nCrawlX < MAXDUNX && nCrawlY >= 0 && nCrawlY < MAXDUNY) {
-					nBlockerFlag = nBlockTable[grid[nCrawlX][nCrawlY].dPiece];
+					nBlockerFlag = pieces[grid[nCrawlX][nCrawlY].dPiece].nBlockTable;
 					if ((x1adj + nCrawlX >= 0 && x1adj + nCrawlX < MAXDUNX && y1adj + nCrawlY >= 0 && y1adj + nCrawlY < MAXDUNY
-					        && !nBlockTable[grid[x1adj + nCrawlX][y1adj + nCrawlY].dPiece])
+					        && !pieces[grid[x1adj + nCrawlX][y1adj + nCrawlY].dPiece].nBlockTable)
 					    || (x2adj + nCrawlX >= 0 && x2adj + nCrawlX < MAXDUNX && y2adj + nCrawlY >= 0 && y2adj + nCrawlY < MAXDUNY
-					           && !nBlockTable[grid[x2adj + nCrawlX][y2adj + nCrawlY].dPiece])) {
+					        && !pieces[grid[x2adj + nCrawlX][y2adj + nCrawlY].dPiece].nBlockTable)) {
 						if (doautomap) {
 							if (grid[nCrawlX][nCrawlY].dFlags >= 0) {
 								SetAutomapView(nCrawlX, nCrawlY);
@@ -869,7 +869,7 @@ void MakeLightTable()
 		*tbl++ = 0;
 	}
 
-	if (leveltype == DTYPE_HELL) {
+	if (level.leveltype == DTYPE_HELL) {
 		tbl = pLightTbl;
 		for (i = 0; i < lights; i++) {
 			l1 = lights - i;
@@ -989,7 +989,7 @@ void ToggleLighting()
 		//memcpy(dLight, dPreLight, sizeof(dLight));
 		grid.prelightToLight();
 		for (i = 0; i < MAX_PLRS; i++) {
-			if (plr[i].plractive && plr[i].plrlevel == currlevel) {
+			if (plr[i].plractive && plr[i].plrlevel == level.currlevel) {
 				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
 			}
 		}
@@ -1281,7 +1281,7 @@ void lighting_color_cycling()
 
 	l = light4flag ? 4 : 16;
 
-	if (leveltype != DTYPE_HELL) {
+	if (level.leveltype != DTYPE_HELL) {
 		return;
 	}
 

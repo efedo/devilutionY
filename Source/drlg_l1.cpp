@@ -1595,7 +1595,7 @@ static void DRLG_L5(int entry)
 	LONG minarea;
 	BOOL doneflag;
 
-	switch (currlevel) {
+	switch (level.currlevel) {
 	case 1:
 		minarea = 533;
 		break;

@@ -128,7 +128,7 @@ void FindItemOrObject()
 		}
 	}
 
-	if (leveltype == DTYPE_TOWN || pcursitem != -1)
+	if (level.leveltype == DTYPE_TOWN || pcursitem != -1)
 		return; // Don't look for objects in town
 
 	for (int xx = -1; xx < 2; xx++) {
@@ -348,7 +348,7 @@ void CheckPlayerNearby()
 
 void FindActor()
 {
-	if (leveltype != DTYPE_TOWN)
+	if (level.leveltype != DTYPE_TOWN)
 		CheckMonstersNearby();
 	else
 		CheckTownersNearby();
@@ -405,7 +405,7 @@ void FindTrigger()
 
 		if (pcurstrig == -1) {
 			for (int i = 0; i < MAXQUESTS; i++) {
-				if (i == Q_BETRAYER || currlevel != quests[i]._qlevel || quests[i]._qslvl == 0)
+				if (i == Q_BETRAYER || level.currlevel != quests[i]._qlevel || quests[i]._qslvl == 0)
 					continue;
 				const int newDdistance = GetDistance(quests[i]._qtx, quests[i]._qty, 2);
 				if (newDdistance == 0)
@@ -427,7 +427,7 @@ void FindTrigger()
 
 void Interact()
 {
-	if (leveltype == DTYPE_TOWN && pcursmonst != -1) {
+	if (level.leveltype == DTYPE_TOWN && pcursmonst != -1) {
 		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._tx, towner[pcursmonst]._ty, pcursmonst);
 	} else if (pcursmonst != -1) {
 		if (plr[myplr]._pwtype != WT_RANGED || CanTalkToMonst(pcursmonst)) {
@@ -435,7 +435,7 @@ void Interact()
 		} else {
 			NetSendCmdParam1(true, CMD_RATTACKID, pcursmonst);
 		}
-	} else if (leveltype != DTYPE_TOWN && pcursplr != -1 && !FriendlyMode) {
+	} else if (level.leveltype != DTYPE_TOWN && pcursplr != -1 && !FriendlyMode) {
 		NetSendCmdParam1(true, plr[myplr]._pwtype == WT_RANGED ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
 	}
 }
@@ -793,7 +793,7 @@ bool IsPathBlocked(int x, int y, int dir)
 	d2x = x + kOffsets[d2][0];
 	d2y = y + kOffsets[d2][1];
 
-	if (!nSolidTable[grid[d1x][d1y].dPiece] && !nSolidTable[grid[d2x][d2y].dPiece])
+	if (!pieces[grid[d1x][d1y].dPiece].nSolidTable && !pieces[grid[d2x][d2y].dPiece].nSolidTable)
 		return false;
 
 	return !PosOkPlayer(myplr, d1x, d1y) && !PosOkPlayer(myplr, d2x, d2y);
@@ -882,7 +882,7 @@ struct RightStickAccumulator {
 
 bool IsAutomapActive()
 {
-	return automapflag && leveltype != DTYPE_TOWN;
+	return automapflag && level.leveltype != DTYPE_TOWN;
 }
 
 void HandleRightStickMotion()

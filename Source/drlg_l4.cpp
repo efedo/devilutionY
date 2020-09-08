@@ -350,7 +350,7 @@ void DRLG_LoadL4SP()
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 		setloadflag = TRUE;
 	}
-	if (currlevel == 15 && gbMaxPlayers != 1) {
+	if (level.currlevel == 15 && gbMaxPlayers != 1) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
 		setloadflag = TRUE;
 	}
@@ -1326,12 +1326,12 @@ static void L4firstRoom()
 {
 	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax, tx, ty;
 
-	if (currlevel != 16) {
-		if (currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive) {
+	if (level.currlevel != 16) {
+		if (level.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive) {
 			/// ASSERT: assert(gbMaxPlayers == 1);
 			w = 11;
 			h = 11;
-		} else if (currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		} else if (level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
 			w = 11;
 			h = 11;
 		} else {
@@ -1362,11 +1362,11 @@ static void L4firstRoom()
 		y = rndy;
 	}
 
-	if (currlevel == 16) {
+	if (level.currlevel == 16) {
 		l4holdx = x;
 		l4holdy = y;
 	}
-	if (QuestStatus(Q_WARLORD) || currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+	if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
 		SP4x1 = x + 1;
 		SP4y1 = y + 1;
 		SP4x2 = SP4x1 + w;
@@ -1533,7 +1533,7 @@ static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 		}
 	}
 
-	if (currlevel == 15) {
+	if (level.currlevel == 15) {
 		quests[Q_BETRAYER]._qtx = sx + 1;
 		quests[Q_BETRAYER]._qty = sy + 1;
 	}
@@ -1748,10 +1748,10 @@ static void DRLG_L4(int entry)
 		L4makeDungeon();
 		L4makeDmt();
 		L4tileFix();
-		if (currlevel == 16) {
+		if (level.currlevel == 16) {
 			L4SaveQuads();
 		}
-		if (QuestStatus(Q_WARLORD) || currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
 			for (spi = SP4x1; spi < SP4x2; spi++) {
 				for (spj = SP4y1; spj < SP4y2; spj++) {
 					dgrid[spi][spj].dflags = 1;
@@ -1764,55 +1764,55 @@ static void DRLG_L4(int entry)
 		if (setloadflag) {
 			DRLG_L4SetSPRoom(SP4x1, SP4y1);
 		}
-		if (currlevel == 16) {
+		if (level.currlevel == 16) {
 			DRLG_LoadDiabQuads(TRUE);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
-				if (doneflag && currlevel == 13) {
+				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				ViewX++;
 			} else if (entry == 1) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && currlevel == 13) {
+				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				ViewX = 2 * setpc_x + 22;
 				ViewY = 2 * setpc_y + 22;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && currlevel == 13) {
+				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 1, 6);
 				}
 				ViewX++;
 			}
-		} else if (currlevel != 15) {
+		} else if (level.currlevel != 15) {
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
-				if (doneflag && currlevel != 16) {
+				if (doneflag && level.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, 0, 1);
 				}
-				if (doneflag && currlevel == 13) {
+				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				ViewX++;
 			} else if (entry == 1) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && currlevel != 16) {
+				if (doneflag && level.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, 1, 1);
 				}
-				if (doneflag && currlevel == 13) {
+				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				ViewY++;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && currlevel != 16) {
+				if (doneflag && level.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, 0, 1);
 				}
-				if (doneflag && currlevel == 13) {
+				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 1, 6);
 				}
 				ViewX++;
@@ -1844,7 +1844,7 @@ static void DRLG_L4(int entry)
 
 	DRLG_L4GeneralFix();
 
-	if (currlevel != 16) {
+	if (level.currlevel != 16) {
 		DRLG_PlaceThemeRooms(7, 10, 6, 8, 1);
 	}
 
@@ -1863,7 +1863,7 @@ static void DRLG_L4(int entry)
 
 	DRLG_CheckQuests(SP4x1, SP4y1);
 
-	if (currlevel == 15) {
+	if (level.currlevel == 15) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
 				if (dgrid[i][j].dungeon == 98) {
@@ -1875,7 +1875,7 @@ static void DRLG_L4(int entry)
 			}
 		}
 	}
-	if (currlevel == 16) {
+	if (level.currlevel == 16) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
 				dgrid[i][j].pdungeon = dgrid[i][j].dungeon;

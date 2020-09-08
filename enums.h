@@ -2538,14 +2538,14 @@ typedef enum _item_indexes {
 	IDI_RESURRECT,
 } _item_indexes;
 
-typedef enum _setlevels {
+typedef enum setlevels {
 	//SL_BUTCHCHAMB = 0x0,
 	SL_SKELKING     = 0x1,
 	SL_BONECHAMB    = 0x2,
 	SL_MAZE         = 0x3,
 	SL_POISONWATER  = 0x4,
 	SL_VILEBETRAYER = 0x5,
-} _setlevels;
+} setlevels;
 
 typedef enum quest_id {
 	Q_ROCK     = 0x0,

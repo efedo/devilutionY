@@ -26,10 +26,10 @@ void LoadGame(BOOL firstflag)
 	if (ILoad() != 'RETL')
 		app_fatal("Invalid save file");
 
-	setlevel = OLoad();
-	setlvlnum = WLoad();
-	currlevel = WLoad();
-	leveltype = WLoad();
+	level.setlevel = OLoad();
+	level.setlvlnum = WLoad();
+	level.currlevel = WLoad();
+	level.leveltype = WLoad();
 	_ViewX = WLoad();
 	_ViewY = WLoad();
 	invflag = OLoad();
@@ -65,7 +65,7 @@ void LoadGame(BOOL firstflag)
 	for (i = 0; i < MAXMONSTERS; i++)
 		monstkills[i] = ILoad();
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			monstactive[i] = WLoad();
 		for (i = 0; i < nummonsters; i++)
@@ -125,7 +125,7 @@ void LoadGame(BOOL firstflag)
 			grid[i][j].dItem = BLoad();
 	}
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				grid[i][j].dMonster = WLoad();
@@ -168,7 +168,7 @@ void LoadGame(BOOL firstflag)
 	AutomapZoomReset();
 	ResyncQuests();
 
-	if (leveltype != DTYPE_TOWN)
+	if (level.leveltype != DTYPE_TOWN)
 		ProcessLightList();
 
 	RedoPlayerVision();
@@ -184,14 +184,16 @@ char BLoad()
 	return *tbuff++;
 }
 
+// Used to be separate functions for loading wide/short ints
 int WLoad()
 {
-	int rv = *tbuff++ << 24;
-	rv |= *tbuff++ << 16;
-	rv |= *tbuff++ << 8;
-	rv |= *tbuff++;
+	return ILoad();
+	//int rv = *tbuff++ << 24;
+	//rv |= *tbuff++ << 16;
+	//rv |= *tbuff++ << 8;
+	//rv |= *tbuff++;
 
-	return rv;
+	//return rv;
 }
 
 int ILoad()
@@ -836,10 +838,10 @@ void SaveGame()
 	tbuff = SaveBuff;
 
 	ISave('RETL');
-	OSave(setlevel);
-	WSave(setlvlnum);
-	WSave(currlevel);
-	WSave(leveltype);
+	OSave(level.setlevel);
+	WSave(level.setlvlnum);
+	WSave(level.currlevel);
+	WSave(level.leveltype);
 	WSave(ViewX);
 	WSave(ViewY);
 	OSave(invflag);
@@ -863,7 +865,7 @@ void SaveGame()
 	for (i = 0; i < MAXMONSTERS; i++)
 		ISave(monstkills[i]);
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			WSave(monstactive[i]);
 		for (i = 0; i < nummonsters; i++)
@@ -921,7 +923,7 @@ void SaveGame()
 			BSave(grid[i][j].dItem);
 	}
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				WSave(grid[i][j].dMonster);
@@ -1551,14 +1553,14 @@ void SaveLevel()
 	int dwLen;
 	BYTE *SaveBuff;
 
-	if (currlevel == 0)
+	if (level.currlevel == 0)
 		glSeedTbl[0] = GetRndSeed();
 
 	dwLen = codec_get_encoded_len(FILEBUFF);
 	SaveBuff = DiabloAllocPtr(dwLen);
 	tbuff = SaveBuff;
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				BSave(grid[i][j].dDead);
@@ -1569,7 +1571,7 @@ void SaveLevel()
 	WSave(numitems);
 	WSave(nobjects);
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			WSave(monstactive[i]);
 		for (i = 0; i < nummonsters; i++)
@@ -1598,7 +1600,7 @@ void SaveLevel()
 			BSave(grid[i][j].dItem);
 	}
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				WSave(grid[i][j].dMonster);
@@ -1630,10 +1632,10 @@ void SaveLevel()
 	pfile_write_save_file(szName, SaveBuff, tbuff - SaveBuff, dwLen);
 	mem_free_dbg(SaveBuff);
 
-	if (!setlevel)
-		plr[myplr]._pLvlVisited[currlevel] = TRUE;
+	if (!level.setlevel)
+		plr[myplr]._pLvlVisited[level.currlevel] = TRUE;
 	else
-		plr[myplr]._pSLvlVisited[setlvlnum] = TRUE;
+		plr[myplr]._pSLvlVisited[level.setlvlnum] = TRUE;
 }
 
 void LoadLevel()
@@ -1647,7 +1649,7 @@ void LoadLevel()
 	LoadBuff = pfile_read(szName, &dwLen);
 	tbuff = LoadBuff;
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				grid[i][j].dDead = BLoad();
@@ -1659,7 +1661,7 @@ void LoadLevel()
 	numitems = WLoad();
 	nobjects = WLoad();
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			monstactive[i] = WLoad();
 		for (i = 0; i < nummonsters; i++)
@@ -1690,7 +1692,7 @@ void LoadLevel()
 			grid[i][j].dItem = BLoad();
 	}
 
-	if (leveltype != DTYPE_TOWN) {
+	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				grid[i][j].dMonster = WLoad();
@@ -1723,7 +1725,7 @@ void LoadLevel()
 	dolighting = TRUE;
 
 	for (i = 0; i < MAX_PLRS; i++) {
-		if (plr[i].plractive && currlevel == plr[i].plrlevel)
+		if (plr[i].plractive && level.currlevel == plr[i].plrlevel)
 			LightList[plr[i]._plid]._lunflag = TRUE;
 	}
 

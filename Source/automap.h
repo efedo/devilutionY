@@ -12,6 +12,10 @@ DEVILUTION_BEGIN_NAMESPACE
 extern "C" {
 #endif
 
+class Automap {
+
+};
+
 extern WORD automaptype[512];
 extern BOOL automapflag;
 extern char AmShiftTab[31];
