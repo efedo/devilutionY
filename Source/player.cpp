@@ -309,7 +309,8 @@ DWORD GetPlrGFXSize(char *szCel)
 
 	dwMaxSize = 0;
 
-	for (c = 0; c < sizeof(ClassStrTbl) / sizeof(*ClassStrTbl); c++) {
+	for (c = 0; c < classes.numclasses; c++) {
+	//for (c = 0; c < sizeof(ClassStrTbl) / sizeof(*ClassStrTbl); c++) {
 #ifdef SPAWN
 		if (c != 0)
 			continue;
@@ -327,7 +328,7 @@ DWORD GetPlrGFXSize(char *szCel)
 					continue; //No block without weapon
 				}
 				sprintf(Type, "%c%c%c", CharChar[c], *a, *w);
-				sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", ClassStrTbl[c], Type, Type, szCel);
+				sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", classes[c].ClassStrTbl.c_str(), Type, Type, szCel);
 				if (WOpenFile(pszName, &hsFile, TRUE)) {
 					/// ASSERT: assert(hsFile);
 					dwSize = WGetFileSize(hsFile, NULL, pszName);

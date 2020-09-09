@@ -148,11 +148,12 @@ public:
 	int ToBlkTbl = 0;
 	std::array<int, 4> MaxStats = {0, 0, 0, 0};
 	std::string ClassStrTblOld = "unnamed";
-	std::string ClassStrTbl = "unnamed";
+	//std::string ClassStrTbl = "unnamed";
 };
 
 class CharacterTypes {
 public:
+	const int numclasses = 3;
 	CharacterTypes()
 	{
 		init();

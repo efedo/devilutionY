@@ -52,19 +52,19 @@ void FocusOnCharInfo()
 	for (int i = 4; i >= 0; --i) {
 		switch (i) {
 		case ATTRIB_STR:
-			if (plr[myplr]._pBaseStr >= MaxStats[pc][ATTRIB_STR])
+			if (plr[myplr]._pBaseStr >= classes[pc].MaxStats[ATTRIB_STR])
 				continue;
 			break;
 		case ATTRIB_MAG:
-			if (plr[myplr]._pBaseMag >= MaxStats[pc][ATTRIB_MAG])
+			if (plr[myplr]._pBaseMag >= classes[pc].MaxStats[ATTRIB_MAG])
 				continue;
 			break;
 		case ATTRIB_DEX:
-			if (plr[myplr]._pBaseDex >= MaxStats[pc][ATTRIB_DEX])
+			if (plr[myplr]._pBaseDex >= classes[pc].MaxStats[ATTRIB_DEX])
 				continue;
 			break;
 		case ATTRIB_VIT:
-			if (plr[myplr]._pBaseVit >= MaxStats[pc][ATTRIB_VIT])
+			if (plr[myplr]._pBaseVit >= classes[pc].MaxStats[ATTRIB_VIT])
 				continue;
 			break;
 		default:
