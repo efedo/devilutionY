@@ -33,35 +33,9 @@ int plrxoff[9] = { 0, 2, 0, 2, 1, 0, 1, 2, 1 };
 int plryoff[9] = { 0, 2, 2, 0, 1, 1, 0, 1, 2 };
 int plrxoff2[9] = { 0, 1, 0, 1, 2, 0, 1, 2, 2 };
 int plryoff2[9] = { 0, 0, 1, 1, 0, 2, 2, 1, 2 };
-char PlrGFXAnimLens[][11] = {
-	{ 10, 16, 8, 2, 20, 20, 6, 20, 8, 9, 14 },
-	{ 8, 18, 8, 4, 20, 16, 7, 20, 8, 10, 12 },
-	{ 8, 16, 8, 6, 20, 12, 8, 20, 8, 12, 8 },
-};
-int PWVel[3][3] = {
-	{ 2048, 1024, 512 },
-	{ 2048, 1024, 512 },
-	{ 2048, 1024, 512 }
-};
-/** Total number of frames in walk animation. */
-int AnimLenFromClass[3] = {
-	8, 8, 8
-};
-int StrengthTbl[3] = { 30, 20, 15 };
-int MagicTbl[3] = { 10, 15, 35 };
-int DexterityTbl[3] = { 20, 30, 15 };
-int VitalityTbl[3] = { 25, 20, 20 };
-int ToBlkTbl[3] = { 30, 20, 10 };
-char *ClassStrTblOld[] = {
-	"Warrior",
-	"Rogue",
-	"Sorceror",
-};
-int MaxStats[3][4] = {
-	{ 250, 50, 60, 100 },
-	{ 55, 70, 250, 80 },
-	{ 45, 250, 85, 80 }
-};
+
+CharacterTypes classes;
+
 int ExpLvlsTbl[MAXCHARLEVEL] = {
 	0,
 	2000,
@@ -115,11 +89,7 @@ int ExpLvlsTbl[MAXCHARLEVEL] = {
 	1310707109,
 	1583495809
 };
-char *ClassStrTbl[] = {
-	"Warrior",
-	"Rogue",
-	"Sorceror",
-};
+
 BYTE fix[9] = { 0, 0, 3, 3, 3, 6, 6, 6, 8 }; /* PM_ChangeLightOff local type */
 
 void SetPlayerGPtrs(BYTE *pData, BYTE **pAnim)
@@ -137,7 +107,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 	char pszName[256];
 	char *szCel;
 	PlayerStruct *p;
-	char *cs;
+	//char *cs;
 	BYTE *pData, *pAnim;
 	DWORD i;
 
@@ -147,7 +117,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 
 	p = &plr[pnum];
 	sprintf(prefix, "%c%c%c", CharChar[p->_pClass], ArmourChar[p->_pgfxnum >> 4], WepChar[p->_pgfxnum & 0xF]);
-	cs = ClassStrTbl[p->_pClass];
+	std::string &cs = classes[p->_pClass].ClassStrTbl;
 
 	for (i = 1; i <= PFILE_NONDEATH; i <<= 1) {
 		if (!(i & gfxflag)) {
@@ -236,7 +206,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 			break;
 		}
 
-		sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", cs, prefix, prefix, szCel);
+		sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", cs.c_str(), prefix, prefix, szCel);
 		LoadFileWithMem(pszName, pData);
 		SetPlayerGPtrs((BYTE *)pData, (BYTE **)pAnim);
 		p->_pGFXLoad |= i;
@@ -441,21 +411,21 @@ void SetPlrAnims(int pnum)
 	pc = plr[pnum]._pClass;
 
 	if (level.leveltype == DTYPE_TOWN) {
-		plr[pnum]._pNFrames = PlrGFXAnimLens[pc][7];
-		plr[pnum]._pWFrames = PlrGFXAnimLens[pc][8];
-		plr[pnum]._pDFrames = PlrGFXAnimLens[pc][4];
-		plr[pnum]._pSFrames = PlrGFXAnimLens[pc][5];
+		plr[pnum]._pNFrames = classes[pc].PlrGFXAnimLens[7];
+		plr[pnum]._pWFrames = classes[pc].PlrGFXAnimLens[8];
+		plr[pnum]._pDFrames = classes[pc].PlrGFXAnimLens[4];
+		plr[pnum]._pSFrames = classes[pc].PlrGFXAnimLens[5];
 	} else {
-		plr[pnum]._pNFrames = PlrGFXAnimLens[pc][0];
-		plr[pnum]._pWFrames = PlrGFXAnimLens[pc][2];
-		plr[pnum]._pAFrames = PlrGFXAnimLens[pc][1];
-		plr[pnum]._pHFrames = PlrGFXAnimLens[pc][6];
-		plr[pnum]._pSFrames = PlrGFXAnimLens[pc][5];
-		plr[pnum]._pDFrames = PlrGFXAnimLens[pc][4];
-		plr[pnum]._pBFrames = PlrGFXAnimLens[pc][3];
-		plr[pnum]._pAFNum = PlrGFXAnimLens[pc][9];
+		plr[pnum]._pNFrames = classes[pc].PlrGFXAnimLens[0];
+		plr[pnum]._pWFrames = classes[pc].PlrGFXAnimLens[2];
+		plr[pnum]._pAFrames = classes[pc].PlrGFXAnimLens[1];
+		plr[pnum]._pHFrames = classes[pc].PlrGFXAnimLens[6];
+		plr[pnum]._pSFrames = classes[pc].PlrGFXAnimLens[5];
+		plr[pnum]._pDFrames = classes[pc].PlrGFXAnimLens[4];
+		plr[pnum]._pBFrames = classes[pc].PlrGFXAnimLens[3];
+		plr[pnum]._pAFNum = classes[pc].PlrGFXAnimLens[9];
 	}
-	plr[pnum]._pSFNum = PlrGFXAnimLens[pc][10];
+	plr[pnum]._pSFNum = classes[pc].PlrGFXAnimLens[10];
 
 	gn = plr[pnum]._pgfxnum & 0xF;
 	if (pc == PC_WARRIOR) {
@@ -541,28 +511,28 @@ void CreatePlayer(int pnum, char c)
 	}
 	plr[pnum]._pClass = c;
 
-	val = StrengthTbl[c];
+	val = classes[c].StrengthTbl;
 	if (val < 0) {
 		val = 0;
 	}
 	plr[pnum]._pStrength = val;
 	plr[pnum]._pBaseStr = val;
 
-	val = MagicTbl[c];
+	val = classes[c].MagicTbl;
 	if (val < 0) {
 		val = 0;
 	}
 	plr[pnum]._pMagic = val;
 	plr[pnum]._pBaseMag = val;
 
-	val = DexterityTbl[c];
+	val = classes[c].DexterityTbl;
 	if (val < 0) {
 		val = 0;
 	}
 	plr[pnum]._pDexterity = val;
 	plr[pnum]._pBaseDex = val;
 
-	val = VitalityTbl[c];
+	val = classes[c].VitalityTbl;
 	if (val < 0) {
 		val = 0;
 	}
@@ -581,7 +551,7 @@ void CreatePlayer(int pnum, char c)
 		plr[pnum]._pDamageMod = plr[pnum]._pStrength * plr[pnum]._pLevel / 100;
 	}
 
-	plr[pnum]._pBaseToBlk = ToBlkTbl[c];
+	plr[pnum]._pBaseToBlk = classes[c].ToBlkTbl;
 
 	plr[pnum]._pHitPoints = (val + 10) << 6;
 	if (c == PC_WARRIOR) {
@@ -687,13 +657,13 @@ int CalcStatDiff(int pnum)
 	int c;
 
 	c = plr[pnum]._pClass;
-	return MaxStats[c][ATTRIB_STR]
+	return classes[c].MaxStats[ATTRIB_STR]
 	    - plr[pnum]._pBaseStr
-	    + MaxStats[c][ATTRIB_MAG]
+	    + classes[c].MaxStats[ATTRIB_MAG]
 	    - plr[pnum]._pBaseMag
-	    + MaxStats[c][ATTRIB_DEX]
+	    + classes[c].MaxStats[ATTRIB_DEX]
 	    - plr[pnum]._pBaseDex
-	    + MaxStats[c][ATTRIB_VIT]
+	    + classes[c].MaxStats[ATTRIB_VIT]
 	    - plr[pnum]._pBaseVit;
 }
 
@@ -2072,7 +2042,7 @@ BOOL PM_DoWalk(int pnum)
 
 	anim_len = 8;
 	if (level.currlevel != 0) {
-		anim_len = AnimLenFromClass[plr[pnum]._pClass];
+		anim_len = classes[plr[pnum]._pClass].AnimLenFromClass;
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
@@ -2128,7 +2098,7 @@ BOOL PM_DoWalk2(int pnum)
 
 	anim_len = 8;
 	if (level.currlevel != 0) {
-		anim_len = AnimLenFromClass[plr[pnum]._pClass];
+		anim_len = classes[plr[pnum]._pClass].AnimLenFromClass;
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
@@ -2180,7 +2150,7 @@ BOOL PM_DoWalk3(int pnum)
 
 	anim_len = 8;
 	if (level.currlevel != 0) {
-		anim_len = AnimLenFromClass[plr[pnum]._pClass];
+		anim_len = classes[plr[pnum]._pClass].AnimLenFromClass;
 	}
 
 	if (plr[pnum]._pVar8 == anim_len) {
@@ -2999,9 +2969,9 @@ void CheckNewPath(int pnum)
 			}
 
 			if (level.currlevel != 0) {
-				xvel3 = PWVel[plr[pnum]._pClass][0];
-				xvel = PWVel[plr[pnum]._pClass][1];
-				yvel = PWVel[plr[pnum]._pClass][2];
+				xvel3 = classes[plr[pnum]._pClass].PWVel[0];
+				xvel = classes[plr[pnum]._pClass].PWVel[1];
+				yvel = classes[plr[pnum]._pClass].PWVel[2];
 			} else {
 				xvel3 = 2048;
 				xvel = 1024;
@@ -3321,17 +3291,17 @@ void ValidatePlayer()
 		plr[myplr]._pGold = gt;
 
 	pc = plr[myplr]._pClass;
-	if (plr[myplr]._pBaseStr > MaxStats[pc][ATTRIB_STR]) {
-		plr[myplr]._pBaseStr = MaxStats[pc][ATTRIB_STR];
+	if (plr[myplr]._pBaseStr > classes[pc].MaxStats[ATTRIB_STR]) {
+		plr[myplr]._pBaseStr = classes[pc].MaxStats[ATTRIB_STR];
 	}
-	if (plr[myplr]._pBaseMag > MaxStats[pc][ATTRIB_MAG]) {
-		plr[myplr]._pBaseMag = MaxStats[pc][ATTRIB_MAG];
+	if (plr[myplr]._pBaseMag > classes[pc].MaxStats[ATTRIB_MAG]) {
+		plr[myplr]._pBaseMag = classes[pc].MaxStats[ATTRIB_MAG];
 	}
-	if (plr[myplr]._pBaseDex > MaxStats[pc][ATTRIB_DEX]) {
-		plr[myplr]._pBaseDex = MaxStats[pc][ATTRIB_DEX];
+	if (plr[myplr]._pBaseDex > classes[pc].MaxStats[ATTRIB_DEX]) {
+		plr[myplr]._pBaseDex = classes[pc].MaxStats[ATTRIB_DEX];
 	}
-	if (plr[myplr]._pBaseVit > MaxStats[pc][ATTRIB_VIT]) {
-		plr[myplr]._pBaseVit = MaxStats[pc][ATTRIB_VIT];
+	if (plr[myplr]._pBaseVit > classes[pc].MaxStats[ATTRIB_VIT]) {
+		plr[myplr]._pBaseVit = classes[pc].MaxStats[ATTRIB_VIT];
 	}
 
 	for (b = 1; b < MAX_SPELLS; b++) {
@@ -3821,29 +3791,29 @@ void CheckStats(int p)
 	for (i = 0; i < 4; i++) {
 		switch (i) {
 		case ATTRIB_STR:
-			if (plr[p]._pBaseStr > MaxStats[c][ATTRIB_STR]) {
-				plr[p]._pBaseStr = MaxStats[c][ATTRIB_STR];
+			if (plr[p]._pBaseStr > classes[c].MaxStats[ATTRIB_STR]) {
+				plr[p]._pBaseStr = classes[c].MaxStats[ATTRIB_STR];
 			} else if (plr[p]._pBaseStr < 0) {
 				plr[p]._pBaseStr = 0;
 			}
 			break;
 		case ATTRIB_MAG:
-			if (plr[p]._pBaseMag > MaxStats[c][ATTRIB_MAG]) {
-				plr[p]._pBaseMag = MaxStats[c][ATTRIB_MAG];
+			if (plr[p]._pBaseMag > classes[c].MaxStats[ATTRIB_MAG]) {
+				plr[p]._pBaseMag = classes[c].MaxStats[ATTRIB_MAG];
 			} else if (plr[p]._pBaseMag < 0) {
 				plr[p]._pBaseMag = 0;
 			}
 			break;
 		case ATTRIB_DEX:
-			if (plr[p]._pBaseDex > MaxStats[c][ATTRIB_DEX]) {
-				plr[p]._pBaseDex = MaxStats[c][ATTRIB_DEX];
+			if (plr[p]._pBaseDex > classes[c].MaxStats[ATTRIB_DEX]) {
+				plr[p]._pBaseDex = classes[c].MaxStats[ATTRIB_DEX];
 			} else if (plr[p]._pBaseDex < 0) {
 				plr[p]._pBaseDex = 0;
 			}
 			break;
 		case ATTRIB_VIT:
-			if (plr[p]._pBaseVit > MaxStats[c][ATTRIB_VIT]) {
-				plr[p]._pBaseVit = MaxStats[c][ATTRIB_VIT];
+			if (plr[p]._pBaseVit > classes[c].MaxStats[ATTRIB_VIT]) {
+				plr[p]._pBaseVit = classes[c].MaxStats[ATTRIB_VIT];
 			} else if (plr[p]._pBaseVit < 0) {
 				plr[p]._pBaseVit = 0;
 			}
@@ -3860,7 +3830,7 @@ void ModifyPlrStr(int p, int l)
 		app_fatal("ModifyPlrStr: illegal player %d", p);
 	}
 
-	max = MaxStats[plr[p]._pClass][ATTRIB_STR];
+	max = classes[plr[p]._pClass].MaxStats[ATTRIB_STR];
 	if (plr[p]._pBaseStr + l > max) {
 		l = max - plr[p]._pBaseStr;
 	}
@@ -3889,7 +3859,7 @@ void ModifyPlrMag(int p, int l)
 		app_fatal("ModifyPlrMag: illegal player %d", p);
 	}
 
-	max = MaxStats[plr[p]._pClass][ATTRIB_MAG];
+	max = classes[plr[p]._pClass].MaxStats[ATTRIB_MAG];
 	if (plr[p]._pBaseMag + l > max) {
 		l = max - plr[p]._pBaseMag;
 	}
@@ -3924,7 +3894,7 @@ void ModifyPlrDex(int p, int l)
 		app_fatal("ModifyPlrDex: illegal player %d", p);
 	}
 
-	max = MaxStats[plr[p]._pClass][ATTRIB_DEX];
+	max = classes[plr[p]._pClass].MaxStats[ATTRIB_DEX];
 	if (plr[p]._pBaseDex + l > max) {
 		l = max - plr[p]._pBaseDex;
 	}
@@ -3950,7 +3920,7 @@ void ModifyPlrVit(int p, int l)
 		app_fatal("ModifyPlrVit: illegal player %d", p);
 	}
 
-	max = MaxStats[plr[p]._pClass][ATTRIB_VIT];
+	max = classes[plr[p]._pClass].MaxStats[ATTRIB_VIT];
 	if (plr[p]._pBaseVit + l > max) {
 		l = max - plr[p]._pBaseVit;
 	}

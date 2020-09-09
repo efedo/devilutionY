@@ -3,6 +3,7 @@
 #define __PLAYER_H__
 
 #include <string>
+#include <array>
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -135,50 +136,83 @@ extern int plryoff2[9];
 
 // need to rename current abs before adding std libraries
 
-//class CharType {
-//public:
-//	char PlrGFXAnimLens[11];
-//	int PWVel[3] = { 2048, 1024, 512 };
-//	int AnimLenFromClass = 8; // Total number of frames in walk animation.
-//	int StrengthTbl; // starting strength
-//	int MagicTbl;
-//	int DexterityTbl;
-//	int VitalityTbl;
-//	int ToBlkTbl;
-//	int MaxStats[4];
-//	char *ClassStrTblOld;
-//	char *ClassStrTbl;
-//};
-//
-//class CharacterTypes {
-//public:
-//	void init() {
-//		*(types[0].PlrGFXAnimLens) = { 10, 16, 8, 2, 20, 20, 6, 20, 8, 9, 14 };
-//
-//
-//		{ 8, 18, 8, 4, 20, 16, 7, 20, 8, 10, 12 },
-//			    { 8, 16, 8, 6, 20, 12, 8, 20, 8, 12, 8 },
-//		    };
-//	}
-//private:
-//	CharType types[3];
-//};
-//
-//extern CharacterTypes charTypes;
+class CharType {
+public:
+	std::array<char, 11> PlrGFXAnimLens;
+	int PWVel[3] = { 2048, 1024, 512 };
+	int AnimLenFromClass = 8; // Total number of frames in walk animation.
+	int StrengthTbl = 0; // starting strength
+	int MagicTbl = 0;
+	int DexterityTbl = 0;
+	int VitalityTbl = 0;
+	int ToBlkTbl = 0;
+	std::array<int, 4> MaxStats = {0, 0, 0, 0};
+	std::string ClassStrTblOld = "unnamed";
+	std::string ClassStrTbl = "unnamed";
+};
 
-extern int PWVel[3][3];
-extern int AnimLenFromClass[3];
-extern int StrengthTbl[3];
-extern int MagicTbl[3];
-extern int DexterityTbl[3];
-extern int VitalityTbl[3];
-extern int ToBlkTbl[3];
-extern int MaxStats[3][4];
-extern char *ClassStrTblOld[];
-extern char *ClassStrTbl[];
+class CharacterTypes {
+public:
+	CharacterTypes()
+	{
+		init();
+	}
+	void init() {
+		types[0].ClassStrTblOld = "Warrior";
+		types[1].ClassStrTblOld = "Rogue";
+		types[2].ClassStrTblOld = "Sorceror";
+
+		types[0].PlrGFXAnimLens = { 10, 16, 8, 2, 20, 20, 6, 20, 8, 9, 14 };
+		types[1].PlrGFXAnimLens = { 8, 18, 8, 4, 20, 16, 7, 20, 8, 10, 12 };
+		types[2].PlrGFXAnimLens = { 8, 16, 8, 6, 20, 12, 8, 20, 8, 12, 8 };
+
+		types[0].StrengthTbl = 30;
+		types[1].StrengthTbl = 20;
+		types[2].StrengthTbl = 15;
+
+		types[0].MagicTbl = 10;
+		types[1].MagicTbl = 15;
+		types[2].MagicTbl = 35;
+
+		types[0].DexterityTbl = 20;
+		types[1].DexterityTbl = 30;
+		types[2].DexterityTbl = 15;
+
+		types[0].VitalityTbl = 25;
+		types[1].VitalityTbl = 20;
+		types[2].VitalityTbl = 20;
+
+		types[0].ToBlkTbl = 30;
+		types[1].ToBlkTbl = 20;
+		types[2].ToBlkTbl = 10;
+		
+		types[0].MaxStats = { 250, 50, 60, 100 };
+		types[1].MaxStats = { 55, 70, 250, 80 };
+		types[2].MaxStats = { 45, 250, 85, 80 };
+	}
+
+	auto &operator[](size_t n)
+	{
+		return types[n];
+	}
+private:
+	CharType types[3];
+};
+
+extern CharacterTypes classes;
+
+//extern int PWVel[3][3];
+//extern int AnimLenFromClass[3];
+//extern int StrengthTbl[3];
+//extern int MagicTbl[3];
+//extern int DexterityTbl[3];
+//extern int VitalityTbl[3];
+//extern int ToBlkTbl[3];
+//extern int MaxStats[3][4];
+//extern char *ClassStrTblOld[];
+//extern char *ClassStrTbl[];
 
 extern int ExpLvlsTbl[MAXCHARLEVEL];
-
 extern BYTE fix[9];
 
 //#ifdef __cplusplus
