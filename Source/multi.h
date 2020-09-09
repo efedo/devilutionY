@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern BOOLEAN gbSomebodyWonGameKludge;
 extern char szPlayerDescript[128];
@@ -66,9 +66,9 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv);
 
 extern const int event_types[3];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

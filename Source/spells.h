@@ -4,9 +4,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 int GetManaAmount(int id, int sn);
 void UseMana(int id, int sn);
@@ -15,9 +15,9 @@ void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int 
 void DoResurrect(int pnum, int rid);
 void DoHealOther(int pnum, int rid);
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

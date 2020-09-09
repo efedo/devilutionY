@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern SDL_threadID glpDThreadId;
 extern BOOLEAN dthread_running;
@@ -22,9 +22,9 @@ unsigned int dthread_handler(void *data);
 void dthread_cleanup();
 
 /* data */
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

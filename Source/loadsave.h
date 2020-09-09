@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern BYTE *tbuff;
 
@@ -55,9 +55,9 @@ void SavePortal(int i);
 void SaveLevel();
 void LoadLevel();
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

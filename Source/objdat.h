@@ -4,17 +4,17 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern int ObjTypeConv[];
 extern ObjDataStruct AllObjects[99];
 extern char *ObjMasterLoadList[56];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

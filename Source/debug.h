@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern BYTE *pSquareCel;
 extern char dMonsDbg[NUMLEVELS][MAXDUNX][MAXDUNY];
@@ -33,9 +33,9 @@ void GetDebugMonster();
 void NextDebugMonster();
 #endif
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

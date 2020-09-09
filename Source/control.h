@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern BYTE *pDurIcons;
 extern BYTE *pChrButtons;
@@ -143,9 +143,9 @@ extern char *PanBtnStr[8];
 extern RECT32 ChrBtnsRect[4];
 extern int SpellPages[6][7];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

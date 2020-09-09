@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern int diabquad1x;
 extern int diabquad1y;
@@ -55,9 +55,9 @@ extern const BYTE L4PENTA[52];
 extern const BYTE L4PENTA2[52];
 extern const BYTE L4BTYPES[140];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern char sz_error_buf[256];
 extern BOOL terminating;
@@ -36,9 +36,9 @@ void DiskFreeDlg(char *error);
 void InsertCDDlg(const char *fileName);
 void DirErrorDlg(char *error);
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

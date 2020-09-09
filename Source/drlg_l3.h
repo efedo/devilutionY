@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern BOOLEAN lavapool;
 extern int abyssx;
@@ -67,9 +67,9 @@ extern const BYTE L3XTRA4[4];
 extern const BYTE L3XTRA5[4];
 extern const BYTE L3ANVIL[244];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

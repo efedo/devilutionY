@@ -10,9 +10,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 void mpqapi_remove_hash_entry(const char *pszName);
 void mpqapi_alloc_block(uint32_t block_offset, uint32_t block_size);
@@ -31,9 +31,9 @@ BOOL mpqapi_flush_and_close(const char *pszArchive, BOOL bFree, DWORD dwChar);
 /* rdata */
 
 /* data */
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

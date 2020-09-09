@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern int sfxdelay;
 extern int sfxdnum;
@@ -43,9 +43,9 @@ void effects_play_sound(char *snd_file);
 extern const char MonstSndChar[];
 
 /* data */
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

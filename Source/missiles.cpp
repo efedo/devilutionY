@@ -10,9 +10,9 @@ DEVILUTION_BEGIN_NAMESPACE
 int missileactive[MAXMISSILES];
 int missileavail[MAXMISSILES];
 MissileStruct missile[MAXMISSILES];
+ChainStruct chain[MAXMISSILES];
 int nummissiles;
 BOOL ManashieldFlag;
-ChainStruct chain[MAXMISSILES];
 BOOL MissilePreFlag;
 int numchains;
 

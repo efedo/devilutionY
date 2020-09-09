@@ -4,9 +4,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern PortalStruct portal[MAXPORTAL];
 extern int portalindex;
@@ -29,9 +29,9 @@ BOOL PosOkPortal(int lvl, int x, int y);
 extern int WarpDropX[MAXPORTAL];
 extern int WarpDropY[MAXPORTAL];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

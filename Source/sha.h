@@ -4,9 +4,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 #define SHA1HashSize 20
 
@@ -20,9 +20,9 @@ void SHA1ProcessMessageBlock(SHA1Context *context);
 void SHA1Reset(int n);
 void SHA1Init(SHA1Context *context);
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

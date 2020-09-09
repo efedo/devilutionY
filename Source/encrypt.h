@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern DWORD hashtable[5][256];
 
@@ -23,9 +23,9 @@ unsigned int PkwareBufferRead(char *buf, unsigned int *size, void *param);
 void PkwareBufferWrite(char *buf, unsigned int *size, void *param);
 void PkwareDecompress(BYTE *pbInBuff, int recv_size, int dwMaxBytes);
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

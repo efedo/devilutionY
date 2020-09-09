@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern char msgtable[MAX_SEND_STR_LEN];
 extern DWORD msgdelay;
@@ -24,9 +24,9 @@ void DrawDiabloMsg();
 /* data */
 extern char *MsgStrings[];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

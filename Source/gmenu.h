@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern BYTE *optbar_cel;
 extern BOOLEAN mouseNavigation;
@@ -49,9 +49,9 @@ void gmenu_slider_steps(TMenuItem *pItem, int dwTicks);
 extern const BYTE lfontframe[];
 extern const BYTE lfontkern[];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

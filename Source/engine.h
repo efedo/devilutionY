@@ -15,9 +15,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 //offset 0
 //pCelBuff->pFrameTable[0]
@@ -104,9 +104,9 @@ void PlayInGameMovie(char *pszMovie);
 extern const int RndInc;
 extern const int RndMult;
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

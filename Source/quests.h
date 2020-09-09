@@ -4,9 +4,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern int qtopline;
 extern BOOL questlog;
@@ -57,9 +57,9 @@ extern int QuestGroup2[3];
 extern int QuestGroup3[3];
 extern int QuestGroup4[2];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

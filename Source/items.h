@@ -8,16 +8,20 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern int itemactive[MAXITEMS];
-extern BOOL uitemflag;
 extern int itemavail[MAXITEMS];
-extern ItemStruct curruitem;
 extern ItemGetRecordStruct itemrecord[MAXITEMS];
+
+
+extern BOOL uitemflag;
+
+extern ItemStruct curruitem;
 extern ItemStruct item[MAXITEMS + 1];
+
 extern BOOL itemhold[3][3];
 extern BYTE *itemanims[ITEMTYPES];
 extern BOOL UniqueItemFlag[128];
@@ -146,9 +150,9 @@ extern int ItemInvSnds[];
 extern int idoppely;
 extern int premiumlvladd[6];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 

@@ -2,11 +2,13 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
+#include <string>
+
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 
 extern int plr_lframe_size;
 extern int plr_wframe_size;
@@ -127,7 +129,43 @@ extern int plrxoff[9];
 extern int plryoff[9];
 extern int plrxoff2[9];
 extern int plryoff2[9];
-extern char PlrGFXAnimLens[][11];
+
+
+// These are all character templates
+
+// need to rename current abs before adding std libraries
+
+//class CharType {
+//public:
+//	char PlrGFXAnimLens[11];
+//	int PWVel[3] = { 2048, 1024, 512 };
+//	int AnimLenFromClass = 8; // Total number of frames in walk animation.
+//	int StrengthTbl; // starting strength
+//	int MagicTbl;
+//	int DexterityTbl;
+//	int VitalityTbl;
+//	int ToBlkTbl;
+//	int MaxStats[4];
+//	char *ClassStrTblOld;
+//	char *ClassStrTbl;
+//};
+//
+//class CharacterTypes {
+//public:
+//	void init() {
+//		*(types[0].PlrGFXAnimLens) = { 10, 16, 8, 2, 20, 20, 6, 20, 8, 9, 14 };
+//
+//
+//		{ 8, 18, 8, 4, 20, 16, 7, 20, 8, 10, 12 },
+//			    { 8, 16, 8, 6, 20, 12, 8, 20, 8, 12, 8 },
+//		    };
+//	}
+//private:
+//	CharType types[3];
+//};
+//
+//extern CharacterTypes charTypes;
+
 extern int PWVel[3][3];
 extern int AnimLenFromClass[3];
 extern int StrengthTbl[3];
@@ -135,15 +173,17 @@ extern int MagicTbl[3];
 extern int DexterityTbl[3];
 extern int VitalityTbl[3];
 extern int ToBlkTbl[3];
-extern char *ClassStrTblOld[];
 extern int MaxStats[3][4];
-extern int ExpLvlsTbl[MAXCHARLEVEL];
+extern char *ClassStrTblOld[];
 extern char *ClassStrTbl[];
+
+extern int ExpLvlsTbl[MAXCHARLEVEL];
+
 extern BYTE fix[9];
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 DEVILUTION_END_NAMESPACE
 
