@@ -13,38 +13,50 @@ DEVILUTION_BEGIN_NAMESPACE
 //#endif
 
 class Automap {
-
+public:
+	void enable(bool var = true) { automapflag = var; }
+	void disable() { enable(false); }
+	[[nodiscard]] bool enabled() { return automapflag; }
+	void initOnce();
+	void init();
+	void start();
+	void up();
+	void down();
+	void left();
+	void right();
+	void zoomIn();
+	void zoomOut();
+	void zoomReset();
+	void setScale(int scale) { AutoMapScale = scale; }
+	void draw();
+	void drawTile(int screen_x, int screen_y, WORD automap_type);
+	void drawPlayer();
+	void drawText();
+	WORD GetAutomapType(int x, int y, BOOL view);
+	void SetAutomapView(int x, int y);
+	auto & getView() { return automapview; }
+	int &getScale() { return AutoMapScale; }
+	void addOffsetX(int offset) { AutoMapXOfs += offset; }
+	void addOffsetY(int offset) { AutoMapYOfs += offset; }
+private:
+	WORD automaptype[512];  // Maps from tile_id to automap type.
+							// BUGFIX: only the first 256 elements are ever read
+	int AutoMapX;
+	int AutoMapY;
+	BOOL automapflag; // Specifies whether the automap is enabled.
+	char AmShiftTab[31];
+	BOOLEAN automapview[DMAXX][DMAXY]; // Tracks the explored areas of the map.
+	int AutoMapScale; // Specifies the scale of the automap.
+	int AutoMapXOfs; // X offset
+	int AutoMapYOfs; // Y offset
+	int AmLine64;
+	int AmLine32;
+	int AmLine16;
+	int AmLine8;
+	int AmLine4;
 };
 
-extern WORD automaptype[512];
-extern BOOL automapflag;
-extern char AmShiftTab[31];
-extern BOOLEAN automapview[DMAXX][DMAXY];
-extern int AutoMapScale;
-extern int AutoMapXOfs;
-extern int AutoMapYOfs;
-extern int AmLine64;
-extern int AmLine32;
-extern int AmLine16;
-extern int AmLine8;
-extern int AmLine4;
-
-void InitAutomapOnce();
-void InitAutomap();
-void StartAutomap();
-void AutomapUp();
-void AutomapDown();
-void AutomapLeft();
-void AutomapRight();
-void AutomapZoomIn();
-void AutomapZoomOut();
-void DrawAutomap();
-void DrawAutomapTile(int screen_x, int screen_y, WORD automap_type);
-void DrawAutomapPlr();
-WORD GetAutomapType(int x, int y, BOOL view);
-void DrawAutomapText();
-void SetAutomapView(int x, int y);
-void AutomapZoomReset();
+extern Automap automap;
 
 //#ifdef __cplusplus
 //}

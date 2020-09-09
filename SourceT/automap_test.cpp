@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include "all.h"
 
-TEST(Automap, InitAutomap) {
-	dvl::InitAutomapOnce();
+TEST(Automap, init) {
+	dvl::initOnce();
 	EXPECT_EQ(dvl::automapflag, false);
 	EXPECT_EQ(dvl::AutoMapScale, 50);
 	EXPECT_EQ(dvl::AmLine64, 32);
@@ -12,48 +12,48 @@ TEST(Automap, InitAutomap) {
 	EXPECT_EQ(dvl::AmLine4, 2);
 }
 
-TEST(Automap, StartAutomap) {
-	dvl::StartAutomap();
+TEST(Automap, start) {
+	dvl::start();
 	EXPECT_EQ(dvl::AutoMapXOfs, 0);
 	EXPECT_EQ(dvl::AutoMapYOfs, 0);
 	EXPECT_EQ(dvl::automapflag, true);
 }
 
-TEST(Automap, AutomapUp) {
+TEST(Automap, up) {
 	dvl::AutoMapXOfs = 1;
 	dvl::AutoMapYOfs = 1;
-	dvl::AutomapUp();
+	dvl::up();
 	EXPECT_EQ(dvl::AutoMapXOfs, 0);
 	EXPECT_EQ(dvl::AutoMapYOfs, 0);
 }
 
-TEST(Automap, AutomapDown) {
+TEST(Automap, down) {
 	dvl::AutoMapXOfs = 1;
 	dvl::AutoMapYOfs = 1;
-	dvl::AutomapDown();
+	dvl::down();
 	EXPECT_EQ(dvl::AutoMapXOfs, 2);
 	EXPECT_EQ(dvl::AutoMapYOfs, 2);
 }
 
-TEST(Automap, AutomapLeft) {
+TEST(Automap, left) {
 	dvl::AutoMapXOfs = 1;
 	dvl::AutoMapYOfs = 1;
-	dvl::AutomapLeft();
+	dvl::left();
 	EXPECT_EQ(dvl::AutoMapXOfs, 0);
 	EXPECT_EQ(dvl::AutoMapYOfs, 2);
 }
 
-TEST(Automap, AutomapRight) {
+TEST(Automap, right) {
 	dvl::AutoMapXOfs = 1;
 	dvl::AutoMapYOfs = 1;
-	dvl::AutomapRight();
+	dvl::right();
 	EXPECT_EQ(dvl::AutoMapXOfs, 2);
 	EXPECT_EQ(dvl::AutoMapYOfs, 0);
 }
 
-TEST(Automap, AutomapZoomIn) {
+TEST(Automap, zoomIn) {
 	dvl::AutoMapScale = 50;
-	dvl::AutomapZoomIn();
+	dvl::zoomIn();
 	EXPECT_EQ(dvl::AutoMapScale, 55);
 	EXPECT_EQ(dvl::AmLine64, 35);
 	EXPECT_EQ(dvl::AmLine32, 17);
@@ -64,8 +64,8 @@ TEST(Automap, AutomapZoomIn) {
 
 TEST(Automap, AutomapZoomIn_Max) {
 	dvl::AutoMapScale = 195;
-	dvl::AutomapZoomIn();
-	dvl::AutomapZoomIn();
+	dvl::zoomIn();
+	dvl::zoomIn();
 	EXPECT_EQ(dvl::AutoMapScale, 200);
 	EXPECT_EQ(dvl::AmLine64, 128);
 	EXPECT_EQ(dvl::AmLine32, 64);
@@ -74,9 +74,9 @@ TEST(Automap, AutomapZoomIn_Max) {
 	EXPECT_EQ(dvl::AmLine4, 8);
 }
 
-TEST(Automap, AutomapZoomOut) {
+TEST(Automap, zoomOut) {
 	dvl::AutoMapScale = 200;
-	dvl::AutomapZoomOut();
+	dvl::zoomOut();
 	EXPECT_EQ(dvl::AutoMapScale, 195);
 	EXPECT_EQ(dvl::AmLine64, 124);
 	EXPECT_EQ(dvl::AmLine32, 62);
@@ -87,8 +87,8 @@ TEST(Automap, AutomapZoomOut) {
 
 TEST(Automap, AutomapZoomOut_Min) {
 	dvl::AutoMapScale = 55;
-	dvl::AutomapZoomOut();
-	dvl::AutomapZoomOut();
+	dvl::zoomOut();
+	dvl::zoomOut();
 	EXPECT_EQ(dvl::AutoMapScale, 50);
 	EXPECT_EQ(dvl::AmLine64, 32);
 	EXPECT_EQ(dvl::AmLine32, 16);
@@ -97,11 +97,11 @@ TEST(Automap, AutomapZoomOut_Min) {
 	EXPECT_EQ(dvl::AmLine4, 2);
 }
 
-TEST(Automap, AutomapZoomReset) {
+TEST(Automap, zoomReset) {
 	dvl::AutoMapScale = 50;
 	dvl::AutoMapXOfs = 1;
 	dvl::AutoMapYOfs = 1;
-	dvl::AutomapZoomReset();
+	dvl::zoomReset();
 	EXPECT_EQ(dvl::AutoMapXOfs, 0);
 	EXPECT_EQ(dvl::AutoMapYOfs, 0);
 	EXPECT_EQ(dvl::AutoMapScale, 50);

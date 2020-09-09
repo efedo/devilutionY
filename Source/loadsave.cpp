@@ -148,7 +148,7 @@ void LoadGame(BOOL firstflag)
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
-				automapview[i][j] = OLoad();
+				automap.getView()[i][j] = OLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -162,10 +162,10 @@ void LoadGame(BOOL firstflag)
 	for (i = 0; i < SMITH_PREMIUM_ITEMS; i++)
 		LoadPremium(i);
 
-	automapflag = OLoad();
-	AutoMapScale = WLoad();
+	automap.enable(OLoad());
+	automap.setScale(WLoad());
 	mem_free_dbg(LoadBuff);
-	AutomapZoomReset();
+	automap.zoomReset();
 	ResyncQuests();
 
 	if (level.leveltype != DTYPE_TOWN)
@@ -946,7 +946,7 @@ void SaveGame()
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
-				OSave(automapview[i][j]);
+				OSave(automap.getView()[i][j]);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -960,8 +960,8 @@ void SaveGame()
 	for (i = 0; i < SMITH_PREMIUM_ITEMS; i++)
 		SavePremium(i);
 
-	OSave(automapflag);
-	WSave(AutoMapScale);
+	OSave(automap.enabled());
+	WSave(automap.getScale());
 	pfile_get_game_name(szName);
 	dwLen = codec_get_encoded_len(tbuff - SaveBuff);
 	pfile_write_save_file(szName, SaveBuff, tbuff - SaveBuff, dwLen);
@@ -1619,7 +1619,7 @@ void SaveLevel()
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
-				OSave(automapview[i][j]);
+				OSave(automap.getView()[i][j]);
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -1711,7 +1711,7 @@ void LoadLevel()
 		}
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++)
-				automapview[i][j] = OLoad();
+				automap.getView()[i][j] = OLoad();
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -1719,7 +1719,7 @@ void LoadLevel()
 		}
 	}
 
-	AutomapZoomReset();
+	automap.zoomReset();
 	ResyncQuests();
 	SyncPortals();
 	dolighting = TRUE;

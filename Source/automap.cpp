@@ -7,27 +7,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-/**
- * Maps from tile_id to automap type.
- * BUGFIX: only the first 256 elements are ever read
- */
-WORD automaptype[512];
-static int AutoMapX;
-static int AutoMapY;
-/** Specifies whether the automap is enabled. */
-BOOL automapflag;
-char AmShiftTab[31];
-/** Tracks the explored areas of the map. */
-BOOLEAN automapview[DMAXX][DMAXY];
-/** Specifies the scale of the automap. */
-int AutoMapScale;
-int AutoMapXOfs;
-int AutoMapYOfs;
-int AmLine64;
-int AmLine32;
-int AmLine16;
-int AmLine8;
-int AmLine4;
+Automap automap;
 
 /** color used to draw the player's arrow */
 #define COLOR_PLAYER (PAL8_ORANGE + 1)
@@ -50,7 +30,7 @@ int AmLine4;
 /**
  * @brief Initializes the automap.
  */
-void InitAutomapOnce()
+void Automap::initOnce()
 {
 	automapflag = FALSE;
 	AutoMapScale = 50;
@@ -64,7 +44,7 @@ void InitAutomapOnce()
 /**
  * @brief Loads the mapping between tile IDs and automap shapes.
  */
-void InitAutomap()
+void Automap::init()
 {
 	BYTE b1, b2;
 	DWORD dwTiles;
@@ -112,7 +92,7 @@ void InitAutomap()
 /**
  * @brief Displays the automap.
  */
-void StartAutomap()
+void Automap::start()
 {
 	AutoMapXOfs = 0;
 	AutoMapYOfs = 0;
@@ -122,7 +102,7 @@ void StartAutomap()
 /**
  * @brief Scrolls the automap upwards.
  */
-void AutomapUp()
+void Automap::up()
 {
 	AutoMapXOfs--;
 	AutoMapYOfs--;
@@ -131,7 +111,7 @@ void AutomapUp()
 /**
  * @brief Scrolls the automap downwards.
  */
-void AutomapDown()
+void Automap::down()
 {
 	AutoMapXOfs++;
 	AutoMapYOfs++;
@@ -140,7 +120,7 @@ void AutomapDown()
 /**
  * @brief Scrolls the automap leftwards.
  */
-void AutomapLeft()
+void Automap::left()
 {
 	AutoMapXOfs--;
 	AutoMapYOfs++;
@@ -149,7 +129,7 @@ void AutomapLeft()
 /**
  * @brief Scrolls the automap rightwards.
  */
-void AutomapRight()
+void Automap::right()
 {
 	AutoMapXOfs++;
 	AutoMapYOfs--;
@@ -158,7 +138,7 @@ void AutomapRight()
 /**
  * @brief Increases the zoom level of the automap.
  */
-void AutomapZoomIn()
+void Automap::zoomIn()
 {
 	if (AutoMapScale < 200) {
 		AutoMapScale += 5;
@@ -173,7 +153,7 @@ void AutomapZoomIn()
 /**
  * @brief Decreases the zoom level of the automap.
  */
-void AutomapZoomOut()
+void Automap::zoomOut()
 {
 	if (AutoMapScale > 50) {
 		AutoMapScale -= 5;
@@ -188,7 +168,7 @@ void AutomapZoomOut()
 /**
  * @brief Renders the automap on screen.
  */
-void DrawAutomap()
+void Automap::draw()
 {
 	int cells;
 	int sx, sy;
@@ -196,7 +176,7 @@ void DrawAutomap()
 	int mapx, mapy;
 
 	if (level.leveltype == DTYPE_TOWN) {
-		DrawAutomapText();
+		drawText();
 		return;
 	}
 
@@ -262,7 +242,7 @@ void DrawAutomap()
 		for (j = 0; j < cells; j++) {
 			WORD maptype = GetAutomapType(mapx + j, mapy - j, TRUE);
 			if (maptype != 0)
-				DrawAutomapTile(x, sy, maptype);
+				drawTile(x, sy, maptype);
 			x += AmLine64;
 		}
 		mapy++;
@@ -271,21 +251,21 @@ void DrawAutomap()
 		for (j = 0; j <= cells; j++) {
 			WORD maptype = GetAutomapType(mapx + j, mapy - j, TRUE);
 			if (maptype != 0)
-				DrawAutomapTile(x, y, maptype);
+				drawTile(x, y, maptype);
 			x += AmLine64;
 		}
 		mapx++;
 		sy += AmLine32;
 	}
-	DrawAutomapPlr();
-	DrawAutomapText();
+	drawPlayer();
+	drawText();
 	gpBufEnd = &gpBuffer[BUFFER_WIDTH * (SCREEN_Y + SCREEN_HEIGHT)];
 }
 
 /**
  * @brief Renders the given automap shape at the specified screen coordinates.
  */
-void DrawAutomapTile(int sx, int sy, WORD automap_type)
+void Automap::drawTile(int sx, int sy, WORD automap_type)
 {
 	BOOL do_vert;
 	BOOL do_horz;
@@ -473,7 +453,7 @@ void DrawAutomapTile(int sx, int sy, WORD automap_type)
 /**
  * @brief Renders an arrow on the automap, centered on and facing the direction of the player.
  */
-void DrawAutomapPlr()
+void Automap::drawPlayer()
 {
 	int px, py;
 	int x, y;
@@ -550,7 +530,7 @@ void DrawAutomapPlr()
 /**
  * @brief Returns the automap shape at the given coordinate.
  */
-WORD GetAutomapType(int x, int y, BOOL view)
+WORD Automap::GetAutomapType(int x, int y, BOOL view)
 {
 	WORD rv;
 
@@ -594,7 +574,7 @@ WORD GetAutomapType(int x, int y, BOOL view)
 /**
  * @brief Renders game info, such as the name of the current level, and in multi player the name of the game and the game password.
  */
-void DrawAutomapText()
+void Automap::drawText()
 {
 	char desc[256];
 	int nextline = 20;
@@ -620,7 +600,7 @@ void DrawAutomapText()
 /**
  * @brief Marks the given coordinate as within view on the automap.
  */
-void SetAutomapView(int x, int y)
+void Automap::SetAutomapView(int x, int y)
 {
 	WORD maptype, solid;
 	int xx, yy;
@@ -695,7 +675,7 @@ void SetAutomapView(int x, int y)
 /**
  * @brief Resets the zoom level of the automap.
  */
-void AutomapZoomReset()
+void Automap::zoomReset()
 {
 	AutoMapXOfs = 0;
 	AutoMapYOfs = 0;

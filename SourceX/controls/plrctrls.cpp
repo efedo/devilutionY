@@ -882,7 +882,7 @@ struct RightStickAccumulator {
 
 bool IsAutomapActive()
 {
-	return automapflag && level.leveltype != DTYPE_TOWN;
+	return automap.enabled() && level.leveltype != DTYPE_TOWN;
 }
 
 void HandleRightStickMotion()
@@ -897,8 +897,8 @@ void HandleRightStickMotion()
 	if (IsAutomapActive()) { // move map
 		int dx = 0, dy = 0;
 		acc.pool(&dx, &dy, 32);
-		AutoMapXOfs += dy + dx;
-		AutoMapYOfs += dy - dx;
+		automap.addOffsetX(dy + dx);
+		automap.addOffsetY(dy - dx);
 		return;
 	}
 

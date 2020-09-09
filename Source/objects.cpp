@@ -3327,7 +3327,7 @@ void OperateShrine(int pnum, int i, int sType)
 
 		for (yy = 0; yy < DMAXY; yy++) {
 			for (xx = 0; xx < DMAXX; xx++) {
-				automapview[xx][yy] = TRUE;
+				automap.getView()[xx][yy] = TRUE;
 			}
 		}
 		InitDiabloMsg(EMSG_SHRINE_SECLUDED);

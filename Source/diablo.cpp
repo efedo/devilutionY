@@ -954,7 +954,7 @@ void PressKey(int vkey)
 				stream_stop();
 			}
 			questlog = FALSE;
-			automapflag = FALSE;
+			automap.disable();
 			msgdelay = 0;
 			gamemenu_off();
 			DisplayHelp();
@@ -1028,8 +1028,8 @@ void PressKey(int vkey)
 			QuestlogUp();
 		} else if (helpflag) {
 			HelpScrollUp();
-		} else if (automapflag) {
-			AutomapUp();
+		} else if (automap.enabled()) {
+			automap.up();
 		}
 	} else if (vkey == DVL_VK_DOWN) {
 		if (stextflag) {
@@ -1038,8 +1038,8 @@ void PressKey(int vkey)
 			QuestlogDown();
 		} else if (helpflag) {
 			HelpScrollDown();
-		} else if (automapflag) {
-			AutomapDown();
+		} else if (automap.enabled()) {
+			automap.down();
 		}
 	} else if (vkey == DVL_VK_PRIOR) {
 		if (stextflag) {
@@ -1050,12 +1050,12 @@ void PressKey(int vkey)
 			STextNext();
 		}
 	} else if (vkey == DVL_VK_LEFT) {
-		if (automapflag && !talkflag) {
-			AutomapLeft();
+		if (automap.enabled() && !talkflag) {
+			automap.left();
 		}
 	} else if (vkey == DVL_VK_RIGHT) {
-		if (automapflag && !talkflag) {
-			AutomapRight();
+		if (automap.enabled() && !talkflag) {
+			automap.right();
 		}
 	} else if (vkey == DVL_VK_TAB) {
 		DoAutoMap();
@@ -1076,7 +1076,7 @@ void PressKey(int vkey)
 			stream_stop();
 		}
 		questlog = FALSE;
-		automapflag = FALSE;
+		automap.disable();
 		msgdelay = 0;
 		gamemenu_off();
 		doom_close();
@@ -1198,14 +1198,14 @@ void PressChar(int vkey)
 		return;
 	case '+':
 	case '=':
-		if (automapflag) {
-			AutomapZoomIn();
+		if (automap.enabled()) {
+			automap.zoomIn();
 		}
 		return;
 	case '-':
 	case '_':
-		if (automapflag) {
-			AutomapZoomOut();
+		if (automap.enabled()) {
+			automap.zoomOut();
 		}
 		return;
 	case 'v':
@@ -1480,7 +1480,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			InitPlrGFXMem(i);
 
 		InitStores();
-		InitAutomapOnce();
+		automap.initOnce();
 		InitHelp();
 	}
 
@@ -1490,7 +1490,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		SetupTownStores();
 
 	IncProgress();
-	InitAutomap();
+	automap.init();
 
 	if (level.leveltype != DTYPE_TOWN && lvldir != 4) {
 		InitLighting();

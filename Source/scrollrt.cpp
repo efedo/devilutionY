@@ -1111,8 +1111,8 @@ extern void DrawControllerModifierHints();
 void DrawView(int StartX, int StartY)
 {
 	DrawGame(StartX, StartY);
-	if (automapflag) {
-		DrawAutomap();
+	if (automap.enabled()) {
+		automap.draw();
 	}
 	if (stextflag && !qtextflag)
 		DrawSText();

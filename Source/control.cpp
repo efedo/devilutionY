@@ -968,10 +968,10 @@ void control_check_btn_press()
 void DoAutoMap()
 {
 	if (level.currlevel != 0 || gbMaxPlayers != 1) {
-		if (!automapflag)
-			StartAutomap();
+		if (!automap.enabled())
+			automap.start();
 		else
-			automapflag = FALSE;
+			automap.disable();
 	} else {
 		InitDiabloMsg(EMSG_NO_AUTOMAP_IN_TOWN);
 	}
