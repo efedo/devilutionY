@@ -141,14 +141,13 @@ public:
 	std::array<char, 11> PlrGFXAnimLens;
 	int PWVel[3] = { 2048, 1024, 512 };
 	int AnimLenFromClass = 8; // Total number of frames in walk animation.
-	int StrengthTbl = 0; // starting strength
-	int MagicTbl = 0;
-	int DexterityTbl = 0;
-	int VitalityTbl = 0;
-	int ToBlkTbl = 0;
+	int strength = 0; // starting strength
+	int magic = 0;
+	int dexterity = 0;
+	int vitality = 0;
+	int block = 0;
 	std::array<int, 4> MaxStats = {0, 0, 0, 0};
-	std::string ClassStrTblOld = "unnamed";
-	//std::string ClassStrTbl = "unnamed";
+	std::string name = "unnamed";
 };
 
 class CharacterTypes {
@@ -159,59 +158,43 @@ public:
 		init();
 	}
 	void init() {
-		types[0].ClassStrTblOld = "Warrior";
-		types[1].ClassStrTblOld = "Rogue";
-		types[2].ClassStrTblOld = "Sorceror";
+		list[0].name = "Warrior";
+		list[0].PlrGFXAnimLens = { 10, 16, 8, 2, 20, 20, 6, 20, 8, 9, 14 };
+		list[0].strength = 30;
+		list[0].magic = 10;
+		list[0].dexterity = 20;
+		list[0].vitality = 25;
+		list[0].block = 30;
+		list[0].MaxStats = { 250, 50, 60, 100 };
 
-		types[0].PlrGFXAnimLens = { 10, 16, 8, 2, 20, 20, 6, 20, 8, 9, 14 };
-		types[1].PlrGFXAnimLens = { 8, 18, 8, 4, 20, 16, 7, 20, 8, 10, 12 };
-		types[2].PlrGFXAnimLens = { 8, 16, 8, 6, 20, 12, 8, 20, 8, 12, 8 };
+		list[1].name = "Rogue";
+		list[1].PlrGFXAnimLens = { 8, 18, 8, 4, 20, 16, 7, 20, 8, 10, 12 };
+		list[1].strength = 20;
+		list[1].magic = 15;
+		list[1].dexterity = 30;
+		list[1].vitality = 20;
+		list[1].block = 20;
+		list[1].MaxStats = { 55, 70, 250, 80 };
 
-		types[0].StrengthTbl = 30;
-		types[1].StrengthTbl = 20;
-		types[2].StrengthTbl = 15;
-
-		types[0].MagicTbl = 10;
-		types[1].MagicTbl = 15;
-		types[2].MagicTbl = 35;
-
-		types[0].DexterityTbl = 20;
-		types[1].DexterityTbl = 30;
-		types[2].DexterityTbl = 15;
-
-		types[0].VitalityTbl = 25;
-		types[1].VitalityTbl = 20;
-		types[2].VitalityTbl = 20;
-
-		types[0].ToBlkTbl = 30;
-		types[1].ToBlkTbl = 20;
-		types[2].ToBlkTbl = 10;
-		
-		types[0].MaxStats = { 250, 50, 60, 100 };
-		types[1].MaxStats = { 55, 70, 250, 80 };
-		types[2].MaxStats = { 45, 250, 85, 80 };
+		list[2].name = "Sorceror";
+		list[2].PlrGFXAnimLens = { 8, 16, 8, 6, 20, 12, 8, 20, 8, 12, 8 };
+		list[2].strength = 15;
+		list[2].magic = 35;
+		list[2].dexterity = 15;
+		list[2].vitality = 20;
+		list[2].block = 10;		
+		list[2].MaxStats = { 45, 250, 85, 80 };
 	}
 
 	auto &operator[](size_t n)
 	{
-		return types[n];
+		return list[n];
 	}
 private:
-	CharType types[3];
+	CharType list[3];
 };
 
 extern CharacterTypes classes;
-
-//extern int PWVel[3][3];
-//extern int AnimLenFromClass[3];
-//extern int StrengthTbl[3];
-//extern int MagicTbl[3];
-//extern int DexterityTbl[3];
-//extern int VitalityTbl[3];
-//extern int ToBlkTbl[3];
-//extern int MaxStats[3][4];
-//extern char *ClassStrTblOld[];
-//extern char *ClassStrTbl[];
 
 extern int ExpLvlsTbl[MAXCHARLEVEL];
 extern BYTE fix[9];

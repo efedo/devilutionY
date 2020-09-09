@@ -286,10 +286,10 @@ BOOL pfile_ui_set_class_stats(unsigned int player_class_nr, _uidefaultstats *cla
 	int c;
 
 	c = pfile_get_player_class(player_class_nr);
-	class_stats->strength = classes[c].StrengthTbl;
-	class_stats->magic = classes[c].MagicTbl;
-	class_stats->dexterity = classes[c].DexterityTbl;
-	class_stats->vitality = classes[c].VitalityTbl;
+	class_stats->strength = classes[c].strength;
+	class_stats->magic = classes[c].magic;
+	class_stats->dexterity = classes[c].dexterity;
+	class_stats->vitality = classes[c].vitality;
 	return TRUE;
 }
 

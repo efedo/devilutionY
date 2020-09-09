@@ -117,7 +117,7 @@ void LoadPlrGFX(int pnum, player_graphic gfxflag)
 
 	p = &plr[pnum];
 	sprintf(prefix, "%c%c%c", CharChar[p->_pClass], ArmourChar[p->_pgfxnum >> 4], WepChar[p->_pgfxnum & 0xF]);
-	std::string &cs = classes[p->_pClass].ClassStrTbl;
+	std::string &cs = classes[p->_pClass].name;
 
 	for (i = 1; i <= PFILE_NONDEATH; i <<= 1) {
 		if (!(i & gfxflag)) {
@@ -328,7 +328,7 @@ DWORD GetPlrGFXSize(char *szCel)
 					continue; //No block without weapon
 				}
 				sprintf(Type, "%c%c%c", CharChar[c], *a, *w);
-				sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", classes[c].ClassStrTbl.c_str(), Type, Type, szCel);
+				sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", classes[c].name.c_str(), Type, Type, szCel);
 				if (WOpenFile(pszName, &hsFile, TRUE)) {
 					/// ASSERT: assert(hsFile);
 					dwSize = WGetFileSize(hsFile, NULL, pszName);
@@ -512,28 +512,28 @@ void CreatePlayer(int pnum, char c)
 	}
 	plr[pnum]._pClass = c;
 
-	val = classes[c].StrengthTbl;
+	val = classes[c].strength;
 	if (val < 0) {
 		val = 0;
 	}
 	plr[pnum]._pStrength = val;
 	plr[pnum]._pBaseStr = val;
 
-	val = classes[c].MagicTbl;
+	val = classes[c].magic;
 	if (val < 0) {
 		val = 0;
 	}
 	plr[pnum]._pMagic = val;
 	plr[pnum]._pBaseMag = val;
 
-	val = classes[c].DexterityTbl;
+	val = classes[c].dexterity;
 	if (val < 0) {
 		val = 0;
 	}
 	plr[pnum]._pDexterity = val;
 	plr[pnum]._pBaseDex = val;
 
-	val = classes[c].VitalityTbl;
+	val = classes[c].vitality;
 	if (val < 0) {
 		val = 0;
 	}
@@ -552,7 +552,7 @@ void CreatePlayer(int pnum, char c)
 		plr[pnum]._pDamageMod = plr[pnum]._pStrength * plr[pnum]._pLevel / 100;
 	}
 
-	plr[pnum]._pBaseToBlk = classes[c].ToBlkTbl;
+	plr[pnum]._pBaseToBlk = classes[c].block;
 
 	plr[pnum]._pHitPoints = (val + 10) << 6;
 	if (c == PC_WARRIOR) {
