@@ -124,7 +124,7 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 			InitLevels();
 			InitQuests();
 			InitPortals();
-			InitDungMsgs(myplr);
+			plr.local().InitDungMsgs();
 		}
 		if (!gbValidSaveFile || !gbLoadGame) {
 			uMsg = WM_DIABNEWGAME;
@@ -261,7 +261,7 @@ void free_game()
 	FreeStoreMem();
 
 	for (i = 0; i < MAX_PLRS; i++)
-		FreePlayerGFX(i);
+		plr[i].FreePlayerGFX();
 
 	FreeItemGFX();
 	FreeCursor();
@@ -429,7 +429,7 @@ void diablo_parse_flags(int argc, char **argv)
 			leveldebug = TRUE;
 			level.leveltype = SDL_atoi(argv[++i]);
 			level.currlevel = SDL_atoi(argv[++i]);
-			plr[0].plrlevel = level.currlevel;
+			plr[0].data.plrlevel = level.currlevel;
 		} else if (strcasecmp("-m", argv[i]) == 0) {
 			monstdebug = TRUE;
 			DebugMonsters[debugmonsttypes++] = SDL_atoi(argv[++i]);
@@ -681,7 +681,7 @@ BOOL LeftMouseDown(int wParam)
 							NewCursor(CURSOR_HAND);
 						}
 					} else {
-						if (plr[myplr]._pStatPts != 0 && !spselflag)
+						if (plr.local().data._pStatPts != 0 && !spselflag)
 							CheckLvlBtn();
 						if (!lvlbtndown)
 							return LeftMouseCmd(wParam == DVL_MK_SHIFT + DVL_MK_LBUTTON);
@@ -714,12 +714,12 @@ BOOL LeftMouseCmd(BOOL bShift)
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	} else {
-		bNear = abs(plr[myplr]._px - cursmx) < 2 && abs(plr[myplr]._py - cursmy) < 2;
+		bNear = abs(plr.local().data._px - cursmx) < 2 && abs(plr.local().data._py - cursmy) < 2;
 		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
 			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
 			NetSendCmdLocParam1(TRUE, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursmx, cursmy, pcursobj);
-		} else if (plr[myplr]._pwtype == WT_RANGED) {
+		} else if (plr.local().data._pwtype == WT_RANGED) {
 			if (bShift) {
 				NetSendCmdLoc(TRUE, CMD_RATTACKXY, cursmx, cursmy);
 			} else if (pcursmonst != -1) {
@@ -768,32 +768,32 @@ BOOL TryIconCurs()
 		return TRUE;
 	} else if (pcurs == CURSOR_IDENTIFY) {
 		if (pcursinvitem != -1) {
-			CheckIdentify(myplr, pcursinvitem);
+			CheckIdentify(myplr(), pcursinvitem);
 		} else {
 			NewCursor(CURSOR_HAND);
 		}
 		return TRUE;
 	} else if (pcurs == CURSOR_REPAIR) {
 		if (pcursinvitem != -1) {
-			DoRepair(myplr, pcursinvitem);
+			DoRepair(myplr(), pcursinvitem);
 		} else {
 			NewCursor(CURSOR_HAND);
 		}
 		return TRUE;
 	} else if (pcurs == CURSOR_RECHARGE) {
 		if (pcursinvitem != -1) {
-			DoRecharge(myplr, pcursinvitem);
+			DoRecharge(myplr(), pcursinvitem);
 		} else {
 			NewCursor(CURSOR_HAND);
 		}
 		return TRUE;
 	} else if (pcurs == CURSOR_TELEPORT) {
 		if (pcursmonst != -1) {
-			NetSendCmdParam3(TRUE, CMD_TSPELLID, pcursmonst, plr[myplr]._pTSpell, GetSpellLevel(myplr, plr[myplr]._pTSpell));
+			NetSendCmdParam3(TRUE, CMD_TSPELLID, pcursmonst, plr.local().data._pTSpell, GetSpellLevel(myplr(), plr.local().data._pTSpell));
 		} else if (pcursplr != -1) {
-			NetSendCmdParam3(TRUE, CMD_TSPELLPID, pcursplr, plr[myplr]._pTSpell, GetSpellLevel(myplr, plr[myplr]._pTSpell));
+			NetSendCmdParam3(TRUE, CMD_TSPELLPID, pcursplr, plr.local().data._pTSpell, GetSpellLevel(myplr(), plr.local().data._pTSpell));
 		} else {
-			NetSendCmdLocParam2(TRUE, CMD_TSPELLXY, cursmx, cursmy, plr[myplr]._pTSpell, GetSpellLevel(myplr, plr[myplr]._pTSpell));
+			NetSendCmdLocParam2(TRUE, CMD_TSPELLXY, cursmx, cursmy, plr.local().data._pTSpell, GetSpellLevel(myplr(), plr.local().data._pTSpell));
 		}
 		NewCursor(CURSOR_HAND);
 		return TRUE;
@@ -821,7 +821,7 @@ void LeftMouseUp()
 
 void RightMouseDown()
 {
-	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE && PauseMode != 2 && !plr[myplr]._pInvincible) {
+	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE && PauseMode != 2 && !plr.local().data._pInvincible) {
 		if (doomflag) {
 			doom_close();
 		} else if (stextflag == STORE_NONE) {
@@ -830,9 +830,9 @@ void RightMouseDown()
 			} else if (MouseY >= SPANEL_HEIGHT
 			    || (!sbookflag || MouseX <= RIGHT_PANEL)
 			        && !TryIconCurs()
-			        && (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))) {
+			        && (pcursinvitem == -1 || !plr.local().inventory.UseInvItem(pcursinvitem))) {
 				if (pcurs == CURSOR_HAND) {
-					if (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
+					if (pcursinvitem == -1 || !plr.local().inventory.UseInvItem(pcursinvitem))
 						CheckPlrSpell();
 				} else if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM) {
 					NewCursor(CURSOR_HAND);
@@ -974,10 +974,10 @@ void PressKey(int vkey)
 			    item[pcursitem].IDidx,
 			    item[pcursitem]._iSeed,
 			    item[pcursitem]._iCreateInfo);
-			NetSendCmdString(1 << myplr, tempstr);
+			NetSendCmdString(1 << myplr(), tempstr);
 		}
 		sprintf(tempstr, "Numitems : %i", numitems);
-		NetSendCmdString(1 << myplr, tempstr);
+		NetSendCmdString(1 << myplr(), tempstr);
 	}
 #endif
 #ifdef _DEBUG
@@ -1209,51 +1209,51 @@ void PressChar(int vkey)
 		}
 		return;
 	case 'v':
-		NetSendCmdString(1 << myplr, gszProductName);
+		NetSendCmdString(1 << myplr(), gszProductName);
 		return;
 	case 'V':
-		NetSendCmdString(1 << myplr, gszVersionNumber);
+		NetSendCmdString(1 << myplr(), gszVersionNumber);
 		return;
 	case '!':
 	case '1':
-		if (plr[myplr].SpdList[0]._itype != ITYPE_NONE && plr[myplr].SpdList[0]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST);
+		if (plr.local().data.SpdList[0]._itype != ITYPE_NONE && plr.local().data.SpdList[0]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST);
 		}
 		return;
 	case '@':
 	case '2':
-		if (plr[myplr].SpdList[1]._itype != ITYPE_NONE && plr[myplr].SpdList[1]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 1);
+		if (plr.local().data.SpdList[1]._itype != ITYPE_NONE && plr.local().data.SpdList[1]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 1);
 		}
 		return;
 	case '#':
 	case '3':
-		if (plr[myplr].SpdList[2]._itype != ITYPE_NONE && plr[myplr].SpdList[2]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 2);
+		if (plr.local().data.SpdList[2]._itype != ITYPE_NONE && plr.local().data.SpdList[2]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 2);
 		}
 		return;
 	case '$':
 	case '4':
-		if (plr[myplr].SpdList[3]._itype != ITYPE_NONE && plr[myplr].SpdList[3]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 3);
+		if (plr.local().data.SpdList[3]._itype != ITYPE_NONE && plr.local().data.SpdList[3]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 3);
 		}
 		return;
 	case '%':
 	case '5':
-		if (plr[myplr].SpdList[4]._itype != ITYPE_NONE && plr[myplr].SpdList[4]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 4);
+		if (plr.local().data.SpdList[4]._itype != ITYPE_NONE && plr.local().data.SpdList[4]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 4);
 		}
 		return;
 	case '^':
 	case '6':
-		if (plr[myplr].SpdList[5]._itype != ITYPE_NONE && plr[myplr].SpdList[5]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 5);
+		if (plr.local().data.SpdList[5]._itype != ITYPE_NONE && plr.local().data.SpdList[5]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 5);
 		}
 		return;
 	case '&':
 	case '7':
-		if (plr[myplr].SpdList[6]._itype != ITYPE_NONE && plr[myplr].SpdList[6]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 6);
+		if (plr.local().data.SpdList[6]._itype != ITYPE_NONE && plr.local().data.SpdList[6]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 6);
 		}
 		return;
 	case '*':
@@ -1264,8 +1264,8 @@ void PressChar(int vkey)
 			return;
 		}
 #endif
-		if (plr[myplr].SpdList[7]._itype != ITYPE_NONE && plr[myplr].SpdList[7]._itype != ITYPE_GOLD) {
-			UseInvItem(myplr, INVITEM_BELT_FIRST + 7);
+		if (plr.local().data.SpdList[7]._itype != ITYPE_NONE && plr.local().data.SpdList[7]._itype != ITYPE_GOLD) {
+			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 7);
 		}
 		return;
 #ifdef _DEBUG
@@ -1276,14 +1276,14 @@ void PressChar(int vkey)
 				arrowdebug = 0;
 			}
 			if (arrowdebug == 0) {
-				plr[myplr]._pIFlags &= ~ISPL_FIRE_ARROWS;
-				plr[myplr]._pIFlags &= ~ISPL_LIGHT_ARROWS;
+				plr.local().data._pIFlags &= ~ISPL_FIRE_ARROWS;
+				plr.local().data._pIFlags &= ~ISPL_LIGHT_ARROWS;
 			}
 			if (arrowdebug == 1) {
-				plr[myplr]._pIFlags |= ISPL_FIRE_ARROWS;
+				plr.local().data._pIFlags |= ISPL_FIRE_ARROWS;
 			}
 			if (arrowdebug == 2) {
-				plr[myplr]._pIFlags |= ISPL_LIGHT_ARROWS;
+				plr.local().data._pIFlags |= ISPL_LIGHT_ARROWS;
 			}
 			arrowdebug++;
 		}
@@ -1306,7 +1306,7 @@ void PressChar(int vkey)
 	case 'a':
 		if (debug_mode_key_inverted_v) {
 			spelldata[SPL_TELEPORT].sTownSpell = 1;
-			plr[myplr]._pSplLvl[plr[myplr]._pSpell]++;
+			plr.local().data._pSplLvl[plr.local().data._pSpell]++;
 		}
 		return;
 	case 'D':
@@ -1330,19 +1330,19 @@ void PressChar(int vkey)
 	case 'R':
 	case 'r':
 		sprintf(tempstr, "seed = %i", glSeedTbl[level.currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
+		NetSendCmdString(1 << myplr(), tempstr);
 		sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[level.currlevel], glMid2Seed[level.currlevel], glMid3Seed[level.currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
+		NetSendCmdString(1 << myplr(), tempstr);
 		sprintf(tempstr, "End = %i", glEndSeed[level.currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
+		NetSendCmdString(1 << myplr(), tempstr);
 		return;
 	case 'T':
 	case 't':
 		if (debug_mode_key_inverted_v) {
-			sprintf(tempstr, "PX = %i  PY = %i", plr[myplr]._px, plr[myplr]._py);
-			NetSendCmdString(1 << myplr, tempstr);
+			sprintf(tempstr, "PX = %i  PY = %i", plr.local().data._px, plr.local().data._py);
+			NetSendCmdString(1 << myplr(), tempstr);
 			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursmx, cursmy, dgrid[cursmx][cursmy].dungeon);
-			NetSendCmdString(1 << myplr, tempstr);
+			NetSendCmdString(1 << myplr(), tempstr);
 		}
 		return;
 	case '|':
@@ -1477,7 +1477,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		InitQuestText();
 
 		for (i = 0; i < gbMaxPlayers; i++)
-			InitPlrGFXMem(i);
+			plr[i].InitPlrGFXMem();
 
 		InitStores();
 		automap.initOnce();
@@ -1528,10 +1528,10 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		IncProgress();
 
 		for (i = 0; i < MAX_PLRS; i++) {
-			if (plr[i].plractive && level.currlevel == plr[i].plrlevel) {
-				InitPlayerGFX(i);
+			if (plr[i].data.plractive && level.currlevel == plr[i].data.plrlevel) {
+				plr[i].InitPlayerGFX();
 				if (lvldir != 4)
-					InitPlayer(i, firstflag);
+					plr[i].InitPlayer(firstflag);
 			}
 		}
 
@@ -1541,14 +1541,14 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 		visited = FALSE;
 		for (i = 0; i < gbMaxPlayers; i++) {
-			if (plr[i].plractive)
-				visited = visited || plr[i]._pLvlVisited[level.currlevel];
+			if (plr[i].data.plractive)
+				visited = visited || plr[i].data._pLvlVisited[level.currlevel];
 		}
 
 		SetRndSeed(glSeedTbl[level.currlevel]);
 
 		if (level.leveltype != DTYPE_TOWN) {
-			if (firstflag || lvldir == 4 || !plr[myplr]._pLvlVisited[level.currlevel] || gbMaxPlayers != 1) {
+			if (firstflag || lvldir == 4 || !plr.local().data._pLvlVisited[level.currlevel] || gbMaxPlayers != 1) {
 				HoldThemeRooms();
 				glMid1Seed[level.currlevel] = GetRndSeed();
 				InitMonsters();
@@ -1587,7 +1587,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			InitMissiles();
 			IncProgress();
 
-			if (!firstflag && lvldir != 4 && plr[myplr]._pLvlVisited[level.currlevel] && gbMaxPlayers == 1)
+			if (!firstflag && lvldir != 4 && plr.local().data._pLvlVisited[level.currlevel] && gbMaxPlayers == 1)
 				LoadLevel();
 			if (gbMaxPlayers != 1)
 				DeltaLoadLevel();
@@ -1618,10 +1618,10 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		IncProgress();
 
 		for (i = 0; i < MAX_PLRS; i++) {
-			if (plr[i].plractive && level.currlevel == plr[i].plrlevel) {
-				InitPlayerGFX(i);
+			if (plr[i].data.plractive && level.currlevel == plr[i].data.plrlevel) {
+				plr[i].InitPlayerGFX();
 				if (lvldir != 4)
-					InitPlayer(i, firstflag);
+					plr[i].InitPlayer(firstflag);
 			}
 		}
 		IncProgress();
@@ -1629,7 +1629,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		InitMultiView();
 		IncProgress();
 
-		if (firstflag || lvldir == 4 || !plr[myplr]._pSLvlVisited[level.setlvlnum]) {
+		if (firstflag || lvldir == 4 || !plr.local().data._pSLvlVisited[level.setlvlnum]) {
 			InitItems();
 			SavePreLighting();
 		} else {
@@ -1644,14 +1644,14 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 	SyncPortals();
 
 	for (i = 0; i < MAX_PLRS; i++) {
-		if (plr[i].plractive && plr[i].plrlevel == level.currlevel && (!plr[i]._pLvlChanging || i == myplr)) {
-			if (plr[i]._pHitPoints > 0) {
+		if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
+			if (plr[i].data._pHitPoints > 0) {
 				if (gbMaxPlayers == 1)
-					grid[plr[i]._px][plr[i]._py].dPlayer = i + 1;
+					grid[plr[i].data._px][plr[i].data._py].dPlayer = i + 1;
 				else
-					SyncInitPlrPos(i);
+					plr[i].SyncInitPlrPos();
 			} else {
-				grid[plr[i]._px][plr[i]._py].dFlags |= BFLAG_DEAD_PLAYER;
+				grid[plr[i].data._px][plr[i].data._py].dFlags |= BFLAG_DEAD_PLAYER;
 			}
 		}
 	}

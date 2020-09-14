@@ -44,7 +44,7 @@ void LoadGame(BOOL firstflag)
 		gnLevelTypeTbl[i] = WLoad();
 	}
 
-	LoadPlayer(myplr);
+	LoadPlayer(myplr());
 
 	for (i = 0; i < MAXQUESTS; i++)
 		LoadQuest(i);
@@ -52,8 +52,8 @@ void LoadGame(BOOL firstflag)
 		LoadPortal(i);
 
 	LoadGameLevel(firstflag, 4);
-	SyncInitPlr(myplr);
-	SyncPlrAnim(myplr);
+	plr.local().SyncInitPlr();
+	plr.local().SyncPlrAnim();
 
 	ViewX = _ViewX;
 	ViewY = _ViewY;
@@ -277,7 +277,7 @@ void CopyInt64(const void *src, void *dst)
 
 void LoadPlayer(int i)
 {
-	PlayerStruct *pPlayer = &plr[i];
+	PlayerStruct *pPlayer = &plr[i].data;
 
 	CopyInt(tbuff, &pPlayer->_pmode);
 	CopyBytes(tbuff, MAX_PATH_LENGTH, pPlayer->walkpath);
@@ -856,7 +856,7 @@ void SaveGame()
 		WSave(gnLevelTypeTbl[i]);
 	}
 
-	SavePlayer(myplr);
+	SavePlayer(myplr());
 
 	for (i = 0; i < MAXQUESTS; i++)
 		SaveQuest(i);
@@ -1002,7 +1002,7 @@ void OSave(BOOL v)
 
 void SavePlayer(int i)
 {
-	PlayerStruct *pPlayer = &plr[i];
+	PlayerStruct *pPlayer = &plr[i].data;
 
 	CopyInt(&pPlayer->_pmode, tbuff);
 	CopyBytes(&pPlayer->walkpath, MAX_PATH_LENGTH, tbuff);
@@ -1633,9 +1633,9 @@ void SaveLevel()
 	mem_free_dbg(SaveBuff);
 
 	if (!level.setlevel)
-		plr[myplr]._pLvlVisited[level.currlevel] = TRUE;
+		plr.local().data._pLvlVisited[level.currlevel] = TRUE;
 	else
-		plr[myplr]._pSLvlVisited[level.setlvlnum] = TRUE;
+		plr.local().data._pSLvlVisited[level.setlvlnum] = TRUE;
 }
 
 void LoadLevel()
@@ -1725,8 +1725,8 @@ void LoadLevel()
 	dolighting = TRUE;
 
 	for (i = 0; i < MAX_PLRS; i++) {
-		if (plr[i].plractive && level.currlevel == plr[i].plrlevel)
-			LightList[plr[i]._plid]._lunflag = TRUE;
+		if (plr[i].data.plractive && level.currlevel == plr[i].data.plrlevel)
+			LightList[plr[i].data._plid]._lunflag = TRUE;
 	}
 
 	mem_free_dbg(LoadBuff);

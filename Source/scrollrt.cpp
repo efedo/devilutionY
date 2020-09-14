@@ -145,7 +145,7 @@ static void scrollrt_draw_cursor_item()
 		return;
 	}
 
-	if (sgbControllerActive && pcurs != CURSOR_TELEPORT && !invflag && (!chrflag || plr[myplr]._pStatPts <= 0)) {
+	if (sgbControllerActive && pcurs != CURSOR_TELEPORT && !invflag && (!chrflag || plr.local().data._pStatPts <= 0)) {
 		return;
 	}
 
@@ -195,10 +195,10 @@ static void scrollrt_draw_cursor_item()
 
 	if (pcurs >= CURSOR_FIRSTITEM) {
 		col = PAL16_YELLOW + 5;
-		if (plr[myplr].HoldItem._iMagical != 0) {
+		if (plr.local().data.HoldItem._iMagical != 0) {
 			col = PAL16_BLUE + 5;
 		}
-		if (!plr[myplr].HoldItem._iStatFlag) {
+		if (!plr.local().data.HoldItem._iStatFlag) {
 			col = PAL16_RED + 5;
 		}
 		CelBlitOutline(col, mx + SCREEN_X, my + cursH + SCREEN_Y - 1, pCursCels, pcurs, cursW);
@@ -330,7 +330,7 @@ static void DrawMonster(int x, int y, int mx, int my, int m)
 			trans = monster[m]._uniqtrans + 4;
 		if (monster[m]._mmode == MM_STONE)
 			trans = 2;
-		if (plr[myplr]._pInfraFlag && light_table_index > 8)
+		if (plr.local().data._pInfraFlag && light_table_index > 8)
 			trans = 1;
 		if (trans)
 			Cl2DrawLightTbl(mx, my, monster[m]._mAnimData, monster[m]._mAnimFrame, monster[m].MType->width, trans);
@@ -354,23 +354,23 @@ static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, i
 {
 	int l, frames;
 
-	if (grid[x][y].dFlags & BFLAG_LIT || plr[myplr]._pInfraFlag || !level.setlevel && !level.currlevel) {
+	if (grid[x][y].dFlags & BFLAG_LIT || plr.local().data._pInfraFlag || !level.setlevel && !level.currlevel) {
 		if (!pCelBuff) {
-			// app_fatal("Drawing player %d \"%s\": NULL Cel Buffer", pnum, plr[pnum]._pName);
+			// app_fatal("Drawing player %d \"%s\": NULL Cel Buffer", pnum, plr[pnum].data._pName);
 			return;
 		}
 		frames = SDL_SwapLE32(*(DWORD *)pCelBuff);
 		if (nCel < 1 || frames > 50 || nCel > frames) {
 			/*
 			const char *szMode = "unknown action";
-			if(plr[pnum]._pmode <= PM_QUIT)
-				szMode = szPlrModeAssert[plr[pnum]._pmode];
+			if(plr[pnum].data._pmode <= PM_QUIT)
+				szMode = szPlrModeAssert[plr[pnum].data._pmode];
 			app_fatal(
 				"Drawing player %d \"%s\" %s: facing %d, frame %d of %d",
 				pnum,
-				plr[pnum]._pName,
+				plr[pnum].data._pName,
 				szMode,
-				plr[pnum]._pdir,
+				plr[pnum].data._pdir,
 				nCel,
 				frames);
 			*/
@@ -378,20 +378,20 @@ static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, i
 		}
 		if (pnum == pcursplr)
 			Cl2DrawOutline(165, px, py, pCelBuff, nCel, nWidth);
-		if (pnum == myplr) {
+		if (pnum == myplr()) {
 			Cl2Draw(px, py, pCelBuff, nCel, nWidth);
-			if (plr[pnum].pManaShield)
+			if (plr[pnum].data.pManaShield)
 				Cl2Draw(
-				    px + plr[pnum]._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
+				    px + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
 				    py,
 				    misfiledata[MFILE_MANASHLD].mAnimData[0],
 				    1,
 				    misfiledata[MFILE_MANASHLD].mAnimWidth[0]);
-		} else if (!(grid[x][y].dFlags & BFLAG_LIT) || plr[myplr]._pInfraFlag && light_table_index > 8) {
+		} else if (!(grid[x][y].dFlags & BFLAG_LIT) || plr.local().data._pInfraFlag && light_table_index > 8) {
 			Cl2DrawLightTbl(px, py, pCelBuff, nCel, nWidth, 1);
-			if (plr[pnum].pManaShield)
+			if (plr[pnum].data.pManaShield)
 				Cl2DrawLightTbl(
-				    px + plr[pnum]._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
+				    px + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
 				    py,
 				    misfiledata[MFILE_MANASHLD].mAnimData[0],
 				    1,
@@ -404,9 +404,9 @@ static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, i
 			else
 				light_table_index -= 5;
 			Cl2DrawLight(px, py, pCelBuff, nCel, nWidth);
-			if (plr[pnum].pManaShield)
+			if (plr[pnum].data.pManaShield)
 				Cl2DrawLight(
-				    px + plr[pnum]._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
+				    px + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
 				    py,
 				    misfiledata[MFILE_MANASHLD].mAnimData[0],
 				    1,
@@ -432,7 +432,7 @@ void DrawDeadPlayer(int x, int y, int sx, int sy)
 	grid[x][y].dFlags &= ~BFLAG_DEAD_PLAYER;
 
 	for (i = 0; i < MAX_PLRS; i++) {
-		p = &plr[i];
+		p = &plr[i].data;
 		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && p->_px == x && p->_py == y) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
@@ -624,7 +624,7 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 		return;
 	}
 
-	if (!(grid[x][y].dFlags & BFLAG_LIT) && !plr[myplr]._pInfraFlag)
+	if (!(grid[x][y].dFlags & BFLAG_LIT) && !plr.local().data._pInfraFlag)
 		return;
 
 	if ((DWORD)mi >= MAXMONSTERS) {
@@ -660,7 +660,7 @@ static void DrawPlayerHelper(int x, int y, int oy, int sx, int sy)
 {
 	int p = grid[x][y + oy].dPlayer;
 	p = p > 0 ? p - 1 : -(p + 1);
-	PlayerStruct *pPlayer = &plr[p];
+	PlayerStruct *pPlayer = &plr[p].data;
 	int px = sx + pPlayer->_pxoff - pPlayer->_pAnimWidth2;
 	int py = sy + pPlayer->_pyoff;
 
@@ -1129,7 +1129,7 @@ void DrawView(int StartX, int StartY)
 	} else if (questlog) {
 		DrawQuestLog();
 	}
-	if (!chrflag && plr[myplr]._pStatPts != 0 && !spselflag
+	if (!chrflag && plr.local().data._pStatPts != 0 && !spselflag
 	    && (!questlog || SCREEN_HEIGHT >= SPANEL_HEIGHT + PANEL_HEIGHT + 74 || SCREEN_WIDTH >= 4 * SPANEL_WIDTH)) {
 		DrawLevelUpIcon();
 	}

@@ -989,8 +989,8 @@ void ToggleLighting()
 		//memcpy(dLight, dPreLight, sizeof(dLight));
 		grid.prelightToLight();
 		for (i = 0; i < MAX_PLRS; i++) {
-			if (plr[i].plractive && plr[i].plrlevel == level.currlevel) {
-				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
+			if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel) {
+				DoLighting(plr[i].data._px, plr[i].data._py, plr[i].data._pLightRad, -1);
 			}
 		}
 	}

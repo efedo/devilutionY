@@ -514,8 +514,8 @@ void ClrAllMonsters()
 		Monst->_mFlags = 0;
 		Monst->_mDelFlag = FALSE;
 		Monst->_menemy = random_(89, gbActivePlayers);
-		Monst->_menemyx = plr[Monst->_menemy]._pfutx;
-		Monst->_menemyy = plr[Monst->_menemy]._pfuty;
+		Monst->_menemyx = plr[Monst->_menemy].data._pfutx;
+		Monst->_menemyy = plr[Monst->_menemy].data._pfuty;
 	}
 }
 
@@ -1132,24 +1132,24 @@ void M_Enemy(int i)
 	Monst = monster + i;
 	if (!(Monst->_mFlags & MFLAG_GOLEM)) {
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
-			if (!plr[pnum].plractive || level.currlevel != plr[pnum].plrlevel || plr[pnum]._pLvlChanging || (plr[pnum]._pHitPoints == 0 && gbMaxPlayers != 1))
+			if (!plr[pnum].data.plractive || level.currlevel != plr[pnum].data.plrlevel || plr[pnum].data._pLvlChanging || (plr[pnum].data._pHitPoints == 0 && gbMaxPlayers != 1))
 				continue;
-			if (grid[Monst->_mx][Monst->_my].dTransVal == grid[plr[pnum]._px][plr[pnum]._py].dTransVal)
+			if (grid[Monst->_mx][Monst->_my].dTransVal == grid[plr[pnum].data._px][plr[pnum].data._py].dTransVal)
 				sameroom = TRUE;
 			else
 				sameroom = FALSE;
-			if (abs(Monst->_mx - plr[pnum]._px) > abs(Monst->_my - plr[pnum]._py))
-				dist = Monst->_mx - plr[pnum]._px;
+			if (abs(Monst->_mx - plr[pnum].data._px) > abs(Monst->_my - plr[pnum].data._py))
+				dist = Monst->_mx - plr[pnum].data._px;
 			else
-				dist = Monst->_my - plr[pnum]._py;
+				dist = Monst->_my - plr[pnum].data._py;
 			dist = abs(dist);
 			if ((sameroom && !bestsameroom)
 			    || ((sameroom || !bestsameroom) && dist < best_dist)
 			    || (_menemy == -1)) {
 				Monst->_mFlags &= ~MFLAG_TARGETS_MONSTER;
 				_menemy = pnum;
-				enemyx = plr[pnum]._pfutx;
-				enemyy = plr[pnum]._pfuty;
+				enemyx = plr[pnum].data._pfutx;
+				enemyy = plr[pnum].data._pfuty;
 				best_dist = dist;
 				bestsameroom = sameroom;
 			}
@@ -1456,7 +1456,7 @@ void M_StartHit(int i, int pnum, int dam)
 {
 	if (pnum >= 0)
 		monster[i].mWhoHit |= 1 << pnum;
-	if (pnum == myplr) {
+	if (pnum == myplr()) {
 		delta_monster_hp(i, monster[i]._mhitpoints, level.currlevel);
 		NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, i, dam);
 	}
@@ -1465,8 +1465,8 @@ void M_StartHit(int i, int pnum, int dam)
 		if (pnum >= 0) {
 			monster[i]._mFlags &= ~MFLAG_TARGETS_MONSTER;
 			monster[i]._menemy = pnum;
-			monster[i]._menemyx = plr[pnum]._pfutx;
-			monster[i]._menemyy = plr[pnum]._pfuty;
+			monster[i]._menemyx = plr[pnum].data._pfutx;
+			monster[i]._menemyy = plr[pnum].data._pfuty;
 			monster[i]._mdir = M_GetDir(i);
 		}
 		if (monster[i].MType->mtype == MT_BLINK) {
@@ -1699,7 +1699,7 @@ void M_StartKill(int i, int pnum)
 		app_fatal("M_StartKill: Invalid monster %d", i);
 	}
 
-	if (myplr == pnum) {
+	if (myplr() == pnum) {
 		delta_kill_monster(i, monster[i]._mx, monster[i]._my, level.currlevel);
 		if (i != pnum) {
 			NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, monster[i]._mx, monster[i]._my, i);
@@ -2001,10 +2001,10 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 		M_TryM2MHit(i, pnum, Hit, MinDam, MaxDam);
 		return;
 	}
-	if (plr[pnum]._pHitPoints >> 6 <= 0 || plr[pnum]._pInvincible || plr[pnum]._pSpellFlags & 1)
+	if (plr[pnum].data._pHitPoints >> 6 <= 0 || plr[pnum].data._pInvincible || plr[pnum].data._pSpellFlags & 1)
 		return;
-	dx = abs(monster[i]._mx - plr[pnum]._px);
-	dy = abs(monster[i]._my - plr[pnum]._py);
+	dx = abs(monster[i]._mx - plr[pnum].data._px);
+	dy = abs(monster[i]._my - plr[pnum].data._py);
 	if (dx >= 2 || dy >= 2)
 		return;
 
@@ -2014,11 +2014,11 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 		hper = 1000;
 #endif
 	hit = Hit
-	    + 2 * (monster[i].mLevel - plr[pnum]._pLevel)
+	    + 2 * (monster[i].mLevel - plr[pnum].data._pLevel)
 	    + 30
-	    - plr[pnum]._pIBonusAC
-	    - plr[pnum]._pIAC
-	    - plr[pnum]._pDexterity / 5;
+	    - plr[pnum].data._pIBonusAC
+	    - plr[pnum].data._pIAC
+	    - plr[pnum].data._pDexterity / 5;
 	if (hit < 15)
 		hit = 15;
 	if (level.currlevel == 14 && hit < 20)
@@ -2027,15 +2027,15 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 		hit = 25;
 	if (level.currlevel == 16 && hit < 30)
 		hit = 30;
-	if ((plr[pnum]._pmode == PM_STAND || plr[pnum]._pmode == PM_ATTACK) && plr[pnum]._pBlockFlag) {
+	if ((plr[pnum].data._pmode == PM_STAND || plr[pnum].data._pmode == PM_ATTACK) && plr[pnum].data._pBlockFlag) {
 		blkper = random_(98, 100);
 	} else {
 		blkper = 100;
 	}
-	blk = plr[pnum]._pDexterity
-	    + plr[pnum]._pBaseToBlk
+	blk = plr[pnum].data._pDexterity
+	    + plr[pnum].data._pBaseToBlk
 	    - (monster[i].mLevel << 1)
-	    + (plr[pnum]._pLevel << 1);
+	    + (plr[pnum].data._pLevel << 1);
 	if (blk < 0)
 		blk = 0;
 	if (blk > 100)
@@ -2043,10 +2043,10 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 	if (hper >= hit)
 		return;
 	if (blkper < blk) {
-		StartPlrBlock(pnum, GetDirection(plr[pnum]._px, plr[pnum]._py, monster[i]._mx, monster[i]._my));
+		plr[pnum].StartPlrBlock(GetDirection(plr[pnum].data._px, plr[pnum].data._py, monster[i]._mx, monster[i]._my));
 		return;
 	}
-	if (monster[i].MType->mtype == MT_YZOMBIE && pnum == myplr) {
+	if (monster[i].MType->mtype == MT_YZOMBIE && pnum == myplr()) {
 		ms_num = -1;
 		cur_ms_num = -1;
 		for (j = 0; j < nummissiles; j++) {
@@ -2058,19 +2058,19 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 			else
 				ms_num = misnum;
 		}
-		if (plr[pnum]._pMaxHP > 64) {
-			if (plr[pnum]._pMaxHPBase > 64) {
-				new_hp = plr[pnum]._pMaxHP - 64;
-				plr[pnum]._pMaxHP = new_hp;
-				if (plr[pnum]._pHitPoints > new_hp) {
-					plr[pnum]._pHitPoints = new_hp;
+		if (plr[pnum].data._pMaxHP > 64) {
+			if (plr[pnum].data._pMaxHPBase > 64) {
+				new_hp = plr[pnum].data._pMaxHP - 64;
+				plr[pnum].data._pMaxHP = new_hp;
+				if (plr[pnum].data._pHitPoints > new_hp) {
+					plr[pnum].data._pHitPoints = new_hp;
 					if (cur_ms_num >= 0)
 						missile[cur_ms_num]._miVar1 = new_hp;
 				}
-				new_hp = plr[pnum]._pMaxHPBase - 64;
-				plr[pnum]._pMaxHPBase = new_hp;
-				if (plr[pnum]._pHPBase > new_hp) {
-					plr[pnum]._pHPBase = new_hp;
+				new_hp = plr[pnum].data._pMaxHPBase - 64;
+				plr[pnum].data._pMaxHPBase = new_hp;
+				if (plr[pnum].data._pHPBase > new_hp) {
+					plr[pnum].data._pHPBase = new_hp;
 					if (cur_ms_num >= 0)
 						missile[cur_ms_num]._miVar2 = new_hp;
 				}
@@ -2078,14 +2078,14 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 		}
 	}
 	dam = (MinDam << 6) + random_(99, (MaxDam - MinDam + 1) << 6);
-	dam += (plr[pnum]._pIGetHit << 6);
+	dam += (plr[pnum].data._pIGetHit << 6);
 	if (dam < 64)
 		dam = 64;
-	if (pnum == myplr) {
-		plr[pnum]._pHitPoints -= dam;
-		plr[pnum]._pHPBase -= dam;
+	if (pnum == myplr()) {
+		plr[pnum].data._pHitPoints -= dam;
+		plr[pnum].data._pHPBase -= dam;
 	}
-	if (plr[pnum]._pIFlags & ISPL_THORNS) {
+	if (plr[pnum].data._pIFlags & ISPL_THORNS) {
 		mdam = (random_(99, 3) + 1) << 6;
 		monster[i]._mhitpoints -= mdam;
 		if (monster[i]._mhitpoints >> 6 <= 0)
@@ -2095,27 +2095,27 @@ void M_TryH2HHit(int i, int pnum, int Hit, int MinDam, int MaxDam)
 	}
 	if (!(monster[i]._mFlags & MFLAG_NOLIFESTEAL) && monster[i].MType->mtype == MT_SKING && gbMaxPlayers != 1)
 		monster[i]._mhitpoints += dam;
-	if (plr[pnum]._pHitPoints > plr[pnum]._pMaxHP) {
-		plr[pnum]._pHitPoints = plr[pnum]._pMaxHP;
-		plr[pnum]._pHPBase = plr[pnum]._pMaxHPBase;
+	if (plr[pnum].data._pHitPoints > plr[pnum].data._pMaxHP) {
+		plr[pnum].data._pHitPoints = plr[pnum].data._pMaxHP;
+		plr[pnum].data._pHPBase = plr[pnum].data._pMaxHPBase;
 	}
-	if (plr[pnum]._pHitPoints >> 6 <= 0) {
-		SyncPlrKill(pnum, 0);
+	if (plr[pnum].data._pHitPoints >> 6 <= 0) {
+		plr[pnum].SyncPlrKill(0);
 		return;
 	}
-	StartPlrHit(pnum, dam, FALSE);
+	plr[pnum].StartPlrHit(dam, FALSE);
 	if (monster[i]._mFlags & MFLAG_KNOCKBACK) {
-		if (plr[pnum]._pmode != PM_GOTHIT)
-			StartPlrHit(pnum, 0, TRUE);
-		newx = plr[pnum]._px + offset_x[monster[i]._mdir];
-		newy = plr[pnum]._py + offset_y[monster[i]._mdir];
+		if (plr[pnum].data._pmode != PM_GOTHIT)
+			plr[pnum].StartPlrHit(0, TRUE);
+		newx = plr[pnum].data._px + offset_x[monster[i]._mdir];
+		newy = plr[pnum].data._py + offset_y[monster[i]._mdir];
 		if (PosOkPlayer(pnum, newx, newy)) {
-			plr[pnum]._px = newx;
-			plr[pnum]._py = newy;
-			FixPlayerLocation(pnum, plr[pnum]._pdir);
-			FixPlrWalkTags(pnum);
+			plr[pnum].data._px = newx;
+			plr[pnum].data._py = newy;
+			plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
+			plr[pnum].FixPlrWalkTags();
 			grid[newx][newy].dPlayer = pnum + 1;
-			SetPlayerOld(pnum);
+			plr[pnum].SetPlayerOld();
 		}
 	}
 }
@@ -2489,9 +2489,9 @@ void DoEnding()
 	}
 
 #ifndef SPAWN
-	if (plr[myplr]._pClass == PC_WARRIOR) {
+	if (plr.local().data._pClass == PC_WARRIOR) {
 		play_movie("gendata\\DiabVic2.smk", FALSE);
-	} else if (plr[myplr]._pClass == PC_SORCERER) {
+	} else if (plr.local().data._pClass == PC_SORCERER) {
 		play_movie("gendata\\DiabVic1.smk", FALSE);
 	} else {
 		play_movie("gendata\\DiabVic3.smk", FALSE);
@@ -2525,20 +2525,20 @@ void PrepDoEnding()
 	deathflag = FALSE;
 	cineflag = TRUE;
 
-	killLevel = &plr[myplr].pDiabloKillLevel;
+	killLevel = &plr.local().data.pDiabloKillLevel;
 	newKillLevel = gnDifficulty + 1;
 	if (*killLevel > newKillLevel)
 		newKillLevel = *killLevel;
-	plr[myplr].pDiabloKillLevel = newKillLevel;
+	plr.local().data.pDiabloKillLevel = newKillLevel;
 
 	for (i = 0; i < MAX_PLRS; i++) {
-		plr[i]._pmode = PM_QUIT;
-		plr[i]._pInvincible = TRUE;
+		plr[i].data._pmode = PM_QUIT;
+		plr[i].data._pInvincible = TRUE;
 		if (gbMaxPlayers > 1) {
-			if (plr[i]._pHitPoints >> 6 == 0)
-				plr[i]._pHitPoints = 64;
-			if (plr[i]._pMana >> 6 == 0)
-				plr[i]._pMana = 64;
+			if (plr[i].data._pHitPoints >> 6 == 0)
+				plr[i].data._pHitPoints = 64;
+			if (plr[i].data._pMana >> 6 == 0)
+				plr[i].data._pMana = 64;
 		}
 	}
 }
@@ -3229,7 +3229,7 @@ void MAI_Sneak(int i)
 			}
 			if (Monst->_mgoal == MGOAL_RETREAT) {
 				if (Monst->_mFlags & MFLAG_TARGETS_MONSTER)
-					md = GetDirection(Monst->_mx, Monst->_my, plr[Monst->_menemy]._pownerx, plr[Monst->_menemy]._pownery);
+					md = GetDirection(Monst->_mx, Monst->_my, plr[Monst->_menemy].data._pownerx, plr[Monst->_menemy].data._pownery);
 				md = opposite[md];
 				if (Monst->MType->mtype == MT_UNSEEN) {
 					if (random_(112, 2))
@@ -3909,7 +3909,7 @@ void MAI_Golum(int i)
 	if (monster[i]._pathcount > 8)
 		monster[i]._pathcount = 5;
 
-	ok = M_CallWalk(i, plr[i]._pdir);
+	ok = M_CallWalk(i, plr[i].data._pdir);
 	if (!ok) {
 		md = (md - 1) & 7;
 		for (j = 0; j < 8 && !ok; j++) {
@@ -4297,7 +4297,7 @@ void MAI_Lazurus(int i)
 	md = M_GetDir(i);
 	if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 		if (gbMaxPlayers == 1) {
-			if (Monst->mtalkmsg == TEXT_VILE13 && Monst->_mgoal == MGOAL_INQUIRING && plr[myplr]._px == TEXT_VILE13 && plr[myplr]._py == 46) {
+			if (Monst->mtalkmsg == TEXT_VILE13 && Monst->_mgoal == MGOAL_INQUIRING && plr.local().data._px == TEXT_VILE13 && plr.local().data._py == 46) {
 				PlayInGameMovie("gendata\\fprst3.smk");
 				Monst->_mmode = MM_TALK;
 				quests[Q_BETRAYER]._qvar1 = 5;
@@ -4514,12 +4514,12 @@ void ProcessMonsters()
 			if ((DWORD)_menemy >= MAX_PLRS) {
 				app_fatal("Illegal enemy player %d for monster \"%s\"", _menemy, Monst->mName);
 			}
-			Monst->_menemyx = plr[Monst->_menemy]._pfutx;
-			Monst->_menemyy = plr[Monst->_menemy]._pfuty;
+			Monst->_menemyx = plr[Monst->_menemy].data._pfutx;
+			Monst->_menemyy = plr[Monst->_menemy].data._pfuty;
 			if (grid[mx][my].dFlags & BFLAG_VISIBLE) {
 				Monst->_msquelch = 255;
-				Monst->_lastx = plr[Monst->_menemy]._pfutx;
-				Monst->_lasty = plr[Monst->_menemy]._pfuty;
+				Monst->_lastx = plr[Monst->_menemy].data._pfutx;
+				Monst->_lasty = plr[Monst->_menemy].data._pfuty;
 			} else if (Monst->_msquelch != 0 && Monst->_mAi != MT_DIABLO) { /// BUGFIX: change '_mAi' to 'MType->mtype'
 				Monst->_msquelch--;
 			}
@@ -5102,17 +5102,17 @@ void MissToMonst(int i, int x, int y)
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
 				M_TryH2HHit(m, grid[oldx][oldy].dPlayer - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
 				if (pnum == grid[oldx][oldy].dPlayer - 1 && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
-					if (plr[pnum]._pmode != 7 && plr[pnum]._pmode != 8)
-						StartPlrHit(pnum, 0, TRUE);
+					if (plr[pnum].data._pmode != 7 && plr[pnum].data._pmode != 8)
+						plr[pnum].StartPlrHit(0, TRUE);
 					newx = oldx + offset_x[Monst->_mdir];
 					newy = oldy + offset_y[Monst->_mdir];
 					if (PosOkPlayer(pnum, newx, newy)) {
-						plr[pnum]._px = newx;
-						plr[pnum]._py = newy;
-						FixPlayerLocation(pnum, plr[pnum]._pdir);
-						FixPlrWalkTags(pnum);
+						plr[pnum].data._px = newx;
+						plr[pnum].data._py = newy;
+						plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
+						plr[pnum].FixPlrWalkTags();
 						grid[newx][newy].dPlayer = pnum + 1;
-						SetPlayerOld(pnum);
+						plr[pnum].SetPlayerOld();
 					}
 				}
 			}
@@ -5396,14 +5396,14 @@ void TalktoMonster(int i)
 	Monst->_mmode = MM_TALK;
 	if (Monst->_mAi == AI_SNOTSPIL || Monst->_mAi == AI_LACHDAN) {
 		if (QuestStatus(Q_LTBANNER) && quests[Q_LTBANNER]._qvar1 == 2 && PlrHasItem(pnum, IDI_BANNER, &itm)) {
-			RemoveInvItem(pnum, itm);
+			plr[pnum].inventory.RemoveInvItem(itm);
 			quests[Q_LTBANNER]._qactive = QUEST_DONE;
 			Monst->mtalkmsg = TEXT_BANNER12;
 			Monst->_mgoal = MGOAL_INQUIRING;
 		}
 		if (QuestStatus(Q_VEIL) && Monst->mtalkmsg >= TEXT_VEIL9) {
 			if (PlrHasItem(pnum, IDI_GLDNELIX, &itm)) {
-				RemoveInvItem(pnum, itm);
+				plr[pnum].inventory.RemoveInvItem(itm);
 				Monst->mtalkmsg = TEXT_VEIL11;
 				Monst->_mgoal = MGOAL_INQUIRING;
 			}
@@ -5426,14 +5426,14 @@ void SpawnGolum(int i, int x, int y, int mi)
 	monster[i]._pathcount = 0;
 	monster[i]._mFlags |= MFLAG_GOLEM;
 	monster[i].mArmorClass = 25;
-	monster[i]._mmaxhp = 2 * (320 * missile[mi]._mispllvl + plr[i]._pMaxMana / 3);
+	monster[i]._mmaxhp = 2 * (320 * missile[mi]._mispllvl + plr[i].data._pMaxMana / 3);
 	monster[i]._mhitpoints = monster[i]._mmaxhp;
-	monster[i].mHit = 5 * (missile[mi]._mispllvl + 8) + 2 * plr[i]._pLevel;
+	monster[i].mHit = 5 * (missile[mi]._mispllvl + 8) + 2 * plr[i].data._pLevel;
 	monster[i].mMinDamage = 2 * (missile[mi]._mispllvl + 4);
 	monster[i].mMaxDamage = 2 * (missile[mi]._mispllvl + 8);
 	M_StartSpStand(i, 0);
 	M_Enemy(i);
-	if (i == myplr) {
+	if (i == myplr()) {
 		NetSendCmdGolem(
 		    monster[i]._mx,
 		    monster[i]._my,
@@ -5493,8 +5493,8 @@ void decode_enemy(int m, int enemy)
 	if (enemy < MAX_PLRS) {
 		monster[m]._mFlags &= ~MFLAG_TARGETS_MONSTER;
 		monster[m]._menemy = enemy;
-		monster[m]._menemyx = plr[enemy]._pfutx;
-		monster[m]._menemyy = plr[enemy]._pfuty;
+		monster[m]._menemyx = plr[enemy].data._pfutx;
+		monster[m]._menemyy = plr[enemy].data._pfuty;
 	} else {
 		monster[m]._mFlags |= MFLAG_TARGETS_MONSTER;
 		enemy -= MAX_PLRS;

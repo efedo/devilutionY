@@ -107,18 +107,18 @@ void T_Pass3()
 
 #ifndef SPAWN
 	if (gbMaxPlayers == 1) {
-		if (!(plr[myplr].pTownWarps & 1)) {
+		if (!(plr.local().data.pTownWarps & 1)) {
 #endif
 			T_FillTile(P3Tiles, 48, 20, 320);
 #ifndef SPAWN
 		}
-		if (!(plr[myplr].pTownWarps & 2)) {
+		if (!(plr.local().data.pTownWarps & 2)) {
 #endif
 			T_FillTile(P3Tiles, 16, 68, 332);
 			T_FillTile(P3Tiles, 16, 70, 331);
 #ifndef SPAWN
 		}
-		if (!(plr[myplr].pTownWarps & 4)) {
+		if (!(plr.local().data.pTownWarps & 4)) {
 #endif
 			for (x = 36; x < 46; x++) {
 				T_FillTile(P3Tiles, x, 78, random_(0, 4) + 1);

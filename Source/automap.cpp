@@ -458,22 +458,22 @@ void Automap::drawPlayer()
 	int px, py;
 	int x, y;
 
-	if (plr[myplr]._pmode == PM_WALK3) {
-		x = plr[myplr]._pfutx;
-		y = plr[myplr]._pfuty;
-		if (plr[myplr]._pdir == DIR_W)
+	if (plr.local().data._pmode == PM_WALK3) {
+		x = plr.local().data._pfutx;
+		y = plr.local().data._pfuty;
+		if (plr.local().data._pdir == DIR_W)
 			x++;
 		else
 			y++;
 	} else {
-		x = plr[myplr]._px;
-		y = plr[myplr]._py;
+		x = plr.local().data._px;
+		y = plr.local().data._py;
 	}
 	px = x - 2 * AutoMapXOfs - ViewX;
 	py = y - 2 * AutoMapYOfs - ViewY;
 
-	x = (plr[myplr]._pxoff * AutoMapScale / 100 >> 1) + (ScrollInfo._sxoff * AutoMapScale / 100 >> 1) + (px - py) * AmLine16 + SCREEN_WIDTH / 2 + SCREEN_X;
-	y = (plr[myplr]._pyoff * AutoMapScale / 100 >> 1) + (ScrollInfo._syoff * AutoMapScale / 100 >> 1) + (px + py) * AmLine8 + (SCREEN_HEIGHT - PANEL_HEIGHT) / 2 + SCREEN_Y;
+	x = (plr.local().data._pxoff * AutoMapScale / 100 >> 1) + (ScrollInfo._sxoff * AutoMapScale / 100 >> 1) + (px - py) * AmLine16 + SCREEN_WIDTH / 2 + SCREEN_X;
+	y = (plr.local().data._pyoff * AutoMapScale / 100 >> 1) + (ScrollInfo._syoff * AutoMapScale / 100 >> 1) + (px + py) * AmLine8 + (SCREEN_HEIGHT - PANEL_HEIGHT) / 2 + SCREEN_Y;
 
 	if (PANELS_COVER) {
 		if (invflag || sbookflag)
@@ -483,7 +483,7 @@ void Automap::drawPlayer()
 	}
 	y -= AmLine8;
 
-	switch (plr[myplr]._pdir) {
+	switch (plr.local().data._pdir) {
 	case DIR_N:
 		DrawLine(x, y, x, y - AmLine16, COLOR_PLAYER);
 		DrawLine(x, y - AmLine16, x - AmLine4, y - AmLine8, COLOR_PLAYER);

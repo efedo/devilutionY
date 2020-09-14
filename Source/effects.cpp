@@ -997,7 +997,7 @@ void PlayEffect(int i, int mode)
 	int sndIdx, mi, lVolume, lPan;
 	TSnd *snd;
 
-	if (plr[myplr].pLvlLoad) {
+	if (plr.local().data.pLvlLoad) {
 		return;
 	}
 
@@ -1022,8 +1022,8 @@ BOOL calc_snd_position(int x, int y, int *plVolume, int *plPan)
 {
 	int pan, volume;
 
-	x -= plr[myplr]._px;
-	y -= plr[myplr]._py;
+	x -= plr.local().data._px;
+	y -= plr.local().data._py;
 
 	pan = (x - y) * 256;
 	*plPan = pan;
@@ -1053,7 +1053,7 @@ void PlaySFX_priv(TSFX *pSFX, BOOL loc, int x, int y)
 {
 	int lPan, lVolume;
 
-	if (plr[myplr].pLvlLoad && gbMaxPlayers != 1) {
+	if (plr.local().data.pLvlLoad && gbMaxPlayers != 1) {
 		return;
 	}
 	if (!gbSndInited || !gbSoundOn || gbBufferMsgs) {
@@ -1199,11 +1199,11 @@ void sound_init()
 	BYTE mask = 0;
 	if (gbMaxPlayers > 1) {
 		mask = PLRSFXS;
-	} else if (plr[myplr]._pClass == PC_WARRIOR) {
+	} else if (plr.local().data._pClass == PC_WARRIOR) {
 		mask = sfx_WARRIOR;
-	} else if (plr[myplr]._pClass == PC_ROGUE) {
+	} else if (plr.local().data._pClass == PC_ROGUE) {
 		mask = sfx_ROGUE;
-	} else if (plr[myplr]._pClass == PC_SORCERER) {
+	} else if (plr.local().data._pClass == PC_SORCERER) {
 		mask = sfx_SORCEROR;
 	} else {
 		app_fatal("effects:1");

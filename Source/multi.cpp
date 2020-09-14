@@ -86,22 +86,22 @@ void multi_send_packet(void *packet, BYTE dwSize)
 	NetRecvPlrData(&pkt);
 	pkt.hdr.wLen = dwSize + 19;
 	memcpy(pkt.body, packet, dwSize);
-	if (!SNetSendMessage(myplr, &pkt.hdr, pkt.hdr.wLen))
+	if (!SNetSendMessage(myplr(), &pkt.hdr, pkt.hdr.wLen))
 		nthread_terminate_game("SNetSendMessage0");
 }
 
 void NetRecvPlrData(TPkt *pkt)
 {
 	pkt->hdr.wCheck = 'ip';
-	pkt->hdr.px = plr[myplr]._px;
-	pkt->hdr.py = plr[myplr]._py;
-	pkt->hdr.targx = plr[myplr]._ptargx;
-	pkt->hdr.targy = plr[myplr]._ptargy;
-	pkt->hdr.php = plr[myplr]._pHitPoints;
-	pkt->hdr.pmhp = plr[myplr]._pMaxHP;
-	pkt->hdr.bstr = plr[myplr]._pBaseStr;
-	pkt->hdr.bmag = plr[myplr]._pBaseMag;
-	pkt->hdr.bdex = plr[myplr]._pBaseDex;
+	pkt->hdr.px = plr.local().data._px;
+	pkt->hdr.py = plr.local().data._py;
+	pkt->hdr.targx = plr.local().data._ptargx;
+	pkt->hdr.targy = plr.local().data._ptargy;
+	pkt->hdr.php = plr.local().data._pHitPoints;
+	pkt->hdr.pmhp = plr.local().data._pMaxHP;
+	pkt->hdr.bstr = plr.local().data._pBaseStr;
+	pkt->hdr.bmag = plr.local().data._pBaseMag;
+	pkt->hdr.bdex = plr.local().data._pBaseDex;
 }
 
 void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
@@ -211,9 +211,9 @@ void multi_handle_turn_upper_bit(int pnum)
 			break;
 	}
 
-	if (myplr == i) {
+	if (myplr() == i) {
 		sgbSendDeltaTbl[pnum] = TRUE;
-	} else if (myplr == pnum) {
+	} else if (myplr() == pnum) {
 		gbDeltaSender = i;
 	}
 }
@@ -246,12 +246,12 @@ void multi_player_left_msg(int pnum, int left)
 {
 	char *pszFmt;
 
-	if (plr[pnum].plractive) {
-		RemovePlrFromMap(pnum);
+	if (plr[pnum].data.plractive) {
+		plr[pnum].RemovePlrFromMap();
 		RemovePortalMissile(pnum);
 		DeactivatePortal(pnum);
 		delta_close_portal(pnum);
-		RemovePlrMissiles(pnum);
+		plr[pnum].RemovePlrMissiles();
 		if (left) {
 			pszFmt = "Player '%s' just left the game";
 			switch (sgdwPlayerLeftReasonTbl[pnum]) {
@@ -263,10 +263,10 @@ void multi_player_left_msg(int pnum, int left)
 				pszFmt = "Player '%s' dropped due to timeout";
 				break;
 			}
-			EventPlrMsg(pszFmt, plr[pnum]._pName);
+			EventPlrMsg(pszFmt, plr[pnum].data._pName);
 		}
-		plr[pnum].plractive = FALSE;
-		plr[pnum]._pName[0] = '\0';
+		plr[pnum].data.plractive = FALSE;
+		plr[pnum].data._pName[0] = '\0';
 		gbActivePlayers--;
 	}
 }
@@ -386,10 +386,10 @@ void multi_begin_timeout()
 	} else if (bGroupPlayers == bGroupCount) {
 		if (nLowestPlayer != nLowestActive) {
 			gbGameDestroyed = TRUE;
-		} else if (nLowestActive == myplr) {
+		} else if (nLowestActive == myplr()) {
 			multi_check_drop_player();
 		}
-	} else if (nLowestActive == myplr) {
+	} else if (nLowestActive == myplr()) {
 		multi_check_drop_player();
 	}
 }
@@ -428,45 +428,45 @@ void multi_process_network_packets()
 			continue;
 		if (pkt->wLen != dwMsgSize)
 			continue;
-		plr[dwID]._pownerx = pkt->px;
-		plr[dwID]._pownery = pkt->py;
-		if (dwID != myplr) {
+		plr[dwID].data._pownerx = pkt->px;
+		plr[dwID].data._pownery = pkt->py;
+		if (dwID != myplr()) {
 			// ASSERT: gbBufferMsgs != BUFFER_PROCESS (2)
-			plr[dwID]._pHitPoints = pkt->php;
-			plr[dwID]._pMaxHP = pkt->pmhp;
+			plr[dwID].data._pHitPoints = pkt->php;
+			plr[dwID].data._pMaxHP = pkt->pmhp;
 			cond = gbBufferMsgs == 1;
-			plr[dwID]._pBaseStr = pkt->bstr;
-			plr[dwID]._pBaseMag = pkt->bmag;
-			plr[dwID]._pBaseDex = pkt->bdex;
-			if (!cond && plr[dwID].plractive && plr[dwID]._pHitPoints) {
-				if (level.currlevel == plr[dwID].plrlevel && !plr[dwID]._pLvlChanging) {
-					dx = abs(plr[dwID]._px - pkt->px);
-					dy = abs(plr[dwID]._py - pkt->py);
+			plr[dwID].data._pBaseStr = pkt->bstr;
+			plr[dwID].data._pBaseMag = pkt->bmag;
+			plr[dwID].data._pBaseDex = pkt->bdex;
+			if (!cond && plr[dwID].data.plractive && plr[dwID].data._pHitPoints) {
+				if (level.currlevel == plr[dwID].data.plrlevel && !plr[dwID].data._pLvlChanging) {
+					dx = abs(plr[dwID].data._px - pkt->px);
+					dy = abs(plr[dwID].data._py - pkt->py);
 					if ((dx > 3 || dy > 3) && grid[pkt->px][pkt->py].dPlayer == 0) {
-						FixPlrWalkTags(dwID);
-						plr[dwID]._poldx = plr[dwID]._px;
-						plr[dwID]._poldy = plr[dwID]._py;
-						FixPlrWalkTags(dwID);
-						plr[dwID]._px = pkt->px;
-						plr[dwID]._py = pkt->py;
-						plr[dwID]._pfutx = pkt->px;
-						plr[dwID]._pfuty = pkt->py;
-						grid[plr[dwID]._px][plr[dwID]._py].dPlayer = dwID + 1;
+						plr[dwID].FixPlrWalkTags();
+						plr[dwID].data._poldx = plr[dwID].data._px;
+						plr[dwID].data._poldy = plr[dwID].data._py;
+						plr[dwID].FixPlrWalkTags();
+						plr[dwID].data._px = pkt->px;
+						plr[dwID].data._py = pkt->py;
+						plr[dwID].data._pfutx = pkt->px;
+						plr[dwID].data._pfuty = pkt->py;
+						grid[plr[dwID].data._px][plr[dwID].data._py].dPlayer = dwID + 1;
 					}
-					dx = abs(plr[dwID]._pfutx - plr[dwID]._px);
-					dy = abs(plr[dwID]._pfuty - plr[dwID]._py);
+					dx = abs(plr[dwID].data._pfutx - plr[dwID].data._px);
+					dy = abs(plr[dwID].data._pfuty - plr[dwID].data._py);
 					if (dx > 1 || dy > 1) {
-						plr[dwID]._pfutx = plr[dwID]._px;
-						plr[dwID]._pfuty = plr[dwID]._py;
+						plr[dwID].data._pfutx = plr[dwID].data._px;
+						plr[dwID].data._pfuty = plr[dwID].data._py;
 					}
-					MakePlrPath(dwID, pkt->targx, pkt->targy, TRUE);
+					plr[dwID].MakePlrPath(pkt->targx, pkt->targy, TRUE);
 				} else {
-					plr[dwID]._px = pkt->px;
-					plr[dwID]._py = pkt->py;
-					plr[dwID]._pfutx = pkt->px;
-					plr[dwID]._pfuty = pkt->py;
-					plr[dwID]._ptargx = pkt->targx;
-					plr[dwID]._ptargy = pkt->targy;
+					plr[dwID].data._px = pkt->px;
+					plr[dwID].data._py = pkt->py;
+					plr[dwID].data._pfutx = pkt->px;
+					plr[dwID].data._pfuty = pkt->py;
+					plr[dwID].data._ptargx = pkt->targx;
+					plr[dwID].data._ptargy = pkt->targy;
 				}
 			}
 		}
@@ -496,7 +496,7 @@ void multi_process_tmsgs()
 	TPkt pkt;
 
 	while (cnt = tmsg_get((BYTE *)&pkt, 512)) {
-		multi_handle_all_packets(myplr, (BYTE *)&pkt, cnt);
+		multi_handle_all_packets(myplr(), (BYTE *)&pkt, cnt);
 	}
 }
 
@@ -506,7 +506,7 @@ void multi_send_zero_packet(int pnum, BYTE bCmd, BYTE *pbSrc, DWORD dwLen)
 	TPkt pkt;
 	TCmdPlrInfoHdr *p;
 
-	/// ASSERT: assert(pnum != myplr);
+	/// ASSERT: assert(pnum != myplr());
 	/// ASSERT: assert(pbSrc);
 	/// ASSERT: assert(dwLen <= 0x0ffff);
 
@@ -543,16 +543,16 @@ void multi_send_zero_packet(int pnum, BYTE bCmd, BYTE *pbSrc, DWORD dwLen)
 		}
 #if 0
 		if((DWORD)pnum >= MAX_PLRS) {
-			if(myplr != 0) {
+			if(myplr() != 0) {
 				debug_plr_tbl[0]++;
 			}
-			if(myplr != 1) {
+			if(myplr() != 1) {
 				debug_plr_tbl[1]++;
 			}
-			if(myplr != 2) {
+			if(myplr() != 2) {
 				debug_plr_tbl[2]++;
 			}
-			if(myplr != 3) {
+			if(myplr() != 3) {
 				debug_plr_tbl[3]++;
 			}
 		} else {
@@ -683,7 +683,7 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 		memset(sgbPlayerLeftGameTbl, 0, sizeof(sgbPlayerLeftGameTbl));
 		memset(sgdwPlayerLeftReasonTbl, 0, sizeof(sgdwPlayerLeftReasonTbl));
 		memset(sgbSendDeltaTbl, 0, sizeof(sgbSendDeltaTbl));
-		memset(plr, 0, sizeof(plr));
+		//memset(plr, 0, sizeof(plr));
 		memset(sgwPackPlrOffsetTbl, 0, sizeof(sgwPackPlrOffsetTbl));
 		SNetSetBasePlayer(0);
 		if (bSinglePlayer) {
@@ -701,19 +701,19 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 		buffer_init(&sgLoPriBuf);
 		gbShouldValidatePackage = FALSE;
 		sync_init();
-		nthread_start(sgbPlayerTurnBitTbl[myplr]);
+		nthread_start(sgbPlayerTurnBitTbl[myplr()]);
 		dthread_start();
 		tmsg_start();
 		sgdwGameLoops = 0;
 		sgbSentThisCycle = 0;
-		gbDeltaSender = myplr;
+		gbDeltaSender = myplr();
 		gbSomebodyWonGameKludge = FALSE;
 		nthread_send_and_recv_turn(0, 0);
 		SetupLocalCoords();
 		multi_send_pinfo(-2, CMD_SEND_PLRINFO);
 		gbActivePlayers = 1;
-		plr[myplr].plractive = TRUE;
-		if (sgbPlayerTurnBitTbl[myplr] == 0 || msg_wait_resync())
+		plr.local().data.plractive = TRUE;
+		if (sgbPlayerTurnBitTbl[myplr()] == 0 || msg_wait_resync())
 			break;
 		NetClose();
 		gbSelectProvider = FALSE;
@@ -743,7 +743,7 @@ void multi_send_pinfo(int pnum, char cmd)
 {
 	PkPlayerStruct pkplr;
 
-	PackPlayer(&pkplr, myplr, TRUE);
+	PackPlayer(&pkplr, myplr(), TRUE);
 	dthread_send_delta(pnum, cmd, &pkplr, sizeof(pkplr));
 }
 
@@ -778,19 +778,19 @@ void SetupLocalCoords()
 		y = 23;
 	}
 #endif
-	x += plrxoff[myplr];
-	y += plryoff[myplr];
-	plr[myplr]._px = x;
-	plr[myplr]._py = y;
-	plr[myplr]._pfutx = x;
-	plr[myplr]._pfuty = y;
-	plr[myplr]._ptargx = x;
-	plr[myplr]._ptargy = y;
-	plr[myplr].plrlevel = level.currlevel;
-	plr[myplr]._pLvlChanging = TRUE;
-	plr[myplr].pLvlLoad = 0;
-	plr[myplr]._pmode = PM_NEWLVL;
-	plr[myplr].destAction = ACTION_NONE;
+	x += plrxoff[myplr()];
+	y += plryoff[myplr()];
+	plr.local().data._px = x;
+	plr.local().data._py = y;
+	plr.local().data._pfutx = x;
+	plr.local().data._pfuty = y;
+	plr.local().data._ptargx = x;
+	plr.local().data._ptargy = y;
+	plr.local().data.plrlevel = level.currlevel;
+	plr.local().data._pLvlChanging = TRUE;
+	plr.local().data.pLvlLoad = 0;
+	plr.local().data._pmode = PM_NEWLVL;
+	plr.local().data.destAction = ACTION_NONE;
 }
 
 BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info)
@@ -807,7 +807,7 @@ BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info
 		app_fatal("SNetCreateGame1:\n%s", TraceLastError());
 	}
 
-	myplr = 0;
+	plr.setLocal(0);
 	gbMaxPlayers = 1;
 
 	return TRUE;
@@ -827,7 +827,7 @@ BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info,
 				return FALSE;
 			}
 			if (type == 'BNET')
-				plr[0].pBattleNet = 1;
+				plr[0].data.pBattleNet = 1;
 		}
 
 		multi_event_handler(TRUE);
@@ -840,13 +840,13 @@ BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info,
 	if ((DWORD)playerId >= MAX_PLRS) {
 		return FALSE;
 	} else {
-		myplr = playerId;
+		plr.setLocal(playerId);
 		gbMaxPlayers = MAX_PLRS;
 
 		pfile_read_player_from_save();
 
 		if (type == 'BNET')
-			plr[myplr].pBattleNet = 1;
+			plr.local().data.pBattleNet = 1;
 
 		return TRUE;
 	}
@@ -878,7 +878,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 {
 	char *szEvent;
 
-	if (myplr == pnum) {
+	if (myplr() == pnum) {
 		return;
 	}
 	/// ASSERT: assert((DWORD)pnum < MAX_PLRS);
@@ -901,14 +901,14 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 
 	sgwPackPlrOffsetTbl[pnum] = 0;
 	multi_player_left_msg(pnum, 0);
-	plr[pnum]._pGFXLoad = 0;
+	plr[pnum].data._pGFXLoad = 0;
 	UnPackPlayer(&netplr[pnum], pnum, TRUE);
 
 	if (!recv) {
 		return;
 	}
 
-	plr[pnum].plractive = TRUE;
+	plr[pnum].data.plractive = TRUE;
 	gbActivePlayers++;
 
 	if (sgbPlayerTurnBitTbl[pnum] != 0) {
@@ -916,22 +916,22 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 	} else {
 		szEvent = "Player '%s' (level %d) is already in the game";
 	}
-	EventPlrMsg(szEvent, plr[pnum]._pName, plr[pnum]._pLevel);
+	EventPlrMsg(szEvent, plr[pnum].data._pName, plr[pnum].data._pLevel);
 
-	LoadPlrGFX(pnum, PFILE_STAND);
-	SyncInitPlr(pnum);
+	plr[pnum].LoadPlrGFX(PFILE_STAND);
+	plr[pnum].SyncInitPlr();
 
-	if (plr[pnum].plrlevel == level.currlevel) {
-		if (plr[pnum]._pHitPoints >> 6 > 0) {
-			StartStand(pnum, 0);
+	if (plr[pnum].data.plrlevel == level.currlevel) {
+		if (plr[pnum].data._pHitPoints >> 6 > 0) {
+			plr[pnum].StartStand(0);
 		} else {
-			plr[pnum]._pgfxnum = 0;
-			LoadPlrGFX(pnum, PFILE_DEATH);
-			plr[pnum]._pmode = PM_DEATH;
-			NewPlrAnim(pnum, plr[pnum]._pDAnim[0], plr[pnum]._pDFrames, 1, plr[pnum]._pDWidth);
-			plr[pnum]._pAnimFrame = plr[pnum]._pAnimLen - 1;
-			plr[pnum]._pVar8 = 2 * plr[pnum]._pAnimLen;
-			grid[plr[pnum]._px][plr[pnum]._py].dFlags |= BFLAG_DEAD_PLAYER;
+			plr[pnum].data._pgfxnum = 0;
+			plr[pnum].LoadPlrGFX(PFILE_DEATH);
+			plr[pnum].data._pmode = PM_DEATH;
+			plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
+			plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;
+			plr[pnum].data._pVar8 = 2 * plr[pnum].data._pAnimLen;
+			grid[plr[pnum].data._px][plr[pnum].data._py].dFlags |= BFLAG_DEAD_PLAYER;
 		}
 	}
 }

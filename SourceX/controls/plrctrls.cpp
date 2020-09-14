@@ -24,7 +24,7 @@ bool InGameMenu()
 	    || qtextflag
 	    || gmenu_is_active()
 	    || PauseMode == 2
-	    || plr[myplr]._pInvincible;
+	    || plr.local().data._pInvincible;
 }
 
 namespace {
@@ -44,11 +44,11 @@ int GetRotaryDistance(int x, int y)
 {
 	int d, d1, d2;
 
-	if (plr[myplr]._pfutx == x && plr[myplr]._pfuty == y)
+	if (plr.local().data._pfutx == x && plr.local().data._pfuty == y)
 		return -1;
 
-	d1 = plr[myplr]._pdir;
-	d2 = GetDirection(plr[myplr]._pfutx, plr[myplr]._pfuty, x, y);
+	d1 = plr.local().data._pdir;
+	d2 = GetDirection(plr.local().data._pfutx, plr.local().data._pfuty, x, y);
 
 	d = abs(d1 - d2);
 	if (d > 4)
@@ -64,7 +64,7 @@ int GetRotaryDistance(int x, int y)
  */
 int GetMinDistance(int dx, int dy)
 {
-	return std::max(abs(plr[myplr]._pfutx - dx), abs(plr[myplr]._pfuty - dy));
+	return std::max(abs(plr.local().data._pfutx - dx), abs(plr.local().data._pfuty - dy));
 }
 
 /**
@@ -81,7 +81,7 @@ int GetDistance(int dx, int dy, int maxDistance)
 	}
 
 	char walkpath[MAX_PATH_LENGTH];
-	int steps = FindPath(PosOkPlayer, myplr, plr[myplr]._pfutx, plr[myplr]._pfuty, dx, dy, walkpath);
+	int steps = FindPath(PosOkPlayer, myplr(), plr.local().data._pfutx, plr.local().data._pfuty, dx, dy, walkpath);
 	if (steps > maxDistance)
 		return 0;
 
@@ -95,16 +95,16 @@ int GetDistance(int dx, int dy, int maxDistance)
  */
 int GetDistanceRanged(int dx, int dy)
 {
-	int a = plr[myplr]._pfutx - dx;
-	int b = plr[myplr]._pfuty - dy;
+	int a = plr.local().data._pfutx - dx;
+	int b = plr.local().data._pfuty - dy;
 
 	return sqrt(a * a + b * b);
 }
 
 void FindItemOrObject()
 {
-	int mx = plr[myplr]._pfutx;
-	int my = plr[myplr]._pfuty;
+	int mx = plr.local().data._pfutx;
+	int my = plr.local().data._pfuty;
 	int rotations = 5;
 
 	// As the player can not stand on the edge fo the map this is safe from OOB
@@ -165,7 +165,7 @@ void CheckTownersNearby()
 
 bool HasRangedSpell()
 {
-	int spl = plr[myplr]._pRSpell;
+	int spl = plr.local().data._pRSpell;
 
 	return spl != SPL_INVALID
 	    && spl != SPL_TOWN
@@ -238,8 +238,8 @@ void FindMeleeTarget()
 	std::list<SearchNode> queue;
 
 	{
-		const int start_x = plr[myplr]._pfutx;
-		const int start_y = plr[myplr]._pfuty;
+		const int start_x = plr.local().data._pfutx;
+		const int start_y = plr.local().data._pfuty;
 		visited[start_x][start_y] = true;
 		queue.push_back({ start_x, start_y, 0 });
 	}
@@ -260,7 +260,7 @@ void FindMeleeTarget()
 				continue;
 			}
 
-			if (!PosOkPlayer(myplr, dx, dy)) {
+			if (!PosOkPlayer(myplr(), dx, dy)) {
 				visited[dx][dy] = true;
 
 				if (grid[dx][dy].dMonster != 0) {
@@ -297,7 +297,7 @@ void FindMeleeTarget()
 
 void CheckMonstersNearby()
 {
-	if (plr[myplr]._pwtype == WT_RANGED || HasRangedSpell()) {
+	if (plr.local().data._pwtype == WT_RANGED || HasRangedSpell()) {
 		FindRangedTarget();
 		return;
 	}
@@ -312,21 +312,21 @@ void CheckPlayerNearby()
 	if (pcursmonst != -1)
 		return;
 
-	int spl = plr[myplr]._pRSpell;
+	int spl = plr.local().data._pRSpell;
 	if (FriendlyMode && spl != SPL_RESURRECT && spl != SPL_HEALOTHER)
 		return;
 
 	for (int i = 0; i < MAX_PLRS; i++) {
-		if (i == myplr)
+		if (i == myplr())
 			continue;
-		const int mx = plr[i]._pfutx;
-		const int my = plr[i]._pfuty;
+		const int mx = plr[i].data._pfutx;
+		const int my = plr[i].data._pfuty;
 		if (grid[mx][my].dPlayer == 0
 		    || !(grid[mx][my].dFlags & BFLAG_LIT)
-		    || (plr[i]._pHitPoints == 0 && spl != SPL_RESURRECT))
+		    || (plr[i].data._pHitPoints == 0 && spl != SPL_RESURRECT))
 			continue;
 
-		if (plr[myplr]._pwtype == WT_RANGED || HasRangedSpell() || spl == SPL_HEALOTHER) {
+		if (plr.local().data._pwtype == WT_RANGED || HasRangedSpell() || spl == SPL_HEALOTHER) {
 			newDdistance = GetDistanceRanged(mx, my);
 		} else {
 			newDdistance = GetDistance(mx, my, distance);
@@ -430,13 +430,13 @@ void Interact()
 	if (level.leveltype == DTYPE_TOWN && pcursmonst != -1) {
 		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._tx, towner[pcursmonst]._ty, pcursmonst);
 	} else if (pcursmonst != -1) {
-		if (plr[myplr]._pwtype != WT_RANGED || CanTalkToMonst(pcursmonst)) {
+		if (plr.local().data._pwtype != WT_RANGED || CanTalkToMonst(pcursmonst)) {
 			NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
 		} else {
 			NetSendCmdParam1(true, CMD_RATTACKID, pcursmonst);
 		}
 	} else if (level.leveltype != DTYPE_TOWN && pcursplr != -1 && !FriendlyMode) {
-		NetSendCmdParam1(true, plr[myplr]._pwtype == WT_RANGED ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
+		NetSendCmdParam1(true, plr.local().data._pwtype == WT_RANGED ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
 	}
 }
 
@@ -445,7 +445,7 @@ void AttrIncBtnSnap(MoveDirectionY dir)
 	if (dir == MoveDirectionY_NONE)
 		return;
 
-	if (chrbtnactive && plr[myplr]._pStatPts <= 0)
+	if (chrbtnactive && plr.local().data._pStatPts <= 0)
 		return;
 
 	DWORD ticks = SDL_GetTicks();
@@ -671,7 +671,7 @@ void HotSpellMove(MoveDirection dir)
 		if (MouseX >= speedspellscoords[r].x - 28 && MouseX < speedspellscoords[r].x + (28) && MouseY >= speedspellscoords[r].y - (28) && MouseY < speedspellscoords[r].y + 28) {
 			spbslot = r;
 			//sprintf(tempstr, "IN HOT SPELL CELL NUM:%i", r);
-			//NetSendCmdString(1 << myplr, tempstr);
+			//NetSendCmdString(1 << myplr(), tempstr);
 		}
 	}
 
@@ -796,16 +796,16 @@ bool IsPathBlocked(int x, int y, int dir)
 	if (!pieces[grid[d1x][d1y].dPiece].nSolidTable && !pieces[grid[d2x][d2y].dPiece].nSolidTable)
 		return false;
 
-	return !PosOkPlayer(myplr, d1x, d1y) && !PosOkPlayer(myplr, d2x, d2y);
+	return !PosOkPlayer(myplr(), d1x, d1y) && !PosOkPlayer(myplr(), d2x, d2y);
 }
 
 void WalkInDir(MoveDirection dir)
 {
-	const int x = plr[myplr]._pfutx;
-	const int y = plr[myplr]._pfuty;
+	const int x = plr.local().data._pfutx;
+	const int y = plr.local().data._pfuty;
 
 	if (dir.x == MoveDirectionX_NONE && dir.y == MoveDirectionY_NONE) {
-		if (sgbControllerActive && plr[myplr].walkpath[0] != WALK_NONE && plr[myplr].destAction == ACTION_NONE)
+		if (sgbControllerActive && plr.local().data.walkpath[0] != WALK_NONE && plr.local().data.destAction == ACTION_NONE)
 			NetSendCmdLoc(true, CMD_WALKXY, x, y); // Stop walking
 		return;
 	}
@@ -813,9 +813,9 @@ void WalkInDir(MoveDirection dir)
 	const int pdir = kFaceDir[static_cast<std::size_t>(dir.x)][static_cast<std::size_t>(dir.y)];
 	const int dx = x + kOffsets[pdir][0];
 	const int dy = y + kOffsets[pdir][1];
-	plr[myplr]._pdir = pdir;
+	plr.local().data._pdir = pdir;
 
-	if (PosOkPlayer(myplr, dx, dy) && IsPathBlocked(x, y, pdir))
+	if (PosOkPlayer(myplr(), dx, dy) && IsPathBlocked(x, y, pdir))
 		return; // Don't start backtrack around obstacles
 
 	NetSendCmdLoc(true, CMD_WALKXY, dx, dy);
@@ -835,7 +835,7 @@ void Movement()
 
 	if (invflag) {
 		InvMove(move_dir);
-	} else if (chrflag && plr[myplr]._pStatPts > 0) {
+	} else if (chrflag && plr.local().data._pStatPts > 0) {
 		AttrIncBtnSnap(move_dir.y);
 	} else if (spselflag) {
 		HotSpellMove(move_dir);
@@ -955,13 +955,13 @@ void plrctrls_after_game_logic()
 void UseBeltItem(int type)
 {
 	for (int i = 0; i < MAXBELTITEMS; i++) {
-		const int id = AllItemsList[plr[myplr].SpdList[i].IDidx].iMiscId;
-		const int spellId = AllItemsList[plr[myplr].SpdList[i].IDidx].iSpell;
+		const int id = AllItemsList[plr.local().data.SpdList[i].IDidx].iMiscId;
+		const int spellId = AllItemsList[plr.local().data.SpdList[i].IDidx].iSpell;
 		if ((type == BLT_HEALING && (id == IMISC_HEAL || id == IMISC_FULLHEAL || (id == IMISC_SCROLL && spellId == SPL_HEAL)))
 		    || (type == BLT_MANA && (id == IMISC_MANA || id == IMISC_FULLMANA))
 		    || id == IMISC_REJUV || id == IMISC_FULLREJUV) {
-			if (plr[myplr].SpdList[i]._itype > -1) {
-				UseInvItem(myplr, INVITEM_BELT_FIRST + i);
+			if (plr.local().data.SpdList[i]._itype > -1) {
+				plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + i);
 				break;
 			}
 		}
@@ -985,7 +985,7 @@ void PerformPrimaryAction()
 		return;
 	}
 
-	if (chrflag && !chrbtnactive && plr[myplr]._pStatPts > 0) {
+	if (chrflag && !chrbtnactive && plr.local().data._pStatPts > 0) {
 		CheckChrBtns();
 		for (int i = 0; i < 4; i++) {
 			if (MouseX >= ChrBtnsRect[i].x
@@ -1005,7 +1005,7 @@ void PerformPrimaryAction()
 
 bool SpellHasActorTarget()
 {
-	int spl = plr[myplr]._pRSpell;
+	int spl = plr.local().data._pRSpell;
 	if (spl == SPL_TOWN || spl == SPL_TELEPORT)
 		return false;
 
@@ -1025,10 +1025,10 @@ void UpdateSpellTarget()
 	pcursplr = -1;
 	pcursmonst = -1;
 
-	const PlayerStruct &player = plr[myplr];
+	const PlayerStruct &player = plr.local().data;
 
 	int range = 1;
-	if (plr[myplr]._pRSpell == SPL_TELEPORT)
+	if (plr.local().data._pRSpell == SPL_TELEPORT)
 		range = 4;
 
 	cursmx = player._pfutx + kOffsets[player._pdir][0] * range;
@@ -1040,12 +1040,12 @@ void UpdateSpellTarget()
  */
 bool TryDropItem()
 {
-	cursmx = plr[myplr]._pfutx + 1;
-	cursmy = plr[myplr]._pfuty;
+	cursmx = plr.local().data._pfutx + 1;
+	cursmy = plr.local().data._pfuty;
 	if (!DropItemBeforeTrig()) {
 		// Try to drop on the other side
-		cursmx = plr[myplr]._pfutx;
-		cursmy = plr[myplr]._pfuty + 1;
+		cursmx = plr.local().data._pfutx;
+		cursmy = plr.local().data._pfuty + 1;
 		DropItemBeforeTrig();
 	}
 
@@ -1077,15 +1077,15 @@ void PerformSpellAction()
 		return;
 	}
 
-	int spl = plr[myplr]._pRSpell;
+	int spl = plr.local().data._pRSpell;
 	if ((pcursplr == -1 && (spl == SPL_RESURRECT || spl == SPL_HEALOTHER))
 	    || (pcursobj == -1 && spl == SPL_DISARM)) {
-		if (plr[myplr]._pClass == PC_WARRIOR) {
+		if (plr.local().data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
 #ifndef SPAWN
-		} else if (plr[myplr]._pClass == PC_ROGUE) {
+		} else if (plr.local().data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE27);
-		} else if (plr[myplr]._pClass == PC_SORCERER) {
+		} else if (plr.local().data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE27);
 #endif
 		}
@@ -1104,15 +1104,15 @@ void CtrlUseInvItem()
 		return;
 
 	if (pcursinvitem <= INVITEM_INV_LAST)
-		Item = &plr[myplr].InvList[pcursinvitem - INVITEM_INV_FIRST];
+		Item = &plr.local().data.InvList[pcursinvitem - INVITEM_INV_FIRST];
 	else
-		Item = &plr[myplr].SpdList[pcursinvitem - INVITEM_BELT_FIRST];
+		Item = &plr.local().data.SpdList[pcursinvitem - INVITEM_BELT_FIRST];
 
 	if ((Item->_iMiscId == IMISC_SCROLLT || Item->_iMiscId == IMISC_SCROLL) && spelldata[Item->_iSpell].sTargeted) {
 		return;
 	}
 
-	UseInvItem(myplr, pcursinvitem);
+	plr.local().inventory.UseInvItem(pcursinvitem);
 }
 
 void PerformSecondaryAction()
@@ -1132,14 +1132,14 @@ void PerformSecondaryAction()
 	} else if (pcursobj != -1) {
 		NetSendCmdLocParam1(true, CMD_OPOBJXY, cursmx, cursmy, pcursobj);
 	} else if (pcursmissile != -1) {
-		MakePlrPath(myplr, missile[pcursmissile]._mix, missile[pcursmissile]._miy, true);
-		plr[myplr].destAction = ACTION_WALK;
+		plr.local().MakePlrPath(missile[pcursmissile]._mix, missile[pcursmissile]._miy, true);
+		plr.local().data.destAction = ACTION_WALK;
 	} else if (pcurstrig != -1) {
-		MakePlrPath(myplr, trigs[pcurstrig]._tx, trigs[pcurstrig]._ty, true);
-		plr[myplr].destAction = ACTION_WALK;
+		plr.local().MakePlrPath(trigs[pcurstrig]._tx, trigs[pcurstrig]._ty, true);
+		plr.local().data.destAction = ACTION_WALK;
 	} else if (pcursquest != -1) {
-		MakePlrPath(myplr, quests[pcursquest]._qtx, quests[pcursquest]._qty, true);
-		plr[myplr].destAction = ACTION_WALK;
+		plr.local().MakePlrPath(quests[pcursquest]._qtx, quests[pcursquest]._qty, true);
+		plr.local().data.destAction = ACTION_WALK;
 	}
 }
 

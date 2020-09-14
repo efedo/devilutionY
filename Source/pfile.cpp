@@ -22,9 +22,9 @@ void pfile_write_hero()
 	DWORD save_num;
 	PkPlayerStruct pkplr;
 
-	save_num = pfile_get_save_num_from_name(plr[myplr]._pName);
+	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
 	if (pfile_open_archive(TRUE, save_num)) {
-		PackPlayer(&pkplr, myplr, gbMaxPlayers == 1);
+		PackPlayer(&pkplr, myplr(), gbMaxPlayers == 1);
 		pfile_encode_hero(&pkplr);
 		pfile_flush(gbMaxPlayers == 1, save_num);
 	}
@@ -103,9 +103,9 @@ BOOL pfile_create_player_description(char *dst, DWORD len)
 	char desc[128];
 	_uiheroinfo uihero;
 
-	myplr = 0;
+	plr.setLocal(0);
 	pfile_read_player_from_save();
-	game_2_ui_player(plr, &uihero, gbValidSaveFile);
+	game_2_ui_player(&plr[0].data, &uihero, gbValidSaveFile);
 	UiSetupPlayerInfo(gszHero, &uihero, GAME_ID);
 
 	if (dst != NULL && len) {
@@ -125,7 +125,7 @@ BOOL pfile_rename_hero(const char *name_1, const char *name_2)
 
 	if (pfile_get_save_num_from_name(name_2) == MAX_CHARACTERS) {
 		for (i = 0; i != MAX_PLRS; i++) {
-			if (!strcasecmp(name_1, plr[i]._pName)) {
+			if (!strcasecmp(name_1, plr[i].data._pName)) {
 				found = TRUE;
 				break;
 			}
@@ -139,10 +139,10 @@ BOOL pfile_rename_hero(const char *name_1, const char *name_2)
 		return FALSE;
 
 	SStrCopy(hero_names[save_num], name_2, PLR_NAME_LEN);
-	SStrCopy(plr[i]._pName, name_2, PLR_NAME_LEN);
+	SStrCopy(plr[i].data._pName, name_2, PLR_NAME_LEN);
 	if (!strcasecmp(gszHero, name_1))
 		SStrCopy(gszHero, name_2, sizeof(gszHero));
-	game_2_ui_player(plr, &uihero, gbValidSaveFile);
+	game_2_ui_player(&plr[0].data, &uihero, gbValidSaveFile);
 	UiSetupPlayerInfo(gszHero, &uihero, GAME_ID);
 	pfile_write_hero();
 	return TRUE;
@@ -150,7 +150,7 @@ BOOL pfile_rename_hero(const char *name_1, const char *name_2)
 
 void pfile_flush_W()
 {
-	pfile_flush(TRUE, pfile_get_save_num_from_name(plr[myplr]._pName));
+	pfile_flush(TRUE, pfile_get_save_num_from_name(plr.local().data._pName));
 }
 
 void game_2_ui_player(const PlayerStruct *p, _uiheroinfo *heroinfo, BOOL bHasSaveFile)
@@ -203,7 +203,7 @@ BOOL pfile_ui_set_hero_infos(BOOL(*ui_add_hero_info)(_uiheroinfo *))
 				_uiheroinfo uihero;
 				strcpy(hero_names[i], pkplr.pName);
 				UnPackPlayer(&pkplr, 0, FALSE);
-				game_2_ui_player(plr, &uihero, pfile_archive_contains_game(archive, i));
+				game_2_ui_player(&plr[0].data, &uihero, pfile_archive_contains_game(archive, i));
 				ui_add_hero_info(&uihero);
 			}
 			pfile_SFileCloseArchive(archive);
@@ -327,12 +327,12 @@ BOOL pfile_ui_save_create(_uiheroinfo *heroinfo)
 	strncpy(hero_names[save_num], heroinfo->name, PLR_NAME_LEN);
 	hero_names[save_num][PLR_NAME_LEN - 1] = '\0';
 	cl = pfile_get_player_class(heroinfo->heroclass);
-	CreatePlayer(0, cl);
-	strncpy(plr[0]._pName, heroinfo->name, PLR_NAME_LEN);
-	plr[0]._pName[PLR_NAME_LEN - 1] = '\0';
+	plr[0].CreatePlayer(cl);
+	strncpy(plr[0].data._pName, heroinfo->name, PLR_NAME_LEN);
+	plr[0].data._pName[PLR_NAME_LEN - 1] = '\0';
 	PackPlayer(&pkplr, 0, TRUE);
 	pfile_encode_hero(&pkplr);
-	game_2_ui_player(&plr[0], heroinfo, FALSE);
+	game_2_ui_player(&plr[0].data, heroinfo, FALSE);
 	pfile_flush(TRUE, save_num);
 	return TRUE;
 }
@@ -389,7 +389,7 @@ void pfile_read_player_from_save()
 	if (!pfile_read_hero(archive, &pkplr))
 		app_fatal("Unable to load character");
 
-	UnPackPlayer(&pkplr, myplr, FALSE);
+	UnPackPlayer(&pkplr, myplr(), FALSE);
 	gbValidSaveFile = pfile_archive_contains_game(archive, save_num);
 	pfile_SFileCloseArchive(archive);
 }
@@ -397,7 +397,7 @@ void pfile_read_player_from_save()
 void GetTempLevelNames(char *szTemp)
 {
 	// BUGFIX: function call has no purpose
-	pfile_get_save_num_from_name(plr[myplr]._pName);
+	pfile_get_save_num_from_name(plr.local().data._pName);
 	if (level.setlevel)
 		sprintf(szTemp, "temps%02d", level.setlvlnum);
 	else
@@ -409,7 +409,7 @@ void GetPermLevelNames(char *szPerm)
 	DWORD save_num;
 	BOOL has_file;
 
-	save_num = pfile_get_save_num_from_name(plr[myplr]._pName);
+	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
 	GetTempLevelNames(szPerm);
 	if (!pfile_open_archive(FALSE, save_num))
 		app_fatal("Unable to read to save file archive");
@@ -427,14 +427,14 @@ void GetPermLevelNames(char *szPerm)
 void pfile_get_game_name(char *dst)
 {
 	// BUGFIX: function call with no purpose
-	pfile_get_save_num_from_name(plr[myplr]._pName);
+	pfile_get_save_num_from_name(plr.local().data._pName);
 	strcpy(dst, "game");
 }
 
 void pfile_remove_temp_files()
 {
 	if (gbMaxPlayers <= 1) {
-		DWORD save_num = pfile_get_save_num_from_name(plr[myplr]._pName);
+		DWORD save_num = pfile_get_save_num_from_name(plr.local().data._pName);
 		if (!pfile_open_archive(FALSE, save_num))
 			app_fatal("Unable to write to save file archive");
 		mpqapi_remove_hash_entries(GetTempSaveNames);
@@ -465,7 +465,7 @@ void pfile_rename_temp_to_perm()
 	char szTemp[MAX_PATH];
 	char szPerm[MAX_PATH];
 
-	dwChar = pfile_get_save_num_from_name(plr[myplr]._pName);
+	dwChar = pfile_get_save_num_from_name(plr.local().data._pName);
 	assert(dwChar < MAX_CHARACTERS);
 	assert(gbMaxPlayers == 1);
 	if (!pfile_open_archive(FALSE, dwChar))
@@ -508,7 +508,7 @@ void pfile_write_save_file(const char *pszName, BYTE *pbData, DWORD dwLen, DWORD
 	char FileName[MAX_PATH];
 
 	pfile_strcpy(FileName, pszName);
-	save_num = pfile_get_save_num_from_name(plr[myplr]._pName);
+	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
 	{
 		char password[16] = PASSWORD_SINGLE;
 		if (gbMaxPlayers > 1)
@@ -535,7 +535,7 @@ BYTE *pfile_read(const char *pszName, DWORD *pdwLen)
 	BYTE *buf;
 
 	pfile_strcpy(FileName, pszName);
-	save_num = pfile_get_save_num_from_name(plr[myplr]._pName);
+	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
 	archive = pfile_open_save_archive(NULL, save_num);
 	if (archive == NULL)
 		app_fatal("Unable to open save file archive");

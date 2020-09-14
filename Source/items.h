@@ -12,6 +12,16 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
+class Player;
+
+class Item {
+public:
+	Item(Player *);
+	Player &owner();
+private:
+	Player *_owner = 0;
+};
+
 extern int itemactive[MAXITEMS];
 extern int itemavail[MAXITEMS];
 extern ItemGetRecordStruct itemrecord[MAXITEMS];

@@ -143,7 +143,7 @@ void CheckTown()
 				trigflag = TRUE;
 				ClearPanel();
 				strcpy(infostr, "Town Portal");
-				sprintf(tempstr, "from %s", plr[missile[mx]._misource]._pName);
+				sprintf(tempstr, "from %s", plr[missile[mx]._misource].data._pName);
 				AddPanelString(tempstr, TRUE);
 				cursmx = missile[mx]._mix;
 				cursmy = missile[mx]._miy;
@@ -220,10 +220,10 @@ void CheckCursMove()
 	sy -= ScrollInfo._syoff - yo;
 
 	// Predict the next frame when walking to avoid input jitter
-	fx = plr[myplr]._pVar6 / 256;
-	fy = plr[myplr]._pVar7 / 256;
-	fx -= (plr[myplr]._pVar6 + plr[myplr]._pxvel) / 256;
-	fy -= (plr[myplr]._pVar7 + plr[myplr]._pyvel) / 256;
+	fx = plr.local().data._pVar6 / 256;
+	fy = plr.local().data._pVar7 / 256;
+	fx -= (plr.local().data._pVar6 + plr.local().data._pxvel) / 256;
+	fy -= (plr.local().data._pVar7 + plr.local().data._pyvel) / 256;
 	if (ScrollInfo._sdir != SDIR_NONE) {
 		sx -= fx;
 		sy -= fy;
@@ -285,7 +285,7 @@ void CheckCursMove()
 	panelflag = FALSE;
 	trigflag = FALSE;
 
-	if (plr[myplr]._pInvincible) {
+	if (plr.local().data._pInvincible) {
 		return;
 	}
 	if (pcurs >= CURSOR_FIRSTITEM || spselflag) {
@@ -474,7 +474,7 @@ void CheckCursMove()
 	if (pcursmonst == -1) {
 		if (!flipflag && mx + 1 < MAXDUNX && grid[mx + 1][my].dPlayer != 0) {
 			bv = grid[mx + 1][my].dPlayer > 0 ? grid[mx + 1][my].dPlayer - 1 : -(grid[mx + 1][my].dPlayer + 1);
-			if (bv != myplr && plr[bv]._pHitPoints != 0) {
+			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursmx = mx + 1;
 				cursmy = my;
 				pcursplr = bv;
@@ -482,7 +482,7 @@ void CheckCursMove()
 		}
 		if (flipflag && my + 1 < MAXDUNY && grid[mx][my + 1].dPlayer != 0) {
 			bv = grid[mx][my + 1].dPlayer > 0 ? grid[mx][my + 1].dPlayer - 1 : -(grid[mx][my + 1].dPlayer + 1);
-			if (bv != myplr && plr[bv]._pHitPoints != 0) {
+			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursmx = mx;
 				cursmy = my + 1;
 				pcursplr = bv;
@@ -490,7 +490,7 @@ void CheckCursMove()
 		}
 		if (grid[mx][my].dPlayer != 0) {
 			bv = grid[mx][my].dPlayer > 0 ? grid[mx][my].dPlayer - 1 : -(grid[mx][my].dPlayer + 1);
-			if (bv != myplr) {
+			if (bv != myplr()) {
 				cursmx = mx;
 				cursmy = my;
 				pcursplr = bv;
@@ -498,7 +498,7 @@ void CheckCursMove()
 		}
 		if (grid[mx][my].dFlags & BFLAG_DEAD_PLAYER) {
 			for (i = 0; i < MAX_PLRS; i++) {
-				if (plr[i]._px == mx && plr[i]._py == my && i != myplr) {
+				if (plr[i].data._px == mx && plr[i].data._py == my && i != myplr()) {
 					cursmx = mx;
 					cursmy = my;
 					pcursplr = i;
@@ -510,7 +510,7 @@ void CheckCursMove()
 				for (yy = -1; yy < 2; yy++) {
 					if (mx + xx < MAXDUNX && my + yy < MAXDUNY && grid[mx + xx][my + yy].dFlags & BFLAG_DEAD_PLAYER) {
 						for (i = 0; i < MAX_PLRS; i++) {
-							if (plr[i]._px == mx + xx && plr[i]._py == my + yy && i != myplr) {
+							if (plr[i].data._px == mx + xx && plr[i].data._py == my + yy && i != myplr()) {
 								cursmx = mx + xx;
 								cursmy = my + yy;
 								pcursplr = i;
@@ -522,7 +522,7 @@ void CheckCursMove()
 		}
 		if (mx + 1 < MAXDUNX && my + 1 < MAXDUNY && grid[mx + 1][my + 1].dPlayer != 0) {
 			bv = grid[mx + 1][my + 1].dPlayer > 0 ? grid[mx + 1][my + 1].dPlayer - 1 : -(grid[mx + 1][my + 1].dPlayer + 1);
-			if (bv != myplr && plr[bv]._pHitPoints != 0) {
+			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursmx = mx + 1;
 				cursmy = my + 1;
 				pcursplr = bv;

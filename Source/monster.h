@@ -12,12 +12,18 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern int MissileFileFlag;
+class MonsterEntry {
+public:
+
+};
+
+extern MonsterStruct monster[MAXMONSTERS];
 extern int monstkills[MAXMONSTERS];
 extern int monstactive[MAXMONSTERS];
+
+extern int MissileFileFlag;
 extern int nummonsters;
 extern BOOLEAN sgbSaveSoundOn;
-extern MonsterStruct monster[MAXMONSTERS];
 extern int totalmonsters;
 extern CMonster Monsters[MAX_LVLMTYPES];
 extern BYTE GraphicTable[NUMLEVELS][MAX_LVLMTYPES];

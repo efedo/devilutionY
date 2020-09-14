@@ -80,7 +80,7 @@ BOOL mainmenu_select_hero_dialog(
 	pfile_create_player_description(cdesc, cdlen);
 	if (multi) {
 		if (mode == 'BNET')
-			*multi = hero_is_created || !plr[myplr].pBattleNet;
+			*multi = hero_is_created || !plr.local().data.pBattleNet;
 		else
 			*multi = hero_is_created;
 	}

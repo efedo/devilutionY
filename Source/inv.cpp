@@ -118,12 +118,12 @@ void FreeInvGFX()
 
 void InitInv()
 {
-	if (plr[myplr]._pClass == PC_WARRIOR) {
+	if (plr.local().data._pClass == PC_WARRIOR) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv.CEL", NULL);
 #ifndef SPAWN
-	} else if (plr[myplr]._pClass == PC_ROGUE) {
+	} else if (plr.local().data._pClass == PC_ROGUE) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_rog.CEL", NULL);
-	} else if (plr[myplr]._pClass == PC_SORCERER) {
+	} else if (plr.local().data._pClass == PC_SORCERER) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_Sor.CEL", NULL);
 #endif
 	}
@@ -165,106 +165,106 @@ void DrawInv()
 
 	CelDraw(RIGHT_PANEL_X, 351 + SCREEN_Y, pInvCels, 1, SPANEL_WIDTH);
 
-	if (plr[myplr].InvBody[INVLOC_HEAD]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_HEAD]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 133, 59 + SCREEN_Y, 2 * INV_SLOT_SIZE_PX, 2 * INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_HEAD]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_HEAD]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == INVITEM_HEAD) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_HEAD]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_HEAD]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_HEAD]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_HEAD]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, RIGHT_PANEL_X + 133, 59 + SCREEN_Y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_HEAD]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_HEAD]._iStatFlag) {
 			CelClippedDraw(RIGHT_PANEL_X + 133, 59 + SCREEN_Y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(RIGHT_PANEL_X + 133, 59 + SCREEN_Y, pCursCels, frame, frame_width, 1);
 		}
 	}
 
-	if (plr[myplr].InvBody[INVLOC_RING_LEFT]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_RING_LEFT]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 48, 205 + SCREEN_Y, INV_SLOT_SIZE_PX, INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_RING_LEFT]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_RING_LEFT]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == INVITEM_RING_LEFT) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_RING_LEFT]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_RING_LEFT]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_RING_LEFT]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_RING_LEFT]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, RIGHT_PANEL_X + 48, 205 + SCREEN_Y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_RING_LEFT]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_RING_LEFT]._iStatFlag) {
 			CelClippedDraw(RIGHT_PANEL_X + 48, 205 + SCREEN_Y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(RIGHT_PANEL_X + 48, 205 + SCREEN_Y, pCursCels, frame, frame_width, 1);
 		}
 	}
 
-	if (plr[myplr].InvBody[INVLOC_RING_RIGHT]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_RING_RIGHT]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 249, 205 + SCREEN_Y, INV_SLOT_SIZE_PX, INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_RING_RIGHT]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_RING_RIGHT]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == INVITEM_RING_RIGHT) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_RING_RIGHT]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_RING_RIGHT]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_RING_RIGHT]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_RING_RIGHT]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, RIGHT_PANEL_X + 249, 205 + SCREEN_Y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_RING_RIGHT]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_RING_RIGHT]._iStatFlag) {
 			CelClippedDraw(RIGHT_PANEL_X + 249, 205 + SCREEN_Y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(RIGHT_PANEL_X + 249, 205 + SCREEN_Y, pCursCels, frame, frame_width, 1);
 		}
 	}
 
-	if (plr[myplr].InvBody[INVLOC_AMULET]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_AMULET]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 205, 60 + SCREEN_Y, INV_SLOT_SIZE_PX, INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_AMULET]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_AMULET]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == INVITEM_AMULET) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_AMULET]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_AMULET]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_AMULET]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_AMULET]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, RIGHT_PANEL_X + 205, 60 + SCREEN_Y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_AMULET]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_AMULET]._iStatFlag) {
 			CelClippedDraw(RIGHT_PANEL_X + 205, 60 + SCREEN_Y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(RIGHT_PANEL_X + 205, 60 + SCREEN_Y, pCursCels, frame, frame_width, 1);
 		}
 	}
 
-	if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 17, 160 + SCREEN_Y, 2 * INV_SLOT_SIZE_PX, 3 * INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_HAND_LEFT]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 		// calc item offsets for weapons smaller than 2x3 slots
 		screen_x = frame_width == INV_SLOT_SIZE_PX ? (RIGHT_PANEL_X + 31) : (RIGHT_PANEL_X + 17);
@@ -272,22 +272,22 @@ void DrawInv()
 
 		if (pcursinvitem == INVITEM_HAND_LEFT) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, screen_x, screen_y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
 			CelClippedDraw(screen_x, screen_y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(screen_x, screen_y, pCursCels, frame, frame_width, 1);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND) {
+		if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND) {
 			InvDrawSlotBack(RIGHT_PANEL_X + 247, 160 + SCREEN_Y, 2 * INV_SLOT_SIZE_PX, 3 * INV_SLOT_SIZE_PX);
 			light_table_index = 0;
 			cel_transparency_active = TRUE;
@@ -300,10 +300,10 @@ void DrawInv()
 			cel_transparency_active = FALSE;
 		}
 	}
-	if (plr[myplr].InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 247, 160 + SCREEN_Y, 2 * INV_SLOT_SIZE_PX, 3 * INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_HAND_RIGHT]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 		// calc item offsets for weapons smaller than 2x3 slots
 		screen_x = frame_width == INV_SLOT_SIZE_PX ? (RIGHT_PANEL_X + 261) : (RIGHT_PANEL_X + 249);
@@ -311,40 +311,40 @@ void DrawInv()
 
 		if (pcursinvitem == INVITEM_HAND_RIGHT) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_HAND_RIGHT]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, screen_x, screen_y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
 			CelClippedDraw(screen_x, screen_y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(screen_x, screen_y, pCursCels, frame, frame_width, 1);
 		}
 	}
 
-	if (plr[myplr].InvBody[INVLOC_CHEST]._itype != ITYPE_NONE) {
+	if (plr.local().data.InvBody[INVLOC_CHEST]._itype != ITYPE_NONE) {
 		InvDrawSlotBack(RIGHT_PANEL_X + 133, 160 + SCREEN_Y, 2 * INV_SLOT_SIZE_PX, 3 * INV_SLOT_SIZE_PX);
 
-		frame = plr[myplr].InvBody[INVLOC_CHEST]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.InvBody[INVLOC_CHEST]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == INVITEM_CHEST) {
 			color = ICOL_WHITE;
-			if (plr[myplr].InvBody[INVLOC_CHEST]._iMagical != ITEM_QUALITY_NORMAL) {
+			if (plr.local().data.InvBody[INVLOC_CHEST]._iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
 			}
-			if (!plr[myplr].InvBody[INVLOC_CHEST]._iStatFlag) {
+			if (!plr.local().data.InvBody[INVLOC_CHEST]._iStatFlag) {
 				color = ICOL_RED;
 			}
 			CelBlitOutline(color, RIGHT_PANEL_X + 133, 160 + SCREEN_Y, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].InvBody[INVLOC_CHEST]._iStatFlag) {
+		if (plr.local().data.InvBody[INVLOC_CHEST]._iStatFlag) {
 			CelClippedDraw(RIGHT_PANEL_X + 133, 160 + SCREEN_Y, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(RIGHT_PANEL_X + 133, 160 + SCREEN_Y, pCursCels, frame, frame_width, 1);
@@ -353,7 +353,7 @@ void DrawInv()
 
 	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
 		invtest[i] = FALSE;
-		if (plr[myplr].InvGrid[i] != 0) {
+		if (plr.local().data.InvGrid[i] != 0) {
 			InvDrawSlotBack(
 			    InvRect[i + SLOTXY_INV_FIRST].X + SCREEN_X,
 			    InvRect[i + SLOTXY_INV_FIRST].Y + SCREEN_Y - 1,
@@ -363,20 +363,20 @@ void DrawInv()
 	}
 
 	for (j = 0; j < NUM_INV_GRID_ELEM; j++) {
-		if (plr[myplr].InvGrid[j] > 0) // first slot of an item
+		if (plr.local().data.InvGrid[j] > 0) // first slot of an item
 		{
-			ii = plr[myplr].InvGrid[j] - 1;
+			ii = plr.local().data.InvGrid[j] - 1;
 
 			invtest[j] = TRUE;
 
-			frame = plr[myplr].InvList[ii]._iCurs + CURSOR_FIRSTITEM;
+			frame = plr.local().data.InvList[ii]._iCurs + CURSOR_FIRSTITEM;
 			frame_width = InvItemWidth[frame];
 			if (pcursinvitem == ii + INVITEM_INV_FIRST) {
 				color = ICOL_WHITE;
-				if (plr[myplr].InvList[ii]._iMagical != ITEM_QUALITY_NORMAL) {
+				if (plr.local().data.InvList[ii]._iMagical != ITEM_QUALITY_NORMAL) {
 					color = ICOL_BLUE;
 				}
-				if (!plr[myplr].InvList[ii]._iStatFlag) {
+				if (!plr.local().data.InvList[ii]._iStatFlag) {
 					color = ICOL_RED;
 				}
 				CelBlitOutline(
@@ -386,7 +386,7 @@ void DrawInv()
 				    pCursCels, frame, frame_width);
 			}
 
-			if (plr[myplr].InvList[ii]._iStatFlag) {
+			if (plr.local().data.InvList[ii]._iStatFlag) {
 				CelClippedDraw(
 				    InvRect[j + SLOTXY_INV_FIRST].X + SCREEN_X,
 				    InvRect[j + SLOTXY_INV_FIRST].Y + SCREEN_Y - 1,
@@ -413,33 +413,33 @@ void DrawInvBelt()
 	DrawPanelBox(205, 21, 232, 28, PANEL_X + 205, PANEL_Y + 5);
 
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (plr[myplr].SpdList[i]._itype == ITYPE_NONE) {
+		if (plr.local().data.SpdList[i]._itype == ITYPE_NONE) {
 			continue;
 		}
 
 		InvDrawSlotBack(InvRect[i + SLOTXY_BELT_FIRST].X + SCREEN_X, InvRect[i + SLOTXY_BELT_FIRST].Y + SCREEN_Y - 1, 28, 28);
-		frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
+		frame = plr.local().data.SpdList[i]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == i + INVITEM_BELT_FIRST) {
 			color = ICOL_WHITE;
-			if (plr[myplr].SpdList[i]._iMagical)
+			if (plr.local().data.SpdList[i]._iMagical)
 				color = ICOL_BLUE;
-			if (!plr[myplr].SpdList[i]._iStatFlag)
+			if (!plr.local().data.SpdList[i]._iStatFlag)
 				color = ICOL_RED;
 			if (!sgbControllerActive || invflag)
 				CelBlitOutline(color, InvRect[i + SLOTXY_BELT_FIRST].X + SCREEN_X, InvRect[i + SLOTXY_BELT_FIRST].Y + SCREEN_Y - 1, pCursCels, frame, frame_width);
 		}
 
-		if (plr[myplr].SpdList[i]._iStatFlag) {
+		if (plr.local().data.SpdList[i]._iStatFlag) {
 			CelClippedDraw(InvRect[i + SLOTXY_BELT_FIRST].X + SCREEN_X, InvRect[i + SLOTXY_BELT_FIRST].Y + SCREEN_Y - 1, pCursCels, frame, frame_width);
 		} else {
 			CelDrawLightRed(InvRect[i + SLOTXY_BELT_FIRST].X + SCREEN_X, InvRect[i + SLOTXY_BELT_FIRST].Y + SCREEN_Y - 1, pCursCels, frame, frame_width, 1);
 		}
 
-		if (AllItemsList[plr[myplr].SpdList[i].IDidx].iUsable
-		    && plr[myplr].SpdList[i]._iStatFlag
-		    && plr[myplr].SpdList[i]._itype != ITYPE_GOLD) {
+		if (AllItemsList[plr.local().data.SpdList[i].IDidx].iUsable
+		    && plr.local().data.SpdList[i]._iStatFlag
+		    && plr.local().data.SpdList[i]._itype != ITYPE_GOLD) {
 			fi = i + 49;
 			ff = fontframe[gbFontTransTbl[fi]];
 			PrintChar(InvRect[i + SLOTXY_BELT_FIRST].X + SCREEN_X + 28 - fontkern[ff], InvRect[i + SLOTXY_BELT_FIRST].Y + SCREEN_Y - 1, ff, 0);
@@ -447,7 +447,13 @@ void DrawInvBelt()
 	}
 }
 
-BOOL AutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
+PlayerInventory::PlayerInventory(Player &new_owner)
+    : owner(new_owner)
+{
+} 
+
+
+BOOL PlayerInventory::AutoPlace(int ii, int sx, int sy, BOOL saveflag)
 {
 	int i, j, xx, yy;
 	BOOL done;
@@ -469,15 +475,15 @@ BOOL AutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
 			if (xx >= 10) {
 				done = FALSE;
 			} else {
-				done = plr[pnum].InvGrid[xx + yy] == 0;
+				done = owner.data.InvGrid[xx + yy] == 0;
 			}
 			xx++;
 		}
 		yy += 10;
 	}
 	if (done && saveflag) {
-		plr[pnum].InvList[plr[pnum]._pNumInv] = plr[pnum].HoldItem;
-		plr[pnum]._pNumInv++;
+		owner.data.InvList[owner.data._pNumInv] = owner.data.HoldItem;
+		owner.data._pNumInv++;
 		yy = 10 * (ii / 10);
 		if (yy < 0) {
 			yy = 0;
@@ -489,20 +495,20 @@ BOOL AutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
 			}
 			for (i = 0; i < sx; i++) {
 				if (i != 0 || j != sy - 1) {
-					plr[pnum].InvGrid[xx + yy] = -plr[pnum]._pNumInv;
+					owner.data.InvGrid[xx + yy] = -owner.data._pNumInv;
 				} else {
-					plr[pnum].InvGrid[xx + yy] = plr[pnum]._pNumInv;
+					owner.data.InvGrid[xx + yy] = owner.data._pNumInv;
 				}
 				xx++;
 			}
 			yy += 10;
 		}
-		CalcPlrScrolls(pnum);
+		CalcPlrScrolls(owner.id());
 	}
 	return done;
 }
 
-BOOL SpecialAutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
+BOOL PlayerInventory::SpecialAutoPlace(int ii, int sx, int sy, BOOL saveflag)
 {
 	int i, j, xx, yy;
 	BOOL done;
@@ -524,7 +530,7 @@ BOOL SpecialAutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
 			if (xx >= 10) {
 				done = FALSE;
 			} else {
-				done = plr[pnum].InvGrid[xx + yy] == 0;
+				done = owner.data.InvGrid[xx + yy] == 0;
 			}
 			xx++;
 		}
@@ -535,7 +541,7 @@ BOOL SpecialAutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
 			done = FALSE;
 		} else {
 			for (i = 0; i < MAXBELTITEMS; i++) {
-				if (plr[pnum].SpdList[i]._itype == ITYPE_NONE) {
+				if (owner.data.SpdList[i]._itype == ITYPE_NONE) {
 					done = TRUE;
 					break;
 				}
@@ -543,8 +549,8 @@ BOOL SpecialAutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
 		}
 	}
 	if (done && saveflag) {
-		plr[pnum].InvList[plr[pnum]._pNumInv] = plr[pnum].HoldItem;
-		plr[pnum]._pNumInv++;
+		owner.data.InvList[owner.data._pNumInv] = owner.data.HoldItem;
+		owner.data._pNumInv++;
 		yy = 10 * (ii / 10);
 		if (yy < 0) {
 			yy = 0;
@@ -556,37 +562,37 @@ BOOL SpecialAutoPlace(int pnum, int ii, int sx, int sy, BOOL saveflag)
 			}
 			for (i = 0; i < sx; i++) {
 				if (i != 0 || j != sy - 1) {
-					plr[pnum].InvGrid[xx + yy] = -plr[pnum]._pNumInv;
+					owner.data.InvGrid[xx + yy] = -owner.data._pNumInv;
 				} else {
-					plr[pnum].InvGrid[xx + yy] = plr[pnum]._pNumInv;
+					owner.data.InvGrid[xx + yy] = owner.data._pNumInv;
 				}
 				xx++;
 			}
 			yy += 10;
 		}
-		CalcPlrScrolls(pnum);
+		CalcPlrScrolls(owner.id());
 	}
 	return done;
 }
 
-BOOL GoldAutoPlace(int pnum)
+BOOL PlayerInventory::GoldAutoPlace()
 {
 	BOOL done;
 	int i, ii;
 	int xx, yy;
 
 	done = FALSE;
-	for (i = 0; i < plr[pnum]._pNumInv && !done; i++) {
-		if (plr[pnum].InvList[i]._itype == ITYPE_GOLD) {
-			if (plr[pnum].HoldItem._ivalue + plr[pnum].InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
-				plr[pnum].InvList[i]._ivalue = plr[pnum].HoldItem._ivalue + plr[pnum].InvList[i]._ivalue;
-				if (plr[pnum].InvList[i]._ivalue >= GOLD_MEDIUM_LIMIT)
-					plr[pnum].InvList[i]._iCurs = ICURS_GOLD_LARGE;
-				else if (plr[pnum].InvList[i]._ivalue <= GOLD_SMALL_LIMIT)
-					plr[pnum].InvList[i]._iCurs = ICURS_GOLD_SMALL;
+	for (i = 0; i < owner.data._pNumInv && !done; i++) {
+		if (owner.data.InvList[i]._itype == ITYPE_GOLD) {
+			if (owner.data.HoldItem._ivalue + owner.data.InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
+				owner.data.InvList[i]._ivalue = owner.data.HoldItem._ivalue + owner.data.InvList[i]._ivalue;
+				if (owner.data.InvList[i]._ivalue >= GOLD_MEDIUM_LIMIT)
+					owner.data.InvList[i]._iCurs = ICURS_GOLD_LARGE;
+				else if (owner.data.InvList[i]._ivalue <= GOLD_SMALL_LIMIT)
+					owner.data.InvList[i]._iCurs = ICURS_GOLD_SMALL;
 				else
-					plr[pnum].InvList[i]._iCurs = ICURS_GOLD_MEDIUM;
-				plr[pnum]._pGold = CalculateGold(pnum);
+					owner.data.InvList[i]._iCurs = ICURS_GOLD_MEDIUM;
+				owner.data._pGold = CalculateGold();
 				done = TRUE;
 			}
 		}
@@ -594,17 +600,17 @@ BOOL GoldAutoPlace(int pnum)
 	if (done)
 		return done;
 
-	for (i = 0; i < plr[pnum]._pNumInv && !done; i++) {
-		if (plr[pnum].InvList[i]._itype == ITYPE_GOLD && plr[pnum].InvList[i]._ivalue < GOLD_MAX_LIMIT) {
-			if (plr[pnum].HoldItem._ivalue + plr[pnum].InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
-				plr[pnum].InvList[i]._ivalue = plr[pnum].HoldItem._ivalue + plr[pnum].InvList[i]._ivalue;
-				if (plr[pnum].InvList[i]._ivalue >= GOLD_MEDIUM_LIMIT)
-					plr[pnum].InvList[i]._iCurs = ICURS_GOLD_LARGE;
-				else if (plr[pnum].InvList[i]._ivalue <= GOLD_SMALL_LIMIT)
-					plr[pnum].InvList[i]._iCurs = ICURS_GOLD_SMALL;
+	for (i = 0; i < owner.data._pNumInv && !done; i++) {
+		if (owner.data.InvList[i]._itype == ITYPE_GOLD && owner.data.InvList[i]._ivalue < GOLD_MAX_LIMIT) {
+			if (owner.data.HoldItem._ivalue + owner.data.InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
+				owner.data.InvList[i]._ivalue = owner.data.HoldItem._ivalue + owner.data.InvList[i]._ivalue;
+				if (owner.data.InvList[i]._ivalue >= GOLD_MEDIUM_LIMIT)
+					owner.data.InvList[i]._iCurs = ICURS_GOLD_LARGE;
+				else if (owner.data.InvList[i]._ivalue <= GOLD_SMALL_LIMIT)
+					owner.data.InvList[i]._iCurs = ICURS_GOLD_SMALL;
 				else
-					plr[pnum].InvList[i]._iCurs = ICURS_GOLD_MEDIUM;
-				plr[pnum]._pGold = CalculateGold(pnum);
+					owner.data.InvList[i]._iCurs = ICURS_GOLD_MEDIUM;
+				owner.data._pGold = CalculateGold();
 				done = TRUE;
 			}
 		}
@@ -615,18 +621,18 @@ BOOL GoldAutoPlace(int pnum)
 	for (i = 39; i >= 0 && !done; i--) {
 		yy = 10 * (i / 10);
 		xx = i % 10;
-		if (!plr[pnum].InvGrid[xx + yy]) {
-			ii = plr[pnum]._pNumInv;
-			plr[pnum].InvList[ii] = plr[pnum].HoldItem;
-			plr[pnum]._pNumInv = plr[pnum]._pNumInv + 1;
-			plr[pnum].InvGrid[xx + yy] = plr[pnum]._pNumInv;
-			if (plr[pnum].HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
-				plr[pnum].InvList[ii]._iCurs = ICURS_GOLD_LARGE;
-			else if (plr[pnum].HoldItem._ivalue <= GOLD_SMALL_LIMIT)
-				plr[pnum].InvList[ii]._iCurs = ICURS_GOLD_SMALL;
+		if (!owner.data.InvGrid[xx + yy]) {
+			ii = owner.data._pNumInv;
+			owner.data.InvList[ii] = owner.data.HoldItem;
+			owner.data._pNumInv = owner.data._pNumInv + 1;
+			owner.data.InvGrid[xx + yy] = owner.data._pNumInv;
+			if (owner.data.HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
+				owner.data.InvList[ii]._iCurs = ICURS_GOLD_LARGE;
+			else if (owner.data.HoldItem._ivalue <= GOLD_SMALL_LIMIT)
+				owner.data.InvList[ii]._iCurs = ICURS_GOLD_SMALL;
 			else
-				plr[pnum].InvList[ii]._iCurs = ICURS_GOLD_MEDIUM;
-			plr[pnum]._pGold = CalculateGold(pnum);
+				owner.data.InvList[ii]._iCurs = ICURS_GOLD_MEDIUM;
+			owner.data._pGold = CalculateGold();
 			done = TRUE;
 		}
 	}
@@ -634,26 +640,26 @@ BOOL GoldAutoPlace(int pnum)
 	return done;
 }
 
-BOOL WeaponAutoPlace(int pnum)
+BOOL PlayerInventory::WeaponAutoPlace()
 {
-	if (plr[pnum].HoldItem._iLoc != ILOC_TWOHAND) {
-		if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON)
+	if (owner.data.HoldItem._iLoc != ILOC_TWOHAND) {
+		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON)
 			return FALSE;
-		if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE && plr[pnum].InvBody[INVLOC_HAND_RIGHT]._iClass == ICLASS_WEAPON)
+		if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_RIGHT]._iClass == ICLASS_WEAPON)
 			return FALSE;
-		if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE) {
+		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE) {
 			NetSendCmdChItem(TRUE, INVLOC_HAND_LEFT);
-			plr[pnum].InvBody[INVLOC_HAND_LEFT] = plr[pnum].HoldItem;
+			owner.data.InvBody[INVLOC_HAND_LEFT] = owner.data.HoldItem;
 			return TRUE;
 		}
-		if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iLoc != ILOC_TWOHAND) {
+		if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_LEFT]._iLoc != ILOC_TWOHAND) {
 			NetSendCmdChItem(TRUE, INVLOC_HAND_RIGHT);
-			plr[pnum].InvBody[INVLOC_HAND_RIGHT] = plr[pnum].HoldItem;
+			owner.data.InvBody[INVLOC_HAND_RIGHT] = owner.data.HoldItem;
 			return TRUE;
 		}
-	} else if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE && plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE) {
+	} else if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE) {
 		NetSendCmdChItem(TRUE, INVLOC_HAND_LEFT);
-		plr[pnum].InvBody[INVLOC_HAND_LEFT] = plr[pnum].HoldItem;
+		owner.data.InvBody[INVLOC_HAND_LEFT] = owner.data.HoldItem;
 		return TRUE;
 	}
 
@@ -671,7 +677,7 @@ int SwapItem(ItemStruct *a, ItemStruct *b)
 	return h._iCurs + CURSOR_FIRSTITEM;
 }
 
-void CheckInvPaste(int pnum, int mx, int my)
+void PlayerInventory::CheckInvPaste(int mx, int my)
 {
 	int r, sx, sy;
 	int i, j, xx, yy, ii;
@@ -679,7 +685,7 @@ void CheckInvPaste(int pnum, int mx, int my)
 	int il, cn, it, iv, ig, gt;
 	ItemStruct tempitem;
 
-	SetICursor(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+	SetICursor(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 	i = mx + (icursW >> 1);
 	j = my + (icursH >> 1);
 	sx = icursW28;
@@ -718,20 +724,20 @@ void CheckInvPaste(int pnum, int mx, int my)
 	if (r >= 65 && r <= 72)
 		il = ILOC_BELT;
 	done = FALSE;
-	if (plr[pnum].HoldItem._iLoc == il)
+	if (owner.data.HoldItem._iLoc == il)
 		done = TRUE;
-	if (il == ILOC_ONEHAND && plr[pnum].HoldItem._iLoc == ILOC_TWOHAND) {
+	if (il == ILOC_ONEHAND && owner.data.HoldItem._iLoc == ILOC_TWOHAND) {
 		il = ILOC_TWOHAND;
 		done = TRUE;
 	}
-	if (plr[pnum].HoldItem._iLoc == ILOC_UNEQUIPABLE && il == ILOC_BELT) {
+	if (owner.data.HoldItem._iLoc == ILOC_UNEQUIPABLE && il == ILOC_BELT) {
 		if (sx == 1 && sy == 1) {
 			done = TRUE;
-			if (!AllItemsList[plr[pnum].HoldItem.IDidx].iUsable)
+			if (!AllItemsList[owner.data.HoldItem.IDidx].iUsable)
 				done = FALSE;
-			if (!plr[pnum].HoldItem._iStatFlag)
+			if (!owner.data.HoldItem._iStatFlag)
 				done = FALSE;
-			if (plr[pnum].HoldItem._itype == ITYPE_GOLD)
+			if (owner.data.HoldItem._itype == ITYPE_GOLD)
 				done = FALSE;
 		}
 	}
@@ -740,13 +746,13 @@ void CheckInvPaste(int pnum, int mx, int my)
 		done = TRUE;
 		it = 0;
 		ii = r - 25;
-		if (plr[pnum].HoldItem._itype == ITYPE_GOLD) {
+		if (owner.data.HoldItem._itype == ITYPE_GOLD) {
 			yy = 10 * (ii / 10);
 			xx = ii % 10;
-			if (plr[pnum].InvGrid[xx + yy] != 0) {
-				iv = plr[pnum].InvGrid[xx + yy];
+			if (owner.data.InvGrid[xx + yy] != 0) {
+				iv = owner.data.InvGrid[xx + yy];
 				if (iv > 0) {
-					if (plr[pnum].InvList[iv - 1]._itype != ITYPE_GOLD) {
+					if (owner.data.InvList[iv - 1]._itype != ITYPE_GOLD) {
 						it = iv;
 					}
 				} else {
@@ -767,8 +773,8 @@ void CheckInvPaste(int pnum, int mx, int my)
 					if (xx >= 10) {
 						done = FALSE;
 					} else {
-						if (plr[pnum].InvGrid[xx + yy] != 0) {
-							iv = plr[pnum].InvGrid[xx + yy];
+						if (owner.data.InvGrid[xx + yy] != 0) {
+							iv = owner.data.InvGrid[xx + yy];
 							if (iv < 0)
 								iv = -iv;
 							if (it != 0) {
@@ -788,14 +794,14 @@ void CheckInvPaste(int pnum, int mx, int my)
 	if (!done)
 		return;
 
-	if (il != ILOC_UNEQUIPABLE && il != ILOC_BELT && !plr[pnum].HoldItem._iStatFlag) {
+	if (il != ILOC_UNEQUIPABLE && il != ILOC_BELT && !owner.data.HoldItem._iStatFlag) {
 		done = FALSE;
-		if (plr[pnum]._pClass == PC_WARRIOR)
+		if (owner.data._pClass == PC_WARRIOR)
 			PlaySFX(PS_WARR13);
 #ifndef SPAWN
-		else if (plr[pnum]._pClass == PC_ROGUE)
+		else if (owner.data._pClass == PC_ROGUE)
 			PlaySFX(PS_ROGUE13);
-		else if (plr[pnum]._pClass == PC_SORCERER)
+		else if (owner.data._pClass == PC_SORCERER)
 			PlaySFX(PS_MAGE13);
 #endif
 	}
@@ -803,204 +809,204 @@ void CheckInvPaste(int pnum, int mx, int my)
 	if (!done)
 		return;
 
-	if (pnum == myplr)
-		PlaySFX(ItemInvSnds[ItemCAnimTbl[plr[pnum].HoldItem._iCurs]]);
+	if (owner.isLocal())
+		PlaySFX(ItemInvSnds[ItemCAnimTbl[owner.data.HoldItem._iCurs]]);
 
 	cn = CURSOR_HAND;
 	switch (il) {
 	case ILOC_HELM:
 		NetSendCmdChItem(FALSE, INVLOC_HEAD);
-		if (plr[pnum].InvBody[INVLOC_HEAD]._itype == ITYPE_NONE)
-			plr[pnum].InvBody[INVLOC_HEAD] = plr[pnum].HoldItem;
+		if (owner.data.InvBody[INVLOC_HEAD]._itype == ITYPE_NONE)
+			owner.data.InvBody[INVLOC_HEAD] = owner.data.HoldItem;
 		else
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_HEAD], &plr[pnum].HoldItem);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_HEAD], &owner.data.HoldItem);
 		break;
 	case ILOC_RING:
 		if (r == 4) {
 			NetSendCmdChItem(FALSE, INVLOC_RING_LEFT);
-			if (plr[pnum].InvBody[INVLOC_RING_LEFT]._itype == ITYPE_NONE)
-				plr[pnum].InvBody[INVLOC_RING_LEFT] = plr[pnum].HoldItem;
+			if (owner.data.InvBody[INVLOC_RING_LEFT]._itype == ITYPE_NONE)
+				owner.data.InvBody[INVLOC_RING_LEFT] = owner.data.HoldItem;
 			else
-				cn = SwapItem(&plr[pnum].InvBody[INVLOC_RING_LEFT], &plr[pnum].HoldItem);
+				cn = SwapItem(&owner.data.InvBody[INVLOC_RING_LEFT], &owner.data.HoldItem);
 		} else {
 			NetSendCmdChItem(FALSE, INVLOC_RING_RIGHT);
-			if (plr[pnum].InvBody[INVLOC_RING_RIGHT]._itype == ITYPE_NONE)
-				plr[pnum].InvBody[INVLOC_RING_RIGHT] = plr[pnum].HoldItem;
+			if (owner.data.InvBody[INVLOC_RING_RIGHT]._itype == ITYPE_NONE)
+				owner.data.InvBody[INVLOC_RING_RIGHT] = owner.data.HoldItem;
 			else
-				cn = SwapItem(&plr[pnum].InvBody[INVLOC_RING_RIGHT], &plr[pnum].HoldItem);
+				cn = SwapItem(&owner.data.InvBody[INVLOC_RING_RIGHT], &owner.data.HoldItem);
 		}
 		break;
 	case ILOC_AMULET:
 		NetSendCmdChItem(FALSE, INVLOC_AMULET);
-		if (plr[pnum].InvBody[INVLOC_AMULET]._itype == ITYPE_NONE)
-			plr[pnum].InvBody[INVLOC_AMULET] = plr[pnum].HoldItem;
+		if (owner.data.InvBody[INVLOC_AMULET]._itype == ITYPE_NONE)
+			owner.data.InvBody[INVLOC_AMULET] = owner.data.HoldItem;
 		else
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_AMULET], &plr[pnum].HoldItem);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_AMULET], &owner.data.HoldItem);
 		break;
 	case ILOC_ONEHAND:
 		if (r <= 12) {
-			if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE) {
-				if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE || plr[pnum].InvBody[INVLOC_HAND_RIGHT]._iClass != plr[pnum].HoldItem._iClass) {
+			if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE) {
+				if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE || owner.data.InvBody[INVLOC_HAND_RIGHT]._iClass != owner.data.HoldItem._iClass) {
 					NetSendCmdChItem(FALSE, INVLOC_HAND_LEFT);
-					plr[pnum].InvBody[INVLOC_HAND_LEFT] = plr[pnum].HoldItem;
+					owner.data.InvBody[INVLOC_HAND_LEFT] = owner.data.HoldItem;
 				} else {
 					NetSendCmdChItem(FALSE, INVLOC_HAND_RIGHT);
-					cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_RIGHT], &plr[pnum].HoldItem);
+					cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_RIGHT], &owner.data.HoldItem);
 				}
 				break;
 			}
-			if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE || plr[pnum].InvBody[INVLOC_HAND_RIGHT]._iClass != plr[pnum].HoldItem._iClass) {
+			if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE || owner.data.InvBody[INVLOC_HAND_RIGHT]._iClass != owner.data.HoldItem._iClass) {
 				NetSendCmdChItem(FALSE, INVLOC_HAND_LEFT);
-				cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_LEFT], &plr[pnum].HoldItem);
+				cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_LEFT], &owner.data.HoldItem);
 				break;
 			}
 
 			NetSendCmdChItem(FALSE, INVLOC_HAND_RIGHT);
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_RIGHT], &plr[pnum].HoldItem);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_RIGHT], &owner.data.HoldItem);
 			break;
 		}
-		if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE) {
-			if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE || plr[pnum].InvBody[INVLOC_HAND_LEFT]._iLoc != ILOC_TWOHAND) {
-				if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE || plr[pnum].InvBody[INVLOC_HAND_LEFT]._iClass != plr[pnum].HoldItem._iClass) {
+		if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE) {
+			if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE || owner.data.InvBody[INVLOC_HAND_LEFT]._iLoc != ILOC_TWOHAND) {
+				if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE || owner.data.InvBody[INVLOC_HAND_LEFT]._iClass != owner.data.HoldItem._iClass) {
 					NetSendCmdChItem(FALSE, INVLOC_HAND_RIGHT);
-					plr[pnum].InvBody[INVLOC_HAND_RIGHT] = plr[pnum].HoldItem;
+					owner.data.InvBody[INVLOC_HAND_RIGHT] = owner.data.HoldItem;
 					break;
 				}
 				NetSendCmdChItem(FALSE, INVLOC_HAND_LEFT);
-				cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_LEFT], &plr[pnum].HoldItem);
+				cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_LEFT], &owner.data.HoldItem);
 				break;
 			}
 			NetSendCmdDelItem(FALSE, INVLOC_HAND_LEFT);
 			NetSendCmdChItem(FALSE, INVLOC_HAND_RIGHT);
-			SwapItem(&plr[pnum].InvBody[INVLOC_HAND_RIGHT], &plr[pnum].InvBody[INVLOC_HAND_LEFT]);
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_RIGHT], &plr[pnum].HoldItem);
+			SwapItem(&owner.data.InvBody[INVLOC_HAND_RIGHT], &owner.data.InvBody[INVLOC_HAND_LEFT]);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_RIGHT], &owner.data.HoldItem);
 			break;
 		}
 
-		if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iClass == plr[pnum].HoldItem._iClass) {
+		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_LEFT]._iClass == owner.data.HoldItem._iClass) {
 			NetSendCmdChItem(FALSE, INVLOC_HAND_LEFT);
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_LEFT], &plr[pnum].HoldItem);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_LEFT], &owner.data.HoldItem);
 			break;
 		}
 		NetSendCmdChItem(FALSE, INVLOC_HAND_RIGHT);
-		cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_RIGHT], &plr[pnum].HoldItem);
+		cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_RIGHT], &owner.data.HoldItem);
 		break;
 	case ILOC_TWOHAND:
 		NetSendCmdDelItem(FALSE, INVLOC_HAND_RIGHT);
-		if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
-			tempitem = plr[pnum].HoldItem;
-			if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD)
-				plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_HAND_RIGHT];
+		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
+			tempitem = owner.data.HoldItem;
+			if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD)
+				owner.data.HoldItem = owner.data.InvBody[INVLOC_HAND_RIGHT];
 			else
-				plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_HAND_LEFT];
-			if (pnum == myplr)
-				SetCursor_(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+				owner.data.HoldItem = owner.data.InvBody[INVLOC_HAND_LEFT];
+			if (owner.isLocal())
+				SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			else
-				SetICursor(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+				SetICursor(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done2h = FALSE;
 			for (i = 0; i < NUM_INV_GRID_ELEM && !done2h; i++)
-				done2h = AutoPlace(pnum, i, icursW28, icursH28, TRUE);
-			plr[pnum].HoldItem = tempitem;
-			if (pnum == myplr)
-				SetCursor_(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+				done2h = AutoPlace(i, icursW28, icursH28, TRUE);
+			owner.data.HoldItem = tempitem;
+			if (owner.isLocal())
+				SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			else
-				SetICursor(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+				SetICursor(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			if (!done2h)
 				return;
 
-			if (plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD)
-				plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
+			if (owner.data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD)
+				owner.data.InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
 			else
-				plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
+				owner.data.InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
 		}
 
-		if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE || plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
+		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE || owner.data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
 			NetSendCmdChItem(FALSE, INVLOC_HAND_LEFT);
-			if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE)
-				SwapItem(&plr[pnum].InvBody[INVLOC_HAND_LEFT], &plr[pnum].InvBody[INVLOC_HAND_RIGHT]);
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_HAND_LEFT], &plr[pnum].HoldItem);
+			if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE)
+				SwapItem(&owner.data.InvBody[INVLOC_HAND_LEFT], &owner.data.InvBody[INVLOC_HAND_RIGHT]);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_HAND_LEFT], &owner.data.HoldItem);
 		} else {
 			NetSendCmdChItem(FALSE, INVLOC_HAND_LEFT);
-			plr[pnum].InvBody[INVLOC_HAND_LEFT] = plr[pnum].HoldItem;
+			owner.data.InvBody[INVLOC_HAND_LEFT] = owner.data.HoldItem;
 		}
-		if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_STAFF && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iSpell != 0 && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
-			plr[pnum]._pRSpell = plr[pnum].InvBody[INVLOC_HAND_LEFT]._iSpell;
-			plr[pnum]._pRSplType = RSPLTYPE_CHARGES;
+		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_STAFF && owner.data.InvBody[INVLOC_HAND_LEFT]._iSpell != 0 && owner.data.InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
+			owner.data._pRSpell = owner.data.InvBody[INVLOC_HAND_LEFT]._iSpell;
+			owner.data._pRSplType = RSPLTYPE_CHARGES;
 			force_redraw = 255;
 		}
 		break;
 	case ILOC_ARMOR:
 		NetSendCmdChItem(FALSE, INVLOC_CHEST);
-		if (plr[pnum].InvBody[INVLOC_CHEST]._itype == ITYPE_NONE)
-			plr[pnum].InvBody[INVLOC_CHEST] = plr[pnum].HoldItem;
+		if (owner.data.InvBody[INVLOC_CHEST]._itype == ITYPE_NONE)
+			owner.data.InvBody[INVLOC_CHEST] = owner.data.HoldItem;
 		else
-			cn = SwapItem(&plr[pnum].InvBody[INVLOC_CHEST], &plr[pnum].HoldItem);
+			cn = SwapItem(&owner.data.InvBody[INVLOC_CHEST], &owner.data.HoldItem);
 		break;
 	case ILOC_UNEQUIPABLE:
-		if (plr[pnum].HoldItem._itype == ITYPE_GOLD && it == 0) {
+		if (owner.data.HoldItem._itype == ITYPE_GOLD && it == 0) {
 			ii = r - 25;
 			yy = 10 * (ii / 10);
 			xx = ii % 10;
-			if (plr[pnum].InvGrid[yy + xx] > 0) {
-				il = plr[pnum].InvGrid[yy + xx];
+			if (owner.data.InvGrid[yy + xx] > 0) {
+				il = owner.data.InvGrid[yy + xx];
 				il--;
-				gt = plr[pnum].InvList[il]._ivalue;
-				ig = plr[pnum].HoldItem._ivalue + gt;
+				gt = owner.data.InvList[il]._ivalue;
+				ig = owner.data.HoldItem._ivalue + gt;
 				if (ig <= GOLD_MAX_LIMIT) {
-					plr[pnum].InvList[il]._ivalue = ig;
-					plr[pnum]._pGold += plr[pnum].HoldItem._ivalue;
+					owner.data.InvList[il]._ivalue = ig;
+					owner.data._pGold += owner.data.HoldItem._ivalue;
 					if (ig >= GOLD_MEDIUM_LIMIT)
-						plr[pnum].InvList[il]._iCurs = ICURS_GOLD_LARGE;
+						owner.data.InvList[il]._iCurs = ICURS_GOLD_LARGE;
 					else if (ig <= GOLD_SMALL_LIMIT)
-						plr[pnum].InvList[il]._iCurs = ICURS_GOLD_SMALL;
+						owner.data.InvList[il]._iCurs = ICURS_GOLD_SMALL;
 					else
-						plr[pnum].InvList[il]._iCurs = ICURS_GOLD_MEDIUM;
+						owner.data.InvList[il]._iCurs = ICURS_GOLD_MEDIUM;
 				} else {
 					ig = GOLD_MAX_LIMIT - gt;
-					plr[pnum]._pGold += ig;
-					plr[pnum].HoldItem._ivalue -= ig;
-					plr[pnum].InvList[il]._ivalue = GOLD_MAX_LIMIT;
-					plr[pnum].InvList[il]._iCurs = ICURS_GOLD_LARGE;
+					owner.data._pGold += ig;
+					owner.data.HoldItem._ivalue -= ig;
+					owner.data.InvList[il]._ivalue = GOLD_MAX_LIMIT;
+					owner.data.InvList[il]._iCurs = ICURS_GOLD_LARGE;
 					// BUGFIX: incorrect values here are leftover from beta
-					if (plr[pnum].HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
+					if (owner.data.HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
 						cn = 18;
-					else if (plr[pnum].HoldItem._ivalue <= GOLD_SMALL_LIMIT)
+					else if (owner.data.HoldItem._ivalue <= GOLD_SMALL_LIMIT)
 						cn = 16;
 					else
 						cn = 17;
 				}
 			} else {
-				il = plr[pnum]._pNumInv;
-				plr[pnum].InvList[il] = plr[pnum].HoldItem;
-				plr[pnum]._pNumInv++;
-				plr[pnum].InvGrid[yy + xx] = plr[pnum]._pNumInv;
-				plr[pnum]._pGold += plr[pnum].HoldItem._ivalue;
-				if (plr[pnum].HoldItem._ivalue <= GOLD_MAX_LIMIT) {
-					if (plr[pnum].HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
-						plr[pnum].InvList[il]._iCurs = ICURS_GOLD_LARGE;
-					else if (plr[pnum].HoldItem._ivalue <= GOLD_SMALL_LIMIT)
-						plr[pnum].InvList[il]._iCurs = ICURS_GOLD_SMALL;
+				il = owner.data._pNumInv;
+				owner.data.InvList[il] = owner.data.HoldItem;
+				owner.data._pNumInv++;
+				owner.data.InvGrid[yy + xx] = owner.data._pNumInv;
+				owner.data._pGold += owner.data.HoldItem._ivalue;
+				if (owner.data.HoldItem._ivalue <= GOLD_MAX_LIMIT) {
+					if (owner.data.HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
+						owner.data.InvList[il]._iCurs = ICURS_GOLD_LARGE;
+					else if (owner.data.HoldItem._ivalue <= GOLD_SMALL_LIMIT)
+						owner.data.InvList[il]._iCurs = ICURS_GOLD_SMALL;
 					else
-						plr[pnum].InvList[il]._iCurs = ICURS_GOLD_MEDIUM;
+						owner.data.InvList[il]._iCurs = ICURS_GOLD_MEDIUM;
 				}
 			}
 		} else {
 			if (it == 0) {
-				plr[pnum].InvList[plr[pnum]._pNumInv] = plr[pnum].HoldItem;
-				plr[pnum]._pNumInv++;
-				it = plr[pnum]._pNumInv;
+				owner.data.InvList[owner.data._pNumInv] = owner.data.HoldItem;
+				owner.data._pNumInv++;
+				it = owner.data._pNumInv;
 			} else {
 				il = it - 1;
-				if (plr[pnum].HoldItem._itype == ITYPE_GOLD)
-					plr[pnum]._pGold += plr[pnum].HoldItem._ivalue;
-				cn = SwapItem(&plr[pnum].InvList[il], &plr[pnum].HoldItem);
-				if (plr[pnum].HoldItem._itype == ITYPE_GOLD)
-					plr[pnum]._pGold = CalculateGold(pnum);
+				if (owner.data.HoldItem._itype == ITYPE_GOLD)
+					owner.data._pGold += owner.data.HoldItem._ivalue;
+				cn = SwapItem(&owner.data.InvList[il], &owner.data.HoldItem);
+				if (owner.data.HoldItem._itype == ITYPE_GOLD)
+					owner.data._pGold = CalculateGold();
 				for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
-					if (plr[pnum].InvGrid[i] == it)
-						plr[pnum].InvGrid[i] = 0;
-					if (plr[pnum].InvGrid[i] == -it)
-						plr[pnum].InvGrid[i] = 0;
+					if (owner.data.InvGrid[i] == it)
+						owner.data.InvGrid[i] = 0;
+					if (owner.data.InvGrid[i] == -it)
+						owner.data.InvGrid[i] = 0;
 				}
 			}
 			ii = r - 25;
@@ -1013,9 +1019,9 @@ void CheckInvPaste(int pnum, int mx, int my)
 					xx = 0;
 				for (i = 0; i < sx; i++) {
 					if (i != 0 || j != sy - 1)
-						plr[pnum].InvGrid[xx + yy] = -it;
+						owner.data.InvGrid[xx + yy] = -it;
 					else
-						plr[pnum].InvGrid[xx + yy] = it;
+						owner.data.InvGrid[xx + yy] = it;
 					xx++;
 				}
 				yy += 10;
@@ -1024,67 +1030,67 @@ void CheckInvPaste(int pnum, int mx, int my)
 		break;
 	case ILOC_BELT:
 		ii = r - 65;
-		if (plr[pnum].HoldItem._itype == ITYPE_GOLD) {
-			if (plr[pnum].SpdList[ii]._itype != ITYPE_NONE) {
-				if (plr[pnum].SpdList[ii]._itype == ITYPE_GOLD) {
-					i = plr[pnum].HoldItem._ivalue + plr[pnum].SpdList[ii]._ivalue;
+		if (owner.data.HoldItem._itype == ITYPE_GOLD) {
+			if (owner.data.SpdList[ii]._itype != ITYPE_NONE) {
+				if (owner.data.SpdList[ii]._itype == ITYPE_GOLD) {
+					i = owner.data.HoldItem._ivalue + owner.data.SpdList[ii]._ivalue;
 					if (i <= GOLD_MAX_LIMIT) {
-						plr[pnum].SpdList[ii]._ivalue += plr[pnum].HoldItem._ivalue;
-						plr[pnum]._pGold += plr[pnum].HoldItem._ivalue;
+						owner.data.SpdList[ii]._ivalue += owner.data.HoldItem._ivalue;
+						owner.data._pGold += owner.data.HoldItem._ivalue;
 						if (i >= GOLD_MEDIUM_LIMIT)
-							plr[pnum].SpdList[ii]._iCurs = ICURS_GOLD_LARGE;
+							owner.data.SpdList[ii]._iCurs = ICURS_GOLD_LARGE;
 						else if (i <= GOLD_SMALL_LIMIT)
-							plr[pnum].SpdList[ii]._iCurs = ICURS_GOLD_SMALL;
+							owner.data.SpdList[ii]._iCurs = ICURS_GOLD_SMALL;
 						else
-							plr[pnum].SpdList[ii]._iCurs = ICURS_GOLD_MEDIUM;
+							owner.data.SpdList[ii]._iCurs = ICURS_GOLD_MEDIUM;
 					} else {
-						i = GOLD_MAX_LIMIT - plr[pnum].SpdList[ii]._ivalue;
-						plr[pnum]._pGold += i;
-						plr[pnum].HoldItem._ivalue -= i;
-						plr[pnum].SpdList[ii]._ivalue = GOLD_MAX_LIMIT;
-						plr[pnum].SpdList[ii]._iCurs = ICURS_GOLD_LARGE;
+						i = GOLD_MAX_LIMIT - owner.data.SpdList[ii]._ivalue;
+						owner.data._pGold += i;
+						owner.data.HoldItem._ivalue -= i;
+						owner.data.SpdList[ii]._ivalue = GOLD_MAX_LIMIT;
+						owner.data.SpdList[ii]._iCurs = ICURS_GOLD_LARGE;
 
 						// BUGFIX: incorrect values here are leftover from beta
-						if (plr[pnum].HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
+						if (owner.data.HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
 							cn = 18;
-						else if (plr[pnum].HoldItem._ivalue <= GOLD_SMALL_LIMIT)
+						else if (owner.data.HoldItem._ivalue <= GOLD_SMALL_LIMIT)
 							cn = 16;
 						else
 							cn = 17;
 					}
 				} else {
-					plr[pnum]._pGold += plr[pnum].HoldItem._ivalue;
-					cn = SwapItem(&plr[pnum].SpdList[ii], &plr[pnum].HoldItem);
+					owner.data._pGold += owner.data.HoldItem._ivalue;
+					cn = SwapItem(&owner.data.SpdList[ii], &owner.data.HoldItem);
 				}
 			} else {
-				plr[pnum].SpdList[ii] = plr[pnum].HoldItem;
-				plr[pnum]._pGold += plr[pnum].HoldItem._ivalue;
+				owner.data.SpdList[ii] = owner.data.HoldItem;
+				owner.data._pGold += owner.data.HoldItem._ivalue;
 			}
-		} else if (plr[pnum].SpdList[ii]._itype == ITYPE_NONE) {
-			plr[pnum].SpdList[ii] = plr[pnum].HoldItem;
+		} else if (owner.data.SpdList[ii]._itype == ITYPE_NONE) {
+			owner.data.SpdList[ii] = owner.data.HoldItem;
 		} else {
-			cn = SwapItem(&plr[pnum].SpdList[ii], &plr[pnum].HoldItem);
-			if (plr[pnum].HoldItem._itype == ITYPE_GOLD)
-				plr[pnum]._pGold = CalculateGold(pnum);
+			cn = SwapItem(&owner.data.SpdList[ii], &owner.data.HoldItem);
+			if (owner.data.HoldItem._itype == ITYPE_GOLD)
+				owner.data._pGold = CalculateGold();
 		}
 		drawsbarflag = TRUE;
 		break;
 	}
-	CalcPlrInv(pnum, TRUE);
-	if (pnum == myplr) {
+	CalcPlrInv(owner.id(), TRUE);
+	if (owner.isLocal()) {
 		if (cn == 1)
 			SetCursorPos(MouseX + (cursW >> 1), MouseY + (cursH >> 1));
 		SetCursor_(cn);
 	}
 }
 
-void CheckInvSwap(int pnum, BYTE bLoc, int idx, WORD wCI, int seed, BOOL bId)
+void PlayerInventory::CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, BOOL bId)
 {
 	PlayerStruct *p;
 
 	RecreateItem(MAXITEMS, idx, wCI, seed, 0);
 
-	p = &plr[pnum];
+	p = &owner.data;
 	p->HoldItem = item[MAXITEMS];
 
 	if (bId) {
@@ -1101,17 +1107,18 @@ void CheckInvSwap(int pnum, BYTE bLoc, int idx, WORD wCI, int seed, BOOL bId)
 		}
 	}
 
-	CalcPlrInv(pnum, TRUE);
+	CalcPlrInv(owner.id(), TRUE);
 }
 
-void CheckInvCut(int pnum, int mx, int my)
+void PlayerInventory::CheckInvCut(int mx, int my)
 {
 	int r;
 	BOOL done;
 	char ii;
 	int iv, i, j, offs, ig;
+	Player & owner = plr.local();
 
-	if (plr[pnum]._pmode > PM_WALK3) {
+	if (plr.local().data._pmode > PM_WALK3) {
 		return;
 	}
 
@@ -1138,71 +1145,71 @@ void CheckInvCut(int pnum, int mx, int my)
 		return;
 	}
 
-	plr[pnum].HoldItem._itype = ITYPE_NONE;
+	owner.data.HoldItem._itype = ITYPE_NONE;
 
 	if (
 	    r >= SLOTXY_HEAD_FIRST
 	    && r <= SLOTXY_HEAD_LAST
-	    && plr[pnum].InvBody[INVLOC_HEAD]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_HEAD]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_HEAD);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_HEAD];
-		plr[pnum].InvBody[INVLOC_HEAD]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_HEAD];
+		owner.data.InvBody[INVLOC_HEAD]._itype = ITYPE_NONE;
 	}
 
 	if (
 	    r == SLOTXY_RING_LEFT
-	    && plr[pnum].InvBody[INVLOC_RING_LEFT]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_RING_LEFT]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_RING_LEFT);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_RING_LEFT];
-		plr[pnum].InvBody[INVLOC_RING_LEFT]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_RING_LEFT];
+		owner.data.InvBody[INVLOC_RING_LEFT]._itype = ITYPE_NONE;
 	}
 
 	if (
 	    r == SLOTXY_RING_RIGHT
-	    && plr[pnum].InvBody[INVLOC_RING_RIGHT]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_RING_RIGHT]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_RING_RIGHT);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_RING_RIGHT];
-		plr[pnum].InvBody[INVLOC_RING_RIGHT]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_RING_RIGHT];
+		owner.data.InvBody[INVLOC_RING_RIGHT]._itype = ITYPE_NONE;
 	}
 
 	if (
 	    r == SLOTXY_AMULET
-	    && plr[pnum].InvBody[INVLOC_AMULET]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_AMULET]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_AMULET);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_AMULET];
-		plr[pnum].InvBody[INVLOC_AMULET]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_AMULET];
+		owner.data.InvBody[INVLOC_AMULET]._itype = ITYPE_NONE;
 	}
 
 	if (
 	    r >= SLOTXY_HAND_LEFT_FIRST
 	    && r <= SLOTXY_HAND_LEFT_LAST
-	    && plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_HAND_LEFT);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_HAND_LEFT];
-		plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_HAND_LEFT];
+		owner.data.InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
 	}
 
 	if (
 	    r >= SLOTXY_HAND_RIGHT_FIRST
 	    && r <= SLOTXY_HAND_RIGHT_LAST
-	    && plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_HAND_RIGHT);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_HAND_RIGHT];
-		plr[pnum].InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_HAND_RIGHT];
+		owner.data.InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
 	}
 
 	if (
 	    r >= SLOTXY_CHEST_FIRST
 	    && r <= SLOTXY_CHEST_LAST
-	    && plr[pnum].InvBody[INVLOC_CHEST]._itype != ITYPE_NONE) {
+	    && owner.data.InvBody[INVLOC_CHEST]._itype != ITYPE_NONE) {
 		NetSendCmdDelItem(FALSE, INVLOC_CHEST);
-		plr[pnum].HoldItem = plr[pnum].InvBody[INVLOC_CHEST];
-		plr[pnum].InvBody[INVLOC_CHEST]._itype = ITYPE_NONE;
+		owner.data.HoldItem = owner.data.InvBody[INVLOC_CHEST];
+		owner.data.InvBody[INVLOC_CHEST]._itype = ITYPE_NONE;
 	}
 
 	if (r >= SLOTXY_INV_FIRST && r <= SLOTXY_INV_LAST) {
 		ig = r - SLOTXY_INV_FIRST;
-		ii = plr[pnum].InvGrid[ig];
+		ii = owner.data.InvGrid[ig];
 		if (ii != 0) {
 			iv = ii;
 			if (ii <= 0) {
@@ -1210,25 +1217,25 @@ void CheckInvCut(int pnum, int mx, int my)
 			}
 
 			for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
-				if (plr[pnum].InvGrid[i] == iv || plr[pnum].InvGrid[i] == -iv) {
-					plr[pnum].InvGrid[i] = 0;
+				if (owner.data.InvGrid[i] == iv || owner.data.InvGrid[i] == -iv) {
+					owner.data.InvGrid[i] = 0;
 				}
 			}
 
 			iv--;
 
-			plr[pnum].HoldItem = plr[pnum].InvList[iv];
-			plr[pnum]._pNumInv--;
+			owner.data.HoldItem = owner.data.InvList[iv];
+			owner.data._pNumInv--;
 
-			if (plr[pnum]._pNumInv > 0 && plr[pnum]._pNumInv != iv) {
-				plr[pnum].InvList[iv] = plr[pnum].InvList[plr[pnum]._pNumInv];
+			if (owner.data._pNumInv > 0 && owner.data._pNumInv != iv) {
+				owner.data.InvList[iv] = owner.data.InvList[owner.data._pNumInv];
 
 				for (j = 0; j < NUM_INV_GRID_ELEM; j++) {
-					if (plr[pnum].InvGrid[j] == plr[pnum]._pNumInv + 1) {
-						plr[pnum].InvGrid[j] = iv + 1;
+					if (owner.data.InvGrid[j] == owner.data._pNumInv + 1) {
+						owner.data.InvGrid[j] = iv + 1;
 					}
-					if (plr[pnum].InvGrid[j] == -(plr[pnum]._pNumInv + 1)) {
-						plr[pnum].InvGrid[j] = -iv - 1;
+					if (owner.data.InvGrid[j] == -(owner.data._pNumInv + 1)) {
+						owner.data.InvGrid[j] = -iv - 1;
 					}
 				}
 			}
@@ -1237,80 +1244,80 @@ void CheckInvCut(int pnum, int mx, int my)
 
 	if (r >= SLOTXY_BELT_FIRST) {
 		offs = r - SLOTXY_BELT_FIRST;
-		if (plr[pnum].SpdList[offs]._itype != ITYPE_NONE) {
-			plr[pnum].HoldItem = plr[pnum].SpdList[offs];
-			plr[pnum].SpdList[offs]._itype = ITYPE_NONE;
+		if (owner.data.SpdList[offs]._itype != ITYPE_NONE) {
+			owner.data.HoldItem = owner.data.SpdList[offs];
+			owner.data.SpdList[offs]._itype = ITYPE_NONE;
 			drawsbarflag = TRUE;
 		}
 	}
 
-	if (plr[pnum].HoldItem._itype != ITYPE_NONE) {
-		if (plr[pnum].HoldItem._itype == ITYPE_GOLD) {
-			plr[pnum]._pGold = CalculateGold(pnum);
+	if (owner.data.HoldItem._itype != ITYPE_NONE) {
+		if (owner.data.HoldItem._itype == ITYPE_GOLD) {
+			owner.data._pGold = owner.inventory.CalculateGold();
 		}
 
-		CalcPlrInv(pnum, TRUE);
-		CheckItemStats(pnum);
+		CalcPlrInv(owner.id(), TRUE);
+		owner.inventory.CheckItemStats();
 
-		if (pnum == myplr) {
+		if (owner.isLocal()) {
 			PlaySFX(IS_IGRAB);
-			SetCursor_(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			SetCursorPos(mx - (cursW >> 1), MouseY - (cursH >> 1));
 		}
 	}
 }
 
-void inv_update_rem_item(int pnum, BYTE iv)
+void PlayerInventory::inv_update_rem_item(BYTE iv)
 {
 	if (iv < NUM_INVLOC) {
-		plr[pnum].InvBody[iv]._itype = ITYPE_NONE;
+		owner.data.InvBody[iv]._itype = ITYPE_NONE;
 	}
 
-	if (plr[pnum]._pmode != PM_DEATH) {
-		CalcPlrInv(pnum, TRUE);
+	if (owner.data._pmode != PM_DEATH) {
+		CalcPlrInv(owner.id(), TRUE);
 	} else {
-		CalcPlrInv(pnum, FALSE);
+		CalcPlrInv(owner.id(), FALSE);
 	}
 }
 
-void RemoveInvItem(int pnum, int iv)
+void PlayerInventory::RemoveInvItem(int iv)
 {
 	int i, j;
 
 	iv++;
 
 	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		if (plr[pnum].InvGrid[i] == iv || plr[pnum].InvGrid[i] == -iv) {
-			plr[pnum].InvGrid[i] = 0;
+		if (owner.data.InvGrid[i] == iv || owner.data.InvGrid[i] == -iv) {
+			owner.data.InvGrid[i] = 0;
 		}
 	}
 
 	iv--;
-	plr[pnum]._pNumInv--;
+	owner.data._pNumInv--;
 
-	if (plr[pnum]._pNumInv > 0 && plr[pnum]._pNumInv != iv) {
-		plr[pnum].InvList[iv] = plr[pnum].InvList[plr[pnum]._pNumInv];
+	if (owner.data._pNumInv > 0 && owner.data._pNumInv != iv) {
+		owner.data.InvList[iv] = owner.data.InvList[owner.data._pNumInv];
 
 		for (j = 0; j < NUM_INV_GRID_ELEM; j++) {
-			if (plr[pnum].InvGrid[j] == plr[pnum]._pNumInv + 1) {
-				plr[pnum].InvGrid[j] = iv + 1;
+			if (owner.data.InvGrid[j] == owner.data._pNumInv + 1) {
+				owner.data.InvGrid[j] = iv + 1;
 			}
-			if (plr[pnum].InvGrid[j] == -(plr[pnum]._pNumInv + 1)) {
-				plr[pnum].InvGrid[j] = -(iv + 1);
+			if (owner.data.InvGrid[j] == -(owner.data._pNumInv + 1)) {
+				owner.data.InvGrid[j] = -(iv + 1);
 			}
 		}
 	}
 
-	CalcPlrScrolls(pnum);
+	CalcPlrScrolls(owner.id());
 
-	if (plr[pnum]._pRSplType == RSPLTYPE_SCROLL) {
-		if (plr[pnum]._pRSpell != SPL_INVALID) {
+	if (owner.data._pRSplType == RSPLTYPE_SCROLL) {
+		if (owner.data._pRSpell != SPL_INVALID) {
 			// BUGFIX: Cast the literal `1` to `unsigned __int64` to make that bitshift 64bit
 			// this causes the last 4 skills to not reset correctly after use
 			if (!(
-			        plr[pnum]._pScrlSpells
-			        & (1 << (plr[pnum]._pRSpell - 1)))) {
-				plr[pnum]._pRSpell = SPL_INVALID;
+			        owner.data._pScrlSpells
+			        & (1 << (owner.data._pRSpell - 1)))) {
+				owner.data._pRSpell = SPL_INVALID;
 			}
 
 			force_redraw = 255;
@@ -1318,20 +1325,20 @@ void RemoveInvItem(int pnum, int iv)
 	}
 }
 
-void RemoveSpdBarItem(int pnum, int iv)
+void PlayerInventory::RemoveSpdBarItem(int iv)
 {
-	plr[pnum].SpdList[iv]._itype = ITYPE_NONE;
+	owner.data.SpdList[iv]._itype = ITYPE_NONE;
 
-	CalcPlrScrolls(pnum);
+	CalcPlrScrolls(owner.id());
 
-	if (plr[pnum]._pRSplType == RSPLTYPE_SCROLL) {
-		if (plr[pnum]._pRSpell != SPL_INVALID) {
+	if (owner.data._pRSplType == RSPLTYPE_SCROLL) {
+		if (owner.data._pRSpell != SPL_INVALID) {
 			// BUGFIX: Cast the literal `1` to `unsigned __int64` to make that bitshift 64bit
 			// this causes the last 4 skills to not reset correctly after use
 			if (!(
-			        plr[pnum]._pScrlSpells
-			        & (1 << (plr[pnum]._pRSpell - 1)))) {
-				plr[pnum]._pRSpell = SPL_INVALID;
+			        owner.data._pScrlSpells
+			        & (1 << (owner.data._pRSpell - 1)))) {
+				owner.data._pRSpell = SPL_INVALID;
 			}
 		}
 	}
@@ -1341,9 +1348,9 @@ void RemoveSpdBarItem(int pnum, int iv)
 void CheckInvItem()
 {
 	if (pcurs >= CURSOR_FIRSTITEM) {
-		CheckInvPaste(myplr, MouseX, MouseY);
+		plr.local().inventory.CheckInvPaste(MouseX, MouseY);
 	} else {
-		CheckInvCut(myplr, MouseX, MouseY);
+		plr.local().inventory.CheckInvCut(MouseX, MouseY);
 	}
 }
 
@@ -1358,9 +1365,9 @@ void CheckInvScrn()
 	}
 }
 
-void CheckItemStats(int pnum)
+void PlayerInventory::CheckItemStats()
 {
-	PlayerStruct *p = &plr[pnum];
+	PlayerStruct *p = &owner.data;
 
 	p->HoldItem._iStatFlag = FALSE;
 
@@ -1371,42 +1378,42 @@ void CheckItemStats(int pnum)
 	}
 }
 
-void CheckBookLevel(int pnum)
+void PlayerInventory::CheckBookLevel()
 {
 	int slvl;
 
-	if (plr[pnum].HoldItem._iMiscId == IMISC_BOOK) {
-		plr[pnum].HoldItem._iMinMag = spelldata[plr[pnum].HoldItem._iSpell].sMinInt;
-		slvl = plr[pnum]._pSplLvl[plr[pnum].HoldItem._iSpell];
+	if (owner.data.HoldItem._iMiscId == IMISC_BOOK) {
+		owner.data.HoldItem._iMinMag = spelldata[owner.data.HoldItem._iSpell].sMinInt;
+		slvl = owner.data._pSplLvl[owner.data.HoldItem._iSpell];
 		while (slvl != 0) {
-			plr[pnum].HoldItem._iMinMag += 20 * plr[pnum].HoldItem._iMinMag / 100;
+			owner.data.HoldItem._iMinMag += 20 * owner.data.HoldItem._iMinMag / 100;
 			slvl--;
-			if (plr[pnum].HoldItem._iMinMag + 20 * plr[pnum].HoldItem._iMinMag / 100 > 255) {
-				plr[pnum].HoldItem._iMinMag = -1;
+			if (owner.data.HoldItem._iMinMag + 20 * owner.data.HoldItem._iMinMag / 100 > 255) {
+				owner.data.HoldItem._iMinMag = -1;
 				slvl = 0;
 			}
 		}
 	}
 }
 
-void CheckQuestItem(int pnum)
+void PlayerInventory::CheckQuestItem()
 {
-	if (plr[pnum].HoldItem.IDidx == IDI_OPTAMULET)
+	if (owner.data.HoldItem.IDidx == IDI_OPTAMULET)
 		quests[Q_BLIND]._qactive = QUEST_DONE;
-	if (plr[pnum].HoldItem.IDidx == IDI_MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
+	if (owner.data.HoldItem.IDidx == IDI_MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
 #ifndef SPAWN
 		sfxdelay = 10;
-		if (plr[pnum]._pClass == PC_WARRIOR) { // BUGFIX: Voice for this quest might be wrong in MP
+		if (owner.data._pClass == PC_WARRIOR) { // BUGFIX: Voice for this quest might be wrong in MP
 			sfxdnum = PS_WARR95;
-		} else if (plr[pnum]._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE95;
-		} else if (plr[pnum]._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE95;
 		}
 #endif
 		quests[Q_MUSHROOM]._qvar1 = QS_MUSHPICKED;
 	}
-	if (plr[pnum].HoldItem.IDidx == IDI_ANVIL) {
+	if (owner.data.HoldItem.IDidx == IDI_ANVIL) {
 		if (quests[Q_ANVIL]._qactive == QUEST_INIT) {
 			quests[Q_ANVIL]._qactive = QUEST_ACTIVE;
 			quests[Q_ANVIL]._qvar1 = 1;
@@ -1414,29 +1421,29 @@ void CheckQuestItem(int pnum)
 #ifndef SPAWN
 		if (quests[Q_ANVIL]._qlog == TRUE) {
 			sfxdelay = 10;
-			if (plr[myplr]._pClass == PC_WARRIOR) {
+			if (plr.local().data._pClass == PC_WARRIOR) {
 				sfxdnum = PS_WARR89;
-			} else if (plr[myplr]._pClass == PC_ROGUE) {
+			} else if (plr.local().data._pClass == PC_ROGUE) {
 				sfxdnum = PS_ROGUE89;
-			} else if (plr[myplr]._pClass == PC_SORCERER) {
+			} else if (plr.local().data._pClass == PC_SORCERER) {
 				sfxdnum = PS_MAGE89;
 			}
 		}
 #endif
 	}
 #ifndef SPAWN
-	if (plr[pnum].HoldItem.IDidx == IDI_GLDNELIX) {
+	if (owner.data.HoldItem.IDidx == IDI_GLDNELIX) {
 		sfxdelay = 30;
-		if (plr[myplr]._pClass == PC_WARRIOR) {
+		if (plr.local().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR88;
-		} else if (plr[myplr]._pClass == PC_ROGUE) {
+		} else if (plr.local().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE88;
-		} else if (plr[myplr]._pClass == PC_SORCERER) {
+		} else if (plr.local().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE88;
 		}
 	}
 #endif
-	if (plr[pnum].HoldItem.IDidx == IDI_ROCK) {
+	if (owner.data.HoldItem.IDidx == IDI_ROCK) {
 		if (quests[Q_ROCK]._qactive == QUEST_INIT) {
 			quests[Q_ROCK]._qactive = QUEST_ACTIVE;
 			quests[Q_ROCK]._qvar1 = 1;
@@ -1444,32 +1451,32 @@ void CheckQuestItem(int pnum)
 #ifndef SPAWN
 		if (quests[Q_ROCK]._qlog == TRUE) {
 			sfxdelay = 10;
-			if (plr[myplr]._pClass == PC_WARRIOR) {
+			if (plr.local().data._pClass == PC_WARRIOR) {
 				sfxdnum = PS_WARR87;
-			} else if (plr[myplr]._pClass == PC_ROGUE) {
+			} else if (plr.local().data._pClass == PC_ROGUE) {
 				sfxdnum = PS_ROGUE87;
-			} else if (plr[myplr]._pClass == PC_SORCERER) {
+			} else if (plr.local().data._pClass == PC_SORCERER) {
 				sfxdnum = PS_MAGE87;
 			}
 		}
 #endif
 	}
-	if (plr[pnum].HoldItem.IDidx == IDI_ARMOFVAL) {
+	if (owner.data.HoldItem.IDidx == IDI_ARMOFVAL) {
 		quests[Q_BLOOD]._qactive = QUEST_DONE;
 #ifndef SPAWN
 		sfxdelay = 20;
-		if (plr[myplr]._pClass == PC_WARRIOR) {
+		if (plr.local().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR91;
-		} else if (plr[myplr]._pClass == PC_ROGUE) {
+		} else if (plr.local().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE91;
-		} else if (plr[myplr]._pClass == PC_SORCERER) {
+		} else if (plr.local().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE91;
 		}
 #endif
 	}
 }
 
-void InvGetItem(int pnum, int ii)
+void PlayerInventory::InvGetItem(int ii)
 {
 	int i;
 
@@ -1479,13 +1486,13 @@ void InvGetItem(int pnum, int ii)
 	}
 
 	if (grid[item[ii]._ix][item[ii]._iy].dItem != 0) {
-		if (myplr == pnum && pcurs >= CURSOR_FIRSTITEM)
-			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, plr[myplr]._px, plr[myplr]._py);
+		if (owner.isLocal() && pcurs >= CURSOR_FIRSTITEM)
+			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, plr.local().data._px, plr.local().data._py);
 		item[ii]._iCreateInfo &= ~0x8000;
-		plr[pnum].HoldItem = item[ii];
-		CheckQuestItem(pnum);
-		CheckBookLevel(pnum);
-		CheckItemStats(pnum);
+		owner.data.HoldItem = item[ii];
+		CheckQuestItem();
+		CheckBookLevel();
+		CheckItemStats();
 		grid[item[ii]._ix][item[ii]._iy].dItem = 0;
 		i = 0;
 		while (i < numitems) {
@@ -1497,11 +1504,11 @@ void InvGetItem(int pnum, int ii)
 			}
 		}
 		pcursitem = -1;
-		SetCursor_(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
+		SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 	}
 }
 
-void AutoGetItem(int pnum, int ii)
+void PlayerInventory::AutoGetItem(int ii)
 {
 	int i, idx;
 	int w, h;
@@ -1522,21 +1529,21 @@ void AutoGetItem(int pnum, int ii)
 	}
 
 	item[ii]._iCreateInfo &= 0x7FFF;
-	plr[pnum].HoldItem = item[ii]; /// BUGFIX: overwrites cursor item, allowing for belt dupe bug
-	CheckQuestItem(pnum);
-	CheckBookLevel(pnum);
-	CheckItemStats(pnum);
-	SetICursor(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
-	if (plr[pnum].HoldItem._itype == ITYPE_GOLD) {
-		done = GoldAutoPlace(pnum);
+	owner.data.HoldItem = item[ii]; /// BUGFIX: overwrites cursor item, allowing for belt dupe bug
+	CheckQuestItem();
+	CheckBookLevel();
+	CheckItemStats();
+	SetICursor(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+	if (owner.data.HoldItem._itype == ITYPE_GOLD) {
+		done = GoldAutoPlace();
 	} else {
 		done = FALSE;
-		if (((plr[pnum]._pgfxnum & 0xF) == ANIM_ID_UNARMED || (plr[pnum]._pgfxnum & 0xF) == ANIM_ID_UNARMED_SHIELD) && plr[pnum]._pmode <= PM_WALK3) {
-			if (plr[pnum].HoldItem._iStatFlag) {
-				if (plr[pnum].HoldItem._iClass == ICLASS_WEAPON) {
-					done = WeaponAutoPlace(pnum);
+		if (((owner.data._pgfxnum & 0xF) == ANIM_ID_UNARMED || (owner.data._pgfxnum & 0xF) == ANIM_ID_UNARMED_SHIELD) && owner.data._pmode <= PM_WALK3) {
+			if (owner.data.HoldItem._iStatFlag) {
+				if (owner.data.HoldItem._iClass == ICLASS_WEAPON) {
+					done = WeaponAutoPlace();
 					if (done)
-						CalcPlrInv(pnum, TRUE);
+						CalcPlrInv(owner.id(), TRUE);
 				}
 			}
 		}
@@ -1544,66 +1551,66 @@ void AutoGetItem(int pnum, int ii)
 			w = icursW28;
 			h = icursH28;
 			if (w == 1 && h == 1) {
-				idx = plr[pnum].HoldItem.IDidx;
-				if (plr[pnum].HoldItem._iStatFlag && AllItemsList[idx].iUsable) {
+				idx = owner.data.HoldItem.IDidx;
+				if (owner.data.HoldItem._iStatFlag && AllItemsList[idx].iUsable) {
 					for (i = 0; i < 8 && !done; i++) {
-						if (plr[pnum].SpdList[i]._itype == ITYPE_NONE) {
-							plr[pnum].SpdList[i] = plr[pnum].HoldItem;
-							CalcPlrScrolls(pnum);
+						if (owner.data.SpdList[i]._itype == ITYPE_NONE) {
+							owner.data.SpdList[i] = owner.data.HoldItem;
+							CalcPlrScrolls(owner.id());
 							drawsbarflag = TRUE;
 							done = TRUE;
 						}
 					}
 				}
 				for (i = 30; i <= 39 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 20; i <= 29 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 10; i <= 19 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 0; i <= 9 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 			}
 			if (w == 1 && h == 2) {
 				for (i = 29; i >= 20 && !done; i--) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 9; i >= 0 && !done; i--) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 19; i >= 10 && !done; i--) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 			}
 			if (w == 1 && h == 3) {
 				for (i = 0; i < 20 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 			}
 			if (w == 2 && h == 2) {
 				for (i = 0; i < 10 && !done; i++) {
-					done = AutoPlace(pnum, AP2x2Tbl[i], w, h, TRUE);
+					done = AutoPlace(AP2x2Tbl[i], w, h, TRUE);
 				}
 				for (i = 21; i < 29 && !done; i += 2) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 1; i < 9 && !done; i += 2) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 10; i < 19 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 			}
 			if (w == 2 && h == 3) {
 				for (i = 0; i < 9 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 				for (i = 10; i < 19 && !done; i++) {
-					done = AutoPlace(pnum, i, w, h, TRUE);
+					done = AutoPlace(i, w, h, TRUE);
 				}
 			}
 		}
@@ -1620,21 +1627,21 @@ void AutoGetItem(int pnum, int ii)
 			}
 		}
 	} else {
-		if (pnum == myplr) {
-			if (plr[pnum]._pClass == PC_WARRIOR) {
+		if (owner.isLocal()) {
+			if (owner.data._pClass == PC_WARRIOR) {
 				PlaySFX(random_(0, 3) + PS_WARR14);
 #ifndef SPAWN
-			} else if (plr[pnum]._pClass == PC_ROGUE) {
+			} else if (owner.data._pClass == PC_ROGUE) {
 				PlaySFX(random_(0, 3) + PS_ROGUE14);
-			} else if (plr[pnum]._pClass == PC_SORCERER) {
+			} else if (owner.data._pClass == PC_SORCERER) {
 				PlaySFX(random_(0, 3) + PS_MAGE14);
 #endif
 			}
 		}
-		plr[pnum].HoldItem = item[ii];
+		owner.data.HoldItem = item[ii];
 		RespawnItem(ii, TRUE);
 		NetSendCmdPItem(TRUE, CMD_RESPAWNITEM, item[ii]._ix, item[ii]._iy);
-		plr[pnum].HoldItem._itype = ITYPE_NONE;
+		owner.data.HoldItem._itype = ITYPE_NONE;
 	}
 }
 
@@ -1740,22 +1747,22 @@ BOOL TryInvPut()
 	if (numitems >= 127)
 		return FALSE;
 
-	dir = GetDirection(plr[myplr]._px, plr[myplr]._py, cursmx, cursmy);
-	if (CanPut(plr[myplr]._px + offset_x[dir], plr[myplr]._py + offset_y[dir])) {
+	dir = GetDirection(plr.local().data._px, plr.local().data._py, cursmx, cursmy);
+	if (CanPut(plr.local().data._px + offset_x[dir], plr.local().data._py + offset_y[dir])) {
 		return TRUE;
 	}
 
 	dir = (dir - 1) & 7;
-	if (CanPut(plr[myplr]._px + offset_x[dir], plr[myplr]._py + offset_y[dir])) {
+	if (CanPut(plr.local().data._px + offset_x[dir], plr.local().data._py + offset_y[dir])) {
 		return TRUE;
 	}
 
 	dir = (dir + 2) & 7;
-	if (CanPut(plr[myplr]._px + offset_x[dir], plr[myplr]._py + offset_y[dir])) {
+	if (CanPut(plr.local().data._px + offset_x[dir], plr.local().data._py + offset_y[dir])) {
 		return TRUE;
 	}
 
-	return CanPut(plr[myplr]._px, plr[myplr]._py);
+	return CanPut(plr.local().data._px, plr.local().data._py);
 }
 
 void DrawInvMsg(char *msg)
@@ -1769,7 +1776,7 @@ void DrawInvMsg(char *msg)
 	}
 }
 
-int InvPutItem(int pnum, int x, int y)
+int PlayerInventory::InvPutItem(int x, int y)
 {
 	BOOL done;
 	int d, ii;
@@ -1780,33 +1787,33 @@ int InvPutItem(int pnum, int x, int y)
 	if (numitems >= 127)
 		return -1;
 
-	if (FindGetItem(plr[pnum].HoldItem.IDidx, plr[pnum].HoldItem._iCreateInfo, plr[pnum].HoldItem._iSeed) != -1) {
+	if (FindGetItem(owner.data.HoldItem.IDidx, owner.data.HoldItem._iCreateInfo, owner.data.HoldItem._iSeed) != -1) {
 		DrawInvMsg("A duplicate item has been detected.  Destroying duplicate...");
-		SyncGetItem(x, y, plr[pnum].HoldItem.IDidx, plr[pnum].HoldItem._iCreateInfo, plr[pnum].HoldItem._iSeed);
+		SyncGetItem(x, y, owner.data.HoldItem.IDidx, owner.data.HoldItem._iCreateInfo, owner.data.HoldItem._iSeed);
 	}
 
-	d = GetDirection(plr[pnum]._px, plr[pnum]._py, x, y);
-	xx = x - plr[pnum]._px;
-	yy = y - plr[pnum]._py;
+	d = GetDirection(owner.data._px, owner.data._py, x, y);
+	xx = x - owner.data._px;
+	yy = y - owner.data._py;
 	if (abs(xx) > 1 || abs(yy) > 1) {
-		x = plr[pnum]._px + offset_x[d];
-		y = plr[pnum]._py + offset_y[d];
+		x = owner.data._px + offset_x[d];
+		y = owner.data._py + offset_y[d];
 	}
 	if (!CanPut(x, y)) {
 		d = (d - 1) & 7;
-		x = plr[pnum]._px + offset_x[d];
-		y = plr[pnum]._py + offset_y[d];
+		x = owner.data._px + offset_x[d];
+		y = owner.data._py + offset_y[d];
 		if (!CanPut(x, y)) {
 			d = (d + 2) & 7;
-			x = plr[pnum]._px + offset_x[d];
-			y = plr[pnum]._py + offset_y[d];
+			x = owner.data._px + offset_x[d];
+			y = owner.data._py + offset_y[d];
 			if (!CanPut(x, y)) {
 				done = FALSE;
 				for (l = 1; l < 50 && !done; l++) {
 					for (j = -l; j <= l && !done; j++) {
-						yp = j + plr[pnum]._py;
+						yp = j + owner.data._py;
 						for (i = -l; i <= l && !done; i++) {
-							xp = i + plr[pnum]._px;
+							xp = i + owner.data._px;
 							if (CanPut(xp, yp)) {
 								done = TRUE;
 								x = xp;
@@ -1829,7 +1836,7 @@ int InvPutItem(int pnum, int x, int y)
 	grid[x][y].dItem = ii + 1;
 	itemavail[0] = itemavail[MAXITEMS - (numitems + 1)];
 	itemactive[numitems] = ii;
-	item[ii] = plr[pnum].HoldItem;
+	item[ii] = owner.data.HoldItem;
 	item[ii]._ix = x;
 	item[ii]._iy = y;
 	RespawnItem(ii, TRUE);
@@ -1838,7 +1845,7 @@ int InvPutItem(int pnum, int x, int y)
 	return ii;
 }
 
-int SyncPutItem(int pnum, int x, int y, int idx, WORD icreateinfo, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, DWORD ibuff)
+int PlayerInventory::SyncPutItem(int x, int y, int idx, WORD icreateinfo, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, DWORD ibuff)
 {
 	BOOL done;
 	int d, ii;
@@ -1854,28 +1861,28 @@ int SyncPutItem(int pnum, int x, int y, int idx, WORD icreateinfo, int iseed, in
 		SyncGetItem(x, y, idx, icreateinfo, iseed);
 	}
 
-	d = GetDirection(plr[pnum]._px, plr[pnum]._py, x, y);
-	xx = x - plr[pnum]._px;
-	yy = y - plr[pnum]._py;
+	d = GetDirection(owner.data._px, owner.data._py, x, y);
+	xx = x - owner.data._px;
+	yy = y - owner.data._py;
 	if (abs(xx) > 1 || abs(yy) > 1) {
-		x = plr[pnum]._px + offset_x[d];
-		y = plr[pnum]._py + offset_y[d];
+		x = owner.data._px + offset_x[d];
+		y = owner.data._py + offset_y[d];
 	}
 	if (!CanPut(x, y)) {
 		d = (d - 1) & 7;
-		x = plr[pnum]._px + offset_x[d];
-		y = plr[pnum]._py + offset_y[d];
+		x = owner.data._px + offset_x[d];
+		y = owner.data._py + offset_y[d];
 		if (!CanPut(x, y)) {
 			d = (d + 2) & 7;
-			x = plr[pnum]._px + offset_x[d];
-			y = plr[pnum]._py + offset_y[d];
+			x = owner.data._px + offset_x[d];
+			y = owner.data._py + offset_y[d];
 			if (!CanPut(x, y)) {
 				done = FALSE;
 				for (l = 1; l < 50 && !done; l++) {
 					for (j = -l; j <= l && !done; j++) {
-						yp = j + plr[pnum]._py;
+						yp = j + owner.data._py;
 						for (i = -l; i <= l && !done; i++) {
-							xp = i + plr[pnum]._px;
+							xp = i + owner.data._px;
 							if (CanPut(xp, yp)) {
 								done = TRUE;
 								x = xp;
@@ -1938,7 +1945,7 @@ char CheckInvHLight()
 	rv = -1;
 	infoclr = COL_WHITE;
 	pi = NULL;
-	p = &plr[myplr];
+	p = &plr.local().data;
 	ClearPanel();
 	if (r >= 0 && r <= 3) {
 		rv = INVLOC_HEAD;
@@ -2006,25 +2013,25 @@ char CheckInvHLight()
 	return rv;
 }
 
-void RemoveScroll(int pnum)
+void PlayerInventory::RemoveScroll()
 {
 	int i;
 
-	for (i = 0; i < plr[pnum]._pNumInv; i++) {
-		if (plr[pnum].InvList[i]._itype != ITYPE_NONE
-		    && (plr[pnum].InvList[i]._iMiscId == IMISC_SCROLL || plr[pnum].InvList[i]._iMiscId == IMISC_SCROLLT)
-		    && plr[pnum].InvList[i]._iSpell == plr[pnum]._pRSpell) {
-			RemoveInvItem(pnum, i);
-			CalcPlrScrolls(pnum);
+	for (i = 0; i < owner.data._pNumInv; i++) {
+		if (owner.data.InvList[i]._itype != ITYPE_NONE
+		    && (owner.data.InvList[i]._iMiscId == IMISC_SCROLL || owner.data.InvList[i]._iMiscId == IMISC_SCROLLT)
+		    && owner.data.InvList[i]._iSpell == owner.data._pRSpell) {
+			RemoveInvItem(i);
+			CalcPlrScrolls(owner.id());
 			return;
 		}
 	}
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (plr[pnum].SpdList[i]._itype != ITYPE_NONE
-		    && (plr[pnum].SpdList[i]._iMiscId == IMISC_SCROLL || plr[pnum].SpdList[i]._iMiscId == IMISC_SCROLLT)
-		    && plr[pnum].SpdList[i]._iSpell == plr[pnum]._pRSpell) {
-			RemoveSpdBarItem(pnum, i);
-			CalcPlrScrolls(pnum);
+		if (owner.data.SpdList[i]._itype != ITYPE_NONE
+		    && (owner.data.SpdList[i]._iMiscId == IMISC_SCROLL || owner.data.SpdList[i]._iMiscId == IMISC_SCROLLT)
+		    && owner.data.SpdList[i]._iSpell == owner.data._pRSpell) {
+			RemoveSpdBarItem(i);
+			CalcPlrScrolls(owner.id());
 			return;
 		}
 	}
@@ -2036,20 +2043,20 @@ BOOL UseScroll()
 
 	if (pcurs != CURSOR_HAND)
 		return FALSE;
-	if (level.leveltype == DTYPE_TOWN && !spelldata[plr[myplr]._pRSpell].sTownSpell)
+	if (level.leveltype == DTYPE_TOWN && !spelldata[plr.local().data._pRSpell].sTownSpell)
 		return FALSE;
 
-	for (i = 0; i < plr[myplr]._pNumInv; i++) {
-		if (plr[myplr].InvList[i]._itype != ITYPE_NONE
-		    && (plr[myplr].InvList[i]._iMiscId == IMISC_SCROLL || plr[myplr].InvList[i]._iMiscId == IMISC_SCROLLT)
-		    && plr[myplr].InvList[i]._iSpell == plr[myplr]._pRSpell) {
+	for (i = 0; i < plr.local().data._pNumInv; i++) {
+		if (plr.local().data.InvList[i]._itype != ITYPE_NONE
+		    && (plr.local().data.InvList[i]._iMiscId == IMISC_SCROLL || plr.local().data.InvList[i]._iMiscId == IMISC_SCROLLT)
+		    && plr.local().data.InvList[i]._iSpell == plr.local().data._pRSpell) {
 			return TRUE;
 		}
 	}
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (plr[myplr].SpdList[i]._itype != ITYPE_NONE
-		    && (plr[myplr].SpdList[i]._iMiscId == IMISC_SCROLL || plr[myplr].SpdList[i]._iMiscId == IMISC_SCROLLT)
-		    && plr[myplr].SpdList[i]._iSpell == plr[myplr]._pRSpell) {
+		if (plr.local().data.SpdList[i]._itype != ITYPE_NONE
+		    && (plr.local().data.SpdList[i]._iMiscId == IMISC_SCROLL || plr.local().data.SpdList[i]._iMiscId == IMISC_SCROLLT)
+		    && plr.local().data.SpdList[i]._iSpell == plr.local().data._pRSpell) {
 			return TRUE;
 		}
 	}
@@ -2057,24 +2064,24 @@ BOOL UseScroll()
 	return FALSE;
 }
 
-void UseStaffCharge(int pnum)
+void PlayerInventory::UseStaffCharge()
 {
-	if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-	    && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF
-	    && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iSpell == plr[pnum]._pRSpell
-	    && plr[pnum].InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
-		plr[pnum].InvBody[INVLOC_HAND_LEFT]._iCharges--;
-		CalcPlrStaff(pnum);
+	if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
+	    && owner.data.InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF
+	    && owner.data.InvBody[INVLOC_HAND_LEFT]._iSpell == owner.data._pRSpell
+	    && owner.data.InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
+		owner.data.InvBody[INVLOC_HAND_LEFT]._iCharges--;
+		CalcPlrStaff(owner.id());
 	}
 }
 
 BOOL UseStaff()
 {
 	if (pcurs == CURSOR_HAND) {
-		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iSpell == plr[myplr]._pRSpell
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
+		if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
+		    && plr.local().data.InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF
+		    && plr.local().data.InvBody[INVLOC_HAND_LEFT]._iSpell == plr.local().data._pRSpell
+		    && plr.local().data.InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
 			return TRUE;
 		}
 	}
@@ -2086,22 +2093,22 @@ void StartGoldDrop()
 {
 	initialDropGoldIndex = pcursinvitem;
 	if (pcursinvitem <= INVITEM_INV_LAST)
-		initialDropGoldValue = plr[myplr].InvList[pcursinvitem - INVITEM_INV_FIRST]._ivalue;
+		initialDropGoldValue = plr.local().data.InvList[pcursinvitem - INVITEM_INV_FIRST]._ivalue;
 	else
-		initialDropGoldValue = plr[myplr].SpdList[pcursinvitem - INVITEM_BELT_FIRST]._ivalue;
+		initialDropGoldValue = plr.local().data.SpdList[pcursinvitem - INVITEM_BELT_FIRST]._ivalue;
 	dropGoldFlag = TRUE;
 	dropGoldValue = 0;
 	if (talkflag)
 		control_reset_talk();
 }
 
-BOOL UseInvItem(int pnum, int cii)
+BOOL PlayerInventory::UseInvItem(int cii)
 {
 	int c, idata;
 	ItemStruct *Item;
 	BOOL speedlist;
 
-	if (plr[pnum]._pInvincible && !plr[pnum]._pHitPoints && pnum == myplr)
+	if (owner.data._pInvincible && !owner.data._pHitPoints && owner.isLocal())
 		return TRUE;
 	if (pcurs != CURSOR_HAND)
 		return TRUE;
@@ -2112,13 +2119,13 @@ BOOL UseInvItem(int pnum, int cii)
 
 	if (cii <= INVITEM_INV_LAST) {
 		c = cii - INVITEM_INV_FIRST;
-		Item = &plr[pnum].InvList[c];
+		Item = &owner.data.InvList[c];
 		speedlist = FALSE;
 	} else {
 		if (talkflag)
 			return TRUE;
 		c = cii - INVITEM_BELT_FIRST;
-		Item = &plr[pnum].SpdList[c];
+		Item = &owner.data.SpdList[c];
 		speedlist = TRUE;
 	}
 
@@ -2126,11 +2133,11 @@ BOOL UseInvItem(int pnum, int cii)
 	case IDI_MUSHROOM:
 		sfxdelay = 10;
 #ifndef SPAWN
-		if (plr[pnum]._pClass == PC_WARRIOR) {
+		if (owner.data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR95;
-		} else if (plr[pnum]._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE95;
-		} else if (plr[pnum]._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE95;
 		}
 #endif
@@ -2138,12 +2145,12 @@ BOOL UseInvItem(int pnum, int cii)
 	case IDI_FUNGALTM:
 		PlaySFX(IS_IBOOK);
 		sfxdelay = 10;
-		if (plr[pnum]._pClass == PC_WARRIOR) {
+		if (owner.data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR29;
 #ifndef SPAWN
-		} else if (plr[pnum]._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE29;
-		} else if (plr[pnum]._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE29;
 #endif
 		}
@@ -2154,12 +2161,12 @@ BOOL UseInvItem(int pnum, int cii)
 		return FALSE;
 
 	if (!Item->_iStatFlag) {
-		if (plr[pnum]._pClass == PC_WARRIOR) {
+		if (owner.data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR13);
 #ifndef SPAWN
-		} else if (plr[pnum]._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE13);
-		} else if (plr[pnum]._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE13);
 #endif
 		}
@@ -2187,18 +2194,18 @@ BOOL UseInvItem(int pnum, int cii)
 	idata = ItemCAnimTbl[Item->_iCurs];
 	if (Item->_iMiscId == IMISC_BOOK)
 		PlaySFX(IS_RBOOK);
-	else if (pnum == myplr)
+	else if (owner.isLocal())
 		PlaySFX(ItemInvSnds[idata]);
 
-	UseItem(pnum, Item->_iMiscId, Item->_iSpell);
+	UseItem(owner.id(), Item->_iMiscId, Item->_iSpell);
 
 	if (speedlist) {
-		RemoveSpdBarItem(pnum, c);
+		RemoveSpdBarItem(c);
 		return TRUE;
 	} else {
-		if (plr[pnum].InvList[c]._iMiscId == IMISC_MAPOFDOOM)
+		if (owner.data.InvList[c]._iMiscId == IMISC_MAPOFDOOM)
 			return TRUE;
-		RemoveInvItem(pnum, c);
+		RemoveInvItem(c);
 	}
 
 	return TRUE;
@@ -2209,26 +2216,26 @@ void DoTelekinesis()
 	if (pcursobj != -1)
 		NetSendCmdParam1(TRUE, CMD_OPOBJT, pcursobj);
 	if (pcursitem != -1)
-		NetSendCmdGItem(TRUE, CMD_REQUESTAGITEM, myplr, myplr, pcursitem);
+		NetSendCmdGItem(TRUE, CMD_REQUESTAGITEM, myplr(), myplr(), pcursitem);
 	if (pcursmonst != -1 && !M_Talker(pcursmonst) && monster[pcursmonst].mtalkmsg == 0)
 		NetSendCmdParam1(TRUE, CMD_KNOCKBACK, pcursmonst);
 	NewCursor(CURSOR_HAND);
 }
 
-int CalculateGold(int pnum)
+int PlayerInventory::CalculateGold()
 {
 	int i, gold;
 
 	gold = 0;
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (plr[pnum].SpdList[i]._itype == ITYPE_GOLD) {
-			gold += plr[pnum].SpdList[i]._ivalue;
+		if (owner.data.SpdList[i]._itype == ITYPE_GOLD) {
+			gold += owner.data.SpdList[i]._ivalue;
 			force_redraw = 255;
 		}
 	}
-	for (i = 0; i < plr[pnum]._pNumInv; i++) {
-		if (plr[pnum].InvList[i]._itype == ITYPE_GOLD)
-			gold += plr[pnum].InvList[i]._ivalue;
+	for (i = 0; i < owner.data._pNumInv; i++) {
+		if (owner.data.InvList[i]._itype == ITYPE_GOLD)
+			gold += owner.data.InvList[i]._ivalue;
 	}
 
 	return gold;

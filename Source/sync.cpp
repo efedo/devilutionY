@@ -57,7 +57,7 @@ void sync_one_monster()
 
 	for (i = 0; i < nummonsters; i++) {
 		m = monstactive[i];
-		sync_word_6AA708[m] = abs(plr[myplr]._px - monster[m]._mx) + abs(plr[myplr]._py - monster[m]._my);
+		sync_word_6AA708[m] = abs(plr.local().data._px - monster[m]._mx) + abs(plr.local().data._py - monster[m]._my);
 		if (monster[m]._msquelch == 0) {
 			sync_word_6AA708[m] += 0x1000;
 		} else if (sgwLRU[m] != 0) {
@@ -171,7 +171,7 @@ void SyncPlrInv(TSyncHeader *pHdr)
 	}
 
 	assert((DWORD)sgnSyncPInv < NUM_INVLOC);
-	pItem = &plr[myplr].InvBody[sgnSyncPInv];
+	pItem = &plr.local().data.InvBody[sgnSyncPInv];
 	if (pItem->_itype != ITYPE_NONE) {
 		pHdr->bPInvLoc = sgnSyncPInv;
 		pHdr->wPInvIndx = pItem->IDidx;
@@ -205,7 +205,7 @@ DWORD sync_update(int pnum, const BYTE *pbBuf)
 	if (gbBufferMsgs == 1) {
 		return pHdr->wLen + sizeof(*pHdr);
 	}
-	if (pnum == myplr) {
+	if (pnum == myplr()) {
 		return pHdr->wLen + sizeof(*pHdr);
 	}
 
@@ -239,12 +239,12 @@ void sync_monster(int pnum, const TSyncMonster *p)
 		}
 	}
 
-	delta = abs(plr[myplr]._px - monster[ndx]._mx) + abs(plr[myplr]._py - monster[ndx]._my);
+	delta = abs(plr.local().data._px - monster[ndx]._mx) + abs(plr.local().data._py - monster[ndx]._my);
 	if (delta > 255) {
 		delta = 255;
 	}
 
-	if (delta < p->_mdelta || (delta == p->_mdelta && pnum > myplr)) {
+	if (delta < p->_mdelta || (delta == p->_mdelta && pnum > myplr())) {
 		return;
 	}
 	if (monster[ndx]._mfutx == p->_mx && monster[ndx]._mfuty == p->_my) {
@@ -282,7 +282,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 
 void sync_init()
 {
-	sgnMonsters = 16 * myplr;
+	sgnMonsters = 16 * myplr();
 	memset(sgwLRU, 255, sizeof(sgwLRU));
 }
 

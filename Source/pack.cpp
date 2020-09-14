@@ -40,7 +40,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield)
 	PkItemStruct *pki;
 
 	memset(pPack, 0, sizeof(*pPack));
-	pPlayer = &plr[pnum];
+	pPlayer = &plr[pnum].data;
 	pPack->destAction = pPlayer->destAction;
 	pPack->destParam1 = pPlayer->destParam1;
 	pPack->destParam2 = pPlayer->destParam2;
@@ -172,8 +172,8 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok)
 	ItemStruct *pi;
 	PkItemStruct *pki;
 
-	pPlayer = &plr[pnum];
-	ClearPlrRVars(pPlayer);
+	pPlayer = &plr[pnum].data;
+	plr[pnum].ClearPlrRVars();
 	pPlayer->_px = pPack->px;
 	pPlayer->_py = pPack->py;
 	pPlayer->_pfutx = pPack->px;
@@ -181,11 +181,11 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok)
 	pPlayer->_ptargx = pPack->targx;
 	pPlayer->_ptargy = pPack->targy;
 	pPlayer->plrlevel = pPack->plrlevel;
-	ClrPlrPath(pnum);
+	plr[pnum].ClrPlrPath();
 	pPlayer->destAction = ACTION_NONE;
 	strcpy(pPlayer->_pName, pPack->pName);
 	pPlayer->_pClass = pPack->pClass;
-	InitPlayer(pnum, TRUE);
+	plr[pnum].InitPlayer(TRUE);
 	pPlayer->_pBaseStr = pPack->pBaseStr;
 	pPlayer->_pStrength = pPack->pBaseStr;
 	pPlayer->_pBaseMag = pPack->pBaseMag;
@@ -244,7 +244,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok)
 		pi++;
 	}
 
-	if (pnum == myplr) {
+	if (pnum == myplr()) {
 		for (i = 0; i < 20; i++)
 			witchitem[i]._itype = ITYPE_NONE;
 	}

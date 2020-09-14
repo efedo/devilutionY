@@ -8,8 +8,8 @@ TEST(Control, SetSpell) {
 	dvl::pSplType = dvl::RSPLTYPE_CHARGES;
 	dvl::SetSpell();
 	EXPECT_EQ(dvl::spselflag, false);
-	EXPECT_EQ(dvl::plr[dvl::myplr]._pRSpell, dvl::SPL_FIREBOLT);
-	EXPECT_EQ(dvl::plr[dvl::myplr]._pRSplType, dvl::RSPLTYPE_CHARGES);
+	EXPECT_EQ(dvl::plr[dvl::myplr()]._pRSpell, dvl::SPL_FIREBOLT);
+	EXPECT_EQ(dvl::plr[dvl::myplr()]._pRSplType, dvl::RSPLTYPE_CHARGES);
 	EXPECT_EQ(dvl::pnumlines, 0);
 	EXPECT_EQ(dvl::pinfoflag, false);
 	EXPECT_EQ(dvl::force_redraw, 255);

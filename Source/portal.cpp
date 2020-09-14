@@ -128,22 +128,22 @@ void GetPortalLevel()
 	if (level.currlevel) {
 		level.setlevel = FALSE;
 		level.currlevel = 0;
-		plr[myplr].plrlevel = 0;
+		plr.local().data.plrlevel = 0;
 		level.leveltype = DTYPE_TOWN;
 	} else {
 		if (portal[portalindex].setlvl) {
 			level.setlevel = TRUE;
 			level.setlvlnum = portal[portalindex].level;
 			level.currlevel = portal[portalindex].level;
-			plr[myplr].plrlevel = level.setlvlnum;
+			plr.local().data.plrlevel = level.setlvlnum;
 			level.leveltype = portal[portalindex].ltype;
 		} else {
 			level.setlevel = FALSE;
 			level.currlevel = portal[portalindex].level;
-			plr[myplr].plrlevel = level.currlevel;
+			plr.local().data.plrlevel = level.currlevel;
 			level.leveltype = portal[portalindex].ltype;
 		}
-		if (portalindex == myplr) {
+		if (portalindex == myplr()) {
 			NetSendCmd(TRUE, CMD_DEACTIVATEPORTAL);
 			DeactivatePortal(portalindex);
 		}
@@ -159,7 +159,7 @@ void GetPortalLvlPos()
 		ViewX = portal[portalindex].x;
 		ViewY = portal[portalindex].y;
 
-		if (portalindex != myplr) {
+		if (portalindex != myplr()) {
 			ViewX++;
 			ViewY++;
 		}

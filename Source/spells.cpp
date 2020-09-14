@@ -10,7 +10,7 @@ int GetManaAmount(int id, int sn)
 	int adj = 0;
 
 	// spell level
-	int sl = plr[id]._pSplLvl[sn] + plr[id]._pISplLvlAdd - 1;
+	int sl = plr[id].data._pSplLvl[sn] + plr[id].data._pISplLvlAdd - 1;
 
 	if (sl < 0) {
 		sl = 0;
@@ -25,9 +25,9 @@ int GetManaAmount(int id, int sn)
 	}
 
 	if (sn == SPL_HEAL || sn == SPL_HEALOTHER) {
-		ma = (spelldata[SPL_HEAL].sManaCost + 2 * plr[id]._pLevel - adj);
+		ma = (spelldata[SPL_HEAL].sManaCost + 2 * plr[id].data._pLevel - adj);
 	} else if (spelldata[sn].sManaCost == 255) {
-		ma = ((BYTE)plr[id]._pMaxManaBase - adj);
+		ma = ((BYTE)plr[id].data._pMaxManaBase - adj);
 	} else {
 		ma = (spelldata[sn].sManaCost - adj);
 	}
@@ -36,7 +36,7 @@ int GetManaAmount(int id, int sn)
 		ma = 0;
 	ma <<= 6;
 
-	if (plr[id]._pClass == PC_ROGUE) {
+	if (plr[id].data._pClass == PC_ROGUE) {
 		ma -= ma >> 2;
 	}
 
@@ -44,31 +44,31 @@ int GetManaAmount(int id, int sn)
 		ma = spelldata[sn].sMinMana << 6;
 	}
 
-	return ma * (100 - plr[id]._pISplCost) / 100;
+	return ma * (100 - plr[id].data._pISplCost) / 100;
 }
 
 void UseMana(int id, int sn)
 {
 	int ma; // mana cost
 
-	if (id == myplr) {
-		switch (plr[id]._pSplType) {
+	if (id == myplr()) {
+		switch (plr[id].data._pSplType) {
 		case RSPLTYPE_SKILL:
 		case RSPLTYPE_INVALID:
 			break;
 		case RSPLTYPE_SCROLL:
-			RemoveScroll(id);
+			plr[id].inventory.RemoveScroll();
 			break;
 		case RSPLTYPE_CHARGES:
-			UseStaffCharge(id);
+			plr[id].inventory.UseStaffCharge();
 			break;
 		case RSPLTYPE_SPELL:
 #ifdef _DEBUG
 			if (!debug_mode_key_inverted_v) {
 #endif
 				ma = GetManaAmount(id, sn);
-				plr[id]._pMana -= ma;
-				plr[id]._pManaBase -= ma;
+				plr[id].data._pMana -= ma;
+				plr[id].data._pManaBase -= ma;
 				drawmanaflag = TRUE;
 #ifdef _DEBUG
 			}
@@ -95,7 +95,7 @@ BOOL CheckSpell(int id, int sn, char st, BOOL manaonly)
 			if (GetSpellLevel(id, sn) <= 0) {
 				result = FALSE;
 			} else {
-				result = plr[id]._pMana >= GetManaAmount(id, sn);
+				result = plr[id].data._pMana >= GetManaAmount(id, sn);
 			}
 		}
 	}
@@ -116,10 +116,10 @@ void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int 
 		// caster must be 0 already in this case, but oh well,
 		// it's needed to generate the right code
 		caster = 0;
-		dir = plr[id]._pdir;
+		dir = plr[id].data._pdir;
 
 		if (spl == SPL_FIREWALL) {
-			dir = plr[id]._pVar3;
+			dir = plr[id].data._pVar3;
 		}
 		break;
 	}
@@ -146,10 +146,10 @@ static void PlacePlayer(int pnum)
 	DWORD i;
 	BOOL done;
 
-	if (plr[pnum].plrlevel == level.currlevel) {
+	if (plr[pnum].data.plrlevel == level.currlevel) {
 		for (i = 0; i < 8; i++) {
-			nx = plr[pnum]._px + plrxoff2[i];
-			ny = plr[pnum]._py + plryoff2[i];
+			nx = plr[pnum].data._px + plrxoff2[i];
+			ny = plr[pnum].data._py + plryoff2[i];
 
 			if (PosOkPlayer(pnum, nx, ny)) {
 				break;
@@ -161,10 +161,10 @@ static void PlacePlayer(int pnum)
 
 			for (max = 1, min = -1; min > -50 && !done; max++, min--) {
 				for (y = min; y <= max && !done; y++) {
-					ny = plr[pnum]._py + y;
+					ny = plr[pnum].data._py + y;
 
 					for (x = min; x <= max && !done; x++) {
-						nx = plr[pnum]._px + x;
+						nx = plr[pnum].data._px + x;
 
 						if (PosOkPlayer(pnum, nx, ny)) {
 							done = TRUE;
@@ -174,12 +174,12 @@ static void PlacePlayer(int pnum)
 			}
 		}
 
-		plr[pnum]._px = nx;
-		plr[pnum]._py = ny;
+		plr[pnum].data._px = nx;
+		plr[pnum].data._py = ny;
 
 		grid[nx][ny].dPlayer = pnum + 1;
 
-		if (pnum == myplr) {
+		if (pnum == myplr()) {
 			ViewX = nx;
 			ViewY = ny;
 		}
@@ -195,42 +195,42 @@ void DoResurrect(int pnum, int rid)
 	int hp;
 
 	if ((char)rid != -1) {
-		AddMissile(plr[rid]._px, plr[rid]._py, plr[rid]._px, plr[rid]._py, 0, MIS_RESURRECTBEAM, 0, pnum, 0, 0);
+		AddMissile(plr[rid].data._px, plr[rid].data._py, plr[rid].data._px, plr[rid].data._py, 0, MIS_RESURRECTBEAM, 0, pnum, 0, 0);
 	}
 
-	if (pnum == myplr) {
+	if (pnum == myplr()) {
 		NewCursor(CURSOR_HAND);
 	}
 
-	if ((char)rid != -1 && plr[rid]._pHitPoints == 0) {
-		if (rid == myplr) {
+	if ((char)rid != -1 && plr[rid].data._pHitPoints == 0) {
+		if (rid == myplr()) {
 			deathflag = FALSE;
 			gamemenu_off();
 			drawhpflag = TRUE;
 			drawmanaflag = TRUE;
 		}
 
-		ClrPlrPath(rid);
-		plr[rid].destAction = ACTION_NONE;
-		plr[rid]._pInvincible = FALSE;
+		plr[rid].ClrPlrPath();
+		plr[rid].data.destAction = ACTION_NONE;
+		plr[rid].data._pInvincible = FALSE;
 		PlacePlayer(rid);
 
 		hp = 640;
-		if (plr[rid]._pMaxHPBase < 640) {
-			hp = plr[rid]._pMaxHPBase;
+		if (plr[rid].data._pMaxHPBase < 640) {
+			hp = plr[rid].data._pMaxHPBase;
 		}
-		SetPlayerHitPoints(rid, hp);
+		plr[rid].SetPlayerHitPoints(hp);
 
-		plr[rid]._pHPBase = plr[rid]._pHitPoints + (plr[rid]._pMaxHPBase - plr[rid]._pMaxHP);
-		plr[rid]._pMana = 0;
-		plr[rid]._pManaBase = plr[rid]._pMana + (plr[rid]._pMaxManaBase - plr[rid]._pMaxMana);
+		plr[rid].data._pHPBase = plr[rid].data._pHitPoints + (plr[rid].data._pMaxHPBase - plr[rid].data._pMaxHP);
+		plr[rid].data._pMana = 0;
+		plr[rid].data._pManaBase = plr[rid].data._pMana + (plr[rid].data._pMaxManaBase - plr[rid].data._pMaxMana);
 
 		CalcPlrInv(rid, TRUE);
 
-		if (plr[rid].plrlevel == level.currlevel) {
-			StartStand(rid, plr[rid]._pdir);
+		if (plr[rid].data.plrlevel == level.currlevel) {
+			plr[rid].StartStand(plr[rid].data._pdir);
 		} else {
-			plr[rid]._pmode = PM_STAND;
+			plr[rid].data._pmode = PM_STAND;
 		}
 	}
 }
@@ -239,14 +239,14 @@ void DoHealOther(int pnum, int rid)
 {
 	int i, j, hp;
 
-	if (pnum == myplr) {
+	if (pnum == myplr()) {
 		NewCursor(CURSOR_HAND);
 	}
 
-	if ((char)rid != -1 && (plr[rid]._pHitPoints >> 6) > 0) {
+	if ((char)rid != -1 && (plr[rid].data._pHitPoints >> 6) > 0) {
 		hp = (random_(57, 10) + 1) << 6;
 
-		for (i = 0; i < plr[pnum]._pLevel; i++) {
+		for (i = 0; i < plr[pnum].data._pLevel; i++) {
 			hp += (random_(57, 4) + 1) << 6;
 		}
 
@@ -254,24 +254,24 @@ void DoHealOther(int pnum, int rid)
 			hp += (random_(57, 6) + 1) << 6;
 		}
 
-		if (plr[pnum]._pClass == PC_WARRIOR) {
+		if (plr[pnum].data._pClass == PC_WARRIOR) {
 			hp <<= 1;
 		}
 
-		if (plr[pnum]._pClass == PC_ROGUE) {
+		if (plr[pnum].data._pClass == PC_ROGUE) {
 			hp += hp >> 1;
 		}
 
-		plr[rid]._pHitPoints += hp;
+		plr[rid].data._pHitPoints += hp;
 
-		if (plr[rid]._pHitPoints > plr[rid]._pMaxHP) {
-			plr[rid]._pHitPoints = plr[rid]._pMaxHP;
+		if (plr[rid].data._pHitPoints > plr[rid].data._pMaxHP) {
+			plr[rid].data._pHitPoints = plr[rid].data._pMaxHP;
 		}
 
-		plr[rid]._pHPBase += hp;
+		plr[rid].data._pHPBase += hp;
 
-		if (plr[rid]._pHPBase > plr[rid]._pMaxHPBase) {
-			plr[rid]._pHPBase = plr[rid]._pMaxHPBase;
+		if (plr[rid].data._pHPBase > plr[rid].data._pMaxHPBase) {
+			plr[rid].data._pHPBase = plr[rid].data._pMaxHPBase;
 		}
 
 		drawhpflag = TRUE;

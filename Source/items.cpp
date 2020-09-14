@@ -191,6 +191,16 @@ int ItemInvSnds[] = {
 int idoppely = 16;
 int premiumlvladd[6] = { -1, -1, 0, 0, 1, 2 };
 
+Item::Item(Player *new_owner)
+    : _owner(new_owner)
+{
+}
+
+Player& Item::owner() {
+	assert(_owner);
+	return *_owner;
+}
+
 void InitItemGFX()
 {
 	int i;
@@ -339,7 +349,7 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 	int lmax = 0; // maximum lightning damage
 
 	for (i = 0; i < NUM_INVLOC; i++) {
-		ItemStruct *itm = &plr[p].InvBody[i];
+		ItemStruct *itm = &plr[p].data.InvBody[i];
 		if (itm->_itype != ITYPE_NONE && itm->_iStatFlag) {
 
 			tac += itm->_iAC;
@@ -386,24 +396,24 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 		mind = 1;
 		maxd = 1;
 
-		if (plr[p].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD && plr[p].InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
+		if (plr[p].data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD && plr[p].data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
 			maxd = 3;
 		}
 
-		if (plr[p].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD && plr[p].InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
+		if (plr[p].data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD && plr[p].data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
 			maxd = 3;
 		}
 	}
 
-	plr[p]._pIMinDam = mind;
-	plr[p]._pIMaxDam = maxd;
-	plr[p]._pIAC = tac;
-	plr[p]._pIBonusDam = bdam;
-	plr[p]._pIBonusToHit = btohit;
-	plr[p]._pIBonusAC = bac;
-	plr[p]._pIFlags = iflgs;
-	plr[p]._pIBonusDamMod = dmod;
-	plr[p]._pIGetHit = ghit;
+	plr[p].data._pIMinDam = mind;
+	plr[p].data._pIMaxDam = maxd;
+	plr[p].data._pIAC = tac;
+	plr[p].data._pIBonusDam = bdam;
+	plr[p].data._pIBonusToHit = btohit;
+	plr[p].data._pIBonusAC = bac;
+	plr[p].data._pIFlags = iflgs;
+	plr[p].data._pIBonusDamMod = dmod;
+	plr[p].data._pIGetHit = ghit;
 
 	if (lrad < 2) {
 		lrad = 2;
@@ -412,57 +422,57 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 		lrad = 15;
 	}
 
-	if (plr[p]._pLightRad != lrad && p == myplr) {
-		ChangeLightRadius(plr[p]._plid, lrad);
+	if (plr[p].data._pLightRad != lrad && p == myplr()) {
+		ChangeLightRadius(plr[p].data._plid, lrad);
 
-		pvid = plr[p]._pvid;
+		pvid = plr[p].data._pvid;
 		if (lrad >= 10) {
 			ChangeVisionRadius(pvid, lrad);
 		} else {
 			ChangeVisionRadius(pvid, 10);
 		}
 
-		plr[p]._pLightRad = lrad;
+		plr[p].data._pLightRad = lrad;
 	}
 
-	plr[p]._pStrength = sadd + plr[p]._pBaseStr;
-	if (plr[myplr]._pStrength <= 0) {
-		plr[myplr]._pStrength = 0;
+	plr[p].data._pStrength = sadd + plr[p].data._pBaseStr;
+	if (plr.local().data._pStrength <= 0) {
+		plr.local().data._pStrength = 0;
 	}
 
-	plr[p]._pMagic = madd + plr[p]._pBaseMag;
-	if (plr[myplr]._pMagic <= 0) {
-		plr[myplr]._pMagic = 0;
+	plr[p].data._pMagic = madd + plr[p].data._pBaseMag;
+	if (plr.local().data._pMagic <= 0) {
+		plr.local().data._pMagic = 0;
 	}
 
-	plr[p]._pDexterity = dadd + plr[p]._pBaseDex;
-	if (plr[myplr]._pDexterity <= 0) {
-		plr[myplr]._pDexterity = 0;
+	plr[p].data._pDexterity = dadd + plr[p].data._pBaseDex;
+	if (plr.local().data._pDexterity <= 0) {
+		plr.local().data._pDexterity = 0;
 	}
 
-	plr[p]._pVitality = vadd + plr[p]._pBaseVit;
-	if (plr[myplr]._pVitality <= 0) {
-		plr[myplr]._pVitality = 0;
+	plr[p].data._pVitality = vadd + plr[p].data._pBaseVit;
+	if (plr.local().data._pVitality <= 0) {
+		plr.local().data._pVitality = 0;
 	}
 
-	if (plr[p]._pClass == PC_ROGUE) {
-		plr[p]._pDamageMod = plr[p]._pLevel * (plr[p]._pStrength + plr[p]._pDexterity) / 200;
+	if (plr[p].data._pClass == PC_ROGUE) {
+		plr[p].data._pDamageMod = plr[p].data._pLevel * (plr[p].data._pStrength + plr[p].data._pDexterity) / 200;
 	} else {
-		plr[p]._pDamageMod = plr[p]._pLevel * plr[p]._pStrength / 100;
+		plr[p].data._pDamageMod = plr[p].data._pLevel * plr[p].data._pStrength / 100;
 	}
 
-	plr[p]._pISpells = spl;
+	plr[p].data._pISpells = spl;
 
 	// check if the current RSplType is a valid/allowed spell
-	if (plr[p]._pRSplType == RSPLTYPE_CHARGES
-	    && !(spl & ((unsigned __int64)1 << (plr[p]._pRSpell - 1)))) {
-		plr[p]._pRSpell = SPL_INVALID;
-		plr[p]._pRSplType = RSPLTYPE_INVALID;
+	if (plr[p].data._pRSplType == RSPLTYPE_CHARGES
+	    && !(spl & ((unsigned __int64)1 << (plr[p].data._pRSpell - 1)))) {
+		plr[p].data._pRSpell = SPL_INVALID;
+		plr[p].data._pRSplType = RSPLTYPE_INVALID;
 		force_redraw = 255;
 	}
 
-	plr[p]._pISplLvlAdd = spllvladd;
-	plr[p]._pIEnAc = enac;
+	plr[p].data._pISplLvlAdd = spllvladd;
+	plr[p].data._pIEnAc = enac;
 
 	if (iflgs & ISPL_ALLRESZERO) {
 		// reset resistances to zero if the respective special effect is active
@@ -473,68 +483,68 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 
 	if (mr > MAXRESIST)
 		mr = MAXRESIST;
-	plr[p]._pMagResist = mr;
+	plr[p].data._pMagResist = mr;
 
 	if (fr > MAXRESIST)
 		fr = MAXRESIST;
-	plr[p]._pFireResist = fr;
+	plr[p].data._pFireResist = fr;
 
 	if (lr > MAXRESIST)
 		lr = MAXRESIST;
-	plr[p]._pLghtResist = lr;
+	plr[p].data._pLghtResist = lr;
 
-	if (plr[p]._pClass == PC_WARRIOR) {
+	if (plr[p].data._pClass == PC_WARRIOR) {
 		vadd *= 2;
 	}
-	if (plr[p]._pClass == PC_ROGUE) {
+	if (plr[p].data._pClass == PC_ROGUE) {
 		vadd += vadd >> 1;
 	}
 	ihp += (vadd << 6);
 
-	if (plr[p]._pClass == PC_SORCERER) {
+	if (plr[p].data._pClass == PC_SORCERER) {
 		madd *= 2;
 	}
-	if (plr[p]._pClass == PC_ROGUE) {
+	if (plr[p].data._pClass == PC_ROGUE) {
 		madd += madd >> 1;
 	}
 	imana += (madd << 6);
 
-	plr[p]._pHitPoints = ihp + plr[p]._pHPBase;
-	plr[p]._pMaxHP = ihp + plr[p]._pMaxHPBase;
+	plr[p].data._pHitPoints = ihp + plr[p].data._pHPBase;
+	plr[p].data._pMaxHP = ihp + plr[p].data._pMaxHPBase;
 
-	if (p == myplr && (plr[p]._pHitPoints >> 6) <= 0) {
-		SetPlayerHitPoints(p, 0);
+	if (p == myplr() && (plr[p].data._pHitPoints >> 6) <= 0) {
+		plr[p].SetPlayerHitPoints(0);
 	}
 
-	plr[p]._pMana = imana + plr[p]._pManaBase;
-	plr[p]._pMaxMana = imana + plr[p]._pMaxManaBase;
+	plr[p].data._pMana = imana + plr[p].data._pManaBase;
+	plr[p].data._pMaxMana = imana + plr[p].data._pMaxManaBase;
 
-	plr[p]._pIFMinDam = fmin;
-	plr[p]._pIFMaxDam = fmax;
-	plr[p]._pILMinDam = lmin;
-	plr[p]._pILMaxDam = lmax;
+	plr[p].data._pIFMinDam = fmin;
+	plr[p].data._pIFMaxDam = fmax;
+	plr[p].data._pILMinDam = lmin;
+	plr[p].data._pILMaxDam = lmax;
 
 	if (iflgs & ISPL_INFRAVISION) {
-		plr[p]._pInfraFlag = TRUE;
+		plr[p].data._pInfraFlag = TRUE;
 	} else {
-		plr[p]._pInfraFlag = FALSE;
+		plr[p].data._pInfraFlag = FALSE;
 	}
 
-	plr[p]._pBlockFlag = FALSE;
-	plr[p]._pwtype = WT_MELEE;
+	plr[p].data._pBlockFlag = FALSE;
+	plr[p].data._pwtype = WT_MELEE;
 
 	g = 0;
 
-	if (plr[p].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-	    && plr[p].InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON
-	    && plr[p].InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
-		g = plr[p].InvBody[INVLOC_HAND_LEFT]._itype;
+	if (plr[p].data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
+	    && plr[p].data.InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON
+	    && plr[p].data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
+		g = plr[p].data.InvBody[INVLOC_HAND_LEFT]._itype;
 	}
 
-	if (plr[p].InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE
-	    && plr[p].InvBody[INVLOC_HAND_RIGHT]._iClass == ICLASS_WEAPON
-	    && plr[p].InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
-		g = plr[p].InvBody[INVLOC_HAND_RIGHT]._itype;
+	if (plr[p].data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE
+	    && plr[p].data.InvBody[INVLOC_HAND_RIGHT]._iClass == ICLASS_WEAPON
+	    && plr[p].data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
+		g = plr[p].data.InvBody[INVLOC_HAND_RIGHT]._itype;
 	}
 
 	switch (g) {
@@ -545,7 +555,7 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 		g = ANIM_ID_AXE;
 		break;
 	case ITYPE_BOW:
-		plr[p]._pwtype = WT_RANGED;
+		plr[p].data._pwtype = WT_RANGED;
 		g = ANIM_ID_BOW;
 		break;
 	case ITYPE_MACE:
@@ -556,50 +566,50 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 		break;
 	}
 
-	if (plr[p].InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD && plr[p].InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
-		plr[p]._pBlockFlag = TRUE;
+	if (plr[p].data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD && plr[p].data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
+		plr[p].data._pBlockFlag = TRUE;
 		g++;
 	}
-	if (plr[p].InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD && plr[p].InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
-		plr[p]._pBlockFlag = TRUE;
+	if (plr[p].data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD && plr[p].data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
+		plr[p].data._pBlockFlag = TRUE;
 		g++;
 	}
 
 #ifndef SPAWN
-	if (plr[p].InvBody[INVLOC_CHEST]._itype == ITYPE_MARMOR && plr[p].InvBody[INVLOC_CHEST]._iStatFlag) {
+	if (plr[p].data.InvBody[INVLOC_CHEST]._itype == ITYPE_MARMOR && plr[p].data.InvBody[INVLOC_CHEST]._iStatFlag) {
 		g += ANIM_ID_MEDIUM_ARMOR;
 	}
-	if (plr[p].InvBody[INVLOC_CHEST]._itype == ITYPE_HARMOR && plr[p].InvBody[INVLOC_CHEST]._iStatFlag) {
+	if (plr[p].data.InvBody[INVLOC_CHEST]._itype == ITYPE_HARMOR && plr[p].data.InvBody[INVLOC_CHEST]._iStatFlag) {
 		g += ANIM_ID_HEAVY_ARMOR;
 	}
 #endif
 
-	if (plr[p]._pgfxnum != g && Loadgfx) {
-		plr[p]._pgfxnum = g;
-		plr[p]._pGFXLoad = 0;
-		LoadPlrGFX(p, PFILE_STAND);
-		SetPlrAnims(p);
+	if (plr[p].data._pgfxnum != g && Loadgfx) {
+		plr[p].data._pgfxnum = g;
+		plr[p].data._pGFXLoad = 0;
+		plr[p].LoadPlrGFX(PFILE_STAND);
+		plr[p].SetPlrAnims();
 
-		d = plr[p]._pdir;
+		d = plr[p].data._pdir;
 
-		assert(plr[p]._pNAnim[d]);
-		plr[p]._pAnimData = plr[p]._pNAnim[d];
+		assert(plr[p].data._pNAnim[d]);
+		plr[p].data._pAnimData = plr[p].data._pNAnim[d];
 
-		plr[p]._pAnimLen = plr[p]._pNFrames;
-		plr[p]._pAnimFrame = 1;
-		plr[p]._pAnimCnt = 0;
-		plr[p]._pAnimDelay = 3;
-		plr[p]._pAnimWidth = plr[p]._pNWidth;
-		plr[p]._pAnimWidth2 = (plr[p]._pNWidth - 64) >> 1;
+		plr[p].data._pAnimLen = plr[p].data._pNFrames;
+		plr[p].data._pAnimFrame = 1;
+		plr[p].data._pAnimCnt = 0;
+		plr[p].data._pAnimDelay = 3;
+		plr[p].data._pAnimWidth = plr[p].data._pNWidth;
+		plr[p].data._pAnimWidth2 = (plr[p].data._pNWidth - 64) >> 1;
 	} else {
-		plr[p]._pgfxnum = g;
+		plr[p].data._pgfxnum = g;
 	}
 
 	for (i = 0; i < nummissiles; i++) {
 		mi = missileactive[i];
 		if (missile[mi]._mitype == MIS_MANASHIELD && missile[mi]._misource == p) {
-			missile[mi]._miVar1 = plr[p]._pHitPoints;
-			missile[mi]._miVar2 = plr[p]._pHPBase;
+			missile[mi]._miVar1 = plr[p].data._pHitPoints;
+			missile[mi]._miVar2 = plr[p].data._pHPBase;
 		}
 	}
 
@@ -611,24 +621,24 @@ void CalcPlrScrolls(int p)
 {
 	int i, j;
 
-	plr[p]._pScrlSpells = 0;
-	for (i = 0; i < plr[p]._pNumInv; i++) {
-		if (plr[p].InvList[i]._itype != ITYPE_NONE && (plr[p].InvList[i]._iMiscId == IMISC_SCROLL || plr[p].InvList[i]._iMiscId == IMISC_SCROLLT)) {
-			if (plr[p].InvList[i]._iStatFlag)
-				plr[p]._pScrlSpells |= (__int64)1 << (plr[p].InvList[i]._iSpell - 1);
+	plr[p].data._pScrlSpells = 0;
+	for (i = 0; i < plr[p].data._pNumInv; i++) {
+		if (plr[p].data.InvList[i]._itype != ITYPE_NONE && (plr[p].data.InvList[i]._iMiscId == IMISC_SCROLL || plr[p].data.InvList[i]._iMiscId == IMISC_SCROLLT)) {
+			if (plr[p].data.InvList[i]._iStatFlag)
+				plr[p].data._pScrlSpells |= (__int64)1 << (plr[p].data.InvList[i]._iSpell - 1);
 		}
 	}
 
 	for (j = 0; j < MAXBELTITEMS; j++) {
-		if (plr[p].SpdList[j]._itype != ITYPE_NONE && (plr[p].SpdList[j]._iMiscId == IMISC_SCROLL || plr[p].SpdList[j]._iMiscId == IMISC_SCROLLT)) {
-			if (plr[p].SpdList[j]._iStatFlag)
-				plr[p]._pScrlSpells |= (__int64)1 << (plr[p].SpdList[j]._iSpell - 1);
+		if (plr[p].data.SpdList[j]._itype != ITYPE_NONE && (plr[p].data.SpdList[j]._iMiscId == IMISC_SCROLL || plr[p].data.SpdList[j]._iMiscId == IMISC_SCROLLT)) {
+			if (plr[p].data.SpdList[j]._iStatFlag)
+				plr[p].data._pScrlSpells |= (__int64)1 << (plr[p].data.SpdList[j]._iSpell - 1);
 		}
 	}
-	if (plr[p]._pRSplType == RSPLTYPE_SCROLL) {
-		if (!(plr[p]._pScrlSpells & 1 << (plr[p]._pRSpell - 1))) {
-			plr[p]._pRSpell = SPL_INVALID;
-			plr[p]._pRSplType = RSPLTYPE_INVALID;
+	if (plr[p].data._pRSplType == RSPLTYPE_SCROLL) {
+		if (!(plr[p].data._pScrlSpells & 1 << (plr[p].data._pRSpell - 1))) {
+			plr[p].data._pRSpell = SPL_INVALID;
+			plr[p].data._pRSplType = RSPLTYPE_INVALID;
 			force_redraw = 255;
 		}
 	}
@@ -636,11 +646,11 @@ void CalcPlrScrolls(int p)
 
 void CalcPlrStaff(int p)
 {
-	plr[p]._pISpells = 0;
-	if (plr[p].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-	    && plr[p].InvBody[INVLOC_HAND_LEFT]._iStatFlag
-	    && plr[p].InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
-		plr[p]._pISpells |= (__int64)1 << (plr[p].InvBody[INVLOC_HAND_LEFT]._iSpell - 1);
+	plr[p].data._pISpells = 0;
+	if (plr[p].data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
+	    && plr[p].data.InvBody[INVLOC_HAND_LEFT]._iStatFlag
+	    && plr[p].data.InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
+		plr[p].data._pISpells |= (__int64)1 << (plr[p].data.InvBody[INVLOC_HAND_LEFT]._iSpell - 1);
 	}
 }
 
@@ -651,7 +661,7 @@ void CalcSelfItems(int pnum)
 	BOOL sf, changeflag;
 	int sa, ma, da;
 
-	p = &plr[pnum];
+	p = &plr[pnum].data;
 
 	sa = 0;
 	ma = 0;
@@ -697,7 +707,7 @@ void CalcPlrItemMin(int pnum)
 	ItemStruct *pi;
 	int i;
 
-	p = &plr[pnum];
+	p = &plr[pnum].data;
 	pi = p->InvList;
 	i = p->_pNumInv;
 
@@ -740,20 +750,20 @@ void CalcPlrBookVals(int p)
 		}
 	}
 
-	for (i = 0; i < plr[p]._pNumInv; i++) {
-		if (plr[p].InvList[i]._itype == ITYPE_MISC && plr[p].InvList[i]._iMiscId == IMISC_BOOK) {
-			plr[p].InvList[i]._iMinMag = spelldata[plr[p].InvList[i]._iSpell].sMinInt;
-			slvl = plr[p]._pSplLvl[plr[p].InvList[i]._iSpell];
+	for (i = 0; i < plr[p].data._pNumInv; i++) {
+		if (plr[p].data.InvList[i]._itype == ITYPE_MISC && plr[p].data.InvList[i]._iMiscId == IMISC_BOOK) {
+			plr[p].data.InvList[i]._iMinMag = spelldata[plr[p].data.InvList[i]._iSpell].sMinInt;
+			slvl = plr[p].data._pSplLvl[plr[p].data.InvList[i]._iSpell];
 
 			while (slvl != 0) {
-				plr[p].InvList[i]._iMinMag += 20 * plr[p].InvList[i]._iMinMag / 100;
+				plr[p].data.InvList[i]._iMinMag += 20 * plr[p].data.InvList[i]._iMinMag / 100;
 				slvl--;
-				if (plr[p].InvList[i]._iMinMag + 20 * plr[p].InvList[i]._iMinMag / 100 > 255) {
-					plr[p].InvList[i]._iMinMag = 255;
+				if (plr[p].data.InvList[i]._iMinMag + 20 * plr[p].data.InvList[i]._iMinMag / 100 > 255) {
+					plr[p].data.InvList[i]._iMinMag = 255;
 					slvl = 0;
 				}
 			}
-			plr[p].InvList[i]._iStatFlag = ItemMinStats(&plr[p], &plr[p].InvList[i]);
+			plr[p].data.InvList[i]._iStatFlag = ItemMinStats(&plr[p].data, &plr[p].data.InvList[i]);
 		}
 	}
 }
@@ -764,11 +774,11 @@ void CalcPlrInv(int p, BOOL Loadgfx)
 	CalcSelfItems(p);
 	CalcPlrItemVals(p, Loadgfx);
 	CalcPlrItemMin(p);
-	if (p == myplr) {
+	if (p == myplr()) {
 		CalcPlrBookVals(p);
 		CalcPlrScrolls(p);
 		CalcPlrStaff(p);
-		if (p == myplr && level.currlevel == 0)
+		if (p == myplr() && level.currlevel == 0)
 			RecalcStoreStats();
 	}
 }
@@ -830,9 +840,9 @@ void GetGoldSeed(int pnum, ItemStruct *h)
 			if (item[ii]._iSeed == s)
 				doneflag = FALSE;
 		}
-		if (pnum == myplr) {
-			for (i = 0; i < plr[pnum]._pNumInv; i++) {
-				if (plr[pnum].InvList[i]._iSeed == s)
+		if (pnum == myplr()) {
+			for (i = 0; i < plr[pnum].data._pNumInv; i++) {
+				if (plr[pnum].data.InvList[i]._iSeed == s)
 					doneflag = FALSE;
 			}
 		}
@@ -859,7 +869,7 @@ void SetPlrHandGoldCurs(ItemStruct *h)
 void CreatePlrItems(int p)
 {
 	int i;
-	ItemStruct *pi = plr[p].InvBody;
+	ItemStruct *pi = plr[p].data.InvBody;
 
 	for (i = NUM_INVLOC; i != 0; i--) {
 		pi->_itype = ITYPE_NONE;
@@ -868,90 +878,90 @@ void CreatePlrItems(int p)
 
 	// converting this to a for loop creates a `rep stosd` instruction,
 	// so this probably actually was a memset
-	memset(&plr[p].InvGrid, 0, sizeof(plr[p].InvGrid));
+	memset(&plr[p].data.InvGrid, 0, sizeof(plr[p].data.InvGrid));
 
-	pi = plr[p].InvList;
+	pi = plr[p].data.InvList;
 	for (i = NUM_INV_GRID_ELEM; i != 0; i--) {
 		pi->_itype = ITYPE_NONE;
 		pi++;
 	}
 
-	plr[p]._pNumInv = 0;
+	plr[p].data._pNumInv = 0;
 
-	pi = &plr[p].SpdList[0];
+	pi = &plr[p].data.SpdList[0];
 	for (i = MAXBELTITEMS; i != 0; i--) {
 		pi->_itype = ITYPE_NONE;
 		pi++;
 	}
 
-	switch (plr[p]._pClass) {
+	switch (plr[p].data._pClass) {
 	case PC_WARRIOR:
-		SetPlrHandItem(&plr[p].InvBody[INVLOC_HAND_LEFT], IDI_WARRIOR);
-		GetPlrHandSeed(&plr[p].InvBody[INVLOC_HAND_LEFT]);
+		SetPlrHandItem(&plr[p].data.InvBody[INVLOC_HAND_LEFT], IDI_WARRIOR);
+		GetPlrHandSeed(&plr[p].data.InvBody[INVLOC_HAND_LEFT]);
 
-		SetPlrHandItem(&plr[p].InvBody[INVLOC_HAND_RIGHT], IDI_WARRSHLD);
-		GetPlrHandSeed(&plr[p].InvBody[INVLOC_HAND_RIGHT]);
+		SetPlrHandItem(&plr[p].data.InvBody[INVLOC_HAND_RIGHT], IDI_WARRSHLD);
+		GetPlrHandSeed(&plr[p].data.InvBody[INVLOC_HAND_RIGHT]);
 
 #ifdef _DEBUG
 		if (!debug_mode_key_w) {
 #endif
-			SetPlrHandItem(&plr[p].HoldItem, IDI_WARRCLUB);
-			GetPlrHandSeed(&plr[p].HoldItem);
-			AutoPlace(p, 0, 1, 3, TRUE);
+			SetPlrHandItem(&plr[p].data.HoldItem, IDI_WARRCLUB);
+			GetPlrHandSeed(&plr[p].data.HoldItem);
+			plr[p].inventory.AutoPlace(0, 1, 3, TRUE);
 #ifdef _DEBUG
 		}
 #endif
 
-		SetPlrHandItem(&plr[p].SpdList[0], IDI_HEAL);
-		GetPlrHandSeed(&plr[p].SpdList[0]);
+		SetPlrHandItem(&plr[p].data.SpdList[0], IDI_HEAL);
+		GetPlrHandSeed(&plr[p].data.SpdList[0]);
 
-		SetPlrHandItem(&plr[p].SpdList[1], IDI_HEAL);
-		GetPlrHandSeed(&plr[p].SpdList[1]);
+		SetPlrHandItem(&plr[p].data.SpdList[1], IDI_HEAL);
+		GetPlrHandSeed(&plr[p].data.SpdList[1]);
 		break;
 #ifndef SPAWN
 	case PC_ROGUE:
-		SetPlrHandItem(&plr[p].InvBody[INVLOC_HAND_LEFT], IDI_ROGUE);
-		GetPlrHandSeed(&plr[p].InvBody[INVLOC_HAND_LEFT]);
+		SetPlrHandItem(&plr[p].data.InvBody[INVLOC_HAND_LEFT], IDI_ROGUE);
+		GetPlrHandSeed(&plr[p].data.InvBody[INVLOC_HAND_LEFT]);
 
-		SetPlrHandItem(&plr[p].SpdList[0], IDI_HEAL);
-		GetPlrHandSeed(&plr[p].SpdList[0]);
+		SetPlrHandItem(&plr[p].data.SpdList[0], IDI_HEAL);
+		GetPlrHandSeed(&plr[p].data.SpdList[0]);
 
-		SetPlrHandItem(&plr[p].SpdList[1], IDI_HEAL);
-		GetPlrHandSeed(&plr[p].SpdList[1]);
+		SetPlrHandItem(&plr[p].data.SpdList[1], IDI_HEAL);
+		GetPlrHandSeed(&plr[p].data.SpdList[1]);
 		break;
 	case PC_SORCERER:
-		SetPlrHandItem(&plr[p].InvBody[INVLOC_HAND_LEFT], IDI_SORCEROR);
-		GetPlrHandSeed(&plr[p].InvBody[INVLOC_HAND_LEFT]);
+		SetPlrHandItem(&plr[p].data.InvBody[INVLOC_HAND_LEFT], IDI_SORCEROR);
+		GetPlrHandSeed(&plr[p].data.InvBody[INVLOC_HAND_LEFT]);
 
-		SetPlrHandItem(&plr[p].SpdList[0], IDI_MANA);
-		GetPlrHandSeed(&plr[p].SpdList[0]);
+		SetPlrHandItem(&plr[p].data.SpdList[0], IDI_MANA);
+		GetPlrHandSeed(&plr[p].data.SpdList[0]);
 
-		SetPlrHandItem(&plr[p].SpdList[1], IDI_MANA);
-		GetPlrHandSeed(&plr[p].SpdList[1]);
+		SetPlrHandItem(&plr[p].data.SpdList[1], IDI_MANA);
+		GetPlrHandSeed(&plr[p].data.SpdList[1]);
 		break;
 #endif
 	}
 
-	SetPlrHandItem(&plr[p].HoldItem, IDI_GOLD);
-	GetPlrHandSeed(&plr[p].HoldItem);
+	SetPlrHandItem(&plr[p].data.HoldItem, IDI_GOLD);
+	GetPlrHandSeed(&plr[p].data.HoldItem);
 
 #ifdef _DEBUG
 	if (!debug_mode_key_w) {
 #endif
-		plr[p].HoldItem._ivalue = 100;
-		plr[p].HoldItem._iCurs = ICURS_GOLD_SMALL;
-		plr[p]._pGold = plr[p].HoldItem._ivalue;
-		plr[p].InvList[plr[p]._pNumInv++] = plr[p].HoldItem;
-		plr[p].InvGrid[30] = plr[p]._pNumInv;
+		plr[p].data.HoldItem._ivalue = 100;
+		plr[p].data.HoldItem._iCurs = ICURS_GOLD_SMALL;
+		plr[p].data._pGold = plr[p].data.HoldItem._ivalue;
+		plr[p].data.InvList[plr[p].data._pNumInv++] = plr[p].data.HoldItem;
+		plr[p].data.InvGrid[30] = plr[p].data._pNumInv;
 #ifdef _DEBUG
 	} else {
-		plr[p].HoldItem._ivalue = GOLD_MAX_LIMIT;
-		plr[p].HoldItem._iCurs = ICURS_GOLD_LARGE;
-		plr[p]._pGold = plr[p].HoldItem._ivalue * 40;
+		plr[p].data.HoldItem._ivalue = GOLD_MAX_LIMIT;
+		plr[p].data.HoldItem._iCurs = ICURS_GOLD_LARGE;
+		plr[p].data._pGold = plr[p].data.HoldItem._ivalue * 40;
 		for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
-			GetPlrHandSeed(&plr[p].HoldItem);
-			plr[p].InvList[plr[p]._pNumInv++] = plr[p].HoldItem;
-			plr[p].InvGrid[i] = plr[p]._pNumInv;
+			GetPlrHandSeed(&plr[p].data.HoldItem);
+			plr[p].data.InvList[plr[p].data._pNumInv++] = plr[p].data.HoldItem;
+			plr[p].data.InvGrid[i] = plr[p].data._pNumInv;
 		}
 	}
 #endif
@@ -1643,13 +1653,13 @@ void SaveItemPower(int i, int power, int param1, int param2, int minval, int max
 		item[i]._iCurs = param1;
 		break;
 	case IPL_ADDACLIFE:
-		item[i]._iPLHP = (plr[myplr]._pIBonusAC + plr[myplr]._pIAC + plr[myplr]._pDexterity / 5) << 6;
+		item[i]._iPLHP = (plr.local().data._pIBonusAC + plr.local().data._pIAC + plr.local().data._pDexterity / 5) << 6;
 		break;
 	case IPL_ADDMANAAC:
-		item[i]._iAC += (plr[myplr]._pMaxManaBase >> 6) / 10;
+		item[i]._iAC += (plr.local().data._pMaxManaBase >> 6) / 10;
 		break;
 	case IPL_FIRERESCLVL:
-		item[i]._iPLFR = 30 - plr[myplr]._pLevel;
+		item[i]._iPLFR = 30 - plr.local().data._pLevel;
 		if (item[i]._iPLFR < 0)
 			item[i]._iPLFR = 0;
 		break;
@@ -1803,7 +1813,7 @@ void SetupItem(int i)
 	item[i]._iIdentified = FALSE;
 	item[i]._iPostDraw = FALSE;
 
-	if (!plr[myplr].pLvlLoad) {
+	if (!plr.local().data.pLvlLoad) {
 		item[i]._iAnimFrame = 1;
 		item[i]._iAnimFlag = TRUE;
 		item[i]._iSelFlag = 0;
@@ -2515,14 +2525,14 @@ void CheckIdentify(int pnum, int cii)
 	ItemStruct *pi;
 
 	if (cii >= NUM_INVLOC)
-		pi = &plr[pnum].InvList[cii - NUM_INVLOC];
+		pi = &plr[pnum].data.InvList[cii - NUM_INVLOC];
 	else
-		pi = &plr[pnum].InvBody[cii];
+		pi = &plr[pnum].data.InvBody[cii];
 
 	pi->_iIdentified = TRUE;
 	CalcPlrInv(pnum, TRUE);
 
-	if (pnum == myplr)
+	if (pnum == myplr())
 		SetCursor_(CURSOR_HAND);
 }
 
@@ -2531,7 +2541,7 @@ void DoRepair(int pnum, int cii)
 	PlayerStruct *p;
 	ItemStruct *pi;
 
-	p = &plr[pnum];
+	p = &plr[pnum].data;
 	PlaySfxLoc(IS_REPAIR, p->_px, p->_py);
 
 	if (cii >= NUM_INVLOC) {
@@ -2543,7 +2553,7 @@ void DoRepair(int pnum, int cii)
 	RepairItem(pi, p->_pLevel);
 	CalcPlrInv(pnum, TRUE);
 
-	if (pnum == myplr)
+	if (pnum == myplr())
 		SetCursor_(CURSOR_HAND);
 }
 
@@ -2584,7 +2594,7 @@ void DoRecharge(int pnum, int cii)
 	ItemStruct *pi;
 	int r;
 
-	p = &plr[pnum];
+	p = &plr[pnum].data;
 	if (cii >= NUM_INVLOC) {
 		pi = &p->InvList[cii - NUM_INVLOC];
 	} else {
@@ -2597,7 +2607,7 @@ void DoRecharge(int pnum, int cii)
 		CalcPlrInv(pnum, TRUE);
 	}
 
-	if (pnum == myplr)
+	if (pnum == myplr())
 		SetCursor_(CURSOR_HAND);
 }
 
@@ -3133,146 +3143,146 @@ void UseItem(int p, int Mid, int spl)
 	switch (Mid) {
 	case IMISC_HEAL:
 	case IMISC_MEAT:
-		j = plr[p]._pMaxHP >> 8;
+		j = plr[p].data._pMaxHP >> 8;
 		l = ((j >> 1) + random_(39, j)) << 6;
-		if (plr[p]._pClass == PC_WARRIOR)
+		if (plr[p].data._pClass == PC_WARRIOR)
 			l *= 2;
-		if (plr[p]._pClass == PC_ROGUE)
+		if (plr[p].data._pClass == PC_ROGUE)
 			l += l >> 1;
-		plr[p]._pHitPoints += l;
-		if (plr[p]._pHitPoints > plr[p]._pMaxHP)
-			plr[p]._pHitPoints = plr[p]._pMaxHP;
-		plr[p]._pHPBase += l;
-		if (plr[p]._pHPBase > plr[p]._pMaxHPBase)
-			plr[p]._pHPBase = plr[p]._pMaxHPBase;
+		plr[p].data._pHitPoints += l;
+		if (plr[p].data._pHitPoints > plr[p].data._pMaxHP)
+			plr[p].data._pHitPoints = plr[p].data._pMaxHP;
+		plr[p].data._pHPBase += l;
+		if (plr[p].data._pHPBase > plr[p].data._pMaxHPBase)
+			plr[p].data._pHPBase = plr[p].data._pMaxHPBase;
 		drawhpflag = TRUE;
 		break;
 	case IMISC_FULLHEAL:
-		plr[p]._pHitPoints = plr[p]._pMaxHP;
-		plr[p]._pHPBase = plr[p]._pMaxHPBase;
+		plr[p].data._pHitPoints = plr[p].data._pMaxHP;
+		plr[p].data._pHPBase = plr[p].data._pMaxHPBase;
 		drawhpflag = TRUE;
 		break;
 	case IMISC_MANA:
-		j = plr[p]._pMaxMana >> 8;
+		j = plr[p].data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
-		if (plr[p]._pClass == PC_SORCERER)
+		if (plr[p].data._pClass == PC_SORCERER)
 			l *= 2;
-		if (plr[p]._pClass == PC_ROGUE)
+		if (plr[p].data._pClass == PC_ROGUE)
 			l += l >> 1;
-		if (!(plr[p]._pIFlags & ISPL_NOMANA)) {
-			plr[p]._pMana += l;
-			if (plr[p]._pMana > plr[p]._pMaxMana)
-				plr[p]._pMana = plr[p]._pMaxMana;
-			plr[p]._pManaBase += l;
-			if (plr[p]._pManaBase > plr[p]._pMaxManaBase)
-				plr[p]._pManaBase = plr[p]._pMaxManaBase;
+		if (!(plr[p].data._pIFlags & ISPL_NOMANA)) {
+			plr[p].data._pMana += l;
+			if (plr[p].data._pMana > plr[p].data._pMaxMana)
+				plr[p].data._pMana = plr[p].data._pMaxMana;
+			plr[p].data._pManaBase += l;
+			if (plr[p].data._pManaBase > plr[p].data._pMaxManaBase)
+				plr[p].data._pManaBase = plr[p].data._pMaxManaBase;
 			drawmanaflag = TRUE;
 		}
 		break;
 	case IMISC_FULLMANA:
-		if (!(plr[p]._pIFlags & ISPL_NOMANA)) {
-			plr[p]._pMana = plr[p]._pMaxMana;
-			plr[p]._pManaBase = plr[p]._pMaxManaBase;
+		if (!(plr[p].data._pIFlags & ISPL_NOMANA)) {
+			plr[p].data._pMana = plr[p].data._pMaxMana;
+			plr[p].data._pManaBase = plr[p].data._pMaxManaBase;
 			drawmanaflag = TRUE;
 		}
 		break;
 	case IMISC_ELIXSTR:
-		ModifyPlrStr(p, 1);
+		plr[p].ModifyPlrStr(1);
 		break;
 	case IMISC_ELIXMAG:
-		ModifyPlrMag(p, 1);
+		plr[p].ModifyPlrMag(1);
 		break;
 	case IMISC_ELIXDEX:
-		ModifyPlrDex(p, 1);
+		plr[p].ModifyPlrDex(1);
 		break;
 	case IMISC_ELIXVIT:
-		ModifyPlrVit(p, 1);
+		plr[p].ModifyPlrVit(1);
 		break;
 	case IMISC_REJUV:
-		j = plr[p]._pMaxHP >> 8;
+		j = plr[p].data._pMaxHP >> 8;
 		l = ((j >> 1) + random_(39, j)) << 6;
-		if (plr[p]._pClass == PC_WARRIOR)
+		if (plr[p].data._pClass == PC_WARRIOR)
 			l *= 2;
-		if (plr[p]._pClass == PC_ROGUE)
+		if (plr[p].data._pClass == PC_ROGUE)
 			l += l >> 1;
-		plr[p]._pHitPoints += l;
-		if (plr[p]._pHitPoints > plr[p]._pMaxHP)
-			plr[p]._pHitPoints = plr[p]._pMaxHP;
-		plr[p]._pHPBase += l;
-		if (plr[p]._pHPBase > plr[p]._pMaxHPBase)
-			plr[p]._pHPBase = plr[p]._pMaxHPBase;
+		plr[p].data._pHitPoints += l;
+		if (plr[p].data._pHitPoints > plr[p].data._pMaxHP)
+			plr[p].data._pHitPoints = plr[p].data._pMaxHP;
+		plr[p].data._pHPBase += l;
+		if (plr[p].data._pHPBase > plr[p].data._pMaxHPBase)
+			plr[p].data._pHPBase = plr[p].data._pMaxHPBase;
 		drawhpflag = TRUE;
-		j = plr[p]._pMaxMana >> 8;
+		j = plr[p].data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
-		if (plr[p]._pClass == PC_SORCERER)
+		if (plr[p].data._pClass == PC_SORCERER)
 			l *= 2;
-		if (plr[p]._pClass == PC_ROGUE)
+		if (plr[p].data._pClass == PC_ROGUE)
 			l += l >> 1;
-		if (!(plr[p]._pIFlags & ISPL_NOMANA)) {
-			plr[p]._pMana += l;
-			if (plr[p]._pMana > plr[p]._pMaxMana)
-				plr[p]._pMana = plr[p]._pMaxMana;
-			plr[p]._pManaBase += l;
-			if (plr[p]._pManaBase > plr[p]._pMaxManaBase)
-				plr[p]._pManaBase = plr[p]._pMaxManaBase;
+		if (!(plr[p].data._pIFlags & ISPL_NOMANA)) {
+			plr[p].data._pMana += l;
+			if (plr[p].data._pMana > plr[p].data._pMaxMana)
+				plr[p].data._pMana = plr[p].data._pMaxMana;
+			plr[p].data._pManaBase += l;
+			if (plr[p].data._pManaBase > plr[p].data._pMaxManaBase)
+				plr[p].data._pManaBase = plr[p].data._pMaxManaBase;
 			drawmanaflag = TRUE;
 		}
 		break;
 	case IMISC_FULLREJUV:
-		plr[p]._pHitPoints = plr[p]._pMaxHP;
-		plr[p]._pHPBase = plr[p]._pMaxHPBase;
+		plr[p].data._pHitPoints = plr[p].data._pMaxHP;
+		plr[p].data._pHPBase = plr[p].data._pMaxHPBase;
 		drawhpflag = TRUE;
-		if (!(plr[p]._pIFlags & ISPL_NOMANA)) {
-			plr[p]._pMana = plr[p]._pMaxMana;
-			plr[p]._pManaBase = plr[p]._pMaxManaBase;
+		if (!(plr[p].data._pIFlags & ISPL_NOMANA)) {
+			plr[p].data._pMana = plr[p].data._pMaxMana;
+			plr[p].data._pManaBase = plr[p].data._pMaxManaBase;
 			drawmanaflag = TRUE;
 		}
 		break;
 	case IMISC_SCROLL:
 		if (spelldata[spl].sTargeted) {
-			plr[p]._pTSpell = spl;
-			plr[p]._pTSplType = RSPLTYPE_INVALID;
-			if (p == myplr)
+			plr[p].data._pTSpell = spl;
+			plr[p].data._pTSplType = RSPLTYPE_INVALID;
+			if (p == myplr())
 				NewCursor(CURSOR_TELEPORT);
 		} else {
-			ClrPlrPath(p);
-			plr[p]._pSpell = spl;
-			plr[p]._pSplType = RSPLTYPE_INVALID;
-			plr[p]._pSplFrom = 3;
-			plr[p].destAction = ACTION_SPELL;
-			plr[p].destParam1 = cursmx;
-			plr[p].destParam2 = cursmy;
-			if (p == myplr && spl == SPL_NOVA)
+			plr[p].ClrPlrPath();
+			plr[p].data._pSpell = spl;
+			plr[p].data._pSplType = RSPLTYPE_INVALID;
+			plr[p].data._pSplFrom = 3;
+			plr[p].data.destAction = ACTION_SPELL;
+			plr[p].data.destParam1 = cursmx;
+			plr[p].data.destParam2 = cursmy;
+			if (p == myplr() && spl == SPL_NOVA)
 				NetSendCmdLoc(TRUE, CMD_NOVA, cursmx, cursmy);
 		}
 		break;
 	case IMISC_SCROLLT:
 		if (spelldata[spl].sTargeted) {
-			plr[p]._pTSpell = spl;
-			plr[p]._pTSplType = RSPLTYPE_INVALID;
-			if (p == myplr)
+			plr[p].data._pTSpell = spl;
+			plr[p].data._pTSplType = RSPLTYPE_INVALID;
+			if (p == myplr())
 				NewCursor(CURSOR_TELEPORT);
 		} else {
-			ClrPlrPath(p);
-			plr[p]._pSpell = spl;
-			plr[p]._pSplType = RSPLTYPE_INVALID;
-			plr[p]._pSplFrom = 3;
-			plr[p].destAction = ACTION_SPELL;
-			plr[p].destParam1 = cursmx;
-			plr[p].destParam2 = cursmy;
+			plr[p].ClrPlrPath();
+			plr[p].data._pSpell = spl;
+			plr[p].data._pSplType = RSPLTYPE_INVALID;
+			plr[p].data._pSplFrom = 3;
+			plr[p].data.destAction = ACTION_SPELL;
+			plr[p].data.destParam1 = cursmx;
+			plr[p].data.destParam2 = cursmy;
 		}
 		break;
 	case IMISC_BOOK:
-		plr[p]._pMemSpells |= (__int64)1 << (spl - 1);
-		if (plr[p]._pSplLvl[spl] < 15)
-			plr[p]._pSplLvl[spl]++;
-		plr[p]._pMana += spelldata[spl].sManaCost << 6;
-		if (plr[p]._pMana > plr[p]._pMaxMana)
-			plr[p]._pMana = plr[p]._pMaxMana;
-		plr[p]._pManaBase += spelldata[spl].sManaCost << 6;
-		if (plr[p]._pManaBase > plr[p]._pMaxManaBase)
-			plr[p]._pManaBase = plr[p]._pMaxManaBase;
-		if (p == myplr)
+		plr[p].data._pMemSpells |= (__int64)1 << (spl - 1);
+		if (plr[p].data._pSplLvl[spl] < 15)
+			plr[p].data._pSplLvl[spl]++;
+		plr[p].data._pMana += spelldata[spl].sManaCost << 6;
+		if (plr[p].data._pMana > plr[p].data._pMaxMana)
+			plr[p].data._pMana = plr[p].data._pMaxMana;
+		plr[p].data._pManaBase += spelldata[spl].sManaCost << 6;
+		if (plr[p].data._pManaBase > plr[p].data._pMaxManaBase)
+			plr[p].data._pManaBase = plr[p].data._pMaxManaBase;
+		if (p == myplr())
 			CalcPlrBookVals(p);
 		drawmanaflag = TRUE;
 		break;
@@ -3280,10 +3290,10 @@ void UseItem(int p, int Mid, int spl)
 		doom_init();
 		break;
 	case IMISC_SPECELIX:
-		ModifyPlrStr(p, 3);
-		ModifyPlrMag(p, 3);
-		ModifyPlrDex(p, 3);
-		ModifyPlrVit(p, 3);
+		plr[p].ModifyPlrStr(3);
+		plr[p].ModifyPlrMag(3);
+		plr[p].ModifyPlrDex(3);
+		plr[p].ModifyPlrVit(3);
 		break;
 	}
 }
@@ -3293,11 +3303,11 @@ BOOL StoreStatOk(ItemStruct *h)
 	BOOL sf;
 
 	sf = TRUE;
-	if (plr[myplr]._pStrength < h->_iMinStr)
+	if (plr.local().data._pStrength < h->_iMinStr)
 		sf = FALSE;
-	if (plr[myplr]._pMagic < h->_iMinMag)
+	if (plr.local().data._pMagic < h->_iMinMag)
 		sf = FALSE;
-	if (plr[myplr]._pDexterity < h->_iMinDex)
+	if (plr.local().data._pDexterity < h->_iMinDex)
 		sf = FALSE;
 
 	return sf;
@@ -3561,7 +3571,7 @@ void WitchBookLevel(int ii)
 
 	if (witchitem[ii]._iMiscId == IMISC_BOOK) {
 		witchitem[ii]._iMinMag = spelldata[witchitem[ii]._iSpell].sMinInt;
-		slvl = plr[myplr]._pSplLvl[witchitem[ii]._iSpell];
+		slvl = plr.local().data._pSplLvl[witchitem[ii]._iSpell];
 		while (slvl) {
 			witchitem[ii]._iMinMag += 20 * witchitem[ii]._iMinMag / 100;
 			slvl--;
