@@ -25,7 +25,7 @@ register long rv;
 Example assert string:
 
 ```cpp
-"plr.local().data.InvGrid[i] <= plr.local().data._pNumInv"
+"myplr().data.InvGrid[i] <= myplr().data._pNumInv"
 ```
 
 3. The Rich header of the PE executable, which details the exact version of the original compilers and linkers used to build `Diablo.exe` (see [[3]], [[4]]).

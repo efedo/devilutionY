@@ -22,7 +22,7 @@ void pfile_write_hero()
 	DWORD save_num;
 	PkPlayerStruct pkplr;
 
-	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
+	save_num = pfile_get_save_num_from_name(myplr().data._pName);
 	if (pfile_open_archive(TRUE, save_num)) {
 		PackPlayer(&pkplr, myplr(), gbMaxPlayers == 1);
 		pfile_encode_hero(&pkplr);
@@ -150,7 +150,7 @@ BOOL pfile_rename_hero(const char *name_1, const char *name_2)
 
 void pfile_flush_W()
 {
-	pfile_flush(TRUE, pfile_get_save_num_from_name(plr.local().data._pName));
+	pfile_flush(TRUE, pfile_get_save_num_from_name(myplr().data._pName));
 }
 
 void game_2_ui_player(const PlayerStruct *p, _uiheroinfo *heroinfo, BOOL bHasSaveFile)
@@ -397,7 +397,7 @@ void pfile_read_player_from_save()
 void GetTempLevelNames(char *szTemp)
 {
 	// BUGFIX: function call has no purpose
-	pfile_get_save_num_from_name(plr.local().data._pName);
+	pfile_get_save_num_from_name(myplr().data._pName);
 	if (level.setlevel)
 		sprintf(szTemp, "temps%02d", level.setlvlnum);
 	else
@@ -409,7 +409,7 @@ void GetPermLevelNames(char *szPerm)
 	DWORD save_num;
 	BOOL has_file;
 
-	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
+	save_num = pfile_get_save_num_from_name(myplr().data._pName);
 	GetTempLevelNames(szPerm);
 	if (!pfile_open_archive(FALSE, save_num))
 		app_fatal("Unable to read to save file archive");
@@ -427,14 +427,14 @@ void GetPermLevelNames(char *szPerm)
 void pfile_get_game_name(char *dst)
 {
 	// BUGFIX: function call with no purpose
-	pfile_get_save_num_from_name(plr.local().data._pName);
+	pfile_get_save_num_from_name(myplr().data._pName);
 	strcpy(dst, "game");
 }
 
 void pfile_remove_temp_files()
 {
 	if (gbMaxPlayers <= 1) {
-		DWORD save_num = pfile_get_save_num_from_name(plr.local().data._pName);
+		DWORD save_num = pfile_get_save_num_from_name(myplr().data._pName);
 		if (!pfile_open_archive(FALSE, save_num))
 			app_fatal("Unable to write to save file archive");
 		mpqapi_remove_hash_entries(GetTempSaveNames);
@@ -465,7 +465,7 @@ void pfile_rename_temp_to_perm()
 	char szTemp[MAX_PATH];
 	char szPerm[MAX_PATH];
 
-	dwChar = pfile_get_save_num_from_name(plr.local().data._pName);
+	dwChar = pfile_get_save_num_from_name(myplr().data._pName);
 	assert(dwChar < MAX_CHARACTERS);
 	assert(gbMaxPlayers == 1);
 	if (!pfile_open_archive(FALSE, dwChar))
@@ -508,7 +508,7 @@ void pfile_write_save_file(const char *pszName, BYTE *pbData, DWORD dwLen, DWORD
 	char FileName[MAX_PATH];
 
 	pfile_strcpy(FileName, pszName);
-	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
+	save_num = pfile_get_save_num_from_name(myplr().data._pName);
 	{
 		char password[16] = PASSWORD_SINGLE;
 		if (gbMaxPlayers > 1)
@@ -535,7 +535,7 @@ BYTE *pfile_read(const char *pszName, DWORD *pdwLen)
 	BYTE *buf;
 
 	pfile_strcpy(FileName, pszName);
-	save_num = pfile_get_save_num_from_name(plr.local().data._pName);
+	save_num = pfile_get_save_num_from_name(myplr().data._pName);
 	archive = pfile_open_save_archive(NULL, save_num);
 	if (archive == NULL)
 		app_fatal("Unable to open save file archive");

@@ -180,7 +180,7 @@ void CheckQuests()
 		    && nummonsters == 4
 		    && quests[Q_PWATER]._qactive != QUEST_DONE) {
 			quests[Q_PWATER]._qactive = QUEST_DONE;
-			PlaySfxLoc(IS_QUESTDN, plr.local().data._px, plr.local().data._py);
+			PlaySfxLoc(IS_QUESTDN, myplr().data._px, myplr().data._py);
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
 			WaterDone = 32;
 		}
@@ -188,17 +188,17 @@ void CheckQuests()
 			palette_update_quest_palette(WaterDone);
 			WaterDone--;
 		}
-	} else if (plr.local().data._pmode == PM_STAND) {
+	} else if (myplr().data._pmode == PM_STAND) {
 		for (i = 0; i < MAXQUESTS; i++) {
 			if (level.currlevel == quests[i]._qlevel
 			    && quests[i]._qslvl != 0
 			    && quests[i]._qactive != QUEST_NOTAVAIL
-			    && plr.local().data._px == quests[i]._qtx
-			    && plr.local().data._py == quests[i]._qty) {
+			    && myplr().data._px == quests[i]._qtx
+			    && myplr().data._py == quests[i]._qty) {
 				if (quests[i]._qlvltype != DTYPE_NONE) {
 					level.setlvltype = quests[i]._qlvltype;
 				}
-				plr.local().StartNewLvl(WM_DIABSETLVL, quests[i]._qslvl);
+				myplr().StartNewLvl(WM_DIABSETLVL, quests[i]._qslvl);
 			}
 		}
 	}
@@ -254,52 +254,52 @@ void CheckQuestKill(int m, BOOL sendmsg)
 #ifndef SPAWN
 	int i, j;
 
-	if (monster[m].MType->mtype == MT_SKING) {
+	if (monsters[m].data.MType->mtype == MT_SKING) {
 		quests[Q_SKELKING]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR82;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE82;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE82;
 		}
 		if (sendmsg)
 			NetSendCmdQuest(TRUE, Q_SKELKING);
 
-	} else if (monster[m].MType->mtype == MT_CLEAVER) {
+	} else if (monsters[m].data.MType->mtype == MT_CLEAVER) {
 		quests[Q_BUTCHER]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR80;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE80;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE80;
 		}
 		if (sendmsg)
 			NetSendCmdQuest(TRUE, Q_BUTCHER);
-	} else if (monster[m].mName == UniqMonst[UMT_GARBUD].mName) { //"Gharbad the Weak"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_GARBUD].mName) { //"Gharbad the Weak"
 		quests[Q_GARBUD]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR61;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE61;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE61;
 		}
-	} else if (monster[m].mName == UniqMonst[UMT_ZHAR].mName) { //"Zhar the Mad"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_ZHAR].mName) { //"Zhar the Mad"
 		quests[Q_ZHAR]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR62;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE62;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE62;
 		}
-	} else if (monster[m].mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers != 1) { //"Arch-Bishop Lazarus"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers != 1) { //"Arch-Bishop Lazarus"
 		quests[Q_BETRAYER]._qactive = QUEST_DONE;
 		quests[Q_BETRAYER]._qvar1 = 7;
 		sfxdelay = 30;
@@ -315,18 +315,18 @@ void CheckQuestKill(int m, BOOL sendmsg)
 				}
 			}
 		}
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR83;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE83;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE83;
 		}
 		if (sendmsg) {
 			NetSendCmdQuest(TRUE, Q_BETRAYER);
 			NetSendCmdQuest(TRUE, Q_DIABLO);
 		}
-	} else if (monster[m].mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers == 1) { //"Arch-Bishop Lazarus"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers == 1) { //"Arch-Bishop Lazarus"
 		quests[Q_BETRAYER]._qactive = QUEST_DONE;
 		sfxdelay = 30;
 		InitVPTriggers();
@@ -334,21 +334,21 @@ void CheckQuestKill(int m, BOOL sendmsg)
 		quests[Q_BETRAYER]._qvar2 = 4;
 		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
 		AddMissile(35, 32, 35, 32, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR83;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE83;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE83;
 		}
-	} else if (monster[m].mName == UniqMonst[UMT_WARLORD].mName) { //"Warlord of Blood"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_WARLORD].mName) { //"Warlord of Blood"
 		quests[Q_WARLORD]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR94;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE94;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE94;
 		}
 	}

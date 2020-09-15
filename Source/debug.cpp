@@ -54,14 +54,14 @@ void GiveGoldCheat()
 	int i, ni;
 
 	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		if (!plr.local().data.InvGrid[i]) {
-			ni = plr.local().data._pNumInv++;
-			SetPlrHandItem(&plr.local().data.InvList[ni], IDI_GOLD);
-			GetPlrHandSeed(&plr.local().data.InvList[ni]);
-			plr.local().data.InvList[ni]._ivalue = GOLD_MAX_LIMIT;
-			plr.local().data.InvList[ni]._iCurs = ICURS_GOLD_LARGE;
-			plr.local().data._pGold += GOLD_MAX_LIMIT;
-			plr.local().data.InvGrid[i] = plr.local().data._pNumInv;
+		if (!myplr().data.InvGrid[i]) {
+			ni = myplr().data._pNumInv++;
+			SetPlrHandItem(&myplr().data.InvList[ni], IDI_GOLD);
+			GetPlrHandSeed(&myplr().data.InvList[ni]);
+			myplr().data.InvList[ni]._ivalue = GOLD_MAX_LIMIT;
+			myplr().data.InvList[ni]._iCurs = ICURS_GOLD_LARGE;
+			myplr().data._pGold += GOLD_MAX_LIMIT;
+			myplr().data.InvGrid[i] = myplr().data._pNumInv;
 		}
 	}
 }
@@ -89,17 +89,17 @@ void TakeGoldCheat()
 	char ig;
 
 	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		ig = plr.local().data.InvGrid[i];
-		if (ig > 0 && plr.local().data.InvList[ig - 1]._itype == ITYPE_GOLD)
-			plr.local().inventory.RemoveInvItem(ig - 1);
+		ig = myplr().data.InvGrid[i];
+		if (ig > 0 && myplr().data.InvList[ig - 1]._itype == ITYPE_GOLD)
+			myplr().inventory.RemoveInvItem(ig - 1);
 	}
 
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (plr.local().data.SpdList[i]._itype == ITYPE_GOLD)
-			plr.local().data.SpdList[i]._itype = ITYPE_NONE;
+		if (myplr().data.SpdList[i]._itype == ITYPE_GOLD)
+			myplr().data.SpdList[i]._itype = ITYPE_NONE;
 	}
 
-	plr.local().data._pGold = 0;
+	myplr().data._pGold = 0;
 }
 
 void MaxSpellsCheat()
@@ -108,16 +108,16 @@ void MaxSpellsCheat()
 
 	for (i = 1; i < MAX_SPELLS; i++) {
 		if (spelldata[i].sBookLvl != -1) {
-			plr.local().data._pMemSpells |= (__int64)1 << (i - 1);
-			plr.local().data._pSplLvl[i] = 10;
+			myplr().data._pMemSpells |= (__int64)1 << (i - 1);
+			myplr().data._pSplLvl[i] = 10;
 		}
 	}
 }
 
 void SetSpellLevelCheat(char spl, int spllvl)
 {
-	plr.local().data._pMemSpells |= (__int64)1 << (spl - 1);
-	plr.local().data._pSplLvl[spl] = spllvl;
+	myplr().data._pMemSpells |= (__int64)1 << (spl - 1);
+	myplr().data._pSplLvl[spl] = spllvl;
 }
 
 void SetAllSpellsCheat()
@@ -188,13 +188,13 @@ void PrintDebugMonster(int m)
 	int i;
 	char dstr[128];
 
-	sprintf(dstr, "Monster %i = %s", m, monster[m].mName);
+	sprintf(dstr, "Monster %i = %s", m, monsters[m].data.mName);
 	NetSendCmdString(1 << myplr(), dstr);
-	sprintf(dstr, "X = %i, Y = %i", monster[m]._mx, monster[m]._my);
+	sprintf(dstr, "X = %i, Y = %i", monsters[m].data._mx, monsters[m].data._my);
 	NetSendCmdString(1 << myplr(), dstr);
-	sprintf(dstr, "Enemy = %i, HP = %i", monster[m]._menemy, monster[m]._mhitpoints);
+	sprintf(dstr, "Enemy = %i, HP = %i", monsters[m].data._menemy, monsters[m].data._mhitpoints);
 	NetSendCmdString(1 << myplr(), dstr);
-	sprintf(dstr, "Mode = %i, Var1 = %i", monster[m]._mmode, monster[m]._mVar1);
+	sprintf(dstr, "Mode = %i, Var1 = %i", monsters[m].data._mmode, monsters[m].data._mVar1);
 	NetSendCmdString(1 << myplr(), dstr);
 
 	bActive = FALSE;
@@ -204,7 +204,7 @@ void PrintDebugMonster(int m)
 			bActive = TRUE;
 	}
 
-	sprintf(dstr, "Active List = %i, Squelch = %i", bActive, monster[m]._msquelch);
+	sprintf(dstr, "Active List = %i, Squelch = %i", bActive, monsters[m].data._msquelch);
 	NetSendCmdString(1 << myplr(), dstr);
 }
 

@@ -124,7 +124,7 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 			InitLevels();
 			InitQuests();
 			InitPortals();
-			plr.local().InitDungMsgs();
+			myplr().InitDungMsgs();
 		}
 		if (!gbValidSaveFile || !gbLoadGame) {
 			uMsg = WM_DIABNEWGAME;
@@ -681,7 +681,7 @@ BOOL LeftMouseDown(int wParam)
 							NewCursor(CURSOR_HAND);
 						}
 					} else {
-						if (plr.local().data._pStatPts != 0 && !spselflag)
+						if (myplr().data._pStatPts != 0 && !spselflag)
 							CheckLvlBtn();
 						if (!lvlbtndown)
 							return LeftMouseCmd(wParam == DVL_MK_SHIFT + DVL_MK_LBUTTON);
@@ -714,12 +714,12 @@ BOOL LeftMouseCmd(BOOL bShift)
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	} else {
-		bNear = abs(plr.local().data._px - cursmx) < 2 && abs(plr.local().data._py - cursmy) < 2;
+		bNear = abs(myplr().data._px - cursmx) < 2 && abs(myplr().data._py - cursmy) < 2;
 		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
 			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
 			NetSendCmdLocParam1(TRUE, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursmx, cursmy, pcursobj);
-		} else if (plr.local().data._pwtype == WT_RANGED) {
+		} else if (myplr().data._pwtype == WT_RANGED) {
 			if (bShift) {
 				NetSendCmdLoc(TRUE, CMD_RATTACKXY, cursmx, cursmy);
 			} else if (pcursmonst != -1) {
@@ -789,11 +789,11 @@ BOOL TryIconCurs()
 		return TRUE;
 	} else if (pcurs == CURSOR_TELEPORT) {
 		if (pcursmonst != -1) {
-			NetSendCmdParam3(TRUE, CMD_TSPELLID, pcursmonst, plr.local().data._pTSpell, GetSpellLevel(myplr(), plr.local().data._pTSpell));
+			NetSendCmdParam3(TRUE, CMD_TSPELLID, pcursmonst, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		} else if (pcursplr != -1) {
-			NetSendCmdParam3(TRUE, CMD_TSPELLPID, pcursplr, plr.local().data._pTSpell, GetSpellLevel(myplr(), plr.local().data._pTSpell));
+			NetSendCmdParam3(TRUE, CMD_TSPELLPID, pcursplr, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		} else {
-			NetSendCmdLocParam2(TRUE, CMD_TSPELLXY, cursmx, cursmy, plr.local().data._pTSpell, GetSpellLevel(myplr(), plr.local().data._pTSpell));
+			NetSendCmdLocParam2(TRUE, CMD_TSPELLXY, cursmx, cursmy, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		}
 		NewCursor(CURSOR_HAND);
 		return TRUE;
@@ -821,7 +821,7 @@ void LeftMouseUp()
 
 void RightMouseDown()
 {
-	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE && PauseMode != 2 && !plr.local().data._pInvincible) {
+	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE && PauseMode != 2 && !myplr().data._pInvincible) {
 		if (doomflag) {
 			doom_close();
 		} else if (stextflag == STORE_NONE) {
@@ -830,9 +830,9 @@ void RightMouseDown()
 			} else if (MouseY >= SPANEL_HEIGHT
 			    || (!sbookflag || MouseX <= RIGHT_PANEL)
 			        && !TryIconCurs()
-			        && (pcursinvitem == -1 || !plr.local().inventory.UseInvItem(pcursinvitem))) {
+			        && (pcursinvitem == -1 || !myplr().inventory.UseInvItem(pcursinvitem))) {
 				if (pcurs == CURSOR_HAND) {
-					if (pcursinvitem == -1 || !plr.local().inventory.UseInvItem(pcursinvitem))
+					if (pcursinvitem == -1 || !myplr().inventory.UseInvItem(pcursinvitem))
 						CheckPlrSpell();
 				} else if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM) {
 					NewCursor(CURSOR_HAND);
@@ -1216,44 +1216,44 @@ void PressChar(int vkey)
 		return;
 	case '!':
 	case '1':
-		if (plr.local().data.SpdList[0]._itype != ITYPE_NONE && plr.local().data.SpdList[0]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST);
+		if (myplr().data.SpdList[0]._itype != ITYPE_NONE && myplr().data.SpdList[0]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST);
 		}
 		return;
 	case '@':
 	case '2':
-		if (plr.local().data.SpdList[1]._itype != ITYPE_NONE && plr.local().data.SpdList[1]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 1);
+		if (myplr().data.SpdList[1]._itype != ITYPE_NONE && myplr().data.SpdList[1]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 1);
 		}
 		return;
 	case '#':
 	case '3':
-		if (plr.local().data.SpdList[2]._itype != ITYPE_NONE && plr.local().data.SpdList[2]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 2);
+		if (myplr().data.SpdList[2]._itype != ITYPE_NONE && myplr().data.SpdList[2]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 2);
 		}
 		return;
 	case '$':
 	case '4':
-		if (plr.local().data.SpdList[3]._itype != ITYPE_NONE && plr.local().data.SpdList[3]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 3);
+		if (myplr().data.SpdList[3]._itype != ITYPE_NONE && myplr().data.SpdList[3]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 3);
 		}
 		return;
 	case '%':
 	case '5':
-		if (plr.local().data.SpdList[4]._itype != ITYPE_NONE && plr.local().data.SpdList[4]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 4);
+		if (myplr().data.SpdList[4]._itype != ITYPE_NONE && myplr().data.SpdList[4]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 4);
 		}
 		return;
 	case '^':
 	case '6':
-		if (plr.local().data.SpdList[5]._itype != ITYPE_NONE && plr.local().data.SpdList[5]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 5);
+		if (myplr().data.SpdList[5]._itype != ITYPE_NONE && myplr().data.SpdList[5]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 5);
 		}
 		return;
 	case '&':
 	case '7':
-		if (plr.local().data.SpdList[6]._itype != ITYPE_NONE && plr.local().data.SpdList[6]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 6);
+		if (myplr().data.SpdList[6]._itype != ITYPE_NONE && myplr().data.SpdList[6]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 6);
 		}
 		return;
 	case '*':
@@ -1264,8 +1264,8 @@ void PressChar(int vkey)
 			return;
 		}
 #endif
-		if (plr.local().data.SpdList[7]._itype != ITYPE_NONE && plr.local().data.SpdList[7]._itype != ITYPE_GOLD) {
-			plr.local().inventory.UseInvItem(INVITEM_BELT_FIRST + 7);
+		if (myplr().data.SpdList[7]._itype != ITYPE_NONE && myplr().data.SpdList[7]._itype != ITYPE_GOLD) {
+			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 7);
 		}
 		return;
 #ifdef _DEBUG
@@ -1276,14 +1276,14 @@ void PressChar(int vkey)
 				arrowdebug = 0;
 			}
 			if (arrowdebug == 0) {
-				plr.local().data._pIFlags &= ~ISPL_FIRE_ARROWS;
-				plr.local().data._pIFlags &= ~ISPL_LIGHT_ARROWS;
+				myplr().data._pIFlags &= ~ISPL_FIRE_ARROWS;
+				myplr().data._pIFlags &= ~ISPL_LIGHT_ARROWS;
 			}
 			if (arrowdebug == 1) {
-				plr.local().data._pIFlags |= ISPL_FIRE_ARROWS;
+				myplr().data._pIFlags |= ISPL_FIRE_ARROWS;
 			}
 			if (arrowdebug == 2) {
-				plr.local().data._pIFlags |= ISPL_LIGHT_ARROWS;
+				myplr().data._pIFlags |= ISPL_LIGHT_ARROWS;
 			}
 			arrowdebug++;
 		}
@@ -1306,7 +1306,7 @@ void PressChar(int vkey)
 	case 'a':
 		if (debug_mode_key_inverted_v) {
 			spelldata[SPL_TELEPORT].sTownSpell = 1;
-			plr.local().data._pSplLvl[plr.local().data._pSpell]++;
+			myplr().data._pSplLvl[myplr().data._pSpell]++;
 		}
 		return;
 	case 'D':
@@ -1339,7 +1339,7 @@ void PressChar(int vkey)
 	case 'T':
 	case 't':
 		if (debug_mode_key_inverted_v) {
-			sprintf(tempstr, "PX = %i  PY = %i", plr.local().data._px, plr.local().data._py);
+			sprintf(tempstr, "PX = %i  PY = %i", myplr().data._px, myplr().data._py);
 			NetSendCmdString(1 << myplr(), tempstr);
 			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursmx, cursmy, dgrid[cursmx][cursmy].dungeon);
 			NetSendCmdString(1 << myplr(), tempstr);
@@ -1497,7 +1497,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		InitVision();
 	}
 
-	InitLevelMonsters();
+	beastiary.InitLevelMonsters();
 	IncProgress();
 
 	if (!level.setlevel) {
@@ -1507,7 +1507,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		SetRndSeed(glSeedTbl[level.currlevel]);
 
 		if (level.leveltype != DTYPE_TOWN) {
-			GetLevelMTypes();
+			beastiary.GetLevelMTypes();
 			InitThemes();
 			LoadAllGFX();
 		} else {
@@ -1548,7 +1548,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		SetRndSeed(glSeedTbl[level.currlevel]);
 
 		if (level.leveltype != DTYPE_TOWN) {
-			if (firstflag || lvldir == 4 || !plr.local().data._pLvlVisited[level.currlevel] || gbMaxPlayers != 1) {
+			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[level.currlevel] || gbMaxPlayers != 1) {
 				HoldThemeRooms();
 				glMid1Seed[level.currlevel] = GetRndSeed();
 				InitMonsters();
@@ -1587,7 +1587,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			InitMissiles();
 			IncProgress();
 
-			if (!firstflag && lvldir != 4 && plr.local().data._pLvlVisited[level.currlevel] && gbMaxPlayers == 1)
+			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[level.currlevel] && gbMaxPlayers == 1)
 				LoadLevel();
 			if (gbMaxPlayers != 1)
 				DeltaLoadLevel();
@@ -1602,7 +1602,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 	} else {
 		LoadSetMap();
 		IncProgress();
-		GetLevelMTypes();
+		beastiary.GetLevelMTypes();
 		IncProgress();
 		InitMonsters();
 		IncProgress();
@@ -1629,7 +1629,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		InitMultiView();
 		IncProgress();
 
-		if (firstflag || lvldir == 4 || !plr.local().data._pSLvlVisited[level.setlvlnum]) {
+		if (firstflag || lvldir == 4 || !myplr().data._pSLvlVisited[level.setlvlnum]) {
 			InitItems();
 			SavePreLighting();
 		} else {

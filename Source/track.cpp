@@ -14,10 +14,10 @@ void track_process()
 	if (cursmx < 0 || cursmx >= MAXDUNX - 1 || cursmy < 0 || cursmy >= MAXDUNY - 1)
 		return;
 
-	if (plr.local().data._pVar8 <= 6 && plr.local().data._pmode != PM_STAND)
+	if (myplr().data._pVar8 <= 6 && myplr().data._pmode != PM_STAND)
 		return;
 
-	if (cursmx != plr.local().data._ptargx || cursmy != plr.local().data._ptargy) {
+	if (cursmx != myplr().data._ptargx || cursmy != myplr().data._ptargy) {
 		DWORD tick = SDL_GetTicks();
 		if ((int)(tick - sgdwLastWalk) >= 300) {
 			sgdwLastWalk = tick;

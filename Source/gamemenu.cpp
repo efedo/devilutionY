@@ -71,7 +71,7 @@ void gamemenu_update_single(TMenuItem *pMenuItems)
 	gmenu_enable(&sgSingleMenu[3], gbValidSaveFile);
 
 	enable = FALSE;
-	if (plr.local().data._pmode != PM_DEATH && !deathflag)
+	if (myplr().data._pmode != PM_DEATH && !deathflag)
 		enable = TRUE;
 
 	gmenu_enable(&sgSingleMenu[0], enable);
@@ -148,7 +148,7 @@ void gamemenu_save_game(BOOL bActivate)
 		return;
 	}
 
-	if (plr.local().data._pmode == PM_DEATH || deathflag) {
+	if (myplr().data._pmode == PM_DEATH || deathflag) {
 		gamemenu_off();
 		return;
 	}

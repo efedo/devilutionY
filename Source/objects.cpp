@@ -783,11 +783,11 @@ void InitObjects()
 			AddL2Objs(0, 0, MAXDUNX, MAXDUNY);
 			AddL2Torches();
 			if (QuestStatus(Q_BLIND)) {
-				if (plr.local().data._pClass == PC_WARRIOR) {
+				if (myplr().data._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLINDING;
-				} else if (plr.local().data._pClass == PC_ROGUE) {
+				} else if (myplr().data._pClass == PC_ROGUE) {
 					sp_id = TEXT_RBLINDING;
-				} else if (plr.local().data._pClass == PC_SORCERER) {
+				} else if (myplr().data._pClass == PC_SORCERER) {
 					sp_id = TEXT_MBLINDING;
 				}
 				quests[Q_BLIND]._qmsg = sp_id;
@@ -797,11 +797,11 @@ void InitObjects()
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BLOOD)) {
-				if (plr.local().data._pClass == PC_WARRIOR) {
+				if (myplr().data._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLOODY;
-				} else if (plr.local().data._pClass == PC_ROGUE) {
+				} else if (myplr().data._pClass == PC_ROGUE) {
 					sp_id = TEXT_RBLOODY;
-				} else if (plr.local().data._pClass == PC_SORCERER) {
+				} else if (myplr().data._pClass == PC_SORCERER) {
 					sp_id = TEXT_MBLOODY;
 				}
 				quests[Q_BLOOD]._qmsg = sp_id;
@@ -816,11 +816,11 @@ void InitObjects()
 		}
 		if (level.leveltype == DTYPE_HELL) {
 			if (QuestStatus(Q_WARLORD)) {
-				if (plr.local().data._pClass == PC_WARRIOR) {
+				if (myplr().data._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLOODWAR;
-				} else if (plr.local().data._pClass == PC_ROGUE) {
+				} else if (myplr().data._pClass == PC_ROGUE) {
 					sp_id = TEXT_RBLOODWAR;
-				} else if (plr.local().data._pClass == PC_SORCERER) {
+				} else if (myplr().data._pClass == PC_SORCERER) {
 					sp_id = TEXT_MBLOODWAR;
 				}
 				quests[Q_WARLORD]._qmsg = sp_id;
@@ -1502,8 +1502,8 @@ void Obj_Circle(int i)
 
 	ox = object[i]._ox;
 	oy = object[i]._oy;
-	wx = plr.local().data._px;
-	wy = plr.local().data._py;
+	wx = myplr().data._px;
+	wy = myplr().data._py;
 	if (wx == ox && wy == oy) {
 		if (object[i]._otype == OBJ_MCIRCLE1)
 			object[i]._oAnimFrame = 2;
@@ -1521,11 +1521,11 @@ void Obj_Circle(int i)
 			ObjChangeMapResync(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
 			if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE)
 				quests[Q_BETRAYER]._qvar1 = 4;
-			AddMissile(plr.local().data._px, plr.local().data._py, 35, 46, plr.local().data._pdir, MIS_RNDTELEPORT, 0, myplr(), 0, 0);
+			AddMissile(myplr().data._px, myplr().data._py, 35, 46, myplr().data._pdir, MIS_RNDTELEPORT, 0, myplr(), 0, 0);
 			track_repeat_walk(FALSE);
 			sgbMouseDown = 0;
-			plr.local().ClrPlrPath();
-			plr.local().StartStand(0);
+			myplr().ClrPlrPath();
+			myplr().StartStand(0);
 		}
 	} else {
 		if (object[i]._otype == OBJ_MCIRCLE1)
@@ -1687,28 +1687,28 @@ void Obj_BCrossDamage(int i)
 	int fire_resist;
 	int damage[4] = { 6, 8, 10, 12 };
 
-	if (plr.local().data._pmode == PM_DEATH)
+	if (myplr().data._pmode == PM_DEATH)
 		return;
 
-	fire_resist = plr.local().data._pFireResist;
+	fire_resist = myplr().data._pFireResist;
 	if (fire_resist > 0)
 		damage[level.leveltype - 1] -= fire_resist * damage[level.leveltype - 1] / 100;
 
-	if (plr.local().data._px != object[i]._ox || plr.local().data._py != object[i]._oy - 1)
+	if (myplr().data._px != object[i]._ox || myplr().data._py != object[i]._oy - 1)
 		return;
 
-	plr.local().data._pHitPoints -= damage[level.leveltype - 1];
-	plr.local().data._pHPBase -= damage[level.leveltype - 1];
-	if (plr.local().data._pHitPoints >> 6 <= 0) {
-		plr.local().SyncPlrKill(0);
+	myplr().data._pHitPoints -= damage[level.leveltype - 1];
+	myplr().data._pHPBase -= damage[level.leveltype - 1];
+	if (myplr().data._pHitPoints >> 6 <= 0) {
+		myplr().SyncPlrKill(0);
 	} else {
-		if (plr.local().data._pClass == PC_WARRIOR) {
-			PlaySfxLoc(PS_WARR68, plr.local().data._px, plr.local().data._py);
+		if (myplr().data._pClass == PC_WARRIOR) {
+			PlaySfxLoc(PS_WARR68, myplr().data._px, myplr().data._py);
 #ifndef SPAWN
-		} else if (plr.local().data._pClass == PC_ROGUE) {
-			PlaySfxLoc(PS_ROGUE68, plr.local().data._px, plr.local().data._py);
-		} else if (plr.local().data._pClass == PC_SORCERER) {
-			PlaySfxLoc(PS_MAGE68, plr.local().data._px, plr.local().data._py);
+		} else if (myplr().data._pClass == PC_ROGUE) {
+			PlaySfxLoc(PS_ROGUE68, myplr().data._px, myplr().data._py);
+		} else if (myplr().data._pClass == PC_SORCERER) {
+			PlaySfxLoc(PS_MAGE68, myplr().data._px, myplr().data._py);
 #endif
 		}
 	}
@@ -2269,8 +2269,8 @@ void MonstCheckDoors(int m)
 	int i, oi;
 	int dpx, dpy, mx, my;
 
-	mx = monster[m]._mx;
-	my = monster[m]._my;
+	mx = monsters[m].data._mx;
+	my = monsters[m].data._my;
 	if (grid[mx - 1][my - 1].dObject
 	    || grid[mx][my - 1].dObject
 	    || grid[mx + 1][my - 1].dObject
@@ -2430,19 +2430,19 @@ void OperateBook(int pnum, int i)
 		return;
 
 	if (level.setlvlnum == SL_BONECHAMB) {
-		plr.local().data._pMemSpells |= ((__int64)1 << (SPL_GUARDIAN - 1));
+		myplr().data._pMemSpells |= ((__int64)1 << (SPL_GUARDIAN - 1));
 		if (plr[pnum].data._pSplLvl[SPL_GUARDIAN] < 15)
-			plr.local().data._pSplLvl[SPL_GUARDIAN]++;
+			myplr().data._pSplLvl[SPL_GUARDIAN]++;
 		quests[Q_SCHAMB]._qactive = QUEST_DONE;
 		if (!deltaload)
 			PlaySfxLoc(IS_QUESTDN, object[i]._ox, object[i]._oy);
 		InitDiabloMsg(EMSG_BONECHAMB);
 		AddMissile(
-		    plr.local().data._px,
-		    plr.local().data._py,
+		    myplr().data._px,
+		    myplr().data._py,
 		    object[i]._ox - 2,
 		    object[i]._oy - 4,
-		    plr.local().data._pdir,
+		    myplr().data._pdir,
 		    MIS_GUARDIAN,
 		    0,
 		    myplr(),
@@ -2519,11 +2519,11 @@ void OperateSChambBk(int pnum, int i)
 			quests[Q_SCHAMB]._qactive = QUEST_ACTIVE;
 			quests[Q_SCHAMB]._qlog = 1;
 		}
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			textdef = TEXT_BONER;
-		} else if (plr.local().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PC_ROGUE) {
 			textdef = TEXT_RBONER;
-		} else if (plr.local().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PC_SORCERER) {
 			textdef = TEXT_MBONER;
 		}
 		quests[Q_SCHAMB]._qmsg = textdef;
@@ -2583,12 +2583,12 @@ void OperateMushPatch(int pnum, int i)
 
 	if (quests[Q_MUSHROOM]._qactive != QUEST_ACTIVE || quests[Q_MUSHROOM]._qvar1 < QS_TOMEGIVEN) {
 		if (!deltaload && pnum == myplr()) {
-			if (plr.local().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PC_WARRIOR) {
 				PlaySFX(PS_WARR13);
 #ifndef SPAWN
-			} else if (plr.local().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PC_ROGUE) {
 				PlaySFX(PS_ROGUE13);
-			} else if (plr.local().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PC_SORCERER) {
 				PlaySFX(PS_MAGE13);
 #endif
 			}
@@ -2614,12 +2614,12 @@ void OperateInnSignChest(int pnum, int i)
 
 	if (quests[Q_LTBANNER]._qvar1 != 2) {
 		if (!deltaload && pnum == myplr()) {
-			if (plr.local().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PC_WARRIOR) {
 				PlaySFX(PS_WARR24);
 #ifndef SPAWN
-			} else if (plr.local().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PC_ROGUE) {
 				PlaySFX(PS_ROGUE24);
-			} else if (plr.local().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PC_SORCERER) {
 				PlaySFX(PS_MAGE24);
 #endif
 			}
@@ -2646,17 +2646,17 @@ void OperateSlainHero(int pnum, int i, BOOL sendmsg)
 			if (plr[pnum].data._pClass == PC_WARRIOR) {
 				CreateMagicArmor(object[i]._ox, object[i]._oy, ITYPE_HARMOR, ICURS_BREAST_PLATE, FALSE, TRUE);
 #ifndef SPAWN
-				PlaySfxLoc(PS_WARR9, plr.local().data._px, plr.local().data._py);
+				PlaySfxLoc(PS_WARR9, myplr().data._px, myplr().data._py);
 #endif
 			} else if (plr[pnum].data._pClass == PC_ROGUE) {
 				CreateMagicWeapon(object[i]._ox, object[i]._oy, ITYPE_BOW, ICURS_LONG_WAR_BOW, FALSE, TRUE);
 #ifndef SPAWN
-				PlaySfxLoc(PS_ROGUE9, plr.local().data._px, plr.local().data._py);
+				PlaySfxLoc(PS_ROGUE9, myplr().data._px, myplr().data._py);
 #endif
 			} else if (plr[pnum].data._pClass == PC_SORCERER) {
 				CreateSpellBook(object[i]._ox, object[i]._oy, SPL_LIGHTNING, FALSE, TRUE);
 #ifndef SPAWN
-				PlaySfxLoc(PS_MAGE9, plr.local().data._px, plr.local().data._py);
+				PlaySfxLoc(PS_MAGE9, myplr().data._px, myplr().data._py);
 #endif
 			}
 			if (pnum == myplr())
@@ -3283,10 +3283,10 @@ void OperateShrine(int pnum, int i, int sType)
 			InitDiabloMsg(EMSG_SHRINE_SPOOKY1);
 		} else {
 			InitDiabloMsg(EMSG_SHRINE_SPOOKY2);
-			plr.local().data._pHitPoints = plr.local().data._pMaxHP;
-			plr.local().data._pHPBase = plr.local().data._pMaxHPBase;
-			plr.local().data._pMana = plr.local().data._pMaxMana;
-			plr.local().data._pManaBase = plr.local().data._pMaxManaBase;
+			myplr().data._pHitPoints = myplr().data._pMaxHP;
+			myplr().data._pHPBase = myplr().data._pMaxHPBase;
+			myplr().data._pMana = myplr().data._pMaxMana;
+			myplr().data._pManaBase = myplr().data._pMaxManaBase;
 		}
 		break;
 	case SHRINE_ABANDONED:
@@ -3450,13 +3450,13 @@ void OperateBookCase(int pnum, int i, BOOL sendmsg)
 			SetRndSeed(object[i]._oRndSeed);
 			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, sendmsg, FALSE);
 			if (QuestStatus(Q_ZHAR)
-			    && monster[MAX_PLRS].mName == UniqMonst[UMT_ZHAR].mName
-			    && monster[MAX_PLRS]._msquelch == UCHAR_MAX
-			    && monster[MAX_PLRS]._mhitpoints) {
-				monster[MAX_PLRS].mtalkmsg = TEXT_ZHAR2;
-				M_StartStand(0, monster[MAX_PLRS]._mdir);
-				monster[MAX_PLRS]._mgoal = MGOAL_SHOOT;
-				monster[MAX_PLRS]._mmode = MM_TALK;
+			    && monsters[MAX_PLRS].data.mName == UniqMonst[UMT_ZHAR].mName
+			    && monsters[MAX_PLRS].data._msquelch == UCHAR_MAX
+			    && monsters[MAX_PLRS].data._mhitpoints) {
+				monsters[MAX_PLRS].data.mtalkmsg = TEXT_ZHAR2;
+				monsters[0].M_StartStand(monsters[MAX_PLRS].data._mdir);
+				monsters[MAX_PLRS].data._mgoal = MGOAL_SHOOT;
+				monsters[MAX_PLRS].data._mmode = MM_TALK;
 			}
 			if (pnum == myplr())
 				NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
@@ -4442,7 +4442,7 @@ void GetObjectStr(int i)
 		strcpy(infostr, "Slain Hero");
 		break;
 	}
-	if (plr.local().data._pClass == PC_ROGUE) {
+	if (myplr().data._pClass == PC_ROGUE) {
 		if (object[i]._oTrapFlag) {
 			sprintf(tempstr, "Trapped %s", infostr);
 			strcpy(infostr, tempstr);

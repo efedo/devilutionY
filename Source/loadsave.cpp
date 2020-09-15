@@ -52,8 +52,8 @@ void LoadGame(BOOL firstflag)
 		LoadPortal(i);
 
 	LoadGameLevel(firstflag, 4);
-	plr.local().SyncInitPlr();
-	plr.local().SyncPlrAnim();
+	myplr().SyncInitPlr();
+	myplr().SyncPlrAnim();
 
 	ViewX = _ViewX;
 	ViewY = _ViewY;
@@ -475,7 +475,7 @@ void LoadPlayer(int i)
 
 void LoadMonster(int i)
 {
-	MonsterStruct *pMonster = &monster[i];
+	MonsterStruct *pMonster = &monsters[i].data;
 
 	CopyInt(tbuff, &pMonster->_mMTidx);
 	CopyInt(tbuff, &pMonster->_mmode);
@@ -564,7 +564,7 @@ void LoadMonster(int i)
 	// Omit pointer MType;
 	// Omit pointer MData;
 
-	SyncMonsterAnim(i);
+	monsters[i].SyncMonsterAnim();
 }
 
 void LoadMissile(int i)
@@ -1201,7 +1201,7 @@ void SavePlayer(int i)
 
 void SaveMonster(int i)
 {
-	MonsterStruct *pMonster = &monster[i];
+	MonsterStruct *pMonster = &monsters[i].data;
 
 	CopyInt(&pMonster->_mMTidx, tbuff);
 	CopyInt(&pMonster->_mmode, tbuff);
@@ -1633,9 +1633,9 @@ void SaveLevel()
 	mem_free_dbg(SaveBuff);
 
 	if (!level.setlevel)
-		plr.local().data._pLvlVisited[level.currlevel] = TRUE;
+		myplr().data._pLvlVisited[level.currlevel] = TRUE;
 	else
-		plr.local().data._pSLvlVisited[level.setlvlnum] = TRUE;
+		myplr().data._pSLvlVisited[level.setlvlnum] = TRUE;
 }
 
 void LoadLevel()

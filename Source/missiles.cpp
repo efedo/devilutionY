@@ -27,32 +27,32 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 
 	assert((DWORD)myplr() < MAX_PLRS);
 	assert((DWORD)i < 64);
-	sl = plr.local().data._pSplLvl[i] + plr.local().data._pISplLvlAdd;
+	sl = myplr().data._pSplLvl[i] + myplr().data._pISplLvlAdd;
 
 	switch (i) {
 	case SPL_FIREBOLT:
-		*mind = (plr.local().data._pMagic >> 3) + sl + 1;
-		*maxd = (plr.local().data._pMagic >> 3) + sl + 10;
+		*mind = (myplr().data._pMagic >> 3) + sl + 1;
+		*maxd = (myplr().data._pMagic >> 3) + sl + 10;
 		break;
 	case SPL_HEAL: /// BUGFIX: healing calculation is unused
-		*mind = plr.local().data._pLevel + sl + 1;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		*mind = myplr().data._pLevel + sl + 1;
+		if (myplr().data._pClass == PC_WARRIOR) {
 			*mind <<= 1;
 		}
-		if (plr.local().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PC_ROGUE) {
 			*mind += *mind >> 1;
 		}
 		*maxd = 10;
-		for (k = 0; k < plr.local().data._pLevel; k++) {
+		for (k = 0; k < myplr().data._pLevel; k++) {
 			*maxd += 4;
 		}
 		for (k = 0; k < sl; k++) {
 			*maxd += 6;
 		}
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			*maxd <<= 1;
 		}
-		if (plr.local().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PC_ROGUE) {
 			*maxd += *maxd >> 1;
 		}
 		*mind = -1;
@@ -60,10 +60,10 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		break;
 	case SPL_LIGHTNING:
 		*mind = 2;
-		*maxd = plr.local().data._pLevel + 2;
+		*maxd = myplr().data._pLevel + 2;
 		break;
 	case SPL_FLASH:
-		*mind = plr.local().data._pLevel;
+		*mind = myplr().data._pLevel;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
 		}
@@ -92,44 +92,44 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		*maxd = -1;
 		break;
 	case SPL_FIREWALL:
-		*mind = (4 * plr.local().data._pLevel + 8) >> 1;
-		*maxd = (4 * plr.local().data._pLevel + 80) >> 1;
+		*mind = (4 * myplr().data._pLevel + 8) >> 1;
+		*maxd = (4 * myplr().data._pLevel + 80) >> 1;
 		break;
 	case SPL_FIREBALL:
-		*mind = 2 * plr.local().data._pLevel + 4;
+		*mind = 2 * myplr().data._pLevel + 4;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
 		}
-		*maxd = 2 * plr.local().data._pLevel + 40;
+		*maxd = 2 * myplr().data._pLevel + 40;
 		for (k = 0; k < sl; k++) {
 			*maxd += *maxd >> 3;
 		}
 		break;
 	case SPL_GUARDIAN:
-		*mind = (plr.local().data._pLevel >> 1) + 1;
+		*mind = (myplr().data._pLevel >> 1) + 1;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
 		}
-		*maxd = (plr.local().data._pLevel >> 1) + 10;
+		*maxd = (myplr().data._pLevel >> 1) + 10;
 		for (k = 0; k < sl; k++) {
 			*maxd += *maxd >> 3;
 		}
 		break;
 	case SPL_CHAIN:
 		*mind = 4;
-		*maxd = 2 * plr.local().data._pLevel + 4;
+		*maxd = 2 * myplr().data._pLevel + 4;
 		break;
 	case SPL_WAVE:
-		*mind = 6 * (plr.local().data._pLevel + 1);
-		*maxd = 6 * (plr.local().data._pLevel + 10);
+		*mind = 6 * (myplr().data._pLevel + 1);
+		*maxd = 6 * (myplr().data._pLevel + 10);
 		break;
 	case SPL_NOVA:
-		*mind = (plr.local().data._pLevel + 5) >> 1;
+		*mind = (myplr().data._pLevel + 5) >> 1;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
 		}
 		*mind *= 5;
-		*maxd = (plr.local().data._pLevel + 30) >> 1;
+		*maxd = (myplr().data._pLevel + 30) >> 1;
 		for (k = 0; k < sl; k++) {
 			*maxd += *maxd >> 3;
 		}
@@ -137,7 +137,7 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		break;
 	case SPL_FLAME:
 		*mind = 3;
-		*maxd = plr.local().data._pLevel + 4;
+		*maxd = myplr().data._pLevel + 4;
 		*maxd += *maxd >> 1;
 		break;
 	case SPL_GOLEM:
@@ -146,21 +146,21 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		break;
 	case SPL_APOCA:
 		*mind = 0;
-		for (k = 0; k < plr.local().data._pLevel; k++) {
+		for (k = 0; k < myplr().data._pLevel; k++) {
 			*mind += 1;
 		}
 		*maxd = 0;
-		for (k = 0; k < plr.local().data._pLevel; k++) {
+		for (k = 0; k < myplr().data._pLevel; k++) {
 			*maxd += 6;
 		}
 		break;
 	case SPL_ELEMENT:
-		*mind = 2 * plr.local().data._pLevel + 4;
+		*mind = 2 * myplr().data._pLevel + 4;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
 		}
 		/// BUGFIX: add here '*mind >>= 1;'
-		*maxd = 2 * plr.local().data._pLevel + 40;
+		*maxd = 2 * myplr().data._pLevel + 40;
 		for (k = 0; k < sl; k++) {
 			*maxd += *maxd >> 3;
 		}
@@ -168,38 +168,38 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		break;
 	case SPL_CBOLT:
 		*mind = 1;
-		*maxd = (plr.local().data._pMagic >> 2) + 1;
+		*maxd = (myplr().data._pMagic >> 2) + 1;
 		break;
 	case SPL_HBOLT:
-		*mind = plr.local().data._pLevel + 9;
-		*maxd = plr.local().data._pLevel + 18;
+		*mind = myplr().data._pLevel + 9;
+		*maxd = myplr().data._pLevel + 18;
 		break;
 	case SPL_HEALOTHER: /// BUGFIX: healing calculation is unused
-		*mind = plr.local().data._pLevel + sl + 1;
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		*mind = myplr().data._pLevel + sl + 1;
+		if (myplr().data._pClass == PC_WARRIOR) {
 			*mind <<= 1;
 		}
-		if (plr.local().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PC_ROGUE) {
 			*mind += *mind >> 1;
 		}
 		*maxd = 10;
-		for (k = 0; k < plr.local().data._pLevel; k++) {
+		for (k = 0; k < myplr().data._pLevel; k++) {
 			*maxd += 4;
 		}
 		for (k = 0; k < sl; k++) {
 			*maxd += 6;
 		}
-		if (plr.local().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PC_WARRIOR) {
 			*maxd <<= 1;
 		}
-		if (plr.local().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PC_ROGUE) {
 			*maxd += *maxd >> 1;
 		}
 		*mind = -1;
 		*maxd = -1;
 		break;
 	case SPL_FLARE:
-		*mind = (plr.local().data._pMagic >> 1) + 3 * sl - (plr.local().data._pMagic >> 3);
+		*mind = (myplr().data._pMagic >> 1) + 3 * sl - (myplr().data._pMagic >> 3);
 		*maxd = *mind;
 		break;
 	}
@@ -486,19 +486,19 @@ BOOL MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, BOOLEAN shif
 	BOOL resist, ret;
 
 	resist = FALSE;
-	if (monster[m].mtalkmsg) {
+	if (monsters[m].data.mtalkmsg) {
 		return FALSE;
 	}
-	if (monster[m]._mhitpoints >> 6 <= 0) {
+	if (monsters[m].data._mhitpoints >> 6 <= 0) {
 		return FALSE;
 	}
-	if (monster[m].MType->mtype == MT_ILLWEAV && monster[m]._mgoal == MGOAL_RETREAT)
+	if (monsters[m].data.MType->mtype == MT_ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT)
 		return FALSE;
-	if (monster[m]._mmode == MM_CHARGE)
+	if (monsters[m].data._mmode == MM_CHARGE)
 		return FALSE;
 
 	mir = missiledata[t].mResist;
-	mor = monster[m].mMagicRes;
+	mor = monsters[m].data.mMagicRes;
 	if (mor & IMUNE_MAGIC && mir == MISR_MAGIC
 	    || mor & IMUNE_FIRE && mir == MISR_FIRE
 	    || mor & IMUNE_LIGHTNING && mir == MISR_LIGHTNING) {
@@ -512,7 +512,7 @@ BOOL MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, BOOLEAN shif
 	}
 
 	hit = random_(68, 100);
-	hper = 90 - (BYTE)monster[m].mArmorClass - dist;
+	hper = 90 - (BYTE)monsters[m].data.mArmorClass - dist;
 	if (hper < 5)
 		hper = 5;
 	if (hper > 95)
@@ -521,38 +521,38 @@ BOOL MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, BOOLEAN shif
 		return ret;
 	}
 #ifdef _DEBUG
-	else if (hit < hper || debug_mode_dollar_sign || debug_mode_key_inverted_v || monster[m]._mmode == MM_STONE) {
+	else if (hit < hper || debug_mode_dollar_sign || debug_mode_key_inverted_v || monsters[m].data._mmode == MM_STONE) {
 #else
-	else if (hit < hper || monster[m]._mmode == MM_STONE) {
+	else if (hit < hper || monsters[m].data._mmode == MM_STONE) {
 #endif
 		dam = mindam + random_(68, maxdam - mindam + 1);
 		if (!shift)
 			dam <<= 6;
 		if (resist)
-			monster[m]._mhitpoints -= dam >> 2;
+			monsters[m].data._mhitpoints -= dam >> 2;
 		else
-			monster[m]._mhitpoints -= dam;
+			monsters[m].data._mhitpoints -= dam;
 #ifdef _DEBUG
 		if (debug_mode_dollar_sign || debug_mode_key_inverted_v)
-			monster[m]._mhitpoints = 0;
+			monsters[m].data._mhitpoints = 0;
 #endif
-		if (monster[m]._mhitpoints >> 6 <= 0) {
-			if (monster[m]._mmode == MM_STONE) {
-				M_StartKill(m, -1);
-				monster[m]._mmode = MM_STONE;
+		if (monsters[m].data._mhitpoints >> 6 <= 0) {
+			if (monsters[m].data._mmode == MM_STONE) {
+				monsters[m].M_StartKill(-1);
+				monsters[m].data._mmode = MM_STONE;
 			} else {
-				M_StartKill(m, -1);
+				monsters[m].M_StartKill(-1);
 			}
 		} else {
 			if (resist) {
 				PlayEffect(m, 1);
-			} else if (monster[m]._mmode == MM_STONE) {
+			} else if (monsters[m].data._mmode == MM_STONE) {
 				if (m > 3)
-					M_StartHit(m, -1, dam);
-				monster[m]._mmode = MM_STONE;
+					monsters[m].M_StartHit(-1, dam);
+				monsters[m].data._mmode = MM_STONE;
 			} else {
 				if (m > 3)
-					M_StartHit(m, -1, dam);
+					monsters[m].M_StartHit(-1, dam);
 			}
 		}
 		return TRUE;
@@ -567,17 +567,17 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 	BOOL resist, ret;
 
 	resist = FALSE;
-	if (monster[m].mtalkmsg
-	    || monster[m]._mhitpoints >> 6 <= 0
-	    || t == MIS_HBOLT && monster[m].MType->mtype != MT_DIABLO && monster[m].MData->mMonstClass) {
+	if (monsters[m].data.mtalkmsg
+	    || monsters[m].data._mhitpoints >> 6 <= 0
+	    || t == MIS_HBOLT && monsters[m].data.MType->mtype != MT_DIABLO && monsters[m].data.MData->mMonstClass) {
 		return FALSE;
 	}
-	if (monster[m].MType->mtype == MT_ILLWEAV && monster[m]._mgoal == MGOAL_RETREAT)
+	if (monsters[m].data.MType->mtype == MT_ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT)
 		return FALSE;
-	if (monster[m]._mmode == MM_CHARGE)
+	if (monsters[m].data._mmode == MM_CHARGE)
 		return FALSE;
 
-	mor = monster[m].mMagicRes;
+	mor = monsters[m].data.mMagicRes;
 	mir = missiledata[t].mResist;
 
 	if (mor & IMUNE_MAGIC && mir == MISR_MAGIC
@@ -596,7 +596,7 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 		hper = plr[pnum].data._pDexterity
 		    + plr[pnum].data._pIBonusToHit
 		    + plr[pnum].data._pLevel
-		    - monster[m].mArmorClass
+		    - monsters[m].data.mArmorClass
 		    - (dist * dist >> 1)
 		    + plr[pnum].data._pIEnAc
 		    + 50;
@@ -605,7 +605,7 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 		if (plr[pnum].data._pClass == PC_WARRIOR)
 			hper += 10;
 	} else {
-		hper = plr[pnum].data._pMagic - (monster[m].mLevel << 1) - dist + 50;
+		hper = plr[pnum].data._pMagic - (monsters[m].data.mLevel << 1) - dist + 50;
 		if (plr[pnum].data._pClass == PC_SORCERER)
 			hper += 20;
 	}
@@ -613,7 +613,7 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 		hper = 5;
 	if (hper > 95)
 		hper = 95;
-	if (monster[m]._mmode == MM_STONE)
+	if (monsters[m].data._mmode == MM_STONE)
 		hit = 0;
 	if (CheckMonsterHit(m, &ret))
 		return ret;
@@ -625,7 +625,7 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 		return FALSE;
 #endif
 	if (t == MIS_BONESPIRIT) {
-		dam = monster[m]._mhitpoints / 3 >> 6;
+		dam = monsters[m].data._mhitpoints / 3 >> 6;
 	} else {
 		dam = mindam + random_(70, maxdam - mindam + 1);
 	}
@@ -641,37 +641,37 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 	if (resist)
 		dam >>= 2;
 	if (pnum == myplr())
-		monster[m]._mhitpoints -= dam;
+		monsters[m].data._mhitpoints -= dam;
 	if (plr[pnum].data._pIFlags & ISPL_FIRE_ARROWS)
-		monster[m]._mFlags |= MFLAG_NOHEAL;
+		monsters[m].data._mFlags |= MFLAG_NOHEAL;
 
-	if (monster[m]._mhitpoints >> 6 <= 0) {
-		if (monster[m]._mmode == MM_STONE) {
-			M_StartKill(m, pnum);
-			monster[m]._mmode = MM_STONE;
+	if (monsters[m].data._mhitpoints >> 6 <= 0) {
+		if (monsters[m].data._mmode == MM_STONE) {
+			monsters[m].M_StartKill(pnum);
+			monsters[m].data._mmode = MM_STONE;
 		} else {
-			M_StartKill(m, pnum);
+			monsters[m].M_StartKill(pnum);
 		}
 	} else {
 		if (resist) {
 			PlayEffect(m, 1);
-		} else if (monster[m]._mmode == MM_STONE) {
+		} else if (monsters[m].data._mmode == MM_STONE) {
 			if (m > 3)
-				M_StartHit(m, pnum, dam);
-			monster[m]._mmode = MM_STONE;
+				monsters[m].M_StartHit(pnum, dam);
+			monsters[m].data._mmode = MM_STONE;
 		} else {
 			if (!missiledata[t].mType && plr[pnum].data._pIFlags & ISPL_KNOCKBACK) {
-				M_GetKnockback(m);
+				monsters[m].M_GetKnockback();
 			}
 			if (m > 3)
-				M_StartHit(m, pnum, dam);
+				monsters[m].M_StartHit(pnum, dam);
 		}
 	}
 
-	if (!monster[m]._msquelch) {
-		monster[m]._msquelch = UCHAR_MAX;
-		monster[m]._lastx = plr[pnum].data._px;
-		monster[m]._lasty = plr[pnum].data._py;
+	if (!monsters[m].data._msquelch) {
+		monsters[m].data._msquelch = UCHAR_MAX;
+		monsters[m].data._lastx = plr[pnum].data._px;
+		monsters[m].data._lasty = plr[pnum].data._py;
 	}
 	return TRUE;
 }
@@ -700,8 +700,8 @@ BOOL PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 	if (!missiledata[mtype].mType) {
 		tac = plr[pnum].data._pIAC + plr[pnum].data._pIBonusAC + plr[pnum].data._pDexterity / 5;
 		if (m != -1) {
-			hper = monster[m].mHit
-			    + ((monster[m].mLevel - plr[pnum].data._pLevel) * 2)
+			hper = monsters[m].data.mHit
+			    + ((monsters[m].data.mLevel - plr[pnum].data._pLevel) * 2)
 			    + 30
 			    - (dist << 1) - tac;
 		} else {
@@ -709,7 +709,7 @@ BOOL PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 		}
 	} else {
 		if (m != -1) {
-			hper = +40 - (plr[pnum].data._pLevel << 1) - (dist << 1) + (monster[m].mLevel << 1);
+			hper = +40 - (plr[pnum].data._pLevel << 1) - (dist << 1) + (monsters[m].data.mLevel << 1);
 		} else {
 			hper = 40;
 		}
@@ -738,7 +738,7 @@ BOOL PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 	if (mtype == MIS_ACIDPUD)
 		blk = 100;
 	if (m != -1)
-		blkper = plr[pnum].data._pBaseToBlk + (plr[pnum].data._pLevel << 1) - (monster[m].mLevel << 1) + plr[pnum].data._pDexterity;
+		blkper = plr[pnum].data._pBaseToBlk + (plr[pnum].data._pLevel << 1) - (monsters[m].data.mLevel << 1) + plr[pnum].data._pDexterity;
 	else
 		blkper = plr[pnum].data._pBaseToBlk + plr[pnum].data._pDexterity;
 	if (blkper < 0)
@@ -811,7 +811,7 @@ BOOL PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 		} else {
 			if (blk < blkper) {
 				if (m != -1) {
-					tac = GetDirection(plr[pnum].data._px, plr[pnum].data._py, monster[m]._mx, monster[m]._my);
+					tac = GetDirection(plr[pnum].data._px, plr[pnum].data._py, monsters[m].data._mx, monsters[m].data._my);
 				} else {
 					tac = plr[pnum].data._pdir;
 				}
@@ -971,7 +971,7 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 				}
 			} else {
 				if (grid[mx][my].dMonster < 0
-				    && monster[-(grid[mx][my].dMonster + 1)]._mmode == MM_STONE
+				    && monsters[-(grid[mx][my].dMonster + 1)].data._mmode == MM_STONE
 				    && MonsterMHit(
 				           missile[i]._misource,
 				           -(grid[mx][my].dMonster + 1),
@@ -1000,9 +1000,9 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 				missile[i]._miHitFlag = TRUE;
 			}
 		} else {
-			if (monster[missile[i]._misource]._mFlags & MFLAG_TARGETS_MONSTER
+			if (monsters[missile[i]._misource].data._mFlags & MFLAG_TARGETS_MONSTER
 			    && grid[mx][my].dMonster > 0
-			    && monster[grid[mx][my].dMonster - 1]._mFlags & MFLAG_GOLEM
+			    && monsters[grid[mx][my].dMonster - 1].data._mFlags & MFLAG_GOLEM
 			    && MonsterTrapHit(grid[mx][my].dMonster - 1, mindam, maxdam, missile[i]._midist, missile[i]._mitype, shift)) {
 				if (!nodel)
 					missile[i]._mirange = 0;
@@ -1179,8 +1179,8 @@ void InitMissiles()
 {
 	int mi, src, i, j;
 
-	plr.local().data._pSpellFlags &= ~0x1;
-	if (plr.local().data._pInfraFlag == TRUE) {
+	myplr().data._pSpellFlags &= ~0x1;
+	if (myplr().data._pInfraFlag == TRUE) {
 		for (i = 0; i < nummissiles; ++i) {
 			mi = missileactive[i];
 			if (missile[mi]._mitype == MIS_INFRA) {
@@ -1505,7 +1505,7 @@ void AddMisexp(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 	CMonster *mon;
 
 	if (mienemy && id > 0) {
-		mon = monster[id].MType;
+		mon = monsters[id].data.MType;
 		if (mon->mtype == MT_SUCCUBUS)
 			SetMissAnim(mi, MFILE_FLAREEXP);
 		if (mon->mtype == MT_SNOWWICH)
@@ -1634,7 +1634,7 @@ void AddFlash(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 			missile[mi]._midam = level.currlevel >> 1;
 		}
 	} else {
-		missile[mi]._midam = monster[id].mLevel << 1;
+		missile[mi]._midam = monsters[id].data.mLevel << 1;
 	}
 	missile[mi]._mirange = 19;
 }
@@ -1780,14 +1780,14 @@ void AddRhino(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 {
 	AnimStruct *anim;
 
-	if (monster[id].MType->mtype < MT_HORNED || monster[id].MType->mtype > MT_OBLORD) {
-		if (monster[id].MType->mtype < MT_NSNAKE || monster[id].MType->mtype > MT_GSNAKE) {
-			anim = &monster[id].MType->Anims[MA_WALK];
+	if (monsters[id].data.MType->mtype < MT_HORNED || monsters[id].data.MType->mtype > MT_OBLORD) {
+		if (monsters[id].data.MType->mtype < MT_NSNAKE || monsters[id].data.MType->mtype > MT_GSNAKE) {
+			anim = &monsters[id].data.MType->Anims[MA_WALK];
 		} else {
-			anim = &monster[id].MType->Anims[MA_ATTACK];
+			anim = &monsters[id].data.MType->Anims[MA_ATTACK];
 		}
 	} else {
-		anim = &monster[id].MType->Anims[MA_SPECIAL];
+		anim = &monsters[id].data.MType->Anims[MA_SPECIAL];
 	}
 	GetMissileVel(mi, sx, sy, dx, dy, 18);
 	missile[mi]._mimfnum = midir;
@@ -1795,17 +1795,17 @@ void AddRhino(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	missile[mi]._miAnimData = anim->Data[midir];
 	missile[mi]._miAnimDelay = anim->Rate;
 	missile[mi]._miAnimLen = anim->Frames;
-	missile[mi]._miAnimWidth = monster[id].MType->width;
-	missile[mi]._miAnimWidth2 = monster[id].MType->width2;
+	missile[mi]._miAnimWidth = monsters[id].data.MType->width;
+	missile[mi]._miAnimWidth2 = monsters[id].data.MType->width2;
 	missile[mi]._miAnimAdd = 1;
-	if (monster[id].MType->mtype >= MT_NSNAKE && monster[id].MType->mtype <= MT_GSNAKE)
+	if (monsters[id].data.MType->mtype >= MT_NSNAKE && monsters[id].data.MType->mtype <= MT_GSNAKE)
 		missile[mi]._miAnimFrame = 7;
 	missile[mi]._miVar1 = 0;
 	missile[mi]._miVar2 = 0;
 	missile[mi]._miLightFlag = TRUE;
-	if (monster[id]._uniqtype != 0) {
-		missile[mi]._miUniqTrans = monster[id]._uniqtrans + 1;
-		missile[mi]._mlid = monster[id].mlid;
+	if (monsters[id].data._uniqtype != 0) {
+		missile[mi]._miUniqTrans = monsters[id].data._uniqtrans + 1;
+		missile[mi]._mlid = monsters[id].data.mlid;
 	}
 	missile[mi]._mirange = 256;
 	PutMissile(mi);
@@ -1816,22 +1816,22 @@ void miss_null_32(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	AnimStruct *anim;
 	MonsterStruct *mon;
 
-	anim = &monster[id].MType->Anims[MA_WALK];
+	anim = &monsters[id].data.MType->Anims[MA_WALK];
 	GetMissileVel(mi, sx, sy, dx, dy, 16);
 	missile[mi]._mimfnum = midir;
 	missile[mi]._miAnimFlags = 0;
 	missile[mi]._miAnimData = anim->Data[midir];
 	missile[mi]._miAnimDelay = anim->Rate;
 	missile[mi]._miAnimLen = anim->Frames;
-	missile[mi]._miAnimWidth = monster[id].MType->width;
-	missile[mi]._miAnimWidth2 = monster[id].MType->width2;
+	missile[mi]._miAnimWidth = monsters[id].data.MType->width;
+	missile[mi]._miAnimWidth2 = monsters[id].data.MType->width2;
 	missile[mi]._miAnimAdd = 1;
 	missile[mi]._miVar1 = 0;
 	missile[mi]._miVar2 = 0;
 	missile[mi]._miLightFlag = TRUE;
-	if (monster[id]._uniqtype != 0)
-		missile[mi]._miUniqTrans = monster[id]._uniqtrans + 1;
-	mon = &monster[id];
+	if (monsters[id].data._uniqtype != 0)
+		missile[mi]._miUniqTrans = monsters[id].data._uniqtrans + 1;
+	mon = &monsters[id].data;
 	grid[mon->_mx][mon->_my].dMonster = 0;
 	missile[mi]._mirange = 256;
 	PutMissile(mi);
@@ -1857,13 +1857,13 @@ void AddFlare(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 			plr[id].SyncPlrKill(0);
 	} else {
 		if (id > 0) {
-			if (monster[id].MType->mtype == MT_SUCCUBUS)
+			if (monsters[id].data.MType->mtype == MT_SUCCUBUS)
 				SetMissAnim(mi, MFILE_FLARE);
-			if (monster[id].MType->mtype == MT_SNOWWICH)
+			if (monsters[id].data.MType->mtype == MT_SNOWWICH)
 				SetMissAnim(mi, MFILE_SCUBMISB);
-			if (monster[id].MType->mtype == MT_HLSPWN)
+			if (monsters[id].data.MType->mtype == MT_HLSPWN)
 				SetMissAnim(mi, MFILE_SCUBMISD);
-			if (monster[id].MType->mtype == MT_SOLBRNR)
+			if (monsters[id].data.MType->mtype == MT_SOLBRNR)
 				SetMissAnim(mi, MFILE_SCUBMISC);
 		}
 	}
@@ -1873,7 +1873,7 @@ void AddAcid(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 {
 	GetMissileVel(mi, sx, sy, dx, dy, 16);
 	SetMissDir(mi, GetDirection16(sx, sy, dx, dy));
-	missile[mi]._mirange = 5 * (monster[id]._mint + 4);
+	missile[mi]._mirange = 5 * (monsters[id].data._mint + 4);
 	missile[mi]._mlid = -1;
 	missile[mi]._miVar1 = sx;
 	missile[mi]._miVar2 = sy;
@@ -1900,7 +1900,7 @@ void AddAcidpud(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy,
 	missile[mi]._miyoff = 0;
 	missile[mi]._miLightFlag = TRUE;
 	monst = missile[mi]._misource;
-	missile[mi]._mirange = random_(50, 15) + 40 * (monster[monst]._mint + 1);
+	missile[mi]._mirange = random_(50, 15) + 40 * (monsters[monst].data._mint + 1);
 	missile[mi]._miPreFlag = TRUE;
 }
 
@@ -1919,13 +1919,13 @@ void AddStone(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 			if (tx > 0 && tx < MAXDUNX && ty > 0 && ty < MAXDUNY) {
 				mid = grid[tx][ty].dMonster;
 				mid = mid > 0 ? mid - 1 : -1 - mid;
-				if (mid > 3 && monster[mid]._mAi != AI_DIABLO) {
-					if (monster[mid]._mmode != MM_FADEIN && monster[mid]._mmode != MM_FADEOUT && monster[mid]._mmode != MM_CHARGE) {
+				if (mid > 3 && monsters[mid].data._mAi != AI_DIABLO) {
+					if (monsters[mid].data._mmode != MM_FADEIN && monsters[mid].data._mmode != MM_FADEOUT && monsters[mid].data._mmode != MM_CHARGE) {
 						j = -99;
 						i = 6;
-						missile[mi]._miVar1 = monster[mid]._mmode;
+						missile[mi]._miVar1 = monsters[mid].data._mmode;
 						missile[mi]._miVar2 = mid;
-						monster[mid]._mmode = MM_STONE;
+						monsters[mid].data._mmode = MM_STONE;
 						break;
 					}
 				}
@@ -1970,8 +1970,8 @@ void AddGolem(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	missile[mi]._miVar2 = sy;
 	missile[mi]._miVar4 = dx;
 	missile[mi]._miVar5 = dy;
-	if ((monster[id]._mx != 1 || monster[id]._my) && id == myplr())
-		M_StartKill(id, id);
+	if ((monsters[id].data._mx != 1 || monsters[id].data._my) && id == myplr())
+		monsters[id].M_StartKill(id);
 	UseMana(id, SPL_GOLEM);
 }
 
@@ -2293,7 +2293,7 @@ void AddFlame(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 		i = random_(79, plr[id].data._pLevel) + random_(79, 2);
 		missile[mi]._midam = 8 * i + 16 + ((8 * i + 16) >> 1);
 	} else {
-		missile[mi]._midam = monster[id].mMinDamage + random_(77, monster[id].mMaxDamage - monster[id].mMinDamage + 1);
+		missile[mi]._midam = monsters[id].data.mMinDamage + random_(77, monsters[id].data.mMaxDamage - monsters[id].data.mMinDamage + 1);
 	}
 }
 
@@ -2523,7 +2523,7 @@ int Sentfire(int i, int sx, int sy)
 
 	ex = 0;
 	if (LineClear(missile[i]._mix, missile[i]._miy, sx, sy)) {
-		if (grid[sx][sy].dMonster > 0 && monster[grid[sx][sy].dMonster - 1]._mhitpoints >> 6 > 0 && grid[sx][sy].dMonster - 1 > 3) {
+		if (grid[sx][sy].dMonster > 0 && monsters[grid[sx][sy].dMonster - 1].data._mhitpoints >> 6 > 0 && grid[sx][sy].dMonster - 1 > 3) {
 			dir = GetDirection(missile[i]._mix, missile[i]._miy, sx, sy);
 			missile[i]._miVar3 = missileavail[0];
 			AddMissile(missile[i]._mix, missile[i]._miy, sx, sy, dir, MIS_FIREBOLT, 0, missile[i]._misource, missile[i]._midam, GetSpellLevel(missile[i]._misource, SPL_FIREBOLT));
@@ -2550,7 +2550,7 @@ void MI_Golem(int i)
 	char *ct;
 
 	src = missile[i]._misource;
-	if (monster[src]._mx == 1 && !monster[src]._my) {
+	if (monsters[src].data._mx == 1 && !monsters[src].data._my) {
 		for (l = 0; l < 6; l++) {
 			k = CrawlNum[l];
 			tid = k + 2;
@@ -2563,7 +2563,7 @@ void MI_Golem(int i)
 					if (LineClear(missile[i]._miVar1, missile[i]._miVar2, tx, ty)) {
 						if (!(grid[tx][ty].dMonster | pieces[dp].nSolidTable | grid[tx][ty].dObject)) {
 							l = 6;
-							SpawnGolum(src, tx, ty, i);
+							monsters[src].SpawnGolum(tx, ty, i);
 							break;
 						}
 					}
@@ -2623,8 +2623,8 @@ void MI_LArrow(int i)
 				mind = plr[p].data._pIMinDam;
 				maxd = plr[p].data._pIMaxDam;
 			} else {
-				mind = monster[p].mMinDamage;
-				maxd = monster[p].mMaxDamage;
+				mind = monsters[p].data.mMinDamage;
+				maxd = monsters[p].data.mMaxDamage;
 			}
 		} else {
 			mind = random_(68, 10) + 1 + level.currlevel;
@@ -2677,8 +2677,8 @@ void MI_Arrow(int i)
 			mind = plr[p].data._pIMinDam;
 			maxd = plr[p].data._pIMaxDam;
 		} else {
-			mind = monster[p].mMinDamage;
-			maxd = monster[p].mMaxDamage;
+			mind = monsters[p].data.mMinDamage;
+			maxd = monsters[p].data.mMaxDamage;
 		}
 	} else {
 		mind = level.currlevel;
@@ -2718,7 +2718,7 @@ void MI_Firebolt(int i)
 					break;
 				}
 			} else {
-				d = monster[p].mMinDamage + random_(77, monster[p].mMaxDamage - monster[p].mMinDamage + 1);
+				d = monsters[p].data.mMinDamage + random_(77, monsters[p].data.mMaxDamage - monsters[p].data.mMinDamage + 1);
 			}
 		} else {
 			d = level.currlevel + random_(78, 2 * level.currlevel);
@@ -2872,8 +2872,8 @@ void MI_Fireball(int i)
 		px = plr[id].data._px;
 		py = plr[id].data._py;
 	} else {
-		px = monster[id]._mx;
-		py = monster[id]._my;
+		px = monsters[id].data._mx;
+		py = monsters[id].data._my;
 	}
 
 	if (missile[i]._miAnimType == MFILE_BIGEXP) {
@@ -2950,7 +2950,7 @@ void MI_Lightctrl(int i)
 		if (missile[i]._micaster == 0) {
 			dam = (random_(79, 2) + random_(79, plr[p].data._pLevel) + 2) << 6;
 		} else {
-			dam = 2 * (monster[p].mMinDamage + random_(80, monster[p].mMaxDamage - monster[p].mMinDamage + 1));
+			dam = 2 * (monsters[p].data.mMinDamage + random_(80, monsters[p].data.mMaxDamage - monsters[p].data.mMinDamage + 1));
 		}
 	} else {
 		dam = random_(81, level.currlevel) + 2 * level.currlevel;
@@ -2978,8 +2978,8 @@ void MI_Lightctrl(int i)
 		if ((mx != missile[i]._miVar1 || my != missile[i]._miVar2) && mx > 0 && my > 0 && mx < MAXDUNX && my < MAXDUNY) {
 			if (missile[i]._misource != -1) {
 				if (missile[i]._micaster == 1
-				    && monster[missile[i]._misource].MType->mtype >= MT_STORM
-				    && monster[missile[i]._misource].MType->mtype <= MT_MAEL) {
+				    && monsters[missile[i]._misource].data.MType->mtype >= MT_STORM
+				    && monsters[missile[i]._misource].data.MType->mtype <= MT_MAEL) {
 					AddMissile(
 					    mx,
 					    my,
@@ -3449,7 +3449,7 @@ void MI_Acidsplat(int i)
 		missile[i]._miDelFlag = TRUE;
 		monst = missile[i]._misource;
 		dam = missile[i]._mispllvl;
-		AddMissile(missile[i]._mix, missile[i]._miy, i, 0, missile[i]._mimfnum, MIS_ACIDPUD, 1, monst, (monster[monst].MData->mLevel >= 2) + 1, dam);
+		AddMissile(missile[i]._mix, missile[i]._miy, i, 0, missile[i]._mimfnum, MIS_ACIDPUD, 1, monst, (monsters[monst].data.MData->mLevel >= 2) + 1, dam);
 	} else {
 		PutMissile(i);
 	}
@@ -3492,23 +3492,23 @@ void MI_Stone(int i)
 
 	missile[i]._mirange--;
 	m = missile[i]._miVar2;
-	if (!monster[m]._mhitpoints && missile[i]._miAnimType != MFILE_SHATTER1) {
+	if (!monsters[m].data._mhitpoints && missile[i]._miAnimType != MFILE_SHATTER1) {
 		missile[i]._mimfnum = 0;
 		missile[i]._miDrawFlag = TRUE;
 		SetMissAnim(i, MFILE_SHATTER1);
 		missile[i]._mirange = 11;
 	}
-	if (monster[m]._mmode != MM_STONE) {
+	if (monsters[m].data._mmode != MM_STONE) {
 		missile[i]._miDelFlag = TRUE;
 		return;
 	}
 
 	if (!missile[i]._mirange) {
 		missile[i]._miDelFlag = TRUE;
-		if (monster[m]._mhitpoints > 0)
-			monster[m]._mmode = missile[i]._miVar1;
+		if (monsters[m].data._mhitpoints > 0)
+			monsters[m].data._mmode = missile[i]._miVar1;
 		else
-			AddDead(monster[m]._mx, monster[m]._my, stonendx, (direction)monster[m]._mdir);
+			AddDead(monsters[m].data._mx, monsters[m].data._my, stonendx, (direction)monsters[m].data._mdir);
 	}
 	if (missile[i]._miAnimType == MFILE_SHATTER1)
 		PutMissile(i);
@@ -3531,7 +3531,7 @@ void MI_Rhino(int i)
 	int mix, miy, mix2, miy2, omx, omy, monst;
 
 	monst = missile[i]._misource;
-	if (monster[monst]._mmode != MM_CHARGE) {
+	if (monsters[monst].data._mmode != MM_CHARGE) {
 		missile[i]._miDelFlag = TRUE;
 		return;
 	}
@@ -3539,7 +3539,7 @@ void MI_Rhino(int i)
 	mix = missile[i]._mix;
 	miy = missile[i]._miy;
 	grid[mix][miy].dMonster = 0;
-	if (monster[monst]._mAi == AI_SNAKE) {
+	if (monsters[monst].data._mAi == AI_SNAKE) {
 		missile[i]._mitxoff += 2 * missile[i]._mixvel;
 		missile[i]._mityoff += 2 * missile[i]._miyvel;
 		GetMissilePos(i);
@@ -3554,19 +3554,19 @@ void MI_Rhino(int i)
 	GetMissilePos(i);
 	omx = missile[i]._mix;
 	omy = missile[i]._miy;
-	if (!PosOkMonst(monst, missile[i]._mix, missile[i]._miy) || (monster[monst]._mAi == AI_SNAKE && !PosOkMonst(monst, mix2, miy2))) {
+	if (!PosOkMonst(monst, missile[i]._mix, missile[i]._miy) || (monsters[monst].data._mAi == AI_SNAKE && !PosOkMonst(monst, mix2, miy2))) {
 		MissToMonst(i, mix, miy);
 		missile[i]._miDelFlag = TRUE;
 		return;
 	}
-	monster[monst]._mfutx = omx;
-	monster[monst]._moldx = omx;
+	monsters[monst].data._mfutx = omx;
+	monsters[monst].data._moldx = omx;
 	grid[omx][omy].dMonster = -1 - monst;
-	monster[monst]._mx = omx;
-	monster[monst]._mfuty = omy;
-	monster[monst]._moldy = omy;
-	monster[monst]._my = omy;
-	if (monster[monst]._uniqtype != 0)
+	monsters[monst].data._mx = omx;
+	monsters[monst].data._mfuty = omy;
+	monsters[monst].data._moldy = omy;
+	monsters[monst].data._my = omy;
+	if (monsters[monst].data._uniqtype != 0)
 		ChangeLightXY(missile[i]._mlid, omx, omy);
 	MoveMissilePos(i);
 	PutMissile(i);
@@ -3585,18 +3585,18 @@ void mi_null_32(int i)
 	src = missile[i]._misource;
 	bx = missile[i]._mix;
 	by = missile[i]._miy;
-	enemy = monster[src]._menemy;
-	if (!(monster[src]._mFlags & MFLAG_TARGETS_MONSTER)) {
+	enemy = monsters[src].data._menemy;
+	if (!(monsters[src].data._mFlags & MFLAG_TARGETS_MONSTER)) {
 		cx = plr[enemy].data._px;
 		cy = plr[enemy].data._py;
 	} else {
-		cx = monster[enemy]._mx;
-		cy = monster[enemy]._my;
+		cx = monsters[enemy].data._mx;
+		cy = monsters[enemy].data._my;
 	}
 	if ((bx != ax || by != ay) && (missile[i]._miVar1 & 1 && (abs(ax - cx) >= 4 || abs(ay - cy) >= 4) || missile[i]._miVar2 > 1) && PosOkMonst(missile[i]._misource, ax, ay)) {
 		MissToMonst(i, ax, ay);
 		missile[i]._miDelFlag = TRUE;
-	} else if (!(monster[src]._mFlags & MFLAG_TARGETS_MONSTER)) {
+	} else if (!(monsters[src].data._mFlags & MFLAG_TARGETS_MONSTER)) {
 		j = grid[bx][by].dPlayer;
 	} else {
 		j = grid[bx][by].dMonster;
@@ -3605,7 +3605,7 @@ void mi_null_32(int i)
 		missile[i]._mixvel *= -1;
 		missile[i]._miyvel *= -1;
 		missile[i]._mimfnum = opposite[missile[i]._mimfnum];
-		missile[i]._miAnimData = monster[src].MType->Anims[MA_WALK].Data[missile[i]._mimfnum];
+		missile[i]._miAnimData = monsters[src].data.MType->Anims[MA_WALK].Data[missile[i]._mimfnum];
 		missile[i]._miVar2++;
 		if (j > 0)
 			missile[i]._miVar1 |= 1;
@@ -3956,9 +3956,9 @@ void MI_Element(int i)
 			missile[i]._mirange = 255;
 			mid = FindClosest(cx, cy, 19);
 			if (mid > 0) {
-				sd = GetDirection8(cx, cy, monster[mid]._mx, monster[mid]._my);
+				sd = GetDirection8(cx, cy, monsters[mid].data._mx, monsters[mid].data._my);
 				SetMissDir(i, sd);
-				GetMissileVel(i, cx, cy, monster[mid]._mx, monster[mid]._my, 16);
+				GetMissileVel(i, cx, cy, monsters[mid].data._mx, monsters[mid].data._my, 16);
 			} else {
 				sd = plr[id].data._pdir;
 				SetMissDir(i, sd);
@@ -4008,9 +4008,9 @@ void MI_Bonespirit(int i)
 			missile[i]._mirange = 255;
 			mid = FindClosest(cx, cy, 19);
 			if (mid > 0) {
-				missile[i]._midam = monster[mid]._mhitpoints >> 7;
-				SetMissDir(i, GetDirection8(cx, cy, monster[mid]._mx, monster[mid]._my));
-				GetMissileVel(i, cx, cy, monster[mid]._mx, monster[mid]._my, 16);
+				missile[i]._midam = monsters[mid].data._mhitpoints >> 7;
+				SetMissDir(i, GetDirection8(cx, cy, monsters[mid].data._mx, monsters[mid].data._my));
+				GetMissileVel(i, cx, cy, monsters[mid].data._mx, monsters[mid].data._my, 16);
 			} else {
 				sd = plr[id].data._pdir;
 				SetMissDir(i, sd);
@@ -4129,7 +4129,7 @@ void missiles_process_charge()
 		mis = &missile[mi];
 		mis->_miAnimData = misfiledata[mis->_miAnimType].mAnimData[mis->_mimfnum];
 		if (mis->_mitype == MIS_RHINO) {
-			mon = monster[mis->_misource].MType;
+			mon = monsters[mis->_misource].data.MType;
 			if (mon->mtype >= MT_HORNED && mon->mtype <= MT_OBLORD) {
 				anim = &mon->Anims[MA_SPECIAL];
 			} else {

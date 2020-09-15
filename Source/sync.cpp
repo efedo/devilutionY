@@ -57,8 +57,8 @@ void sync_one_monster()
 
 	for (i = 0; i < nummonsters; i++) {
 		m = monstactive[i];
-		sync_word_6AA708[m] = abs(plr.local().data._px - monster[m]._mx) + abs(plr.local().data._py - monster[m]._my);
-		if (monster[m]._msquelch == 0) {
+		sync_word_6AA708[m] = abs(myplr().data._px - monsters[m].data._mx) + abs(myplr().data._py - monsters[m].data._my);
+		if (monsters[m].data._msquelch == 0) {
 			sync_word_6AA708[m] += 0x1000;
 		} else if (sgwLRU[m] != 0) {
 			sgwLRU[m]--;
@@ -93,13 +93,13 @@ BOOL sync_monster_active(TSyncMonster *p)
 void sync_monster_pos(TSyncMonster *p, int ndx)
 {
 	p->_mndx = ndx;
-	p->_mx = monster[ndx]._mx;
-	p->_my = monster[ndx]._my;
+	p->_mx = monsters[ndx].data._mx;
+	p->_my = monsters[ndx].data._my;
 	p->_menemy = encode_enemy(ndx);
 	p->_mdelta = sync_word_6AA708[ndx] > 255 ? 255 : sync_word_6AA708[ndx];
 
 	sync_word_6AA708[ndx] = 0xFFFF;
-	sgwLRU[ndx] = monster[ndx]._msquelch == 0 ? 0xFFFF : 0xFFFE;
+	sgwLRU[ndx] = monsters[ndx].data._msquelch == 0 ? 0xFFFF : 0xFFFE;
 }
 
 BOOL sync_monster_active2(TSyncMonster *p)
@@ -171,7 +171,7 @@ void SyncPlrInv(TSyncHeader *pHdr)
 	}
 
 	assert((DWORD)sgnSyncPInv < NUM_INVLOC);
-	pItem = &plr.local().data.InvBody[sgnSyncPInv];
+	pItem = &myplr().data.InvBody[sgnSyncPInv];
 	if (pItem->_itype != ITYPE_NONE) {
 		pHdr->bPInvLoc = sgnSyncPInv;
 		pHdr->wPInvIndx = pItem->IDidx;
@@ -229,7 +229,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 
 	ndx = p->_mndx;
 
-	if (monster[ndx]._mhitpoints == 0) {
+	if (monsters[ndx].data._mhitpoints == 0) {
 		return;
 	}
 
@@ -239,7 +239,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 		}
 	}
 
-	delta = abs(plr.local().data._px - monster[ndx]._mx) + abs(plr.local().data._py - monster[ndx]._my);
+	delta = abs(myplr().data._px - monsters[ndx].data._mx) + abs(myplr().data._py - monsters[ndx].data._my);
 	if (delta > 255) {
 		delta = 255;
 	}
@@ -247,34 +247,34 @@ void sync_monster(int pnum, const TSyncMonster *p)
 	if (delta < p->_mdelta || (delta == p->_mdelta && pnum > myplr())) {
 		return;
 	}
-	if (monster[ndx]._mfutx == p->_mx && monster[ndx]._mfuty == p->_my) {
+	if (monsters[ndx].data._mfutx == p->_mx && monsters[ndx].data._mfuty == p->_my) {
 		return;
 	}
-	if (monster[ndx]._mmode == MM_CHARGE || monster[ndx]._mmode == MM_STONE) {
+	if (monsters[ndx].data._mmode == MM_CHARGE || monsters[ndx].data._mmode == MM_STONE) {
 		return;
 	}
 
-	mdx = abs(monster[ndx]._mx - p->_mx);
-	mdy = abs(monster[ndx]._my - p->_my);
+	mdx = abs(monsters[ndx].data._mx - p->_mx);
+	mdy = abs(monsters[ndx].data._my - p->_my);
 	if (mdx <= 2 && mdy <= 2) {
-		if (monster[ndx]._mmode < MM_WALK || monster[ndx]._mmode > MM_WALK3) {
-			md = GetDirection(monster[ndx]._mx, monster[ndx]._my, p->_mx, p->_my);
-			if (DirOK(ndx, md)) {
-				M_ClearSquares(ndx);
-				grid[monster[ndx]._mx][monster[ndx]._my].dMonster = ndx + 1;
-				M_WalkDir(ndx, md);
-				monster[ndx]._msquelch = UCHAR_MAX;
+		if (monsters[ndx].data._mmode < MM_WALK || monsters[ndx].data._mmode > MM_WALK3) {
+			md = GetDirection(monsters[ndx].data._mx, monsters[ndx].data._my, p->_mx, p->_my);
+			if (monsters[ndx].DirOK(md)) {
+				monsters[ndx].M_ClearSquares();
+				grid[monsters[ndx].data._mx][monsters[ndx].data._my].dMonster = ndx + 1;
+				monsters[ndx].M_WalkDir(md);
+				monsters[ndx].data._msquelch = UCHAR_MAX;
 			}
 		}
 	} else if (grid[p->_mx][p->_my].dMonster == 0) {
-		M_ClearSquares(ndx);
+		monsters[ndx].M_ClearSquares();
 		grid[p->_mx][p->_my].dMonster = ndx + 1;
-		monster[ndx]._mx = p->_mx;
-		monster[ndx]._my = p->_my;
+		monsters[ndx].data._mx = p->_mx;
+		monsters[ndx].data._my = p->_my;
 		decode_enemy(ndx, p->_menemy);
-		md = GetDirection(p->_mx, p->_my, monster[ndx]._menemyx, monster[ndx]._menemyy);
-		M_StartStand(ndx, md);
-		monster[ndx]._msquelch = UCHAR_MAX;
+		md = GetDirection(p->_mx, p->_my, monsters[ndx].data._menemyx, monsters[ndx].data._menemyy);
+		monsters[ndx].M_StartStand(md);
+		monsters[ndx].data._msquelch = UCHAR_MAX;
 	}
 
 	decode_enemy(ndx, p->_menemy);

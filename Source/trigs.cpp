@@ -69,7 +69,7 @@ void InitTownTriggers()
 			townwarps[i] = FALSE;
 		}
 #ifndef SPAWN
-		if (plr.local().data.pTownWarps & 1) {
+		if (myplr().data.pTownWarps & 1) {
 			trigs[numtrigs]._tx = 49;
 			trigs[numtrigs]._ty = 21;
 			trigs[numtrigs]._tmsg = WM_DIABTOWNWARP;
@@ -77,7 +77,7 @@ void InitTownTriggers()
 			numtrigs++;
 			townwarps[0] = TRUE;
 		}
-		if (plr.local().data.pTownWarps & 2) {
+		if (myplr().data.pTownWarps & 2) {
 			townwarps[1] = TRUE;
 			trigs[numtrigs]._tx = 17;
 			trigs[numtrigs]._ty = 69;
@@ -85,7 +85,7 @@ void InitTownTriggers()
 			trigs[numtrigs]._tlvl = 9;
 			numtrigs++;
 		}
-		if (plr.local().data.pTownWarps & 4) {
+		if (myplr().data.pTownWarps & 4) {
 			townwarps[2] = TRUE;
 			trigs[numtrigs]._tx = 41;
 			trigs[numtrigs]._ty = 80;
@@ -653,11 +653,11 @@ void CheckTriggers()
 	BOOL abort;
 	char abortflag;
 
-	if (plr.local().data._pmode != PM_STAND)
+	if (myplr().data._pmode != PM_STAND)
 		return;
 
 	for (i = 0; i < numtrigs; i++) {
-		if (plr.local().data._px != trigs[i]._tx || plr.local().data._py != trigs[i]._ty) {
+		if (myplr().data._px != trigs[i]._tx || myplr().data._py != trigs[i]._ty) {
 			continue;
 		}
 
@@ -665,14 +665,14 @@ void CheckTriggers()
 		case WM_DIABNEXTLVL:
 #ifdef SPAWN
 			if (level.currlevel >= 2) {
-				NetSendCmdLoc(TRUE, CMD_WALKXY, plr.local().data._px, plr.local().data._py + 1);
+				NetSendCmdLoc(TRUE, CMD_WALKXY, myplr().data._px, myplr().data._py + 1);
 				PlaySFX(PS_WARR18);
 				InitDiabloMsg(EMSG_NOT_IN_SHAREWARE);
 			} else {
 #endif
 				if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
 					return;
-				plr.local().StartNewLvl(trigs[i]._tmsg, level.currlevel + 1);
+				myplr().StartNewLvl(trigs[i]._tmsg, level.currlevel + 1);
 #ifdef SPAWN
 			}
 #endif
@@ -680,43 +680,43 @@ void CheckTriggers()
 		case WM_DIABPREVLVL:
 			if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
 				return;
-			plr.local().StartNewLvl(trigs[i]._tmsg, level.currlevel - 1);
+			myplr().StartNewLvl(trigs[i]._tmsg, level.currlevel - 1);
 			break;
 		case WM_DIABRTNLVL:
-			plr.local().StartNewLvl(trigs[i]._tmsg, ReturnLvl);
+			myplr().StartNewLvl(trigs[i]._tmsg, ReturnLvl);
 			break;
 		case WM_DIABTOWNWARP:
 			if (gbMaxPlayers != 1) {
 				abort = FALSE;
 
-				if (trigs[i]._tlvl == 5 && plr.local().data._pLevel < 8) {
+				if (trigs[i]._tlvl == 5 && myplr().data._pLevel < 8) {
 					abort = TRUE;
-					x = plr.local().data._px;
-					y = plr.local().data._py + 1;
+					x = myplr().data._px;
+					y = myplr().data._py + 1;
 					abortflag = EMSG_REQUIRES_LVL_8;
 				}
 
-				if (trigs[i]._tlvl == 9 && plr.local().data._pLevel < 13) {
+				if (trigs[i]._tlvl == 9 && myplr().data._pLevel < 13) {
 					abort = TRUE;
-					x = plr.local().data._px + 1;
-					y = plr.local().data._py;
+					x = myplr().data._px + 1;
+					y = myplr().data._py;
 					abortflag = EMSG_REQUIRES_LVL_13;
 				}
 
-				if (trigs[i]._tlvl == 13 && plr.local().data._pLevel < 17) {
+				if (trigs[i]._tlvl == 13 && myplr().data._pLevel < 17) {
 					abort = TRUE;
-					x = plr.local().data._px;
-					y = plr.local().data._py + 1;
+					x = myplr().data._px;
+					y = myplr().data._py + 1;
 					abortflag = EMSG_REQUIRES_LVL_17;
 				}
 
 				if (abort) {
-					if (plr.local().data._pClass == PC_WARRIOR) {
+					if (myplr().data._pClass == PC_WARRIOR) {
 						PlaySFX(PS_WARR43);
 #ifndef SPAWN
-					} else if (plr.local().data._pClass == PC_ROGUE) {
+					} else if (myplr().data._pClass == PC_ROGUE) {
 						PlaySFX(PS_ROGUE43);
-					} else if (plr.local().data._pClass == PC_SORCERER) {
+					} else if (myplr().data._pClass == PC_SORCERER) {
 						PlaySFX(PS_MAGE43);
 #endif
 					}
@@ -727,11 +727,11 @@ void CheckTriggers()
 				}
 			}
 
-			plr.local().StartNewLvl(trigs[i]._tmsg, trigs[i]._tlvl);
+			myplr().StartNewLvl(trigs[i]._tmsg, trigs[i]._tlvl);
 			break;
 		case WM_DIABTWARPUP:
 			TWarpFrom = level.currlevel;
-			plr.local().StartNewLvl(trigs[i]._tmsg, 0);
+			myplr().StartNewLvl(trigs[i]._tmsg, 0);
 			break;
 		default:
 			app_fatal("Unknown trigger msg");

@@ -128,19 +128,19 @@ void GetPortalLevel()
 	if (level.currlevel) {
 		level.setlevel = FALSE;
 		level.currlevel = 0;
-		plr.local().data.plrlevel = 0;
+		myplr().data.plrlevel = 0;
 		level.leveltype = DTYPE_TOWN;
 	} else {
 		if (portal[portalindex].setlvl) {
 			level.setlevel = TRUE;
 			level.setlvlnum = portal[portalindex].level;
 			level.currlevel = portal[portalindex].level;
-			plr.local().data.plrlevel = level.setlvlnum;
+			myplr().data.plrlevel = level.setlvlnum;
 			level.leveltype = portal[portalindex].ltype;
 		} else {
 			level.setlevel = FALSE;
 			level.currlevel = portal[portalindex].level;
-			plr.local().data.plrlevel = level.currlevel;
+			myplr().data.plrlevel = level.currlevel;
 			level.leveltype = portal[portalindex].ltype;
 		}
 		if (portalindex == myplr()) {

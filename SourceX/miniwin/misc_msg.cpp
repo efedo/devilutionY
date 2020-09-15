@@ -43,28 +43,28 @@ void SetCursorPos(int X, int Y)
 // Moves the mouse to the first attribute "+" button.
 void FocusOnCharInfo()
 {
-	if (invflag || plr.local().data._pStatPts <= 0)
+	if (invflag || myplr().data._pStatPts <= 0)
 		return;
 
 	// Find the first incrementable stat.
-	int pc = plr.local().data._pClass;
+	int pc = myplr().data._pClass;
 	int stat = -1;
 	for (int i = 4; i >= 0; --i) {
 		switch (i) {
 		case ATTRIB_STR:
-			if (plr.local().data._pBaseStr >= classes[pc].MaxStats[ATTRIB_STR])
+			if (myplr().data._pBaseStr >= classes[pc].MaxStats[ATTRIB_STR])
 				continue;
 			break;
 		case ATTRIB_MAG:
-			if (plr.local().data._pBaseMag >= classes[pc].MaxStats[ATTRIB_MAG])
+			if (myplr().data._pBaseMag >= classes[pc].MaxStats[ATTRIB_MAG])
 				continue;
 			break;
 		case ATTRIB_DEX:
-			if (plr.local().data._pBaseDex >= classes[pc].MaxStats[ATTRIB_DEX])
+			if (myplr().data._pBaseDex >= classes[pc].MaxStats[ATTRIB_DEX])
 				continue;
 			break;
 		case ATTRIB_VIT:
-			if (plr.local().data._pBaseVit >= classes[pc].MaxStats[ATTRIB_VIT])
+			if (myplr().data._pBaseVit >= classes[pc].MaxStats[ATTRIB_VIT])
 				continue;
 			break;
 		default:
@@ -276,16 +276,16 @@ void StoreSpellCoords()
 		std::uint64_t spells;
 		switch (i) {
 		case RSPLTYPE_SKILL:
-			spells = plr.local().data._pAblSpells;
+			spells = myplr().data._pAblSpells;
 			break;
 		case RSPLTYPE_SPELL:
-			spells = plr.local().data._pMemSpells;
+			spells = myplr().data._pMemSpells;
 			break;
 		case RSPLTYPE_SCROLL:
-			spells = plr.local().data._pScrlSpells;
+			spells = myplr().data._pScrlSpells;
 			break;
 		case RSPLTYPE_CHARGES:
-			spells = plr.local().data._pISpells;
+			spells = myplr().data._pISpells;
 			break;
 		default:
 			continue;
@@ -322,12 +322,12 @@ bool BlurInventory()
 {
 	if (pcurs >= CURSOR_FIRSTITEM) {
 		if (!TryDropItem()) {
-			if (plr.local().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PC_WARRIOR) {
 				PlaySFX(PS_WARR16); // "Where would I put this?"
 #ifndef SPAWN
-			} else if (plr.local().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PC_ROGUE) {
 				PlaySFX(PS_ROGUE16);
-			} else if (plr.local().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PC_SORCERER) {
 				PlaySFX(PS_MAGE16);
 #endif
 			}

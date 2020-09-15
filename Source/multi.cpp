@@ -31,7 +31,7 @@ DWORD sgdwGameLoops;
  * Specifies the maximum number of players in a game, where 1
  * represents a single player game and 4 represents a multi player game.
  */
-BYTE gbMaxPlayers;
+BYTE gbMaxPlayers = 0;
 BOOLEAN sgbTimeout;
 char szPlayerName[128];
 BYTE gbDeltaSender;
@@ -93,15 +93,15 @@ void multi_send_packet(void *packet, BYTE dwSize)
 void NetRecvPlrData(TPkt *pkt)
 {
 	pkt->hdr.wCheck = 'ip';
-	pkt->hdr.px = plr.local().data._px;
-	pkt->hdr.py = plr.local().data._py;
-	pkt->hdr.targx = plr.local().data._ptargx;
-	pkt->hdr.targy = plr.local().data._ptargy;
-	pkt->hdr.php = plr.local().data._pHitPoints;
-	pkt->hdr.pmhp = plr.local().data._pMaxHP;
-	pkt->hdr.bstr = plr.local().data._pBaseStr;
-	pkt->hdr.bmag = plr.local().data._pBaseMag;
-	pkt->hdr.bdex = plr.local().data._pBaseDex;
+	pkt->hdr.px = myplr().data._px;
+	pkt->hdr.py = myplr().data._py;
+	pkt->hdr.targx = myplr().data._ptargx;
+	pkt->hdr.targy = myplr().data._ptargy;
+	pkt->hdr.php = myplr().data._pHitPoints;
+	pkt->hdr.pmhp = myplr().data._pMaxHP;
+	pkt->hdr.bstr = myplr().data._pBaseStr;
+	pkt->hdr.bmag = myplr().data._pBaseMag;
+	pkt->hdr.bdex = myplr().data._pBaseDex;
 }
 
 void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
@@ -330,7 +330,7 @@ void multi_mon_seeds()
 	sgdwGameLoops++;
 	l = (sgdwGameLoops >> 8) | (sgdwGameLoops << 24); // _rotr(sgdwGameLoops, 8)
 	for (i = 0; i < MAXMONSTERS; i++)
-		monster[i]._mAISeed = l + i;
+		monsters[i].data._mAISeed = l + i;
 }
 
 void multi_begin_timeout()
@@ -683,7 +683,6 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 		memset(sgbPlayerLeftGameTbl, 0, sizeof(sgbPlayerLeftGameTbl));
 		memset(sgdwPlayerLeftReasonTbl, 0, sizeof(sgdwPlayerLeftReasonTbl));
 		memset(sgbSendDeltaTbl, 0, sizeof(sgbSendDeltaTbl));
-		//memset(plr, 0, sizeof(plr));
 		memset(sgwPackPlrOffsetTbl, 0, sizeof(sgwPackPlrOffsetTbl));
 		SNetSetBasePlayer(0);
 		if (bSinglePlayer) {
@@ -712,7 +711,7 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 		SetupLocalCoords();
 		multi_send_pinfo(-2, CMD_SEND_PLRINFO);
 		gbActivePlayers = 1;
-		plr.local().data.plractive = TRUE;
+		myplr().data.plractive = TRUE;
 		if (sgbPlayerTurnBitTbl[myplr()] == 0 || msg_wait_resync())
 			break;
 		NetClose();
@@ -780,17 +779,17 @@ void SetupLocalCoords()
 #endif
 	x += plrxoff[myplr()];
 	y += plryoff[myplr()];
-	plr.local().data._px = x;
-	plr.local().data._py = y;
-	plr.local().data._pfutx = x;
-	plr.local().data._pfuty = y;
-	plr.local().data._ptargx = x;
-	plr.local().data._ptargy = y;
-	plr.local().data.plrlevel = level.currlevel;
-	plr.local().data._pLvlChanging = TRUE;
-	plr.local().data.pLvlLoad = 0;
-	plr.local().data._pmode = PM_NEWLVL;
-	plr.local().data.destAction = ACTION_NONE;
+	myplr().data._px = x;
+	myplr().data._py = y;
+	myplr().data._pfutx = x;
+	myplr().data._pfuty = y;
+	myplr().data._ptargx = x;
+	myplr().data._ptargy = y;
+	myplr().data.plrlevel = level.currlevel;
+	myplr().data._pLvlChanging = TRUE;
+	myplr().data.pLvlLoad = 0;
+	myplr().data._pmode = PM_NEWLVL;
+	myplr().data.destAction = ACTION_NONE;
 }
 
 BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info)
@@ -846,7 +845,7 @@ BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info,
 		pfile_read_player_from_save();
 
 		if (type == 'BNET')
-			plr.local().data.pBattleNet = 1;
+			myplr().data.pBattleNet = 1;
 
 		return TRUE;
 	}

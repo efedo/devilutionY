@@ -90,11 +90,11 @@ void SetupTownStores()
 	if (gbMaxPlayers == 1) {
 		l = 0;
 		for (i = 0; i < NUMLEVELS; i++) {
-			if (plr.local().data._pLvlVisited[i])
+			if (myplr().data._pLvlVisited[i])
 				l = i;
 		}
 	} else {
-		l = plr.local().data._pLevel >> 1;
+		l = myplr().data._pLevel >> 1;
 	}
 	l += 2;
 	if (l < 6)
@@ -105,8 +105,8 @@ void SetupTownStores()
 	SpawnSmith(l);
 	SpawnWitch(l);
 	SpawnHealer(l);
-	SpawnBoy(plr.local().data._pLevel);
-	SpawnPremium(plr.local().data._pLevel);
+	SpawnBoy(myplr().data._pLevel);
+	SpawnPremium(myplr().data._pLevel);
 }
 
 void FreeStoreMem()
@@ -291,69 +291,69 @@ void StoreAutoPlace()
 	BOOL done;
 	int i, w, h, idx;
 
-	SetICursor(plr.local().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+	SetICursor(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 	w = icursW28;
 	h = icursH28;
 	done = FALSE;
 	if (w == 1 && h == 1) {
-		idx = plr.local().data.HoldItem.IDidx;
-		if (plr.local().data.HoldItem._iStatFlag && AllItemsList[idx].iUsable) {
+		idx = myplr().data.HoldItem.IDidx;
+		if (myplr().data.HoldItem._iStatFlag && AllItemsList[idx].iUsable) {
 			for (i = 0; i < 8 && !done; i++) {
-				if (plr.local().data.SpdList[i]._itype == ITYPE_NONE) {
-					plr.local().data.SpdList[i] = plr.local().data.HoldItem;
+				if (myplr().data.SpdList[i]._itype == ITYPE_NONE) {
+					myplr().data.SpdList[i] = myplr().data.HoldItem;
 					done = TRUE;
 				}
 			}
 		}
 		for (i = 30; i <= 39 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 20; i <= 29 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 10; i <= 19 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 0; i <= 9 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 	}
 	if (w == 1 && h == 2) {
 		for (i = 29; i >= 20 && !done; i--) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 9; i >= 0 && !done; i--) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 19; i >= 10 && !done; i--) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 	}
 	if (w == 1 && h == 3) {
 		for (i = 0; i < 20 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 	}
 	if (w == 2 && h == 2) {
 		for (i = 0; i < 10 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(AP2x2Tbl[i], w, h, TRUE);
+			done = myplr().inventory.AutoPlace(AP2x2Tbl[i], w, h, TRUE);
 		}
 		for (i = 21; i < 29 && !done; i += 2) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 1; i < 9 && !done; i += 2) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 10; i < 19 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 	}
 	if (w == 2 && h == 3) {
 		for (i = 0; i < 9 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 		for (i = 10; i < 19 && !done; i++) {
-			done = plr.local().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
 		}
 	}
 }
@@ -485,7 +485,7 @@ void S_StartSBuy()
 	stextsize = TRUE;
 	stextscrl = TRUE;
 	stextsval = 0;
-	sprintf(tempstr, "I have these items for sale :           Your gold : %i", plr.local().data._pGold);
+	sprintf(tempstr, "I have these items for sale :           Your gold : %i", myplr().data._pGold);
 	AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 	AddSLine(3);
 	AddSLine(21);
@@ -555,7 +555,7 @@ BOOL S_StartSPBuy()
 	stextscrl = TRUE;
 	stextsval = 0;
 
-	sprintf(tempstr, "I have these premium items for sale :   Your gold : %i", plr.local().data._pGold);
+	sprintf(tempstr, "I have these premium items for sale :   Your gold : %i", myplr().data._pGold);
 	AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 	AddSLine(3);
 	AddSLine(21);
@@ -573,17 +573,17 @@ BOOL S_StartSPBuy()
 
 BOOL SmithSellOk(int i)
 {
-	if (plr.local().data.InvList[i]._itype == ITYPE_NONE)
+	if (myplr().data.InvList[i]._itype == ITYPE_NONE)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_MISC)
+	if (myplr().data.InvList[i]._itype == ITYPE_MISC)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_GOLD)
+	if (myplr().data.InvList[i]._itype == ITYPE_GOLD)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_MEAT)
+	if (myplr().data.InvList[i]._itype == ITYPE_MEAT)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_STAFF)
+	if (myplr().data.InvList[i]._itype == ITYPE_STAFF)
 		return FALSE;
-	if (plr.local().data.InvList[i].IDidx == IDI_LAZSTAFF)
+	if (myplr().data.InvList[i].IDidx == IDI_LAZSTAFF)
 		return FALSE;
 
 	return TRUE;
@@ -641,10 +641,10 @@ void S_StartSSell()
 	for (i = 0; i < 48; i++)
 		storehold[i]._itype = ITYPE_NONE;
 
-	for (i = 0; i < plr.local().data._pNumInv; i++) {
+	for (i = 0; i < myplr().data._pNumInv; i++) {
 		if (SmithSellOk(i)) {
 			sellok = TRUE;
-			storehold[storenumh] = plr.local().data.InvList[i];
+			storehold[storenumh] = myplr().data.InvList[i];
 
 			if (storehold[storenumh]._iMagical != ITEM_QUALITY_NORMAL && storehold[storenumh]._iIdentified)
 				storehold[storenumh]._ivalue = storehold[storenumh]._iIvalue;
@@ -659,7 +659,7 @@ void S_StartSSell()
 
 	if (!sellok) {
 		stextscrl = FALSE;
-		sprintf(tempstr, "You have nothing I want.            Your gold : %i", plr.local().data._pGold);
+		sprintf(tempstr, "You have nothing I want.            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -668,8 +668,8 @@ void S_StartSSell()
 	} else {
 		stextscrl = TRUE;
 		stextsval = 0;
-		stextsmax = plr.local().data._pNumInv;
-		sprintf(tempstr, "Which item is for sale?            Your gold : %i", plr.local().data._pGold);
+		stextsmax = myplr().data._pNumInv;
+		sprintf(tempstr, "Which item is for sale?            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -681,15 +681,15 @@ void S_StartSSell()
 
 BOOL SmithRepairOk(int i)
 {
-	if (plr.local().data.InvList[i]._itype == ITYPE_NONE)
+	if (myplr().data.InvList[i]._itype == ITYPE_NONE)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_MISC)
+	if (myplr().data.InvList[i]._itype == ITYPE_MISC)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_GOLD)
+	if (myplr().data.InvList[i]._itype == ITYPE_GOLD)
 		return FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_MEAT)
+	if (myplr().data.InvList[i]._itype == ITYPE_MEAT)
 		return FALSE;
-	if (plr.local().data.InvList[i]._iDurability == plr.local().data.InvList[i]._iMaxDur)
+	if (myplr().data.InvList[i]._iDurability == myplr().data.InvList[i]._iMaxDur)
 		return FALSE;
 
 	return TRUE;
@@ -705,31 +705,31 @@ void S_StartSRepair()
 	storenumh = 0;
 	for (i = 0; i < 48; i++)
 		storehold[i]._itype = ITYPE_NONE;
-	if (plr.local().data.InvBody[INVLOC_HEAD]._itype != ITYPE_NONE && plr.local().data.InvBody[INVLOC_HEAD]._iDurability != plr.local().data.InvBody[INVLOC_HEAD]._iMaxDur) {
+	if (myplr().data.InvBody[INVLOC_HEAD]._itype != ITYPE_NONE && myplr().data.InvBody[INVLOC_HEAD]._iDurability != myplr().data.InvBody[INVLOC_HEAD]._iMaxDur) {
 		repairok = TRUE;
-		AddStoreHoldRepair(plr.local().data.InvBody, -1);
+		AddStoreHoldRepair(myplr().data.InvBody, -1);
 	}
-	if (plr.local().data.InvBody[INVLOC_CHEST]._itype != ITYPE_NONE && plr.local().data.InvBody[INVLOC_CHEST]._iDurability != plr.local().data.InvBody[INVLOC_CHEST]._iMaxDur) {
+	if (myplr().data.InvBody[INVLOC_CHEST]._itype != ITYPE_NONE && myplr().data.InvBody[INVLOC_CHEST]._iDurability != myplr().data.InvBody[INVLOC_CHEST]._iMaxDur) {
 		repairok = TRUE;
-		AddStoreHoldRepair(&plr.local().data.InvBody[INVLOC_CHEST], -2);
+		AddStoreHoldRepair(&myplr().data.InvBody[INVLOC_CHEST], -2);
 	}
-	if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && plr.local().data.InvBody[INVLOC_HAND_LEFT]._iDurability != plr.local().data.InvBody[INVLOC_HAND_LEFT]._iMaxDur) {
+	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && myplr().data.InvBody[INVLOC_HAND_LEFT]._iDurability != myplr().data.InvBody[INVLOC_HAND_LEFT]._iMaxDur) {
 		repairok = TRUE;
-		AddStoreHoldRepair(&plr.local().data.InvBody[INVLOC_HAND_LEFT], -3);
+		AddStoreHoldRepair(&myplr().data.InvBody[INVLOC_HAND_LEFT], -3);
 	}
-	if (plr.local().data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE && plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iDurability != plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iMaxDur) {
+	if (myplr().data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE && myplr().data.InvBody[INVLOC_HAND_RIGHT]._iDurability != myplr().data.InvBody[INVLOC_HAND_RIGHT]._iMaxDur) {
 		repairok = TRUE;
-		AddStoreHoldRepair(&plr.local().data.InvBody[INVLOC_HAND_RIGHT], -4);
+		AddStoreHoldRepair(&myplr().data.InvBody[INVLOC_HAND_RIGHT], -4);
 	}
-	for (i = 0; i < plr.local().data._pNumInv; i++) {
+	for (i = 0; i < myplr().data._pNumInv; i++) {
 		if (SmithRepairOk(i)) {
 			repairok = TRUE;
-			AddStoreHoldRepair(&plr.local().data.InvList[i], i);
+			AddStoreHoldRepair(&myplr().data.InvList[i], i);
 		}
 	}
 	if (!repairok) {
 		stextscrl = FALSE;
-		sprintf(tempstr, "You have nothing to repair.            Your gold : %i", plr.local().data._pGold);
+		sprintf(tempstr, "You have nothing to repair.            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -740,8 +740,8 @@ void S_StartSRepair()
 
 	stextscrl = TRUE;
 	stextsval = 0;
-	stextsmax = plr.local().data._pNumInv;
-	sprintf(tempstr, "Repair which item?            Your gold : %i", plr.local().data._pGold);
+	stextsmax = myplr().data._pNumInv;
+	sprintf(tempstr, "Repair which item?            Your gold : %i", myplr().data._pGold);
 	AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 	AddSLine(3);
 	AddSLine(21);
@@ -833,7 +833,7 @@ void S_StartWBuy()
 	stextscrl = TRUE;
 	stextsval = 0;
 	stextsmax = 20;
-	sprintf(tempstr, "I have these items for sale :           Your gold : %i", plr.local().data._pGold);
+	sprintf(tempstr, "I have these items for sale :           Your gold : %i", myplr().data._pGold);
 	AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 	AddSLine(3);
 	AddSLine(21);
@@ -858,9 +858,9 @@ BOOL WitchSellOk(int i)
 	rv = FALSE;
 
 	if (i >= 0)
-		pI = &plr.local().data.InvList[i];
+		pI = &myplr().data.InvList[i];
 	else
-		pI = &plr.local().data.SpdList[-(i + 1)];
+		pI = &myplr().data.SpdList[-(i + 1)];
 
 	if (pI->_itype == ITYPE_MISC)
 		rv = TRUE;
@@ -885,10 +885,10 @@ void S_StartWSell()
 	for (i = 0; i < 48; i++)
 		storehold[i]._itype = ITYPE_NONE;
 
-	for (i = 0; i < plr.local().data._pNumInv; i++) {
+	for (i = 0; i < myplr().data._pNumInv; i++) {
 		if (WitchSellOk(i)) {
 			sellok = TRUE;
-			storehold[storenumh] = plr.local().data.InvList[i];
+			storehold[storenumh] = myplr().data.InvList[i];
 
 			if (storehold[storenumh]._iMagical != ITEM_QUALITY_NORMAL && storehold[storenumh]._iIdentified)
 				storehold[storenumh]._ivalue = storehold[storenumh]._iIvalue;
@@ -902,9 +902,9 @@ void S_StartWSell()
 	}
 
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (plr.local().data.SpdList[i]._itype != ITYPE_NONE && WitchSellOk(-(i + 1))) {
+		if (myplr().data.SpdList[i]._itype != ITYPE_NONE && WitchSellOk(-(i + 1))) {
 			sellok = TRUE;
-			storehold[storenumh] = plr.local().data.SpdList[i];
+			storehold[storenumh] = myplr().data.SpdList[i];
 
 			if (storehold[storenumh]._iMagical != ITEM_QUALITY_NORMAL && storehold[storenumh]._iIdentified)
 				storehold[storenumh]._ivalue = storehold[storenumh]._iIvalue;
@@ -919,7 +919,7 @@ void S_StartWSell()
 
 	if (!sellok) {
 		stextscrl = FALSE;
-		sprintf(tempstr, "You have nothing I want.            Your gold : %i", plr.local().data._pGold);
+		sprintf(tempstr, "You have nothing I want.            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -928,8 +928,8 @@ void S_StartWSell()
 	} else {
 		stextscrl = TRUE;
 		stextsval = 0;
-		stextsmax = plr.local().data._pNumInv;
-		sprintf(tempstr, "Which item is for sale?            Your gold : %i", plr.local().data._pGold);
+		stextsmax = myplr().data._pNumInv;
+		sprintf(tempstr, "Which item is for sale?            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -944,8 +944,8 @@ BOOL WitchRechargeOk(int i)
 	BOOL rv;
 
 	rv = FALSE;
-	if (plr.local().data.InvList[i]._itype == ITYPE_STAFF
-	    && plr.local().data.InvList[i]._iCharges != plr.local().data.InvList[i]._iMaxCharges) {
+	if (myplr().data.InvList[i]._itype == ITYPE_STAFF
+	    && myplr().data.InvList[i]._iCharges != myplr().data.InvList[i]._iMaxCharges) {
 		rv = TRUE;
 	}
 	return rv;
@@ -974,22 +974,22 @@ void S_StartWRecharge()
 		storehold[i]._itype = ITYPE_NONE;
 	}
 
-	if (plr.local().data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_STAFF
-	    && plr.local().data.InvBody[INVLOC_HAND_LEFT]._iCharges != plr.local().data.InvBody[INVLOC_HAND_LEFT]._iMaxCharges) {
+	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_STAFF
+	    && myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges != myplr().data.InvBody[INVLOC_HAND_LEFT]._iMaxCharges) {
 		rechargeok = TRUE;
-		AddStoreHoldRecharge(plr.local().data.InvBody[INVLOC_HAND_LEFT], -1);
+		AddStoreHoldRecharge(myplr().data.InvBody[INVLOC_HAND_LEFT], -1);
 	}
 
-	for (i = 0; i < plr.local().data._pNumInv; i++) {
+	for (i = 0; i < myplr().data._pNumInv; i++) {
 		if (WitchRechargeOk(i)) {
 			rechargeok = TRUE;
-			AddStoreHoldRecharge(plr.local().data.InvList[i], i);
+			AddStoreHoldRecharge(myplr().data.InvList[i], i);
 		}
 	}
 
 	if (!rechargeok) {
 		stextscrl = FALSE;
-		sprintf(tempstr, "You have nothing to recharge.            Your gold : %i", plr.local().data._pGold);
+		sprintf(tempstr, "You have nothing to recharge.            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -998,8 +998,8 @@ void S_StartWRecharge()
 	} else {
 		stextscrl = TRUE;
 		stextsval = 0;
-		stextsmax = plr.local().data._pNumInv;
-		sprintf(tempstr, "Recharge which item?            Your gold : %i", plr.local().data._pGold);
+		stextsmax = myplr().data._pNumInv;
+		sprintf(tempstr, "Recharge which item?            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -1036,16 +1036,16 @@ void S_StartConfirm()
 	ClearSText(5, 23);
 	iclr = COL_WHITE;
 
-	if (plr.local().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL)
 		iclr = COL_BLUE;
-	if (!plr.local().data.HoldItem._iStatFlag)
+	if (!myplr().data.HoldItem._iStatFlag)
 		iclr = COL_RED;
 
-	idprint = plr.local().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL;
+	idprint = myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL;
 
 	if (stextshold == STORE_SIDENTIFY)
 		idprint = FALSE;
-	if (plr.local().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL && !plr.local().data.HoldItem._iIdentified) {
+	if (myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL && !myplr().data.HoldItem._iIdentified) {
 		if (stextshold == STORE_SSELL)
 			idprint = FALSE;
 		if (stextshold == STORE_WSELL)
@@ -1056,12 +1056,12 @@ void S_StartConfirm()
 			idprint = FALSE;
 	}
 	if (idprint)
-		AddSText(20, 8, FALSE, plr.local().data.HoldItem._iIName, iclr, FALSE);
+		AddSText(20, 8, FALSE, myplr().data.HoldItem._iIName, iclr, FALSE);
 	else
-		AddSText(20, 8, FALSE, plr.local().data.HoldItem._iName, iclr, FALSE);
+		AddSText(20, 8, FALSE, myplr().data.HoldItem._iName, iclr, FALSE);
 
-	AddSTextVal(8, plr.local().data.HoldItem._iIvalue);
-	PrintStoreItem(&plr.local().data.HoldItem, 9, iclr);
+	AddSTextVal(8, myplr().data.HoldItem._iIvalue);
+	PrintStoreItem(&myplr().data.HoldItem, 9, iclr);
 
 	switch (stextshold) {
 	case STORE_BBOY:
@@ -1117,7 +1117,7 @@ void S_StartBBoy()
 
 	stextsize = TRUE;
 	stextscrl = FALSE;
-	sprintf(tempstr, "I have this item for sale :           Your gold : %i", plr.local().data._pGold);
+	sprintf(tempstr, "I have this item for sale :           Your gold : %i", myplr().data._pGold);
 	AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 	AddSLine(3);
 	AddSLine(21);
@@ -1186,7 +1186,7 @@ void S_StartHBuy()
 	stextsize = TRUE;
 	stextscrl = TRUE;
 	stextsval = 0;
-	sprintf(tempstr, "I have these items for sale :           Your gold : %i", plr.local().data._pGold);
+	sprintf(tempstr, "I have these items for sale :           Your gold : %i", myplr().data._pGold);
 	AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 	AddSLine(3);
 	AddSLine(21);
@@ -1247,45 +1247,45 @@ void S_StartSIdentify()
 	for (i = 0; i < 48; i++)
 		storehold[i]._itype = ITYPE_NONE;
 
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_HEAD])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_HEAD])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_HEAD], -1);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_HEAD], -1);
 	}
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_CHEST])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_CHEST])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_CHEST], -2);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_CHEST], -2);
 	}
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_HAND_LEFT])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_HAND_LEFT])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_HAND_LEFT], -3);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_HAND_LEFT], -3);
 	}
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_HAND_RIGHT])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_HAND_RIGHT])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_HAND_RIGHT], -4);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_HAND_RIGHT], -4);
 	}
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_RING_LEFT])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_RING_LEFT])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_RING_LEFT], -5);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_RING_LEFT], -5);
 	}
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_RING_RIGHT])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_RING_RIGHT])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_RING_RIGHT], -6);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_RING_RIGHT], -6);
 	}
-	if (IdItemOk(&plr.local().data.InvBody[INVLOC_AMULET])) {
+	if (IdItemOk(&myplr().data.InvBody[INVLOC_AMULET])) {
 		idok = TRUE;
-		AddStoreHoldId(plr.local().data.InvBody[INVLOC_AMULET], -7);
+		AddStoreHoldId(myplr().data.InvBody[INVLOC_AMULET], -7);
 	}
 
-	for (i = 0; i < plr.local().data._pNumInv; i++) {
-		if (IdItemOk(&plr.local().data.InvList[i])) {
+	for (i = 0; i < myplr().data._pNumInv; i++) {
+		if (IdItemOk(&myplr().data.InvList[i])) {
 			idok = TRUE;
-			AddStoreHoldId(plr.local().data.InvList[i], i);
+			AddStoreHoldId(myplr().data.InvList[i], i);
 		}
 	}
 
 	if (!idok) {
 		stextscrl = FALSE;
-		sprintf(tempstr, "You have nothing to identify.            Your gold : %i", plr.local().data._pGold);
+		sprintf(tempstr, "You have nothing to identify.            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -1294,8 +1294,8 @@ void S_StartSIdentify()
 	} else {
 		stextscrl = TRUE;
 		stextsval = 0;
-		stextsmax = plr.local().data._pNumInv;
-		sprintf(tempstr, "Identify which item?            Your gold : %i", plr.local().data._pGold);
+		stextsmax = myplr().data._pNumInv;
+		sprintf(tempstr, "Identify which item?            Your gold : %i", myplr().data._pGold);
 		AddSText(0, 1, TRUE, tempstr, COL_GOLD, FALSE);
 		AddSLine(3);
 		AddSLine(21);
@@ -1314,14 +1314,14 @@ void S_StartIdShow()
 	ClearSText(5, 23);
 	iclr = COL_WHITE;
 
-	if (plr.local().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL)
 		iclr = COL_BLUE;
-	if (!plr.local().data.HoldItem._iStatFlag)
+	if (!myplr().data.HoldItem._iStatFlag)
 		iclr = COL_RED;
 
 	AddSText(0, 7, TRUE, "This item is:", COL_WHITE, FALSE);
-	AddSText(20, 11, FALSE, plr.local().data.HoldItem._iIName, iclr, FALSE);
-	PrintStoreItem(&plr.local().data.HoldItem, 12, iclr);
+	AddSText(20, 11, FALSE, myplr().data.HoldItem._iIName, iclr, FALSE);
+	PrintStoreItem(&myplr().data.HoldItem, 12, iclr);
 	AddSText(0, 18, TRUE, "Done", COL_WHITE, TRUE);
 }
 
@@ -1783,30 +1783,30 @@ void TakePlrsMoney(int cost)
 {
 	int i;
 
-	plr.local().data._pGold = plr.local().inventory.CalculateGold() - cost;
+	myplr().data._pGold = myplr().inventory.CalculateGold() - cost;
 	for (i = 0; i < MAXBELTITEMS && cost > 0; i++) {
-		if (plr.local().data.SpdList[i]._itype == ITYPE_GOLD && plr.local().data.SpdList[i]._ivalue != GOLD_MAX_LIMIT) {
-			if (cost < plr.local().data.SpdList[i]._ivalue) {
-				plr.local().data.SpdList[i]._ivalue -= cost;
+		if (myplr().data.SpdList[i]._itype == ITYPE_GOLD && myplr().data.SpdList[i]._ivalue != GOLD_MAX_LIMIT) {
+			if (cost < myplr().data.SpdList[i]._ivalue) {
+				myplr().data.SpdList[i]._ivalue -= cost;
 				SetSpdbarGoldCurs(myplr(), i);
 				cost = 0;
 			} else {
-				cost -= plr.local().data.SpdList[i]._ivalue;
-				plr.local().inventory.RemoveSpdBarItem(i);
+				cost -= myplr().data.SpdList[i]._ivalue;
+				myplr().inventory.RemoveSpdBarItem(i);
 				i = -1;
 			}
 		}
 	}
 	if (cost > 0) {
 		for (i = 0; i < MAXBELTITEMS && cost > 0; i++) {
-			if (plr.local().data.SpdList[i]._itype == ITYPE_GOLD) {
-				if (cost < plr.local().data.SpdList[i]._ivalue) {
-					plr.local().data.SpdList[i]._ivalue -= cost;
+			if (myplr().data.SpdList[i]._itype == ITYPE_GOLD) {
+				if (cost < myplr().data.SpdList[i]._ivalue) {
+					myplr().data.SpdList[i]._ivalue -= cost;
 					SetSpdbarGoldCurs(myplr(), i);
 					cost = 0;
 				} else {
-					cost -= plr.local().data.SpdList[i]._ivalue;
-					plr.local().inventory.RemoveSpdBarItem(i);
+					cost -= myplr().data.SpdList[i]._ivalue;
+					myplr().inventory.RemoveSpdBarItem(i);
 					i = -1;
 				}
 			}
@@ -1814,29 +1814,29 @@ void TakePlrsMoney(int cost)
 	}
 	force_redraw = 255;
 	if (cost > 0) {
-		for (i = 0; i < plr.local().data._pNumInv && cost > 0; i++) {
-			if (plr.local().data.InvList[i]._itype == ITYPE_GOLD && plr.local().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
-				if (cost < plr.local().data.InvList[i]._ivalue) {
-					plr.local().data.InvList[i]._ivalue -= cost;
+		for (i = 0; i < myplr().data._pNumInv && cost > 0; i++) {
+			if (myplr().data.InvList[i]._itype == ITYPE_GOLD && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
+				if (cost < myplr().data.InvList[i]._ivalue) {
+					myplr().data.InvList[i]._ivalue -= cost;
 					SetGoldCurs(myplr(), i);
 					cost = 0;
 				} else {
-					cost -= plr.local().data.InvList[i]._ivalue;
-					plr.local().inventory.RemoveInvItem(i);
+					cost -= myplr().data.InvList[i]._ivalue;
+					myplr().inventory.RemoveInvItem(i);
 					i = -1;
 				}
 			}
 		}
 		if (cost > 0) {
-			for (i = 0; i < plr.local().data._pNumInv && cost > 0; i++) {
-				if (plr.local().data.InvList[i]._itype == ITYPE_GOLD) {
-					if (cost < plr.local().data.InvList[i]._ivalue) {
-						plr.local().data.InvList[i]._ivalue -= cost;
+			for (i = 0; i < myplr().data._pNumInv && cost > 0; i++) {
+				if (myplr().data.InvList[i]._itype == ITYPE_GOLD) {
+					if (cost < myplr().data.InvList[i]._ivalue) {
+						myplr().data.InvList[i]._ivalue -= cost;
 						SetGoldCurs(myplr(), i);
 						cost = 0;
 					} else {
-						cost -= plr.local().data.InvList[i]._ivalue;
-						plr.local().inventory.RemoveInvItem(i);
+						cost -= myplr().data.InvList[i]._ivalue;
+						myplr().inventory.RemoveInvItem(i);
 						i = -1;
 					}
 				}
@@ -1849,9 +1849,9 @@ void SmithBuyItem()
 {
 	int idx;
 
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
-	if (plr.local().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
-		plr.local().data.HoldItem._iIdentified = FALSE;
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
+	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
+		myplr().data.HoldItem._iIdentified = FALSE;
 	StoreAutoPlace();
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 	if (idx == SMITH_ITEMS - 1) {
@@ -1878,15 +1878,15 @@ void S_SBuyEnter()
 		stextvhold = stextsval;
 		stextshold = STORE_SBUY;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		if (plr.local().data._pGold < smithitem[idx]._iIvalue) {
+		if (myplr().data._pGold < smithitem[idx]._iIvalue) {
 			StartStore(STORE_NOMONEY);
 		} else {
-			plr.local().data.HoldItem = smithitem[idx];
-			SetCursor_(plr.local().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			myplr().data.HoldItem = smithitem[idx];
+			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 
 			for (i = 0; i < 40 && !done; i++) {
-				done = plr.local().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -1901,9 +1901,9 @@ void SmithBuyPItem()
 {
 	int i, xx, idx;
 
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
-	if (plr.local().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
-		plr.local().data.HoldItem._iIdentified = FALSE;
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
+	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
+		myplr().data.HoldItem._iIdentified = FALSE;
 	StoreAutoPlace();
 
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
@@ -1917,7 +1917,7 @@ void SmithBuyPItem()
 
 	premiumitem[xx]._itype = ITYPE_NONE;
 	numpremium--;
-	SpawnPremium(plr.local().data._pLevel);
+	SpawnPremium(myplr().data._pLevel);
 }
 
 void S_SPBuyEnter()
@@ -1940,14 +1940,14 @@ void S_SPBuyEnter()
 				idx = i;
 			}
 		}
-		if (plr.local().data._pGold < premiumitem[idx]._iIvalue) {
+		if (myplr().data._pGold < premiumitem[idx]._iIvalue) {
 			StartStore(STORE_NOMONEY);
 		} else {
-			plr.local().data.HoldItem = premiumitem[idx];
-			SetCursor_(plr.local().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			myplr().data.HoldItem = premiumitem[idx];
+			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 			for (i = 0; i < 40 && !done; i++) {
-				done = plr.local().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -1975,16 +1975,16 @@ BOOL StoreGoldFit(int idx)
 		return TRUE;
 
 	for (i = 0; i < 40; i++) {
-		if (!plr.local().data.InvGrid[i])
+		if (!myplr().data.InvGrid[i])
 			numsqrs++;
 	}
 
-	for (i = 0; i < plr.local().data._pNumInv; i++) {
-		if (plr.local().data.InvList[i]._itype == ITYPE_GOLD && plr.local().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
-			if (cost + plr.local().data.InvList[i]._ivalue <= GOLD_MAX_LIMIT)
+	for (i = 0; i < myplr().data._pNumInv; i++) {
+		if (myplr().data.InvList[i]._itype == ITYPE_GOLD && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
+			if (cost + myplr().data.InvList[i]._ivalue <= GOLD_MAX_LIMIT)
 				cost = 0;
 			else
-				cost -= GOLD_MAX_LIMIT - plr.local().data.InvList[i]._ivalue;
+				cost -= GOLD_MAX_LIMIT - myplr().data.InvList[i]._ivalue;
 		}
 	}
 
@@ -2005,13 +2005,13 @@ void PlaceStoreGold(int v)
 	for (i = 0; i < 40 && !done; i++) {
 		yy = 10 * (i / 10);
 		xx = i % 10;
-		if (!plr.local().data.InvGrid[xx + yy]) {
-			ii = plr.local().data._pNumInv;
+		if (!myplr().data.InvGrid[xx + yy]) {
+			ii = myplr().data._pNumInv;
 			GetGoldSeed(myplr(), &golditem);
-			plr.local().data.InvList[ii] = golditem;
-			plr.local().data._pNumInv++;
-			plr.local().data.InvGrid[xx + yy] = plr.local().data._pNumInv;
-			plr.local().data.InvList[ii]._ivalue = v;
+			myplr().data.InvList[ii] = golditem;
+			myplr().data._pNumInv++;
+			myplr().data.InvGrid[xx + yy] = myplr().data._pNumInv;
+			myplr().data.InvList[ii]._ivalue = v;
 			SetGoldCurs(myplr(), ii);
 			done = TRUE;
 		}
@@ -2024,9 +2024,9 @@ void StoreSellItem()
 
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 	if (storehidx[idx] >= 0)
-		plr.local().inventory.RemoveInvItem(storehidx[idx]);
+		myplr().inventory.RemoveInvItem(storehidx[idx]);
 	else
-		plr.local().inventory.RemoveSpdBarItem(-(storehidx[idx] + 1));
+		myplr().inventory.RemoveSpdBarItem(-(storehidx[idx] + 1));
 	cost = storehold[idx]._iIvalue;
 	storenumh--;
 	if (idx != storenumh) {
@@ -2036,16 +2036,16 @@ void StoreSellItem()
 			idx++;
 		}
 	}
-	plr.local().data._pGold += cost;
-	for (i = 0; i < plr.local().data._pNumInv && cost > 0; i++) {
-		if (plr.local().data.InvList[i]._itype == ITYPE_GOLD && plr.local().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
-			if (cost + plr.local().data.InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
-				plr.local().data.InvList[i]._ivalue += cost;
+	myplr().data._pGold += cost;
+	for (i = 0; i < myplr().data._pNumInv && cost > 0; i++) {
+		if (myplr().data.InvList[i]._itype == ITYPE_GOLD && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
+			if (cost + myplr().data.InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
+				myplr().data.InvList[i]._ivalue += cost;
 				SetGoldCurs(myplr(), i);
 				cost = 0;
 			} else {
-				cost -= GOLD_MAX_LIMIT - plr.local().data.InvList[i]._ivalue;
-				plr.local().data.InvList[i]._ivalue = GOLD_MAX_LIMIT;
+				cost -= GOLD_MAX_LIMIT - myplr().data.InvList[i]._ivalue;
+				myplr().data.InvList[i]._ivalue = GOLD_MAX_LIMIT;
 				SetGoldCurs(myplr(), i);
 			}
 		}
@@ -2071,7 +2071,7 @@ void S_SSellEnter()
 		idx = stextsval + ((stextsel - stextup) >> 2);
 		stextshold = STORE_SSELL;
 		stextvhold = stextsval;
-		plr.local().data.HoldItem = storehold[idx];
+		myplr().data.HoldItem = storehold[idx];
 
 		if (StoreGoldFit(idx))
 			StartStore(STORE_CONFIRM);
@@ -2084,7 +2084,7 @@ void SmithRepairItem()
 {
 	int i, idx;
 
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 	storehold[idx]._iDurability = storehold[idx]._iMaxDur;
@@ -2092,15 +2092,15 @@ void SmithRepairItem()
 	i = storehidx[idx];
 	if (i < 0) {
 		if (i == -1)
-			plr.local().data.InvBody[INVLOC_HEAD]._iDurability = plr.local().data.InvBody[INVLOC_HEAD]._iMaxDur;
+			myplr().data.InvBody[INVLOC_HEAD]._iDurability = myplr().data.InvBody[INVLOC_HEAD]._iMaxDur;
 		if (i == -2)
-			plr.local().data.InvBody[INVLOC_CHEST]._iDurability = plr.local().data.InvBody[INVLOC_CHEST]._iMaxDur;
+			myplr().data.InvBody[INVLOC_CHEST]._iDurability = myplr().data.InvBody[INVLOC_CHEST]._iMaxDur;
 		if (i == -3)
-			plr.local().data.InvBody[INVLOC_HAND_LEFT]._iDurability = plr.local().data.InvBody[INVLOC_HAND_LEFT]._iMaxDur;
+			myplr().data.InvBody[INVLOC_HAND_LEFT]._iDurability = myplr().data.InvBody[INVLOC_HAND_LEFT]._iMaxDur;
 		if (i == -4)
-			plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iDurability = plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iMaxDur;
+			myplr().data.InvBody[INVLOC_HAND_RIGHT]._iDurability = myplr().data.InvBody[INVLOC_HAND_RIGHT]._iMaxDur;
 	} else {
-		plr.local().data.InvList[i]._iDurability = plr.local().data.InvList[i]._iMaxDur;
+		myplr().data.InvList[i]._iDurability = myplr().data.InvList[i]._iMaxDur;
 	}
 }
 
@@ -2116,8 +2116,8 @@ void S_SRepairEnter()
 		stextlhold = stextsel;
 		stextvhold = stextsval;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		plr.local().data.HoldItem = storehold[idx];
-		if (plr.local().data._pGold < storehold[idx]._iIvalue)
+		myplr().data.HoldItem = storehold[idx];
+		if (myplr().data._pGold < storehold[idx]._iIvalue)
 			StartStore(STORE_NOMONEY);
 		else
 			StartStore(STORE_CONFIRM);
@@ -2157,9 +2157,9 @@ void WitchBuyItem()
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 
 	if (idx < 3)
-		plr.local().data.HoldItem._iSeed = GetRndSeed();
+		myplr().data.HoldItem._iSeed = GetRndSeed();
 
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 	StoreAutoPlace();
 
 	if (idx >= 3) {
@@ -2190,15 +2190,15 @@ void S_WBuyEnter()
 		stextshold = STORE_WBUY;
 		idx = stextsval + ((stextsel - stextup) >> 2);
 
-		if (plr.local().data._pGold < witchitem[idx]._iIvalue) {
+		if (myplr().data._pGold < witchitem[idx]._iIvalue) {
 			StartStore(STORE_NOMONEY);
 		} else {
-			plr.local().data.HoldItem = witchitem[idx];
-			SetCursor_(plr.local().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			myplr().data.HoldItem = witchitem[idx];
+			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 
 			for (i = 0; i < 40 && !done; i++) {
-				done = plr.local().inventory.SpecialAutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.SpecialAutoPlace(i, cursW / 28, cursH / 28, FALSE);
 			}
 
 			if (done)
@@ -2223,7 +2223,7 @@ void S_WSellEnter()
 		idx = stextsval + ((stextsel - stextup) >> 2);
 		stextshold = STORE_WSELL;
 		stextvhold = stextsval;
-		plr.local().data.HoldItem = storehold[idx];
+		myplr().data.HoldItem = storehold[idx];
 		if (StoreGoldFit(idx))
 			StartStore(STORE_CONFIRM);
 		else
@@ -2235,16 +2235,16 @@ void WitchRechargeItem()
 {
 	int i, idx;
 
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 	storehold[idx]._iCharges = storehold[idx]._iMaxCharges;
 
 	i = storehidx[idx];
 	if (i < 0)
-		plr.local().data.InvBody[INVLOC_HAND_LEFT]._iCharges = plr.local().data.InvBody[INVLOC_HAND_LEFT]._iMaxCharges;
+		myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges = myplr().data.InvBody[INVLOC_HAND_LEFT]._iMaxCharges;
 	else
-		plr.local().data.InvList[i]._iCharges = plr.local().data.InvList[i]._iMaxCharges;
+		myplr().data.InvList[i]._iCharges = myplr().data.InvList[i]._iMaxCharges;
 
 	CalcPlrInv(myplr(), TRUE);
 }
@@ -2261,8 +2261,8 @@ void S_WRechargeEnter()
 		stextlhold = stextsel;
 		stextvhold = stextsval;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		plr.local().data.HoldItem = storehold[idx];
-		if (plr.local().data._pGold < storehold[idx]._iIvalue)
+		myplr().data.HoldItem = storehold[idx];
+		if (myplr().data._pGold < storehold[idx]._iIvalue)
 			StartStore(STORE_NOMONEY);
 		else
 			StartStore(STORE_CONFIRM);
@@ -2272,7 +2272,7 @@ void S_WRechargeEnter()
 void S_BoyEnter()
 {
 	if (boyitem._itype != ITYPE_NONE && stextsel == 18) {
-		if (plr.local().data._pGold < 50) {
+		if (myplr().data._pGold < 50) {
 			stextshold = STORE_BOY;
 			stextlhold = 18;
 			stextvhold = stextsval;
@@ -2295,7 +2295,7 @@ void S_BoyEnter()
 
 void BoyBuyItem()
 {
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 	StoreAutoPlace();
 	boyitem._itype = ITYPE_NONE;
 	stextshold = STORE_BOY;
@@ -2318,12 +2318,12 @@ void HealerBuyItem()
 			ok = TRUE;
 	}
 	if (ok) {
-		plr.local().data.HoldItem._iSeed = GetRndSeed();
+		myplr().data.HoldItem._iSeed = GetRndSeed();
 	}
 
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
-	if (plr.local().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
-		plr.local().data.HoldItem._iIdentified = FALSE;
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
+	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
+		myplr().data.HoldItem._iIdentified = FALSE;
 	StoreAutoPlace();
 
 	ok = FALSE;
@@ -2357,15 +2357,15 @@ void S_BBuyEnter()
 		stextshold = STORE_BBOY;
 		stextvhold = stextsval;
 		stextlhold = 10;
-		if (plr.local().data._pGold < boyitem._iIvalue + (boyitem._iIvalue >> 1)) {
+		if (myplr().data._pGold < boyitem._iIvalue + (boyitem._iIvalue >> 1)) {
 			StartStore(STORE_NOMONEY);
 		} else {
-			plr.local().data.HoldItem = boyitem;
-			plr.local().data.HoldItem._iIvalue += plr.local().data.HoldItem._iIvalue >> 1;
-			SetCursor_(plr.local().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			myplr().data.HoldItem = boyitem;
+			myplr().data.HoldItem._iIvalue += myplr().data.HoldItem._iIvalue >> 1;
+			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 			for (i = 0; i < 40 && !done; i++) {
-				done = plr.local().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -2385,24 +2385,24 @@ void StoryIdItem()
 	idx = storehidx[((stextlhold - stextup) >> 2) + stextvhold];
 	if (idx < 0) {
 		if (idx == -1)
-			plr.local().data.InvBody[INVLOC_HEAD]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_HEAD]._iIdentified = TRUE;
 		if (idx == -2)
-			plr.local().data.InvBody[INVLOC_CHEST]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_CHEST]._iIdentified = TRUE;
 		if (idx == -3)
-			plr.local().data.InvBody[INVLOC_HAND_LEFT]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_HAND_LEFT]._iIdentified = TRUE;
 		if (idx == -4)
-			plr.local().data.InvBody[INVLOC_HAND_RIGHT]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_HAND_RIGHT]._iIdentified = TRUE;
 		if (idx == -5)
-			plr.local().data.InvBody[INVLOC_RING_LEFT]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_RING_LEFT]._iIdentified = TRUE;
 		if (idx == -6)
-			plr.local().data.InvBody[INVLOC_RING_RIGHT]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_RING_RIGHT]._iIdentified = TRUE;
 		if (idx == -7)
-			plr.local().data.InvBody[INVLOC_AMULET]._iIdentified = TRUE;
+			myplr().data.InvBody[INVLOC_AMULET]._iIdentified = TRUE;
 	} else {
-		plr.local().data.InvList[idx]._iIdentified = TRUE;
+		myplr().data.InvList[idx]._iIdentified = TRUE;
 	}
-	plr.local().data.HoldItem._iIdentified = TRUE;
-	TakePlrsMoney(plr.local().data.HoldItem._iIvalue);
+	myplr().data.HoldItem._iIdentified = TRUE;
+	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 	CalcPlrInv(myplr(), TRUE);
 }
 
@@ -2460,11 +2460,11 @@ void S_HealerEnter()
 		StartStore(STORE_GOSSIP);
 		break;
 	case 14:
-		if (plr.local().data._pHitPoints != plr.local().data._pMaxHP)
+		if (myplr().data._pHitPoints != myplr().data._pMaxHP)
 			PlaySFX(IS_CAST8);
 		drawhpflag = TRUE;
-		plr.local().data._pHitPoints = plr.local().data._pMaxHP;
-		plr.local().data._pHPBase = plr.local().data._pMaxHPBase;
+		myplr().data._pHitPoints = myplr().data._pMaxHP;
+		myplr().data._pHPBase = myplr().data._pMaxHPBase;
 		break;
 	case 16:
 		StartStore(STORE_HBUY);
@@ -2488,15 +2488,15 @@ void S_HBuyEnter()
 		stextvhold = stextsval;
 		stextshold = STORE_HBUY;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		if (plr.local().data._pGold < healitem[idx]._iIvalue) {
+		if (myplr().data._pGold < healitem[idx]._iIvalue) {
 			StartStore(STORE_NOMONEY);
 		} else {
-			plr.local().data.HoldItem = healitem[idx];
-			SetCursor_(plr.local().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			myplr().data.HoldItem = healitem[idx];
+			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 			i = 0;
 			for (i = 0; i < 40 && !done; i++) {
-				done = plr.local().inventory.SpecialAutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.SpecialAutoPlace(i, cursW / 28, cursH / 28, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -2539,8 +2539,8 @@ void S_SIDEnter()
 		stextlhold = stextsel;
 		stextvhold = stextsval;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		plr.local().data.HoldItem = storehold[idx];
-		if (plr.local().data._pGold < storehold[idx]._iIvalue)
+		myplr().data.HoldItem = storehold[idx];
+		if (myplr().data._pGold < storehold[idx]._iIvalue)
 			StartStore(STORE_NOMONEY);
 		else
 			StartStore(STORE_CONFIRM);

@@ -183,6 +183,7 @@ add_library(devilution STATIC
   Source/appfat.cpp
   Source/automap.cpp
   Source/capture.cpp
+  "Source/actors/character.cpp"
   Source/codec.cpp
   Source/control.cpp
   Source/cursor.cpp
@@ -190,22 +191,22 @@ add_library(devilution STATIC
   Source/debug.cpp
   Source/diablo.cpp
   Source/doom.cpp
-  Source/drlg_l1.cpp
-  Source/drlg_l2.cpp
-  Source/drlg_l3.cpp
-  Source/drlg_l4.cpp
+  "Source/generators/drlg_l1.cpp"
+  "Source/generators/drlg_l2.cpp"
+  "Source/generators/drlg_l3.cpp"
+  "Source/generators/drlg_l4.cpp"
   Source/dthread.cpp
   Source/effects.cpp
   Source/encrypt.cpp
   Source/engine.cpp
   Source/error.cpp
   Source/gamemenu.cpp
-  Source/gendung.cpp
+  "Source/generators/gendung.cpp"
   Source/gmenu.cpp
   Source/help.cpp
   Source/init.cpp
   Source/interfac.cpp
-  Source/inv.cpp
+  "Source/actors/inv.cpp"
   Source/itemdat.cpp
   Source/items.cpp
   Source/lighting.cpp
@@ -214,10 +215,10 @@ add_library(devilution STATIC
   Source/minitext.cpp
   Source/misdat.cpp
   Source/missiles.cpp
-  Source/monstdat.cpp
-  Source/monster.cpp
-  Source/movie.cpp
-  Source/mpqapi.cpp
+  "Source/actors/monstdat.cpp"
+  "Source/actors/monster.cpp"
+  "Source/media/movie.cpp"
+  "Source/media/mpqapi.cpp"
   Source/msg.cpp
   Source/multi.cpp
   Source/nthread.cpp
@@ -227,7 +228,7 @@ add_library(devilution STATIC
   Source/palette.cpp
   Source/path.cpp
   Source/pfile.cpp
-  Source/player.cpp
+  "Source/actors/player.cpp"
   Source/plrmsg.cpp
   Source/portal.cpp
   Source/quests.cpp
@@ -244,10 +245,10 @@ add_library(devilution STATIC
   Source/themes.cpp
   Source/tmsg.cpp
   Source/town.cpp
-  Source/towners.cpp
+  "Source/actors/towners.cpp"
   Source/track.cpp
   Source/trigs.cpp
-  Source/wave.cpp)
+  "Source/media/wave.cpp")
 
 set(devilutionx_SRCS
   SourceX/dx.cpp

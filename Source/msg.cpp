@@ -316,7 +316,7 @@ void delta_kill_monster(int mi, BYTE x, BYTE y, BYTE bLevel)
 		pD = &sgLevels[bLevel].monster[mi];
 		pD->_mx = x;
 		pD->_my = y;
-		pD->_mdir = monster[mi]._mdir;
+		pD->_mdir = monsters[mi].data._mdir;
 		pD->_mhitpoints = 0;
 	}
 }
@@ -382,15 +382,15 @@ void delta_leave_sync(BYTE bLevel)
 		if (level.currlevel > 0) {
 			for (i = 0; i < nummonsters; ++i) {
 				ma = monstactive[i];
-				if (monster[ma]._mhitpoints) {
+				if (monsters[ma].data._mhitpoints) {
 					sgbDeltaChanged = TRUE;
 					pD = &sgLevels[bLevel].monster[ma];
-					pD->_mx = monster[ma]._mx;
-					pD->_my = monster[ma]._my;
-					pD->_mdir = monster[ma]._mdir;
+					pD->_mx = monsters[ma].data._mx;
+					pD->_my = monsters[ma].data._my;
+					pD->_mdir = monsters[ma].data._mdir;
 					pD->_menemy = encode_enemy(ma);
-					pD->_mhitpoints = monster[ma]._mhitpoints;
-					pD->_mactive = monster[ma]._msquelch;
+					pD->_mhitpoints = monsters[ma].data._mhitpoints;
+					pD->_mactive = monsters[ma].data._msquelch;
 				}
 			}
 			memcpy(&sgLocals[bLevel], automap.getView(), sizeof(automap.getView()));
@@ -457,7 +457,7 @@ void DeltaSaveLevel()
 			if (i != myplr())
 				plr[i].data._pGFXLoad = 0;
 		}
-		plr.local().data._pLvlVisited[level.currlevel] = TRUE;
+		myplr().data._pLvlVisited[level.currlevel] = TRUE;
 		delta_leave_sync(level.currlevel);
 	}
 }
@@ -477,41 +477,41 @@ void DeltaLoadLevel()
 	if (level.currlevel != 0) {
 		for (i = 0; i < nummonsters; i++) {
 			if (sgLevels[level.currlevel].monster[i]._mx != 0xFF) {
-				M_ClearSquares(i);
+				monsters[i].M_ClearSquares();
 				x = sgLevels[level.currlevel].monster[i]._mx;
 				y = sgLevels[level.currlevel].monster[i]._my;
-				monster[i]._mx = x;
-				monster[i]._my = y;
-				monster[i]._moldx = x;
-				monster[i]._moldy = y;
-				monster[i]._mfutx = x;
-				monster[i]._mfuty = y;
+				monsters[i].data._mx = x;
+				monsters[i].data._my = y;
+				monsters[i].data._moldx = x;
+				monsters[i].data._moldy = y;
+				monsters[i].data._mfutx = x;
+				monsters[i].data._mfuty = y;
 				if (sgLevels[level.currlevel].monster[i]._mhitpoints != -1)
-					monster[i]._mhitpoints = sgLevels[level.currlevel].monster[i]._mhitpoints;
+					monsters[i].data._mhitpoints = sgLevels[level.currlevel].monster[i]._mhitpoints;
 				if (!sgLevels[level.currlevel].monster[i]._mhitpoints) {
-					monster[i]._moldx = x;
-					monster[i]._moldy = y;
-					M_ClearSquares(i);
-					if (monster[i]._mAi != AI_DIABLO) {
-						if (!monster[i]._uniqtype)
-							/// ASSERT: assert(monster[i].MType != NULL);
-							AddDead(monster[i]._mx, monster[i]._my, monster[i].MType->mdeadval, (direction)monster[i]._mdir);
+					monsters[i].data._moldx = x;
+					monsters[i].data._moldy = y;
+					monsters[i].M_ClearSquares();
+					if (monsters[i].data._mAi != AI_DIABLO) {
+						if (!monsters[i].data._uniqtype)
+							/// ASSERT: assert(monsters[i].data.MType != NULL);
+							AddDead(monsters[i].data._mx, monsters[i].data._my, monsters[i].data.MType->mdeadval, (direction)monsters[i].data._mdir);
 						else
-							AddDead(monster[i]._mx, monster[i]._my, monster[i]._udeadval, (direction)monster[i]._mdir);
+							AddDead(monsters[i].data._mx, monsters[i].data._my, monsters[i].data._udeadval, (direction)monsters[i].data._mdir);
 					}
-					monster[i]._mDelFlag = TRUE;
-					M_UpdateLeader(i);
+					monsters[i].data._mDelFlag = TRUE;
+					monsters[i].M_UpdateLeader();
 				} else {
 					decode_enemy(i, sgLevels[level.currlevel].monster[i]._menemy);
-					if (monster[i]._mx && monster[i]._mx != 1 || monster[i]._my)
-						grid[monster[i]._mx][monster[i]._my].dMonster = i + 1;
+					if (monsters[i].data._mx && monsters[i].data._mx != 1 || monsters[i].data._my)
+						grid[monsters[i].data._mx][monsters[i].data._my].dMonster = i + 1;
 					if (i < MAX_PLRS) {
-						MAI_Golum(i);
-						monster[i]._mFlags |= (MFLAG_TARGETS_MONSTER | MFLAG_GOLEM);
+						monsters[i].MAI_Golum();
+						monsters[i].data._mFlags |= (MFLAG_TARGETS_MONSTER | MFLAG_GOLEM);
 					} else {
-						M_StartStand(i, monster[i]._mdir);
+						monsters[i].M_StartStand(monsters[i].data._mdir);
 					}
-					monster[i]._msquelch = sgLevels[level.currlevel].monster[i]._mactive;
+					monsters[i].data._msquelch = sgLevels[level.currlevel].monster[i]._mactive;
 				}
 			}
 		}
@@ -855,27 +855,27 @@ void NetSendCmdPItem(BOOL bHiPri, BYTE bCmd, BYTE x, BYTE y)
 	cmd.bCmd = bCmd;
 	cmd.x = x;
 	cmd.y = y;
-	cmd.wIndx = plr.local().data.HoldItem.IDidx;
+	cmd.wIndx = myplr().data.HoldItem.IDidx;
 
-	if (plr.local().data.HoldItem.IDidx == IDI_EAR) {
-		cmd.wCI = plr.local().data.HoldItem._iName[8] | (plr.local().data.HoldItem._iName[7] << 8);
-		cmd.dwSeed = plr.local().data.HoldItem._iName[12] | ((plr.local().data.HoldItem._iName[11] | ((plr.local().data.HoldItem._iName[10] | (plr.local().data.HoldItem._iName[9] << 8)) << 8)) << 8);
-		cmd.bId = plr.local().data.HoldItem._iName[13];
-		cmd.bDur = plr.local().data.HoldItem._iName[14];
-		cmd.bMDur = plr.local().data.HoldItem._iName[15];
-		cmd.bCh = plr.local().data.HoldItem._iName[16];
-		cmd.bMCh = plr.local().data.HoldItem._iName[17];
-		cmd.wValue = plr.local().data.HoldItem._ivalue | (plr.local().data.HoldItem._iName[18] << 8) | ((plr.local().data.HoldItem._iCurs - 19) << 6);
-		cmd.dwBuff = plr.local().data.HoldItem._iName[22] | ((plr.local().data.HoldItem._iName[21] | ((plr.local().data.HoldItem._iName[20] | (plr.local().data.HoldItem._iName[19] << 8)) << 8)) << 8);
+	if (myplr().data.HoldItem.IDidx == IDI_EAR) {
+		cmd.wCI = myplr().data.HoldItem._iName[8] | (myplr().data.HoldItem._iName[7] << 8);
+		cmd.dwSeed = myplr().data.HoldItem._iName[12] | ((myplr().data.HoldItem._iName[11] | ((myplr().data.HoldItem._iName[10] | (myplr().data.HoldItem._iName[9] << 8)) << 8)) << 8);
+		cmd.bId = myplr().data.HoldItem._iName[13];
+		cmd.bDur = myplr().data.HoldItem._iName[14];
+		cmd.bMDur = myplr().data.HoldItem._iName[15];
+		cmd.bCh = myplr().data.HoldItem._iName[16];
+		cmd.bMCh = myplr().data.HoldItem._iName[17];
+		cmd.wValue = myplr().data.HoldItem._ivalue | (myplr().data.HoldItem._iName[18] << 8) | ((myplr().data.HoldItem._iCurs - 19) << 6);
+		cmd.dwBuff = myplr().data.HoldItem._iName[22] | ((myplr().data.HoldItem._iName[21] | ((myplr().data.HoldItem._iName[20] | (myplr().data.HoldItem._iName[19] << 8)) << 8)) << 8);
 	} else {
-		cmd.wCI = plr.local().data.HoldItem._iCreateInfo;
-		cmd.dwSeed = plr.local().data.HoldItem._iSeed;
-		cmd.bId = plr.local().data.HoldItem._iIdentified;
-		cmd.bDur = plr.local().data.HoldItem._iDurability;
-		cmd.bMDur = plr.local().data.HoldItem._iMaxDur;
-		cmd.bCh = plr.local().data.HoldItem._iCharges;
-		cmd.bMCh = plr.local().data.HoldItem._iMaxCharges;
-		cmd.wValue = plr.local().data.HoldItem._ivalue;
+		cmd.wCI = myplr().data.HoldItem._iCreateInfo;
+		cmd.dwSeed = myplr().data.HoldItem._iSeed;
+		cmd.bId = myplr().data.HoldItem._iIdentified;
+		cmd.bDur = myplr().data.HoldItem._iDurability;
+		cmd.bMDur = myplr().data.HoldItem._iMaxDur;
+		cmd.bCh = myplr().data.HoldItem._iCharges;
+		cmd.bMCh = myplr().data.HoldItem._iMaxCharges;
+		cmd.wValue = myplr().data.HoldItem._ivalue;
 	}
 
 	if (bHiPri)
@@ -890,10 +890,10 @@ void NetSendCmdChItem(BOOL bHiPri, BYTE bLoc)
 
 	cmd.bCmd = CMD_CHANGEPLRITEMS;
 	cmd.bLoc = bLoc;
-	cmd.wIndx = plr.local().data.HoldItem.IDidx;
-	cmd.wCI = plr.local().data.HoldItem._iCreateInfo;
-	cmd.dwSeed = plr.local().data.HoldItem._iSeed;
-	cmd.bId = plr.local().data.HoldItem._iIdentified;
+	cmd.wIndx = myplr().data.HoldItem.IDidx;
+	cmd.wCI = myplr().data.HoldItem._iCreateInfo;
+	cmd.dwSeed = myplr().data.HoldItem._iSeed;
+	cmd.bId = myplr().data.HoldItem._iIdentified;
 
 	if (bHiPri)
 		NetSendHiPri((BYTE *)&cmd, sizeof(cmd));
@@ -1414,7 +1414,7 @@ DWORD On_REQUESTGITEM(TCmd *pCmd, int pnum)
 				if (p->bPnum != myplr())
 					SyncGetItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed);
 				else
-					plr.local().inventory.InvGetItem(ii);
+					myplr().inventory.InvGetItem(ii);
 				SetItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			} else if (!NetSendCmdReq2(CMD_REQUESTGITEM, myplr(), p->bPnum, p))
 				NetSendCmdExtra(p);
@@ -1451,11 +1451,11 @@ DWORD On_GETITEM(TCmd *pCmd, int pnum)
 			if ((level.currlevel == p->bLevel || p->bPnum == myplr()) && p->bMaster != myplr()) {
 				if (p->bPnum == myplr()) {
 					if (level.currlevel != p->bLevel) {			
-						ii = plr.local().inventory.SyncPutItem(plr.local().data._px, plr.local().data._py, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+						ii = myplr().inventory.SyncPutItem(myplr().data._px, myplr().data._py, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 						if (ii != -1)
-							plr.local().inventory.InvGetItem(ii);
+							myplr().inventory.InvGetItem(ii);
 					} else
-						plr.local().inventory.InvGetItem(ii);
+						myplr().inventory.InvGetItem(ii);
 				} else
 					SyncGetItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed);
 			}
@@ -1551,7 +1551,7 @@ DWORD On_REQUESTAGITEM(TCmd *pCmd, int pnum)
 				if (p->bPnum != myplr())
 					SyncGetItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed);
 				else
-					plr.local().inventory.AutoGetItem(p->bCursitem);
+					myplr().inventory.AutoGetItem(p->bCursitem);
 				SetItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			} else if (!NetSendCmdReq2(CMD_REQUESTAGITEM, myplr(), p->bPnum, p))
 				NetSendCmdExtra(p);
@@ -1573,11 +1573,11 @@ DWORD On_AGETITEM(TCmd *pCmd, int pnum)
 			if ((level.currlevel == p->bLevel || p->bPnum == myplr()) && p->bMaster != myplr()) {
 				if (p->bPnum == myplr()) {
 					if (level.currlevel != p->bLevel) {
-						int ii = plr.local().inventory.SyncPutItem(plr.local().data._px, plr.local().data._py, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+						int ii = myplr().inventory.SyncPutItem(myplr().data._px, myplr().data._py, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 						if (ii != -1)
-							plr.local().inventory.AutoGetItem(ii);
+							myplr().inventory.AutoGetItem(ii);
 					} else
-						plr.local().inventory.AutoGetItem(p->bCursitem);
+						myplr().inventory.AutoGetItem(p->bCursitem);
 				} else
 					SyncGetItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed);
 			}
@@ -1612,9 +1612,9 @@ DWORD On_PUTITEM(TCmd *pCmd, int pnum)
 	else if (level.currlevel == plr[pnum].data.plrlevel) {
 		int ii;
 		if (pnum == myplr())
-			ii = plr.local().inventory.InvPutItem(p->x, p->y);
+			ii = myplr().inventory.InvPutItem(p->x, p->y);
 		else
-			ii = plr.local().inventory.SyncPutItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+			ii = myplr().inventory.SyncPutItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 		if (ii != -1) {
 			PutItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			delta_put_item(p, item[ii]._ix, item[ii]._iy, plr[pnum].data.plrlevel);
@@ -1677,7 +1677,7 @@ DWORD On_SYNCPUTITEM(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs == 1)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else if (level.currlevel == plr[pnum].data.plrlevel) {
-		int ii = plr.local().inventory.SyncPutItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+		int ii = myplr().inventory.SyncPutItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 		if (ii != -1) {
 			PutItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			delta_put_item(p, item[ii]._ix, item[ii]._iy, plr[pnum].data.plrlevel);
@@ -1701,7 +1701,7 @@ DWORD On_RESPAWNITEM(TCmd *pCmd, int pnum)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else {
 		if (level.currlevel == plr[pnum].data.plrlevel && pnum != myplr()) {
-			plr.local().inventory.SyncPutItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+			myplr().inventory.SyncPutItem(p->x, p->y, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 		}
 		PutItemRecord(p->dwSeed, p->wCI, p->wIndx);
 		delta_put_item(p, p->x, p->y, plr[pnum].data.plrlevel);
@@ -1865,10 +1865,10 @@ DWORD On_ATTACKID(TCmd *pCmd, int pnum)
 	TCmdParam1 *p = (TCmdParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && level.currlevel == plr[pnum].data.plrlevel) {
-		int distx = abs(plr[pnum].data._px - monster[p->wParam1]._mfutx);
-		int disty = abs(plr[pnum].data._py - monster[p->wParam1]._mfuty);
+		int distx = abs(plr[pnum].data._px - monsters[p->wParam1].data._mfutx);
+		int disty = abs(plr[pnum].data._py - monsters[p->wParam1].data._mfuty);
 		if (distx > 1 || disty > 1)
-			plr[pnum].MakePlrPath(monster[p->wParam1]._mfutx, monster[p->wParam1]._mfuty, FALSE);
+			plr[pnum].MakePlrPath(monsters[p->wParam1].data._mfutx, monsters[p->wParam1].data._mfuty, FALSE);
 		plr[pnum].data.destAction = ACTION_ATTACKMON;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -2000,8 +2000,8 @@ DWORD On_KNOCKBACK(TCmd *pCmd, int pnum)
 	TCmdParam1 *p = (TCmdParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && level.currlevel == plr[pnum].data.plrlevel) {
-		M_GetKnockback(p->wParam1);
-		M_StartHit(p->wParam1, pnum, 0);
+		monsters[p->wParam1].M_GetKnockback();
+		monsters[p->wParam1].M_StartHit(pnum, 0);
 	}
 
 	return sizeof(*p);
@@ -2065,8 +2065,8 @@ DWORD On_WARP(TCmd *pCmd, int pnum)
 	else {
 		plr[pnum].StartWarpLvl(p->wParam1);
 		if (pnum == myplr() && pcurs >= CURSOR_FIRSTITEM) {
-			item[MAXITEMS] = plr.local().data.HoldItem;
-			plr.local().inventory.AutoGetItem(MAXITEMS);
+			item[MAXITEMS] = myplr().data.HoldItem;
+			myplr().inventory.AutoGetItem(MAXITEMS);
 		}
 	}
 
@@ -2081,7 +2081,7 @@ DWORD On_MONSTDEATH(TCmd *pCmd, int pnum)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else if (pnum != myplr()) {
 		if (level.currlevel == plr[pnum].data.plrlevel)
-			M_SyncStartKill(p->wParam1, p->x, p->y, pnum);
+			monsters[p->wParam1].M_SyncStartKill(p->x, p->y, pnum);
 		delta_kill_monster(p->wParam1, p->x, p->y, plr[pnum].data.plrlevel);
 	}
 
@@ -2096,7 +2096,7 @@ DWORD On_KILLGOLEM(TCmd *pCmd, int pnum)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else if (pnum != myplr()) {
 		if (level.currlevel == p->wParam1)
-			M_SyncStartKill(pnum, p->x, p->y, pnum);
+			monsters[pnum].M_SyncStartKill(p->x, p->y, pnum); // Incorrect???? monsters[pnum] ?
 		delta_kill_monster(pnum, p->x, p->y, plr[pnum].data.plrlevel);
 	}
 
@@ -2137,13 +2137,13 @@ DWORD On_MONSTDAMAGE(TCmd *pCmd, int pnum)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else if (pnum != myplr()) {
 		if (level.currlevel == plr[pnum].data.plrlevel) {
-			monster[p->wParam1].mWhoHit |= 1 << pnum;
+			monsters[p->wParam1].data.mWhoHit |= 1 << pnum;
 
-			if (monster[p->wParam1]._mhitpoints) {
-				monster[p->wParam1]._mhitpoints -= p->wParam2;
-				if ((monster[p->wParam1]._mhitpoints >> 6) < 1)
-					monster[p->wParam1]._mhitpoints = 1 << 6;
-				delta_monster_hp(p->wParam1, monster[p->wParam1]._mhitpoints, plr[pnum].data.plrlevel);
+			if (monsters[p->wParam1].data._mhitpoints) {
+				monsters[p->wParam1].data._mhitpoints -= p->wParam2;
+				if ((monsters[p->wParam1].data._mhitpoints >> 6) < 1)
+					monsters[p->wParam1].data._mhitpoints = 1 << 6;
+				delta_monster_hp(p->wParam1, monsters[p->wParam1].data._mhitpoints, plr[pnum].data.plrlevel);
 			}
 		}
 	}
@@ -2171,15 +2171,15 @@ DWORD On_PLRDAMAGE(TCmd *pCmd, int pnum)
 
 	if (p->bPlr == myplr() && level.currlevel != 0) {
 		if (gbBufferMsgs != 1 && level.currlevel == plr[pnum].data.plrlevel && p->dwDam <= 192000) {
-			if ((plr.local().data._pHitPoints >> 6) > 0) {
+			if ((myplr().data._pHitPoints >> 6) > 0) {
 				drawhpflag = TRUE;
-				plr.local().data._pHitPoints -= p->dwDam;
-				plr.local().data._pHPBase -= p->dwDam;
-				if (plr.local().data._pHitPoints > plr.local().data._pMaxHP) {
-					plr.local().data._pHitPoints = plr.local().data._pMaxHP;
-					plr.local().data._pHPBase = plr.local().data._pMaxHPBase;
+				myplr().data._pHitPoints -= p->dwDam;
+				myplr().data._pHPBase -= p->dwDam;
+				if (myplr().data._pHitPoints > myplr().data._pMaxHP) {
+					myplr().data._pHitPoints = myplr().data._pMaxHP;
+					myplr().data._pHPBase = myplr().data._pMaxHPBase;
 				}
-				if ((plr.local().data._pHitPoints >> 6) <= 0)
+				if ((myplr().data._pHitPoints >> 6) <= 0)
 					plr[myplr()].SyncPlrKill(1);
 			}
 		}

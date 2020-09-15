@@ -953,7 +953,7 @@ void InitMonsterSND(int monst)
 		return;
 	}
 
-	mtype = Monsters[monst].mtype;
+	mtype = beastiary[monst].data.mtype;
 	for (i = 0; i < 4; i++) {
 		if (MonstSndChar[i] != 's' || monsterdata[mtype].snd_special) {
 			for (j = 0; j < 2; j++) {
@@ -961,7 +961,7 @@ void InitMonsterSND(int monst)
 				path = (char *)DiabloAllocPtr(strlen(name) + 1);
 				strcpy(path, name);
 				pSnd = sound_file_load(path);
-				Monsters[monst].Snds[i][j] = pSnd;
+				beastiary[monst].data.Snds[i][j] = pSnd;
 				if (!pSnd)
 					mem_free_dbg(path);
 			}
@@ -976,12 +976,12 @@ void FreeMonsterSnd()
 	TSnd *pSnd;
 
 	for (i = 0; i < nummtypes; i++) {
-		mtype = Monsters[i].mtype;
+		mtype = beastiary[i].data.mtype;
 		for (j = 0; j < 4; ++j) {
 			for (k = 0; k < 2; ++k) {
-				pSnd = Monsters[i].Snds[j][k];
+				pSnd = beastiary[i].data.Snds[j][k];
 				if (pSnd) {
-					Monsters[i].Snds[j][k] = NULL;
+					beastiary[i].data.Snds[j][k] = NULL;
 					file = pSnd->sound_path;
 					pSnd->sound_path = NULL;
 					sound_file_cleanup(pSnd);
@@ -997,7 +997,7 @@ void PlayEffect(int i, int mode)
 	int sndIdx, mi, lVolume, lPan;
 	TSnd *snd;
 
-	if (plr.local().data.pLvlLoad) {
+	if (myplr().data.pLvlLoad) {
 		return;
 	}
 
@@ -1006,13 +1006,13 @@ void PlayEffect(int i, int mode)
 		return;
 	}
 
-	mi = monster[i]._mMTidx;
-	snd = Monsters[mi].Snds[mode][sndIdx];
+	mi = monsters[i].data._mMTidx;
+	snd = beastiary[mi].data.Snds[mode][sndIdx];
 	if (!snd || snd_playing(snd)) {
 		return;
 	}
 
-	if (!calc_snd_position(monster[i]._mx, monster[i]._my, &lVolume, &lPan))
+	if (!calc_snd_position(monsters[i].data._mx, monsters[i].data._my, &lVolume, &lPan))
 		return;
 
 	snd_play_snd(snd, lVolume, lPan);
@@ -1022,8 +1022,8 @@ BOOL calc_snd_position(int x, int y, int *plVolume, int *plPan)
 {
 	int pan, volume;
 
-	x -= plr.local().data._px;
-	y -= plr.local().data._py;
+	x -= myplr().data._px;
+	y -= myplr().data._py;
 
 	pan = (x - y) * 256;
 	*plPan = pan;
@@ -1053,7 +1053,7 @@ void PlaySFX_priv(TSFX *pSFX, BOOL loc, int x, int y)
 {
 	int lPan, lVolume;
 
-	if (plr.local().data.pLvlLoad && gbMaxPlayers != 1) {
+	if (myplr().data.pLvlLoad && gbMaxPlayers != 1) {
 		return;
 	}
 	if (!gbSndInited || !gbSoundOn || gbBufferMsgs) {
@@ -1199,11 +1199,11 @@ void sound_init()
 	BYTE mask = 0;
 	if (gbMaxPlayers > 1) {
 		mask = PLRSFXS;
-	} else if (plr.local().data._pClass == PC_WARRIOR) {
+	} else if (myplr().data._pClass == PC_WARRIOR) {
 		mask = sfx_WARRIOR;
-	} else if (plr.local().data._pClass == PC_ROGUE) {
+	} else if (myplr().data._pClass == PC_ROGUE) {
 		mask = sfx_ROGUE;
-	} else if (plr.local().data._pClass == PC_SORCERER) {
+	} else if (myplr().data._pClass == PC_SORCERER) {
 		mask = sfx_SORCEROR;
 	} else {
 		app_fatal("effects:1");

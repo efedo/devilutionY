@@ -110,7 +110,7 @@ void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int 
 
 	switch (caster) {
 	case 1:
-		dir = monster[id]._mdir;
+		dir = monsters[id].data._mdir;
 		break;
 	case 0:
 		// caster must be 0 already in this case, but oh well,

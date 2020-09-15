@@ -156,7 +156,7 @@ BOOL TFit_SkelRoom(int t)
 	}
 
 	for (i = 0; i < nummtypes; i++) {
-		if (IsSkel(Monsters[i].mtype)) {
+		if (IsSkel(beastiary[i].data.mtype)) {
 			themeVar1 = i;
 			return TFit_Obj5(t);
 		}
@@ -170,7 +170,7 @@ BOOL TFit_GoatShrine(int t)
 	int i;
 
 	for (i = 0; i < nummtypes; i++) {
-		if (IsGoat(Monsters[i].mtype)) {
+		if (IsGoat(beastiary[i].data.mtype)) {
 			themeVar1 = i;
 			return TFit_Obj5(t);
 		}
@@ -498,7 +498,7 @@ void PlaceThemeMonsts(int t, int f)
 
 	numscattypes = 0;
 	for (i = 0; i < nummtypes; i++) {
-		if (Monsters[i].mPlaceFlags & 1) {
+		if (beastiary[i].data.mPlaceFlags & 1) {
 			scattertypes[numscattypes] = i;
 			numscattypes++;
 		}

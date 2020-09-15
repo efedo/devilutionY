@@ -119,7 +119,7 @@ void ShowProgress(unsigned int uMsg)
 		FreeGameMem();
 		level.currlevel++;
 		level.leveltype = gnLevelTypeTbl[level.currlevel];
-		assert(plr.local().data.plrlevel == level.currlevel);
+		assert(myplr().data.plrlevel == level.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 0);
 		IncProgress();
@@ -135,7 +135,7 @@ void ShowProgress(unsigned int uMsg)
 		FreeGameMem();
 		level.currlevel--;
 		level.leveltype = gnLevelTypeTbl[level.currlevel];
-		assert(plr.local().data.plrlevel == level.currlevel);
+		assert(myplr().data.plrlevel == level.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 1);
 		IncProgress();
@@ -194,9 +194,9 @@ void ShowProgress(unsigned int uMsg)
 		}
 		IncProgress();
 		FreeGameMem();
-		level.currlevel = plr.local().data.plrlevel;
+		level.currlevel = myplr().data.plrlevel;
 		level.leveltype = gnLevelTypeTbl[level.currlevel];
-		assert(plr.local().data.plrlevel == level.currlevel);
+		assert(myplr().data.plrlevel == level.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 6);
 		IncProgress();
@@ -210,9 +210,9 @@ void ShowProgress(unsigned int uMsg)
 		}
 		IncProgress();
 		FreeGameMem();
-		level.currlevel = plr.local().data.plrlevel;
+		level.currlevel = myplr().data.plrlevel;
 		level.leveltype = gnLevelTypeTbl[level.currlevel];
-		assert(plr.local().data.plrlevel == level.currlevel);
+		assert(myplr().data.plrlevel == level.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 7);
 		IncProgress();
@@ -226,9 +226,9 @@ void ShowProgress(unsigned int uMsg)
 		}
 		IncProgress();
 		FreeGameMem();
-		level.currlevel = plr.local().data.plrlevel;
+		level.currlevel = myplr().data.plrlevel;
 		level.leveltype = gnLevelTypeTbl[level.currlevel];
-		assert(plr.local().data.plrlevel == level.currlevel);
+		assert(myplr().data.plrlevel == level.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 0);
 		IncProgress();
@@ -243,11 +243,11 @@ void ShowProgress(unsigned int uMsg)
 	saveProc = SetWindowProc(saveProc);
 	assert(saveProc == DisableInputWndProc);
 
-	NetSendCmdLocParam1(TRUE, CMD_PLAYER_JOINLEVEL, plr.local().data._px, plr.local().data._py, plr.local().data.plrlevel);
+	NetSendCmdLocParam1(TRUE, CMD_PLAYER_JOINLEVEL, myplr().data._px, myplr().data._py, myplr().data.plrlevel);
 	plrmsg_delay(FALSE);
 	ResetPal();
 
-	if (gbSomebodyWonGameKludge && plr.local().data.plrlevel == 16) {
+	if (gbSomebodyWonGameKludge && myplr().data.plrlevel == 16) {
 		PrepDoEnding();
 	}
 
@@ -391,7 +391,7 @@ void InitCutscene(unsigned int uMsg)
 		break;
 	case WM_DIABTOWNWARP:
 	case WM_DIABTWARPUP:
-		switch (gnLevelTypeTbl[plr.local().data.plrlevel]) {
+		switch (gnLevelTypeTbl[myplr().data.plrlevel]) {
 		case 0:
 			sgpBackCel = LoadFileInMem("Gendata\\Cuttt.CEL", NULL);
 			LoadPalette("Gendata\\Cuttt.pal");

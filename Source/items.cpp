@@ -436,23 +436,23 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 	}
 
 	plr[p].data._pStrength = sadd + plr[p].data._pBaseStr;
-	if (plr.local().data._pStrength <= 0) {
-		plr.local().data._pStrength = 0;
+	if (myplr().data._pStrength <= 0) {
+		myplr().data._pStrength = 0;
 	}
 
 	plr[p].data._pMagic = madd + plr[p].data._pBaseMag;
-	if (plr.local().data._pMagic <= 0) {
-		plr.local().data._pMagic = 0;
+	if (myplr().data._pMagic <= 0) {
+		myplr().data._pMagic = 0;
 	}
 
 	plr[p].data._pDexterity = dadd + plr[p].data._pBaseDex;
-	if (plr.local().data._pDexterity <= 0) {
-		plr.local().data._pDexterity = 0;
+	if (myplr().data._pDexterity <= 0) {
+		myplr().data._pDexterity = 0;
 	}
 
 	plr[p].data._pVitality = vadd + plr[p].data._pBaseVit;
-	if (plr.local().data._pVitality <= 0) {
-		plr.local().data._pVitality = 0;
+	if (myplr().data._pVitality <= 0) {
+		myplr().data._pVitality = 0;
 	}
 
 	if (plr[p].data._pClass == PC_ROGUE) {
@@ -1653,13 +1653,13 @@ void SaveItemPower(int i, int power, int param1, int param2, int minval, int max
 		item[i]._iCurs = param1;
 		break;
 	case IPL_ADDACLIFE:
-		item[i]._iPLHP = (plr.local().data._pIBonusAC + plr.local().data._pIAC + plr.local().data._pDexterity / 5) << 6;
+		item[i]._iPLHP = (myplr().data._pIBonusAC + myplr().data._pIAC + myplr().data._pDexterity / 5) << 6;
 		break;
 	case IPL_ADDMANAAC:
-		item[i]._iAC += (plr.local().data._pMaxManaBase >> 6) / 10;
+		item[i]._iAC += (myplr().data._pMaxManaBase >> 6) / 10;
 		break;
 	case IPL_FIRERESCLVL:
-		item[i]._iPLFR = 30 - plr.local().data._pLevel;
+		item[i]._iPLFR = 30 - myplr().data._pLevel;
 		if (item[i]._iPLFR < 0)
 			item[i]._iPLFR = 0;
 		break;
@@ -1813,7 +1813,7 @@ void SetupItem(int i)
 	item[i]._iIdentified = FALSE;
 	item[i]._iPostDraw = FALSE;
 
-	if (!plr.local().data.pLvlLoad) {
+	if (!myplr().data.pLvlLoad) {
 		item[i]._iAnimFrame = 1;
 		item[i]._iAnimFlag = TRUE;
 		item[i]._iSelFlag = 0;
@@ -1829,10 +1829,10 @@ int RndItem(int m)
 	int i, ri;
 	int ril[512];
 
-	if ((monster[m].MData->mTreasure & 0x8000) != 0)
-		return -1 - (monster[m].MData->mTreasure & 0xFFF);
+	if ((monsters[m].data.MData->mTreasure & 0x8000) != 0)
+		return -1 - (monsters[m].data.MData->mTreasure & 0xFFF);
 
-	if (monster[m].MData->mTreasure & 0x4000)
+	if (monsters[m].data.MData->mTreasure & 0x4000)
 		return 0;
 
 	if (random_(24, 100) > 40)
@@ -1843,11 +1843,11 @@ int RndItem(int m)
 
 	ri = 0;
 	for (i = 0; AllItemsList[i].iLoc != ILOC_INVALID; i++) {
-		if (AllItemsList[i].iRnd == 2 && monster[m].mLevel >= AllItemsList[i].iMinMLvl) {
+		if (AllItemsList[i].iRnd == 2 && monsters[m].data.mLevel >= AllItemsList[i].iMinMLvl) {
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iRnd && monster[m].mLevel >= AllItemsList[i].iMinMLvl) {
+		if (AllItemsList[i].iRnd && monsters[m].data.mLevel >= AllItemsList[i].iMinMLvl) {
 			ril[ri] = i;
 			ri++;
 		}
@@ -1866,8 +1866,8 @@ int RndUItem(int m)
 	int ril[512];
 	BOOL okflag;
 
-	if (m != -1 && (monster[m].MData->mTreasure & 0x8000) != 0 && gbMaxPlayers == 1)
-		return -1 - (monster[m].MData->mTreasure & 0xFFF);
+	if (m != -1 && (monsters[m].data.MData->mTreasure & 0x8000) != 0 && gbMaxPlayers == 1)
+		return -1 - (monsters[m].data.MData->mTreasure & 0xFFF);
 
 	ri = 0;
 	for (i = 0; AllItemsList[i].iLoc != ILOC_INVALID; i++) {
@@ -1875,7 +1875,7 @@ int RndUItem(int m)
 		if (!AllItemsList[i].iRnd)
 			okflag = FALSE;
 		if (m != -1) {
-			if (monster[m].mLevel < AllItemsList[i].iMinMLvl)
+			if (monsters[m].data.mLevel < AllItemsList[i].iMinMLvl)
 				okflag = FALSE;
 		} else {
 			if (2 * level.currlevel < AllItemsList[i].iMinMLvl)
@@ -2108,7 +2108,7 @@ void SpawnItem(int m, int x, int y, BOOL sendmsg)
 {
 	int ii, onlygood, idx;
 
-	if (monster[m]._uniqtype || ((monster[m].MData->mTreasure & 0x8000) && gbMaxPlayers != 1)) {
+	if (monsters[m].data._uniqtype || ((monsters[m].data.MData->mTreasure & 0x8000) && gbMaxPlayers != 1)) {
 		idx = RndUItem(m);
 		if (idx < 0) {
 			SpawnUnique(-(idx + 1), x, y);
@@ -2136,10 +2136,10 @@ void SpawnItem(int m, int x, int y, BOOL sendmsg)
 		GetSuperItemSpace(x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
-		if (monster[m]._uniqtype) {
-			SetupAllItems(ii, idx, GetRndSeed(), monster[m].MData->mLevel, 15, onlygood, FALSE, FALSE);
+		if (monsters[m].data._uniqtype) {
+			SetupAllItems(ii, idx, GetRndSeed(), monsters[m].data.MData->mLevel, 15, onlygood, FALSE, FALSE);
 		} else {
-			SetupAllItems(ii, idx, GetRndSeed(), monster[m].MData->mLevel, 1, onlygood, FALSE, FALSE);
+			SetupAllItems(ii, idx, GetRndSeed(), monsters[m].data.MData->mLevel, 1, onlygood, FALSE, FALSE);
 		}
 		numitems++;
 		if (sendmsg)
@@ -3303,11 +3303,11 @@ BOOL StoreStatOk(ItemStruct *h)
 	BOOL sf;
 
 	sf = TRUE;
-	if (plr.local().data._pStrength < h->_iMinStr)
+	if (myplr().data._pStrength < h->_iMinStr)
 		sf = FALSE;
-	if (plr.local().data._pMagic < h->_iMinMag)
+	if (myplr().data._pMagic < h->_iMinMag)
 		sf = FALSE;
-	if (plr.local().data._pDexterity < h->_iMinDex)
+	if (myplr().data._pDexterity < h->_iMinDex)
 		sf = FALSE;
 
 	return sf;
@@ -3571,7 +3571,7 @@ void WitchBookLevel(int ii)
 
 	if (witchitem[ii]._iMiscId == IMISC_BOOK) {
 		witchitem[ii]._iMinMag = spelldata[witchitem[ii]._iSpell].sMinInt;
-		slvl = plr.local().data._pSplLvl[witchitem[ii]._iSpell];
+		slvl = myplr().data._pSplLvl[witchitem[ii]._iSpell];
 		while (slvl) {
 			witchitem[ii]._iMinMag += 20 * witchitem[ii]._iMinMag / 100;
 			slvl--;
