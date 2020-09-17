@@ -2728,16 +2728,16 @@ void CheckStoreBtn()
 		qtextflag = FALSE;
 		if (level.leveltype == DTYPE_TOWN)
 			stream_stop();
-	} else if (stextsel != -1 && MouseY >= 32 && MouseY <= 320) {
+	} else if (stextsel != -1 && Mouse.y >= 32 && Mouse.y <= 320) {
 		if (!stextsize) {
-			if (MouseX < 344 + PANEL_LEFT || MouseX > 616 + PANEL_LEFT)
+			if (Mouse.x < 344 + PANEL_LEFT || Mouse.x > 616 + PANEL_LEFT)
 				return;
 		} else {
-			if (MouseX < 24 + PANEL_LEFT || MouseX > 616 + PANEL_LEFT)
+			if (Mouse.x < 24 + PANEL_LEFT || Mouse.x > 616 + PANEL_LEFT)
 				return;
 		}
-		y = (MouseY - 32) / 12;
-		if (stextscrl && MouseX > 600 + PANEL_LEFT) {
+		y = (Mouse.y - 32) / 12;
+		if (stextscrl && Mouse.x > 600 + PANEL_LEFT) {
 			if (y == 4) {
 				if (stextscrlubtn <= 0) {
 					STextUp();

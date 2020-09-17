@@ -29,26 +29,29 @@ public:
 	void zoomReset();
 	void setScale(int scale) { AutoMapScale = scale; }
 	void draw();
-	void drawTile(int screen_x, int screen_y, WORD automap_type);
+	void drawTile(V2Di s, WORD automap_type);
 	void drawPlayer();
 	void drawText();
-	WORD GetAutomapType(int x, int y, BOOL view);
-	void SetAutomapView(int x, int y);
+
+
+	WORD GetAutomapType(V2Di pos, BOOL view);
+	void SetAutomapView(V2Di pos);
 	auto & getView() { return automapview; }
 	int &getScale() { return AutoMapScale; }
-	void addOffsetX(int offset) { AutoMapXOfs += offset; }
-	void addOffsetY(int offset) { AutoMapYOfs += offset; }
+	void addOffsetX(int offset) { AutoMapOfs.x += offset; }
+	void addOffsetY(int offset) { AutoMapOfs.y += offset; }
 private:
 	WORD automaptype[512];  // Maps from tile_id to automap type.
 							// BUGFIX: only the first 256 elements are ever read
-	int AutoMapX;
-	int AutoMapY;
+
+	V2Di AutoMap;
 	BOOL automapflag; // Specifies whether the automap is enabled.
 	char AmShiftTab[31];
 	BOOLEAN automapview[DMAXX][DMAXY]; // Tracks the explored areas of the map.
 	int AutoMapScale; // Specifies the scale of the automap.
-	int AutoMapXOfs; // X offset
-	int AutoMapYOfs; // Y offset
+	V2Di AutoMapOfs;
+	//int AutoMapXOfs; // X offset
+	//int AutoMapYOfs; // Y offset
 	int AmLine64;
 	int AmLine32;
 	int AmLine16;

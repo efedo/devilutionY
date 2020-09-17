@@ -138,7 +138,7 @@ void CheckQuests()
 	int i, rportx, rporty;
 
 	if (QuestStatus(Q_BETRAYER) && gbMaxPlayers != 1 && quests[Q_BETRAYER]._qvar1 == 2) {
-		AddObject(OBJ_ALTBOY, 2 * setpc_x + 20, 2 * setpc_y + 22);
+		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
 		quests[Q_BETRAYER]._qvar1 = 3;
 		NetSendCmdQuest(TRUE, Q_BETRAYER);
 	}
@@ -359,8 +359,8 @@ void DrawButcher()
 {
 	int x, y;
 
-	x = 2 * setpc_x + 16;
-	y = 2 * setpc_y + 16;
+	x = 2 * setpc.x + 16;
+	y = 2 * setpc.y + 16;
 	DRLG_RectTrans(x + 3, y + 3, x + 10, y + 10);
 }
 
@@ -384,8 +384,8 @@ void DrawWarLord(int x, int y)
 	sp += 2;
 	setpc_w = rw;
 	setpc_h = rh;
-	setpc_x = x;
-	setpc_y = y;
+	setpc.x = x;
+	setpc.y = y;
 	for (j = y; j < y + rh; j++) {
 		for (i = x; i < x + rw; i++) {
 			if (*sp != 0) {
@@ -415,8 +415,8 @@ void DrawSChamber(int q, int x, int y)
 	sp += 2;
 	setpc_w = rw;
 	setpc_h = rh;
-	setpc_x = x;
-	setpc_y = y;
+	setpc.x = x;
+	setpc.y = y;
 	for (j = y; j < y + rh; j++) {
 		for (i = x; i < x + rw; i++) {
 			if (*sp != 0) {
@@ -448,8 +448,8 @@ void DrawLTBanner(int x, int y)
 	sp += 2;
 	setpc_w = rw;
 	setpc_h = rh;
-	setpc_x = x;
-	setpc_y = y;
+	setpc.x = x;
+	setpc.y = y;
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -472,8 +472,8 @@ void DrawBlind(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_x = x;
-	setpc_y = y;
+	setpc.x = x;
+	setpc.y = y;
 	setpc_w = rw;
 	setpc_h = rh;
 	for (j = 0; j < rh; j++) {
@@ -498,8 +498,8 @@ void DrawBlood(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_x = x;
-	setpc_y = y;
+	setpc.x = x;
+	setpc.y = y;
 	setpc_w = rw;
 	setpc_h = rh;
 	for (j = 0; j < rh; j++) {
@@ -580,8 +580,8 @@ void GetReturnLvlPos()
 {
 	if (quests[Q_BETRAYER]._qactive == QUEST_DONE)
 		quests[Q_BETRAYER]._qvar2 = 2;
-	ViewX = ReturnLvlX;
-	ViewY = ReturnLvlY;
+	View.x = ReturnLvlX;
+	View.y = ReturnLvlY;
 	level.currlevel = ReturnLvl;
 	level.leveltype = ReturnLvlT;
 }
@@ -606,7 +606,7 @@ void ResyncMPQuests()
 		NetSendCmdQuest(TRUE, Q_BETRAYER);
 	}
 	if (QuestStatus(Q_BETRAYER))
-		AddObject(OBJ_ALTBOY, 2 * setpc_x + 20, 2 * setpc_y + 22);
+		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
 #endif
 }
 
@@ -629,33 +629,33 @@ void ResyncQuests()
 	if (QuestStatus(Q_LTBANNER)) {
 		if (quests[Q_LTBANNER]._qvar1 == 1)
 			ObjChangeMapResync(
-			    setpc_w + setpc_x - 2,
-			    setpc_h + setpc_y - 2,
-			    setpc_w + setpc_x + 1,
-			    setpc_h + setpc_y + 1);
+			    setpc_w + setpc.x - 2,
+			    setpc_h + setpc.y - 2,
+			    setpc_w + setpc.x + 1,
+			    setpc_h + setpc.y + 1);
 		if (quests[Q_LTBANNER]._qvar1 == 2) {
 			ObjChangeMapResync(
-			    setpc_w + setpc_x - 2,
-			    setpc_h + setpc_y - 2,
-			    setpc_w + setpc_x + 1,
-			    setpc_h + setpc_y + 1);
-			ObjChangeMapResync(setpc_x, setpc_y, (setpc_w >> 1) + setpc_x + 2, (setpc_h >> 1) + setpc_y - 2);
+			    setpc_w + setpc.x - 2,
+			    setpc_h + setpc.y - 2,
+			    setpc_w + setpc.x + 1,
+			    setpc_h + setpc.y + 1);
+			ObjChangeMapResync(setpc.x, setpc.y, (setpc_w >> 1) + setpc.x + 2, (setpc_h >> 1) + setpc.y - 2);
 			for (i = 0; i < nobjects; i++)
 				SyncObjectAnim(objectactive[i]);
 			tren = TransVal;
 			TransVal = 9;
-			DRLG_MRectTrans(setpc_x, setpc_y, (setpc_w >> 1) + setpc_x + 4, setpc_y + (setpc_h >> 1));
+			DRLG_MRectTrans(setpc.x, setpc.y, (setpc_w >> 1) + setpc.x + 4, setpc.y + (setpc_h >> 1));
 			TransVal = tren;
 		}
 		if (quests[Q_LTBANNER]._qvar1 == 3) {
-			x = setpc_x;
-			y = setpc_y;
+			x = setpc.x;
+			y = setpc.y;
 			ObjChangeMapResync(x, y, x + setpc_w + 1, y + setpc_h + 1);
 			for (i = 0; i < nobjects; i++)
 				SyncObjectAnim(objectactive[i]);
 			tren = TransVal;
 			TransVal = 9;
-			DRLG_MRectTrans(setpc_x, setpc_y, (setpc_w >> 1) + setpc_x + 4, setpc_y + (setpc_h >> 1));
+			DRLG_MRectTrans(setpc.x, setpc.y, (setpc_w >> 1) + setpc.x + 4, setpc.y + (setpc_h >> 1));
 			TransVal = tren;
 		}
 	}
@@ -808,7 +808,7 @@ void QuestlogESC()
 {
 	int y, i;
 
-	y = (MouseY - 32) / 12;
+	y = (Mouse.y - 32) / 12;
 	if (numqlines) {
 		for (i = 0; i < numqlines; i++) {
 			if (y == qtopline + 2 * i) {

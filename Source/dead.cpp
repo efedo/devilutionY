@@ -71,23 +71,23 @@ void InitDead()
 	assert(nd <= MAXDEAD);
 }
 
-void AddDead(int dx, int dy, char dv, int ddir)
+void AddDead(V2Di pos, char dv, int ddir)
 {
-	grid[dx][dy].dDead = (dv & 0x1F) + (ddir << 5);
+	grid[pos.x][pos.y].dDead = (dv & 0x1F) + (ddir << 5);
 }
 
 void SetDead()
 {
 	int i, mi;
-	int dx, dy;
+	V2Di d;
 
 	for (i = 0; i < nummonsters; i++) {
 		mi = monstactive[i];
 		if (monsters[mi].data._uniqtype != 0) {
-			for (dx = 0; dx < MAXDUNX; dx++) {
-				for (dy = 0; dy < MAXDUNY; dy++) {
-					if ((grid[dx][dy].dDead & 0x1F) == monsters[mi].data._udeadval)
-						ChangeLightXY(monsters[mi].data.mlid, dx, dy);
+			for (d.x = 0; d.x < MAXDUNX; d.x++) {
+				for (d.y = 0; d.y < MAXDUNY; d.y++) {
+					if ((grid[d.x][d.y].dDead & 0x1F) == monsters[mi].data._udeadval)
+						ChangeLightXY(monsters[mi].data.mlid, d);
 				}
 			}
 		}

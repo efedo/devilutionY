@@ -161,7 +161,7 @@ void PrintDebugPlayer(BOOL bNextPlayer)
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  Lvl = %i : Change = %i", plr[dbgplr].data.plrlevel, plr[dbgplr].data._pLvlChanging);
 		NetSendCmdString(1 << myplr(), dstr);
-		sprintf(dstr, "  x = %i, y = %i : tx = %i, ty = %i", plr[dbgplr].data._px, plr[dbgplr].data._py, plr[dbgplr].data._ptargx, plr[dbgplr].data._ptargy);
+		sprintf(dstr, "  x = %i, y = %i : tx = %i, ty = %i", plr[dbgplr].data._p.x, plr[dbgplr].data._p.y, plr[dbgplr].data._ptarg.x, plr[dbgplr].data._ptarg.y);
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  mode = %i : daction = %i : walk[0] = %i", plr[dbgplr].data._pmode, plr[dbgplr].data.destAction, plr[dbgplr].data.walkpath[0]);
 		NetSendCmdString(1 << myplr(), dstr);
@@ -190,7 +190,7 @@ void PrintDebugMonster(int m)
 
 	sprintf(dstr, "Monster %i = %s", m, monsters[m].data.mName);
 	NetSendCmdString(1 << myplr(), dstr);
-	sprintf(dstr, "X = %i, Y = %i", monsters[m].data._mx, monsters[m].data._my);
+	sprintf(dstr, "X = %i, Y = %i", monsters[m].data._m.x, monsters[m].data._m.y);
 	NetSendCmdString(1 << myplr(), dstr);
 	sprintf(dstr, "Enemy = %i, HP = %i", monsters[m].data._menemy, monsters[m].data._mhitpoints);
 	NetSendCmdString(1 << myplr(), dstr);
@@ -214,7 +214,7 @@ void GetDebugMonster()
 
 	mi1 = pcursmonst;
 	if (mi1 == -1) {
-		mi2 = grid[cursmx][cursmy].dMonster;
+		mi2 = grid[cursm.x][cursm.y].dMonster;
 		if (mi2 != 0) {
 			mi1 = mi2 - 1;
 			if (mi2 <= 0)

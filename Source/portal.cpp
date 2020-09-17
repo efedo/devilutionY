@@ -153,15 +153,15 @@ void GetPortalLevel()
 void GetPortalLvlPos()
 {
 	if (level.currlevel == 0) {
-		ViewX = WarpDropX[portalindex] + 1;
-		ViewY = WarpDropY[portalindex] + 1;
+		View.x = WarpDropX[portalindex] + 1;
+		View.y = WarpDropY[portalindex] + 1;
 	} else {
-		ViewX = portal[portalindex].x;
-		ViewY = portal[portalindex].y;
+		View.x = portal[portalindex].x;
+		View.y = portal[portalindex].y;
 
 		if (portalindex != myplr()) {
-			ViewX++;
-			ViewY++;
+			View.x++;
+			View.y++;
 		}
 	}
 }

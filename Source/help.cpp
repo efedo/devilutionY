@@ -540,12 +540,10 @@ void DrawHelp()
 
 void DrawHelpLine(int always_0, int help_line_nr, char *text, char color)
 {
-	int sx, sy, width;
 	BYTE c;
 
-	width = 0;
-	sx = always_0 + 96 + PANEL_LEFT;
-	sy = help_line_nr * 12 + 204;
+	int width = 0;
+	V2Di s = { always_0 + 96 + PANEL_LEFT, help_line_nr * 12 + 204 };
 	while (*text) {
 		c = gbFontTransTbl[(BYTE)*text];
 		text++;
@@ -553,9 +551,9 @@ void DrawHelpLine(int always_0, int help_line_nr, char *text, char color)
 		width += fontkern[c] + 1;
 		if (c) {
 			if (width <= 577)
-				PrintChar(sx, sy, c, color);
+				PrintChar(s, c, color);
 		}
-		sx += fontkern[c] + 1;
+		s.x += fontkern[c] + 1;
 	}
 }
 

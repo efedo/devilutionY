@@ -55,8 +55,8 @@ void LoadGame(BOOL firstflag)
 	myplr().SyncInitPlr();
 	myplr().SyncPlrAnim();
 
-	ViewX = _ViewX;
-	ViewY = _ViewY;
+	View.x = _ViewX;
+	View.y = _ViewY;
 	nummonsters = _nummonsters;
 	numitems = _numitems;
 	nummissiles = _nummissiles;
@@ -289,20 +289,20 @@ void LoadPlayer(int i)
 	CopyInt(tbuff, &pPlayer->destParam3);
 	CopyInt(tbuff, &pPlayer->destParam4);
 	CopyInt(tbuff, &pPlayer->plrlevel);
-	CopyInt(tbuff, &pPlayer->_px);
-	CopyInt(tbuff, &pPlayer->_py);
-	CopyInt(tbuff, &pPlayer->_pfutx);
-	CopyInt(tbuff, &pPlayer->_pfuty);
-	CopyInt(tbuff, &pPlayer->_ptargx);
-	CopyInt(tbuff, &pPlayer->_ptargy);
-	CopyInt(tbuff, &pPlayer->_pownerx);
-	CopyInt(tbuff, &pPlayer->_pownery);
-	CopyInt(tbuff, &pPlayer->_poldx);
-	CopyInt(tbuff, &pPlayer->_poldy);
-	CopyInt(tbuff, &pPlayer->_pxoff);
-	CopyInt(tbuff, &pPlayer->_pyoff);
-	CopyInt(tbuff, &pPlayer->_pxvel);
-	CopyInt(tbuff, &pPlayer->_pyvel);
+	CopyInt(tbuff, &pPlayer->_p.x);
+	CopyInt(tbuff, &pPlayer->_p.y);
+	CopyInt(tbuff, &pPlayer->_pfut.x);
+	CopyInt(tbuff, &pPlayer->_pfut.y);
+	CopyInt(tbuff, &pPlayer->_ptarg.x);
+	CopyInt(tbuff, &pPlayer->_ptarg.y);
+	CopyInt(tbuff, &pPlayer->_powner.x);
+	CopyInt(tbuff, &pPlayer->_powner.y);
+	CopyInt(tbuff, &pPlayer->_pold.x);
+	CopyInt(tbuff, &pPlayer->_pold.y);
+	CopyInt(tbuff, &pPlayer->_poff.x);
+	CopyInt(tbuff, &pPlayer->_poff.y);
+	CopyInt(tbuff, &pPlayer->_pvel.x);
+	CopyInt(tbuff, &pPlayer->_pvel.y);
 	CopyInt(tbuff, &pPlayer->_pdir);
 	CopyInt(tbuff, &pPlayer->_nextdir);
 	CopyInt(tbuff, &pPlayer->_pgfxnum);
@@ -487,20 +487,20 @@ void LoadMonster(int i)
 	CopyInt(tbuff, &pMonster->field_18);
 	CopyChar(tbuff, &pMonster->_pathcount);
 	tbuff += 3; // Alignment
-	CopyInt(tbuff, &pMonster->_mx);
-	CopyInt(tbuff, &pMonster->_my);
-	CopyInt(tbuff, &pMonster->_mfutx);
-	CopyInt(tbuff, &pMonster->_mfuty);
-	CopyInt(tbuff, &pMonster->_moldx);
-	CopyInt(tbuff, &pMonster->_moldy);
-	CopyInt(tbuff, &pMonster->_mxoff);
-	CopyInt(tbuff, &pMonster->_myoff);
-	CopyInt(tbuff, &pMonster->_mxvel);
-	CopyInt(tbuff, &pMonster->_myvel);
+	CopyInt(tbuff, &pMonster->_m.x);
+	CopyInt(tbuff, &pMonster->_m.y);
+	CopyInt(tbuff, &pMonster->_mfut.x);
+	CopyInt(tbuff, &pMonster->_mfut.y);
+	CopyInt(tbuff, &pMonster->_mold.x);
+	CopyInt(tbuff, &pMonster->_mold.y);
+	CopyInt(tbuff, &pMonster->_moff.x);
+	CopyInt(tbuff, &pMonster->_moff.y);
+	CopyInt(tbuff, &pMonster->_mvel.x);
+	CopyInt(tbuff, &pMonster->_mvel.y);
 	CopyInt(tbuff, &pMonster->_mdir);
 	CopyInt(tbuff, &pMonster->_menemy);
-	CopyChar(tbuff, &pMonster->_menemyx);
-	CopyChar(tbuff, &pMonster->_menemyy);
+	CopyChar(tbuff, &pMonster->_menemypos.x);
+	CopyChar(tbuff, &pMonster->_menemypos.y);
 	CopyShort(tbuff, &pMonster->falign_52);
 
 	tbuff += 4; // Skip pointer _mAnimData
@@ -528,8 +528,8 @@ void LoadMonster(int i)
 	CopyChar(tbuff, &pMonster->_msquelch);
 	tbuff += 3; // Alignment
 	CopyInt(tbuff, &pMonster->falign_A4);
-	CopyInt(tbuff, &pMonster->_lastx);
-	CopyInt(tbuff, &pMonster->_lasty);
+	CopyInt(tbuff, &pMonster->_last.x);
+	CopyInt(tbuff, &pMonster->_last.y);
 	CopyInt(tbuff, &pMonster->_mRndSeed);
 	CopyInt(tbuff, &pMonster->_mAISeed);
 	CopyInt(tbuff, &pMonster->falign_B8);
@@ -572,16 +572,16 @@ void LoadMissile(int i)
 	MissileStruct *pMissile = &missile[i];
 
 	CopyInt(tbuff, &pMissile->_mitype);
-	CopyInt(tbuff, &pMissile->_mix);
-	CopyInt(tbuff, &pMissile->_miy);
-	CopyInt(tbuff, &pMissile->_mixoff);
-	CopyInt(tbuff, &pMissile->_miyoff);
-	CopyInt(tbuff, &pMissile->_mixvel);
-	CopyInt(tbuff, &pMissile->_miyvel);
-	CopyInt(tbuff, &pMissile->_misx);
-	CopyInt(tbuff, &pMissile->_misy);
-	CopyInt(tbuff, &pMissile->_mitxoff);
-	CopyInt(tbuff, &pMissile->_mityoff);
+	CopyInt(tbuff, &pMissile->_mi.x);
+	CopyInt(tbuff, &pMissile->_mi.y);
+	CopyInt(tbuff, &pMissile->_mioff.x);
+	CopyInt(tbuff, &pMissile->_mioff.y);
+	CopyInt(tbuff, &pMissile->_mivel.x);
+	CopyInt(tbuff, &pMissile->_mivel.y);
+	CopyInt(tbuff, &pMissile->_mis.x);
+	CopyInt(tbuff, &pMissile->_mis.y);
+	CopyInt(tbuff, &pMissile->_mitoff.x);
+	CopyInt(tbuff, &pMissile->_mitoff.y);
 	CopyInt(tbuff, &pMissile->_mimfnum);
 	CopyInt(tbuff, &pMissile->_mispllvl);
 	CopyInt(tbuff, &pMissile->_miDelFlag);
@@ -623,8 +623,8 @@ void LoadObject(int i)
 	ObjectStruct *pObject = &object[i];
 
 	CopyInt(tbuff, &pObject->_otype);
-	CopyInt(tbuff, &pObject->_ox);
-	CopyInt(tbuff, &pObject->_oy);
+	CopyInt(tbuff, &pObject->_o.x);
+	CopyInt(tbuff, &pObject->_o.y);
 	CopyInt(tbuff, &pObject->_oLight);
 	CopyInt(tbuff, &pObject->_oAnimFlag);
 	tbuff += 4; // Skip pointer _oAnimData
@@ -669,8 +669,8 @@ void LoadItemData(ItemStruct *pItem)
 	CopyShort(tbuff, &pItem->_iCreateInfo);
 	tbuff += 2; // Alignment
 	CopyInt(tbuff, &pItem->_itype);
-	CopyInt(tbuff, &pItem->_ix);
-	CopyInt(tbuff, &pItem->_iy);
+	CopyInt(tbuff, &pItem->_i.x);
+	CopyInt(tbuff, &pItem->_i.y);
 	CopyInt(tbuff, &pItem->_iAnimFlag);
 	tbuff += 4; // Skip pointer _iAnimData
 	CopyInt(tbuff, &pItem->_iAnimLen);
@@ -782,18 +782,18 @@ void LoadLighting(int i)
 {
 	LightListStruct *pLight = &LightList[i];
 
-	CopyInt(tbuff, &pLight->_lx);
-	CopyInt(tbuff, &pLight->_ly);
+	CopyInt(tbuff, &pLight->_l.x);
+	CopyInt(tbuff, &pLight->_l.y);
 	CopyInt(tbuff, &pLight->_lradius);
 	CopyInt(tbuff, &pLight->_lid);
 	CopyInt(tbuff, &pLight->_ldel);
 	CopyInt(tbuff, &pLight->_lunflag);
 	CopyInt(tbuff, &pLight->field_18);
-	CopyInt(tbuff, &pLight->_lunx);
-	CopyInt(tbuff, &pLight->_luny);
+	CopyInt(tbuff, &pLight->_lun.x);
+	CopyInt(tbuff, &pLight->_lun.y);
 	CopyInt(tbuff, &pLight->_lunr);
-	CopyInt(tbuff, &pLight->_xoff);
-	CopyInt(tbuff, &pLight->_yoff);
+	CopyInt(tbuff, &pLight->_off.x);
+	CopyInt(tbuff, &pLight->_off.y);
 	CopyInt(tbuff, &pLight->_lflags);
 }
 
@@ -801,18 +801,18 @@ void LoadVision(int i)
 {
 	LightListStruct *pVision = &VisionList[i];
 
-	CopyInt(tbuff, &pVision->_lx);
-	CopyInt(tbuff, &pVision->_ly);
+	CopyInt(tbuff, &pVision->_l.x);
+	CopyInt(tbuff, &pVision->_l.y);
 	CopyInt(tbuff, &pVision->_lradius);
 	CopyInt(tbuff, &pVision->_lid);
 	CopyInt(tbuff, &pVision->_ldel);
 	CopyInt(tbuff, &pVision->_lunflag);
 	CopyInt(tbuff, &pVision->field_18);
-	CopyInt(tbuff, &pVision->_lunx);
-	CopyInt(tbuff, &pVision->_luny);
+	CopyInt(tbuff, &pVision->_lun.x);
+	CopyInt(tbuff, &pVision->_lun.y);
 	CopyInt(tbuff, &pVision->_lunr);
-	CopyInt(tbuff, &pVision->_xoff);
-	CopyInt(tbuff, &pVision->_yoff);
+	CopyInt(tbuff, &pVision->_off.x);
+	CopyInt(tbuff, &pVision->_off.y);
 	CopyInt(tbuff, &pVision->_lflags);
 }
 
@@ -821,8 +821,8 @@ void LoadPortal(int i)
 	PortalStruct *pPortal = &portal[i];
 
 	CopyInt(tbuff, &pPortal->open);
-	CopyInt(tbuff, &pPortal->x);
-	CopyInt(tbuff, &pPortal->y);
+	CopyInt(tbuff, &pPortal->pos.x);
+	CopyInt(tbuff, &pPortal->pos.y);
 	CopyInt(tbuff, &pPortal->level);
 	CopyInt(tbuff, &pPortal->ltype);
 	CopyInt(tbuff, &pPortal->setlvl);
@@ -842,8 +842,8 @@ void SaveGame()
 	WSave(level.setlvlnum);
 	WSave(level.currlevel);
 	WSave(level.leveltype);
-	WSave(ViewX);
-	WSave(ViewY);
+	WSave(View.x);
+	WSave(View.y);
 	OSave(invflag);
 	OSave(chrflag);
 	WSave(nummonsters);
@@ -1014,20 +1014,20 @@ void SavePlayer(int i)
 	CopyInt(&pPlayer->destParam3, tbuff);
 	CopyInt(&pPlayer->destParam4, tbuff);
 	CopyInt(&pPlayer->plrlevel, tbuff);
-	CopyInt(&pPlayer->_px, tbuff);
-	CopyInt(&pPlayer->_py, tbuff);
-	CopyInt(&pPlayer->_pfutx, tbuff);
-	CopyInt(&pPlayer->_pfuty, tbuff);
-	CopyInt(&pPlayer->_ptargx, tbuff);
-	CopyInt(&pPlayer->_ptargy, tbuff);
-	CopyInt(&pPlayer->_pownerx, tbuff);
-	CopyInt(&pPlayer->_pownery, tbuff);
-	CopyInt(&pPlayer->_poldx, tbuff);
-	CopyInt(&pPlayer->_poldy, tbuff);
-	CopyInt(&pPlayer->_pxoff, tbuff);
-	CopyInt(&pPlayer->_pyoff, tbuff);
-	CopyInt(&pPlayer->_pxvel, tbuff);
-	CopyInt(&pPlayer->_pyvel, tbuff);
+	CopyInt(&pPlayer->_p.x, tbuff);
+	CopyInt(&pPlayer->_p.y, tbuff);
+	CopyInt(&pPlayer->_pfut.x, tbuff);
+	CopyInt(&pPlayer->_pfut.y, tbuff);
+	CopyInt(&pPlayer->_ptarg.x, tbuff);
+	CopyInt(&pPlayer->_ptarg.y, tbuff);
+	CopyInt(&pPlayer->_powner.x, tbuff);
+	CopyInt(&pPlayer->_powner.y, tbuff);
+	CopyInt(&pPlayer->_pold.x, tbuff);
+	CopyInt(&pPlayer->_pold.y, tbuff);
+	CopyInt(&pPlayer->_poff.x, tbuff);
+	CopyInt(&pPlayer->_poff.y, tbuff);
+	CopyInt(&pPlayer->_pvel.x, tbuff);
+	CopyInt(&pPlayer->_pvel.y, tbuff);
 	CopyInt(&pPlayer->_pdir, tbuff);
 	CopyInt(&pPlayer->_nextdir, tbuff);
 	CopyInt(&pPlayer->_pgfxnum, tbuff);
@@ -1213,20 +1213,20 @@ void SaveMonster(int i)
 	CopyInt(&pMonster->field_18, tbuff);
 	CopyChar(&pMonster->_pathcount, tbuff);
 	tbuff += 3; // Alignment
-	CopyInt(&pMonster->_mx, tbuff);
-	CopyInt(&pMonster->_my, tbuff);
-	CopyInt(&pMonster->_mfutx, tbuff);
-	CopyInt(&pMonster->_mfuty, tbuff);
-	CopyInt(&pMonster->_moldx, tbuff);
-	CopyInt(&pMonster->_moldy, tbuff);
-	CopyInt(&pMonster->_mxoff, tbuff);
-	CopyInt(&pMonster->_myoff, tbuff);
-	CopyInt(&pMonster->_mxvel, tbuff);
-	CopyInt(&pMonster->_myvel, tbuff);
+	CopyInt(&pMonster->_m.x, tbuff);
+	CopyInt(&pMonster->_m.y, tbuff);
+	CopyInt(&pMonster->_mfut.x, tbuff);
+	CopyInt(&pMonster->_mfut.y, tbuff);
+	CopyInt(&pMonster->_mold.x, tbuff);
+	CopyInt(&pMonster->_mold.y, tbuff);
+	CopyInt(&pMonster->_moff.x, tbuff);
+	CopyInt(&pMonster->_moff.y, tbuff);
+	CopyInt(&pMonster->_mvel.x, tbuff);
+	CopyInt(&pMonster->_mvel.y, tbuff);
 	CopyInt(&pMonster->_mdir, tbuff);
 	CopyInt(&pMonster->_menemy, tbuff);
-	CopyChar(&pMonster->_menemyx, tbuff);
-	CopyChar(&pMonster->_menemyy, tbuff);
+	CopyChar(&pMonster->_menemypos.x, tbuff);
+	CopyChar(&pMonster->_menemypos.y, tbuff);
 	CopyShort(&pMonster->falign_52, tbuff);
 
 	tbuff += 4; // Skip pointer _mAnimData
@@ -1254,8 +1254,8 @@ void SaveMonster(int i)
 	CopyChar(&pMonster->_msquelch, tbuff);
 	tbuff += 3; // Alignment
 	CopyInt(&pMonster->falign_A4, tbuff);
-	CopyInt(&pMonster->_lastx, tbuff);
-	CopyInt(&pMonster->_lasty, tbuff);
+	CopyInt(&pMonster->_last.x, tbuff);
+	CopyInt(&pMonster->_last.y, tbuff);
 	CopyInt(&pMonster->_mRndSeed, tbuff);
 	CopyInt(&pMonster->_mAISeed, tbuff);
 	CopyInt(&pMonster->falign_B8, tbuff);
@@ -1296,16 +1296,16 @@ void SaveMissile(int i)
 	MissileStruct *pMissile = &missile[i];
 
 	CopyInt(&pMissile->_mitype, tbuff);
-	CopyInt(&pMissile->_mix, tbuff);
-	CopyInt(&pMissile->_miy, tbuff);
-	CopyInt(&pMissile->_mixoff, tbuff);
-	CopyInt(&pMissile->_miyoff, tbuff);
-	CopyInt(&pMissile->_mixvel, tbuff);
-	CopyInt(&pMissile->_miyvel, tbuff);
-	CopyInt(&pMissile->_misx, tbuff);
-	CopyInt(&pMissile->_misy, tbuff);
-	CopyInt(&pMissile->_mitxoff, tbuff);
-	CopyInt(&pMissile->_mityoff, tbuff);
+	CopyInt(&pMissile->_mi.x, tbuff);
+	CopyInt(&pMissile->_mi.y, tbuff);
+	CopyInt(&pMissile->_mioff.x, tbuff);
+	CopyInt(&pMissile->_mioff.y, tbuff);
+	CopyInt(&pMissile->_mivel.x, tbuff);
+	CopyInt(&pMissile->_mivel.y, tbuff);
+	CopyInt(&pMissile->_mis.x, tbuff);
+	CopyInt(&pMissile->_mis.y, tbuff);
+	CopyInt(&pMissile->_mitoff.x, tbuff);
+	CopyInt(&pMissile->_mitoff.y, tbuff);
 	CopyInt(&pMissile->_mimfnum, tbuff);
 	CopyInt(&pMissile->_mispllvl, tbuff);
 	CopyInt(&pMissile->_miDelFlag, tbuff);
@@ -1347,8 +1347,8 @@ void SaveObject(int i)
 	ObjectStruct *pObject = &object[i];
 
 	CopyInt(&pObject->_otype, tbuff);
-	CopyInt(&pObject->_ox, tbuff);
-	CopyInt(&pObject->_oy, tbuff);
+	CopyInt(&pObject->_o.x, tbuff);
+	CopyInt(&pObject->_o.y, tbuff);
 	CopyInt(&pObject->_oLight, tbuff);
 	CopyInt(&pObject->_oAnimFlag, tbuff);
 	tbuff += 4; // Skip pointer _oAnimData
@@ -1387,8 +1387,8 @@ void SaveItem(ItemStruct *pItem)
 	CopyShort(&pItem->_iCreateInfo, tbuff);
 	tbuff += 2; // Alignment
 	CopyInt(&pItem->_itype, tbuff);
-	CopyInt(&pItem->_ix, tbuff);
-	CopyInt(&pItem->_iy, tbuff);
+	CopyInt(&pItem->_i.x, tbuff);
+	CopyInt(&pItem->_i.y, tbuff);
 	CopyInt(&pItem->_iAnimFlag, tbuff);
 	tbuff += 4; // Skip pointer _iAnimData
 	CopyInt(&pItem->_iAnimLen, tbuff);
@@ -1500,18 +1500,18 @@ void SaveLighting(int i)
 {
 	LightListStruct *pLight = &LightList[i];
 
-	CopyInt(&pLight->_lx, tbuff);
-	CopyInt(&pLight->_ly, tbuff);
+	CopyInt(&pLight->_l.x, tbuff);
+	CopyInt(&pLight->_l.y, tbuff);
 	CopyInt(&pLight->_lradius, tbuff);
 	CopyInt(&pLight->_lid, tbuff);
 	CopyInt(&pLight->_ldel, tbuff);
 	CopyInt(&pLight->_lunflag, tbuff);
 	CopyInt(&pLight->field_18, tbuff);
-	CopyInt(&pLight->_lunx, tbuff);
-	CopyInt(&pLight->_luny, tbuff);
+	CopyInt(&pLight->_lun.x, tbuff);
+	CopyInt(&pLight->_lun.y, tbuff);
 	CopyInt(&pLight->_lunr, tbuff);
-	CopyInt(&pLight->_xoff, tbuff);
-	CopyInt(&pLight->_yoff, tbuff);
+	CopyInt(&pLight->_off.x, tbuff);
+	CopyInt(&pLight->_off.y, tbuff);
 	CopyInt(&pLight->_lflags, tbuff);
 }
 
@@ -1519,18 +1519,18 @@ void SaveVision(int i)
 {
 	LightListStruct *pVision = &VisionList[i];
 
-	CopyInt(&pVision->_lx, tbuff);
-	CopyInt(&pVision->_ly, tbuff);
+	CopyInt(&pVision->_l.x, tbuff);
+	CopyInt(&pVision->_l.y, tbuff);
 	CopyInt(&pVision->_lradius, tbuff);
 	CopyInt(&pVision->_lid, tbuff);
 	CopyInt(&pVision->_ldel, tbuff);
 	CopyInt(&pVision->_lunflag, tbuff);
 	CopyInt(&pVision->field_18, tbuff);
-	CopyInt(&pVision->_lunx, tbuff);
-	CopyInt(&pVision->_luny, tbuff);
+	CopyInt(&pVision->_lun.x, tbuff);
+	CopyInt(&pVision->_lun.y, tbuff);
 	CopyInt(&pVision->_lunr, tbuff);
-	CopyInt(&pVision->_xoff, tbuff);
-	CopyInt(&pVision->_yoff, tbuff);
+	CopyInt(&pVision->_off.x, tbuff);
+	CopyInt(&pVision->_off.y, tbuff);
 	CopyInt(&pVision->_lflags, tbuff);
 }
 
@@ -1539,8 +1539,8 @@ void SavePortal(int i)
 	PortalStruct *pPortal = &portal[i];
 
 	CopyInt(&pPortal->open, tbuff);
-	CopyInt(&pPortal->x, tbuff);
-	CopyInt(&pPortal->y, tbuff);
+	CopyInt(&pPortal->pos.x, tbuff);
+	CopyInt(&pPortal->pos.y, tbuff);
 	CopyInt(&pPortal->level, tbuff);
 	CopyInt(&pPortal->ltype, tbuff);
 	CopyInt(&pPortal->setlvl, tbuff);

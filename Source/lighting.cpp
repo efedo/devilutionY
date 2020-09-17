@@ -481,149 +481,136 @@ BYTE byte_49463C[18][18] = {
 /** RadiusAdj maps from vCrawlTable index to lighting vision radius adjustment. */
 BYTE RadiusAdj[23] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0 };
 
-void RotateRadius(int *x, int *y, int *dx, int *dy, int *lx, int *ly, int *bx, int *by)
+void RotateRadius(V2Di &pos, V2Di &d, V2Di &l, V2Di & b)
 {
 	int swap;
 
-	*bx = 0;
-	*by = 0;
+	b = { 0, 0 };
 
-	swap = *dx;
-	*dx = 7 - *dy;
-	*dy = swap;
-	swap = *lx;
-	*lx = 7 - *ly;
-	*ly = swap;
+	swap = d.x;
+	d.x = 7 - d.y;
+	d.y = swap;
+	swap = l.x;
+	l.x = 7 - l.y;
+	l.y = swap;
 
-	*x = *dx - *lx;
-	*y = *dy - *ly;
+	pos = d - l;
 
-	if (*x < 0) {
-		*x += 8;
-		*bx = 1;
+	if (pos.x < 0) {
+		pos.x += 8;
+		b.x = 1;
 	}
-	if (*y < 0) {
-		*y += 8;
-		*by = 1;
+	if (pos.y < 0) {
+		pos.y += 8;
+		b.y = 1;
 	}
 }
 
-void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
+void DoLighting(V2Di pos, int nRadius, int Lnum)
 {
-	int x, y, v, xoff, yoff, mult, radius_block;
-	int min_x, max_x, min_y, max_y;
-	int dist_x, dist_y, light_x, light_y, block_x, block_y, temp_x, temp_y;
-
-	xoff = 0;
-	yoff = 0;
-	light_x = 0;
-	light_y = 0;
-	block_x = 0;
-	block_y = 0;
-
+	int x, y, v, mult, radius_block;
+	V2Di off, dist, light, block, temp, min, max;
 	if (Lnum >= 0) {
-		xoff = LightList[Lnum]._xoff;
-		yoff = LightList[Lnum]._yoff;
-		if (xoff < 0) {
-			xoff += 8;
-			nXPos--;
+		off = LightList[Lnum]._off;
+		if (off.x < 0) {
+			off.x += 8;
+			pos.x--;
 		}
-		if (yoff < 0) {
-			yoff += 8;
-			nYPos--;
+		if (off.y < 0) {
+			off.y += 8;
+			pos.y--;
 		}
 	}
 
-	dist_x = xoff;
-	dist_y = yoff;
+	dist = off;
 
-	if (nXPos - 15 < 0) {
-		min_x = nXPos + 1;
+	if (pos.x - 15 < 0) {
+		min.x = pos.x + 1;
 	} else {
-		min_x = 15;
+		min.x = 15;
 	}
-	if (nXPos + 15 > MAXDUNX) {
-		max_x = MAXDUNX - nXPos;
+	if (pos.x + 15 > MAXDUNX) {
+		max.x = MAXDUNX - pos.x;
 	} else {
-		max_x = 15;
+		max.x = 15;
 	}
-	if (nYPos - 15 < 0) {
-		min_y = nYPos + 1;
+	if (pos.y - 15 < 0) {
+		min.y = pos.y + 1;
 	} else {
-		min_y = 15;
+		min.y = 15;
 	}
-	if (nYPos + 15 > MAXDUNY) {
-		max_y = MAXDUNY - nYPos;
+	if (pos.y + 15 > MAXDUNY) {
+		max.y = MAXDUNY - pos.y;
 	} else {
-		max_y = 15;
-	}
-
-	if (nXPos >= 0 && nXPos < MAXDUNX && nYPos >= 0 && nYPos < MAXDUNY) {
-		grid[nXPos][nYPos].dLight = 0;
+		max.y = 15;
 	}
 
-	mult = xoff + 8 * yoff;
-	for (y = 0; y < min_y; y++) {
-		for (x = 1; x < max_x; x++) {
+	if (pos.x >= 0 && pos.x < MAXDUNX && pos.y >= 0 && pos.y < MAXDUNY) {
+		grid[pos.x][pos.y].dLight = 0;
+	}
+
+	mult = off.x + 8 * off.y;
+	for (y = 0; y < min.y; y++) {
+		for (x = 1; x < max.x; x++) {
 			radius_block = lightblock[mult][y][x];
 			if (radius_block < 128) {
-				temp_x = nXPos + x;
-				temp_y = nYPos + y;
+				temp.x = pos.x + x;
+				temp.y = pos.y + y;
 				v = lightradius[nRadius][radius_block];
-				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < grid[temp_x][temp_y].dLight) {
-						grid[temp_x][temp_y].dLight = v;
+				if (temp.x >= 0 && temp.x < MAXDUNX && temp.y >= 0 && temp.y < MAXDUNY) {
+					if (v < grid[temp.x][temp.y].dLight) {
+						grid[temp.x][temp.y].dLight = v;
 					}
 				}
 			}
 		}
 	}
-	RotateRadius(&xoff, &yoff, &dist_x, &dist_y, &light_x, &light_y, &block_x, &block_y);
-	mult = xoff + 8 * yoff;
-	for (y = 0; y < max_y; y++) {
-		for (x = 1; x < max_x; x++) {
-			radius_block = lightblock[mult][y + block_y][x + block_x];
+	RotateRadius(off, dist, light, block);
+	mult = off.x + 8 * off.y;
+	for (y = 0; y < max.y; y++) {
+		for (x = 1; x < max.x; x++) {
+			radius_block = lightblock[mult][y + block.y][x + block.x];
 			if (radius_block < 128) {
-				temp_x = nXPos + y;
-				temp_y = nYPos - x;
+				temp.x = pos.x + y;
+				temp.y = pos.y - x;
 				v = lightradius[nRadius][radius_block];
-				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < grid[temp_x][temp_y].dLight) {
-						grid[temp_x][temp_y].dLight = v;
+				if (temp.x >= 0 && temp.x < MAXDUNX && temp.y >= 0 && temp.y < MAXDUNY) {
+					if (v < grid[temp.x][temp.y].dLight) {
+						grid[temp.x][temp.y].dLight = v;
 					}
 				}
 			}
 		}
 	}
-	RotateRadius(&xoff, &yoff, &dist_x, &dist_y, &light_x, &light_y, &block_x, &block_y);
-	mult = xoff + 8 * yoff;
-	for (y = 0; y < max_y; y++) {
-		for (x = 1; x < min_x; x++) {
-			radius_block = lightblock[mult][y + block_y][x + block_x];
+	RotateRadius(off, dist, light, block);
+	mult = off.x + 8 * off.y;
+	for (y = 0; y < max.y; y++) {
+		for (x = 1; x < min.x; x++) {
+			radius_block = lightblock[mult][y + block.y][x + block.x];
 			if (radius_block < 128) {
-				temp_x = nXPos - x;
-				temp_y = nYPos - y;
+				temp.x = pos.x - x;
+				temp.y = pos.y - y;
 				v = lightradius[nRadius][radius_block];
-				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < grid[temp_x][temp_y].dLight) {
-						grid[temp_x][temp_y].dLight = v;
+				if (temp.x >= 0 && temp.x < MAXDUNX && temp.y >= 0 && temp.y < MAXDUNY) {
+					if (v < grid[temp.x][temp.y].dLight) {
+						grid[temp.x][temp.y].dLight = v;
 					}
 				}
 			}
 		}
 	}
-	RotateRadius(&xoff, &yoff, &dist_x, &dist_y, &light_x, &light_y, &block_x, &block_y);
-	mult = xoff + 8 * yoff;
-	for (y = 0; y < min_y; y++) {
-		for (x = 1; x < min_x; x++) {
-			radius_block = lightblock[mult][y + block_y][x + block_x];
+	RotateRadius(off, dist, light, block);
+	mult = off.x + 8 * off.y;
+	for (y = 0; y < min.y; y++) {
+		for (x = 1; x < min.x; x++) {
+			radius_block = lightblock[mult][y + block.y][x + block.x];
 			if (radius_block < 128) {
-				temp_x = nXPos - y;
-				temp_y = nYPos + x;
+				temp.x = pos.x - y;
+				temp.y = pos.y + x;
 				v = lightradius[nRadius][radius_block];
-				if (temp_x >= 0 && temp_x < MAXDUNX && temp_y >= 0 && temp_y < MAXDUNY) {
-					if (v < grid[temp_x][temp_y].dLight) {
-						grid[temp_x][temp_y].dLight = v;
+				if (temp.x >= 0 && temp.x < MAXDUNX && temp.y >= 0 && temp.y < MAXDUNY) {
+					if (v < grid[temp.x][temp.y].dLight) {
+						grid[temp.x][temp.y].dLight = v;
 					}
 				}
 			}
@@ -631,59 +618,41 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 	}
 }
 
-void DoUnLight(int nXPos, int nYPos, int nRadius)
+void DoUnLight(V2Di pos, int nRadius)
 {
-	int x, y, min_x, min_y, max_x, max_y;
-
+	V2Di min, max;
 	nRadius++;
-	min_y = nYPos - nRadius;
-	max_y = nYPos + nRadius;
-	min_x = nXPos - nRadius;
-	max_x = nXPos + nRadius;
+	min.y = pos.y - nRadius;
+	max.y = pos.y + nRadius;
+	min.x = pos.x - nRadius;
+	max.x = pos.x + nRadius;
 
-	if (min_y < 0) {
-		min_y = 0;
-	}
-	if (max_y > MAXDUNY) {
-		max_y = MAXDUNY;
-	}
-	if (min_x < 0) {
-		min_x = 0;
-	}
-	if (max_x > MAXDUNX) {
-		max_x = MAXDUNX;
-	}
+	if (min.y < 0) min.y = 0;
+	if (max.y > MAXDUNY) max.y = MAXDUNY;
+	if (min.x < 0) min.x = 0;
+	if (max.x > MAXDUNX) max.x = MAXDUNX;
 
-	for (y = min_y; y < max_y; y++) {
-		for (x = min_x; x < max_x; x++) {
+	for (int y = min.y; y < max.y; y++) {
+		for (int x = min.x; x < max.x; x++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY)
 				grid[x][y].dLight = grid[x][y].dPreLight;
 		}
 	}
 }
 
-void DoUnVision(int nXPos, int nYPos, int nRadius)
+void DoUnVision(V2Di pos, int nRadius)
 {
 	int i, j, x1, y1, x2, y2;
-
 	nRadius++;
-	y1 = nYPos - nRadius;
-	y2 = nYPos + nRadius;
-	x1 = nXPos - nRadius;
-	x2 = nXPos + nRadius;
+	y1 = pos.y - nRadius;
+	y2 = pos.y + nRadius;
+	x1 = pos.x - nRadius;
+	x2 = pos.x + nRadius;
 
-	if (y1 < 0) {
-		y1 = 0;
-	}
-	if (y2 > MAXDUNY) {
-		y2 = MAXDUNY;
-	}
-	if (x1 < 0) {
-		x1 = 0;
-	}
-	if (x2 > MAXDUNX) {
-		x2 = MAXDUNX;
-	}
+	if (y1 < 0) y1 = 0;
+	if (y2 > MAXDUNY) y2 = MAXDUNY;
+	if (x1 < 0) x1 = 0;
+	if (x2 > MAXDUNX) x2 = MAXDUNX;
 
 	for (i = x1; i < x2; i++) {
 		for (j = y1; j < y2; j++) {
@@ -692,23 +661,23 @@ void DoUnVision(int nXPos, int nYPos, int nRadius)
 	}
 }
 
-void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
+void DoVision(V2Di pos, int nRadius, BOOL doautomap, BOOL visible)
 {
 	BOOL nBlockerFlag;
 	int nCrawlX, nCrawlY, nLineLen, nTrans;
 	int j, k, v, x1adj, x2adj, y1adj, y2adj;
 
-	if (nXPos >= 0 && nXPos <= MAXDUNX && nYPos >= 0 && nYPos <= MAXDUNY) {
+	if (pos.x >= 0 && pos.x <= MAXDUNX && pos.y >= 0 && pos.y <= MAXDUNY) {
 		if (doautomap) {
-			if (grid[nXPos][nYPos].dFlags >= 0) {
-				automap.SetAutomapView(nXPos, nXPos);
+			if (grid[pos.x][pos.y].dFlags >= 0) {
+				automap.SetAutomapView(pos); // Is this an error? Should be y?
 			}
-			grid[nXPos][nYPos].dFlags |= BFLAG_EXPLORED;
+			grid.at(pos).dFlags |= BFLAG_EXPLORED;
 		}
 		if (visible) {
-			grid[nXPos][nYPos].dFlags |= BFLAG_LIT;
+			grid.at(pos).dFlags |= BFLAG_LIT;
 		}
-		grid[nXPos][nYPos].dFlags |= BFLAG_VISIBLE;
+		grid.at(pos).dFlags |= BFLAG_VISIBLE;
 	}
 
 	for (v = 0; v < 4; v++) {
@@ -722,32 +691,32 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 				y2adj = 0;
 				switch (v) {
 				case 0:
-					nCrawlX = nXPos + vCrawlTable[j][k];
-					nCrawlY = nYPos + vCrawlTable[j][k + 1];
+					nCrawlX = pos.x + vCrawlTable[j][k];
+					nCrawlY = pos.y + vCrawlTable[j][k + 1];
 					if (vCrawlTable[j][k] > 0 && vCrawlTable[j][k + 1] > 0) {
 						x1adj = -1;
 						y2adj = -1;
 					}
 					break;
 				case 1:
-					nCrawlX = nXPos - vCrawlTable[j][k];
-					nCrawlY = nYPos - vCrawlTable[j][k + 1];
+					nCrawlX = pos.x - vCrawlTable[j][k];
+					nCrawlY = pos.y - vCrawlTable[j][k + 1];
 					if (vCrawlTable[j][k] > 0 && vCrawlTable[j][k + 1] > 0) {
 						y1adj = 1;
 						x2adj = 1;
 					}
 					break;
 				case 2:
-					nCrawlX = nXPos + vCrawlTable[j][k];
-					nCrawlY = nYPos - vCrawlTable[j][k + 1];
+					nCrawlX = pos.x + vCrawlTable[j][k];
+					nCrawlY = pos.y - vCrawlTable[j][k + 1];
 					if (vCrawlTable[j][k] > 0 && vCrawlTable[j][k + 1] > 0) {
 						x1adj = -1;
 						y2adj = 1;
 					}
 					break;
 				case 3:
-					nCrawlX = nXPos - vCrawlTable[j][k];
-					nCrawlY = nYPos + vCrawlTable[j][k + 1];
+					nCrawlX = pos.x - vCrawlTable[j][k];
+					nCrawlY = pos.y + vCrawlTable[j][k + 1];
 					if (vCrawlTable[j][k] > 0 && vCrawlTable[j][k + 1] > 0) {
 						y1adj = -1;
 						x2adj = 1;
@@ -762,7 +731,7 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 					        && !pieces[grid[x2adj + nCrawlX][y2adj + nCrawlY].dPiece].nBlockTable)) {
 						if (doautomap) {
 							if (grid[nCrawlX][nCrawlY].dFlags >= 0) {
-								automap.SetAutomapView(nCrawlX, nCrawlY);
+								automap.SetAutomapView({ nCrawlX, nCrawlY });
 							}
 							grid[nCrawlX][nCrawlY].dFlags |= BFLAG_EXPLORED;
 						}
@@ -990,7 +959,7 @@ void ToggleLighting()
 		grid.prelightToLight();
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel) {
-				DoLighting(plr[i].data._px, plr[i].data._py, plr[i].data._pLightRad, -1);
+				DoLighting(plr[i].data._p, plr[i].data._pLightRad, -1);
 			}
 		}
 	}
@@ -1019,28 +988,20 @@ void InitLighting()
 	}
 }
 
-int AddLight(int x, int y, int r)
+int AddLight(V2Di pos, int r)
 {
-	int lid;
-
-	if (lightflag != 0) {
-		return -1;
-	}
-
-	lid = -1;
+	if (lightflag != 0) return -1;
+	int lid = -1;
 
 	if (numlights < MAXLIGHTS) {
 		lid = lightactive[numlights++];
-		LightList[lid]._lx = x;
-		LightList[lid]._ly = y;
+		LightList[lid]._l = pos;
 		LightList[lid]._lradius = r;
-		LightList[lid]._xoff = 0;
-		LightList[lid]._yoff = 0;
+		LightList[lid]._off = { 0, 0 };
 		LightList[lid]._ldel = FALSE;
 		LightList[lid]._lunflag = FALSE;
 		dolighting = TRUE;
 	}
-
 	return lid;
 }
 
@@ -1056,60 +1017,41 @@ void AddUnLight(int i)
 
 void ChangeLightRadius(int i, int r)
 {
-	if (lightflag || i == -1) {
-		return;
-	}
-
+	if (lightflag || i == -1) return;
 	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
+	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
 	LightList[i]._lradius = r;
 	dolighting = TRUE;
 }
 
-void ChangeLightXY(int i, int x, int y)
+void ChangeLightXY(int i, V2Di pos)
 {
-	if (lightflag || i == -1) {
-		return;
-	}
-
+	if (lightflag || i == -1) return;
 	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
+	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._lx = x;
-	LightList[i]._ly = y;
+	LightList[i]._l = pos;
 	dolighting = TRUE;
 }
 
-void ChangeLightOff(int i, int x, int y)
+void ChangeLightOff(int i, V2Di pos)
 {
-	if (lightflag || i == -1) {
-		return;
-	}
-
+	if (lightflag || i == -1) return;
 	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
+	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._xoff = x;
-	LightList[i]._yoff = y;
+	LightList[i]._off = pos;
 	dolighting = TRUE;
 }
 
-void ChangeLight(int i, int x, int y, int r)
+void ChangeLight(int i, V2Di pos, int r)
 {
-	if (lightflag || i == -1) {
-		return;
-	}
-
+	if (lightflag || i == -1) return;
 	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
+	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._lx = x;
-	LightList[i]._ly = y;
+	LightList[i]._l = pos;
 	LightList[i]._lradius = r;
 	dolighting = TRUE;
 }
@@ -1127,17 +1069,17 @@ void ProcessLightList()
 		for (i = 0; i < numlights; i++) {
 			j = lightactive[i];
 			if (LightList[j]._ldel) {
-				DoUnLight(LightList[j]._lx, LightList[j]._ly, LightList[j]._lradius);
+				DoUnLight(LightList[j]._l, LightList[j]._lradius);
 			}
 			if (LightList[j]._lunflag) {
-				DoUnLight(LightList[j]._lunx, LightList[j]._luny, LightList[j]._lunr);
+				DoUnLight(LightList[j]._lun, LightList[j]._lunr);
 				LightList[j]._lunflag = FALSE;
 			}
 		}
 		for (i = 0; i < numlights; i++) {
 			j = lightactive[i];
 			if (!LightList[j]._ldel) {
-				DoLighting(LightList[j]._lx, LightList[j]._ly, LightList[j]._lradius, j);
+				DoLighting(LightList[j]._l, LightList[j]._lradius, j);
 			}
 		}
 		i = 0;
@@ -1175,13 +1117,11 @@ void InitVision()
 	}
 }
 
-int AddVision(int x, int y, int r, BOOL mine)
+int AddVision(V2Di pos, int r, BOOL mine)
 {
 	int vid; // BUGFIX: if numvision >= MAXVISION behavior is undefined
-
 	if (numvision < MAXVISION) {
-		VisionList[numvision]._lx = x;
-		VisionList[numvision]._ly = y;
+		VisionList[numvision]._l = pos;
 		VisionList[numvision]._lradius = r;
 		vid = visionid++;
 		VisionList[numvision]._lid = vid;
@@ -1202,8 +1142,7 @@ void ChangeVisionRadius(int id, int r)
 	for (i = 0; i < numvision; i++) {
 		if (VisionList[i]._lid == id) {
 			VisionList[i]._lunflag = TRUE;
-			VisionList[i]._lunx = VisionList[i]._lx;
-			VisionList[i]._luny = VisionList[i]._ly;
+			VisionList[i]._lun = VisionList[i]._l;
 			VisionList[i]._lunr = VisionList[i]._lradius;
 			VisionList[i]._lradius = r;
 			dovision = TRUE;
@@ -1211,18 +1150,14 @@ void ChangeVisionRadius(int id, int r)
 	}
 }
 
-void ChangeVisionXY(int id, int x, int y)
+void ChangeVisionXY(int id, V2Di pos)
 {
-	int i;
-
-	for (i = 0; i < numvision; i++) {
+	for (int i = 0; i < numvision; i++) {
 		if (VisionList[i]._lid == id) {
 			VisionList[i]._lunflag = TRUE;
-			VisionList[i]._lunx = VisionList[i]._lx;
-			VisionList[i]._luny = VisionList[i]._ly;
+			VisionList[i]._lun = VisionList[i]._l;
 			VisionList[i]._lunr = VisionList[i]._lradius;
-			VisionList[i]._lx = x;
-			VisionList[i]._ly = y;
+			VisionList[i]._l = pos;
 			dovision = TRUE;
 		}
 	}
@@ -1236,10 +1171,10 @@ void ProcessVisionList()
 	if (dovision) {
 		for (i = 0; i < numvision; i++) {
 			if (VisionList[i]._ldel) {
-				DoUnVision(VisionList[i]._lx, VisionList[i]._ly, VisionList[i]._lradius);
+				DoUnVision(VisionList[i]._l, VisionList[i]._lradius);
 			}
 			if (VisionList[i]._lunflag) {
-				DoUnVision(VisionList[i]._lunx, VisionList[i]._luny, VisionList[i]._lunr);
+				DoUnVision(VisionList[i]._lun, VisionList[i]._lunr);
 				VisionList[i]._lunflag = FALSE;
 			}
 		}
@@ -1249,8 +1184,7 @@ void ProcessVisionList()
 		for (i = 0; i < numvision; i++) {
 			if (!VisionList[i]._ldel) {
 				DoVision(
-				    VisionList[i]._lx,
-				    VisionList[i]._ly,
+				    VisionList[i]._l,
 				    VisionList[i]._lradius,
 				    VisionList[i]._lflags & 1,
 				    VisionList[i]._lflags & 1);

@@ -8,10 +8,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 class Player;
 
 class Item {
@@ -39,7 +35,7 @@ extern int numitems;
 extern int gnNumGetRecords;
 
 void InitItemGFX();
-BOOL ItemPlace(int xp, int yp);
+BOOL ItemPlace(V2Di pos);
 void AddInitItems();
 void InitItems();
 void CalcPlrItemVals(int p, BOOL Loadgfx);
@@ -57,9 +53,9 @@ void SetPlrHandSeed(ItemStruct *h, int iseed);
 void SetPlrHandGoldCurs(ItemStruct *h);
 void CreatePlrItems(int p);
 BOOL ItemSpaceOk(int i, int j);
-BOOL GetItemSpace(int x, int y, char inum);
-void GetSuperItemSpace(int x, int y, char inum);
-void GetSuperItemLoc(int x, int y, int *xx, int *yy);
+BOOL GetItemSpace(V2Di pos, char inum);
+void GetSuperItemSpace(V2Di pos, char inum);
+void GetSuperItemLoc(V2Di pos, V2Di &r);
 void CalcItemValue(int i);
 void GetBookSpell(int i, int lvl);
 void GetStaffPower(int i, int lvl, int bs, BOOL onlygood);
@@ -77,15 +73,15 @@ int RndAllItems();
 int RndTypeItems(int itype, int imid);
 int CheckUnique(int i, int lvl, int uper, BOOL recreate);
 void GetUniqueItem(int i, int uid);
-void SpawnUnique(int uid, int x, int y);
+void SpawnUnique(int uid, V2Di pos);
 void ItemRndDur(int ii);
 void SetupAllItems(int ii, int idx, int iseed, int lvl, int uper, int onlygood, BOOL recreate, BOOL pregen);
-void SpawnItem(int m, int x, int y, BOOL sendmsg);
-void CreateItem(int uid, int x, int y);
-void CreateRndItem(int x, int y, BOOL onlygood, BOOL sendmsg, BOOL delta);
+void SpawnItem(int m, V2Di pos, BOOL sendmsg);
+void CreateItem(int uid, V2Di pos);
+void CreateRndItem(V2Di pos, BOOL onlygood, BOOL sendmsg, BOOL delta);
 void SetupAllUseful(int ii, int iseed, int lvl);
-void CreateRndUseful(int pnum, int x, int y, BOOL sendmsg);
-void CreateTypeItem(int x, int y, BOOL onlygood, int itype, int imisc, BOOL sendmsg, BOOL delta);
+void CreateRndUseful(int pnum, V2Di pos, BOOL sendmsg);
+void CreateTypeItem(V2Di pos, BOOL onlygood, int itype, int imisc, BOOL sendmsg, BOOL delta);
 void RecreateItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue);
 void RecreateEar(int ii, WORD ic, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, int ibuff);
 void SpawnQuestItem(int itemid, int x, int y, int randarea, int selflag);
@@ -105,7 +101,7 @@ void RechargeItem(ItemStruct *i, int r);
 void PrintItemOil(char IDidx);
 void PrintItemPower(char plidx, ItemStruct *x);
 void DrawUTextBack();
-void PrintUString(int x, int y, BOOL cjustflag, char *str, int col);
+void PrintUString(V2Di pos, BOOL cjustflag, char *str, int col);
 void DrawULine(int y);
 void DrawUniqueInfo();
 void PrintItemMisc(ItemStruct *x);
@@ -142,9 +138,9 @@ void RecreateHealerItem(int ii, int idx, int lvl, int iseed);
 void RecreateTownItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue);
 void RecalcStoreStats();
 int ItemNoFlippy();
-void CreateSpellBook(int x, int y, int ispell, BOOL sendmsg, BOOL delta);
-void CreateMagicArmor(int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
-void CreateMagicWeapon(int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
+void CreateSpellBook(V2Di pos, int ispell, BOOL sendmsg, BOOL delta);
+void CreateMagicArmor(V2Di pos, int imisc, int icurs, BOOL sendmsg, BOOL delta);
+void CreateMagicWeapon(V2Di pos, int imisc, int icurs, BOOL sendmsg, BOOL delta);
 BOOL GetItemRecord(int nSeed, WORD wCI, int nIndex);
 void NextItemRecord(int i);
 void SetItemRecord(int nSeed, WORD wCI, int nIndex);
@@ -159,10 +155,6 @@ extern int ItemDropSnds[];
 extern int ItemInvSnds[];
 extern int idoppely;
 extern int premiumlvladd[6];
-
-//#ifdef __cplusplus
-//}
-//#endif
 
 DEVILUTION_END_NAMESPACE
 

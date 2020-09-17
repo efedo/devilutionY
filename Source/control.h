@@ -8,10 +8,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 extern BYTE *pDurIcons;
 extern BYTE *pChrButtons;
 extern BOOL drawhpflag;
@@ -61,19 +57,20 @@ extern BOOL panbtndown;
 extern BYTE *pTalkPanel;
 extern BOOL spselflag;
 
-void DrawSpellCel(int xp, int yp, BYTE *Trans, int nCel, int w);
+void DrawSpellCel(int px, int py, BYTE *Trans, int nCel, int w);
+void DrawSpellCel(V2Di p, BYTE *Trans, int nCel, int w);
 void SetSpellTrans(char t);
 void DrawSpell();
 void DrawSpellList();
 void SetSpell();
 void SetSpeedSpell(int slot);
 void ToggleSpell(int slot);
-void PrintChar(int sx, int sy, int nCel, char col);
+void PrintChar(V2Di s, int nCel, char col);
 void AddPanelString(char *str, BOOL just);
 void ClearPanel();
-void DrawPanelBox(int x, int y, int w, int h, int sx, int sy);
+void DrawPanelBox(RECT32 r, V2Di s);
 void InitPanelStr();
-void SetFlaskHeight(BYTE *pCelBuff, int min, int max, int sx, int sy);
+void SetFlaskHeight(BYTE *pCelBuff, int min, int max, V2Di s);
 void DrawFlask(BYTE *pCelBuff, int w, int nSrcOff, BYTE *pBuff, int nDstOff, int h);
 void DrawLifeFlask();
 void UpdateLifeFlask();
@@ -95,10 +92,11 @@ BOOL control_WriteStringToBuffer(BYTE *str);
 void DrawInfoBox();
 void PrintInfo();
 void CPrintString(int y, char *str, BOOL center, int lines);
-void PrintGameStr(int x, int y, const char *str, int color);
+void PrintGameStr(V2Di pos, const char *str, int color);
 void DrawChr();
 #define ADD_PlrStringXY(x, y, width, pszStr, col) MY_PlrStringXY(x, y, width, pszStr, col, 1)
 void MY_PlrStringXY(int x, int y, int width, char *pszStr, char col, int base);
+void MY_PlrStringXY(V2Di pos, int width, char *pszStr, char col, int base);
 void CheckLvlBtn();
 void ReleaseLvlBtn();
 void DrawLevelUpIcon();
@@ -109,7 +107,7 @@ int DrawDurIcon4Item(ItemStruct *pItem, int x, int c);
 void RedBack();
 char GetSBookTrans(int ii, BOOL townok);
 void DrawSpellBook();
-void PrintSBookStr(int x, int y, BOOL cjustflag, char *pszStr, char col);
+void PrintSBookStr(V2Di pos, BOOL cjustflag, char *pszStr, char col);
 void CheckSBook();
 char *get_pieces_str(int nGold);
 void DrawGoldSplit(int amount);
@@ -142,10 +140,6 @@ extern char *PanBtnHotKey[8];
 extern char *PanBtnStr[8];
 extern RECT32 ChrBtnsRect[4];
 extern int SpellPages[6][7];
-
-//#ifdef __cplusplus
-//}
-//#endif
 
 DEVILUTION_END_NAMESPACE
 

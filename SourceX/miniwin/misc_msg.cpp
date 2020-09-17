@@ -371,7 +371,7 @@ bool PeekMessage(LPMSG lpMsg)
 	}
 
 #ifndef USE_SDL1
-	handle_touch(&e, MouseX, MouseY);
+	handle_touch(&e, Mouse.x, Mouse.y);
 #endif
 
 #ifdef USE_SDL1
@@ -487,7 +487,7 @@ bool PeekMessage(LPMSG lpMsg)
 				lpMsg->message = action.send_mouse_click.up ? DVL_WM_RBUTTONUP : DVL_WM_RBUTTONDOWN;
 				break;
 			}
-			lpMsg->lParam = position_for_mouse(MouseX, MouseY);
+			lpMsg->lParam = position_for_mouse(Mouse.x, Mouse.y);
 			break;
 		}
 		return true;
@@ -605,8 +605,8 @@ bool PeekMessage(LPMSG lpMsg)
 			// and SDL_GetMouseState gives previous location if mouse was
 			// outside window (observed on Ubuntu 19.04)
 			if (mouseWarping) {
-				MouseX = mouseWarpingX;
-				MouseY = mouseWarpingY;
+				Mouse.x = mouseWarpingX;
+				Mouse.y = mouseWarpingY;
 				mouseWarping = false;
 			}
 			break;

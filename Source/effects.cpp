@@ -1012,26 +1012,25 @@ void PlayEffect(int i, int mode)
 		return;
 	}
 
-	if (!calc_snd_position(monsters[i].data._mx, monsters[i].data._my, &lVolume, &lPan))
+	if (!calc_snd_position(monsters[i].data._m, &lVolume, &lPan))
 		return;
 
 	snd_play_snd(snd, lVolume, lPan);
 }
 
-BOOL calc_snd_position(int x, int y, int *plVolume, int *plPan)
+BOOL calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 {
 	int pan, volume;
 
-	x -= myplr().data._px;
-	y -= myplr().data._py;
+	pos -= myplr().data._p;
 
-	pan = (x - y) * 256;
+	pan = (pos.x - pos.y) * 256;
 	*plPan = pan;
 
 	if (abs(pan) > 6400)
 		return FALSE;
 
-	volume = abs(x) > abs(y) ? abs(x) : abs(y);
+	volume = abs(pos.x) > abs(pos.y) ? abs(pos.x) : abs(pos.y);
 	volume *= 64;
 	*plVolume = volume;
 
@@ -1046,10 +1045,10 @@ BOOL calc_snd_position(int x, int y, int *plVolume, int *plPan)
 void PlaySFX(int psfx)
 {
 	psfx = RndSFX(psfx);
-	PlaySFX_priv(&sgSFX[psfx], FALSE, 0, 0);
+	PlaySFX_priv(&sgSFX[psfx], FALSE, { 0, 0 });
 }
 
-void PlaySFX_priv(TSFX *pSFX, BOOL loc, int x, int y)
+void PlaySFX_priv(TSFX *pSFX, BOOL loc, V2Di pos)
 {
 	int lPan, lVolume;
 
@@ -1066,7 +1065,7 @@ void PlaySFX_priv(TSFX *pSFX, BOOL loc, int x, int y)
 
 	lPan = 0;
 	lVolume = 0;
-	if (loc && !calc_snd_position(x, y, &lVolume, &lPan)) {
+	if (loc && !calc_snd_position(pos, &lVolume, &lPan)) {
 		return;
 	}
 
@@ -1142,7 +1141,7 @@ int RndSFX(int psfx)
 	return psfx + random_(165, nRand);
 }
 
-void PlaySfxLoc(int psfx, int x, int y)
+void PlaySfxLoc(int psfx, V2Di pos)
 {
 	TSnd *pSnd;
 
@@ -1154,7 +1153,7 @@ void PlaySfxLoc(int psfx, int x, int y)
 			pSnd->start_tc = 0;
 	}
 
-	PlaySFX_priv(&sgSFX[psfx], TRUE, x, y);
+	PlaySFX_priv(&sgSFX[psfx], TRUE, pos);
 }
 
 void sound_stop()

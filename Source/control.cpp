@@ -214,6 +214,11 @@ int SpellPages[6][7] = {
 #define SPLROWICONLS 10
 #define SPLICONLAST 43
 
+void DrawSpellCel(int px, int py, BYTE *Trans, int nCel, int w)
+{
+	DrawSpellCel({ px, py }, Trans, nCel, w);
+}
+
 /**
  * Draw spell cell onto the back buffer.
  * @param xp Back buffer coordinate
@@ -222,9 +227,9 @@ int SpellPages[6][7] = {
  * @param nCel Index of the cel frame to draw. 0 based.
  * @param w Width of the frame.
  */
-void DrawSpellCel(int xp, int yp, BYTE *Trans, int nCel, int w)
+void DrawSpellCel(V2Di p, BYTE *Trans, int nCel, int w)
 {
-	CelDrawLight(xp, yp, Trans, nCel, w, SplTransTbl);
+	CelDrawLight(p, Trans, nCel, w, SplTransTbl);
 }
 
 void SetSpellTrans(char t)
@@ -364,7 +369,7 @@ void DrawSpellList()
 			DrawSpellCel(x, y, pSpellCels, SpellITbl[j], SPLICONLENGTH);
 			lx = x - BORDER_LEFT;
 			ly = y - BORDER_TOP - SPLICONLENGTH;
-			if (MouseX >= lx && MouseX < lx + SPLICONLENGTH && MouseY >= ly && MouseY < ly + SPLICONLENGTH) {
+			if (Mouse.x >= lx && Mouse.x < lx + SPLICONLENGTH && Mouse.y >= ly && Mouse.y < ly + SPLICONLENGTH) {
 				pSpell = j;
 				pSplType = i;
 				DrawSpellCel(x, y, pSpellCels, c, SPLICONLENGTH);
@@ -501,7 +506,7 @@ void ToggleSpell(int slot)
  * @param nCel Number of letter in Windows-1252
  * @param col text_color color value
  */
-void PrintChar(int sx, int sy, int nCel, char col)
+void PrintChar(V2Di s, int nCel, char col)
 {
 	assert(gpBuffer);
 
@@ -511,7 +516,7 @@ void PrintChar(int sx, int sy, int nCel, char col)
 
 	switch (col) {
 	case COL_WHITE:
-		CelDraw(sx, sy, pPanelText, nCel, 13);
+		CelDraw(s, pPanelText, nCel, 13);
 		return;
 	case COL_BLUE:
 		for (i = 0; i < 256; i++) {
@@ -544,7 +549,7 @@ void PrintChar(int sx, int sy, int nCel, char col)
 		}
 		break;
 	}
-	CelDrawLight(sx, sy, pPanelText, nCel, 13, tbl);
+	CelDrawLight(s, pPanelText, nCel, 13, tbl);
 }
 
 void AddPanelString(char *str, BOOL just)
@@ -562,14 +567,14 @@ void ClearPanel()
 	pinfoflag = FALSE;
 }
 
-void DrawPanelBox(int x, int y, int w, int h, int sx, int sy)
+void DrawPanelBox(RECT32 r, V2Di s)
 {
 	int nSrcOff, nDstOff;
 
 	assert(gpBuffer);
 
-	nSrcOff = x + PANEL_WIDTH * y;
-	nDstOff = sx + BUFFER_WIDTH * sy;
+	nSrcOff = r.x + PANEL_WIDTH * r.y;
+	nDstOff = s.x + BUFFER_WIDTH * s.y;
 
 	int hgt;
 	BYTE *src, *dst;
@@ -577,8 +582,8 @@ void DrawPanelBox(int x, int y, int w, int h, int sx, int sy)
 	src = &pBtmBuff[nSrcOff];
 	dst = &gpBuffer[nDstOff];
 
-	for (hgt = h; hgt; hgt--, src += PANEL_WIDTH, dst += BUFFER_WIDTH) {
-		memcpy(dst, src, w);
+	for (hgt = r.h; hgt; hgt--, src += PANEL_WIDTH, dst += BUFFER_WIDTH) {
+		memcpy(dst, src, r.w);
 	}
 }
 
@@ -592,14 +597,14 @@ void DrawPanelBox(int x, int y, int w, int h, int sx, int sy)
  * @param sx Back buffer coordinate
  * @param sy Back buffer coordinate
  */
-void SetFlaskHeight(BYTE *pCelBuff, int min, int max, int sx, int sy)
+void SetFlaskHeight(BYTE *pCelBuff, int min, int max, V2Di s)
 {
 	int nSrcOff, nDstOff, w;
 
 	assert(gpBuffer);
 
 	nSrcOff = 88 * min;
-	nDstOff = sx + BUFFER_WIDTH * sy;
+	nDstOff = s.x + BUFFER_WIDTH * s.y;
 	w = max - min;
 
 	BYTE *src, *dst;
@@ -682,9 +687,9 @@ void UpdateLifeFlask()
 	else if (filled < 0)
 		filled = 0;
 	if (filled != 69)
-		SetFlaskHeight(pLifeBuff, 16, 85 - filled, 96 + PANEL_X, PANEL_Y);
+		SetFlaskHeight(pLifeBuff, 16, 85 - filled, { 96 + PANEL_X, PANEL_Y });
 	if (filled != 0)
-		DrawPanelBox(96, 85 - filled, 88, filled, 96 + PANEL_X, PANEL_Y + 69 - filled);
+		DrawPanelBox({ 96, 85 - filled, 88, filled }, { 96 + PANEL_X, PANEL_Y + 69 - filled });
 }
 
 void DrawManaFlask()
@@ -743,9 +748,9 @@ void UpdateManaFlask()
 	if (filled > 69)
 		filled = 69;
 	if (filled != 69)
-		SetFlaskHeight(pManaBuff, 16, 85 - filled, PANEL_X + 464, PANEL_Y);
+		SetFlaskHeight(pManaBuff, 16, 85 - filled, { PANEL_X + 464, PANEL_Y });
 	if (filled != 0)
-		DrawPanelBox(464, 85 - filled, 88, filled, PANEL_X + 464, PANEL_Y + 69 - filled);
+		DrawPanelBox({ 464, 85 - filled, 88, filled }, { PANEL_X + 464, PANEL_Y + 69 - filled });
 
 	DrawSpell();
 }
@@ -770,16 +775,16 @@ void InitControlPan()
 	pSpellCels = LoadFileInMem("CtrlPan\\SpelIcon.CEL", NULL);
 	SetSpellTrans(RSPLTYPE_SKILL);
 	pStatusPanel = LoadFileInMem("CtrlPan\\Panel8.CEL", NULL);
-	CelBlitWidth(pBtmBuff, 0, (PANEL_HEIGHT + 16) - 1, PANEL_WIDTH, pStatusPanel, 1, PANEL_WIDTH);
+	CelBlitWidth(pBtmBuff, { 0, (PANEL_HEIGHT + 16) - 1 }, PANEL_WIDTH, pStatusPanel, 1, PANEL_WIDTH);
 	MemFreeDbg(pStatusPanel);
 	pStatusPanel = LoadFileInMem("CtrlPan\\P8Bulbs.CEL", NULL);
-	CelBlitWidth(pLifeBuff, 0, 87, 88, pStatusPanel, 1, 88);
-	CelBlitWidth(pManaBuff, 0, 87, 88, pStatusPanel, 2, 88);
+	CelBlitWidth(pLifeBuff, { 0, 87 }, 88, pStatusPanel, 1, 88);
+	CelBlitWidth(pManaBuff, { 0, 87 }, 88, pStatusPanel, 2, 88);
 	MemFreeDbg(pStatusPanel);
 	talkflag = FALSE;
 	if (gbMaxPlayers != 1) {
 		pTalkPanel = LoadFileInMem("CtrlPan\\TalkPanl.CEL", NULL);
-		CelBlitWidth(pBtmBuff, 0, (PANEL_HEIGHT + 16) * 2 - 1, PANEL_WIDTH, pTalkPanel, 1, PANEL_WIDTH);
+		CelBlitWidth(pBtmBuff, { 0, (PANEL_HEIGHT + 16) * 2 - 1 }, PANEL_WIDTH, pTalkPanel, 1, PANEL_WIDTH);
 		MemFreeDbg(pTalkPanel);
 		pMultiBtns = LoadFileInMem("CtrlPan\\P8But2.CEL", NULL);
 		pTalkBtns = LoadFileInMem("CtrlPan\\TalkButt.CEL", NULL);
@@ -836,7 +841,7 @@ void InitControlPan()
 
 void DrawCtrlPan()
 {
-	DrawPanelBox(0, sgbPlrTalkTbl + 16, PANEL_WIDTH, PANEL_HEIGHT, PANEL_X, PANEL_Y);
+	DrawPanelBox({ 0, sgbPlrTalkTbl + 16, PANEL_WIDTH, PANEL_HEIGHT }, { PANEL_X, PANEL_Y });
 	DrawInfoBox();
 }
 
@@ -850,7 +855,7 @@ void DrawCtrlBtns()
 
 	for (i = 0; i < 6; i++) {
 		if (!panbtn[i])
-			DrawPanelBox(PanBtnPos[i][0] - PANEL_LEFT, PanBtnPos[i][1] - (PANEL_TOP - 16), 71, 20, PanBtnPos[i][0] + SCREEN_X, PanBtnPos[i][1] + SCREEN_Y);
+			DrawPanelBox({ PanBtnPos[i][0] - PANEL_LEFT, PanBtnPos[i][1] - (PANEL_TOP - 16), 71, 20 }, { PanBtnPos[i][0] + SCREEN_X, PanBtnPos[i][1] + SCREEN_Y });
 		else
 			CelDraw(PanBtnPos[i][0] + SCREEN_X, PanBtnPos[i][1] + SCREEN_Y + 18, pPanelButtons, i + 1, 71);
 	}
@@ -928,15 +933,15 @@ void DoPanBtn()
 	int i;
 
 	for (i = 0; i < numpanbtns; i++) {
-		if (MouseX >= PanBtnPos[i][0] && MouseX <= PanBtnPos[i][0] + PanBtnPos[i][2]) {
-			if (MouseY >= PanBtnPos[i][1] && MouseY <= PanBtnPos[i][1] + PanBtnPos[i][3]) {
+		if (Mouse.x >= PanBtnPos[i][0] && Mouse.x <= PanBtnPos[i][0] + PanBtnPos[i][2]) {
+			if (Mouse.y >= PanBtnPos[i][1] && Mouse.y <= PanBtnPos[i][1] + PanBtnPos[i][3]) {
 				panbtn[i] = TRUE;
 				drawbtnflag = TRUE;
 				panbtndown = TRUE;
 			}
 		}
 	}
-	if (!spselflag && MouseX >= 565 + PANEL_LEFT && MouseX < 621 + PANEL_LEFT && MouseY >= 64 + PANEL_TOP && MouseY < 120 + PANEL_TOP) {
+	if (!spselflag && Mouse.x >= 565 + PANEL_LEFT && Mouse.x < 621 + PANEL_LEFT && Mouse.y >= 64 + PANEL_TOP && Mouse.y < 120 + PANEL_TOP) {
 		DoSpeedBook();
 		gamemenu_off();
 	}
@@ -951,16 +956,16 @@ void control_set_button_down(int btn_id)
 
 void control_check_btn_press()
 {
-	if (MouseX >= PanBtnPos[3][0]
-	    && MouseX <= PanBtnPos[3][0] + PanBtnPos[3][2]
-	    && MouseY >= PanBtnPos[3][1]
-	    && MouseY <= PanBtnPos[3][1] + PanBtnPos[3][3]) {
+	if (Mouse.x >= PanBtnPos[3][0]
+	    && Mouse.x <= PanBtnPos[3][0] + PanBtnPos[3][2]
+	    && Mouse.y >= PanBtnPos[3][1]
+	    && Mouse.y <= PanBtnPos[3][1] + PanBtnPos[3][3]) {
 		control_set_button_down(3);
 	}
-	if (MouseX >= PanBtnPos[6][0]
-	    && MouseX <= PanBtnPos[6][0] + PanBtnPos[6][2]
-	    && MouseY >= PanBtnPos[6][1]
-	    && MouseY <= PanBtnPos[6][1] + PanBtnPos[6][3]) {
+	if (Mouse.x >= PanBtnPos[6][0]
+	    && Mouse.x <= PanBtnPos[6][0] + PanBtnPos[6][2]
+	    && Mouse.y >= PanBtnPos[6][1]
+	    && Mouse.y <= PanBtnPos[6][1] + PanBtnPos[6][3]) {
 		control_set_button_down(6);
 	}
 }
@@ -990,7 +995,7 @@ void CheckPanelInfo()
 	for (i = 0; i < numpanbtns; i++) {
 		xend = PanBtnPos[i][0] + PanBtnPos[i][2];
 		yend = PanBtnPos[i][1] + PanBtnPos[i][3];
-		if (MouseX >= PanBtnPos[i][0] && MouseX <= xend && MouseY >= PanBtnPos[i][1] && MouseY <= yend) {
+		if (Mouse.x >= PanBtnPos[i][0] && Mouse.x <= xend && Mouse.y >= PanBtnPos[i][1] && Mouse.y <= yend) {
 			if (i != 7) {
 				strcpy(infostr, PanBtnStr[i]);
 			} else {
@@ -1008,7 +1013,7 @@ void CheckPanelInfo()
 			pinfoflag = TRUE;
 		}
 	}
-	if (!spselflag && MouseX >= 565 + PANEL_LEFT && MouseX < 621 + PANEL_LEFT && MouseY >= 64 + PANEL_TOP && MouseY < 120 + PANEL_TOP) {
+	if (!spselflag && Mouse.x >= 565 + PANEL_LEFT && Mouse.x < 621 + PANEL_LEFT && Mouse.y >= 64 + PANEL_TOP && Mouse.y < 120 + PANEL_TOP) {
 		strcpy(infostr, "Select current spell button");
 		infoclr = COL_WHITE;
 		panelflag = TRUE;
@@ -1070,7 +1075,7 @@ void CheckPanelInfo()
 			}
 		}
 	}
-	if (MouseX > 190 + PANEL_LEFT && MouseX < 437 + PANEL_LEFT && MouseY > 4 + PANEL_TOP && MouseY < 33 + PANEL_TOP)
+	if (Mouse.x > 190 + PANEL_LEFT && Mouse.x < 437 + PANEL_LEFT && Mouse.y > 4 + PANEL_TOP && Mouse.y < 33 + PANEL_TOP)
 		pcursinvitem = CheckInvHLight();
 }
 
@@ -1094,10 +1099,10 @@ void CheckBtnUp()
 
 		panbtn[i] = FALSE;
 
-		if (MouseX < PanBtnPos[i][0]
-		    || MouseX > PanBtnPos[i][0] + PanBtnPos[i][2]
-		    || MouseY < PanBtnPos[i][1]
-		    || MouseY > PanBtnPos[i][1] + PanBtnPos[i][3]) {
+		if (Mouse.x < PanBtnPos[i][0]
+		    || Mouse.x > PanBtnPos[i][0] + PanBtnPos[i][2]
+		    || Mouse.y < PanBtnPos[i][1]
+		    || Mouse.y > PanBtnPos[i][1] + PanBtnPos[i][3]) {
 			continue;
 		}
 
@@ -1197,7 +1202,7 @@ void DrawInfoBox()
 {
 	int nGold;
 
-	DrawPanelBox(177, 62, 288, 60, PANEL_X + 177, PANEL_Y + 46);
+	DrawPanelBox({ 177, 62, 288, 60 }, { PANEL_X + 177, PANEL_Y + 46 });
 	if (!panelflag && !trigflag && pcursinvitem == -1 && !spselflag) {
 		infostr[0] = '\0';
 		infoclr = COL_WHITE;
@@ -1280,11 +1285,12 @@ void CPrintString(int y, char *str, BOOL center, int lines)
 {
 	BYTE c;
 	char *tmp;
-	int lineOffset, strWidth, sx, sy;
+	int lineOffset, strWidth;
+	V2Di s;
 
 	lineOffset = 0;
-	sx = 177 + PANEL_X;
-	sy = lineOffsets[lines][y] + PANEL_Y;
+	s.x = 177 + PANEL_X;
+	s.y = lineOffsets[lines][y] + PANEL_Y;
 	if (center == TRUE) {
 		strWidth = 0;
 		tmp = str;
@@ -1294,7 +1300,7 @@ void CPrintString(int y, char *str, BOOL center, int lines)
 		}
 		if (strWidth < 288)
 			lineOffset = (288 - strWidth) >> 1;
-		sx += lineOffset;
+		s.x += lineOffset;
 	}
 	while (*str) {
 		c = gbFontTransTbl[(BYTE)*str++];
@@ -1302,25 +1308,25 @@ void CPrintString(int y, char *str, BOOL center, int lines)
 		lineOffset += fontkern[c] + 2;
 		if (c) {
 			if (lineOffset < 288) {
-				PrintChar(sx, sy, c, infoclr);
+				PrintChar(s, c, infoclr);
 			}
 		}
-		sx += fontkern[c] + 2;
+		s.x += fontkern[c] + 2;
 	}
 }
 
-void PrintGameStr(int x, int y, const char *str, int color)
+void PrintGameStr(V2Di pos, const char *str, int color)
 {
 	BYTE c;
-	int sx, sy;
-	sx = x + SCREEN_X;
-	sy = y + SCREEN_Y;
+	V2Di s;
+	s.x = pos.x + SCREEN_X;
+	s.y = pos.y + SCREEN_Y;
 	while (*str) {
 		c = gbFontTransTbl[(BYTE)*str++];
 		c = fontframe[c];
 		if (c)
-			PrintChar(sx, sy, c, color);
-		sx += fontkern[c] + 1;
+			PrintChar(s, c, color);
+		s.x += fontkern[c] + 1;
 	}
 }
 
@@ -1529,6 +1535,12 @@ void DrawChr()
 	ADD_PlrStringXY(143, 332, 174, chrstr, col);
 }
 
+void MY_PlrStringXY(int x, int y, int endX, char *pszStr, char col, int base)
+{
+	MY_PlrStringXY({ x, y }, endX, pszStr, col, base);
+}
+
+
 /**
  * @brief Render text string to back buffer
  * @param x Screen coordinate
@@ -1538,15 +1550,16 @@ void DrawChr()
  * @param col text_color color value
  * @param base Letter spacing
  */
-void MY_PlrStringXY(int x, int y, int endX, char *pszStr, char col, int base)
+void MY_PlrStringXY(V2Di pos, int endX, char *pszStr, char col, int base)
 {
 	BYTE c;
 	char *tmp;
-	int sx, sy, screen_x, line, widthOffset;
+	V2Di s;
+	int screen_x, line, widthOffset;
 
-	sx = x + SCREEN_X;
-	sy = y + SCREEN_Y;
-	widthOffset = endX - x + 1;
+	s.x = pos.x + SCREEN_X;
+	s.y = pos.y + SCREEN_Y;
+	widthOffset = endX - pos.x + 1;
 	line = 0;
 	screen_x = 0;
 	tmp = pszStr;
@@ -1556,28 +1569,28 @@ void MY_PlrStringXY(int x, int y, int endX, char *pszStr, char col, int base)
 	}
 	if (screen_x < widthOffset)
 		line = (widthOffset - screen_x) >> 1;
-	sx += line;
+	s.x += line;
 	while (*pszStr) {
 		c = gbFontTransTbl[(BYTE)*pszStr++];
 		c = fontframe[c];
 		line += fontkern[c] + base;
 		if (c) {
 			if (line < widthOffset)
-				PrintChar(sx, sy, c, col);
+				PrintChar(s, c, col);
 		}
-		sx += fontkern[c] + base;
+		s.x += fontkern[c] + base;
 	}
 }
 
 void CheckLvlBtn()
 {
-	if (!lvlbtndown && MouseX >= 40 + PANEL_LEFT && MouseX <= 81 + PANEL_LEFT && MouseY >= -39 + PANEL_TOP && MouseY <= -17 + PANEL_TOP)
+	if (!lvlbtndown && Mouse.x >= 40 + PANEL_LEFT && Mouse.x <= 81 + PANEL_LEFT && Mouse.y >= -39 + PANEL_TOP && Mouse.y <= -17 + PANEL_TOP)
 		lvlbtndown = TRUE;
 }
 
 void ReleaseLvlBtn()
 {
-	if (MouseX >= 40 + PANEL_LEFT && MouseX <= 81 + PANEL_LEFT && MouseY >= -39 + PANEL_TOP && MouseY <= -17 + PANEL_TOP)
+	if (Mouse.x >= 40 + PANEL_LEFT && Mouse.x <= 81 + PANEL_LEFT && Mouse.y >= -39 + PANEL_TOP && Mouse.y <= -17 + PANEL_TOP)
 		chrflag = TRUE;
 	lvlbtndown = FALSE;
 }
@@ -1620,10 +1633,10 @@ void CheckChrBtns()
 			default:
 				continue;
 			}
-			if (MouseX >= ChrBtnsRect[i].x
-			    && MouseX <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
-			    && MouseY >= ChrBtnsRect[i].y
-			    && MouseY <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
+			if (Mouse.x >= ChrBtnsRect[i].x
+			    && Mouse.x <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
+			    && Mouse.y >= ChrBtnsRect[i].y
+			    && Mouse.y <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
 				chrbtn[i] = TRUE;
 				chrbtnactive = TRUE;
 			}
@@ -1639,10 +1652,10 @@ void ReleaseChrBtns()
 	for (i = 0; i < 4; ++i) {
 		if (chrbtn[i]) {
 			chrbtn[i] = FALSE;
-			if (MouseX >= ChrBtnsRect[i].x
-			    && MouseX <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
-			    && MouseY >= ChrBtnsRect[i].y
-			    && MouseY <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
+			if (Mouse.x >= ChrBtnsRect[i].x
+			    && Mouse.x <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
+			    && Mouse.y >= ChrBtnsRect[i].y
+			    && Mouse.y <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
 				switch (i) {
 				case 0:
 					NetSendCmdParam1(TRUE, CMD_ADDSTR, 1);
@@ -1799,7 +1812,7 @@ void DrawSpellBook()
 				SetSpellTrans(RSPLTYPE_SKILL);
 				DrawSpellCel(RIGHT_PANEL + 75, yp, pSBkIconCels, SPLICONLAST, 37);
 			}
-			PrintSBookStr(10, yp - 23, FALSE, spelldata[sn].sNameText, COL_WHITE);
+			PrintSBookStr({ 10, yp - 23 }, FALSE, spelldata[sn].sNameText, COL_WHITE);
 			switch (GetSBookTrans(sn, FALSE)) {
 			case RSPLTYPE_SKILL:
 				strcpy(tempstr, "Skill");
@@ -1818,7 +1831,7 @@ void DrawSpellBook()
 				if (sn == SPL_BONESPIRIT) {
 					sprintf(tempstr, "Mana: %i  Dam: 1/3 tgt hp", mana);
 				}
-				PrintSBookStr(10, yp - 1, FALSE, tempstr, COL_WHITE);
+				PrintSBookStr({ 10, yp - 1 }, FALSE, tempstr, COL_WHITE);
 				lvl = myplr().data._pSplLvl[sn] + myplr().data._pISplLvlAdd;
 				if (lvl < 0) {
 					lvl = 0;
@@ -1830,19 +1843,19 @@ void DrawSpellBook()
 				}
 				break;
 			}
-			PrintSBookStr(10, yp - 12, FALSE, tempstr, COL_WHITE);
+			PrintSBookStr({ 10, yp - 12 }, FALSE, tempstr, COL_WHITE);
 		}
 		yp += 43;
 	}
 }
 
-void PrintSBookStr(int x, int y, BOOL cjustflag, char *pszStr, char col)
+void PrintSBookStr(V2Di pos, BOOL cjustflag, char *pszStr, char col)
 {
 	BYTE c;
 	char *tmp;
 	int screen_x, line, sx;
 
-	sx = x + RIGHT_PANEL + 120;
+	sx = pos.x + RIGHT_PANEL + 120;
 	line = 0;
 	if (cjustflag) {
 		screen_x = 0;
@@ -1861,7 +1874,7 @@ void PrintSBookStr(int x, int y, BOOL cjustflag, char *pszStr, char col)
 		line += fontkern[c] + 1;
 		if (c) {
 			if (line <= 222)
-				PrintChar(sx, y, c, col);
+				PrintChar({ sx, pos.y }, c, col);
 		}
 		sx += fontkern[c] + 1;
 	}
@@ -1873,9 +1886,9 @@ void CheckSBook()
 	char st;
 	unsigned __int64 spl;
 
-	if (MouseX >= RIGHT_PANEL + 11 && MouseX < RIGHT_PANEL + 48 && MouseY >= 18 && MouseY < 314) {
+	if (Mouse.x >= RIGHT_PANEL + 11 && Mouse.x < RIGHT_PANEL + 48 && Mouse.y >= 18 && Mouse.y < 314) {
 		spl = myplr().data._pMemSpells | myplr().data._pISpells | myplr().data._pAblSpells;
-		sn = SpellPages[sbooktab][(MouseY - 18) / 43];
+		sn = SpellPages[sbooktab][(Mouse.y - 18) / 43];
 		if (sn != -1 && spl & (__int64)1 << (sn - 1)) {
 			st = RSPLTYPE_SPELL;
 			if (myplr().data._pISpells & (__int64)1 << (sn - 1)) {
@@ -1889,8 +1902,8 @@ void CheckSBook()
 			force_redraw = 255;
 		}
 	}
-	if (MouseX >= RIGHT_PANEL + 7 && MouseX < RIGHT_PANEL + 311 && MouseY >= SPANEL_WIDTH && MouseY < 349) { /// BUGFIX: change `< 313` to `< 311` (fixed)
-		sbooktab = (MouseX - (RIGHT_PANEL + 7)) / 76;
+	if (Mouse.x >= RIGHT_PANEL + 7 && Mouse.x < RIGHT_PANEL + 311 && Mouse.y >= SPANEL_WIDTH && Mouse.y < 349) { /// BUGFIX: change `< 313` to `< 311` (fixed)
+		sbooktab = (Mouse.x - (RIGHT_PANEL + 7)) / 76;
 	}
 }
 
@@ -1917,7 +1930,7 @@ void DrawGoldSplit(int amount)
 	ADD_PlrStringXY(366, 121, 600, "you want to remove?", COL_GOLD);
 	if (amount > 0) {
 		sprintf(tempstr, "%u", amount);
-		PrintGameStr(388, 140, tempstr, COL_WHITE);
+		PrintGameStr({ 388, 140 }, tempstr, COL_WHITE);
 		for (i = 0; i < tempstr[i]; i++) {
 			screen_x += fontkern[fontframe[gbFontTransTbl[(BYTE)tempstr[i]]]] + 1;
 		}
@@ -2013,17 +2026,17 @@ void DrawTalkPan()
 	if (!talkflag)
 		return;
 
-	DrawPanelBox(175, sgbPlrTalkTbl + 20, 294, 5, PANEL_X + 175, PANEL_Y + 4);
+	DrawPanelBox({ 175, sgbPlrTalkTbl + 20, 294, 5 }, { PANEL_X + 175, PANEL_Y + 4 });
 	off = 0;
 	for (i = 293; i > 283; off++, i--) {
-		DrawPanelBox((off >> 1) + 175, sgbPlrTalkTbl + off + 25, i, 1, (off >> 1) + PANEL_X + 175, off + PANEL_Y + 9);
+		DrawPanelBox({ (off >> 1) + 175, sgbPlrTalkTbl + off + 25, i, 1 }, { (off >> 1) + PANEL_X + 175, off + PANEL_Y + 9 });
 	}
-	DrawPanelBox(185, sgbPlrTalkTbl + 35, 274, 30, PANEL_X + 185, PANEL_Y + 19);
-	DrawPanelBox(180, sgbPlrTalkTbl + 65, 284, 5, PANEL_X + 180, PANEL_Y + 49);
+	DrawPanelBox({ 185, sgbPlrTalkTbl + 35, 274, 30 }, { PANEL_X + 185, PANEL_Y + 19 });
+	DrawPanelBox({ 180, sgbPlrTalkTbl + 65, 284, 5 }, { PANEL_X + 180, PANEL_Y + 49 });
 	for (i = 0; i < 10; i++) {
-		DrawPanelBox(180, sgbPlrTalkTbl + i + 70, i + 284, 1, PANEL_X + 180, i + PANEL_Y + 54);
+		DrawPanelBox({ 180, sgbPlrTalkTbl + i + 70, i + 284, 1 }, { PANEL_X + 180, i + PANEL_Y + 54 });
 	}
-	DrawPanelBox(170, sgbPlrTalkTbl + 80, 310, 55, PANEL_X + 170, PANEL_Y + 64);
+	DrawPanelBox({ 170, sgbPlrTalkTbl + 80, 310, 55 }, { PANEL_X + 170, PANEL_Y + 64 });
 	msg = sgszTalkMsg;
 	for (i = 0; i < 39; i += 13) {
 		x = 0 + PANEL_LEFT;
@@ -2082,7 +2095,7 @@ char *control_print_talk_msg(char *msg, int *x, int y, int color)
 			return msg;
 		msg++;
 		if (c != 0) {
-			PrintChar(*x, y + 22 + PANEL_Y, c, color);
+			PrintChar({ *x, y + 22 + PANEL_Y }, c, color);
 		}
 		*x += fontkern[c] + 1;
 	}
@@ -2096,20 +2109,20 @@ BOOL control_check_talk_btn()
 	if (!talkflag)
 		return FALSE;
 
-	if (MouseX < 172 + PANEL_LEFT)
+	if (Mouse.x < 172 + PANEL_LEFT)
 		return FALSE;
-	if (MouseY < 69 + PANEL_TOP)
+	if (Mouse.y < 69 + PANEL_TOP)
 		return FALSE;
-	if (MouseX > 233 + PANEL_LEFT)
+	if (Mouse.x > 233 + PANEL_LEFT)
 		return FALSE;
-	if (MouseY > 123 + PANEL_TOP)
+	if (Mouse.y > 123 + PANEL_TOP)
 		return FALSE;
 
 	for (i = 0; i < sizeof(talkbtndown) / sizeof(talkbtndown[0]); i++) {
 		talkbtndown[i] = FALSE;
 	}
 
-	talkbtndown[(MouseY - (69 + PANEL_TOP)) / 18] = TRUE;
+	talkbtndown[(Mouse.y - (69 + PANEL_TOP)) / 18] = TRUE;
 
 	return TRUE;
 }
@@ -2121,8 +2134,8 @@ void control_release_talk_btn()
 	if (talkflag) {
 		for (i = 0; i < sizeof(talkbtndown) / sizeof(talkbtndown[0]); i++)
 			talkbtndown[i] = FALSE;
-		if (MouseX >= 172 + PANEL_LEFT && MouseY >= 421 + PANEL_LEFT && MouseX <= -119 + PANEL_TOP && MouseY <= 123 + PANEL_TOP) {
-			off = (MouseY - (69 + PANEL_TOP)) / 18;
+		if (Mouse.x >= 172 + PANEL_LEFT && Mouse.y >= 421 + PANEL_LEFT && Mouse.x <= -119 + PANEL_TOP && Mouse.y <= 123 + PANEL_TOP) {
+			off = (Mouse.y - (69 + PANEL_TOP)) / 18;
 
 			for (p = 0; p < MAX_PLRS && off != -1; p++) {
 				if (p != myplr())

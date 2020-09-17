@@ -923,12 +923,12 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 	}
 
 	if (setview == TRUE) {
-		ViewX = 2 * sx + 17;
-		ViewY = 2 * sy + 19;
+		View.x = 2 * sx + 17;
+		View.y = 2 * sy + 19;
 	}
 	if (ldir == 0) {
-		LvlViewX = 2 * sx + 17;
-		LvlViewY = 2 * sy + 19;
+		LvlView.x = 2 * sx + 17;
+		LvlView.y = 2 * sy + 19;
 	}
 
 	return FALSE;
@@ -1404,10 +1404,7 @@ BOOL DRLG_L3Anvil()
 		}
 	}
 
-	setpc_x = sx;
-	setpc_y = sy;
-	setpc_w = sw;
-	setpc_h = sh;
+	setpc = { sx, sy, sw, sh };
 
 	return FALSE;
 }
@@ -1548,8 +1545,8 @@ static void DRLG_L3(int entry)
 				genok = DRLG_L3PlaceMiniSet(L3UP, 1, 1, -1, -1, 0, 0);
 				if (!genok) {
 					genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, 1, 1);
-					ViewX += 2;
-					ViewY -= 2;
+					View.x += 2;
+					View.y -= 2;
 					if (!genok && level.currlevel == 9) {
 						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, 0, 6);
 					}
@@ -1583,11 +1580,11 @@ static void DRLG_L3(int entry)
 	DRLG_L3River();
 
 	if (QuestStatus(Q_ANVIL)) {
-		dgrid[setpc_x + 7][setpc_y + 5].dungeon = 7;
-		dgrid[setpc_x + 8][setpc_y + 5].dungeon = 7;
-		dgrid[setpc_x + 9][setpc_y + 5].dungeon = 7;
-		if (dgrid[setpc_x + 10][setpc_y + 5].dungeon == 17 || dgrid[setpc_x + 10][setpc_y + 5].dungeon == 18) {
-			dgrid[setpc_x + 10][setpc_y + 5].dungeon = 45;
+		dgrid[setpc.x + 7][setpc.y + 5].dungeon = 7;
+		dgrid[setpc.x + 8][setpc.y + 5].dungeon = 7;
+		dgrid[setpc.x + 9][setpc.y + 5].dungeon = 7;
+		if (dgrid[setpc.x + 10][setpc.y + 5].dungeon == 17 || dgrid[setpc.x + 10][setpc.y + 5].dungeon == 18) {
+			dgrid[setpc.x + 10][setpc.y + 5].dungeon = 45;
 		}
 	}
 
@@ -1686,10 +1683,8 @@ void CreateL3Dungeon(DWORD rseed, int entry)
 	int i, j;
 
 	SetRndSeed(rseed);
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 	DRLG_InitTrans();
 	DRLG_InitSetPC();
 	DRLG_L3(entry);
@@ -1698,13 +1693,13 @@ void CreateL3Dungeon(DWORD rseed, int entry)
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].dPiece >= 56 && grid[i][j].dPiece <= 147) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			} else if (grid[i][j].dPiece >= 154 && grid[i][j].dPiece <= 161) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			} else if (grid[i][j].dPiece == 150) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			} else if (grid[i][j].dPiece == 152) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			}
 		}
 	}
@@ -1718,10 +1713,8 @@ void LoadL3Dungeon(char *sFileName, int vx, int vy)
 	BYTE *pLevelMap, *lm;
 
 	InitL3Dungeon();
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 	DRLG_InitTrans();
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 
@@ -1752,21 +1745,21 @@ void LoadL3Dungeon(char *sFileName, int vx, int vy)
 	abyssx = MAXDUNX; // Unused
 	DRLG_L3Pass3();
 	DRLG_Init_Globals();
-	ViewX = vx;
-	ViewY = vy;
+	View.x = vx;
+	View.y = vy;
 	SetMapMonsters(pLevelMap, 0, 0);
 	SetMapObjects(pLevelMap, 0, 0);
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].dPiece >= 56 && grid[i][j].dPiece <= 147) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			} else if (grid[i][j].dPiece >= 154 && grid[i][j].dPiece <= 161) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			} else if (grid[i][j].dPiece == 150) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			} else if (grid[i][j].dPiece == 152) {
-				DoLighting(i, j, 7, -1);
+				DoLighting({ i, j }, 7, -1);
 			}
 		}
 	}

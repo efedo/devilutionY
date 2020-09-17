@@ -205,26 +205,27 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 	}
 }
 
-BOOL CheckBlock(int fx, int fy, int tx, int ty)
+BOOL CheckBlock(V2Di f, V2Di t)
 {
 	int pn;
 	BOOL coll;
 
 	coll = FALSE;
-	while (fx != tx || fy != ty) {
-		pn = GetDirection(fx, fy, tx, ty);
-		fx += XDirAdd[pn];
-		fy += YDirAdd[pn];
-		if (pieces[grid[fx][fy].dPiece].nSolidTable)
+	while (f.x != t.x || f.y != t.y) {
+		pn = GetDirection(f, t);
+		f.x += XDirAdd[pn];
+		f.y += YDirAdd[pn];
+		if (pieces[grid.at(f).dPiece].nSolidTable)
 			coll = TRUE;
 	}
 
 	return coll;
 }
 
-int FindClosest(int sx, int sy, int rad)
+int FindClosest(V2Di s, int rad)
 {
-	int j, i, mid, tx, ty, cr;
+	V2Di t;
+	int j, i, mid, cr;
 	int CrawlNum[19] = { 0, 3, 12, 45, 94, 159, 240, 337, 450, 579, 724, 885, 1062, 1255, 1464, 1689, 1930, 2187, 2460 };
 
 	if (rad > 19)
@@ -233,11 +234,11 @@ int FindClosest(int sx, int sy, int rad)
 	for (i = 1; i < rad; i++) {
 		cr = CrawlNum[i] + 2;
 		for (j = (BYTE)CrawlTable[CrawlNum[i]]; j > 0; j--) {
-			tx = sx + CrawlTable[cr - 1];
-			ty = sy + CrawlTable[cr];
-			if (tx > 0 && tx < MAXDUNX && ty > 0 && ty < MAXDUNY) {
-				mid = grid[tx][ty].dMonster;
-				if (mid > 0 && !CheckBlock(sx, sy, tx, ty))
+			t.x = s.x + CrawlTable[cr - 1];
+			t.y = s.y + CrawlTable[cr];
+			if (t.x > 0 && t.x < MAXDUNX && t.y > 0 && t.y < MAXDUNY) {
+				mid = grid.at(t).dMonster;
+				if (mid > 0 && !CheckBlock(s, t))
 					return mid - 1;
 			}
 			cr += 2;
@@ -261,7 +262,7 @@ int GetSpellLevel(int id, int sn)
 	return result;
 }
 
-int GetDirection8(int x1, int y1, int x2, int y2)
+int GetDirection8(V2Di t1, V2Di t2)
 {
 	BYTE Dirs[16][16] = {
 		{ 99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -287,26 +288,26 @@ int GetDirection8(int x1, int y1, int x2, int y2)
 	                lrtoul[] = { 7, 6, 5 },
 	                lltour[] = { 7, 0, 1 };
 
-	mx = abs(x2 - x1);
+	mx = abs(t2.x - t1.x);
 	if (mx > 15)
 		mx = 15;
-	my = abs(y2 - y1);
+	my = abs(t2.y - t1.y);
 	if (my > 15)
 		my = 15;
 	md = Dirs[my][mx];
-	if (x1 > x2) {
-		if (y1 > y2)
+	if (t1.x > t2.x) {
+		if (t1.y > t2.y)
 			md = urtoll[md];
 		else
 			md = ultolr[md];
-	} else if (y1 > y2)
+	} else if (t1.y > t2.y)
 		md = lrtoul[md];
 	else
 		md = lltour[md];
 	return md;
 }
 
-int GetDirection16(int x1, int y1, int x2, int y2)
+int GetDirection16(V2Di t1, V2Di t2)
 {
 	BYTE Dirs[16][16] = {
 		{ 99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -332,19 +333,19 @@ int GetDirection16(int x1, int y1, int x2, int y2)
 	BYTE lrtoul[5] = { 14, 15, 0, 1, 2 };
 	int mx, my, md;
 
-	mx = abs(x2 - x1);
+	mx = abs(t2.x - t1.x);
 	if (mx > 15)
 		mx = 15;
-	my = abs(y2 - y1);
+	my = abs(t2.y - t1.y);
 	if (my > 15)
 		my = 15;
 	md = Dirs[my][mx];
-	if (x1 > x2) {
-		if (y1 > y2)
+	if (t1.x > t2.x) {
+		if (t1.y > t2.y)
 			md = urtoll[md];
 		else
 			md = ultolr[md];
-	} else if (y1 > y2) {
+	} else if (t1.y > t2.y) {
 		md = lltour[md];
 	} else {
 		md = lrtoul[md];
@@ -368,36 +369,34 @@ void DeleteMissile(int mi, int i)
 		missileactive[i] = missileactive[nummissiles];
 }
 
-void GetMissileVel(int i, int sx, int sy, int dx, int dy, int v)
+void GetMissileVel(int i, V2Di s, V2Di d, int v)
 {
-	double dxp, dyp, dr;
+	double dr;
+	V2Di dp;
 
-	if (dx != sx || dy != sy) {
-		dxp = (dx + sy - sx - dy) * (1 << 21);
-		dyp = (dy + dx - sx - sy) * (1 << 21);
-		dr = sqrt(dxp * dxp + dyp * dyp);
-		missile[i]._mixvel = (dxp * (v << 16)) / dr;
-		missile[i]._miyvel = (dyp * (v << 15)) / dr;
+	if (d != s) {
+		dp.x = (d.x + s.y - s.x - d.y) * (1 << 21);
+		dp.y = (d.y + d.x - s.x - s.y) * (1 << 21);
+		dr = sqrt(dp.x * dp.x + dp.y * dp.y);
+		missile[i]._mivel.x = (dp.x * (v << 16)) / dr;
+		missile[i]._mivel.y = (dp.y * (v << 15)) / dr;
 	} else {
-		missile[i]._mixvel = 0;
-		missile[i]._miyvel = 0;
+		missile[i]._mivel.x = 0;
+		missile[i]._mivel.y = 0;
 	}
 }
 
 void PutMissile(int i)
 {
-	int x, y;
-
-	x = missile[i]._mix;
-	y = missile[i]._miy;
-	if (x <= 0 || y <= 0 || x >= MAXDUNX || y >= MAXDUNY)
+	V2Di pos = missile[i]._mi;
+	if (pos.x <= 0 || pos.y <= 0 || pos.x >= MAXDUNX || pos.y >= MAXDUNY)
 		missile[i]._miDelFlag = TRUE;
 	if (!missile[i]._miDelFlag) {
-		grid[x][y].dFlags |= BFLAG_MISSILE;
-		if (grid[x][y].dMissile == 0)
-			grid[x][y].dMissile = i + 1;
+		grid.at(pos).dFlags |= BFLAG_MISSILE;
+		if (grid.at(pos).dMissile == 0)
+			grid.at(pos).dMissile = i + 1;
 		else
-			grid[x][y].dMissile = -1;
+			grid.at(pos).dMissile = -1;
 		if (missile[i]._miPreFlag)
 			MissilePreFlag = TRUE;
 	}
@@ -407,8 +406,8 @@ void GetMissilePos(int i)
 {
 	int mx, my, dx, dy, lx, ly;
 
-	mx = missile[i]._mitxoff >> 16;
-	my = missile[i]._mityoff >> 16;
+	mx = missile[i]._mitoff.x >> 16;
+	my = missile[i]._mitoff.y >> 16;
 	dx = mx + 2 * my;
 	dy = 2 * my - mx;
 	if (dx < 0) {
@@ -425,58 +424,49 @@ void GetMissilePos(int i)
 		ly = dy / 8;
 		dy = dy / 64;
 	}
-	missile[i]._mix = dx + missile[i]._misx;
-	missile[i]._miy = dy + missile[i]._misy;
-	missile[i]._mixoff = mx + (dy * 32) - (dx * 32);
-	missile[i]._miyoff = my - (dx * 16) - (dy * 16);
-	ChangeLightOff(missile[i]._mlid, lx - (dx * 8), ly - (dy * 8));
+	missile[i]._mi.x = dx + missile[i]._mis.x;
+	missile[i]._mi.y = dy + missile[i]._mis.y;
+	missile[i]._mioff.x = mx + (dy * 32) - (dx * 32);
+	missile[i]._mioff.y = my - (dx * 16) - (dy * 16);
+	ChangeLightOff(missile[i]._mlid, { lx - (dx * 8), ly - (dy * 8) });
 }
 
 void MoveMissilePos(int i)
 {
-	int dx, dy, x, y;
+	V2Di pos, d;
 
 	switch (missile[i]._mimfnum) {
 	case DIR_S:
-		dx = 1;
-		dy = 1;
+		d = { 1, 1 };
 		break;
 	case DIR_SW:
-		dx = 1;
-		dy = 1;
+		d = { 1, 1 };
 		break;
 	case DIR_W:
-		dx = 0;
-		dy = 1;
+		d = { 0, 1 };
 		break;
 	case DIR_NW:
-		dx = 0;
-		dy = 0;
+		d = { 0, 0 };
 		break;
 	case DIR_N:
-		dx = 0;
-		dy = 0;
+		d = { 0, 0 };
 		break;
 	case DIR_NE:
-		dx = 0;
-		dy = 0;
+		d = { 0, 0 };
 		break;
 	case DIR_E:
-		dx = 1;
-		dy = 0;
+		d = { 1, 0 };
 		break;
 	case DIR_SE:
-		dx = 1;
-		dy = 1;
+		d = { 1, 1 };
 		break;
 	}
-	x = missile[i]._mix + dx;
-	y = missile[i]._miy + dy;
-	if (PosOkMonst(missile[i]._misource, x, y)) {
-		missile[i]._mix += dx;
-		missile[i]._miy += dy;
-		missile[i]._mixoff += (dy << 5) - (dx << 5);
-		missile[i]._miyoff -= (dy << 4) + (dx << 4);
+
+	pos = missile[i]._mi + d;
+	if (PosOkMonst(missile[i]._misource, pos)) {
+		missile[i]._mi += d;
+		missile[i]._mioff.x += (d.y << 5) - (d.x << 5);
+		missile[i]._mioff.y -= (d.y << 4) + (d.x << 4);
 	}
 }
 
@@ -670,8 +660,7 @@ BOOL MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 
 	if (!monsters[m].data._msquelch) {
 		monsters[m].data._msquelch = UCHAR_MAX;
-		monsters[m].data._lastx = plr[pnum].data._px;
-		monsters[m].data._lasty = plr[pnum].data._py;
+		monsters[m].data._last = plr[pnum].data._p;
 	}
 	return TRUE;
 }
@@ -798,12 +787,12 @@ BOOL PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 				plr[pnum].SyncPlrKill(earflag);
 			} else {
 				if (plr[pnum].data._pClass == PC_WARRIOR) {
-					PlaySfxLoc(PS_WARR69, plr[pnum].data._px, plr[pnum].data._py);
+					PlaySfxLoc(PS_WARR69, plr[pnum].data._p);
 #ifndef SPAWN
 				} else if (plr[pnum].data._pClass == PC_ROGUE) {
-					PlaySfxLoc(PS_ROGUE69, plr[pnum].data._px, plr[pnum].data._py);
+					PlaySfxLoc(PS_ROGUE69, plr[pnum].data._p);
 				} else if (plr[pnum].data._pClass == PC_SORCERER) {
-					PlaySfxLoc(PS_MAGE69, plr[pnum].data._px, plr[pnum].data._py);
+					PlaySfxLoc(PS_MAGE69, plr[pnum].data._p);
 #endif
 				}
 				drawhpflag = TRUE;
@@ -811,7 +800,7 @@ BOOL PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 		} else {
 			if (blk < blkper) {
 				if (m != -1) {
-					tac = GetDirection(plr[pnum].data._px, plr[pnum].data._py, monsters[m].data._mx, monsters[m].data._my);
+					tac = GetDirection(plr[pnum].data._p, monsters[m].data._m);
 				} else {
 					tac = plr[pnum].data._pdir;
 				}
@@ -935,10 +924,10 @@ BOOL Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, B
 			} else {
 				return TRUE;
 			}
-			PlaySfxLoc(tac, plr[pnum].data._px, plr[pnum].data._py);
+			PlaySfxLoc(tac, plr[pnum].data._p);
 		} else {
 			if (blkper < blk) {
-				plr[pnum].StartPlrBlock(GetDirection(plr[p].data._px, plr[p].data._py, plr[pnum].data._px, plr[pnum].data._py));
+				plr[pnum].StartPlrBlock(GetDirection(plr[p].data._p, plr[pnum].data._p));
 			} else {
 				if (pnum == myplr())
 					NetSendCmdDamage(TRUE, p, dam);
@@ -950,16 +939,16 @@ BOOL Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, B
 	return FALSE;
 }
 
-void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, BOOLEAN nodel)
+void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, V2Di m, BOOLEAN nodel)
 {
 	int oi;
 
 	if (missile[i]._miAnimType != MFILE_FIREWAL && missile[i]._misource != -1) {
 		if (!missile[i]._micaster) {
-			if (grid[mx][my].dMonster > 0) {
+			if (grid.at(m).dMonster > 0) {
 				if (MonsterMHit(
 				        missile[i]._misource,
-				        grid[mx][my].dMonster - 1,
+				        grid.at(m).dMonster - 1,
 				        mindam,
 				        maxdam,
 				        missile[i]._midist,
@@ -970,11 +959,11 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 					missile[i]._miHitFlag = TRUE;
 				}
 			} else {
-				if (grid[mx][my].dMonster < 0
-				    && monsters[-(grid[mx][my].dMonster + 1)].data._mmode == MM_STONE
+				if (grid.at(m).dMonster < 0
+				    && monsters[-(grid.at(m).dMonster + 1)].data._mmode == MM_STONE
 				    && MonsterMHit(
 				           missile[i]._misource,
-				           -(grid[mx][my].dMonster + 1),
+						   -(grid.at(m).dMonster + 1),
 				           mindam,
 				           maxdam,
 				           missile[i]._midist,
@@ -985,11 +974,11 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 					missile[i]._miHitFlag = TRUE;
 				}
 			}
-			if (grid[mx][my].dPlayer > 0
-			    && grid[mx][my].dPlayer - 1 != missile[i]._misource
+			if (grid.at(m).dPlayer > 0
+			    && grid.at(m).dPlayer - 1 != missile[i]._misource
 			    && Plr2PlrMHit(
 			           missile[i]._misource,
-			           grid[mx][my].dPlayer - 1,
+			        grid.at(m).dPlayer - 1,
 			           mindam,
 			           maxdam,
 			           missile[i]._midist,
@@ -1001,16 +990,16 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 			}
 		} else {
 			if (monsters[missile[i]._misource].data._mFlags & MFLAG_TARGETS_MONSTER
-			    && grid[mx][my].dMonster > 0
-			    && monsters[grid[mx][my].dMonster - 1].data._mFlags & MFLAG_GOLEM
-			    && MonsterTrapHit(grid[mx][my].dMonster - 1, mindam, maxdam, missile[i]._midist, missile[i]._mitype, shift)) {
+			    && grid.at(m).dMonster > 0
+			    && monsters[grid.at(m).dMonster - 1].data._mFlags & MFLAG_GOLEM
+			    && MonsterTrapHit(grid.at(m).dMonster - 1, mindam, maxdam, missile[i]._midist, missile[i]._mitype, shift)) {
 				if (!nodel)
 					missile[i]._mirange = 0;
 				missile[i]._miHitFlag = TRUE;
 			}
-			if (grid[mx][my].dPlayer > 0
+			if (grid.at(m).dPlayer > 0
 			    && PlayerMHit(
-			           grid[mx][my].dPlayer - 1,
+			           grid.at(m).dPlayer - 1,
 			           missile[i]._misource,
 			           missile[i]._midist,
 			           mindam,
@@ -1020,15 +1009,15 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 			           0)) {
 				if (!nodel)
 					missile[i]._mirange = 0;
-				missile[i]._miHitFlag = TRUE;
+					missile[i]._miHitFlag = TRUE;
 			}
 		}
 	} else {
-		if (grid[mx][my].dMonster > 0) {
+		if (grid.at(m).dMonster > 0) {
 			if (missile[i]._miAnimType == MFILE_FIREWAL) {
 				if (MonsterMHit(
 				        missile[i]._misource,
-				        grid[mx][my].dMonster - 1,
+				        grid.at(m).dMonster - 1,
 				        mindam,
 				        maxdam,
 				        missile[i]._midist,
@@ -1038,21 +1027,21 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 						missile[i]._mirange = 0;
 					missile[i]._miHitFlag = TRUE;
 				}
-			} else if (MonsterTrapHit(grid[mx][my].dMonster - 1, mindam, maxdam, missile[i]._midist, missile[i]._mitype, shift)) {
+			} else if (MonsterTrapHit(grid.at(m).dMonster - 1, mindam, maxdam, missile[i]._midist, missile[i]._mitype, shift)) {
 				if (!nodel)
 					missile[i]._mirange = 0;
 				missile[i]._miHitFlag = TRUE;
 			}
 		}
-		if (grid[mx][my].dPlayer > 0
-		    && PlayerMHit(grid[mx][my].dPlayer - 1, -1, missile[i]._midist, mindam, maxdam, missile[i]._mitype, shift, missile[i]._miAnimType == MFILE_FIREWAL)) {
+		if (grid.at(m).dPlayer > 0
+		    && PlayerMHit(grid.at(m).dPlayer - 1, -1, missile[i]._midist, mindam, maxdam, missile[i]._mitype, shift, missile[i]._miAnimType == MFILE_FIREWAL)) {
 			if (!nodel)
 				missile[i]._mirange = 0;
 			missile[i]._miHitFlag = TRUE;
 		}
 	}
-	if (grid[mx][my].dObject) {
-		oi = grid[mx][my].dObject > 0 ? grid[mx][my].dObject - 1 : -(grid[mx][my].dObject + 1);
+	if (grid.at(m).dObject) {
+		oi = grid.at(m).dObject > 0 ? grid.at(m).dObject - 1 : -(grid.at(m).dObject + 1);
 		if (!object[oi]._oMissFlag) {
 			if (object[oi]._oBreak == 1)
 				BreakObject(-1, oi);
@@ -1061,13 +1050,13 @@ void CheckMissileCol(int i, int mindam, int maxdam, BOOL shift, int mx, int my, 
 			missile[i]._miHitFlag = FALSE;
 		}
 	}
-	if (pieces[grid[mx][my].dPiece].nMissileTable) {
+	if (pieces[grid.at(m).dPiece].nMissileTable) {
 		if (!nodel)
 			missile[i]._mirange = 0;
 		missile[i]._miHitFlag = FALSE;
 	}
 	if (!missile[i]._mirange && missiledata[missile[i]._mitype].miSFX != -1)
-		PlaySfxLoc(missiledata[missile[i]._mitype].miSFX, missile[i]._mix, missile[i]._miy);
+		PlaySfxLoc(missiledata[missile[i]._mitype].miSFX, missile[i]._mi);
 }
 
 void SetMissAnim(int mi, int animtype)
@@ -1208,36 +1197,34 @@ void InitMissiles()
 	}
 }
 
-void AddLArrow(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddLArrow(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	if (sx == dx && sy == dy) {
-		dx += XDirAdd[midir];
-		dy += YDirAdd[midir];
+	if (s == d) {
+		d += { XDirAdd[midir], YDirAdd[midir] };
 	}
 	if (!mienemy) {
 		if (plr[id].data._pClass == PC_ROGUE)
-			GetMissileVel(mi, sx, sy, dx, dy, (plr[id].data._pLevel >> 2) + 31);
+			GetMissileVel(mi, s, d, (plr[id].data._pLevel >> 2) + 31);
 		else if (plr[id].data._pClass == PC_WARRIOR)
-			GetMissileVel(mi, sx, sy, dx, dy, (plr[id].data._pLevel >> 3) + 31);
+			GetMissileVel(mi, s, d, (plr[id].data._pLevel >> 3) + 31);
 		else
-			GetMissileVel(mi, sx, sy, dx, dy, 32);
+			GetMissileVel(mi, s, d, 32);
 	} else
-		GetMissileVel(mi, sx, sy, dx, dy, 32);
+		GetMissileVel(mi, s, d, 32);
 
-	SetMissDir(mi, GetDirection16(sx, sy, dx, dy));
+	SetMissDir(mi, GetDirection16(s, d));
 	missile[mi]._mirange = 256;
-	missile[mi]._miVar1 = sx;
-	missile[mi]._miVar2 = sy;
-	missile[mi]._mlid = AddLight(sx, sy, 5);
+	missile[mi]._miVar1 = s.x;
+	missile[mi]._miVar2 = s.y;
+	missile[mi]._mlid = AddLight(s, 5);
 }
 
-void AddArrow(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddArrow(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int av;
 
-	if (sx == dx && sy == dy) {
-		dx += XDirAdd[midir];
-		dy += YDirAdd[midir];
+	if (s == d) {
+		d += { XDirAdd[midir], YDirAdd[midir] };
 	}
 	if (!mienemy) {
 		av = 32;
@@ -1248,36 +1235,33 @@ void AddArrow(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 			av += (plr[id].data._pLevel - 1) >> 2;
 		if (plr[id].data._pClass == PC_WARRIOR)
 			av += (plr[id].data._pLevel - 1) >> 3;
-		GetMissileVel(mi, sx, sy, dx, dy, av);
+		GetMissileVel(mi, s, d, av);
 	} else {
-		GetMissileVel(mi, sx, sy, dx, dy, 32);
+		GetMissileVel(mi, s, d, 32);
 	}
-	missile[mi]._miAnimFrame = GetDirection16(sx, sy, dx, dy) + 1;
+	missile[mi]._miAnimFrame = GetDirection16(s, d) + 1;
 	missile[mi]._mirange = 256;
 }
 
-void GetVileMissPos(int mi, int dx, int dy)
+void GetVileMissPos(int mi, V2Di d)
 {
-	int xx, yy, k, j, i;
-
-	for (k = 1; k < 50; k++) {
-		for (j = -k; j <= k; j++) {
-			yy = j + dy;
-			for (i = -k; i <= k; i++) {
-				xx = i + dx;
-				if (PosOkPlayer(myplr(), xx, yy)) {
-					missile[mi]._mix = xx;
-					missile[mi]._miy = yy;
+	V2Di n;
+	for (int k = 1; k < 50; k++) {
+		for (int j = -k; j <= k; j++) {
+			n.y = j + d.y;
+			for (int i = -k; i <= k; i++) {
+				n.x = i + d.x;
+				if (PosOkPlayer(myplr(), n)) {
+					missile[mi]._mi = n;
 					return;
 				}
 			}
 		}
 	}
-	missile[mi]._mix = dx;
-	missile[mi]._miy = dy;
+	missile[mi]._mi = d;
 }
 
-void AddRndTeleport(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddRndTeleport(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int pn, r1, r2, nTries;
 
@@ -1296,34 +1280,31 @@ void AddRndTeleport(int mi, int sx, int sy, int dx, int dy, int midir, char mien
 		if (random_(58, 2) == 1)
 			r2 = -r2;
 
-		pn = grid[r1 + sx][sy + r2].dPiece;
-	} while (pieces[pn].nSolidTable || grid[r1 + sx][sy + r2].dObject || grid[r1 + sx][sy + r2].dMonster);
+		pn = grid[r1 + s.x][s.y + r2].dPiece;
+	} while (pieces[pn].nSolidTable || grid[r1 + s.x][s.y + r2].dObject || grid[r1 + s.x][s.y + r2].dMonster);
 
 	missile[mi]._mirange = 2;
 	missile[mi]._miVar1 = 0;
 	if (!level.setlevel || level.setlvlnum != SL_VILEBETRAYER) {
-		missile[mi]._mix = sx + r1;
-		missile[mi]._miy = sy + r2;
+		missile[mi]._mi = { s.x + r1, s.y + r2 };
 		if (!mienemy)
 			UseMana(id, SPL_RNDTELEPORT);
 	} else {
-		pn = grid[dx][dy].dObject - 1;
+		pn = grid.at(d).dObject - 1;
 		if (object[pn]._otype == OBJ_MCIRCLE1 || object[pn]._otype == OBJ_MCIRCLE2) {
-			missile[mi]._mix = dx;
-			missile[mi]._miy = dy;
-			if (!PosOkPlayer(myplr(), dx, dy))
-				GetVileMissPos(mi, dx, dy);
+			missile[mi]._mi = d;
+			if (!PosOkPlayer(myplr(), d))
+				GetVileMissPos(mi, d);
 		}
 	}
 }
 
-void AddFirebolt(int mi, int sx, int sy, int dx, int dy, int midir, char micaster, int id, int dam)
+void AddFirebolt(int mi, V2Di s, V2Di d, int midir, char micaster, int id, int dam)
 {
 	int i, mx, sp;
 
-	if (sx == dx && sy == dy) {
-		dx += XDirAdd[midir];
-		dy += YDirAdd[midir];
+	if (s == d) {
+		d += { XDirAdd[midir], YDirAdd[midir] };
 	}
 	if (!micaster) {
 		for (i = 0; i < nummissiles; i++) {
@@ -1343,38 +1324,39 @@ void AddFirebolt(int mi, int sx, int sy, int dx, int dy, int midir, char micaste
 	} else {
 		sp = 26;
 	}
-	GetMissileVel(mi, sx, sy, dx, dy, sp);
-	SetMissDir(mi, GetDirection16(sx, sy, dx, dy));
+	GetMissileVel(mi, s, d, sp);
+	SetMissDir(mi, GetDirection16(s, d));
 	missile[mi]._mirange = 256;
-	missile[mi]._miVar1 = sx;
-	missile[mi]._miVar2 = sy;
-	missile[mi]._mlid = AddLight(sx, sy, 8);
+	missile[mi]._miVar1 = s.x;
+	missile[mi]._miVar2 = s.y;
+	missile[mi]._mlid = AddLight(s, 8);
 }
 
-void AddMagmaball(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddMagmaball(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	GetMissileVel(mi, sx, sy, dx, dy, 16);
-	missile[mi]._mitxoff += 3 * missile[mi]._mixvel;
-	missile[mi]._mityoff += 3 * missile[mi]._miyvel;
+	GetMissileVel(mi, s, d, 16);
+	missile[mi]._mitoff.x += 3 * missile[mi]._mivel.x;
+	missile[mi]._mitoff.y += 3 * missile[mi]._mivel.y;
 	GetMissilePos(mi);
 	missile[mi]._mirange = 256;
-	missile[mi]._miVar1 = sx;
-	missile[mi]._miVar2 = sy;
-	missile[mi]._mlid = AddLight(sx, sy, 8);
+	missile[mi]._miVar1 = s.x;
+	missile[mi]._miVar2 = s.y;
+	missile[mi]._mlid = AddLight(s, 8);
 }
 
-void miss_null_33(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_33(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	GetMissileVel(mi, sx, sy, dx, dy, 16);
+	GetMissileVel(mi, s, d, 16);
 	missile[mi]._mirange = 256;
-	missile[mi]._miVar1 = sx;
-	missile[mi]._miVar2 = sy;
+	missile[mi]._miVar1 = s.x;
+	missile[mi]._miVar2 = s.y;
 	PutMissile(mi);
 }
 
-void AddTeleport(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddTeleport(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	int i, pn, k, j, tx, ty;
+	int i, pn, k, j;
+	V2Di t;
 	int CrawlNum[6] = { 0, 3, 12, 45, 94, 159 };
 
 	missile[mi]._miDelFlag = TRUE;
@@ -1382,14 +1364,12 @@ void AddTeleport(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 		k = CrawlNum[i];
 		pn = k + 2;
 		for (j = (BYTE)CrawlTable[k]; j > 0; j--) {
-			tx = dx + CrawlTable[pn - 1];
-			ty = dy + CrawlTable[pn];
-			if (0 < tx && tx < MAXDUNX && 0 < ty && ty < MAXDUNY) {
-				if (!(pieces[grid[tx][ty].dPiece].nSolidTable | grid[tx][ty].dMonster | grid[tx][ty].dObject | grid[tx][ty].dPlayer)) {
-					missile[mi]._mix = tx;
-					missile[mi]._miy = ty;
-					missile[mi]._misx = tx;
-					missile[mi]._misy = ty;
+			t.x = d.x + CrawlTable[pn - 1];
+			t.y = d.y + CrawlTable[pn];
+			if (0 < t.x && t.x < MAXDUNX && 0 < t.y && t.y < MAXDUNY) {
+				if (!(pieces[grid.at(t).dPiece].nSolidTable | grid.at(t).dMonster | grid.at(t).dObject | grid.at(t).dPlayer)) {
+					missile[mi]._mi = t;
+					missile[mi]._mis = t;
 					missile[mi]._miDelFlag = FALSE;
 					i = 6;
 					break;
@@ -1405,27 +1385,27 @@ void AddTeleport(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 	}
 }
 
-void AddLightball(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddLightball(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	GetMissileVel(mi, sx, sy, dx, dy, 16);
+	GetMissileVel(mi, s, d, 16);
 	missile[mi]._midam = dam;
 	missile[mi]._miAnimFrame = random_(63, 8) + 1;
 	missile[mi]._mirange = 255;
 	if (id < 0) {
-		missile[mi]._miVar1 = sx;
-		missile[mi]._miVar2 = sy;
+		missile[mi]._miVar1 = s.x;
+		missile[mi]._miVar2 = s.y;
 	} else {
-		missile[mi]._miVar1 = plr[id].data._px;
-		missile[mi]._miVar2 = plr[id].data._py;
+		missile[mi]._miVar1 = plr[id].data._p.x;
+		missile[mi]._miVar2 = plr[id].data._p.y;
 	}
 }
 
-void AddFirewall(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFirewall(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
 	missile[mi]._midam = 16 * (random_(53, 10) + random_(53, 10) + plr[id].data._pLevel + 2) >> 1;
-	GetMissileVel(mi, sx, sy, dx, dy, 16);
+	GetMissileVel(mi, s, d, 16);
 	missile[mi]._mirange = 10;
 	i = missile[mi]._mispllvl;
 	if (i > 0)
@@ -1435,13 +1415,12 @@ void AddFirewall(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 	missile[mi]._miVar2 = 0;
 }
 
-void AddFireball(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFireball(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
-	if (sx == dx && sy == dy) {
-		dx += XDirAdd[midir];
-		dy += YDirAdd[midir];
+	if (s == d) {
+		d += { XDirAdd[midir], YDirAdd[midir] };
 	}
 	if (!mienemy) {
 		missile[mi]._midam = 2 * (plr[id].data._pLevel + random_(60, 10) + random_(60, 10)) + 4;
@@ -1455,37 +1434,34 @@ void AddFireball(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 	} else {
 		i = 16;
 	}
-	GetMissileVel(mi, sx, sy, dx, dy, i);
-	SetMissDir(mi, GetDirection16(sx, sy, dx, dy));
+	GetMissileVel(mi, s, d, i);
+	SetMissDir(mi, GetDirection16(s, d));
 	missile[mi]._mirange = 256;
-	missile[mi]._miVar1 = sx;
-	missile[mi]._miVar2 = sy;
+	missile[mi]._miVar1 = s.x;
+	missile[mi]._miVar2 = s.y;
 	missile[mi]._miVar3 = 0;
-	missile[mi]._miVar4 = sx;
-	missile[mi]._miVar5 = sy;
-	missile[mi]._mlid = AddLight(sx, sy, 8);
+	missile[mi]._miVar4 = s.x;
+	missile[mi]._miVar5 = s.y;
+	missile[mi]._mlid = AddLight(s, 8);
 }
 
-void AddLightctrl(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddLightctrl(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	if (!dam && !mienemy)
 		UseMana(id, SPL_LIGHTNING);
-	missile[mi]._miVar1 = sx;
-	missile[mi]._miVar2 = sy;
-	GetMissileVel(mi, sx, sy, dx, dy, 32);
+	missile[mi]._miVar1 = s.x;
+	missile[mi]._miVar2 = s.y;
+	GetMissileVel(mi, s, d, 32);
 	missile[mi]._miAnimFrame = random_(52, 8) + 1;
 	missile[mi]._mirange = 256;
 }
 
-void AddLightning(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddLightning(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	missile[mi]._misx = dx;
-	missile[mi]._misy = dy;
+	missile[mi]._mis = d;
 	if (midir >= 0) {
-		missile[mi]._mixoff = missile[midir]._mixoff;
-		missile[mi]._miyoff = missile[midir]._miyoff;
-		missile[mi]._mitxoff = missile[midir]._mitxoff;
-		missile[mi]._mityoff = missile[midir]._mityoff;
+		missile[mi]._mioff = missile[midir]._mioff;
+		missile[mi]._mitoff = missile[midir]._mitoff;
 	}
 	missile[mi]._miAnimFrame = random_(52, 8) + 1;
 
@@ -1497,10 +1473,10 @@ void AddLightning(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	} else {
 		missile[mi]._mirange = (missile[mi]._mispllvl >> 1) + 6;
 	}
-	missile[mi]._mlid = AddLight(missile[mi]._mix, missile[mi]._miy, 4);
+	missile[mi]._mlid = AddLight(missile[mi]._mi, 4);
 }
 
-void AddMisexp(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddMisexp(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	CMonster *mon;
 
@@ -1516,50 +1492,40 @@ void AddMisexp(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 			SetMissAnim(mi, MFILE_SCBSEXPC);
 	}
 
-	missile[mi]._mix = missile[dx]._mix;
-	missile[mi]._miy = missile[dx]._miy;
-	missile[mi]._misx = missile[dx]._misx;
-	missile[mi]._misy = missile[dx]._misy;
-	missile[mi]._mixoff = missile[dx]._mixoff;
-	missile[mi]._miyoff = missile[dx]._miyoff;
-	missile[mi]._mitxoff = missile[dx]._mitxoff;
-	missile[mi]._mityoff = missile[dx]._mityoff;
-	missile[mi]._mixvel = 0;
-	missile[mi]._miyvel = 0;
+	missile[mi]._mi = missile[d.x]._mi;
+	missile[mi]._mis = missile[d.x]._mis;
+	missile[mi]._mioff = missile[d.x]._mioff;
+	missile[mi]._mitoff = missile[d.x]._mitoff;
+	missile[mi]._mivel = { 0, 0 };
 	missile[mi]._mirange = missile[mi]._miAnimLen;
 	missile[mi]._miVar1 = 0;
 }
 
-void AddWeapexp(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddWeapexp(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	missile[mi]._mix = sx;
-	missile[mi]._miy = sy;
-	missile[mi]._misx = sx;
-	missile[mi]._misy = sy;
-	missile[mi]._mixvel = 0;
-	missile[mi]._miyvel = 0;
+	missile[mi]._mi = s;
+	missile[mi]._mis = s;
+	missile[mi]._mivel = { 0, 0 };
 	missile[mi]._miVar1 = 0;
-	missile[mi]._miVar2 = dx;
+	missile[mi]._miVar2 = d.x;
 	missile[mi]._mimfnum = 0;
-	if (dx == 1)
+	if (d.x == 1)
 		SetMissAnim(mi, MFILE_MAGBLOS);
 	else
 		SetMissAnim(mi, MFILE_MINILTNG);
 	missile[mi]._mirange = missile[mi]._miAnimLen - 1;
 }
 
-BOOL CheckIfTrig(int x, int y)
+BOOL CheckIfTrig(V2Di t)
 {
-	int i;
-
-	for (i = 0; i < numtrigs; i++) {
-		if ((x == trigs[i]._tx && y == trigs[i]._ty) || (abs(trigs[i]._tx - x) < 2 && abs(trigs[i]._ty - y) < 2))
+	for (int i = 0; i < numtrigs; i++) {
+		if ((t == trigs[i]._t) || (abs(trigs[i]._t.x - x) < 2 && abs(trigs[i]._t.y - y) < 2))
 			return TRUE;
 	}
 	return FALSE;
 }
 
-void AddTown(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddTown(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i, j, k, mx, tx, ty, dp;
 	int CrawlNum[6] = { 0, 3, 12, 45, 94, 159 };
@@ -1615,7 +1581,7 @@ void AddTown(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 	}
 }
 
-void AddFlash(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFlash(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -1639,7 +1605,7 @@ void AddFlash(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	missile[mi]._mirange = 19;
 }
 
-void AddFlash2(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFlash2(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -1661,7 +1627,7 @@ void AddFlash2(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 	missile[mi]._mirange = 19;
 }
 
-void AddManashield(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddManashield(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._mirange = 48 * plr[id].data._pLevel;
 	missile[mi]._miVar1 = plr[id].data._pHitPoints;
@@ -1674,21 +1640,22 @@ void AddManashield(int mi, int sx, int sy, int dx, int dy, int midir, char miene
 	plr[id].data.pManaShield = TRUE;
 }
 
-void AddFiremove(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFiremove(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._midam = random_(59, 10) + plr[id].data._pLevel + 1;
-	GetMissileVel(mi, sx, sy, dx, dy, 16);
+	GetMissileVel(mi, s, d, 16);
 	missile[mi]._mirange = 255;
 	missile[mi]._miVar1 = 0;
 	missile[mi]._miVar2 = 0;
-	missile[mi]._mix++;
-	missile[mi]._miy++;
-	missile[mi]._miyoff -= 32;
+	missile[mi]._mi.x++;
+	missile[mi]._mi.y++;
+	missile[mi]._mioff.y -= 32;
 }
 
-void AddGuardian(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddGuardian(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
-	int i, pn, k, j, tx, ty;
+	V2Di t;
+	int i, pn, k, j;
 	int CrawlNum[6] = { 0, 3, 12, 45, 94, 159 };
 
 	missile[mi]._midam = random_(62, 10) + (plr[id].data._pLevel >> 1) + 1;
@@ -1701,11 +1668,10 @@ void AddGuardian(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 		pn = CrawlNum[i];
 		k = pn + 2;
 		for (j = (BYTE)CrawlTable[pn]; j > 0; j--) {
-			tx = dx + CrawlTable[k - 1];
-			ty = dy + CrawlTable[k];
-			pn = grid[tx][ty].dPiece;
-			if (tx > 0 && tx < MAXDUNX && ty > 0 && ty < MAXDUNY) {
-				if (LineClear(sx, sy, tx, ty)) {
+			t = { d.x + CrawlTable[k - 1], d.y + CrawlTable[k] };
+			pn = grid.at(t).dPiece;
+			if (t.x > 0 && t.x < MAXDUNX && t.y > 0 && t.y < MAXDUNY) {
+				if (LineClear(s, t)) {
 					if (!(grid[tx][ty].dMonster | pieces[pn].nSolidTable | pieces[pn].nMissileTable | grid[tx][ty].dObject | grid[tx][ty].dMissile)) {
 						missile[mi]._mix = tx;
 						missile[mi]._miy = ty;
@@ -1740,7 +1706,7 @@ void AddGuardian(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 	}
 }
 
-void AddChain(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddChain(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miVar1 = dx;
 	missile[mi]._miVar2 = dy;
@@ -1748,7 +1714,7 @@ void AddChain(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	UseMana(id, SPL_CHAIN);
 }
 
-void miss_null_11(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_11(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	SetMissDir(mi, dx);
 	missile[mi]._midam = 0;
@@ -1756,7 +1722,7 @@ void miss_null_11(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._mirange = 250;
 }
 
-void miss_null_12(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_12(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	if (dx > 3)
 		dx = 2;
@@ -1766,7 +1732,7 @@ void miss_null_12(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._mirange = 250;
 }
 
-void miss_null_13(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_13(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	if (dx > 3)
 		dx = 2;
@@ -1776,7 +1742,7 @@ void miss_null_13(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._mirange = missile[mi]._miAnimLen;
 }
 
-void AddRhino(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddRhino(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	AnimStruct *anim;
 
@@ -1811,7 +1777,7 @@ void AddRhino(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	PutMissile(mi);
 }
 
-void miss_null_32(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_32(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	AnimStruct *anim;
 	MonsterStruct *mon;
@@ -1837,7 +1803,7 @@ void miss_null_32(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	PutMissile(mi);
 }
 
-void AddFlare(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFlare(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	if (sx == dx && sy == dy) {
 		dx += XDirAdd[midir];
@@ -1869,7 +1835,7 @@ void AddFlare(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	}
 }
 
-void AddAcid(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddAcid(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	GetMissileVel(mi, sx, sy, dx, dy, 16);
 	SetMissDir(mi, GetDirection16(sx, sy, dx, dy));
@@ -1880,7 +1846,7 @@ void AddAcid(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 	PutMissile(mi);
 }
 
-void miss_null_1D(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_1D(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._midam = dam;
 	missile[mi]._mixvel = 0;
@@ -1890,7 +1856,7 @@ void miss_null_1D(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._miVar2 = 0;
 }
 
-void AddAcidpud(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddAcidpud(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int monst;
 
@@ -1904,7 +1870,7 @@ void AddAcidpud(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy,
 	missile[mi]._miPreFlag = TRUE;
 }
 
-void AddStone(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddStone(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i, j, k, l, tx, ty, mid;
 	int CrawlNum[6] = { 0, 3, 12, 45, 94, 159 };
@@ -1951,7 +1917,7 @@ void AddStone(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	}
 }
 
-void AddGolem(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddGolem(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 	int mx;
@@ -1975,7 +1941,7 @@ void AddGolem(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	UseMana(id, SPL_GOLEM);
 }
 
-void AddEtherealize(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddEtherealize(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -1990,12 +1956,12 @@ void AddEtherealize(int mi, int sx, int sy, int dx, int dy, int midir, char mien
 		UseMana(id, SPL_ETHEREALIZE);
 }
 
-void miss_null_1F(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_1F(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 }
 
-void miss_null_23(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void miss_null_23(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._midam = dam;
 	missile[mi]._mix = sx;
@@ -2011,7 +1977,7 @@ void miss_null_23(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._mirange = missile[mi]._miAnimLen;
 }
 
-void AddBoom(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddBoom(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._mix = dx;
 	missile[mi]._miy = dy;
@@ -2024,7 +1990,7 @@ void AddBoom(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 	missile[mi]._miVar1 = 0;
 }
 
-void AddHeal(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddHeal(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 	int HealAmount;
@@ -2056,7 +2022,7 @@ void AddHeal(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 	drawhpflag = TRUE;
 }
 
-void AddHealOther(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddHealOther(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 	UseMana(id, SPL_HEALOTHER);
@@ -2067,7 +2033,7 @@ void AddHealOther(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	}
 }
 
-void AddElement(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddElement(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -2094,7 +2060,7 @@ void AddElement(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy,
 
 extern void FocusOnInventory();
 
-void AddIdentify(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddIdentify(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 	UseMana(id, SPL_IDENTIFY);
@@ -2110,7 +2076,7 @@ void AddIdentify(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 	}
 }
 
-void AddFirewallC(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFirewallC(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i, j, k, tx, ty, pn;
 	int CrawlNum[6] = { 0, 3, 12, 45, 94, 159 };
@@ -2150,7 +2116,7 @@ void AddFirewallC(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	}
 }
 
-void AddInfra(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddInfra(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -2163,7 +2129,7 @@ void AddInfra(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 		UseMana(id, SPL_INFRA);
 }
 
-void AddWave(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddWave(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miVar1 = dx;
 	missile[mi]._miVar2 = dy;
@@ -2174,7 +2140,7 @@ void AddWave(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 	UseMana(id, SPL_WAVE);
 }
 
-void AddNova(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddNova(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int k;
 
@@ -2195,12 +2161,12 @@ void AddNova(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, in
 	missile[mi]._mirange = 1;
 }
 
-void AddBlodboil(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddBlodboil(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = 1;
 }
 
-void AddRepair(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddRepair(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 	UseMana(id, SPL_REPAIR);
@@ -2216,7 +2182,7 @@ void AddRepair(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 	}
 }
 
-void AddRecharge(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddRecharge(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 	UseMana(id, SPL_RECHARGE);
@@ -2232,7 +2198,7 @@ void AddRecharge(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy
 	}
 }
 
-void AddDisarm(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddDisarm(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 	UseMana(id, SPL_DISARM);
@@ -2247,7 +2213,7 @@ void AddDisarm(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 	}
 }
 
-void AddApoca(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddApoca(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -2273,7 +2239,7 @@ void AddApoca(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	UseMana(id, SPL_APOCA);
 }
 
-void AddFlame(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFlame(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int i;
 
@@ -2297,7 +2263,7 @@ void AddFlame(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 	}
 }
 
-void AddFlamec(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddFlamec(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	if (sx == dx && sy == dy) {
 		dx += XDirAdd[midir];
@@ -2312,7 +2278,7 @@ void AddFlamec(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 	missile[mi]._mirange = 256;
 }
 
-void AddCbolt(int mi, int sx, int sy, int dx, int dy, int midir, char micaster, int id, int dam)
+void AddCbolt(int mi, V2Di s, V2Di d, int midir, char micaster, int id, int dam)
 {
 	assert((DWORD)mi < MAXMISSILES);
 
@@ -2344,7 +2310,7 @@ void AddCbolt(int mi, int sx, int sy, int dx, int dy, int midir, char micaster, 
 	missile[mi]._mirange = 256;
 }
 
-void AddHbolt(int mi, int sx, int sy, int dx, int dy, int midir, char micaster, int id, int dam)
+void AddHbolt(int mi, V2Di s, V2Di d, int midir, char micaster, int id, int dam)
 {
 	int sp;
 
@@ -2370,7 +2336,7 @@ void AddHbolt(int mi, int sx, int sy, int dx, int dy, int midir, char micaster, 
 	UseMana(id, SPL_HBOLT);
 }
 
-void AddResurrect(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddResurrect(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	UseMana(id, SPL_RESURRECT);
 	if (id == myplr()) {
@@ -2381,7 +2347,7 @@ void AddResurrect(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._miDelFlag = TRUE;
 }
 
-void AddResurrectBeam(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddResurrectBeam(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._mix = dx;
 	missile[mi]._miy = dy;
@@ -2392,7 +2358,7 @@ void AddResurrectBeam(int mi, int sx, int sy, int dx, int dy, int midir, char mi
 	missile[mi]._mirange = misfiledata[MFILE_RESSUR1].mAnimLen[0];
 }
 
-void AddTelekinesis(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddTelekinesis(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = TRUE;
 	UseMana(id, SPL_TELEKINESIS);
@@ -2400,7 +2366,7 @@ void AddTelekinesis(int mi, int sx, int sy, int dx, int dy, int midir, char mien
 		SetCursor_(CURSOR_TELEKINESIS);
 }
 
-void AddBoneSpirit(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddBoneSpirit(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	if (sx == dx && sy == dy) {
 		dx = XDirAdd[midir] + dx;
@@ -2426,7 +2392,7 @@ void AddBoneSpirit(int mi, int sx, int sy, int dx, int dy, int midir, char miene
 	}
 }
 
-void AddRportal(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddRportal(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	missile[mi]._mix = sx;
 	missile[mi]._miy = sy;
@@ -2438,7 +2404,7 @@ void AddRportal(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy,
 	PutMissile(mi);
 }
 
-void AddDiabApoca(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
+void AddDiabApoca(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam)
 {
 	int pnum;
 
@@ -2452,7 +2418,7 @@ void AddDiabApoca(int mi, int sx, int sy, int dx, int dy, int midir, char mienem
 	missile[mi]._miDelFlag = TRUE;
 }
 
-int AddMissile(int sx, int sy, int dx, int dy, int midir, int mitype, char micaster, int id, int midam, int spllvl)
+int AddMissile(V2Di s, V2Di d, int midir, int mitype, char micaster, int id, int midam, int spllvl)
 {
 	int i, mi;
 
@@ -3480,8 +3446,8 @@ void MI_Teleport(int i)
 			ChangeVisionXY(plr[id].data._pvid, plr[id].data._px, plr[id].data._py);
 		}
 		if (id == myplr()) {
-			ViewX = plr[id].data._px - ScrollInfo._sdx;
-			ViewY = plr[id].data._py - ScrollInfo._sdy;
+			View.x = plr[id].data._px - ScrollInfo._sdx;
+			View.y = plr[id].data._py - ScrollInfo._sdy;
 		}
 	}
 }

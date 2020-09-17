@@ -49,7 +49,7 @@ public:
 	void StartWalkStand();
 	void PM_ChangeLightOff();
 	void PM_ChangeOffset();
-	void StartWalk(int xvel, int yvel, int xadd, int yadd, int EndDir, int sdir);
+	void StartWalk(V2Di vel, V2Di add, int EndDir, int sdir);
 	void StartWalk2(int xvel, int yvel, int xoff, int yoff, int xadd, int yadd, int EndDir, int sdir);
 	void StartWalk3(int xvel, int yvel, int xoff, int yoff, int xadd, int yadd, int mapx, int mapy, int EndDir, int sdir);
 	void StartAttack(int d);
@@ -89,8 +89,8 @@ public:
 	void CheckNewPath();
 	void CheckCheatStats();
 	void ClrPlrPath();
-	BOOL PosOkPlayer(int x, int y);
-	void MakePlrPath(int xx, int yy, BOOL endspace);
+	BOOL PosOkPlayer(V2Di pos);
+	void MakePlrPath(V2Di pos, BOOL endspace);
 	void SyncPlrAnim();
 	void SyncInitPlrPos();
 	void SyncInitPlr();
@@ -150,7 +150,7 @@ private:
 
 extern PlayerManager plr;
 
-BOOL PosOkPlayer(int pnum, int x, int y);
+BOOL PosOkPlayer(int pnum, V2Di pos);
 BOOL PlrDeathModeOK(int p);
 
 extern int plr_lframe_size;
@@ -171,10 +171,10 @@ void SetPlayerGPtrs(BYTE *pData, BYTE **pAnim);
 DWORD GetPlrGFXSize(char *szCel);
 void AddPlrMonstExper(int lvl, int exp, char pmask);
 void InitMultiView();
-BOOL SolidLoc(int x, int y);
-void PlrClrTrans(int x, int y);
-void PlrDoTrans(int x, int y);
-void RespawnDeadItem(ItemStruct *itm, int x, int y);
+BOOL SolidLoc(V2Di pos);
+void PlrClrTrans(V2Di pos);
+void PlrDoTrans(V2Di pos);
+void RespawnDeadItem(ItemStruct *itm, V2Di pos);
 void ValidatePlayer();
 void ProcessPlayers();
 void CheckPlrSpell();
@@ -188,7 +188,8 @@ extern const char CharChar[];
 
 /* data */
 
-extern int plrxoff[9];
+extern int plrxoff[9]; // stores x and y offsets for players independently for multiplayer for some reason
+						// 9 slots even though only 4 players max (assuming higher slots are not used?)
 extern int plryoff[9];
 extern int plrxoff2[9];
 extern int plryoff2[9];

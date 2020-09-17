@@ -314,16 +314,16 @@ static BOOL DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int c
 	}
 
 	if (setview == TRUE) {
-		ViewX = 2 * sx + 21;
-		ViewY = 2 * sy + 22;
+		View.x = 2 * sx + 21;
+		View.y = 2 * sy + 22;
 	}
 	if (ldir == 0) {
-		LvlViewX = 2 * sx + 21;
-		LvlViewY = 2 * sy + 22;
+		LvlView.x = 2 * sx + 21;
+		LvlView.y = 2 * sy + 22;
 	}
 	if (ldir == 6) {
-		LvlViewX = 2 * sx + 21;
-		LvlViewY = 2 * sy + 22;
+		LvlView.x = 2 * sx + 21;
+		LvlView.y = 2 * sy + 22;
 	}
 
 	return TRUE;
@@ -500,10 +500,10 @@ static void DRLG_L2SetRoom(int rx1, int ry1)
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
 
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc.x = rx1;
+	setpc.y = ry1;
+	setpc.w = rw;
+	setpc.h = rh;
 
 	sp = &pSetPiece[4];
 
@@ -1757,7 +1757,7 @@ static void DRLG_L2(int entry)
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 0, 6);
 				}
 			}
-			ViewY -= 2;
+			View.y -= 2;
 		} else if (entry == 1) {
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 0, 0);
 			if (doneflag) {
@@ -1766,7 +1766,7 @@ static void DRLG_L2(int entry)
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 0, 6);
 				}
 			}
-			ViewX--;
+			View.x--;
 		} else {
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 0, 0);
 			if (doneflag) {
@@ -1775,7 +1775,7 @@ static void DRLG_L2(int entry)
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 1, 6);
 				}
 			}
-			ViewY -= 2;
+			View.y -= 2;
 		}
 	}
 
@@ -2027,8 +2027,8 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 		}
 	}
 
-	ViewX = vx;
-	ViewY = vy;
+	View.x = vx;
+	View.y = vy;
 	SetMapMonsters(pLevelMap, 0, 0);
 	SetMapObjects(pLevelMap, 0, 0);
 	mem_free_dbg(pLevelMap);
@@ -2106,10 +2106,8 @@ void CreateL2Dungeon(DWORD rseed, int entry)
 
 	SetRndSeed(rseed);
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	DRLG_InitSetPC();

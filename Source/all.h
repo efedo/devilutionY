@@ -56,10 +56,14 @@
 #include "missiles.h"
 #include "actors/monstdat.h"
 #include "actors/monster.h"
+#include "actors/monster_type.h"
+#include "actors/monster_manager.h"
+#include "actors/monster_beastiary.h"
+#include "actors/monster_instance.h"
 #include "media/movie.h"
 #include "media/mpqapi.h"
-#include "msg.h"
-#include "multi.h"
+#include "multiplayer/msg.h"
+#include "multiplayer/multi.h"
 #include "nthread.h"
 #include "objdat.h"
 #include "objects.h"
@@ -79,7 +83,7 @@
 #include "spelldat.h"
 #include "spells.h"
 #include "stores.h"
-#include "sync.h"
+#include "multiplayer/sync.h"
 #include "textdat.h" // check file name
 #include "themes.h"
 #include "tmsg.h"
@@ -87,6 +91,20 @@
 #include "actors/towners.h"
 #include "track.h"
 #include "trigs.h"
+#include "vectordvl.h"
+
+//DEVILUTION_BEGIN_NAMESPACE
+//
+//// Lean 2D int vector
+//class V2Di {
+//public:
+//	V2Di(int nx = 0, int ny = 0);
+//	int x;
+//	int y;
+//};
+//
+//DEVILUTION_END_NAMESPACE
+
 #include "media/wave.h"
 #include "render.h" // linked last, likely .s/.asm
 

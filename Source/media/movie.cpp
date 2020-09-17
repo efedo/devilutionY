@@ -47,8 +47,8 @@ void play_movie(char *pszMovie, BOOL user_can_close)
 		SVidPlayEnd(video_stream);
 	sound_disable_music(FALSE);
 	movie_playing = FALSE;
-	SDL_GetMouseState(&MouseX, &MouseY);
-	OutputToLogical(&MouseX, &MouseY);
+	SDL_GetMouseState(&Mouse.x, &Mouse.y);
+	OutputToLogical(&Mouse.x, &Mouse.y);
 }
 
 DEVILUTION_END_NAMESPACE

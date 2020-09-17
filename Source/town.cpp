@@ -153,23 +153,23 @@ void CreateTown(int entry)
 	DRLG_Init_Globals();
 
 	if (entry == 0) {
-		ViewX = 75;
-		ViewY = 68;
+		View.x = 75;
+		View.y = 68;
 	} else if (entry == 1) {
-		ViewX = 25;
-		ViewY = 31;
+		View.x = 25;
+		View.y = 31;
 	} else if (entry == 7) {
 		if (TWarpFrom == 5) {
-			ViewX = 49;
-			ViewY = 22;
+			View.x = 49;
+			View.y = 22;
 		}
 		if (TWarpFrom == 9) {
-			ViewX = 18;
-			ViewY = 69;
+			View.x = 18;
+			View.y = 69;
 		}
 		if (TWarpFrom == 13) {
-			ViewX = 41;
-			ViewY = 81;
+			View.x = 41;
+			View.y = 81;
 		}
 	}
 

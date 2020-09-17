@@ -457,10 +457,10 @@ void AttrIncBtnSnap(MoveDirectionY dir)
 	// first, find our cursor location
 	int slot = 0;
 	for (int i = 0; i < 4; i++) {
-		if (MouseX >= ChrBtnsRect[i].x
-		    && MouseX <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
-		    && MouseY >= ChrBtnsRect[i].y
-		    && MouseY <= ChrBtnsRect[i].h + ChrBtnsRect[i].y) {
+		if (Mouse.x >= ChrBtnsRect[i].x
+		    && Mouse.x <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
+		    && Mouse.y >= ChrBtnsRect[i].y
+		    && Mouse.y <= ChrBtnsRect[i].h + ChrBtnsRect[i].y) {
 			slot = i;
 			break;
 		}
@@ -490,8 +490,8 @@ void InvMove(MoveDirection dir)
 		return;
 	}
 	invmove = ticks;
-	int x = MouseX;
-	int y = MouseY;
+	int x = Mouse.x;
+	int y = Mouse.y;
 
 	// check which inventory rectangle the mouse is in, if any
 	for (int r = 0; (DWORD)r < NUM_XY_SLOTS; r++) {
@@ -625,12 +625,12 @@ void InvMove(MoveDirection dir)
 		}
 	}
 
-	if (x == MouseX && y == MouseY) {
+	if (x == Mouse.x && y == Mouse.y) {
 		return; // Avoid wobeling when scalled
 	}
 
 	if (pcurs > 1) {       // [3] Keep item in the same slot, don't jump it up
-		if (x != MouseX) { // without this, the cursor keeps moving -10
+		if (x != Mouse.x) { // without this, the cursor keeps moving -10
 			x -= 10;
 			y -= 10;
 		}
@@ -642,7 +642,7 @@ void InvMove(MoveDirection dir)
 bool HSExists(int x, int y)
 {
 	for (int r = 0; r < speedspellcount; r++) { // speedbook cells are 56x56
-		if (MouseX >= speedspellscoords[r].x - 28 && MouseX < speedspellscoords[r].x + (28) && MouseY >= speedspellscoords[r].y - (28) && MouseY < speedspellscoords[r].y + 28) {
+		if (Mouse.x >= speedspellscoords[r].x - 28 && Mouse.x < speedspellscoords[r].x + (28) && Mouse.y >= speedspellscoords[r].y - (28) && Mouse.y < speedspellscoords[r].y + 28) {
 			return true;
 		}
 	}
@@ -668,7 +668,7 @@ void HotSpellMove(MoveDirection dir)
 			hsr[1]++;
 		if (speedspellscoords[r].y == 195)
 			hsr[2]++;
-		if (MouseX >= speedspellscoords[r].x - 28 && MouseX < speedspellscoords[r].x + (28) && MouseY >= speedspellscoords[r].y - (28) && MouseY < speedspellscoords[r].y + 28) {
+		if (Mouse.x >= speedspellscoords[r].x - 28 && Mouse.x < speedspellscoords[r].x + (28) && Mouse.y >= speedspellscoords[r].y - (28) && Mouse.y < speedspellscoords[r].y + 28) {
 			spbslot = r;
 			//sprintf(tempstr, "IN HOT SPELL CELL NUM:%i", r);
 			//NetSendCmdString(1 << myplr(), tempstr);
@@ -677,25 +677,25 @@ void HotSpellMove(MoveDirection dir)
 
 	if (dir.y == MoveDirectionY_UP) {
 		if (speedspellscoords[spbslot].y == 307 && hsr[1] > 0) { // we're in row 1, check if row 2 has spells
-			if (HSExists(MouseX, 251)) {
-				x = MouseX;
+			if (HSExists(Mouse.x, 251)) {
+				x = Mouse.x;
 				y = 251;
 			}
 		} else if (speedspellscoords[spbslot].y == 251 && hsr[2] > 0) { // we're in row 2, check if row 3 has spells
-			if (HSExists(MouseX, 195)) {
-				x = MouseX;
+			if (HSExists(Mouse.x, 195)) {
+				x = Mouse.x;
 				y = 195;
 			}
 		}
 	} else if (dir.y == MoveDirectionY_DOWN) {
 		if (speedspellscoords[spbslot].y == 251) { // we're in row 2
-			if (HSExists(MouseX, 307)) {
-				x = MouseX;
+			if (HSExists(Mouse.x, 307)) {
+				x = Mouse.x;
 				y = 307;
 			}
 		} else if (speedspellscoords[spbslot].y == 195) { // we're in row 3
-			if (HSExists(MouseX, 251)) {
-				x = MouseX;
+			if (HSExists(Mouse.x, 251)) {
+				x = Mouse.x;
 				y = 251;
 			}
 		}
@@ -904,8 +904,8 @@ void HandleRightStickMotion()
 
 	{ // move cursor
 		sgbControllerActive = false;
-		int x = MouseX;
-		int y = MouseY;
+		int x = Mouse.x;
+		int y = Mouse.y;
 		acc.pool(&x, &y, 2);
 		x = std::min(std::max(x, 0), SCREEN_WIDTH - 1);
 		y = std::min(std::max(y, 0), SCREEN_HEIGHT - 1);
@@ -988,10 +988,10 @@ void PerformPrimaryAction()
 	if (chrflag && !chrbtnactive && myplr().data._pStatPts > 0) {
 		CheckChrBtns();
 		for (int i = 0; i < 4; i++) {
-			if (MouseX >= ChrBtnsRect[i].x
-			    && MouseX <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
-			    && MouseY >= ChrBtnsRect[i].y
-			    && MouseY <= ChrBtnsRect[i].h + ChrBtnsRect[i].y) {
+			if (Mouse.x >= ChrBtnsRect[i].x
+			    && Mouse.x <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
+			    && Mouse.y >= ChrBtnsRect[i].y
+			    && Mouse.y <= ChrBtnsRect[i].h + ChrBtnsRect[i].y) {
 				chrbtn[i] = 1;
 				chrbtnactive = true;
 				ReleaseChrBtns();

@@ -92,7 +92,8 @@ void ClrDiabloMsg()
 
 void DrawDiabloMsg()
 {
-	int i, len, width, sx, sy;
+	int i, len, width;
+	V2Di s;
 	BYTE c;
 
 	CelDraw(PANEL_X + 101, DIALOG_Y, pSTextSlidCels, 1, 12);
@@ -100,17 +101,17 @@ void DrawDiabloMsg()
 	CelDraw(PANEL_X + 101, DIALOG_Y + 48, pSTextSlidCels, 2, 12);
 	CelDraw(PANEL_X + 527, DIALOG_Y + 48, pSTextSlidCels, 3, 12);
 
-	sx = PANEL_X + 109;
+	s.x = PANEL_X + 109;
 	for (i = 0; i < 35; i++) {
-		CelDraw(sx, DIALOG_Y, pSTextSlidCels, 5, 12);
-		CelDraw(sx, DIALOG_Y + 48, pSTextSlidCels, 7, 12);
-		sx += 12;
+		CelDraw(s.x, DIALOG_Y, pSTextSlidCels, 5, 12);
+		CelDraw(s.x, DIALOG_Y + 48, pSTextSlidCels, 7, 12);
+		s.x += 12;
 	}
-	sy = DIALOG_Y + 12;
+	s.y = DIALOG_Y + 12;
 	for (i = 0; i < 3; i++) {
-		CelDraw(PANEL_X + 101, sy, pSTextSlidCels, 6, 12);
-		CelDraw(PANEL_X + 527, sy, pSTextSlidCels, 8, 12);
-		sy += 12;
+		CelDraw(PANEL_X + 101, s.y, pSTextSlidCels, 6, 12);
+		CelDraw(PANEL_X + 527, s.y, pSTextSlidCels, 8, 12);
+		s.y += 12;
 	}
 
 	assert(gpBuffer);
@@ -118,8 +119,8 @@ void DrawDiabloMsg()
 	trans_rect(PANEL_LEFT + 104, DIALOG_TOP - 8, 432, 54);
 
 	strcpy(tempstr, MsgStrings[msgflag]);
-	sx = PANEL_X + 101;
-	sy = DIALOG_Y + 24;
+	s.x = PANEL_X + 101;
+	s.y = DIALOG_Y + 24;
 	len = strlen(tempstr);
 	width = 0;
 
@@ -128,15 +129,15 @@ void DrawDiabloMsg()
 	}
 
 	if (width < 442) {
-		sx += (442 - width) >> 1;
+		s.x += (442 - width) >> 1;
 	}
 
 	for (i = 0; i < len; i++) {
 		c = fontframe[gbFontTransTbl[(BYTE)tempstr[i]]];
 		if (c != '\0') {
-			PrintChar(sx, sy, c, COL_GOLD);
+			PrintChar(s, c, COL_GOLD);
 		}
-		sx += fontkern[c] + 1;
+		s.x += fontkern[c] + 1;
 	}
 
 	if (msgdelay > 0 && msgdelay <= SDL_GetTicks() - 3500) {

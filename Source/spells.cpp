@@ -180,8 +180,8 @@ static void PlacePlayer(int pnum)
 		grid[nx][ny].dPlayer = pnum + 1;
 
 		if (pnum == myplr()) {
-			ViewX = nx;
-			ViewY = ny;
+			View.x = nx;
+			View.y = ny;
 		}
 	}
 }

@@ -365,14 +365,9 @@ void DRLG_L4SetSPRoom(int rx1, int ry1)
 {
 	int rw, rh, i, j;
 	BYTE *sp;
-
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
-
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc = { rx1, ry1, rw, rh };
 
 	sp = &pSetPiece[4];
 
@@ -1538,12 +1533,12 @@ static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 		quests[Q_BETRAYER]._qty = sy + 1;
 	}
 	if (setview == TRUE) {
-		ViewX = 2 * sx + 21;
-		ViewY = 2 * sy + 22;
+		View.x = 2 * sx + 21;
+		View.y = 2 * sy + 22;
 	}
 	if (ldir == 0) {
-		LvlViewX = 2 * sx + 21;
-		LvlViewY = 2 * sy + 22;
+		LvlView.x = 2 * sx + 21;
+		LvlView.y = 2 * sy + 22;
 	}
 
 	return TRUE;
@@ -1773,20 +1768,20 @@ static void DRLG_L4(int entry)
 				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
-				ViewX++;
+				View.x++;
 			} else if (entry == 1) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
-				ViewX = 2 * setpc_x + 22;
-				ViewY = 2 * setpc_y + 22;
+				View.x = 2 * setpc.x + 22;
+				View.y = 2 * setpc.y + 22;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 1, 6);
 				}
-				ViewX++;
+				View.x++;
 			}
 		} else if (level.currlevel != 15) {
 			if (entry == 0) {
@@ -1797,7 +1792,7 @@ static void DRLG_L4(int entry)
 				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
-				ViewX++;
+				View.x++;
 			} else if (entry == 1) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag && level.currlevel != 16) {
@@ -1806,7 +1801,7 @@ static void DRLG_L4(int entry)
 				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
-				ViewY++;
+				View.y++;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag && level.currlevel != 16) {
@@ -1815,7 +1810,7 @@ static void DRLG_L4(int entry)
 				if (doneflag && level.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 1, 6);
 				}
-				ViewX++;
+				View.x++;
 			}
 		} else {
 			if (entry == 0) {
@@ -1827,7 +1822,7 @@ static void DRLG_L4(int entry)
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, 0, 1);
 					}
 				}
-				ViewX++;
+				View.x++;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag) {
@@ -1837,7 +1832,7 @@ static void DRLG_L4(int entry)
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, 1, 1);
 					}
 				}
-				ViewY++;
+				View.y++;
 			}
 		}
 	} while (!doneflag);
@@ -1939,13 +1934,11 @@ void CreateL4Dungeon(DWORD rseed, int entry)
 {
 	SetRndSeed(rseed);
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
-	ViewX = 40;
-	ViewY = 40;
+	View.x = 40;
+	View.y = 40;
 
 	DRLG_InitSetPC();
 	DRLG_LoadL4SP();
@@ -1960,10 +1953,8 @@ void LoadL4Dungeon(char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	InitL4Dungeon();
@@ -1988,8 +1979,8 @@ void LoadL4Dungeon(char *sFileName, int vx, int vy)
 		}
 	}
 
-	ViewX = vx;
-	ViewY = vy;
+	View.x = vx;
+	View.y = vy;
 	DRLG_L4Pass3();
 	DRLG_Init_Globals();
 
@@ -2002,11 +1993,8 @@ void LoadPreL4Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
-
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
 	InitL4Dungeon();
 

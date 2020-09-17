@@ -149,13 +149,13 @@ static void scrollrt_draw_cursor_item()
 		return;
 	}
 
-	mx = MouseX - 1;
+	mx = Mouse.x - 1;
 	if (mx < 0 - cursW - 1) {
 		return;
 	} else if (mx > SCREEN_WIDTH - 1) {
 		return;
 	}
-	my = MouseY - 1;
+	my = Mouse.y - 1;
 	if (my < 0 - cursH - 1) {
 		return;
 	} else if (my > SCREEN_HEIGHT - 1) {
@@ -1201,67 +1201,67 @@ void ScrollView()
 
 	scroll = FALSE;
 
-	if (MouseX < 20) {
-		if (dmaxy - 1 <= ViewY || dminx >= ViewX) {
-			if (dmaxy - 1 > ViewY) {
-				ViewY++;
+	if (Mouse.x < 20) {
+		if (dmaxy - 1 <= View.y || dminx >= View.x) {
+			if (dmaxy - 1 > View.y) {
+				View.y++;
 				scroll = TRUE;
 			}
-			if (dminx < ViewX) {
-				ViewX--;
+			if (dminx < View.x) {
+				View.x--;
 				scroll = TRUE;
 			}
 		} else {
-			ViewY++;
-			ViewX--;
+			View.y++;
+			View.x--;
 			scroll = TRUE;
 		}
 	}
-	if (MouseX > SCREEN_WIDTH - 20) {
-		if (dmaxx - 1 <= ViewX || dminy >= ViewY) {
-			if (dmaxx - 1 > ViewX) {
-				ViewX++;
+	if (Mouse.x > SCREEN_WIDTH - 20) {
+		if (dmaxx - 1 <= View.x || dminy >= View.y) {
+			if (dmaxx - 1 > View.x) {
+				View.x++;
 				scroll = TRUE;
 			}
-			if (dminy < ViewY) {
-				ViewY--;
+			if (dminy < View.y) {
+				View.y--;
 				scroll = TRUE;
 			}
 		} else {
-			ViewY--;
-			ViewX++;
+			View.y--;
+			View.x++;
 			scroll = TRUE;
 		}
 	}
-	if (MouseY < 20) {
-		if (dminy >= ViewY || dminx >= ViewX) {
-			if (dminy < ViewY) {
-				ViewY--;
+	if (Mouse.y < 20) {
+		if (dminy >= View.y || dminx >= View.x) {
+			if (dminy < View.y) {
+				View.y--;
 				scroll = TRUE;
 			}
-			if (dminx < ViewX) {
-				ViewX--;
+			if (dminx < View.x) {
+				View.x--;
 				scroll = TRUE;
 			}
 		} else {
-			ViewX--;
-			ViewY--;
+			View.x--;
+			View.y--;
 			scroll = TRUE;
 		}
 	}
-	if (MouseY > SCREEN_HEIGHT - 20) {
-		if (dmaxy - 1 <= ViewY || dmaxx - 1 <= ViewX) {
-			if (dmaxy - 1 > ViewY) {
-				ViewY++;
+	if (Mouse.y > SCREEN_HEIGHT - 20) {
+		if (dmaxy - 1 <= View.y || dmaxx - 1 <= View.x) {
+			if (dmaxy - 1 > View.y) {
+				View.y++;
 				scroll = TRUE;
 			}
-			if (dmaxx - 1 > ViewX) {
-				ViewX++;
+			if (dmaxx - 1 > View.x) {
+				View.x++;
 				scroll = TRUE;
 			}
 		} else {
-			ViewX++;
-			ViewY++;
+			View.x++;
+			View.y++;
 			scroll = TRUE;
 		}
 	}
@@ -1445,7 +1445,7 @@ void DrawAndBlit()
 	force_redraw = 0;
 
 	lock_buf(0);
-	DrawView(ViewX, ViewY);
+	DrawView(View.x, View.y);
 	if (ctrlPan) {
 		DrawCtrlPan();
 	}

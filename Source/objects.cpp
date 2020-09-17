@@ -316,8 +316,8 @@ void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, in
 	if (QuestStatus(Q_WARLORD))
 		AddObject(OBJ_STEELTOME, xp, yp);
 	if (QuestStatus(Q_BLOOD)) {
-		xp = 2 * setpc_x + 25;
-		yp = 2 * setpc_y + 40;
+		xp = 2 * setpc.x + 25;
+		yp = 2 * setpc.y + 40;
 		AddObject(OBJ_BLOODBOOK, xp, yp);
 	}
 	ob = grid[xp][yp].dObject - 1;
@@ -770,7 +770,7 @@ void InitObjects()
 			if (QuestStatus(Q_PWATER))
 				AddCandles();
 			if (QuestStatus(Q_LTBANNER))
-				AddObject(OBJ_SIGNCHEST, 2 * setpc_x + 26, 2 * setpc_y + 19);
+				AddObject(OBJ_SIGNCHEST, 2 * setpc.x + 26, 2 * setpc.y + 19);
 			InitRndLocBigObj(10, 15, OBJ_SARC);
 			AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 			InitRndBarrels();
@@ -791,9 +791,9 @@ void InitObjects()
 					sp_id = TEXT_MBLINDING;
 				}
 				quests[Q_BLIND]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_w + setpc_x + 1, setpc_h + setpc_y + 1, sp_id);
+				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc.x, setpc.y, setpc_w + setpc.x + 1, setpc_h + setpc.y + 1, sp_id);
 				mem = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-				LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
+				LoadMapObjs(mem, 2 * setpc.x, 2 * setpc.y);
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BLOOD)) {
@@ -805,8 +805,8 @@ void InitObjects()
 					sp_id = TEXT_MBLOODY;
 				}
 				quests[Q_BLOOD]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y + 3, setpc_x + 2, setpc_y + 7, sp_id);
-				AddObject(OBJ_PEDISTAL, 2 * setpc_x + 25, 2 * setpc_y + 32);
+				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7, sp_id);
+				AddObject(OBJ_PEDISTAL, 2 * setpc.x + 25, 2 * setpc.y + 32);
 			}
 			InitRndBarrels();
 		}
@@ -824,9 +824,9 @@ void InitObjects()
 					sp_id = TEXT_MBLOODWAR;
 				}
 				quests[Q_WARLORD]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_x + setpc_w, setpc_y + setpc_h, sp_id);
+				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc.x, setpc.y, setpc.x + setpc_w, setpc.y + setpc_h, sp_id);
 				mem = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-				LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
+				LoadMapObjs(mem, 2 * setpc.x, 2 * setpc.y);
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BETRAYER) && gbMaxPlayers == 1)
@@ -987,10 +987,10 @@ void AddL1Door(int i, int x, int y, int ot)
 
 void AddSCambBook(int i)
 {
-	object[i]._oVar1 = setpc_x;
-	object[i]._oVar2 = setpc_y;
-	object[i]._oVar3 = setpc_w + setpc_x + 1;
-	object[i]._oVar4 = setpc_h + setpc_y + 1;
+	object[i]._oVar1 = setpc.x;
+	object[i]._oVar2 = setpc.y;
+	object[i]._oVar3 = setpc_w + setpc.x + 1;
+	object[i]._oVar4 = setpc_h + setpc.y + 1;
 	object[i]._oVar6 = object[i]._oAnimFrame + 1;
 }
 
@@ -1231,10 +1231,10 @@ void AddBrnCross(int i)
 
 void AddPedistal(int i)
 {
-	object[i]._oVar1 = setpc_x;
-	object[i]._oVar2 = setpc_y;
-	object[i]._oVar3 = setpc_x + setpc_w;
-	object[i]._oVar4 = setpc_y + setpc_h;
+	object[i]._oVar1 = setpc.x;
+	object[i]._oVar2 = setpc.y;
+	object[i]._oVar3 = setpc.x + setpc_w;
+	object[i]._oVar4 = setpc.y + setpc_h;
 }
 
 void AddStoryBook(int i)
@@ -2464,8 +2464,8 @@ void OperateBookLever(int pnum, int i)
 {
 	int x, y, tren;
 
-	x = 2 * setpc_x + 16;
-	y = 2 * setpc_y + 16;
+	x = 2 * setpc.x + 16;
+	y = 2 * setpc.y + 16;
 	if (object[i]._oSelFlag != 0 && !qtextflag) {
 		if (object[i]._otype == OBJ_BLINDBOOK && !quests[Q_BLIND]._qvar1) {
 			quests[Q_BLIND]._qactive = QUEST_ACTIVE;
@@ -2476,9 +2476,9 @@ void OperateBookLever(int pnum, int i)
 			quests[Q_BLOOD]._qactive = QUEST_ACTIVE;
 			quests[Q_BLOOD]._qlog = 1;
 			quests[Q_BLOOD]._qvar1 = 1;
-			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc_x + 19, 2 * setpc_y + 26, 0, 1);
-			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc_x + 31, 2 * setpc_y + 26, 0, 1);
-			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc_x + 25, 2 * setpc_y + 33, 0, 1);
+			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc.x + 19, 2 * setpc.y + 26, 0, 1);
+			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc.x + 31, 2 * setpc.y + 26, 0, 1);
+			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc.x + 25, 2 * setpc.y + 33, 0, 1);
 		}
 		object[i]._otype = object[i]._otype;
 		if (object[i]._otype == OBJ_STEELTOME && !quests[Q_WARLORD]._qvar1) {
@@ -2755,21 +2755,21 @@ void OperatePedistal(int pnum, int i)
 		if (object[i]._oVar6 == 1) {
 			if (!deltaload)
 				PlaySfxLoc(LS_PUDDLE, object[i]._ox, object[i]._oy);
-			ObjChangeMap(setpc_x, setpc_y + 3, setpc_x + 2, setpc_y + 7);
+			ObjChangeMap(setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7);
 		}
 		if (object[i]._oVar6 == 2) {
 			if (!deltaload)
 				PlaySfxLoc(LS_PUDDLE, object[i]._ox, object[i]._oy);
-			ObjChangeMap(setpc_x + 6, setpc_y + 3, setpc_x + setpc_w, setpc_y + 7);
+			ObjChangeMap(setpc.x + 6, setpc.y + 3, setpc.x + setpc_w, setpc.y + 7);
 		}
 		if (object[i]._oVar6 == 3) {
 			if (!deltaload)
 				PlaySfxLoc(LS_BLODSTAR, object[i]._ox, object[i]._oy);
 			ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
 			mem = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-			LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
+			LoadMapObjs(mem, 2 * setpc.x, 2 * setpc.y);
 			mem_free_dbg(mem);
-			CreateItem(7, 2 * setpc_x + 25, 2 * setpc_y + 19);
+			CreateItem(7, 2 * setpc.x + 25, 2 * setpc.y + 19);
 			object[i]._oSelFlag = 0;
 		}
 	}
@@ -4205,15 +4205,15 @@ void SyncPedistal(int i)
 	BYTE *setp;
 
 	if (object[i]._oVar6 == 1)
-		ObjChangeMapResync(setpc_x, setpc_y + 3, setpc_x + 2, setpc_y + 7);
+		ObjChangeMapResync(setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7);
 	if (object[i]._oVar6 == 2) {
-		ObjChangeMapResync(setpc_x, setpc_y + 3, setpc_x + 2, setpc_y + 7);
-		ObjChangeMapResync(setpc_x + 6, setpc_y + 3, setpc_x + setpc_w, setpc_y + 7);
+		ObjChangeMapResync(setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7);
+		ObjChangeMapResync(setpc.x + 6, setpc.y + 3, setpc.x + setpc_w, setpc.y + 7);
 	}
 	if (object[i]._oVar6 == 3) {
 		ObjChangeMapResync(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
 		setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-		LoadMapObjs(setp, 2 * setpc_x, 2 * setpc_y);
+		LoadMapObjs(setp, 2 * setpc.x, 2 * setpc.y);
 		mem_free_dbg(setp);
 	}
 }

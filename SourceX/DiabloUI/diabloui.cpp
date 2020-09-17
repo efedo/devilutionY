@@ -320,8 +320,8 @@ void UiHandleEvents(SDL_Event *event)
 #ifdef USE_SDL1
 		OutputToLogical(&event->motion.x, &event->motion.y);
 #endif
-		MouseX = event->motion.x;
-		MouseY = event->motion.y;
+		Mouse.x = event->motion.x;
+		Mouse.y = event->motion.y;
 		return;
 	}
 
@@ -880,7 +880,7 @@ void DrawMouse()
 	if (sgbControllerActive)
 		return;
 
-	DrawArt(MouseX, MouseY, &ArtCursor);
+	DrawArt(Mouse.x, Mouse.y, &ArtCursor);
 }
 
 /**

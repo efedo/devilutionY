@@ -17,8 +17,7 @@ int glEndSeed[NUMLEVELS];
 int glMid1Seed[NUMLEVELS];
 int glMid2Seed[NUMLEVELS];
 int glMid3Seed[NUMLEVELS];
-int MouseX;
-int MouseY;
+V2Di Mouse;
 BOOL gbGameLoopStartup;
 BOOL gbRunGame;
 BOOL gbRunGameResult;
@@ -157,7 +156,7 @@ static bool ProcessInput()
 
 	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE) {
 #ifndef USE_SDL1
-		finish_simulated_mouse_clicks(MouseX, MouseY);
+		finish_simulated_mouse_clicks(Mouse.x, Mouse.y);
 #endif
 		CheckCursMove();
 		plrctrls_after_check_curs_move();
@@ -457,14 +456,14 @@ void diablo_parse_flags(int argc, char **argv)
 
 void diablo_init_screen()
 {
-	MouseX = SCREEN_WIDTH / 2;
-	MouseY = SCREEN_HEIGHT / 2;
+	Mouse.x = SCREEN_WIDTH / 2;
+	Mouse.y = SCREEN_HEIGHT / 2;
 	if (!sgbControllerActive)
-		SetCursorPos(MouseX, MouseY);
-	ScrollInfo._sdx = 0;
-	ScrollInfo._sdy = 0;
-	ScrollInfo._sxoff = 0;
-	ScrollInfo._syoff = 0;
+		SetCursorPos(Mouse.x, Mouse.y);
+	ScrollInfo._sd.x = 0;
+	ScrollInfo._sd.y = 0;
+	ScrollInfo._soff.x = 0;
+	ScrollInfo._soff.y = 0;
 	ScrollInfo._sdir = SDIR_NONE;
 
 	ClrDiabloMsg();
@@ -514,8 +513,8 @@ BOOL PressEscKey()
 
 static void GetMousePos(LPARAM lParam)
 {
-	MouseX = (short)(lParam & 0xffff);
-	MouseY = (short)((lParam >> 16) & 0xffff);
+	Mouse.x = (short)(lParam & 0xffff);
+	Mouse.y = (short)((lParam >> 16) & 0xffff);
 }
 
 LRESULT DisableInputWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -661,23 +660,23 @@ BOOL LeftMouseDown(int wParam)
 				SetSpell();
 			} else if (stextflag != STORE_NONE) {
 				CheckStoreBtn();
-			} else if (MouseY < PANEL_TOP || MouseX < PANEL_LEFT || MouseX >= PANEL_LEFT + PANEL_WIDTH) {
+			} else if (Mouse.y < PANEL_TOP || Mouse.x < PANEL_LEFT || Mouse.x >= PANEL_LEFT + PANEL_WIDTH) {
 				if (!gmenu_is_active() && !TryIconCurs()) {
-					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {
+					if (questlog && Mouse.x > 32 && Mouse.x < 288 && Mouse.y > 32 && Mouse.y < 308) {
 						QuestlogESC();
 					} else if (qtextflag) {
 						qtextflag = FALSE;
 						stream_stop();
-					} else if (chrflag && MouseX < SPANEL_WIDTH && MouseY < SPANEL_HEIGHT) {
+					} else if (chrflag && Mouse.x < SPANEL_WIDTH && Mouse.y < SPANEL_HEIGHT) {
 						CheckChrBtns();
-					} else if (invflag && MouseX > RIGHT_PANEL && MouseY < SPANEL_HEIGHT) {
+					} else if (invflag && Mouse.x > RIGHT_PANEL && Mouse.y < SPANEL_HEIGHT) {
 						if (!dropGoldFlag)
 							CheckInvItem();
-					} else if (sbookflag && MouseX > RIGHT_PANEL && MouseY < SPANEL_HEIGHT) {
+					} else if (sbookflag && Mouse.x > RIGHT_PANEL && Mouse.y < SPANEL_HEIGHT) {
 						CheckSBook();
 					} else if (pcurs >= CURSOR_FIRSTITEM) {
 						if (TryInvPut()) {
-							NetSendCmdPItem(TRUE, CMD_PUTITEM, cursmx, cursmy);
+							NetSendCmdPItem(TRUE, CMD_PUTITEM, cursm.x, cursm.y);
 							NewCursor(CURSOR_HAND);
 						}
 					} else {
@@ -704,24 +703,24 @@ BOOL LeftMouseCmd(BOOL bShift)
 {
 	BOOL bNear;
 
-	assert(MouseY < PANEL_TOP || MouseX < PANEL_LEFT || MouseX >= PANEL_LEFT + PANEL_WIDTH);
+	assert(Mouse.y < PANEL_TOP || Mouse.x < PANEL_LEFT || Mouse.x >= PANEL_LEFT + PANEL_WIDTH);
 
 	if (level.leveltype == DTYPE_TOWN) {
 		if (pcursitem != -1 && pcurs == CURSOR_HAND)
-			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
+			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
 		if (pcursmonst != -1)
-			NetSendCmdLocParam1(TRUE, CMD_TALKXY, cursmx, cursmy, pcursmonst);
+			NetSendCmdLocParam1(TRUE, CMD_TALKXY, cursm, pcursmonst);
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	} else {
-		bNear = abs(myplr().data._px - cursmx) < 2 && abs(myplr().data._py - cursmy) < 2;
+		bNear = abs(myplr().data._p.x - cursm.x) < 2 && abs(myplr().data._p.y - cursm.y) < 2;
 		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
-			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
+			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
-			NetSendCmdLocParam1(TRUE, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursmx, cursmy, pcursobj);
+			NetSendCmdLocParam1(TRUE, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursm, pcursobj);
 		} else if (myplr().data._pwtype == WT_RANGED) {
 			if (bShift) {
-				NetSendCmdLoc(TRUE, CMD_RATTACKXY, cursmx, cursmy);
+				NetSendCmdLoc(TRUE, CMD_RATTACKXY, cursm);
 			} else if (pcursmonst != -1) {
 				if (CanTalkToMonst(pcursmonst)) {
 					NetSendCmdParam1(TRUE, CMD_ATTACKID, pcursmonst);
@@ -737,10 +736,10 @@ BOOL LeftMouseCmd(BOOL bShift)
 					if (CanTalkToMonst(pcursmonst)) {
 						NetSendCmdParam1(TRUE, CMD_ATTACKID, pcursmonst);
 					} else {
-						NetSendCmdLoc(TRUE, CMD_SATTACKXY, cursmx, cursmy);
+						NetSendCmdLoc(TRUE, CMD_SATTACKXY, cursm);
 					}
 				} else {
-					NetSendCmdLoc(TRUE, CMD_SATTACKXY, cursmx, cursmy);
+					NetSendCmdLoc(TRUE, CMD_SATTACKXY, cursm);
 				}
 			} else if (pcursmonst != -1) {
 				NetSendCmdParam1(TRUE, CMD_ATTACKID, pcursmonst);
@@ -793,7 +792,7 @@ BOOL TryIconCurs()
 		} else if (pcursplr != -1) {
 			NetSendCmdParam3(TRUE, CMD_TSPELLPID, pcursplr, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		} else {
-			NetSendCmdLocParam2(TRUE, CMD_TSPELLXY, cursmx, cursmy, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
+			NetSendCmdLocParam2(TRUE, CMD_TSPELLXY, cursm, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		}
 		NewCursor(CURSOR_HAND);
 		return TRUE;
@@ -827,8 +826,8 @@ void RightMouseDown()
 		} else if (stextflag == STORE_NONE) {
 			if (spselflag) {
 				SetSpell();
-			} else if (MouseY >= SPANEL_HEIGHT
-			    || (!sbookflag || MouseX <= RIGHT_PANEL)
+			} else if (Mouse.y >= SPANEL_HEIGHT
+			    || (!sbookflag || Mouse.x <= RIGHT_PANEL)
 			        && !TryIconCurs()
 			        && (pcursinvitem == -1 || !myplr().inventory.UseInvItem(pcursinvitem))) {
 				if (pcurs == CURSOR_HAND) {
@@ -1060,11 +1059,11 @@ void PressKey(int vkey)
 	} else if (vkey == DVL_VK_TAB) {
 		DoAutoMap();
 	} else if (vkey == DVL_VK_SPACE) {
-		if (!chrflag && invflag && MouseX < 480 && MouseY < PANEL_TOP && PANELS_COVER) {
-			SetCursorPos(MouseX + 160, MouseY);
+		if (!chrflag && invflag && Mouse.x < 480 && Mouse.y < PANEL_TOP && PANELS_COVER) {
+			SetCursorPos(Mouse.x + 160, Mouse.y);
 		}
-		if (!invflag && chrflag && MouseX > 160 && MouseY < PANEL_TOP && PANELS_COVER) {
-			SetCursorPos(MouseX - 160, MouseY);
+		if (!invflag && chrflag && Mouse.x > 160 && Mouse.y < PANEL_TOP && PANELS_COVER) {
+			SetCursorPos(Mouse.x - 160, Mouse.y);
 		}
 		helpflag = FALSE;
 		invflag = FALSE;
@@ -1136,12 +1135,12 @@ void PressChar(int vkey)
 			sbookflag = FALSE;
 			invflag = !invflag;
 			if (!invflag || chrflag) {
-				if (MouseX < 480 && MouseY < PANEL_TOP && PANELS_COVER) {
-					SetCursorPos(MouseX + 160, MouseY);
+				if (Mouse.x < 480 && Mouse.y < PANEL_TOP && PANELS_COVER) {
+					SetCursorPos(Mouse.x + 160, Mouse.y);
 				}
 			} else {
-				if (MouseX > 160 && MouseY < PANEL_TOP && PANELS_COVER) {
-					SetCursorPos(MouseX - 160, MouseY);
+				if (Mouse.x > 160 && Mouse.y < PANEL_TOP && PANELS_COVER) {
+					SetCursorPos(Mouse.x - 160, Mouse.y);
 				}
 			}
 		}
@@ -1152,12 +1151,12 @@ void PressChar(int vkey)
 			questlog = FALSE;
 			chrflag = !chrflag;
 			if (!chrflag || invflag) {
-				if (MouseX > 160 && MouseY < PANEL_TOP && PANELS_COVER) {
-					SetCursorPos(MouseX - 160, MouseY);
+				if (Mouse.x > 160 && Mouse.y < PANEL_TOP && PANELS_COVER) {
+					SetCursorPos(Mouse.x - 160, Mouse.y);
 				}
 			} else {
-				if (MouseX < 480 && MouseY < PANEL_TOP && PANELS_COVER) {
-					SetCursorPos(MouseX + 160, MouseY);
+				if (Mouse.x < 480 && Mouse.y < PANEL_TOP && PANELS_COVER) {
+					SetCursorPos(Mouse.x + 160, Mouse.y);
 				}
 			}
 		}
@@ -1339,9 +1338,9 @@ void PressChar(int vkey)
 	case 'T':
 	case 't':
 		if (debug_mode_key_inverted_v) {
-			sprintf(tempstr, "PX = %i  PY = %i", myplr().data._px, myplr().data._py);
+			sprintf(tempstr, "PX = %i  PY = %i", myplr().data._p.x, myplr().data._p.y);
 			NetSendCmdString(1 << myplr(), tempstr);
-			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursmx, cursmy, dgrid[cursmx][cursmy].dungeon);
+			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursm.x, cursm.y, dgrid[cursm.x][cursm.y].dungeon);
 			NetSendCmdString(1 << myplr(), tempstr);
 		}
 		return;
@@ -1647,11 +1646,11 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
 			if (plr[i].data._pHitPoints > 0) {
 				if (gbMaxPlayers == 1)
-					grid[plr[i].data._px][plr[i].data._py].dPlayer = i + 1;
+					grid[plr[i].data._p.x][plr[i].data._p.y].dPlayer = i + 1;
 				else
 					plr[i].SyncInitPlrPos();
 			} else {
-				grid[plr[i].data._px][plr[i].data._py].dFlags |= BFLAG_DEAD_PLAYER;
+				grid[plr[i].data._p.x][plr[i].data._p.y].dFlags |= BFLAG_DEAD_PLAYER;
 			}
 		}
 	}

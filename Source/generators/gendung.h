@@ -51,11 +51,8 @@ private:
 };
 
 extern DGrid dgrid;
+extern RECT32 setpc;
 
-extern int setpc_x;
-extern int setpc_y;
-extern int setpc_w;
-extern int setpc_h;
 extern BYTE *pSetPiece;
 extern BOOL setloadflag;
 extern BYTE *pSpecialCels;
@@ -103,10 +100,9 @@ private:
 
 extern PieceInventory pieces;
 
-extern int dminx;
-extern int dminy;
-extern int dmaxx;
-extern int dmaxy;
+extern V2Di dmin;
+extern V2Di dmax;
+
 extern int gnDifficulty;
 
 class Level {
@@ -120,15 +116,12 @@ public:
 
 extern Level level;
 
-extern int ViewX;
-extern int ViewY;
-extern int ViewBX;
-extern int ViewBY;
-extern int ViewDX;
-extern int ViewDY;
+extern V2Di View;
+extern V2Di ViewB;
+extern V2Di ViewD;
+extern V2Di LvlView;
+
 extern ScrollStruct ScrollInfo;
-extern int LvlViewX;
-extern int LvlViewY;
 extern int MicroTileLen;
 extern char TransVal;
 extern BOOLEAN TransList[256];
@@ -154,6 +147,7 @@ public:
 
 class Grid {
 public:
+	auto &at(V2Di pos) { return tiles[pos.x][pos.y]; }
 	auto &operator[](const size_t n) { return tiles[n]; }
 	void clearTrans() {
 		for (int j = 0; j < MAXDUNY; j++) {

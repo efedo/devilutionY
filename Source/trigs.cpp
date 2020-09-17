@@ -603,7 +603,7 @@ void CheckTrigForce()
 {
 	trigflag = FALSE;
 
-	if (!sgbControllerActive && MouseY > PANEL_TOP - 1) {
+	if (!sgbControllerActive && Mouse.y > PANEL_TOP - 1) {
 		return;
 	}
 

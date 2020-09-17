@@ -830,8 +830,8 @@ void Player::InitPlayer(BOOL FirstTime)
 
 		if (pnum == myplr()) {
 			if (!FirstTime || level.currlevel != 0) {
-				data._px = ViewX;
-				data._py = ViewY;
+				data._px = View.x;
+				data._py = View.y;
 			}
 			data._ptargx = data._px;
 			data._ptargy = data._py;
@@ -897,13 +897,13 @@ void InitMultiView()
 		app_fatal("InitPlayer: illegal player %d", myplr());
 	}
 
-	ViewX = myplr().data._px;
-	ViewY = myplr().data._py;
+	View.x = myplr().data._px;
+	View.y = myplr().data._py;
 }
 
-BOOL SolidLoc(int x, int y)
+BOOL SolidLoc(V2Di pos)
 {
-	if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY) {
+	if (pos.x < 0 || pos.y < 0 || pos.x >= MAXDUNX || pos.y >= MAXDUNY) {
 		return FALSE;
 	}
 
@@ -934,26 +934,22 @@ BOOL Player::PlrDirOK(int dir)
 	return isOk;
 }
 
-void PlrClrTrans(int x, int y)
+void PlrClrTrans(V2Di pos)
 {
-	int i, j;
-
-	for (i = y - 1; i <= y + 1; i++) {
-		for (j = x - 1; j <= x + 1; j++) {
+	for (int i = pos.y - 1; i <= pos.y + 1; i++) {
+		for (int j = pos.x - 1; j <= pos.x + 1; j++) {
 			TransList[grid[j][i].dTransVal] = FALSE;
 		}
 	}
 }
 
-void PlrDoTrans(int x, int y)
+void PlrDoTrans(V2Di pos)
 {
-	int i, j;
-
 	if (level.leveltype != DTYPE_CATHEDRAL && level.leveltype != DTYPE_CATACOMBS) {
 		TransList[1] = TRUE;
 	} else {
-		for (i = y - 1; i <= y + 1; i++) {
-			for (j = x - 1; j <= x + 1; j++) {
+		for (int i = pos.y - 1; i <= pos.y + 1; i++) {
+			for (int j = pos.x - 1; j <= pos.x + 1; j++) {
 				if (!pieces[grid[j][i].dPiece].nSolidTable && grid[j][i].dTransVal) {
 					TransList[grid[j][i].dTransVal] = TRUE;
 				}
@@ -981,8 +977,8 @@ void Player::FixPlayerLocation(int bDir)
 		ScrollInfo._sxoff = 0;
 		ScrollInfo._syoff = 0;
 		ScrollInfo._sdir = SDIR_NONE;
-		ViewX = data._px;
-		ViewY = data._py;
+		View.x = data._px;
+		View.y = data._py;
 	}
 }
 
@@ -1016,8 +1012,8 @@ void Player::StartWalkStand()
 		ScrollInfo._sxoff = 0;
 		ScrollInfo._syoff = 0;
 		ScrollInfo._sdir = SDIR_NONE;
-		ViewX = data._px;
-		ViewY = data._py;
+		View.x = data._px;
+		View.y = data._py;
 	}
 }
 
@@ -1086,30 +1082,21 @@ void Player::PM_ChangeOffset()
 	PM_ChangeLightOff();
 }
 
-void Player::StartWalk(int xvel, int yvel, int xadd, int yadd, int EndDir, int sdir)
+void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 {
-	int px, py;
-
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
 		return;
 	}
 
 	SetPlayerOld();
-
-	px = xadd + data._px;
-	py = yadd + data._py;
-
-	if (!PlrDirOK(EndDir)) {
-		return;
-	}
-
-	data._pfutx = px;
-	data._pfuty = py;
+	V2Di p = add + data._p;
+	if (!PlrDirOK(EndDir)) return;
+	data._pfut = p;
 
 	if (pnum == myplr()) {
-		ScrollInfo._sdx = data._px - ViewX;
-		ScrollInfo._sdy = data._py - ViewY;
+		ScrollInfo._sd = data._p - View.x;
+		ScrollInfo._sdy = data._py - View.y;
 	}
 
 	grid[px][py].dPlayer = -(pnum + 1);
@@ -1174,8 +1161,8 @@ void Player::StartWalk2(int xvel, int yvel, int xoff, int yoff, int xadd, int ya
 	data._pfuty = py;
 
 	if (pnum == myplr()) {
-		ScrollInfo._sdx = data._px - ViewX;
-		ScrollInfo._sdy = data._py - ViewY;
+		ScrollInfo._sdx = data._px - View.x;
+		ScrollInfo._sdy = data._py - View.y;
 	}
 
 	grid[data._px][data._py].dPlayer = -1 - pnum;
@@ -1248,8 +1235,8 @@ void Player::StartWalk3(int xvel, int yvel, int xoff, int yoff, int xadd, int ya
 	data._pfuty = py;
 
 	if (pnum == myplr()) {
-		ScrollInfo._sdx = data._px - ViewX;
-		ScrollInfo._sdy = data._py - ViewY;
+		ScrollInfo._sdx = data._px - View.x;
+		ScrollInfo._sdy = data._py - View.y;
 	}
 
 	grid[data._px][data._py].dPlayer = -1 - pnum;
@@ -1479,26 +1466,22 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 	}
 }
 
-void RespawnDeadItem(ItemStruct *itm, int x, int y)
+void RespawnDeadItem(ItemStruct *itm, V2Di pos)
 {
 	int ii;
-
-	if (numitems >= MAXITEMS) {
-		return;
-	}
+	if (numitems >= MAXITEMS) return;
 
 	if (FindGetItem(itm->IDidx, itm->_iCreateInfo, itm->_iSeed) >= 0) {
 		DrawInvMsg("A duplicate item has been detected.  Destroying duplicate...");
-		SyncGetItem(x, y, itm->IDidx, itm->_iCreateInfo, itm->_iSeed);
+		SyncGetItem(pos, itm->IDidx, itm->_iCreateInfo, itm->_iSeed);
 	}
 
 	ii = itemavail[0];
-	grid[x][y].dItem = ii + 1;
+	grid.at(pos).dItem = ii + 1;
 	itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 	itemactive[numitems] = ii;
 	item[ii] = *itm;
-	item[ii]._ix = x;
-	item[ii]._iy = y;
+	item[ii]._i = pos;
 	RespawnItem(ii, TRUE);
 	numitems++;
 	itm->_itype = ITYPE_NONE;
@@ -1950,8 +1933,8 @@ BOOL Player::PM_DoWalk()
 		}
 
 		if (pnum == myplr() && ScrollInfo._sdir) {
-			ViewX = data._px - ScrollInfo._sdx;
-			ViewY = data._py - ScrollInfo._sdy;
+			View.x = data._px - ScrollInfo._sdx;
+			View.y = data._py - ScrollInfo._sdy;
 		}
 
 		if (data.walkpath[0] != WALK_NONE) {
@@ -1999,8 +1982,8 @@ BOOL Player::PM_DoWalk2()
 		}
 
 		if (pnum == myplr() && ScrollInfo._sdir) {
-			ViewX = data._px - ScrollInfo._sdx;
-			ViewY = data._py - ScrollInfo._sdy;
+			View.x = data._px - ScrollInfo._sdx;
+			View.y = data._py - ScrollInfo._sdy;
 		}
 
 		if (data.walkpath[0] != WALK_NONE) {
@@ -2051,8 +2034,8 @@ BOOL Player::PM_DoWalk3()
 		}
 
 		if (pnum == myplr() && ScrollInfo._sdir) {
-			ViewX = data._px - ScrollInfo._sdx;
-			ViewY = data._py - ScrollInfo._sdy;
+			View.x = data._px - ScrollInfo._sdx;
+			View.y = data._py - ScrollInfo._sdy;
 		}
 
 		if (data.walkpath[0] != WALK_NONE) {
@@ -3305,13 +3288,15 @@ void Player::ClrPlrPath()
 	memset(data.walkpath, WALK_NONE, sizeof(data.walkpath));
 }
 
-BOOL PosOkPlayer(int pnum, int x, int y)
+BOOL PosOkPlayer(int pnum, V2Di pos)
 {
-	return plr[pnum].PosOkPlayer(x, y);
+	return plr[pnum].PosOkPlayer(pos);
 }
 
-BOOL Player::PosOkPlayer(int x, int y)
+BOOL Player::PosOkPlayer(V2Di pos)
 {
+	int x = pos.x;
+	int y = pos.y;
 	BOOL PosOK;
 	DWORD p;
 	char bv;
@@ -3361,20 +3346,15 @@ BOOL Player::PosOkPlayer(int x, int y)
 	return TRUE;
 }
 
-void Player::MakePlrPath(int xx, int yy, BOOL endspace)
+void Player::MakePlrPath(V2Di pos, BOOL endspace)
 {
-	int path;
-
-	data._ptargx = xx;
-	data._ptargy = yy;
-	if (data._pfutx == xx && data._pfuty == yy) {
+	data._ptarg = pos;
+	if (data._pfut.x == pos.x && data._pfut.y == pos.y) {
 		return;
 	}
 
-	path = FindPath(::dvl::PosOkPlayer, pnum, data._pfutx, data._pfuty, xx, yy, data.walkpath);
-	if (!path) {
-		return;
-	}
+	int path = FindPath(::dvl::PosOkPlayer, pnum, data._pfut.x, data._pfut.y, pos.x, pos.y, data.walkpath);
+	if (!path) return;
 
 	if (!endspace) {
 		path--;
@@ -3455,9 +3435,9 @@ void CheckPlrSpell()
 
 	if (!sgbControllerActive) {
 		if (pcurs != CURSOR_HAND
-		    || (MouseY >= PANEL_TOP && MouseX >= PANEL_LEFT && MouseX <= RIGHT_PANEL)     // inside main panel
-		    || ((chrflag || questlog) && MouseX < SPANEL_WIDTH && MouseY < SPANEL_HEIGHT) // inside left panel
-		    || ((invflag || sbookflag) && MouseX > RIGHT_PANEL && MouseY < SPANEL_HEIGHT) // inside right panel
+		    || (Mouse.y >= PANEL_TOP && Mouse.x >= PANEL_LEFT && Mouse.x <= RIGHT_PANEL)     // inside main panel
+		    || ((chrflag || questlog) && Mouse.x < SPANEL_WIDTH && Mouse.y < SPANEL_HEIGHT) // inside left panel
+		    || ((invflag || sbookflag) && Mouse.x > RIGHT_PANEL && Mouse.y < SPANEL_HEIGHT) // inside right panel
 		        && rspell != SPL_HEAL
 		        && rspell != SPL_IDENTIFY
 		        && rspell != SPL_REPAIR
@@ -3609,8 +3589,8 @@ void Player::SyncInitPlrPos()
 		data._pfuty = y;
 		data._ptargx = x;
 		data._ptargy = y;
-		ViewX = x;
-		ViewY = y;
+		View.x = x;
+		View.y = y;
 	}
 }
 

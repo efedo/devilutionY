@@ -4,6 +4,8 @@
  * Various global structures.
  */
 
+#include "vectordvl.h"
+
 DEVILUTION_BEGIN_NAMESPACE
 
 //////////////////////////////////////////////////
@@ -102,8 +104,7 @@ typedef struct ItemStruct {
 	int _iSeed;
 	WORD _iCreateInfo;
 	int _itype;
-	int _ix;
-	int _iy;
+	V2Di _i;
 	BOOL _iAnimFlag;
 	unsigned char *_iAnimData; // PSX name -> ItemFrame
 	int _iAnimLen;
@@ -187,20 +188,27 @@ typedef struct PlayerStruct {
 	int destParam3;
 	int destParam4;
 	int plrlevel;
-	int _px;
-	int _py;
-	int _pfutx;
-	int _pfuty;
-	int _ptargx;
-	int _ptargy;
-	int _pownerx;
-	int _pownery;
-	int _poldx;
-	int _poldy;
-	int _pxoff;
-	int _pyoff;
-	int _pxvel;
-	int _pyvel;
+	V2Di _p;
+	//int _px;
+	//int _py;
+	V2Di _pfut;
+	//int _pfutx;
+	//int _pfuty;
+	V2Di _ptarg;
+	//int _ptargx;
+	//int _ptargy;
+	V2Di _powner;
+	//int _pownerx;
+	//int _pownery;
+	V2Di _pold;
+	//int _poldx;
+	//int _poldy;
+	V2Di _poff;
+	//int _pxoff;
+	//int _pyoff;
+	V2Di _pvel;
+	//int _pxvel;
+	//int _pyvel;
 	int _pdir;
 	int _nextdir;
 	int _pgfxnum;
@@ -378,7 +386,7 @@ typedef struct TextDataStruct {
 
 typedef struct MissileData {
 	unsigned char mName;
-	void (*mAddProc)(int, int, int, int, int, int, char, int, int);
+	void (*mAddProc)(int, V2Di, V2Di, int, char, int, int);
 	void (*mProc)(int);
 	BOOL mDraw;
 	unsigned char mType;
@@ -408,16 +416,21 @@ typedef struct ChainStruct {
 
 typedef struct MissileStruct {
 	int _mitype;
-	int _mix;
-	int _miy;
-	int _mixoff;
-	int _miyoff;
-	int _mixvel;
-	int _miyvel;
-	int _misx;
-	int _misy;
-	int _mitxoff;
-	int _mityoff;
+	V2Di _mi;
+	//int _mix;
+	//int _miy;
+	V2Di _mioff;
+	//int _mixoff;
+	//int _miyoff;
+	V2Di _mivel;
+	//int _mixvel;
+	//int _miyvel;
+	V2Di _mis;
+	//int _misx;
+	//int _misy;
+	V2Di _mitoff;
+	//int _mitxoff;
+	//int _mityoff;
 	int _mimfnum;
 	int _mispllvl;
 	BOOL _miDelFlag;
@@ -545,20 +558,26 @@ typedef struct MonsterStruct { // note: missing field _mAFNum
 	int _mgoalvar3;
 	int field_18;
 	unsigned char _pathcount;
-	int _mx;
-	int _my;
-	int _mfutx;
-	int _mfuty;
-	int _moldx;
-	int _moldy;
-	int _mxoff;
-	int _myoff;
-	int _mxvel;
-	int _myvel;
+	V2Di _m;
+	//int _mx;
+	//int _my;
+	V2Di _mfut;
+	//int _mfutx;
+	//int _mfuty;
+	V2Di _mold;
+	//int _moldx;
+	//int _moldy;
+	V2Di _moff;
+	//int _mxoff;
+	//int _myoff;
+	V2Di _mvel;
+	//int _mxvel;
+	//int _myvel;
 	int _mdir;
 	int _menemy;
-	unsigned char _menemyx;
-	unsigned char _menemyy;
+	V2Di _menemypos;
+	//unsigned char _menemyx;
+	//unsigned char _menemyy;
 	short falign_52; // probably _mAFNum (unused)
 	unsigned char *_mAnimData;
 	int _mAnimDelay;
@@ -583,8 +602,9 @@ typedef struct MonsterStruct { // note: missing field _mAFNum
 	int _mFlags;
 	BYTE _msquelch;
 	int falign_A4;
-	int _lastx;
-	int _lasty;
+	V2Di _last;
+	//int _lastx;
+	//int _lasty;
 	int _mRndSeed;
 	int _mAISeed;
 	int falign_B8;
@@ -656,8 +676,9 @@ typedef struct ObjDataStruct {
 
 typedef struct ObjectStruct {
 	int _otype;
-	int _ox;
-	int _oy;
+	V2Di _o;
+	//int _ox;
+	//int _oy;
 	int _oLight;
 	int _oAnimFlag;
 	unsigned char *_oAnimData;
@@ -693,8 +714,9 @@ typedef struct ObjectStruct {
 
 typedef struct PortalStruct {
 	BOOL open;
-	int x;
-	int y;
+	V2Di pos;
+	//int x;
+	//int y;
 	int level;
 	int ltype;
 	BOOL setlvl;
@@ -1046,12 +1068,15 @@ typedef struct TNQ {
 typedef struct TownerStruct {
 	int _tmode;
 	int _ttype;
-	int _tx;
-	int _ty;
-	int _txoff;
-	int _tyoff;
-	int _txvel;
-	int _tyvel;
+	V2Di _t;
+	//int _tx;
+	//int _ty;
+	V2Di _toff;
+	//int _txoff;
+	//int _tyoff;
+	V2Di _tvel;
+	//int _txvel;
+	//int _tyvel;
 	int _tdir;
 	unsigned char *_tAnimData;
 	int _tAnimDelay;
@@ -1103,14 +1128,17 @@ typedef struct QuestTalkData {
 //////////////////////////////////////////////////
 
 typedef struct ScrollStruct {
-	int _sxoff;
-	int _syoff;
-	int _sdx;
-	int _sdy;
+	V2Di _soff;
+	//int _sxoff;
+	//int _syoff;
+	V2Di _sd;
+	//int _sdx;
+	//int _sdy;
 	int _sdir;
 } ScrollStruct;
 
 typedef struct THEME_LOC {
+	//V2Di pos;
 	int x;
 	int y;
 	int ttval;
@@ -1176,18 +1204,21 @@ typedef struct InvXY {
 //////////////////////////////////////////////////
 
 typedef struct LightListStruct {
-	int _lx;
-	int _ly;
+	V2Di _l;
+	//int _lx;
+	//int _ly;
 	int _lradius;
 	int _lid;
 	int _ldel;
 	int _lunflag;
 	int field_18;
-	int _lunx;
-	int _luny;
+	V2Di _lun;
+	//int _lunx;
+	//int _luny;
 	int _lunr;
-	int _xoff;
-	int _yoff;
+	V2Di _off;
+	//int _xoff;
+	//int _yoff;
 	int _lflags;
 } LightListStruct;
 
@@ -1378,10 +1409,12 @@ typedef struct PkPlayerStruct {
 	char destParam1;
 	char destParam2;
 	BYTE plrlevel;
-	BYTE px;
-	BYTE py;
-	BYTE targx;
-	BYTE targy;
+	V2Di p;
+	//BYTE px;
+	//BYTE py;
+	V2Di targ;
+	//BYTE targx;
+	//BYTE targy;
 	char pName[PLR_NAME_LEN];
 	char pClass;
 	BYTE pBaseStr;
@@ -1423,8 +1456,9 @@ typedef struct PATHNODE {
 	char f;
 	char h;
 	char g;
-	int x;
-	int y;
+	V2Di pos;
+	//int x;
+	//int y;
 	struct PATHNODE *Parent;
 	struct PATHNODE *Child[8];
 	struct PATHNODE *NextNode;
@@ -1504,8 +1538,9 @@ typedef struct _BLOCKENTRY {
 //////////////////////////////////////////////////
 
 typedef struct TriggerStruct {
-	int _tx;
-	int _ty;
+	V2Di _t;
+	//int _tx;
+	//int _ty;
 	int _tmsg;
 	int _tlvl;
 } TriggerStruct;

@@ -21,13 +21,13 @@ class Player;
 class PlayerInventory {
 public:
 	PlayerInventory(Player &);
-	BOOL AutoPlace(int ii, int sx, int sy, BOOL saveflag);
-	BOOL SpecialAutoPlace(int ii, int sx, int sy, BOOL saveflag);
+	BOOL AutoPlace(int ii, V2Di pos, BOOL saveflag);
+	BOOL SpecialAutoPlace(int ii, V2Di pos, BOOL saveflag);
 	BOOL GoldAutoPlace();
 	BOOL WeaponAutoPlace();
-	void CheckInvPaste(int mx, int my);
+	void CheckInvPaste(V2Di pos);
 	void CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, BOOL bId);
-	void CheckInvCut(int mx, int my);
+	void CheckInvCut(V2Di pos);
 	void inv_update_rem_item(BYTE iv);
 	void RemoveInvItem(int iv);
 	void RemoveSpdBarItem(int iv);
@@ -36,8 +36,9 @@ public:
 	void CheckQuestItem();
 	void InvGetItem(int ii);
 	void AutoGetItem(int ii);
-	int InvPutItem(int x, int y);
-	int SyncPutItem(int x, int y, int idx, WORD icreateinfo, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, DWORD ibuff);
+	int InvPutItem(V2Di pos);
+	int SyncPutItem(V2Di pos, int idx, WORD icreateinfo, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, DWORD ibuff);
+	int _PrepPutItem(V2Di &pos); // EF Added
 	void RemoveScroll();
 	void UseStaffCharge();
 	BOOL UseInvItem(int cii);
@@ -48,15 +49,15 @@ private:
 
 void FreeInvGFX();
 void InitInv();
-void InvDrawSlotBack(int X, int Y, int W, int H);
+void InvDrawSlotBack(RECT32 r);
 void DrawInv();
 void DrawInvBelt();
 int SwapItem(ItemStruct *a, ItemStruct *b);
 void CheckInvItem();
 void CheckInvScrn();
 int FindGetItem(int idx, WORD ci, int iseed);
-void SyncGetItem(int x, int y, int idx, WORD ci, int iseed);
-BOOL CanPut(int x, int y);
+void SyncGetItem(V2Di pos, int idx, WORD ci, int iseed);
+BOOL CanPut(V2Di pos);
 BOOL TryInvPut();
 void DrawInvMsg(char *msg);
 char CheckInvHLight();

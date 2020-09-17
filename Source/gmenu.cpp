@@ -65,7 +65,7 @@ void gmenu_print_text(int x, int y, char *pszStr)
 		c = gbFontTransTbl[(BYTE)*pszStr++];
 		c = lfontframe[c];
 		if (c != 0)
-			CelDrawLight(x, y, BigTGold_cel, c, 46, NULL);
+			CelDrawLight({ x, y }, BigTGold_cel, c, 46, NULL);
 		x += lfontkern[c] + 2;
 	}
 }
@@ -309,15 +309,15 @@ BOOL gmenu_on_mouse_move()
 BOOLEAN gmenu_get_mouse_slider(int *plOffset)
 {
 	*plOffset = 282;
-	if (MouseX < 282 + PANEL_LEFT) {
+	if (Mouse.x < 282 + PANEL_LEFT) {
 		*plOffset = 0;
 		return FALSE;
 	}
-	if (MouseX > 538 + PANEL_LEFT) {
+	if (Mouse.x > 538 + PANEL_LEFT) {
 		*plOffset = 256;
 		return FALSE;
 	}
-	*plOffset = MouseX - 282 - PANEL_LEFT;
+	*plOffset = Mouse.x - 282 - PANEL_LEFT;
 	return TRUE;
 }
 
@@ -339,13 +339,13 @@ BOOL gmenu_left_mouse(BOOL isDown)
 	if (!sgpCurrentMenu) {
 		return FALSE;
 	}
-	if (MouseY >= PANEL_TOP) {
+	if (Mouse.y >= PANEL_TOP) {
 		return FALSE;
 	}
-	if (MouseY - 117 < 0) {
+	if (Mouse.y - 117 < 0) {
 		return TRUE;
 	}
-	i = (MouseY - 117) / 45;
+	i = (Mouse.y - 117) / 45;
 	if (i >= sgCurrentMenuIdx) {
 		return TRUE;
 	}
@@ -354,10 +354,10 @@ BOOL gmenu_left_mouse(BOOL isDown)
 		return TRUE;
 	}
 	w = gmenu_get_lfont(pItem);
-	if (MouseX < SCREEN_WIDTH / 2 - w / 2) {
+	if (Mouse.x < SCREEN_WIDTH / 2 - w / 2) {
 		return TRUE;
 	}
-	if (MouseX > SCREEN_WIDTH / 2 + w / 2) {
+	if (Mouse.x > SCREEN_WIDTH / 2 + w / 2) {
 		return TRUE;
 	}
 	sgpCurrItem = pItem;

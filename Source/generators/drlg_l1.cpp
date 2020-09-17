@@ -362,13 +362,13 @@ static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, in
 	}
 
 	if (setview == TRUE) {
-		ViewX = 2 * sx + 19;
-		ViewY = 2 * sy + 20;
+		View.x = 2 * sx + 19;
+		View.y = 2 * sy + 20;
 	}
 
 	if (ldir == 0) {
-		LvlViewX = 2 * sx + 19;
-		LvlViewY = 2 * sy + 20;
+		LvlView.x = 2 * sx + 19;
+		LvlView.y = 2 * sy + 20;
 	}
 
 	if (sx < cx && sy < cy)
@@ -533,10 +533,8 @@ void LoadL1Dungeon(char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	pLevelMap = LoadFileInMem(sFileName, NULL);
@@ -567,8 +565,8 @@ void LoadL1Dungeon(char *sFileName, int vx, int vy)
 	}
 
 	DRLG_L1Floor();
-	ViewX = vx;
-	ViewY = vy;
+	View.x = vx;
+	View.y = vy;
 	DRLG_L1Pass3();
 	DRLG_Init_Globals();
 	DRLG_InitL1Vals();
@@ -582,10 +580,8 @@ void LoadPreL1Dungeon(char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 
@@ -1317,11 +1313,7 @@ static void DRLG_L5SetRoom(int rx1, int ry1)
 
 	rw = *L5pSetPiece;
 	rh = *(L5pSetPiece + 2);
-
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc = { rx1, ry1, rw, rh };
 
 	sp = L5pSetPiece + 4;
 
@@ -1633,7 +1625,7 @@ static void DRLG_L5(int entry)
 			} else {
 				if (DRLG_PlaceMiniSet(PWATERIN, 1, 1, 0, 0, 0, -1, 0) < 0)
 					doneflag = FALSE;
-				ViewY--;
+				View.y--;
 			}
 		}
 		if (QuestStatus(Q_LTBANNER)) {
@@ -1644,10 +1636,10 @@ static void DRLG_L5(int entry)
 				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, 0, -1, 0) < 0)
 					doneflag = FALSE;
 				if (entry == 1) {
-					ViewX = 2 * setpc_x + 20;
-					ViewY = 2 * setpc_y + 28;
+					View.x = 2 * setpc.x + 20;
+					View.y = 2 * setpc.y + 28;
 				} else {
-					ViewY--;
+					View.y--;
 				}
 			}
 		} else if (entry == 0) {
@@ -1660,7 +1652,7 @@ static void DRLG_L5(int entry)
 				doneflag = FALSE;
 			else if (DRLG_PlaceMiniSet(STAIRSDOWN, 1, 1, 0, 0, 1, -1, 1) < 0)
 				doneflag = FALSE;
-			ViewY--;
+			View.y--;
 		}
 	} while (doneflag == FALSE);
 
@@ -1698,17 +1690,15 @@ static void DRLG_L5(int entry)
 	}
 
 	DRLG_Init_Globals();
-	DRLG_CheckQuests(setpc_x, setpc_y);
+	DRLG_CheckQuests(setpc.x, setpc.y);
 }
 
 void CreateL5Dungeon(DWORD rseed, int entry)
 {
 	SetRndSeed(rseed);
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	dmin = { 16, 16 };
+	dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	DRLG_InitSetPC();

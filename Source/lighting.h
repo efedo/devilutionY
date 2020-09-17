@@ -8,10 +8,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 extern LightListStruct VisionList[MAXVISION];
 extern BYTE lightactive[MAXLIGHTS];
 extern LightListStruct LightList[MAXLIGHTS];
@@ -26,11 +22,11 @@ extern int visionid;
 extern BYTE *pLightTbl;
 extern BOOL lightflag;
 
-void RotateRadius(int *x, int *y, int *dx, int *dy, int *lx, int *ly, int *bx, int *by);
-void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum);
-void DoUnLight(int nXPos, int nYPos, int nRadius);
-void DoUnVision(int nXPos, int nYPos, int nRadius);
-void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
+void RotateRadius(V2Di &pos, V2Di &d, V2Di &l, V2Di &b);
+void DoLighting(V2Di pos, int nRadius, int Lnum);
+void DoUnLight(V2Di pos, int nRadius);
+void DoUnVision(V2Di pos, int nRadius);
+void DoVision(V2Di pos, int nRadius, BOOL doautomap, BOOL visible);
 void FreeLightTable();
 void InitLightTable();
 void MakeLightTable();
@@ -39,18 +35,18 @@ void ToggleLighting();
 #endif
 void InitLightMax();
 void InitLighting();
-int AddLight(int x, int y, int r);
+int AddLight(V2Di pos, int r);
 void AddUnLight(int i);
 void ChangeLightRadius(int i, int r);
-void ChangeLightXY(int i, int x, int y);
-void ChangeLightOff(int i, int x, int y);
-void ChangeLight(int i, int x, int y, int r);
+void ChangeLightXY(int i, V2Di pos);
+void ChangeLightOff(int i, V2Di pos);
+void ChangeLight(int i, V2Di pos, int r);
 void ProcessLightList();
 void SavePreLighting();
 void InitVision();
-int AddVision(int x, int y, int r, BOOL mine);
+int AddVision(V2Di pos, int r, BOOL mine);
 void ChangeVisionRadius(int id, int r);
-void ChangeVisionXY(int id, int x, int y);
+void ChangeVisionXY(int id, V2Di pos);
 void ProcessVisionList();
 void lighting_color_cycling();
 
@@ -61,10 +57,6 @@ extern char *pCrawlTable[19];
 extern BYTE vCrawlTable[23][30];
 extern BYTE byte_49463C[18][18];
 extern BYTE RadiusAdj[23];
-
-//#ifdef __cplusplus
-//}
-//#endif
 
 DEVILUTION_END_NAMESPACE
 

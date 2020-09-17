@@ -10,10 +10,7 @@ DEVILUTION_BEGIN_NAMESPACE
 DGrid dgrid;
 Grid grid;
 
-int setpc_x;
-int setpc_y;
-int setpc_w;
-int setpc_h;
+RECT32 setpc;
 BYTE *pSetPiece;
 BOOL setloadflag;
 BYTE *pSpecialCels;
@@ -34,10 +31,9 @@ int nlevel_frames;
 
 PieceInventory pieces;
 
-int dminx;
-int dminy;
-int dmaxx;
-int dmaxy;
+V2Di dmin;
+V2Di dmax;
+
 int gnDifficulty;
 //BYTE level.leveltype;
 //BYTE level.currlevel;
@@ -47,15 +43,13 @@ int gnDifficulty;
 
 Level level;
 
-int ViewX;
-int ViewY;
-int ViewBX;
-int ViewBY;
-int ViewDX;
-int ViewDY;
+
+V2Di View;
+V2Di ViewB;
+V2Di ViewD;
+V2Di LvlView;
+
 ScrollStruct ScrollInfo;
-int LvlViewX;
-int LvlViewY;
 int MicroTileLen;
 char TransVal;
 BOOLEAN TransList[256];
@@ -239,20 +233,20 @@ void DRLG_AreaTrans(int num, BYTE *List)
 
 void DRLG_InitSetPC()
 {
-	setpc_x = 0;
-	setpc_y = 0;
-	setpc_w = 0;
-	setpc_h = 0;
+	setpc.x = 0;
+	setpc.y = 0;
+	setpc.w = 0;
+	setpc.h = 0;
 }
 
 void DRLG_SetPC()
 {
 	int i, j, x, y, w, h;
 
-	w = 2 * setpc_w;
-	h = 2 * setpc_h;
-	x = 2 * setpc_x + 16;
-	y = 2 * setpc_y + 16;
+	w = 2 * setpc.w;
+	h = 2 * setpc.h;
+	x = 2 * setpc.x + 16;
+	y = 2 * setpc.y + 16;
 
 	for (j = 0; j < h; j++) {
 		for (i = 0; i < w; i++) {
