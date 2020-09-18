@@ -807,11 +807,8 @@ void Player::InitPlayer(BOOL FirstTime)
 
 		SetPlrAnims();
 
-		data._pxoff = 0;
-		data._pyoff = 0;
-		data._pxvel = 0;
-		data._pyvel = 0;
-
+		data._poff = { 0, 0 };
+		data._pvel = { 0, 0 };
 		ClearPlrPVars();
 
 		if (data._pHitPoints >> 6 > 0) {
@@ -830,44 +827,40 @@ void Player::InitPlayer(BOOL FirstTime)
 
 		if (pnum == myplr()) {
 			if (!FirstTime || level.currlevel != 0) {
-				data._px = View.x;
-				data._py = View.y;
+				data._p = View;
 			}
-			data._ptargx = data._px;
-			data._ptargy = data._py;
+			data._ptarg = data._p;
 		} else {
-			data._ptargx = data._px;
-			data._ptargy = data._py;
-			for (i = 0; i < 8 && !PosOkPlayer(plrxoff2[i] + data._px, plryoff2[i] + data._py); i++)
+			data._ptarg = data._p;
+			for (i = 0; i < 8 && !PosOkPlayer(plrxoff2[i] + data._p); i++)
 				;
-			data._px += plrxoff2[i];
-			data._py += plryoff2[i];
+			data._p.x += plrxoff2[i];
+			data._p.y += plryoff2[i];
 		}
 
-		data._pfutx = data._px;
-		data._pfuty = data._py;
+		data._pfut = data._p;
 		data.walkpath[0] = WALK_NONE;
 		data.destAction = ACTION_NONE;
 
 		if (pnum == myplr()) {
-			data._plid = AddLight(data._px, data._py, data._pLightRad);
+			data._plid = AddLight(data._p, data._pLightRad);
 		} else {
 			data._plid = -1;
 		}
-		data._pvid = AddVision(data._px, data._py, data._pLightRad, pnum == myplr());
+		data._pvid = AddVision(data._p, data._pLightRad, pnum == myplr());
 	}
 
 	if (data._pClass == PC_WARRIOR) {
 		data._pAblSpells = 1 << (SPL_REPAIR - 1);
-#ifndef SPAWN
+	#ifndef SPAWN
 	} else if (data._pClass == PC_ROGUE) {
 		data._pAblSpells = 1 << (SPL_DISARM - 1);
 	} else if (data._pClass == PC_SORCERER) {
 		data._pAblSpells = 1 << (SPL_RECHARGE - 1);
-#endif
+	#endif
 	}
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	if (debug_mode_dollar_sign && FirstTime) {
 		data._pMemSpells |= 1 << (SPL_TELEPORT - 1);
 		if (!data._pSplLvl[SPL_TELEPORT]) {
@@ -877,7 +870,7 @@ void Player::InitPlayer(BOOL FirstTime)
 	if (debug_mode_key_inverted_v && FirstTime) {
 		data._pMemSpells = SPL_INVALID;
 	}
-#endif
+	#endif
 
 	data._pNextExper = ExpLvlsTbl[data._pLevel];
 	data._pInvincible = FALSE;
@@ -885,8 +878,7 @@ void Player::InitPlayer(BOOL FirstTime)
 	if (pnum == myplr()) {
 		deathdelay = 0;
 		deathflag = FALSE;
-		ScrollInfo._sxoff = 0;
-		ScrollInfo._syoff = 0;
+		ScrollInfo._soff = { 0, 0 };
 		ScrollInfo._sdir = SDIR_NONE;
 	}
 }
@@ -896,9 +888,7 @@ void InitMultiView()
 	if ((DWORD)myplr() >= MAX_PLRS) {
 		app_fatal("InitPlayer: illegal player %d", myplr());
 	}
-
-	View.x = myplr().data._px;
-	View.y = myplr().data._py;
+	View = myplr().data._p;
 }
 
 BOOL SolidLoc(V2Di pos)
@@ -906,29 +896,25 @@ BOOL SolidLoc(V2Di pos)
 	if (pos.x < 0 || pos.y < 0 || pos.x >= MAXDUNX || pos.y >= MAXDUNY) {
 		return FALSE;
 	}
-
-	return pieces[grid[x][y].dPiece].nSolidTable;
+	return pieces[grid.at(pos).dPiece].nSolidTable;
 }
 
 BOOL Player::PlrDirOK(int dir)
 {
-	int px, py;
 	BOOL isOk;
+	V2Di p = data._p + offset[dir];
 
-	px = data._px + offset_x[dir];
-	py = data._py + offset_y[dir];
-
-	if (px < 0 || !grid[px][py].dPiece || !PosOkPlayer(px, py)) {
+	if (p.x < 0 || !grid.at(p).dPiece || !PosOkPlayer(p)) {
 		return FALSE;
 	}
 
 	isOk = TRUE;
 	if (dir == DIR_E) {
-		isOk = !SolidLoc(px, py + 1) && !(grid[px][py + 1].dFlags & BFLAG_PLAYERLR);
+		isOk = !SolidLoc({ p.x, p.y + 1 }) && !(grid[p.x][p.y + 1].dFlags & BFLAG_PLAYERLR);
 	}
 
 	if (isOk && dir == DIR_W) {
-		isOk = !SolidLoc(px + 1, py) && !(grid[px + 1][py].dFlags & BFLAG_PLAYERLR);
+		isOk = !SolidLoc({ p.x + 1, p.y }) && !(grid[p.x + 1][p.y].dFlags & BFLAG_PLAYERLR);
 	}
 
 	return isOk;
@@ -960,25 +946,19 @@ void PlrDoTrans(V2Di pos)
 
 void Player::SetPlayerOld()
 {
-	data._poldx = data._px;
-	data._poldy = data._py;
+	data._pold = data._p;
 }
 
 void Player::FixPlayerLocation(int bDir)
 {
-	data._pfutx = data._px;
-	data._pfuty = data._py;
-	data._ptargx = data._px;
-	data._ptargy = data._py;
-	data._pxoff = 0;
-	data._pyoff = 0;
+	data._pfut = data._p;
+	data._ptarg = data._p;
+	data._poff = { 0, 0 };
 	data._pdir = bDir;
 	if (pnum == myplr()) {
-		ScrollInfo._sxoff = 0;
-		ScrollInfo._syoff = 0;
+		ScrollInfo._soff = { 0, 0 };
 		ScrollInfo._sdir = SDIR_NONE;
-		View.x = data._px;
-		View.y = data._py;
+		View = data._p;
 	}
 }
 
@@ -993,7 +973,7 @@ void Player::StartStand(int dir)
 		data._pmode = PM_STAND;
 		FixPlayerLocation(dir);
 		FixPlrWalkTags();
-		grid[data._px][data._py].dPlayer = pnum + 1;
+		grid.at(data._p).dPlayer = pnum + 1;
 		SetPlayerOld();
 	} else {
 		SyncPlrKill(-1);
@@ -1003,80 +983,70 @@ void Player::StartStand(int dir)
 void Player::StartWalkStand()
 {
 	data._pmode = PM_STAND;
-	data._pfutx = data._px;
-	data._pfuty = data._py;
-	data._pxoff = 0;
-	data._pyoff = 0;
+	data._pfut = data._p;
+	data._poff = { 0, 0 };
 
 	if (pnum == myplr()) {
-		ScrollInfo._sxoff = 0;
-		ScrollInfo._syoff = 0;
+		ScrollInfo._soff = { 0, 0 };
 		ScrollInfo._sdir = SDIR_NONE;
-		View.x = data._px;
-		View.y = data._py;
+		View = data._p;
 	}
 }
 
 void Player::PM_ChangeLightOff()
 {
-	int x, y;
-	int xmul, ymul;
-	int lx, ly;
-	int offx, offy;
+	V2Di p, mul, lv, off;
 	const LightListStruct *l;
 
 	// check if issue is upstream
-	if (data._plid == -1)
-		return;
+	if (data._plid == -1) return;
 
 	l = &LightList[data._plid];
-	x = 2 * data._pyoff + data._pxoff;
-	y = 2 * data._pyoff - data._pxoff;
-	if (x < 0) {
-		xmul = -1;
-		x = -x;
+	p.x = 2 * data._poff.y + data._poff.x;
+	p.y = 2 * data._poff.y - data._poff.x;
+	if (p.x < 0) {
+		mul.x = -1;
+		p.x = -p.x;
 	} else {
-		xmul = 1;
+		mul.x = 1;
 	}
-	if (y < 0) {
-		ymul = -1;
-		y = -y;
+	if (p.y < 0) {
+		mul.y = -1;
+		p.y = -p.y;
 	} else {
-		ymul = 1;
+		mul.y = 1;
 	}
 
-	x = (x >> 3) * xmul;
-	y = (y >> 3) * ymul;
-	lx = x + (l->_lx << 3);
-	ly = y + (l->_ly << 3);
-	offx = l->_xoff + (l->_lx << 3);
-	offy = l->_yoff + (l->_ly << 3);
+	p.x = (p.x >> 3) * mul.x;
+	p.y = (p.y >> 3) * mul.y;
+	lv.x = p.x + (l->_l.x << 3);
+	lv.y = p.y + (l->_l.y << 3);
+	off.x = l->_off.x + (l->_l.x << 3);
+	off.y = l->_off.y + (l->_l.y << 3);
 
-	if (abs(lx - offx) < 3 && abs(ly - offy) < 3)
+	if (abs(lv.x - off.x) < 3 && abs(lv.y - off.y) < 3)
 		return;
 
-	ChangeLightOff(data._plid, x, y);
+	ChangeLightOff(data._plid, p);
 }
 
 void Player::PM_ChangeOffset()
 {
-	int px, py;
-
+	V2Di p;
 	data._pVar8++;
-	px = data._pVar6 / 256;
-	py = data._pVar7 / 256;
+	p.x = data._pVar6 / 256;
+	p.y = data._pVar7 / 256;
 
-	data._pVar6 += data._pxvel;
-	data._pVar7 += data._pyvel;
-	data._pxoff = data._pVar6 / 256;
-	data._pyoff = data._pVar7 / 256;
+	data._pVar6 += data._pvel.x;
+	data._pVar7 += data._pvel.y;
+	data._poff.x = data._pVar6 / 256;
+	data._poff.y = data._pVar7 / 256;
 
-	px -= data._pVar6 >> 8;
-	py -= data._pVar7 >> 8;
+	p.x -= data._pVar6 >> 8;
+	p.y -= data._pVar7 >> 8;
 
 	if (pnum == myplr() && ScrollInfo._sdir) {
-		ScrollInfo._sxoff += px;
-		ScrollInfo._syoff += py;
+		ScrollInfo._soff += p;
 	}
 
 	PM_ChangeLightOff();
@@ -1095,18 +1065,15 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 	data._pfut = p;
 
 	if (pnum == myplr()) {
-		ScrollInfo._sd = data._p - View.x;
-		ScrollInfo._sdy = data._py - View.y;
+		ScrollInfo._sd = data._p - View;
 	}
 
-	grid[px][py].dPlayer = -(pnum + 1);
+	grid.at(p).dPlayer = -(pnum + 1);
 	data._pmode = PM_WALK;
-	data._pxvel = xvel;
-	data._pyvel = yvel;
-	data._pxoff = 0;
-	data._pyoff = 0;
-	data._pVar1 = xadd;
-	data._pVar2 = yadd;
+	data._pvel = vel;
+	data._poff = { 0, 0 };
+	data._pVar1 = add.x;
+	data._pVar2 = add.y;
 	data._pVar3 = EndDir;
 
 	if (!(data._pGFXLoad & PFILE_WALK)) {
@@ -1124,13 +1091,15 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 		return;
 	}
 
+	int dist = (ScrollInfo._sd).maxabs();
 	if (zoomflag) {
-		if (abs(ScrollInfo._sdx) >= 3 || abs(ScrollInfo._sdy) >= 3) {
+
+		if (dist >= 3) {
 			ScrollInfo._sdir = SDIR_NONE;
 		} else {
 			ScrollInfo._sdir = sdir;
 		}
-	} else if (abs(ScrollInfo._sdx) >= 2 || abs(ScrollInfo._sdy) >= 2) {
+	} else if (dist >= 2) {
 		ScrollInfo._sdir = SDIR_NONE;
 	} else {
 		ScrollInfo._sdir = sdir;
@@ -1140,48 +1109,39 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 #if defined(__clang__) || defined(__GNUC__)
 __attribute__((no_sanitize("shift-base")))
 #endif
-void Player::StartWalk2(int xvel, int yvel, int xoff, int yoff, int xadd, int yadd, int EndDir, int sdir)
+void Player::StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir, int sdir)
 {
-	int px, py;
-
+	V2Di p = add + data._p;
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
 		return;
 	}
 
 	SetPlayerOld();
-	px = xadd + data._px;
-	py = yadd + data._py;
-
 	if (!PlrDirOK(EndDir)) {
 		return;
 	}
 
-	data._pfutx = px;
-	data._pfuty = py;
+	data._pfut = p;
 
 	if (pnum == myplr()) {
-		ScrollInfo._sdx = data._px - View.x;
-		ScrollInfo._sdy = data._py - View.y;
+		ScrollInfo._sd = data._p - View;
 	}
 
-	grid[data._px][data._py].dPlayer = -1 - pnum;
-	data._pVar1 = data._px;
-	data._pVar2 = data._py;
-	data._px = px;
-	data._py = py;
-	grid[data._px][data._py].dPlayer = pnum + 1;
-	data._pxoff = xoff;
-	data._pyoff = yoff;
+	grid.at(data._p).dPlayer = -1 - pnum;
+	data._pVar1 = data._p.x;
+	data._pVar2 = data._p.y;
+	data._p = p;
+	grid.at(data._p).dPlayer = pnum + 1;
+	data._poff = off;
 
-	ChangeLightXY(data._plid, data._px, data._py);
+	ChangeLightXY(data._plid, data._p);
 	PM_ChangeLightOff();
 
 	data._pmode = PM_WALK2;
-	data._pxvel = xvel;
-	data._pyvel = yvel;
-	data._pVar6 = xoff * 256;
-	data._pVar7 = yoff * 256;
+	data._pvel = vel;
+	data._pVar6 = off.x * 256;
+	data._pVar7 = off.y * 256;
 	data._pVar3 = EndDir;
 
 	if (!(data._pGFXLoad & PFILE_WALK)) {
@@ -1196,13 +1156,14 @@ void Player::StartWalk2(int xvel, int yvel, int xoff, int yoff, int xadd, int ya
 		return;
 	}
 
+	int dist = (ScrollInfo._sd).maxabs();
 	if (zoomflag) {
-		if (abs(ScrollInfo._sdx) >= 3 || abs(ScrollInfo._sdy) >= 3) {
+		if (dist >= 3) {
 			ScrollInfo._sdir = SDIR_NONE;
 		} else {
 			ScrollInfo._sdir = sdir;
 		}
-	} else if (abs(ScrollInfo._sdx) >= 2 || abs(ScrollInfo._sdy) >= 2) {
+	} else if (dist >= 2) {
 		ScrollInfo._sdir = SDIR_NONE;
 	} else {
 		ScrollInfo._sdir = sdir;
@@ -1212,9 +1173,9 @@ void Player::StartWalk2(int xvel, int yvel, int xoff, int yoff, int xadd, int ya
 #if defined(__clang__) || defined(__GNUC__)
 __attribute__((no_sanitize("shift-base")))
 #endif
-void Player::StartWalk3(int xvel, int yvel, int xoff, int yoff, int xadd, int yadd, int mapx, int mapy, int EndDir, int sdir)
+void Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir, int sdir)
 {
-	int px, py, x, y;
+	V2Di p, n;
 
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1222,43 +1183,37 @@ void Player::StartWalk3(int xvel, int yvel, int xoff, int yoff, int xadd, int ya
 	}
 
 	SetPlayerOld();
-	px = xadd + data._px;
-	py = yadd + data._py;
-	x = mapx + data._px;
-	y = mapy + data._py;
+	p = add + data._p;
+	n = map + data._p;
 
 	if (!PlrDirOK(EndDir)) {
 		return;
 	}
 
-	data._pfutx = px;
-	data._pfuty = py;
+	data._pfut = p;
 
 	if (pnum == myplr()) {
-		ScrollInfo._sdx = data._px - View.x;
-		ScrollInfo._sdy = data._py - View.y;
+		ScrollInfo._sd = data._p - View;
 	}
 
-	grid[data._px][data._py].dPlayer = -1 - pnum;
-	grid[px][py].dPlayer = -1 - pnum;
-	data._pVar4 = x;
-	data._pVar5 = y;
-	grid[x][y].dFlags |= BFLAG_PLAYERLR;
-	data._pxoff = xoff;
-	data._pyoff = yoff;
+	grid.at(data._p).dPlayer = -1 - pnum;
+	grid.at(p).dPlayer = -1 - pnum;
+	data._pVar4 = n.x;
+	data._pVar5 = n.y;
+	grid.at(n).dFlags |= BFLAG_PLAYERLR;
+	data._poff = off;
 
 	if (level.leveltype != DTYPE_TOWN) {
-		ChangeLightXY(data._plid, x, y);
+		ChangeLightXY(data._plid, n);
 		PM_ChangeLightOff();
 	}
 
 	data._pmode = PM_WALK3;
-	data._pxvel = xvel;
-	data._pyvel = yvel;
-	data._pVar1 = px;
-	data._pVar2 = py;
-	data._pVar6 = xoff * 256;
-	data._pVar7 = yoff * 256;
+	data._pvel = vel;
+	data._pVar1 = p.x;
+	data._pVar2 = p.y;
+	data._pVar6 = off.x * 256;
+	data._pVar7 = off.y * 256;
 	data._pVar3 = EndDir;
 
 	if (!(data._pGFXLoad & PFILE_WALK)) {
@@ -1272,14 +1227,14 @@ void Player::StartWalk3(int xvel, int yvel, int xoff, int yoff, int xadd, int ya
 	if (pnum != myplr()) {
 		return;
 	}
-
+	int dist = (ScrollInfo._sd).maxabs();
 	if (zoomflag) {
-		if (abs(ScrollInfo._sdx) >= 3 || abs(ScrollInfo._sdy) >= 3) {
+		if (dist >= 3) {
 			ScrollInfo._sdir = SDIR_NONE;
 		} else {
 			ScrollInfo._sdir = sdir;
 		}
-	} else if (abs(ScrollInfo._sdx) >= 2 || abs(ScrollInfo._sdy) >= 2) {
+	} else if (dist >= 2) {
 		ScrollInfo._sdir = SDIR_NONE;
 	} else {
 		ScrollInfo._sdir = sdir;
@@ -1304,7 +1259,7 @@ void Player::StartAttack(int d)
 	SetPlayerOld();
 }
 
-void Player::StartRangeAttack(int d, int cx, int cy)
+void Player::StartRangeAttack(int d, V2Di c)
 {
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1319,8 +1274,8 @@ void Player::StartRangeAttack(int d, int cx, int cy)
 	data._pmode = PM_RATTACK;
 	FixPlayerLocation(d);
 	SetPlayerOld();
-	data._pVar1 = cx;
-	data._pVar2 = cy;
+	data._pVar1 = c.x;
+	data._pVar2 = c.y;
 }
 
 void Player::StartPlrBlock(int dir)
@@ -1331,7 +1286,7 @@ void Player::StartPlrBlock(int dir)
 		return;
 	}
 
-	PlaySfxLoc(IS_ISWORD, data._px, data._py);
+	PlaySfxLoc(IS_ISWORD, data._p);
 
 	if (!(data._pGFXLoad & PFILE_BLOCK)) {
 		LoadPlrGFX(PFILE_BLOCK);
@@ -1343,7 +1298,7 @@ void Player::StartPlrBlock(int dir)
 	SetPlayerOld();
 }
 
-void Player::StartSpell(int d, int cx, int cy)
+void Player::StartSpell(int d, V2Di c)
 {
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1373,15 +1328,15 @@ void Player::StartSpell(int d, int cx, int cy)
 		}
 	}
 
-	PlaySfxLoc(spelldata[data._pSpell].sSFX, data._px, data._py);
+	PlaySfxLoc(spelldata[data._pSpell].sSFX, data._p);
 
 	data._pmode = PM_SPELL;
 
 	FixPlayerLocation(d);
 	SetPlayerOld();
 
-	data._pVar1 = cx;
-	data._pVar2 = cy;
+	data._pVar1 = c.x;
+	data._pVar2 = c.y;
 	data._pVar4 = GetSpellLevel(pnum, data._pSpell);
 	data._pVar8 = 1;
 }
@@ -1389,23 +1344,22 @@ void Player::StartSpell(int d, int cx, int cy)
 void Player::FixPlrWalkTags()
 {
 	int pp, pn;
-	int dx, dy, y, x;
+	V2Di d, n;
 
 	pp = pnum + 1;
 	pn = -(pnum + 1);
-	dx = data._poldx;
-	dy = data._poldy;
-	for (y = dy - 1; y <= dy + 1; y++) {
-		for (x = dx - 1; x <= dx + 1; x++) {
+	d = data._pold;
+	for (int y = d.y - 1; y <= d.y + 1; y++) {
+		for (int x = d.x - 1; x <= d.x + 1; x++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && (grid[x][y].dPlayer == pp || grid[x][y].dPlayer == pn)) {
 				grid[x][y].dPlayer = 0;
 			}
 		}
 	}
 
-	if (dx >= 0 && dx < MAXDUNX - 1 && dy >= 0 && dy < MAXDUNY - 1) {
-		grid[dx + 1][dy].dFlags &= ~BFLAG_PLAYERLR;
-		grid[dx][dy + 1].dFlags &= ~BFLAG_PLAYERLR;
+	if (d.x >= 0 && d.x < MAXDUNX - 1 && d.y >= 0 && d.y < MAXDUNY - 1) {
+		grid[d.x + 1][d.y].dFlags &= ~BFLAG_PLAYERLR;
+		grid[d.x][d.y + 1].dFlags &= ~BFLAG_PLAYERLR;
 	}
 }
 
@@ -1439,12 +1393,12 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 	}
 
 	if (data._pClass == PC_WARRIOR) {
-		PlaySfxLoc(PS_WARR69, data._px, data._py);
+		PlaySfxLoc(PS_WARR69, data._p);
 #ifndef SPAWN
 	} else if (data._pClass == PC_ROGUE) {
-		PlaySfxLoc(PS_ROGUE69, data._px, data._py);
+		PlaySfxLoc(PS_ROGUE69, data._p);
 	} else if (data._pClass == PC_SORCERER) {
-		PlaySfxLoc(PS_MAGE69, data._px, data._py);
+		PlaySfxLoc(PS_MAGE69, data._p);
 #endif
 	}
 
@@ -1461,7 +1415,7 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 		FixPlayerLocation(pd);
 		data._pVar8 = 1;
 		FixPlrWalkTags();
-		grid[data._px][data._py].dPlayer = pnum + 1;
+		grid.at(data._p).dPlayer = pnum + 1;
 		SetPlayerOld();
 	}
 }
@@ -1512,13 +1466,13 @@ void Player::StartPlayerKill(int earflag)
 	}
 
 	if (data._pClass == PC_WARRIOR) {
-		PlaySfxLoc(PS_DEAD, data._px, data._py); // BUGFIX: should use `PS_WARR71` like other classes
-#ifndef SPAWN
+		PlaySfxLoc(PS_DEAD, data._p); // BUGFIX: should use `PS_WARR71` like other classes
+	#ifndef SPAWN
 	} else if (data._pClass == PC_ROGUE) {
-		PlaySfxLoc(PS_ROGUE71, data._px, data._py);
+		PlaySfxLoc(PS_ROGUE71, data._p);
 	} else if (data._pClass == PC_SORCERER) {
-		PlaySfxLoc(PS_MAGE71, data._px, data._py);
-#endif
+		PlaySfxLoc(PS_MAGE71, data._p);
+	#endif
 	}
 
 	if (data._pgfxnum) {
@@ -1549,7 +1503,7 @@ void Player::StartPlayerKill(int earflag)
 	if (data.plrlevel == level.currlevel) {
 		FixPlayerLocation(data._pdir);
 		RemovePlrFromMap();
-		grid[data._px][data._py].dFlags |= BFLAG_DEAD_PLAYER;
+		grid.at(data._p).dFlags |= BFLAG_DEAD_PLAYER;
 		SetPlayerOld();
 
 		if (pnum == myplr()) {
@@ -1557,7 +1511,7 @@ void Player::StartPlayerKill(int earflag)
 			deathdelay = 30;
 
 			if (pcurs >= CURSOR_FIRSTITEM) {
-				PlrDeadItem(&data.HoldItem, 0, 0);
+				PlrDeadItem(&data.HoldItem, { 0, 0 });
 				SetCursor_(CURSOR_HAND);
 			}
 
@@ -1580,14 +1534,14 @@ void Player::StartPlayerKill(int earflag)
 						ear._ivalue = data._pLevel;
 
 						if (FindGetItem(IDI_EAR, ear._iCreateInfo, ear._iSeed) == -1) {
-							PlrDeadItem(&ear, 0, 0);
+							PlrDeadItem(&ear, { 0, 0 });
 						}
 					} else {
 						pi = &data.InvBody[0];
 						i = NUM_INVLOC;
 						while (i--) {
 							pdd = (i + data._pdir) & 7;
-							PlrDeadItem(pi, offset_x[pdd], offset_y[pdd]);
+							PlrDeadItem(pi, offset[pdd]);
 							pi++;
 						}
 
@@ -1600,32 +1554,27 @@ void Player::StartPlayerKill(int earflag)
 	SetPlayerHitPoints(0);
 }
 
-void Player::PlrDeadItem(ItemStruct *itm, int xx, int yy)
+void Player::PlrDeadItem(ItemStruct *itm, V2Di n)
 {
-	int x, y;
-	int i, j, k;
+	if (itm->_itype == ITYPE_NONE) return;
 
-	if (itm->_itype == ITYPE_NONE)
-		return;
-
-	x = xx + data._px;
-	y = yy + data._py;
-	if ((xx || yy) && ItemSpaceOk(x, y)) {
-		RespawnDeadItem(itm, x, y);
+	V2Di p = n + data._p;
+	if ((n.x || n.y) && ItemSpaceOk(p.x, p.y)) {
+		RespawnDeadItem(itm, p);
 		data.HoldItem = *itm;
-		NetSendCmdPItem(FALSE, CMD_RESPAWNITEM, x, y);
+		NetSendCmdPItem(FALSE, CMD_RESPAWNITEM, p.x, p.y);
 		return;
 	}
 
-	for (k = 1; k < 50; k++) {
-		for (j = -k; j <= k; j++) {
-			y = j + data._py;
-			for (i = -k; i <= k; i++) {
-				x = i + data._px;
-				if (ItemSpaceOk(x, y)) {
-					RespawnDeadItem(itm, x, y);
+	for (int k = 1; k < 50; k++) {
+		for (int j = -k; j <= k; j++) {
+			p.y = j + data._p.y;
+			for (int i = -k; i <= k; i++) {
+				p.x = i + data._p.x;
+				if (ItemSpaceOk(p.x, p.y)) {
+					RespawnDeadItem(itm, p);
 					data.HoldItem = *itm;
-					NetSendCmdPItem(FALSE, CMD_RESPAWNITEM, x, y);
+					NetSendCmdPItem(FALSE, CMD_RESPAWNITEM, p.x, p.y);
 					return;
 				}
 			}
@@ -1647,7 +1596,7 @@ void Player::DropHalfPlayersGold()
 				GetGoldSeed(pnum, &data.HoldItem);
 				SetPlrHandGoldCurs(&data.HoldItem);
 				data.HoldItem._ivalue = hGold;
-				PlrDeadItem(&data.HoldItem, 0, 0);
+				PlrDeadItem(&data.HoldItem, { 0, 0 });
 				hGold = 0;
 			} else {
 				hGold -= data.SpdList[i]._ivalue;
@@ -1656,7 +1605,7 @@ void Player::DropHalfPlayersGold()
 				GetGoldSeed(pnum, &data.HoldItem);
 				SetPlrHandGoldCurs(&data.HoldItem);
 				data.HoldItem._ivalue = data.SpdList[i]._ivalue;
-				PlrDeadItem(&data.HoldItem, 0, 0);
+				PlrDeadItem(&data.HoldItem, { 0, 0 });
 				i = -1;
 			}
 		}
@@ -1671,7 +1620,7 @@ void Player::DropHalfPlayersGold()
 					GetGoldSeed(pnum, &data.HoldItem);
 					SetPlrHandGoldCurs(&data.HoldItem);
 					data.HoldItem._ivalue = hGold;
-					PlrDeadItem(&data.HoldItem, 0, 0);
+					PlrDeadItem(&data.HoldItem, { 0, 0 });
 					hGold = 0;
 				} else {
 					hGold -= data.SpdList[i]._ivalue;
@@ -1680,7 +1629,7 @@ void Player::DropHalfPlayersGold()
 					GetGoldSeed(pnum, &data.HoldItem);
 					SetPlrHandGoldCurs(&data.HoldItem);
 					data.HoldItem._ivalue = data.SpdList[i]._ivalue;
-					PlrDeadItem(&data.HoldItem, 0, 0);
+					PlrDeadItem(&data.HoldItem, { 0, 0 });
 					i = -1;
 				}
 			}
@@ -1697,7 +1646,7 @@ void Player::DropHalfPlayersGold()
 					GetGoldSeed(pnum, &data.HoldItem);
 					SetPlrHandGoldCurs(&data.HoldItem);
 					data.HoldItem._ivalue = hGold;
-					PlrDeadItem(&data.HoldItem, 0, 0);
+					PlrDeadItem(&data.HoldItem, { 0, 0 });
 					hGold = 0;
 				} else {
 					hGold -= data.InvList[i]._ivalue;
@@ -1706,7 +1655,7 @@ void Player::DropHalfPlayersGold()
 					GetGoldSeed(pnum, &data.HoldItem);
 					SetPlrHandGoldCurs(&data.HoldItem);
 					data.HoldItem._ivalue = data.InvList[i]._ivalue;
-					PlrDeadItem(&data.HoldItem, 0, 0);
+					PlrDeadItem(&data.HoldItem, { 0, 0 });
 					i = -1;
 				}
 			}
@@ -1722,7 +1671,7 @@ void Player::DropHalfPlayersGold()
 					GetGoldSeed(pnum, &data.HoldItem);
 					SetPlrHandGoldCurs(&data.HoldItem);
 					data.HoldItem._ivalue = hGold;
-					PlrDeadItem(&data.HoldItem, 0, 0);
+					PlrDeadItem(&data.HoldItem, { 0, 0 });
 					hGold = 0;
 				} else {
 					hGold -= data.InvList[i]._ivalue;
@@ -1731,7 +1680,7 @@ void Player::DropHalfPlayersGold()
 					GetGoldSeed(pnum, &data.HoldItem);
 					SetPlrHandGoldCurs(&data.HoldItem);
 					data.HoldItem._ivalue = data.InvList[i]._ivalue;
-					PlrDeadItem(&data.HoldItem, 0, 0);
+					PlrDeadItem(&data.HoldItem, { 0, 0 });
 					i = -1;
 				}
 			}
@@ -1767,14 +1716,13 @@ void Player::SyncPlrKill(int earflag)
 void Player::RemovePlrMissiles()
 {
 	int i, am;
-	int mx, my;
+	V2Di m;
 
-	if (level.currlevel != 0 && pnum == myplr() && (monsters[myplr()].data._mx != 1 || monsters[myplr()].data._my != 0)) {
+	if (level.currlevel != 0 && pnum == myplr() && (monsters[myplr()].data._m.x != 1 || monsters[myplr()].data._m.y != 0)) {
 		monsters[myplr()].M_StartKill(myplr());
-		AddDead(monsters[myplr()].data._mx, monsters[myplr()].data._my, (monsters[myplr()].data.MType)->mdeadval, monsters[myplr()].data._mdir);
-		mx = monsters[myplr()].data._mx;
-		my = monsters[myplr()].data._my;
-		grid[mx][my].dMonster = 0;
+		AddDead(monsters[myplr()].data._m, (monsters[myplr()].data.MType)->mdeadval, monsters[myplr()].data._mdir);
+		m = monsters[myplr()].data._m;
+		grid.at(m).dMonster = 0;
 		monsters[myplr()].data._mDelFlag = TRUE;
 		DeleteMonsterList();
 	}
@@ -1806,7 +1754,7 @@ void Player::InitLevelChange()
 	RemovePlrFromMap();
 	SetPlayerOld();
 	if (pnum == myplr()) {
-		grid[data._px][data._py].dPlayer = myplr() + 1;
+		grid.at(data._p).dPlayer = myplr() + 1;
 	} else {
 		data._pLvlVisited[data.plrlevel] = TRUE;
 	}
@@ -1913,7 +1861,7 @@ BOOL Player::PM_DoWalk()
 	if (data._pAnimFrame == 3
 	    || (data._pWFrames == 8 && data._pAnimFrame == 7)
 	    || (data._pWFrames != 8 && data._pAnimFrame == 4)) {
-		PlaySfxLoc(PS_WALK1, data._px, data._py);
+		PlaySfxLoc(PS_WALK1, data._p);
 	}
 
 	anim_len = 8;
@@ -1922,19 +1870,18 @@ BOOL Player::PM_DoWalk()
 	}
 
 	if (data._pVar8 == anim_len) {
-		grid[data._px][data._py].dPlayer = 0;
-		data._px += data._pVar1;
-		data._py += data._pVar2;
-		grid[data._px][data._py].dPlayer = pnum + 1;
+		grid.at(data._p).dPlayer = 0;
+		data._p.x += data._pVar1;
+		data._p.y += data._pVar2;
+		grid.at(data._p).dPlayer = pnum + 1;
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightXY(data._plid, data._px, data._py);
-			ChangeVisionXY(data._pvid, data._px, data._py);
+			ChangeLightXY(data._plid, data._p);
+			ChangeVisionXY(data._pvid, data._p);
 		}
 
 		if (pnum == myplr() && ScrollInfo._sdir) {
-			View.x = data._px - ScrollInfo._sdx;
-			View.y = data._py - ScrollInfo._sdy;
+			View = data._p - ScrollInfo._sd;
 		}
 
 		if (data.walkpath[0] != WALK_NONE) {
@@ -1946,7 +1893,7 @@ BOOL Player::PM_DoWalk()
 		ClearPlrPVars();
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightOff(data._plid, 0, 0);
+			ChangeLightOff(data._plid, { 0, 0 });
 		}
 		rv = TRUE;
 	} else {
@@ -1965,7 +1912,7 @@ BOOL Player::PM_DoWalk2()
 	if (data._pAnimFrame == 3
 	    || (data._pWFrames == 8 && data._pAnimFrame == 7)
 	    || (data._pWFrames != 8 && data._pAnimFrame == 4)) {
-		PlaySfxLoc(PS_WALK1, data._px, data._py);
+		PlaySfxLoc(PS_WALK1, data._p);
 	}
 
 	anim_len = 8;
@@ -1977,13 +1924,12 @@ BOOL Player::PM_DoWalk2()
 		grid[data._pVar1][data._pVar2].dPlayer = 0;
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightXY(data._plid, data._px, data._py);
-			ChangeVisionXY(data._pvid, data._px, data._py);
+			ChangeLightXY(data._plid, data._p);
+			ChangeVisionXY(data._pvid, data._p);
 		}
 
 		if (pnum == myplr() && ScrollInfo._sdir) {
-			View.x = data._px - ScrollInfo._sdx;
-			View.y = data._py - ScrollInfo._sdy;
+			View = data._p - ScrollInfo._sd;
 		}
 
 		if (data.walkpath[0] != WALK_NONE) {
@@ -1994,7 +1940,7 @@ BOOL Player::PM_DoWalk2()
 
 		ClearPlrPVars();
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightOff(data._plid, 0, 0);
+			ChangeLightOff(data._plid, { 0, 0 });
 		}
 		rv = TRUE;
 	} else {
@@ -2013,7 +1959,7 @@ BOOL Player::PM_DoWalk3()
 	if (data._pAnimFrame == 3
 	    || (data._pWFrames == 8 && data._pAnimFrame == 7)
 	    || (data._pWFrames != 8 && data._pAnimFrame == 4)) {
-		PlaySfxLoc(PS_WALK1, data._px, data._py);
+		PlaySfxLoc(PS_WALK1, data._p);
 	}
 
 	anim_len = 8;
@@ -2022,20 +1968,19 @@ BOOL Player::PM_DoWalk3()
 	}
 
 	if (data._pVar8 == anim_len) {
-		grid[data._px][data._py].dPlayer = 0;
+		grid.at(data._p).dPlayer = 0;
 		grid[data._pVar4][data._pVar5].dFlags &= ~BFLAG_PLAYERLR;
-		data._px = data._pVar1;
-		data._py = data._pVar2;
-		grid[data._px][data._py].dPlayer = pnum + 1;
+		data._p.x = data._pVar1;
+		data._p.y = data._pVar2;
+		grid.at(data._p).dPlayer = pnum + 1;
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightXY(data._plid, data._px, data._py);
-			ChangeVisionXY(data._pvid, data._px, data._py);
+			ChangeLightXY(data._plid, data._p);
+			ChangeVisionXY(data._pvid, data._p);
 		}
 
 		if (pnum == myplr() && ScrollInfo._sdir) {
-			View.x = data._px - ScrollInfo._sdx;
-			View.y = data._py - ScrollInfo._sdy;
+			View = data._p - ScrollInfo._sd;
 		}
 
 		if (data.walkpath[0] != WALK_NONE) {
@@ -2047,7 +1992,7 @@ BOOL Player::PM_DoWalk3()
 		ClearPlrPVars();
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightOff(data._plid, 0, 0);
+			ChangeLightOff(data._plid, { 0, 0 });
 		}
 		rv = TRUE;
 	} else {
@@ -2360,7 +2305,7 @@ BOOL Player::PlrHitPlr(char p)
 
 	if (hit < hper) {
 		if (blk < blkper) {
-			dir = GetDirection(plr[p].data._px, plr[p].data._py, data._px, data._py);
+			dir = GetDirection(plr[p].data._p, data._p);
 			plr[p].StartPlrBlock(dir);
 		} else {
 			mind = data._pIMinDam;
@@ -2399,29 +2344,28 @@ BOOL Player::PlrHitPlr(char p)
 	return rv;
 }
 
-BOOL Player::PlrHitObj(int mx, int my)
+BOOL Player::PlrHitObj(V2Di m)
 {
 	int oi;
 
-	if (grid[mx][my].dObject > 0) {
-		oi = grid[mx][my].dObject - 1;
+	if (grid.at(m).dObject > 0) {
+		oi = grid.at(m).dObject - 1;
 	} else {
-		oi = -grid[mx][my].dObject - 1;
+		oi = -grid.at(m).dObject - 1;
 	}
 
 	if (object[oi]._oBreak == 1) {
 		BreakObject(pnum, oi);
 		return TRUE;
 	}
-
 	return FALSE;
 }
 
 BOOL Player::PM_DoAttack()
 {
-	int frame, dir, dx, dy, m;
+	int frame, dir, m;
 	BOOL didhit;
-
+	V2Di d;
 	frame = data._pAnimFrame;
 	if (data._pIFlags & ISPL_QUICKATTACK && frame == 1) {
 		data._pAnimFrame++;
@@ -2436,19 +2380,17 @@ BOOL Player::PM_DoAttack()
 		data._pAnimFrame += 2;
 	}
 	if (data._pAnimFrame == data._pAFNum - 1) {
-		PlaySfxLoc(PS_SWING, data._px, data._py);
+		PlaySfxLoc(PS_SWING, data._p);
 	}
 
 	if (data._pAnimFrame == data._pAFNum) {
 		dir = data._pdir;
-		dx = data._px + offset_x[dir];
-		dy = data._py + offset_y[dir];
-
-		if (grid[dx][dy].dMonster) {
-			if (grid[dx][dy].dMonster > 0) {
-				m = grid[dx][dy].dMonster - 1;
+		d = data._p + offset[dir];
+		if (grid.at(d).dMonster) {
+			if (grid.at(d).dMonster > 0) {
+				m = grid.at(d).dMonster - 1;
 			} else {
-				m = -(grid[dx][dy].dMonster + 1);
+				m = -(grid.at(d).dMonster + 1);
 			}
 			if (CanTalkToMonst(m)) {
 				data._pVar1 = 0;
@@ -2457,31 +2399,31 @@ BOOL Player::PM_DoAttack()
 		}
 
 		if (data._pIFlags & ISPL_FIREDAM) {
-			AddMissile(dx, dy, 1, 0, 0, MIS_WEAPEXP, 0, pnum, 0, 0);
+			AddMissile(d, { 1, 0 }, 0, MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
 		if (data._pIFlags & ISPL_LIGHTDAM) {
-			AddMissile(dx, dy, 2, 0, 0, MIS_WEAPEXP, 0, pnum, 0, 0);
+			AddMissile(d, { 2, 0 }, 0, MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
 
 		didhit = FALSE;
-		if (grid[dx][dy].dMonster) {
-			m = grid[dx][dy].dMonster;
-			if (grid[dx][dy].dMonster > 0) {
-				m = grid[dx][dy].dMonster - 1;
+		if (grid.at(d).dMonster) {
+			m = grid.at(d).dMonster;
+			if (grid.at(d).dMonster > 0) {
+				m = grid.at(d).dMonster - 1;
 			} else {
-				m = -(grid[dx][dy].dMonster + 1);
+				m = -(grid.at(d).dMonster + 1);
 			}
 			didhit = PlrHitMonst(m);
-		} else if (grid[dx][dy].dPlayer && !FriendlyMode) {
-			BYTE p = grid[dx][dy].dPlayer;
-			if (grid[dx][dy].dPlayer > 0) {
-				p = grid[dx][dy].dPlayer - 1;
+		} else if (grid.at(d).dPlayer && !FriendlyMode) {
+			BYTE p = grid.at(d).dPlayer;
+			if (grid.at(d).dPlayer > 0) {
+				p = grid.at(d).dPlayer - 1;
 			} else {
-				p = -(grid[dx][dy].dPlayer + 1);
+				p = -(grid.at(d).dPlayer + 1);
 			}
 			didhit = PlrHitPlr(p);
-		} else if (grid[dx][dy].dObject > 0) {
-			didhit = PlrHitObj(dx, dy);
+		} else if (grid.at(d).dObject > 0) {
+			didhit = PlrHitObj(d);
 		}
 
 		if (didhit && WeaponDur(30)) {
@@ -2521,10 +2463,8 @@ BOOL Player::PM_DoRangeAttack()
 			mistype = MIS_LARROW;
 		}
 		AddMissile(
-		    data._px,
-		    data._py,
-		    data._pVar1,
-		    data._pVar2,
+		    data._p,
+		    { data._pVar1, data._pVar2 },
 		    data._pdir,
 		    mistype,
 		    0,
@@ -2532,7 +2472,7 @@ BOOL Player::PM_DoRangeAttack()
 		    4,
 		    0);
 
-		PlaySfxLoc(PS_BFIRE, data._px, data._py);
+		PlaySfxLoc(PS_BFIRE, data._p);
 
 		if (WeaponDur(40)) {
 			StartStand(data._pdir);
@@ -2610,10 +2550,8 @@ BOOL Player::PM_DoSpell()
 		CastSpell(
 		    pnum,
 		    data._pSpell,
-		    data._px,
-		    data._py,
-		    data._pVar1,
-		    data._pVar2,
+		    data._p,
+		    { data._pVar1, data._pVar2 },
 		    0,
 		    data._pVar4);
 
@@ -2748,7 +2686,7 @@ BOOL Player::PM_DoDeath()
 
 		data._pAnimDelay = 10000;
 		data._pAnimFrame = data._pAnimLen;
-		grid[data._px][data._py].dFlags |= BFLAG_DEAD_PLAYER;
+		grid.at(data._p).dFlags |= BFLAG_DEAD_PLAYER;
 	}
 
 	if (data._pVar8 < 100) {
@@ -2765,15 +2703,16 @@ BOOL Player::PM_DoNewLvl()
 
 void Player::CheckNewPath()
 {
-	int i, x, y, d;
-	int xvel3, xvel, yvel;
+	int i, d;
+	V2Di n, vel;
+	int xvel3;
 
 	if (data.destAction == ACTION_ATTACKMON) {
-		MakePlrPath(monsters[data.destParam1].data._mfutx, monsters[data.destParam1].data._mfuty, FALSE);
+		MakePlrPath(monsters[data.destParam1].data._mfut, FALSE);
 	}
 
 	if (data.destAction == ACTION_ATTACKPLR) {
-		MakePlrPath(plr[data.destParam1].data._pfutx, plr[data.destParam1].data._pfuty, FALSE);
+		MakePlrPath(plr[data.destParam1].data._pfut, FALSE);
 	}
 
 	if (data.walkpath[0] != WALK_NONE) {
@@ -2783,16 +2722,14 @@ void Player::CheckNewPath()
 					i = data.destParam1;
 
 					if (data.destAction == ACTION_ATTACKMON) {
-						x = abs(data._pfutx - monsters[i].data._mfutx);
-						y = abs(data._pfuty - monsters[i].data._mfuty);
-						d = GetDirection(data._pfutx, data._pfuty, monsters[i].data._mfutx, monsters[i].data._mfuty);
+						n = (data._pfut - monsters[i].data._mfut).abs();
+						d = GetDirection(data._pfut, monsters[i].data._mfut);
 					} else {
-						x = abs(data._pfutx - plr[i].data._pfutx);
-						y = abs(data._pfuty - plr[i].data._pfuty);
-						d = GetDirection(data._pfutx, data._pfuty, plr[i].data._pfutx, plr[i].data._pfuty);
+						n = (data._pfut - plr[i].data._pfut).abs();
+						d = GetDirection(data._pfut, plr[i].data._pfut);
 					}
 
-					if (x < 2 && y < 2) {
+					if (n.x < 2 && n.y < 2) {
 						ClrPlrPath();
 						if (monsters[i].data.mtalkmsg && monsters[i].data.mtalkmsg != TEXT_VILE14) {
 							monsters[i].TalktoMonster();
@@ -2806,38 +2743,38 @@ void Player::CheckNewPath()
 
 			if (level.currlevel != 0) {
 				xvel3 = classes[data._pClass].PWVel[0];
-				xvel = classes[data._pClass].PWVel[1];
-				yvel = classes[data._pClass].PWVel[2];
+				vel.x = classes[data._pClass].PWVel[1];
+				vel.y = classes[data._pClass].PWVel[2];
 			} else {
 				xvel3 = 2048;
-				xvel = 1024;
-				yvel = 512;
+				vel.x = 1024;
+				vel.y = 512;
 			}
 
 			switch (data.walkpath[0]) {
 			case WALK_N:
-				StartWalk(0, -xvel, -1, -1, DIR_N, SDIR_N);
+				StartWalk({ 0, -vel.x }, { -1, -1 }, DIR_N, SDIR_N);
 				break;
 			case WALK_NE:
-				StartWalk(xvel, -yvel, 0, -1, DIR_NE, SDIR_NE);
+				StartWalk({ vel.x, -vel.y }, { 0, -1 }, DIR_NE, SDIR_NE);
 				break;
 			case WALK_E:
-				StartWalk3(xvel3, 0, -32, -16, 1, -1, 1, 0, DIR_E, SDIR_E);
+				StartWalk3({ xvel3, 0 }, { -32, -16 }, { 1, -1 }, { 1, 0 }, DIR_E, SDIR_E);
 				break;
 			case WALK_SE:
-				StartWalk2(xvel, yvel, -32, -16, 1, 0, DIR_SE, SDIR_SE);
+				StartWalk2(vel, { -32, -16 }, { 1, 0 }, DIR_SE, SDIR_SE);
 				break;
 			case WALK_S:
-				StartWalk2(0, xvel, 0, -32, 1, 1, DIR_S, SDIR_S);
+				StartWalk2({ 0, vel.x }, { 0, -32 }, { 1, 1 }, DIR_S, SDIR_S);
 				break;
 			case WALK_SW:
-				StartWalk2(-xvel, yvel, 32, -16, 0, 1, DIR_SW, SDIR_SW);
+				StartWalk2({ -vel.x, vel.y }, { 32, -16 }, { 0, 1 }, DIR_SW, SDIR_SW);
 				break;
 			case WALK_W:
-				StartWalk3(-xvel3, 0, 32, -16, -1, 1, 0, 1, DIR_W, SDIR_W);
+				StartWalk3({ -xvel3, 0 }, { 32, -16 }, { -1, 1 }, { 0, 1 }, DIR_W, SDIR_W);
 				break;
 			case WALK_NW:
-				StartWalk(-xvel, -yvel, -1, 0, DIR_NW, SDIR_NW);
+				StartWalk({ -vel.x, -vel.y }, { -1, 0 }, DIR_NW, SDIR_NW);
 				break;
 			}
 
@@ -2862,15 +2799,14 @@ void Player::CheckNewPath()
 	if (data._pmode == PM_STAND) {
 		switch (data.destAction) {
 		case ACTION_ATTACK:
-			d = GetDirection(data._px, data._py, data.destParam1, data.destParam2);
+			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
 			StartAttack(d);
 			break;
 		case ACTION_ATTACKMON:
 			i = data.destParam1;
-			x = abs(data._px - monsters[i].data._mfutx);
-			y = abs(data._py - monsters[i].data._mfuty);
-			if (x <= 1 && y <= 1) {
-				d = GetDirection(data._pfutx, data._pfuty, monsters[i].data._mfutx, monsters[i].data._mfuty);
+			n = (data._p - monsters[i].data._mfut).abs();
+			if (n.x <= 1 && n.y <= 1) {
+				d = GetDirection(data._pfut, monsters[i].data._mfut);
 				if (monsters[i].data.mtalkmsg && monsters[i].data.mtalkmsg != TEXT_VILE14) {
 					monsters[i].TalktoMonster();
 				} else {
@@ -2880,63 +2816,61 @@ void Player::CheckNewPath()
 			break;
 		case ACTION_ATTACKPLR:
 			i = data.destParam1;
-			x = abs(data._px - plr[i].data._pfutx);
-			y = abs(data._py - plr[i].data._pfuty);
-			if (x <= 1 && y <= 1) {
-				d = GetDirection(data._pfutx, data._pfuty, plr[i].data._pfutx, plr[i].data._pfuty);
+			n = (data._p - plr[i].data._pfut).abs();
+			if (n.x <= 1 && n.y <= 1) {
+				d = GetDirection(data._pfut, plr[i].data._pfut);
 				StartAttack(d);
 			}
 			break;
 		case ACTION_RATTACK:
-			d = GetDirection(data._px, data._py, data.destParam1, data.destParam2);
-			StartRangeAttack(d, data.destParam1, data.destParam2);
+			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			StartRangeAttack(d, { data.destParam1, data.destParam2 });
 			break;
 		case ACTION_RATTACKMON:
 			i = data.destParam1;
-			d = GetDirection(data._pfutx, data._pfuty, monsters[i].data._mfutx, monsters[i].data._mfuty);
+			d = GetDirection(data._pfut, monsters[i].data._mfut);
 			if (monsters[i].data.mtalkmsg && monsters[i].data.mtalkmsg != TEXT_VILE14) {
 				monsters[i].TalktoMonster();
 			} else {
-				StartRangeAttack(d, monsters[i].data._mfutx, monsters[i].data._mfuty);
+				StartRangeAttack(d, monsters[i].data._mfut);
 			}
 			break;
 		case ACTION_RATTACKPLR:
 			i = data.destParam1;
-			d = GetDirection(data._pfutx, data._pfuty, plr[i].data._pfutx, plr[i].data._pfuty);
-			StartRangeAttack(d, plr[i].data._pfutx, plr[i].data._pfuty);
+			d = GetDirection(data._pfut, plr[i].data._pfut);
+			StartRangeAttack(d, plr[i].data._pfut);
 			break;
 		case ACTION_SPELL:
-			d = GetDirection(data._px, data._py, data.destParam1, data.destParam2);
-			StartSpell(d, data.destParam1, data.destParam2);
+			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			StartSpell(d, { data.destParam1, data.destParam2 });
 			data._pVar4 = data.destParam3;
 			break;
 		case ACTION_SPELLWALL:
-			StartSpell(data.destParam3, data.destParam1, data.destParam2);
+			StartSpell(data.destParam3, { data.destParam1, data.destParam2 });
 			data._pVar3 = data.destParam3;
 			data._pVar4 = data.destParam4;
 			break;
 		case ACTION_SPELLMON:
 			i = data.destParam1;
-			d = GetDirection(data._px, data._py, monsters[i].data._mfutx, monsters[i].data._mfuty);
-			StartSpell(d, monsters[i].data._mfutx, monsters[i].data._mfuty);
+			d = GetDirection(data._p, monsters[i].data._mfut);
+			StartSpell(d, monsters[i].data._mfut);
 			data._pVar4 = data.destParam2;
 			break;
 		case ACTION_SPELLPLR:
 			i = data.destParam1;
-			d = GetDirection(data._px, data._py, plr[i].data._pfutx, plr[i].data._pfuty);
-			StartSpell(d, plr[i].data._pfutx, plr[i].data._pfuty);
+			d = GetDirection(data._p, plr[i].data._pfut);
+			StartSpell(d, plr[i].data._pfut);
 			data._pVar4 = data.destParam2;
 			break;
 		case ACTION_OPERATE:
 			i = data.destParam1;
-			x = abs(data._px - object[i]._ox);
-			y = abs(data._py - object[i]._oy);
-			if (y > 1 && grid[object[i]._ox][object[i]._oy - 1].dObject == -1 - i) {
-				y = abs(data._py - object[i]._oy + 1);
+			n = (data._p - object[i]._o).abs();
+			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].dObject == -1 - i) {
+				n.y = abs(data._p.y - object[i]._o.y + 1);
 			}
-			if (x <= 1 && y <= 1) {
+			if (n.x <= 1 && n.y <= 1) {
 				if (object[i]._oBreak == 1) {
-					d = GetDirection(data._px, data._py, object[i]._ox, object[i]._oy);
+					d = GetDirection(data._p, object[i]._o);
 					StartAttack(d);
 				} else {
 					OperateObject(pnum, i, FALSE);
@@ -2945,14 +2879,13 @@ void Player::CheckNewPath()
 			break;
 		case ACTION_DISARM:
 			i = data.destParam1;
-			x = abs(data._px - object[i]._ox);
-			y = abs(data._py - object[i]._oy);
-			if (y > 1 && grid[object[i]._ox][object[i]._oy - 1].dObject == -1 - i) {
-				y = abs(data._py - object[i]._oy + 1);
+			n = (data._p - object[i]._o).abs();
+			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].dObject == -1 - i) {
+				n.y = abs(data._p.y - object[i]._o.y + 1);
 			}
-			if (x <= 1 && y <= 1) {
+			if (n.x <= 1 && n.y <= 1) {
 				if (object[i]._oBreak == 1) {
-					d = GetDirection(data._px, data._py, object[i]._ox, object[i]._oy);
+					d = GetDirection(data._p, object[i]._o);
 					StartAttack(d);
 				} else {
 					TryDisarm(pnum, i);
@@ -2969,9 +2902,8 @@ void Player::CheckNewPath()
 		case ACTION_PICKUPITEM:
 			if (pnum == myplr()) {
 				i = data.destParam1;
-				x = abs(data._px - item[i]._ix);
-				y = abs(data._py - item[i]._iy);
-				if (x <= 1 && y <= 1 && pcurs == CURSOR_HAND && !item[i]._iRequest) {
+				n = (data._p - item[i]._i).abs();
+				if (n.x <= 1 && n.y <= 1 && pcurs == CURSOR_HAND && !item[i]._iRequest) {
 					NetSendCmdGItem(TRUE, CMD_REQUESTGITEM, myplr(), myplr(), i);
 					item[i]._iRequest = TRUE;
 				}
@@ -2980,9 +2912,8 @@ void Player::CheckNewPath()
 		case ACTION_PICKUPAITEM:
 			if (pnum == myplr()) {
 				i = data.destParam1;
-				x = abs(data._px - item[i]._ix);
-				y = abs(data._py - item[i]._iy);
-				if (x <= 1 && y <= 1 && pcurs == CURSOR_HAND) {
+				n = (data._p - item[i]._i).abs();
+				if (n.x <= 1 && n.y <= 1 && pcurs == CURSOR_HAND) {
 					NetSendCmdGItem(TRUE, CMD_REQUESTAGITEM, myplr(), myplr(), i);
 				}
 			}
@@ -3002,37 +2933,34 @@ void Player::CheckNewPath()
 
 	if (data._pmode == PM_ATTACK && data._pAnimFrame > myplr().data._pAFNum) {
 		if (data.destAction == ACTION_ATTACK) {
-			d = GetDirection(data._pfutx, data._pfuty, data.destParam1, data.destParam2);
+			d = GetDirection(data._pfut, { data.destParam1, data.destParam2 });
 			StartAttack(d);
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_ATTACKMON) {
 			i = data.destParam1;
-			x = abs(data._px - monsters[i].data._mfutx);
-			y = abs(data._py - monsters[i].data._mfuty);
-			if (x <= 1 && y <= 1) {
-				d = GetDirection(data._pfutx, data._pfuty, monsters[i].data._mfutx, monsters[i].data._mfuty);
+			n = (data._p - monsters[i].data._mfut).abs();
+			if (n.x <= 1 && n.y <= 1) {
+				d = GetDirection(data._pfut, monsters[i].data._mfut);
 				StartAttack(d);
 			}
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_ATTACKPLR) {
 			i = data.destParam1;
-			x = abs(data._px - plr[i].data._pfutx);
-			y = abs(data._py - plr[i].data._pfuty);
-			if (x <= 1 && y <= 1) {
-				d = GetDirection(data._pfutx, data._pfuty, plr[i].data._pfutx, plr[i].data._pfuty);
+			n = (data._p - plr[i].data._pfut).abs();
+			if (n.x <= 1 && n.y <= 1) {
+				d = GetDirection(data._pfut, plr[i].data._pfut);
 				StartAttack(d);
 			}
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_OPERATE) {
 			i = data.destParam1;
-			x = abs(data._px - object[i]._ox);
-			y = abs(data._py - object[i]._oy);
-			if (y > 1 && grid[object[i]._ox][object[i]._oy - 1].dObject == -1 - i) {
-				y = abs(data._py - object[i]._oy + 1);
+			n = (data._p - object[i]._o).abs();
+			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].dObject == -1 - i) {
+				n.y = abs(data._p.y - object[i]._o.y + 1);
 			}
-			if (x <= 1 && y <= 1) {
+			if (n.x <= 1 && n.y <= 1) {
 				if (object[i]._oBreak == 1) {
-					d = GetDirection(data._px, data._py, object[i]._ox, object[i]._oy);
+					d = GetDirection(data._p, object[i]._o);
 					StartAttack(d);
 				} else {
 					OperateObject(pnum, i, FALSE);
@@ -3043,36 +2971,36 @@ void Player::CheckNewPath()
 
 	if (data._pmode == PM_RATTACK && data._pAnimFrame > myplr().data._pAFNum) {
 		if (data.destAction == ACTION_RATTACK) {
-			d = GetDirection(data._px, data._py, data.destParam1, data.destParam2);
-			StartRangeAttack(d, data.destParam1, data.destParam2);
+			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			StartRangeAttack(d, { data.destParam1, data.destParam2 });
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_RATTACKMON) {
 			i = data.destParam1;
-			d = GetDirection(data._px, data._py, monsters[i].data._mfutx, monsters[i].data._mfuty);
-			StartRangeAttack(d, monsters[i].data._mfutx, monsters[i].data._mfuty);
+			d = GetDirection(data._p, monsters[i].data._mfut);
+			StartRangeAttack(d, monsters[i].data._mfut);
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_RATTACKPLR) {
 			i = data.destParam1;
-			d = GetDirection(data._px, data._py, plr[i].data._pfutx, plr[i].data._pfuty);
-			StartRangeAttack(d, plr[i].data._pfutx, plr[i].data._pfuty);
+			d = GetDirection(data._p, plr[i].data._pfut);
+			StartRangeAttack(d, plr[i].data._pfut);
 			data.destAction = ACTION_NONE;
 		}
 	}
 
 	if (data._pmode == PM_SPELL && data._pAnimFrame > data._pSFNum) {
 		if (data.destAction == ACTION_SPELL) {
-			d = GetDirection(data._px, data._py, data.destParam1, data.destParam2);
-			StartSpell(d, data.destParam1, data.destParam2);
+			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			StartSpell(d, { data.destParam1, data.destParam2 });
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_SPELLMON) {
 			i = data.destParam1;
-			d = GetDirection(data._px, data._py, monsters[i].data._mfutx, monsters[i].data._mfuty);
-			StartSpell(d, monsters[i].data._mfutx, monsters[i].data._mfuty);
+			d = GetDirection(data._p, monsters[i].data._mfut);
+			StartSpell(d, monsters[i].data._mfut);
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_SPELLPLR) {
 			i = data.destParam1;
-			d = GetDirection(data._px, data._py, plr[i].data._pfutx, plr[i].data._pfuty);
-			StartSpell(d, plr[i].data._pfutx, plr[i].data._pfuty);
+			d = GetDirection(data._p, plr[i].data._pfut);
+			StartSpell(d, plr[i].data._pfut);
 			data.destAction = ACTION_NONE;
 		}
 	}
@@ -3302,7 +3230,7 @@ BOOL Player::PosOkPlayer(V2Di pos)
 	char bv;
 
 	PosOK = FALSE;
-	if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && !SolidLoc(x, y) && grid[x][y].dPiece) {
+	if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && !SolidLoc({ x, y }) && grid[x][y].dPiece) {
 
 		if (grid[x][y].dPlayer) {
 			if (grid[x][y].dPlayer > 0) {
@@ -3346,14 +3274,14 @@ BOOL Player::PosOkPlayer(V2Di pos)
 	return TRUE;
 }
 
-void Player::MakePlrPath(V2Di pos, BOOL endspace)
+void Player::MakePlrPath(V2Di p, BOOL endspace)
 {
-	data._ptarg = pos;
-	if (data._pfut.x == pos.x && data._pfut.y == pos.y) {
+	data._ptarg = p;
+	if (data._pfut == p) {
 		return;
 	}
 
-	int path = FindPath(::dvl::PosOkPlayer, pnum, data._pfut.x, data._pfut.y, pos.x, pos.y, data.walkpath);
+	int path = FindPath(::dvl::PosOkPlayer, pnum, data._pfut, p, data.walkpath);
 	if (!path) return;
 
 	if (!endspace) {
@@ -3361,37 +3289,36 @@ void Player::MakePlrPath(V2Di pos, BOOL endspace)
 
 		switch (data.walkpath[path]) {
 		case WALK_NE:
-			yy++;
+			p.y++;
 			break;
 		case WALK_NW:
-			xx++;
+			p.x++;
 			break;
 		case WALK_SE:
-			xx--;
+			p.x--;
 			break;
 		case WALK_SW:
-			yy--;
+			p.y--;
 			break;
 		case WALK_N:
-			xx++;
-			yy++;
+			p.x++;
+			p.y++;
 			break;
 		case WALK_E:
-			xx--;
-			yy++;
+			p.x--;
+			p.y++;
 			break;
 		case WALK_S:
-			xx--;
-			yy--;
+			p.x--;
+			p.y--;
 			break;
 		case WALK_W:
-			xx++;
-			yy--;
+			p.x++;
+			p.y--;
 			break;
 		}
 
-		data._ptargx = xx;
-		data._ptargy = yy;
+		data._ptarg = p;
 	}
 
 	data.walkpath[path] = WALK_NONE;
@@ -3463,9 +3390,9 @@ void CheckPlrSpell()
 
 	if (addflag) {
 		if (myplr().data._pRSpell == SPL_FIREWALL) {
-			sd = GetDirection(myplr().data._px, myplr().data._py, cursmx, cursmy);
+			sd = GetDirection(myplr().data._p, cursm);
 			sl = GetSpellLevel(myplr(), myplr().data._pRSpell);
-			NetSendCmdLocParam3(TRUE, CMD_SPELLXYD, cursmx, cursmy, myplr().data._pRSpell, sd, sl);
+			NetSendCmdLocParam3(TRUE, CMD_SPELLXYD, cursm, myplr().data._pRSpell, sd, sl);
 		} else if (pcursmonst != -1) {
 			sl = GetSpellLevel(myplr(), myplr().data._pRSpell);
 			NetSendCmdParam3(TRUE, CMD_SPELLID, pcursmonst, myplr().data._pRSpell, sl);
@@ -3474,7 +3401,7 @@ void CheckPlrSpell()
 			NetSendCmdParam3(TRUE, CMD_SPELLPID, pcursplr, myplr().data._pRSpell, sl);
 		} else { //145
 			sl = GetSpellLevel(myplr(), myplr().data._pRSpell);
-			NetSendCmdLocParam2(TRUE, CMD_SPELLXY, cursmx, cursmy, myplr().data._pRSpell, sl);
+			NetSendCmdLocParam2(TRUE, CMD_SPELLXY, cursm, myplr().data._pRSpell, sl);
 		}
 		return;
 	}
@@ -3550,29 +3477,28 @@ void Player::SyncInitPlrPos()
 	DWORD i;
 	BOOL posOk;
 
-	data._ptargx = data._px;
-	data._ptargy = data._py;
+	data._ptarg = data._p;
 
 	if (gbMaxPlayers == 1 || data.plrlevel != level.currlevel) {
 		return;
 	}
 
 	for (i = 0; i < 8; i++) {
-		x = data._px + plrxoff2[i];
-		y = data._py + plryoff2[i];
-		if (PosOkPlayer(x, y)) {
+		x = data._p.x + plrxoff2[i];
+		y = data._p.y + plryoff2[i];
+		if (PosOkPlayer({ x, y })) {
 			break;
 		}
 	}
 
-	if (!PosOkPlayer(x, y)) {
+	if (!PosOkPlayer({ x, y })) {
 		posOk = FALSE;
 		for (range = 1; range < 50 && !posOk; range++) {
 			for (yy = -range; yy <= range && !posOk; yy++) {
-				y = yy + data._py;
+				y = yy + data._p.y;
 				for (xx = -range; xx <= range && !posOk; xx++) {
-					x = xx + data._px;
-					if (PosOkPlayer(x, y) && !PosOkPortal(level.currlevel, x, y)) {
+					x = xx + data._p.x;
+					if (PosOkPlayer({ x, y }) && !PosOkPortal(level.currlevel, { x, y })) {
 						posOk = TRUE;
 					}
 				}
@@ -3580,17 +3506,13 @@ void Player::SyncInitPlrPos()
 		}
 	}
 
-	data._px = x;
-	data._py = y;
+	data._p = { x, y };
 	grid[x][y].dPlayer = pnum + 1;
 
 	if (pnum == myplr()) {
-		data._pfutx = x;
-		data._pfuty = y;
-		data._ptargx = x;
-		data._ptargy = y;
-		View.x = x;
-		View.y = y;
+		data._pfut = { x, y };
+		data._ptarg = { x, y };
+		View = { x, y };
 	}
 }
 

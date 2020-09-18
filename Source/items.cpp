@@ -287,7 +287,7 @@ void InitItems()
 		if (QuestStatus(Q_ROCK))
 			SpawnRock();
 		if (QuestStatus(Q_ANVIL))
-			SpawnQuestItem(IDI_ANVIL, 2 * setpc.x + 27, 2 * setpc.y + 27, 0, 1);
+			SpawnQuestItem(IDI_ANVIL, { 2 * setpc.x + 27, 2 * setpc.y + 27 }, 0, 1);
 		if (level.currlevel > 0 && level.currlevel < 16)
 			AddInitItems();
 	}

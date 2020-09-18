@@ -2029,8 +2029,8 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 
 	View.x = vx;
 	View.y = vy;
-	SetMapMonsters(pLevelMap, 0, 0);
-	SetMapObjects(pLevelMap, 0, 0);
+	SetMapMonsters(pLevelMap, { 0, 0 });
+	SetMapObjects(pLevelMap, { 0, 0 });
 	mem_free_dbg(pLevelMap);
 }
 

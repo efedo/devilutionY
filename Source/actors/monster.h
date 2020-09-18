@@ -27,7 +27,7 @@ BOOL MonstPlace(V2Di p);
 void LoadDiabMonsts();
 void InitMonsters();
 void PlaceUniques();
-void SetMapMonsters(BYTE *pMap, int startx, int starty);
+void SetMapMonsters(BYTE *pMap, V2Di start);
 int AddMonster(V2Di pos, int dir, int mtype, BOOL InMap);
 
 void DeleteMonsterList();
@@ -52,7 +52,7 @@ BOOL CanTalkToMonst(int m);
 BOOL CheckMonsterHit(int m, BOOL *ret);
 
 
-int M_SpawnSkel(int x, int y, int dir);
+int M_SpawnSkel(V2Di pos, int dir);
 BOOL SpawnSkeleton(int ii, V2Di pos);
 int PreSpawnSkeleton();
 
@@ -73,8 +73,7 @@ extern char animletter[7];
 extern int left[8];
 extern int right[8];
 extern int opposite[8];
-extern int offset_x[8];
-extern int offset_y[8];
+extern V2Di offset[8];
 
 extern void (MonsterInstance:: *AiProc[])();
 

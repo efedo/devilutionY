@@ -95,14 +95,13 @@ text_color CircleMenuHintTextColor(bool active)
 void DrawCircleMenuHint(const CircleMenuHint &hint, int x, int y)
 {
 	const int kLineHeight = 25;
-	PrintGameStr(x + hint.x_mid - hint.top_w / 2, y, hint.top, CircleMenuHintTextColor(IsTopActive(hint)));
+	PrintGameStr({ x + hint.x_mid - hint.top_w / 2, y }, hint.top, CircleMenuHintTextColor(IsTopActive(hint)));
 	y += kLineHeight;
 
-	PrintGameStr(x, y, hint.left, CircleMenuHintTextColor(IsLeftActive(hint)));
-	PrintGameStr(x + hint.left_w + 5 * SpaceWidth(), y, hint.right, CircleMenuHintTextColor(IsRightActive(hint)));
+	PrintGameStr({ x, y }, hint.left, CircleMenuHintTextColor(IsLeftActive(hint)));
+	PrintGameStr({ x + hint.left_w + 5 * SpaceWidth(), y }, hint.right, CircleMenuHintTextColor(IsRightActive(hint)));
 	y += kLineHeight;
-
-	PrintGameStr(x + hint.x_mid - hint.bottom_w / 2, y, hint.bottom, CircleMenuHintTextColor(IsBottomActive(hint)));
+	PrintGameStr({ x + hint.x_mid - hint.bottom_w / 2, y }, hint.bottom, CircleMenuHintTextColor(IsBottomActive(hint)));
 }
 
 const int kCircleMarginX = 16;

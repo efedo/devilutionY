@@ -10,7 +10,17 @@ V2Di::V2Di(int nx, int ny)
 
 int V2Di::maxdim()
 {
-	return ::dvl::maxdim(*this);
+	return (x > y) ? x : y;
+}
+
+int V2Di::maxabs()
+{
+	return (::abs(x) > ::abs(y)) ? ::abs(x) : ::abs(y);
+}
+
+V2Di V2Di::abs()
+{
+	return V2Di(::abs(x), ::abs(y));
 }
 
 V2Di operator+(const V2Di &lhs, const V2Di &rhs)
@@ -28,10 +38,50 @@ V2Di operator-(const V2Di &lhs)
 	return V2Di(-lhs.x, -lhs.y);
 }
 
+V2Di operator*(const int &lhs, const V2Di &rhs)
+{
+	return V2Di(rhs.x * lhs, rhs.y * lhs);
+}
+
+V2Di operator*(const V2Di &lhs, const int &rhs)
+{
+	return rhs * lhs;
+}
+
+V2Di operator/(const V2Di &lhs, const int &rhs)
+{
+	return V2Di(lhs.x / rhs, lhs.y / rhs);
+}
+
+V2Di operator>>(const V2Di &lhs, const int &rhs)
+{
+	return V2Di(lhs.x >> rhs, lhs.y >> rhs);
+}
+
+
+V2Di operator<<(const V2Di &lhs, const int &rhs)
+{
+	return V2Di(lhs.x << rhs, lhs.y << rhs);
+}
+
 V2Di &operator+=(V2Di &lhs, const V2Di &rhs)
 {
 	lhs.x += rhs.x;
 	lhs.y += rhs.y;
+	return lhs;
+}
+
+V2Di &operator/=(V2Di &lhs, const int &rhs)
+{
+	lhs.x /= rhs;
+	lhs.y /= rhs;
+	return lhs;
+}
+
+V2Di &operator*=(V2Di &lhs, const int &rhs)
+{
+	lhs.x *= rhs;
+	lhs.y *= rhs;
 	return lhs;
 }
 
@@ -52,15 +102,6 @@ bool operator==(const V2Di &lhs, const V2Di &rhs)
 bool operator!=(const V2Di &lhs, const V2Di &rhs)
 {
 	return (!(lhs == rhs));
-}
-
-V2Di abs(const V2Di &lhs) {
-	return V2Di(::abs(lhs.x), ::abs(lhs.y));
-}
-
-int maxdim(const V2Di &lhs)
-{
-	return (lhs.x > lhs.y) ? lhs.x : lhs.y;
 }
 
 DEVILUTION_END_NAMESPACE

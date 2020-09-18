@@ -22,7 +22,6 @@ extern int itemactive[MAXITEMS];
 extern int itemavail[MAXITEMS];
 extern ItemGetRecordStruct itemrecord[MAXITEMS];
 
-
 extern BOOL uitemflag;
 
 extern ItemStruct curruitem;
@@ -84,7 +83,7 @@ void CreateRndUseful(int pnum, V2Di pos, BOOL sendmsg);
 void CreateTypeItem(V2Di pos, BOOL onlygood, int itype, int imisc, BOOL sendmsg, BOOL delta);
 void RecreateItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue);
 void RecreateEar(int ii, WORD ic, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, int ibuff);
-void SpawnQuestItem(int itemid, int x, int y, int randarea, int selflag);
+void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag);
 void SpawnRock();
 void RespawnItem(int i, BOOL FlipFlag);
 void DeleteItem(int ii, int i);

@@ -145,31 +145,24 @@ void CreateTown(int entry)
 {
 	int x, y;
 
-	dminx = 10;
-	dminy = 10;
-	dmaxx = 84;
-	dmaxy = 84;
+	dmin = { 10, 10 };
+	dmax = { 84, 84 };
 	DRLG_InitTrans();
 	DRLG_Init_Globals();
 
 	if (entry == 0) {
-		View.x = 75;
-		View.y = 68;
+		View = { 75, 68 };
 	} else if (entry == 1) {
-		View.x = 25;
-		View.y = 31;
+		View = { 25, 31 };
 	} else if (entry == 7) {
 		if (TWarpFrom == 5) {
-			View.x = 49;
-			View.y = 22;
+			View = { 49, 22 };
 		}
 		if (TWarpFrom == 9) {
-			View.x = 18;
-			View.y = 69;
+			View = { 18, 69 };
 		}
 		if (TWarpFrom == 13) {
-			View.x = 41;
-			View.y = 81;
+			View = { 41, 81 };
 		}
 	}
 

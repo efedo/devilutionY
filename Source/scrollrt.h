@@ -20,13 +20,13 @@ extern int level_piece_id;
 extern void (*DrawPlrProc)(int, int, int, int, int, BYTE *, int, int, int, int);
 
 void ClearCursor();
-void DrawMissile(int x, int y, int sx, int sy, BOOL pre);
-void DrawDeadPlayer(int x, int y, int sx, int sy);
+void DrawMissile(V2Di p, V2Di s, BOOL pre);
+void DrawDeadPlayer(V2Di p, V2Di s);
 void ShiftGrid(int *x, int *y, int horizontal, int vertical);
 int RowsCoveredByPanel();
 void CalcTileOffset(int *offsetX, int *offsetY);
 void TilesInView(int *columns, int *rows);
-void DrawView(int StartX, int StartY);
+void DrawView(V2Di Start);
 void ClearScreenBuffer();
 #ifdef _DEBUG
 void ScrollView();

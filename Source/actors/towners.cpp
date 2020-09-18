@@ -152,8 +152,7 @@ void InitTownerInfo(int i, int w, int sel, int t, int x, int y, int ao, int tp)
 	towner[i]._tAnimWidth2 = (w - 64) >> 1;
 	towner[i]._tMsgSaid = FALSE;
 	towner[i]._ttype = t;
-	towner[i]._tx = x;
-	towner[i]._ty = y;
+	towner[i]._t = { x, y };
 	grid[x][y].dMonster = i + 1;
 	towner[i]._tAnimOrder = ao;
 	towner[i]._tTenPer = tp;
@@ -375,29 +374,22 @@ void InitTowners()
 
 void FreeTownerGFX()
 {
-	int i;
-
-	for (i = 0; i < NUM_TOWNERS; i++) {
+	for (int i = 0; i < NUM_TOWNERS; i++) {
 		if (towner[i]._tNData == pCowCels) {
 			towner[i]._tNData = NULL;
 		} else if (towner[i]._tNData) {
 			MemFreeDbg(towner[i]._tNData);
 		}
 	}
-
 	MemFreeDbg(pCowCels);
 }
 
 void TownCtrlMsg(int i)
 {
-	int p;
-	int dx, dy;
-
 	if (towner[i]._tbtcnt != 0) {
-		p = towner[i]._tVar1;
-		dx = abs(towner[i]._tx - plr[p].data._px);
-		dy = abs(towner[i]._ty - plr[p].data._py);
-		if (dx >= 2 || dy >= 2)
+		int p = towner[i]._tVar1;
+		int dist = (towner[i]._t - plr[p].data._p).maxabs();
+		if (dist >= 2)
 			towner[i]._tbtcnt = 0;
 		if (!towner[i]._tbtcnt) {
 			qtextflag = FALSE;
@@ -408,25 +400,19 @@ void TownCtrlMsg(int i)
 
 void TownBlackSmith()
 {
-	int i;
-
-	i = GetActiveTowner(TOWN_SMITH);
+	int i = GetActiveTowner(TOWN_SMITH);
 	TownCtrlMsg(i);
 }
 
 void TownBarOwner()
 {
-	int i;
-
-	i = GetActiveTowner(TOWN_TAVERN);
+	int i = GetActiveTowner(TOWN_TAVERN);
 	TownCtrlMsg(i);
 }
 
 void TownDead()
 {
-	int tidx;
-
-	tidx = GetActiveTowner(TOWN_DEADGUY);
+	int tidx = GetActiveTowner(TOWN_DEADGUY);
 	TownCtrlMsg(tidx);
 	if (!qtextflag) {
 		if (quests[Q_BUTCHER]._qactive == QUEST_ACTIVE && quests[Q_BUTCHER]._qlog == 0) {
@@ -444,17 +430,13 @@ void TownDead()
 
 void TownHealer()
 {
-	int i;
-
-	i = GetActiveTowner(TOWN_HEALER);
+	int i = GetActiveTowner(TOWN_HEALER);
 	TownCtrlMsg(i);
 }
 
 void TownStory()
 {
-	int i;
-
-	i = GetActiveTowner(TOWN_STORY);
+	int i = GetActiveTowner(TOWN_STORY);
 	TownCtrlMsg(i);
 }
 
@@ -582,18 +564,16 @@ void TalkToTowner(int p, int t)
 	rv1 = random_(6, 3); /* unused */
 	rv2 = random_(6, 4); /* unused */
 	rv3 = random_(6, 5); /* unused */
-
-	dx = abs(plr[p].data._px - towner[t]._tx);
-	dy = abs(plr[p].data._py - towner[t]._ty);
-#ifdef _DEBUG
-	if (!debug_mode_key_d && (dx >= 2 || dy >= 2)) {
+	int dist = (plr[p].data._p - towner[t]._t).maxabs();
+	#ifdef _DEBUG
+	if (!debug_mode_key_d && (dist >= 2)) {
 		return;
 	}
-#else
-	if (dx >= 2 || dy >= 2) {
+	#else
+	if (dist >= 2) {
 		return;
 	}
-#endif
+	#endif
 
 	if (qtextflag) {
 		return;
@@ -654,7 +634,7 @@ void TalkToTowner(int p, int t)
 					quests[Q_LTBANNER]._qactive = QUEST_DONE;
 					quests[Q_LTBANNER]._qvar1 = 3;
 					plr[p].inventory.RemoveInvItem(i);
-					CreateItem(UITEM_HARCREST, towner[t]._tx, towner[t]._ty + 1);
+					CreateItem(UITEM_HARCREST, { towner[t]._t.x, towner[t]._t.y + 1 });
 					towner[t]._tbtcnt = 150;
 					towner[t]._tVar1 = p;
 					InitQTextMsg(TEXT_BANNER3);
@@ -721,7 +701,7 @@ void TalkToTowner(int p, int t)
 						quests[Q_ROCK]._qvar2 = 2;
 						quests[Q_ROCK]._qvar1 = 2;
 						plr[p].inventory.RemoveInvItem(i);
-						CreateItem(UITEM_INFRARING, towner[t]._tx, towner[t]._ty + 1);
+						CreateItem(UITEM_INFRARING, { towner[t]._t.x, towner[t]._t.y + 1 });
 						towner[t]._tbtcnt = 150;
 						towner[t]._tVar1 = p;
 						InitQTextMsg(TEXT_INFRA7);
@@ -750,7 +730,7 @@ void TalkToTowner(int p, int t)
 						quests[Q_ANVIL]._qvar2 = 2;
 						quests[Q_ANVIL]._qvar1 = 2;
 						plr[p].inventory.RemoveInvItem(i);
-						CreateItem(UITEM_GRISWOLD, towner[t]._tx, towner[t]._ty + 1);
+						CreateItem(UITEM_GRISWOLD, { towner[t]._t.x, towner[t]._t.y + 1 });
 						towner[t]._tbtcnt = 150;
 						towner[t]._tVar1 = p;
 						InitQTextMsg(TEXT_ANVIL7);
@@ -849,13 +829,13 @@ void TalkToTowner(int p, int t)
 					towner[t]._tbtcnt = 150;
 					towner[t]._tVar1 = p;
 					InitQTextMsg(TEXT_POISON5);
-					CreateItem(UITEM_TRING, towner[t]._tx, towner[t]._ty + 1);
+					CreateItem(UITEM_TRING, { towner[t]._t.x, towner[t]._t.y + 1 });
 					towner[t]._tMsgSaid = TRUE;
 				}
 			}
 			if (quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qmsg == TEXT_MUSH10 && PlrHasItem(p, IDI_BRAIN, &i) != NULL) {
 				plr[p].inventory.RemoveInvItem(i);
-				SpawnQuestItem(IDI_SPECELIX, towner[t]._tx, towner[t]._ty + 1, 0, 0);
+				SpawnQuestItem(IDI_SPECELIX, { towner[t]._t.x, towner[t]._t.y + 1 }, 0, 0);
 				InitQTextMsg(TEXT_MUSH4);
 				quests[Q_MUSHROOM]._qvar1 = QS_BRAINGIVEN;
 				Qtalklist[TOWN_HEALER]._qblkm = -1;
@@ -938,7 +918,7 @@ void CowSFX(int pnum)
 		}
 #else
 		if (sgdwCowClicks >= 8) {
-			PlaySfxLoc(TSFX_COW1, plr[pnum].data._px, plr[pnum].data._py + 5);
+			PlaySfxLoc(TSFX_COW1, { plr[pnum].data._p.x, plr[pnum].data._p.y + 5 });
 			sgdwCowClicks = 4;
 			CowPlaying = snSFX[sgnCowMsg][plr[pnum].data._pClass]; /* snSFX is local */
 			sgnCowMsg++;
@@ -948,7 +928,7 @@ void CowSFX(int pnum)
 			CowPlaying = sgdwCowClicks == 4 ? TSFX_COW2 : TSFX_COW1;
 		}
 #endif
-		PlaySfxLoc(CowPlaying, plr[pnum].data._px, plr[pnum].data._py);
+		PlaySfxLoc(CowPlaying, plr[pnum].data._p);
 	}
 }
 

@@ -1256,15 +1256,14 @@ void DeltaImportJunk(BYTE *src)
 		if (*src == 0xFF) {
 			memset(&sgJunk.portal[i], 0xFF, sizeof(DPortal));
 			src++;
-			SetPortalStats(i, FALSE, 0, 0, 0, DTYPE_TOWN);
+			SetPortalStats(i, FALSE, { 0, 0 }, 0, DTYPE_TOWN);
 		} else {
 			memcpy(&sgJunk.portal[i], src, sizeof(DPortal));
 			src += sizeof(DPortal);
 			SetPortalStats(
 			    i,
 			    TRUE,
-			    sgJunk.portal[i].x,
-			    sgJunk.portal[i].y,
+			    { sgJunk.portal[i].x, sgJunk.portal[i].y },
 			    sgJunk.portal[i].level,
 			    sgJunk.portal[i].ltype);
 		}
@@ -2117,7 +2116,7 @@ DWORD On_AWAKEGOLEM(TCmd *pCmd, int pnum)
 			}
 		}
 		if (addGolem)
-			AddMissile(plr[pnum].data._px, plr[pnum].data._py, p->_mx, p->_my, p->_mdir, MIS_GOLEM, 0, pnum, 0, 1);
+			AddMissile(plr[pnum].data._p, { p->_mx, p->_my }, p->_mdir, MIS_GOLEM, 0, pnum, 0, 1);
 	}
 
 	return sizeof(*p);
@@ -2308,7 +2307,7 @@ DWORD On_DROPITEM(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs == 1)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else
-		delta_put_item(p, p->x, p->y, plr[pnum].data.plrlevel);
+		delta_put_item(p, { p->x, p->y }, plr[pnum].data.plrlevel);
 
 	return sizeof(*p);
 }
@@ -2345,8 +2344,7 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 		}
 
 		if (plr[pnum].data.plractive && myplr() != pnum) {
-			plr[pnum].data._px = p->x;
-			plr[pnum].data._py = p->y;
+			plr[pnum].data._p = { p->x, p->y };
 			plr[pnum].data.plrlevel = p->wParam1;
 			plr[pnum].data._pGFXLoad = 0;
 			if (level.currlevel == plr[pnum].data.plrlevel) {
@@ -2361,10 +2359,10 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 					plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
 					plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;
 					plr[pnum].data._pVar8 = plr[pnum].data._pAnimLen << 1;
-					grid[plr[pnum].data._px][plr[pnum].data._py].dFlags |= BFLAG_DEAD_PLAYER;
+					grid.at(plr[pnum].data._p).dFlags |= BFLAG_DEAD_PLAYER;
 				}
 
-				plr[pnum].data._pvid = AddVision(plr[pnum].data._px, plr[pnum].data._py, plr[pnum].data._pLightRad, pnum == myplr());
+				plr[pnum].data._pvid = AddVision(plr[pnum].data._p, plr[pnum].data._pLightRad, pnum == myplr());
 				plr[pnum].data._plid = -1;
 			}
 		}
@@ -2380,7 +2378,7 @@ DWORD On_ACTIVATEPORTAL(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs == 1)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else {
-		ActivatePortal(pnum, p->x, p->y, p->wParam1, p->wParam2, p->wParam3);
+		ActivatePortal(pnum, { p->x, p->y }, p->wParam1, p->wParam2, p->wParam3);
 		if (pnum != myplr()) {
 			if (level.currlevel == 0)
 				AddInTownPortal(pnum);
@@ -2395,11 +2393,11 @@ DWORD On_ACTIVATEPORTAL(TCmd *pCmd, int pnum)
 					}
 				}
 				if (addPortal)
-					AddWarpMissile(pnum, p->x, p->y);
+					AddWarpMissile(pnum, { p->x, p->y });
 			} else
 				RemovePortalMissile(pnum);
 		}
-		delta_open_portal(pnum, p->x, p->y, p->wParam1, p->wParam2, p->wParam3);
+		delta_open_portal(pnum, { p->x, p->y }, p->wParam1, p->wParam2, p->wParam3);
 	}
 
 	return sizeof(*p);

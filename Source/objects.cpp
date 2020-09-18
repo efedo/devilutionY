@@ -124,19 +124,24 @@ void FreeObjectGFX()
 	numobjfiles = 0;
 }
 
-BOOL RndLocOk(int xp, int yp)
+BOOL RndLocOk(int x, int y)
 {
-	if (grid[xp][yp].dMonster)
+	return RndLocOk({ x, y });
+}
+
+BOOL RndLocOk(V2Di p)
+{
+	if (grid.at(p).dMonster)
 		return FALSE;
-	if (grid[xp][yp].dPlayer)
+	if (grid.at(p).dPlayer)
 		return FALSE;
-	if (grid[xp][yp].dObject)
+	if (grid.at(p).dObject)
 		return FALSE;
-	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
+	if (grid.at(p).dFlags & BFLAG_POPULATED)
 		return FALSE;
-	if (pieces[grid[xp][yp].dPiece].nSolidTable)
+	if (pieces[grid.at(p).dPiece].nSolidTable)
 		return FALSE;
-	if (level.leveltype != DTYPE_CATHEDRAL || grid[xp][yp].dPiece <= 126 || grid[xp][yp].dPiece >= 144)
+	if (level.leveltype != DTYPE_CATHEDRAL || grid.at(p).dPiece <= 126 || grid.at(p).dPiece >= 144)
 		return TRUE;
 	return FALSE;
 }
@@ -151,7 +156,7 @@ void InitRndLocObj(int min, int max, int objtype)
 		while (1) {
 			xp = random_(139, 80) + 16;
 			yp = random_(139, 80) + 16;
-			if (RndLocOk(xp - 1, yp - 1)
+			if (RndLocOk(xp - 1, yp - 1) // Checks 8 squares around
 			    && RndLocOk(xp, yp - 1)
 			    && RndLocOk(xp + 1, yp - 1)
 			    && RndLocOk(xp - 1, yp)
@@ -160,7 +165,7 @@ void InitRndLocObj(int min, int max, int objtype)
 			    && RndLocOk(xp - 1, yp + 1)
 			    && RndLocOk(xp, yp + 1)
 			    && RndLocOk(xp + 1, yp + 1)) {
-				AddObject(objtype, xp, yp);
+				AddObject(objtype, { xp, yp });
 				break;
 			}
 		}
@@ -188,7 +193,7 @@ void InitRndLocBigObj(int min, int max, int objtype)
 			    && RndLocOk(xp - 1, yp + 1)
 			    && RndLocOk(xp, yp + 1)
 			    && RndLocOk(xp + 1, yp + 1)) {
-				AddObject(objtype, xp, yp);
+				AddObject(objtype, { xp, yp });
 				break;
 			}
 		}
@@ -220,7 +225,7 @@ void InitRndLocObj5x5(int min, int max, int objtype)
 					return;
 			}
 		}
-		AddObject(objtype, xp, yp);
+		AddObject(objtype, { xp, yp });
 	}
 }
 
@@ -229,8 +234,7 @@ void ClrAllObjects()
 	int i;
 
 	for (i = 0; i < MAXOBJECTS; i++) {
-		object[i]._ox = 0;
-		object[i]._oy = 0;
+		object[i]._o = { 0, 0 };
 		object[i]._oAnimData = 0;
 		object[i]._oAnimDelay = 0;
 		object[i]._oAnimCnt = 0;
@@ -277,17 +281,14 @@ void AddTortures()
 }
 void AddCandles()
 {
-	int tx, ty;
-
-	tx = quests[Q_PWATER]._qtx;
-	ty = quests[Q_PWATER]._qty;
-	AddObject(OBJ_STORYCANDLE, tx - 2, ty + 1);
-	AddObject(OBJ_STORYCANDLE, tx + 3, ty + 1);
-	AddObject(OBJ_STORYCANDLE, tx - 1, ty + 2);
-	AddObject(OBJ_STORYCANDLE, tx + 2, ty + 2);
+	V2Di t = quests[Q_PWATER]._qt;
+	AddObject(OBJ_STORYCANDLE, t.x - 2, t.y + 1);
+	AddObject(OBJ_STORYCANDLE, t.x + 3, t.y + 1);
+	AddObject(OBJ_STORYCANDLE, t.x - 1, t.y + 2);
+	AddObject(OBJ_STORYCANDLE, t.x + 2, t.y + 2);
 }
 
-void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, int y2, int msg)
+void AddBookLever(V2Di /*l1*/, V2Di /*l2*/, V2Di p1, V2Di p2, int msg)
 {
 	DIABOOL exit;
 	int xp, yp, ob, cnt, m, n;
@@ -321,7 +322,7 @@ void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, in
 		AddObject(OBJ_BLOODBOOK, xp, yp);
 	}
 	ob = grid[xp][yp].dObject - 1;
-	SetObjMapRange(ob, x1, y1, x2, y2, leverid);
+	SetObjMapRange(ob, p1, p2, leverid);
 	SetBookMsg(ob, msg);
 	leverid++;
 	object[ob]._oVar6 = object[ob]._oAnimFrame + 1;
@@ -374,12 +375,12 @@ void InitRndBarrels()
 	}
 }
 
-void AddL1Objs(int x1, int y1, int x2, int y2)
+void AddL1Objs(V2Di p1, V2Di p2)
 {
 	int i, j, pn;
 
-	for (j = y1; j < y2; j++) {
-		for (i = x1; i < x2; i++) {
+	for (j = p1.y; j < p2.y; j++) {
+		for (i = p1.x; i < p2.x; i++) {
 			pn = grid[i][j].dPiece;
 			if (pn == 270)
 				AddObject(OBJ_L1LIGHT, i, j);
@@ -391,12 +392,12 @@ void AddL1Objs(int x1, int y1, int x2, int y2)
 	}
 }
 
-void AddL2Objs(int x1, int y1, int x2, int y2)
+void AddL2Objs(V2Di p1, V2Di p2)
 {
 	int i, j, pn;
 
-	for (j = y1; j < y2; j++) {
-		for (i = x1; i < x2; i++) {
+	for (j = p1.y; j < p2.y; j++) {
+		for (i = p1.x; i < p2.x; i++) {
 			pn = grid[i][j].dPiece;
 			if (pn == 13 || pn == 541)
 				AddObject(OBJ_L2LDOOR, i, j);
@@ -406,12 +407,12 @@ void AddL2Objs(int x1, int y1, int x2, int y2)
 	}
 }
 
-void AddL3Objs(int x1, int y1, int x2, int y2)
+void AddL3Objs(V2Di p1, V2Di p2)
 {
 	int i, j, pn;
 
-	for (j = y1; j < y2; j++) {
-		for (i = x1; i < x2; i++) {
+	for (j = p1.y; j < p2.y; j++) {
+		for (i = p1.x; i < p2.x; i++) {
 			pn = grid[i][j].dPiece;
 			if (pn == 531)
 				AddObject(OBJ_L3LDOOR, i, j);
@@ -421,9 +422,9 @@ void AddL3Objs(int x1, int y1, int x2, int y2)
 	}
 }
 
-BOOL WallTrapLocOk(int xp, int yp)
+BOOL WallTrapLocOk(V2Di p)
 {
-	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
+	if (grid.at(p).dFlags & BFLAG_POPULATED)
 		return FALSE;
 	return TRUE;
 }
@@ -434,7 +435,7 @@ void AddL2Torches()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (!WallTrapLocOk(i, j))
+			if (!WallTrapLocOk({ i, j }))
 				continue;
 
 			pn = grid[i][j].dPiece;
@@ -453,12 +454,12 @@ void AddL2Torches()
 	}
 }
 
-BOOL TorchLocOK(int xp, int yp)
+BOOL TorchLocOK(V2Di p)
 {
-	if (grid[xp][yp].dFlags & BFLAG_POPULATED)
+	if (grid.at(p).dFlags & BFLAG_POPULATED)
 		return FALSE;
 
-	if (pieces[grid[xp][yp].dPiece].nTrapTable != FALSE)
+	if (pieces[grid.at(p).dPiece].nTrapTable != FALSE)
 		return TRUE;
 	else
 		return FALSE;
@@ -493,7 +494,7 @@ void AddObjTraps()
 				while (!pieces[grid[xp][j].dPiece].nSolidTable)
 					xp--;
 
-				if (!TorchLocOK(xp, j) || i - xp <= 1)
+				if (!TorchLocOK({ xp, j }) || i - xp <= 1)
 					continue;
 
 				AddObject(OBJ_TRAPL, xp, j);
@@ -506,7 +507,7 @@ void AddObjTraps()
 				while (!pieces[grid[i][yp].dPiece].nSolidTable)
 					yp--;
 
-				if (!TorchLocOK(i, yp) || j - yp <= 1)
+				if (!TorchLocOK({ i, yp }) || j - yp <= 1)
 					continue;
 
 				AddObject(OBJ_TRAPR, i, yp);
@@ -542,7 +543,7 @@ void AddChestTraps()
 	}
 }
 
-void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, int h, int leveridx)
+void LoadMapObjects(BYTE *pMap, V2Di start, V2Di p1, int w, int h, int leveridx)
 {
 	int rw, rh, i, j, oi;
 	BYTE *lm;
@@ -562,9 +563,9 @@ void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, i
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm) {
-				AddObject(ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
-				oi = ObjIndex(startx + 16 + i, starty + 16 + j);
-				SetObjMapRange(oi, x1, y1, x1 + w, y1 + h, leveridx);
+				AddObject(ObjTypeConv[*lm], start.x + 16 + i, start.y + 16 + j);
+				oi = ObjIndex(start.x + 16 + i, start.y + 16 + j);
+				SetObjMapRange(oi, p1, { p1.x + w, p1.y + h }, leveridx);
 			}
 			lm += 2;
 		}
@@ -572,7 +573,7 @@ void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, i
 	InitObjFlag = FALSE;
 }
 
-void LoadMapObjs(BYTE *pMap, int startx, int starty)
+void LoadMapObjs(BYTE *pMap, V2Di start)
 {
 	int rw, rh;
 	int i, j;
@@ -593,7 +594,7 @@ void LoadMapObjs(BYTE *pMap, int startx, int starty)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm) {
-				AddObject(ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
+				AddObject(ObjTypeConv[*lm], start.x + 16 + i, start.y + 16 + j);
 			}
 			lm += 2;
 		}
@@ -606,13 +607,13 @@ void AddDiabObjs()
 	BYTE *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad1x, 2 * diabquad1y, diabquad2x, diabquad2y, 11, 12, 1);
+	LoadMapObjects(lpSetPiece, { 2 * diabquad1x, 2 * diabquad1y }, { diabquad2x, diabquad2y }, 11, 12, 1);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad2x, 2 * diabquad2y, diabquad3x, diabquad3y, 11, 11, 2);
+	LoadMapObjects(lpSetPiece, { 2 * diabquad2x, 2 * diabquad2y }, { diabquad3x, diabquad3y }, 11, 11, 2);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad3x, 2 * diabquad3y, diabquad4x, diabquad4y, 9, 9, 3);
+	LoadMapObjects(lpSetPiece, { 2 * diabquad3x, 2 * diabquad3y }, { diabquad4x, diabquad4y }, 9, 9, 3);
 	mem_free_dbg(lpSetPiece);
 }
 
@@ -772,7 +773,7 @@ void InitObjects()
 			if (QuestStatus(Q_LTBANNER))
 				AddObject(OBJ_SIGNCHEST, 2 * setpc.x + 26, 2 * setpc.y + 19);
 			InitRndLocBigObj(10, 15, OBJ_SARC);
-			AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+			AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			InitRndBarrels();
 		}
 		if (level.leveltype == DTYPE_CATACOMBS) {
@@ -780,7 +781,7 @@ void InitObjects()
 				InitRndLocObj5x5(1, 1, OBJ_STAND);
 			if (QuestStatus(Q_SCHAMB))
 				InitRndLocObj5x5(1, 1, OBJ_BOOK2R);
-			AddL2Objs(0, 0, MAXDUNX, MAXDUNY);
+			AddL2Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			AddL2Torches();
 			if (QuestStatus(Q_BLIND)) {
 				if (myplr().data._pClass == PC_WARRIOR) {
@@ -791,9 +792,9 @@ void InitObjects()
 					sp_id = TEXT_MBLINDING;
 				}
 				quests[Q_BLIND]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc.x, setpc.y, setpc_w + setpc.x + 1, setpc_h + setpc.y + 1, sp_id);
+				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { setpc.x, setpc.y }, { setpc.w + setpc.x + 1, setpc.h + setpc.y + 1 }, sp_id);
 				mem = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-				LoadMapObjs(mem, 2 * setpc.x, 2 * setpc.y);
+				LoadMapObjs(mem, { 2 * setpc.x, 2 * setpc.y });
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BLOOD)) {
@@ -805,13 +806,13 @@ void InitObjects()
 					sp_id = TEXT_MBLOODY;
 				}
 				quests[Q_BLOOD]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7, sp_id);
+				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { setpc.x, setpc.y + 3 }, { setpc.x + 2, setpc.y + 7 }, sp_id);
 				AddObject(OBJ_PEDISTAL, 2 * setpc.x + 25, 2 * setpc.y + 32);
 			}
 			InitRndBarrels();
 		}
 		if (level.leveltype == DTYPE_CAVES) {
-			AddL3Objs(0, 0, MAXDUNX, MAXDUNY);
+			AddL3Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			InitRndBarrels();
 		}
 		if (level.leveltype == DTYPE_HELL) {
@@ -824,9 +825,9 @@ void InitObjects()
 					sp_id = TEXT_MBLOODWAR;
 				}
 				quests[Q_WARLORD]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc.x, setpc.y, setpc.x + setpc_w, setpc.y + setpc_h, sp_id);
+				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { setpc.x, setpc.y }, { setpc.x + setpc.w, setpc.y + setpc.h }, sp_id);
 				mem = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-				LoadMapObjs(mem, 2 * setpc.x, 2 * setpc.y);
+				LoadMapObjs(mem, { 2 * setpc.x, 2 * setpc.y });
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BETRAYER) && gbMaxPlayers == 1)
@@ -846,7 +847,7 @@ void InitObjects()
 }
 
 #ifndef SPAWN
-void SetMapObjects(BYTE *pMap, int startx, int starty)
+void SetMapObjects(BYTE *pMap, V2Di start)
 {
 	int rw, rh;
 	int i, j;
@@ -899,7 +900,7 @@ void SetMapObjects(BYTE *pMap, int startx, int starty)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm)
-				AddObject(ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
+				AddObject(ObjTypeConv[*lm], { start.x + 16 + i, start.y + 16 + j });
 			lm += 2;
 		}
 	}
@@ -909,26 +910,22 @@ void SetMapObjects(BYTE *pMap, int startx, int starty)
 
 void DeleteObject_(int oi, int i)
 {
-	int ox, oy;
-
-	ox = object[oi]._ox;
-	oy = object[oi]._oy;
-	grid[ox][oy].dObject = 0;
+	V2Di o = object[oi]._o;
+	grid.at(o).dObject = 0;
 	objectavail[-nobjects + MAXOBJECTS] = oi;
 	nobjects--;
 	if (nobjects > 0 && i != nobjects)
 		objectactive[i] = objectactive[nobjects];
 }
 
-void SetupObject(int i, int x, int y, int ot)
+void SetupObject(int i, V2Di pos, int ot)
 {
 	int ofi;
 	int j;
 
 	object[i]._otype = ot;
 	ofi = AllObjects[ot].ofindex;
-	object[i]._ox = x;
-	object[i]._oy = y;
+	object[i]._o = pos;
 	j = 0;
 	while (ObjFileList[j] != ofi) {
 		j++;
@@ -958,12 +955,12 @@ void SetupObject(int i, int x, int y, int ot)
 	object[i]._oDoorFlag = FALSE;
 }
 
-void SetObjMapRange(int i, int x1, int y1, int x2, int y2, int v)
+void SetObjMapRange(int i, V2Di p1, V2Di p2, int v)
 {
-	object[i]._oVar1 = x1;
-	object[i]._oVar2 = y1;
-	object[i]._oVar3 = x2;
-	object[i]._oVar4 = y2;
+	object[i]._oVar1 = p1.x;
+	object[i]._oVar2 = p1.y;
+	object[i]._oVar3 = p2.x;
+	object[i]._oVar4 = p2.y;
 	object[i]._oVar8 = v;
 }
 
@@ -972,15 +969,15 @@ void SetBookMsg(int i, int msg)
 	object[i]._oVar7 = msg;
 }
 
-void AddL1Door(int i, int x, int y, int ot)
+void AddL1Door(int i, V2Di pos, int ot)
 {
 	object[i]._oDoorFlag = TRUE;
 	if (ot == 1) {
-		object[i]._oVar1 = grid[x][y].dPiece;
-		object[i]._oVar2 = grid[x][y - 1].dPiece;
+		object[i]._oVar1 = grid.at(pos).dPiece;
+		object[i]._oVar2 = grid[pos.x][pos.y - 1].dPiece;
 	} else {
-		object[i]._oVar1 = grid[x][y].dPiece;
-		object[i]._oVar2 = grid[x - 1][y].dPiece;
+		object[i]._oVar1 = grid.at(pos).dPiece;
+		object[i]._oVar2 = grid[pos.x - 1][pos.y].dPiece;
 	}
 	object[i]._oVar4 = 0;
 }
@@ -989,8 +986,8 @@ void AddSCambBook(int i)
 {
 	object[i]._oVar1 = setpc.x;
 	object[i]._oVar2 = setpc.y;
-	object[i]._oVar3 = setpc_w + setpc.x + 1;
-	object[i]._oVar4 = setpc_h + setpc.y + 1;
+	object[i]._oVar3 = setpc.w + setpc.x + 1;
+	object[i]._oVar4 = setpc.h + setpc.y + 1;
 	object[i]._oVar6 = object[i]._oAnimFrame + 1;
 }
 
@@ -1028,29 +1025,29 @@ void AddChest(int i, int t)
 	object[i]._oVar2 = random_(147, 8);
 }
 
-void AddL2Door(int i, int x, int y, int ot)
+void AddL2Door(int i, V2Di p, int ot)
 {
 	object[i]._oDoorFlag = TRUE;
 	if (ot == OBJ_L2LDOOR)
-		ObjSetMicro(x, y, 538);
+		ObjSetMicro(p, 538);
 	else
-		ObjSetMicro(x, y, 540);
+		ObjSetMicro(p, 540);
 	object[i]._oVar4 = 0;
 }
 
-void AddL3Door(int i, int x, int y, int ot)
+void AddL3Door(int i, V2Di p, int ot)
 {
 	object[i]._oDoorFlag = TRUE;
 	if (ot == OBJ_L3LDOOR)
-		ObjSetMicro(x, y, 531);
+		ObjSetMicro(p, 531);
 	else
-		ObjSetMicro(x, y, 534);
+		ObjSetMicro(p, 534);
 	object[i]._oVar4 = 0;
 }
 
 void AddSarc(int i)
 {
-	grid[object[i]._ox][object[i]._oy - 1].dObject = -(i + 1);
+	grid[object[i]._o.x][object[i]._o.y - 1].dObject = -(i + 1);
 	object[i]._oVar1 = random_(153, 10);
 	object[i]._oRndSeed = GetRndSeed();
 	if (object[i]._oVar1 >= 8)
@@ -1089,7 +1086,7 @@ void AddTrap(int i, int ot)
 void AddObjLight(int i, int r)
 {
 	if (InitObjFlag) {
-		DoLighting(object[i]._ox, object[i]._oy, r, -1);
+		DoLighting(object[i]._o, r, -1);
 		object[i]._oVar1 = -1;
 	} else {
 		object[i]._oVar1 = 0;
@@ -1155,10 +1152,8 @@ void AddBloodFtn(int i)
 
 void AddPurifyingFountain(int i)
 {
-	int ox, oy;
-
-	ox = object[i]._ox;
-	oy = object[i]._oy;
+	int ox = object[i]._o.x;
+	int oy = object[i]._o.y;
 	grid[ox][oy - 1].dObject = -1 - i;
 	grid[ox - 1][oy].dObject = -1 - i;
 	grid[ox - 1][oy - 1].dObject = -1 - i;
@@ -1171,7 +1166,6 @@ void AddArmorStand(int i)
 		object[i]._oAnimFlag = 2;
 		object[i]._oSelFlag = 0;
 	}
-
 	object[i]._oRndSeed = GetRndSeed();
 }
 
@@ -1188,9 +1182,8 @@ void AddCauldron(int i)
 void AddMurkyFountain(int i)
 {
 	int ox, oy;
-
-	ox = object[i]._ox;
-	oy = object[i]._oy;
+	ox = object[i]._o.x;
+	oy = object[i]._o.y;
 	grid[ox][oy - 1].dObject = -1 - i;
 	grid[ox - 1][oy].dObject = -1 - i;
 	grid[ox - 1][oy - 1].dObject = -1 - i;
@@ -1233,8 +1226,8 @@ void AddPedistal(int i)
 {
 	object[i]._oVar1 = setpc.x;
 	object[i]._oVar2 = setpc.y;
-	object[i]._oVar3 = setpc.x + setpc_w;
-	object[i]._oVar4 = setpc.y + setpc_h;
+	object[i]._oVar3 = setpc.x + setpc.w;
+	object[i]._oVar4 = setpc.y + setpc.h;
 }
 
 void AddStoryBook(int i)
@@ -1323,6 +1316,11 @@ void AddSlainHero()
 
 void AddObject(int ot, int ox, int oy)
 {
+	return AddObject(ot, { ox, oy });
+}
+
+void AddObject(int ot, V2Di o)
+{
 	int oi;
 
 	if (nobjects >= MAXOBJECTS)
@@ -1331,8 +1329,8 @@ void AddObject(int ot, int ox, int oy)
 	oi = objectavail[0];
 	objectavail[0] = objectavail[126 - nobjects];
 	objectactive[nobjects] = oi;
-	grid[ox][oy].dObject = oi + 1;
-	SetupObject(oi, ox, oy, ot);
+	grid.at(o).dObject = oi + 1;
+	SetupObject(oi, o, ot);
 	switch (ot) {
 	case OBJ_L1LIGHT:
 		AddObjLight(oi, 5);
@@ -1354,15 +1352,15 @@ void AddObject(int ot, int ox, int oy)
 		break;
 	case OBJ_L1LDOOR:
 	case OBJ_L1RDOOR:
-		AddL1Door(oi, ox, oy, ot);
+		AddL1Door(oi, o, ot);
 		break;
 	case OBJ_L2LDOOR:
 	case OBJ_L2RDOOR:
-		AddL2Door(oi, ox, oy, ot);
+		AddL2Door(oi, o, ot);
 		break;
 	case OBJ_L3LDOOR:
 	case OBJ_L3RDOOR:
-		AddL3Door(oi, ox, oy, ot);
+		AddL3Door(oi, o, ot);
 		break;
 	case OBJ_BOOK2R:
 		AddSCambBook(oi);
@@ -1464,21 +1462,20 @@ void AddObject(int ot, int ox, int oy)
 
 void Obj_Light(int i, int lr)
 {
-	int ox, oy, dx, dy, p, tr;
+	V2Di o, d;
+	int p, tr;
 	BOOL turnon;
 
 	if (object[i]._oVar1 != -1) {
-		ox = object[i]._ox;
-		oy = object[i]._oy;
+		o = object[i]._o;
 		tr = lr + 10;
 		turnon = FALSE;
 		if (!lightflag) {
 			for (p = 0; p < MAX_PLRS && !turnon; p++) {
 				if (plr[p].data.plractive) {
 					if (level.currlevel == plr[p].data.plrlevel) {
-						dx = abs(plr[p].data._px - ox);
-						dy = abs(plr[p].data._py - oy);
-						if (dx < tr && dy < tr)
+						const int dist = (plr[p].data._p - o).maxabs();
+						if (dist < tr)
 							turnon = TRUE;
 					}
 				}
@@ -1486,7 +1483,7 @@ void Obj_Light(int i, int lr)
 		}
 		if (turnon) {
 			if (!object[i]._oVar1)
-				object[i]._olid = AddLight(ox, oy, lr);
+				object[i]._olid = AddLight(o, lr);
 			object[i]._oVar1 = 1;
 		} else {
 			if (object[i]._oVar1 == 1)
@@ -1498,30 +1495,26 @@ void Obj_Light(int i, int lr)
 
 void Obj_Circle(int i)
 {
-	int ox, oy, wx, wy;
-
-	ox = object[i]._ox;
-	oy = object[i]._oy;
-	wx = myplr().data._px;
-	wy = myplr().data._py;
-	if (wx == ox && wy == oy) {
+	V2Di o = object[i]._o;
+	V2Di w = myplr().data._p;
+	if (o == w) {
 		if (object[i]._otype == OBJ_MCIRCLE1)
 			object[i]._oAnimFrame = 2;
 		if (object[i]._otype == OBJ_MCIRCLE2)
 			object[i]._oAnimFrame = 4;
-		if (ox == 45 && oy == 47) {
+		if (o.x == 45 && o.y == 47) {
 			object[i]._oVar6 = 2;
-		} else if (ox == 26 && oy == 46) {
+		} else if (o.x == 26 && o.y == 46) {
 			object[i]._oVar6 = 1;
 		} else {
 			object[i]._oVar6 = 0;
 		}
-		if (ox == 35 && oy == 36 && object[i]._oVar5 == 3) {
+		if (o.x == 35 && o.y == 36 && object[i]._oVar5 == 3) {
 			object[i]._oVar6 = 4;
-			ObjChangeMapResync(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+			ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 			if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE)
 				quests[Q_BETRAYER]._qvar1 = 4;
-			AddMissile(myplr().data._px, myplr().data._py, 35, 46, myplr().data._pdir, MIS_RNDTELEPORT, 0, myplr(), 0, 0);
+			AddMissile(myplr().data._p, { 35, 46 }, myplr().data._pdir, MIS_RNDTELEPORT, 0, myplr(), 0, 0);
 			track_repeat_walk(FALSE);
 			sgbMouseDown = 0;
 			myplr().ClrPlrPath();
@@ -1546,19 +1539,18 @@ void Obj_StopAnim(int i)
 
 void Obj_Door(int i)
 {
-	int dx, dy;
+	V2Di d;
 	BOOL dok;
 
 	if (object[i]._oVar4 == 0) {
 		object[i]._oSelFlag = 3;
 		object[i]._oMissFlag = FALSE;
 	} else {
-		dx = object[i]._ox;
-		dy = object[i]._oy;
-		dok = !grid[dx][dy].dMonster;
-		dok = dok & !grid[dx][dy].dItem;
-		dok = dok & !grid[dx][dy].dDead;
-		dok = dok & !grid[dx][dy].dPlayer;
+		d = object[i]._o;
+		dok = !grid.at(d).dMonster;
+		dok = dok & !grid.at(d).dItem;
+		dok = dok & !grid.at(d).dDead;
+		dok = dok & !grid.at(d).dPlayer;
 		object[i]._oSelFlag = 2;
 		object[i]._oVar4 = dok ? 1 : 2;
 		object[i]._oMissFlag = TRUE;
@@ -1581,7 +1573,7 @@ void ActivateTrapLine(int ttype, int tid)
 			object[oi]._oVar4 = 1;
 			object[oi]._oAnimFlag = 1;
 			object[oi]._oAnimDelay = 1;
-			object[oi]._olid = AddLight(object[oi]._ox, object[oi]._oy, 1);
+			object[oi]._olid = AddLight(object[oi]._o, 1);
 		}
 	}
 }
@@ -1603,16 +1595,16 @@ void Obj_FlameTrap(int i)
 		}
 	} else if (!object[i]._oVar4) {
 		if (object[i]._oVar3 == 2) {
-			x = object[i]._ox - 2;
-			y = object[i]._oy;
+			x = object[i]._o.x - 2;
+			y = object[i]._o.y;
 			for (j = 0; j < 5; j++) {
 				if (grid[x][y].dPlayer || grid[x][y].dMonster)
 					object[i]._oVar4 = 1;
 				x++;
 			}
 		} else {
-			x = object[i]._ox;
-			y = object[i]._oy - 2;
+			x = object[i]._o.x;
+			y = object[i]._o.y - 2;
 			for (k = 0; k < 5; k++) {
 				if (grid[x][y].dPlayer || grid[x][y].dMonster)
 					object[i]._oVar4 = 1;
@@ -1633,7 +1625,7 @@ void Obj_Trap(int i)
 {
 	int oti, dir;
 	BOOLEAN otrig;
-	int sx, sy, dx, dy, x, y;
+	V2Di s, d;
 
 	otrig = FALSE;
 	if (!object[i]._oVar4) {
@@ -1660,22 +1652,19 @@ void Obj_Trap(int i)
 		}
 		if (otrig) {
 			object[i]._oVar4 = 1;
-			sx = object[i]._ox;
-			sy = object[i]._oy;
-			dx = object[oti]._ox;
-			dy = object[oti]._oy;
-			for (y = dy - 1; y <= object[oti]._oy + 1; y++) {
-				for (x = object[oti]._ox - 1; x <= object[oti]._ox + 1; x++) {
+			s = object[i]._o;
+			d = object[oti]._o;
+			for (int y = d.y - 1; y <= object[oti]._o.y + 1; y++) {
+				for (int x = object[oti]._o.x - 1; x <= object[oti]._o.x + 1; x++) {
 					if (grid[x][y].dPlayer) {
-						dx = x;
-						dy = y;
+						d = { x, y };
 					}
 				}
 			}
 			if (!deltaload) {
-				dir = GetDirection(sx, sy, dx, dy);
-				AddMissile(sx, sy, dx, dy, dir, object[i]._oVar3, 1, -1, 0, 0);
-				PlaySfxLoc(IS_TRAP, object[oti]._ox, object[oti]._oy);
+				dir = GetDirection(s, d);
+				AddMissile(s, d, dir, object[i]._oVar3, 1, -1, 0, 0);
+				PlaySfxLoc(IS_TRAP, object[oti]._o);
 			}
 			object[oti]._oTrapFlag = FALSE;
 		}
@@ -1694,7 +1683,7 @@ void Obj_BCrossDamage(int i)
 	if (fire_resist > 0)
 		damage[level.leveltype - 1] -= fire_resist * damage[level.leveltype - 1] / 100;
 
-	if (myplr().data._px != object[i]._ox || myplr().data._py != object[i]._oy - 1)
+	if (myplr().data._p.x != object[i]._o.x || myplr().data._p.y != object[i]._o.y - 1)
 		return;
 
 	myplr().data._pHitPoints -= damage[level.leveltype - 1];
@@ -1703,13 +1692,13 @@ void Obj_BCrossDamage(int i)
 		myplr().SyncPlrKill(0);
 	} else {
 		if (myplr().data._pClass == PC_WARRIOR) {
-			PlaySfxLoc(PS_WARR68, myplr().data._px, myplr().data._py);
-#ifndef SPAWN
+			PlaySfxLoc(PS_WARR68, myplr().data._p);
+			#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
-			PlaySfxLoc(PS_ROGUE68, myplr().data._px, myplr().data._py);
+			PlaySfxLoc(PS_ROGUE68, myplr().data._p);
 		} else if (myplr().data._pClass == PC_SORCERER) {
-			PlaySfxLoc(PS_MAGE68, myplr().data._px, myplr().data._py);
-#endif
+			PlaySfxLoc(PS_MAGE68, myplr().data._p);
+			#endif
 		}
 	}
 	drawhpflag = TRUE;
@@ -1802,15 +1791,15 @@ void ProcessObjects()
 	}
 }
 
-void ObjSetMicro(int dx, int dy, int pn)
+void ObjSetMicro(V2Di d, int pn)
 {
 	WORD *v;
 	MICROS *defs;
 	int i;
 
-	grid[dx][dy].dPiece = pn;
+	grid.at(d).dPiece = pn;
 	pn--;
-	defs = &grid[dx][dy].dpiece_defs_map_2;
+	defs = &grid.at(d).dpiece_defs_map_2;
 	if (level.leveltype != DTYPE_HELL) {
 		v = (WORD *)pLevelPieces + 10 * pn;
 		for (i = 0; i < 10; i++) {
@@ -1824,20 +1813,16 @@ void ObjSetMicro(int dx, int dy, int pn)
 	}
 }
 
-void objects_set_door_piece(int x, int y)
+void objects_set_door_piece(V2Di p)
 {
-	int pn;
-	long v1, v2;
-
-	pn = grid[x][y].dPiece - 1;
-
-	v1 = *((WORD *)pLevelPieces + 10 * pn + 8);
-	v2 = *((WORD *)pLevelPieces + 10 * pn + 9);
-	grid[x][y].dpiece_defs_map_2.mt[0] = SDL_SwapLE16(v1);
-	grid[x][y].dpiece_defs_map_2.mt[1] = SDL_SwapLE16(v2);
+	int pn = grid.at(p).dPiece - 1;
+	int v1 = *((WORD *)pLevelPieces + 10 * pn + 8);
+	int v2 = *((WORD *)pLevelPieces + 10 * pn + 9);
+	grid.at(p).dpiece_defs_map_2.mt[0] = SDL_SwapLE16(v1);
+	grid.at(p).dpiece_defs_map_2.mt[1] = SDL_SwapLE16(v2);
 }
 
-void ObjSetMini(int x, int y, int v)
+void ObjSetMini(V2Di p, int v)
 {
 	int xx, yy;
 	long v1, v2, v3, v4;
@@ -1849,20 +1834,18 @@ void ObjSetMini(int x, int y, int v)
 	v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
 	v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
 
-	xx = 2 * x + 16;
-	yy = 2 * y + 16;
-	ObjSetMicro(xx, yy, v1);
-	ObjSetMicro(xx + 1, yy, v2);
-	ObjSetMicro(xx, yy + 1, v3);
-	ObjSetMicro(xx + 1, yy + 1, v4);
+	xx = 2 * p.x + 16;
+	yy = 2 * p.y + 16;
+	ObjSetMicro({ xx, yy }, v1);
+	ObjSetMicro({ xx + 1, yy }, v2);
+	ObjSetMicro({ xx, yy + 1 }, v3);
+	ObjSetMicro({ xx + 1, yy + 1 }, v4);
 }
 
-void ObjL1Special(int x1, int y1, int x2, int y2)
+void ObjL1Special(V2Di p1, V2Di p2)
 {
-	int i, j;
-
-	for (i = y1; i <= y2; ++i) {
-		for (j = x1; j <= x2; ++j) {
+	for (int i = p1.y; i <= p2.y; ++i) {
+		for (int j = p1.x; j <= p2.x; ++j) {
 			grid[j][i].dSpecial = 0;
 			if (grid[j][i].dPiece == 12)
 				grid[j][i].dSpecial = 1;
@@ -1900,12 +1883,10 @@ void ObjL1Special(int x1, int y1, int x2, int y2)
 	}
 }
 
-void ObjL2Special(int x1, int y1, int x2, int y2)
+void ObjL2Special(V2Di p1, V2Di p2)
 {
-	int i, j;
-
-	for (j = y1; j <= y2; j++) {
-		for (i = x1; i <= x2; i++) {
+	for (int i = p1.y; i <= p2.y; ++i) {
+		for (int j = p1.x; j <= p2.x; ++j) {
 			grid[i][j].dSpecial = 0;
 			if (grid[i][j].dPiece == 541)
 				grid[i][j].dSpecial = 5;
@@ -1923,8 +1904,8 @@ void ObjL2Special(int x1, int y1, int x2, int y2)
 				grid[i][j].dSpecial = 6;
 		}
 	}
-	for (j = y1; j <= y2; j++) {
-		for (i = x1; i <= x2; i++) {
+	for (int i = p1.y; i <= p2.y; ++i) {
+		for (int j = p1.x; j <= p2.x; ++j) {
 			if (grid[i][j].dPiece == 132) {
 				grid[i][j + 1].dSpecial = 2;
 				grid[i][j + 2].dSpecial = 1;
@@ -1937,45 +1918,45 @@ void ObjL2Special(int x1, int y1, int x2, int y2)
 	}
 }
 
-void DoorSet(int oi, int dx, int dy)
+void DoorSet(int oi, V2Di d)
 {
 	int pn;
 
-	pn = grid[dx][dy].dPiece;
+	pn = grid.at(d).dPiece;
 	if (pn == 43)
-		ObjSetMicro(dx, dy, 392);
+		ObjSetMicro(d, 392);
 	if (pn == 45)
-		ObjSetMicro(dx, dy, 394);
+		ObjSetMicro(d, 394);
 	if (pn == 50 && object[oi]._otype == OBJ_L1LDOOR)
-		ObjSetMicro(dx, dy, 411);
+		ObjSetMicro(d, 411);
 	if (pn == 50 && object[oi]._otype == OBJ_L1RDOOR)
-		ObjSetMicro(dx, dy, 412);
+		ObjSetMicro(d, 412);
 	if (pn == 54)
-		ObjSetMicro(dx, dy, 397);
+		ObjSetMicro(d, 397);
 	if (pn == 55)
-		ObjSetMicro(dx, dy, 398);
+		ObjSetMicro(d, 398);
 	if (pn == 61)
-		ObjSetMicro(dx, dy, 399);
+		ObjSetMicro(d, 399);
 	if (pn == 67)
-		ObjSetMicro(dx, dy, 400);
+		ObjSetMicro(d, 400);
 	if (pn == 68)
-		ObjSetMicro(dx, dy, 401);
+		ObjSetMicro(d, 401);
 	if (pn == 69)
-		ObjSetMicro(dx, dy, 403);
+		ObjSetMicro(d, 403);
 	if (pn == 70)
-		ObjSetMicro(dx, dy, 404);
+		ObjSetMicro(d, 404);
 	if (pn == 72)
-		ObjSetMicro(dx, dy, 406);
+		ObjSetMicro(d, 406);
 	if (pn == 212)
-		ObjSetMicro(dx, dy, 407);
+		ObjSetMicro(d, 407);
 	if (pn == 354)
-		ObjSetMicro(dx, dy, 409);
+		ObjSetMicro(d, 409);
 	if (pn == 355)
-		ObjSetMicro(dx, dy, 410);
+		ObjSetMicro(d, 410);
 	if (pn == 411)
-		ObjSetMicro(dx, dy, 396);
+		ObjSetMicro(d, 396);
 	if (pn == 412)
-		ObjSetMicro(dx, dy, 396);
+		ObjSetMicro(d, 396);
 }
 
 void RedoPlayerVision()
@@ -1984,59 +1965,75 @@ void RedoPlayerVision()
 
 	for (p = 0; p < MAX_PLRS; p++) {
 		if (plr[p].data.plractive && level.currlevel == plr[p].data.plrlevel) {
-			ChangeVisionXY(plr[p].data._pvid, plr[p].data._px, plr[p].data._py);
+			ChangeVisionXY(plr[p].data._pvid, plr[p].data._p);
 		}
 	}
 }
 
-void OperateL1RDoor(int pnum, int oi, BOOL sendflag)
+bool _SharedDoorStart(int oi)
 {
-	int xp, yp;
-
 	if (object[oi]._oVar4 == 2) {
 		if (!deltaload)
-			PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, object[oi]._oy);
-		return;
+			PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+		return false;
 	}
+	return true;
+}
 
-	xp = object[oi]._ox;
-	yp = object[oi]._oy;
+void _SharedDoorOpen(int pnum, int oi, BOOL sendflag)
+{
+	if (pnum == myplr() && sendflag)
+		NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
+	if (!deltaload)
+		PlaySfxLoc(IS_DOOROPEN, object[oi]._o);
+	object[oi]._oAnimFrame += 2;
+	object[oi]._oPreFlag = TRUE;
+	object[oi]._oVar4 = 1;
+	object[oi]._oSelFlag = 2;
+	RedoPlayerVision();
+}
+
+void _SharedDoorClose(int pnum, int oi, BOOL sendflag)
+{
+	if (pnum == myplr() && sendflag)
+		NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
+	object[oi]._oVar4 = 0;
+	object[oi]._oSelFlag = 3;
+	object[oi]._oAnimFrame -= 2;
+	object[oi]._oPreFlag = FALSE;
+	RedoPlayerVision();
+}
+
+bool _isDoorFree(V2Di p)
+{
+	return (((grid.at(p).dDead != 0 ? 0 : 1) & (grid.at(p).dMonster != 0 ? 0 : 1) & (grid.at(p).dItem != 0 ? 0 : 1)) != 0);
+}
+
+void OperateL1RDoor(int pnum, int oi, BOOL sendflag)
+{
+	if (!_SharedDoorStart(oi)) return;
+
+	V2Di p = object[oi]._o;
 	if (object[oi]._oVar4 == 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
-		if (!deltaload)
-			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
-		ObjSetMicro(xp, yp, 395);
-		grid[xp][yp].dSpecial = 8;
-		objects_set_door_piece(xp, yp - 1);
-		object[oi]._oAnimFrame += 2;
-		object[oi]._oPreFlag = TRUE;
-		DoorSet(oi, xp - 1, yp);
-		object[oi]._oVar4 = 1;
-		object[oi]._oSelFlag = 2;
-		RedoPlayerVision();
+		ObjSetMicro(p, 395);
+		grid.at(p).dSpecial = 8;
+		objects_set_door_piece({ p.x, p.y - 1 });
+		DoorSet(oi, { p.x - 1, p.y });
+		_SharedDoorOpen(pnum, oi, sendflag);
 		return;
 	}
 
 	if (!deltaload)
-		PlaySfxLoc(IS_DOORCLOS, xp, object[oi]._oy);
-	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
-		object[oi]._oVar4 = 0;
-		object[oi]._oSelFlag = 3;
-		ObjSetMicro(xp, yp, object[oi]._oVar1);
+		PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+	if (_isDoorFree(p)) {
+		ObjSetMicro(p, object[oi]._oVar1);
 		if (object[oi]._oVar2 != 50) {
-			ObjSetMicro(xp - 1, yp, object[oi]._oVar2);
+			ObjSetMicro({p.x - 1, p.y}, object[oi]._oVar2);
 		} else {
-			if (grid[xp - 1][yp].dPiece == 396)
-				ObjSetMicro(xp - 1, yp, 411);
-			else
-				ObjSetMicro(xp - 1, yp, 50);
+			if (grid[p.x - 1][p.y].dPiece == 396) ObjSetMicro({p.x- 1, p.y}, 411);
+			else ObjSetMicro({ p.x - 1, p.y }, 50);
 		}
-		object[oi]._oAnimFrame -= 2;
-		object[oi]._oPreFlag = FALSE;
-		RedoPlayerVision();
+		_SharedDoorClose(pnum, oi, sendflag);
 	} else {
 		object[oi]._oVar4 = 2;
 	}
@@ -2044,55 +2041,34 @@ void OperateL1RDoor(int pnum, int oi, BOOL sendflag)
 
 void OperateL1LDoor(int pnum, int oi, BOOL sendflag)
 {
-	int xp, yp;
+	if (!_SharedDoorStart(oi)) return;
 
-	if (object[oi]._oVar4 == 2) {
-		if (!deltaload)
-			PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, object[oi]._oy);
-		return;
-	}
-
-	xp = object[oi]._ox;
-	yp = object[oi]._oy;
+	V2Di p = object[oi]._o;
 	if (object[oi]._oVar4 == 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
-		if (!deltaload)
-			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
 		if (object[oi]._oVar1 == 214)
-			ObjSetMicro(xp, yp, 408);
+			ObjSetMicro(p, 408);
 		else
-			ObjSetMicro(xp, yp, 393);
-		grid[xp][yp].dSpecial = 7;
-		objects_set_door_piece(xp - 1, yp);
-		object[oi]._oAnimFrame += 2;
-		object[oi]._oPreFlag = TRUE;
-		DoorSet(oi, xp, yp - 1);
-		object[oi]._oVar4 = 1;
-		object[oi]._oSelFlag = 2;
-		RedoPlayerVision();
+			ObjSetMicro(p, 393);
+		grid.at(p).dSpecial = 7;
+		objects_set_door_piece({p.x - 1, p.y});
+		DoorSet(oi, {p.x, p.y - 1 });
+		_SharedDoorOpen(pnum, oi, sendflag);
 		return;
 	}
 
 	if (!deltaload)
-		PlaySfxLoc(IS_DOORCLOS, xp, object[oi]._oy);
-	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
-		object[oi]._oVar4 = 0;
-		object[oi]._oSelFlag = 3;
-		ObjSetMicro(xp, yp, object[oi]._oVar1);
+		PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+	if (_isDoorFree(p)) {
+		ObjSetMicro(p, object[oi]._oVar1);
 		if (object[oi]._oVar2 != 50) {
-			ObjSetMicro(xp, yp - 1, object[oi]._oVar2);
+			ObjSetMicro({ p.x, p.y - 1}, object[oi]._oVar2);
 		} else {
-			if (grid[xp][yp - 1].dPiece == 396)
-				ObjSetMicro(xp, yp - 1, 412);
+			if (grid[p.x][p.y - 1].dPiece == 396)
+				ObjSetMicro({ p.x, p.y - 1 }, 412);
 			else
-				ObjSetMicro(xp, yp - 1, 50);
+				ObjSetMicro({ p.x, p.y - 1 }, 50);
 		}
-		object[oi]._oAnimFrame -= 2;
-		object[oi]._oPreFlag = FALSE;
-		RedoPlayerVision();
+		_SharedDoorClose(pnum, oi, sendflag);
 	} else {
 		object[oi]._oVar4 = 2;
 	}
@@ -2100,40 +2076,20 @@ void OperateL1LDoor(int pnum, int oi, BOOL sendflag)
 
 void OperateL2RDoor(int pnum, int oi, BOOL sendflag)
 {
-	int xp, yp;
+	if (!_SharedDoorStart(oi)) return;
 
-	if (object[oi]._oVar4 == 2) {
-		if (!deltaload)
-			PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, object[oi]._oy);
-		return;
-	}
-	xp = object[oi]._ox;
-	yp = object[oi]._oy;
+	V2Di p = object[oi]._o;
 	if (object[oi]._oVar4 == 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
-		if (!deltaload)
-			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
-		ObjSetMicro(xp, yp, 17);
-		object[oi]._oAnimFrame += 2;
-		object[oi]._oPreFlag = TRUE;
-		object[oi]._oVar4 = 1;
-		object[oi]._oSelFlag = 2;
-		RedoPlayerVision();
+		ObjSetMicro(p, 17);
+		_SharedDoorOpen(pnum, oi, sendflag);
 		return;
 	}
 
 	if (!deltaload)
-		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
-		object[oi]._oVar4 = 0;
-		object[oi]._oSelFlag = 3;
-		ObjSetMicro(xp, yp, 540);
-		object[oi]._oAnimFrame -= 2;
-		object[oi]._oPreFlag = FALSE;
-		RedoPlayerVision();
+		PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+	if (_isDoorFree(p)) {
+		ObjSetMicro(p, 540);
+		_SharedDoorClose(pnum, oi, sendflag);
 	} else {
 		object[oi]._oVar4 = 2;
 	}
@@ -2141,40 +2097,20 @@ void OperateL2RDoor(int pnum, int oi, BOOL sendflag)
 
 void OperateL2LDoor(int pnum, int oi, BOOL sendflag)
 {
-	int xp, yp;
+	if (!_SharedDoorStart(oi)) return;
 
-	if (object[oi]._oVar4 == 2) {
-		if (!deltaload)
-			PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, object[oi]._oy);
-		return;
-	}
-	xp = object[oi]._ox;
-	yp = object[oi]._oy;
+	V2Di p = object[oi]._o;
 	if (object[oi]._oVar4 == 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
-		if (!deltaload)
-			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
-		ObjSetMicro(xp, yp, 13);
-		object[oi]._oAnimFrame += 2;
-		object[oi]._oPreFlag = TRUE;
-		object[oi]._oVar4 = 1;
-		object[oi]._oSelFlag = 2;
-		RedoPlayerVision();
+		ObjSetMicro(p, 13);
+		_SharedDoorOpen(pnum, oi, sendflag);
 		return;
 	}
 
 	if (!deltaload)
-		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
-		object[oi]._oVar4 = 0;
-		object[oi]._oSelFlag = 3;
-		ObjSetMicro(xp, yp, 538);
-		object[oi]._oAnimFrame -= 2;
-		object[oi]._oPreFlag = FALSE;
-		RedoPlayerVision();
+		PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+	if (_isDoorFree(p)) {
+		ObjSetMicro(p, 538);
+		_SharedDoorClose(pnum, oi, sendflag);
 	} else {
 		object[oi]._oVar4 = 2;
 	}
@@ -2182,41 +2118,20 @@ void OperateL2LDoor(int pnum, int oi, BOOL sendflag)
 
 void OperateL3RDoor(int pnum, int oi, BOOL sendflag)
 {
-	int xp, yp;
+	if (!_SharedDoorStart(oi)) return;
 
-	if (object[oi]._oVar4 == 2) {
-		if (!deltaload)
-			PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, object[oi]._oy);
-		return;
-	}
-
-	xp = object[oi]._ox;
-	yp = object[oi]._oy;
+	V2Di p = object[oi]._o;
 	if (object[oi]._oVar4 == 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
-		if (!deltaload)
-			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
-		ObjSetMicro(xp, yp, 541);
-		object[oi]._oAnimFrame += 2;
-		object[oi]._oPreFlag = TRUE;
-		object[oi]._oVar4 = 1;
-		object[oi]._oSelFlag = 2;
-		RedoPlayerVision();
+		ObjSetMicro(p, 541);
+		_SharedDoorOpen(pnum, oi, sendflag);
 		return;
 	}
 
 	if (!deltaload)
-		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
-		object[oi]._oVar4 = 0;
-		object[oi]._oSelFlag = 3;
-		ObjSetMicro(xp, yp, 534);
-		object[oi]._oAnimFrame -= 2;
-		object[oi]._oPreFlag = FALSE;
-		RedoPlayerVision();
+		PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+	if (_isDoorFree(p)) {
+		ObjSetMicro(p, 534);
+		_SharedDoorClose(pnum, oi, sendflag);
 	} else {
 		object[oi]._oVar4 = 2;
 	}
@@ -2224,138 +2139,108 @@ void OperateL3RDoor(int pnum, int oi, BOOL sendflag)
 
 void OperateL3LDoor(int pnum, int oi, BOOL sendflag)
 {
-	int xp, yp;
+	if (!_SharedDoorStart(oi)) return;
 
-	if (object[oi]._oVar4 == 2) {
-		if (!deltaload)
-			PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, object[oi]._oy);
-		return;
-	}
-
-	xp = object[oi]._ox;
-	yp = object[oi]._oy;
+	V2Di p = object[oi]._o;
 	if (object[oi]._oVar4 == 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
-		if (!deltaload)
-			PlaySfxLoc(IS_DOOROPEN, object[oi]._ox, object[oi]._oy);
-		ObjSetMicro(xp, yp, 538);
-		object[oi]._oAnimFrame += 2;
-		object[oi]._oPreFlag = TRUE;
-		object[oi]._oVar4 = 1;
-		object[oi]._oSelFlag = 2;
-		RedoPlayerVision();
+		ObjSetMicro(p, 538);
+		_SharedDoorOpen(pnum, oi, sendflag);
 		return;
 	}
 
 	if (!deltaload)
-		PlaySfxLoc(IS_DOORCLOS, object[oi]._ox, yp);
-	if (((grid[xp][yp].dDead != 0 ? 0 : 1) & (grid[xp][yp].dMonster != 0 ? 0 : 1) & (grid[xp][yp].dItem != 0 ? 0 : 1)) != 0) {
-		if (pnum == myplr() && sendflag)
-			NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
-		object[oi]._oVar4 = 0;
-		object[oi]._oSelFlag = 3;
-		ObjSetMicro(xp, yp, 531);
-		object[oi]._oAnimFrame -= 2;
-		object[oi]._oPreFlag = FALSE;
-		RedoPlayerVision();
+		PlaySfxLoc(IS_DOORCLOS, object[oi]._o);
+	if (_isDoorFree(p)) {
+		ObjSetMicro(p, 531);
+		_SharedDoorClose(pnum, oi, sendflag);
 	} else {
 		object[oi]._oVar4 = 2;
 	}
 }
 
-void MonstCheckDoors(int m)
+void MonstCheckDoors(int n)
 {
 	int i, oi;
-	int dpx, dpy, mx, my;
-
-	mx = monsters[m].data._mx;
-	my = monsters[m].data._my;
-	if (grid[mx - 1][my - 1].dObject
-	    || grid[mx][my - 1].dObject
-	    || grid[mx + 1][my - 1].dObject
-	    || grid[mx - 1][my].dObject
-	    || grid[mx + 1][my].dObject
-	    || grid[mx - 1][my + 1].dObject
-	    || grid[mx][my + 1].dObject
-	    || grid[mx + 1][my + 1].dObject) {
+	V2Di dp, m;
+	m = monsters[n].data._m;
+	if (grid[m.x - 1][m.y - 1].dObject
+	    || grid[m.x][m.y - 1].dObject
+	    || grid[m.x + 1][m.y - 1].dObject
+	    || grid[m.x - 1][m.y].dObject
+	    || grid[m.x + 1][m.y].dObject
+	    || grid[m.x - 1][m.y + 1].dObject
+	    || grid[m.x][m.y + 1].dObject
+	    || grid[m.x + 1][m.y + 1].dObject) {
 		for (i = 0; i < nobjects; ++i) {
 			oi = objectactive[i];
 			if ((object[oi]._otype == OBJ_L1LDOOR || object[oi]._otype == OBJ_L1RDOOR) && !object[oi]._oVar4) {
-				dpx = abs(object[oi]._ox - mx);
-				dpy = abs(object[oi]._oy - my);
-				if (dpx == 1 && dpy <= 1 && object[oi]._otype == OBJ_L1LDOOR)
+				dp.x = abs(object[oi]._o.x - m.x);
+				dp.y = abs(object[oi]._o.y - m.y);
+				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L1LDOOR)
 					OperateL1LDoor(myplr(), oi, TRUE);
-				if (dpx <= 1 && dpy == 1 && object[oi]._otype == OBJ_L1RDOOR)
+				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L1RDOOR)
 					OperateL1RDoor(myplr(), oi, TRUE);
 			}
 			if ((object[oi]._otype == OBJ_L2LDOOR || object[oi]._otype == OBJ_L2RDOOR) && !object[oi]._oVar4) {
-				dpx = abs(object[oi]._ox - mx);
-				dpy = abs(object[oi]._oy - my);
-				if (dpx == 1 && dpy <= 1 && object[oi]._otype == OBJ_L2LDOOR)
+				dp.x = abs(object[oi]._o.x - m.x);
+				dp.y = abs(object[oi]._o.y - m.y);
+				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L2LDOOR)
 					OperateL2LDoor(myplr(), oi, TRUE);
-				if (dpx <= 1 && dpy == 1 && object[oi]._otype == OBJ_L2RDOOR)
+				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L2RDOOR)
 					OperateL2RDoor(myplr(), oi, TRUE);
 			}
 			if ((object[oi]._otype == OBJ_L3LDOOR || object[oi]._otype == OBJ_L3RDOOR) && !object[oi]._oVar4) {
-				dpx = abs(object[oi]._ox - mx);
-				dpy = abs(object[oi]._oy - my);
-				if (dpx == 1 && dpy <= 1 && object[oi]._otype == OBJ_L3RDOOR)
+				dp.x = abs(object[oi]._o.x - m.x);
+				dp.y = abs(object[oi]._o.y - m.y);
+				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L3RDOOR)
 					OperateL3RDoor(myplr(), oi, TRUE);
-				if (dpx <= 1 && dpy == 1 && object[oi]._otype == OBJ_L3LDOOR)
+				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L3LDOOR)
 					OperateL3LDoor(myplr(), oi, TRUE);
 			}
 		}
 	}
 }
 
-void ObjChangeMap(int x1, int y1, int x2, int y2)
+void ObjChangeMap(V2Di p1, V2Di p2)
 {
-	int i, j;
-
-	for (j = y1; j <= y2; j++) {
-		for (i = x1; i <= x2; i++) {
-			ObjSetMini(i, j, dgrid[i][j].pdungeon);
+	for (int j = p1.y; j <= p2.y; j++) {
+		for (int i = p1.x; i <= p2.x; i++) {
+			ObjSetMini({ i, j }, dgrid[i][j].pdungeon);
 			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
 	if (level.leveltype == DTYPE_CATHEDRAL) {
-		ObjL1Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
-		AddL1Objs(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
+		ObjL1Special({2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
+		AddL1Objs({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
 	if (level.leveltype == DTYPE_CATACOMBS) {
-		ObjL2Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
-		AddL2Objs(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
+		ObjL2Special({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
+		AddL2Objs({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
 }
 
-void ObjChangeMapResync(int x1, int y1, int x2, int y2)
+void ObjChangeMapResync(V2Di p1, V2Di p2)
 {
-	int i, j;
-
-	for (j = y1; j <= y2; j++) {
-		for (i = x1; i <= x2; i++) {
-			ObjSetMini(i, j, dgrid[i][j].pdungeon);
+	for (int j = p1.y; j <= p2.y; j++) {
+		for (int i = p1.x; i <= p2.x; i++) {
+			ObjSetMini({ i, j }, dgrid[i][j].pdungeon);
 			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
 	if (level.leveltype == DTYPE_CATHEDRAL) {
-		ObjL1Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
+		ObjL1Special({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
 	if (level.leveltype == DTYPE_CATACOMBS) {
-		ObjL2Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
+		ObjL2Special({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
 }
 
 void OperateL1Door(int pnum, int i, BOOL sendflag)
 {
-	int dpx, dpy;
-
-	dpx = abs(object[i]._ox - plr[pnum].data._px);
-	dpy = abs(object[i]._oy - plr[pnum].data._py);
-	if (dpx == 1 && dpy <= 1 && object[i]._otype == OBJ_L1LDOOR)
+	V2Di dp = (object[i]._o - plr[pnum].data._p).abs();
+	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == OBJ_L1LDOOR)
 		OperateL1LDoor(pnum, i, sendflag);
-	if (dpx <= 1 && dpy == 1 && object[i]._otype == OBJ_L1RDOOR)
+	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == OBJ_L1RDOOR)
 		OperateL1RDoor(pnum, i, sendflag);
 }
 
@@ -2365,8 +2250,7 @@ void OperateLever(int pnum, int i)
 	BOOL mapflag;
 
 	if (object[i]._oSelFlag != 0) {
-		if (!deltaload)
-			PlaySfxLoc(IS_LEVER, object[i]._ox, object[i]._oy);
+		if (!deltaload) PlaySfxLoc(IS_LEVER, object[i]._o);
 		object[i]._oSelFlag = 0;
 		object[i]._oAnimFrame++;
 		mapflag = TRUE;
@@ -2381,7 +2265,7 @@ void OperateLever(int pnum, int i)
 			}
 		}
 		if (mapflag)
-			ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+			ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 		if (pnum == myplr())
 			NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
 	}
@@ -2390,7 +2274,7 @@ void OperateLever(int pnum, int i)
 void OperateBook(int pnum, int i)
 {
 	int j, oi;
-	int dx, dy;
+	V2Di d;
 	int otype;
 	BOOL do_add_missile, missile_added;
 
@@ -2403,20 +2287,18 @@ void OperateBook(int pnum, int i)
 			oi = objectactive[j];
 			otype = object[oi]._otype;
 			if (otype == OBJ_MCIRCLE2 && object[oi]._oVar6 == 1) {
-				dx = 27;
-				dy = 29;
+				d = { 27, 29 };
 				object[oi]._oVar6 = 4;
 				do_add_missile = TRUE;
 			}
 			if (otype == OBJ_MCIRCLE2 && object[oi]._oVar6 == 2) {
-				dx = 43;
-				dy = 29;
+				d = { 43, 29 };
 				object[oi]._oVar6 = 4;
 				do_add_missile = TRUE;
 			}
 			if (do_add_missile) {
 				object[grid[35][36].dObject - 1]._oVar5++;
-				AddMissile(plr[pnum].data._px, plr[pnum].data._py, dx, dy, plr[pnum].data._pdir, MIS_RNDTELEPORT, 0, pnum, 0, 0);
+				AddMissile(plr[pnum].data._p, d, plr[pnum].data._pdir, MIS_RNDTELEPORT, 0, pnum, 0, 0);
 				missile_added = TRUE;
 				do_add_missile = FALSE;
 			}
@@ -2435,26 +2317,14 @@ void OperateBook(int pnum, int i)
 			myplr().data._pSplLvl[SPL_GUARDIAN]++;
 		quests[Q_SCHAMB]._qactive = QUEST_DONE;
 		if (!deltaload)
-			PlaySfxLoc(IS_QUESTDN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(IS_QUESTDN, object[i]._o);
 		InitDiabloMsg(EMSG_BONECHAMB);
-		AddMissile(
-		    myplr().data._px,
-		    myplr().data._py,
-		    object[i]._ox - 2,
-		    object[i]._oy - 4,
-		    myplr().data._pdir,
-		    MIS_GUARDIAN,
-		    0,
-		    myplr(),
-		    0,
-		    0);
+		AddMissile(myplr().data._p, { object[i]._o.x - 2, object[i]._o.y - 4 }, myplr().data._pdir,
+		    MIS_GUARDIAN, 0, myplr(), 0, 0);
 	}
 	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
-		ObjChangeMapResync(
-		    object[i]._oVar1,
-		    object[i]._oVar2,
-		    object[i]._oVar3,
-		    object[i]._oVar4);
+		ObjChangeMapResync( { object[i]._oVar1, object[i]._oVar2 },
+		    { object[i]._oVar3, object[i]._oVar4 });
 		for (j = 0; j < nobjects; j++)
 			SyncObjectAnim(objectactive[j]);
 	}
@@ -2462,10 +2332,10 @@ void OperateBook(int pnum, int i)
 
 void OperateBookLever(int pnum, int i)
 {
-	int x, y, tren;
-
-	x = 2 * setpc.x + 16;
-	y = 2 * setpc.y + 16;
+	int tren;
+	V2Di p;
+	p.x = 2 * setpc.x + 16;
+	p.y = 2 * setpc.y + 16;
 	if (object[i]._oSelFlag != 0 && !qtextflag) {
 		if (object[i]._otype == OBJ_BLINDBOOK && !quests[Q_BLIND]._qvar1) {
 			quests[Q_BLIND]._qactive = QUEST_ACTIVE;
@@ -2476,9 +2346,9 @@ void OperateBookLever(int pnum, int i)
 			quests[Q_BLOOD]._qactive = QUEST_ACTIVE;
 			quests[Q_BLOOD]._qlog = 1;
 			quests[Q_BLOOD]._qvar1 = 1;
-			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc.x + 19, 2 * setpc.y + 26, 0, 1);
-			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc.x + 31, 2 * setpc.y + 26, 0, 1);
-			SpawnQuestItem(IDI_BLDSTONE, 2 * setpc.x + 25, 2 * setpc.y + 33, 0, 1);
+			SpawnQuestItem(IDI_BLDSTONE, { 2 * setpc.x + 19, 2 * setpc.y + 26 }, 0, 1);
+			SpawnQuestItem(IDI_BLDSTONE, { 2 * setpc.x + 31, 2 * setpc.y + 26 }, 0, 1);
+			SpawnQuestItem(IDI_BLDSTONE, { 2 * setpc.x + 25, 2 * setpc.y + 33 }, 0, 1);
 		}
 		object[i]._otype = object[i]._otype;
 		if (object[i]._otype == OBJ_STEELTOME && !quests[Q_WARLORD]._qvar1) {
@@ -2488,9 +2358,9 @@ void OperateBookLever(int pnum, int i)
 		}
 		if (object[i]._oAnimFrame != object[i]._oVar6) {
 			if (object[i]._otype != OBJ_BLOODBOOK)
-				ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+				ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 			if (object[i]._otype == OBJ_BLINDBOOK) {
-				CreateItem(3, x + 5, y + 5);
+				CreateItem(3, { p.x + 5, p.y + 5 });
 				tren = TransVal;
 				TransVal = 9;
 				DRLG_MRectTrans(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
@@ -2510,7 +2380,7 @@ void OperateSChambBk(int pnum, int i)
 
 	if (object[i]._oSelFlag != 0 && !qtextflag) {
 		if (object[i]._oAnimFrame != object[i]._oVar6) {
-			ObjChangeMapResync(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+			ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 			for (j = 0; j < nobjects; j++)
 				SyncObjectAnim(objectactive[j]);
 		}
@@ -2536,26 +2406,25 @@ void OperateChest(int pnum, int i, BOOL sendmsg)
 	int j, mdir, mtype;
 
 	if (object[i]._oSelFlag != 0) {
-		if (!deltaload)
-			PlaySfxLoc(IS_CHEST, object[i]._ox, object[i]._oy);
+		if (!deltaload) PlaySfxLoc(IS_CHEST, object[i]._o);
 		object[i]._oSelFlag = 0;
 		object[i]._oAnimFrame += 2;
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
 			if (level.setlevel) {
 				for (j = 0; j < object[i]._oVar1; j++) {
-					CreateRndItem(object[i]._ox, object[i]._oy, TRUE, sendmsg, FALSE);
+					CreateRndItem(object[i]._o, TRUE, sendmsg, FALSE);
 				}
 			} else {
 				for (j = 0; j < object[i]._oVar1; j++) {
 					if (object[i]._oVar2)
-						CreateRndItem(object[i]._ox, object[i]._oy, FALSE, sendmsg, FALSE);
+						CreateRndItem(object[i]._o, FALSE, sendmsg, FALSE);
 					else
-						CreateRndUseful(pnum, object[i]._ox, object[i]._oy, sendmsg);
+						CreateRndUseful(pnum, object[i]._o, sendmsg);
 				}
 			}
 			if (object[i]._oTrapFlag && object[i]._otype >= OBJ_TCHEST1 && object[i]._otype <= OBJ_TCHEST3) {
-				mdir = GetDirection(object[i]._ox, object[i]._oy, plr[pnum].data._px, plr[pnum].data._py);
+				mdir = GetDirection(object[i]._o, plr[pnum].data._p);
 				switch (object[i]._oVar4) {
 				case 0:
 					mtype = MIS_ARROW;
@@ -2567,7 +2436,7 @@ void OperateChest(int pnum, int i, BOOL sendmsg)
 					mtype = MIS_NOVA;
 					break;
 				}
-				AddMissile(object[i]._ox, object[i]._oy, plr[pnum].data._px, plr[pnum].data._py, mdir, mtype, 1, -1, 0, 0);
+				AddMissile(object[i]._o, plr[pnum].data._p, mdir, mtype, 1, -1, 0, 0);
 				object[i]._oTrapFlag = FALSE;
 			}
 			if (pnum == myplr())
@@ -2579,29 +2448,28 @@ void OperateChest(int pnum, int i, BOOL sendmsg)
 
 void OperateMushPatch(int pnum, int i)
 {
-	int x, y;
-
+	V2Di p;
 	if (quests[Q_MUSHROOM]._qactive != QUEST_ACTIVE || quests[Q_MUSHROOM]._qvar1 < QS_TOMEGIVEN) {
 		if (!deltaload && pnum == myplr()) {
 			if (myplr().data._pClass == PC_WARRIOR) {
 				PlaySFX(PS_WARR13);
-#ifndef SPAWN
+			#ifndef SPAWN
 			} else if (myplr().data._pClass == PC_ROGUE) {
 				PlaySFX(PS_ROGUE13);
 			} else if (myplr().data._pClass == PC_SORCERER) {
 				PlaySFX(PS_MAGE13);
-#endif
+			#endif
 			}
 		}
 	} else {
 		if (object[i]._oSelFlag != 0) {
 			if (!deltaload)
-				PlaySfxLoc(IS_CHEST, object[i]._ox, object[i]._oy);
+				PlaySfxLoc(IS_CHEST, object[i]._o);
 			object[i]._oSelFlag = 0;
 			object[i]._oAnimFrame++;
 			if (!deltaload) {
-				GetSuperItemLoc(object[i]._ox, object[i]._oy, &x, &y);
-				SpawnQuestItem(IDI_MUSHROOM, x, y, 0, 0);
+				GetSuperItemLoc(object[i]._o, p);
+				SpawnQuestItem(IDI_MUSHROOM, p, 0, 0);
 				quests[Q_MUSHROOM]._qvar1 = QS_MUSHSPAWNED;
 			}
 		}
@@ -2610,29 +2478,28 @@ void OperateMushPatch(int pnum, int i)
 
 void OperateInnSignChest(int pnum, int i)
 {
-	int x, y;
-
+	V2Di p;
 	if (quests[Q_LTBANNER]._qvar1 != 2) {
 		if (!deltaload && pnum == myplr()) {
 			if (myplr().data._pClass == PC_WARRIOR) {
 				PlaySFX(PS_WARR24);
-#ifndef SPAWN
+			#ifndef SPAWN
 			} else if (myplr().data._pClass == PC_ROGUE) {
 				PlaySFX(PS_ROGUE24);
 			} else if (myplr().data._pClass == PC_SORCERER) {
 				PlaySFX(PS_MAGE24);
-#endif
+			#endif
 			}
 		}
 	} else {
 		if (object[i]._oSelFlag != 0) {
 			if (!deltaload)
-				PlaySfxLoc(IS_CHEST, object[i]._ox, object[i]._oy);
+				PlaySfxLoc(IS_CHEST, object[i]._o);
 			object[i]._oSelFlag = 0;
 			object[i]._oAnimFrame += 2;
 			if (!deltaload) {
-				GetSuperItemLoc(object[i]._ox, object[i]._oy, &x, &y);
-				SpawnQuestItem(IDI_BANNER, x, y, 0, 0);
+				GetSuperItemLoc(object[i]._o, p);
+				SpawnQuestItem(IDI_BANNER, p, 0, 0);
 			}
 		}
 	}
@@ -2644,20 +2511,20 @@ void OperateSlainHero(int pnum, int i, BOOL sendmsg)
 		object[i]._oSelFlag = 0;
 		if (!deltaload) {
 			if (plr[pnum].data._pClass == PC_WARRIOR) {
-				CreateMagicArmor(object[i]._ox, object[i]._oy, ITYPE_HARMOR, ICURS_BREAST_PLATE, FALSE, TRUE);
-#ifndef SPAWN
-				PlaySfxLoc(PS_WARR9, myplr().data._px, myplr().data._py);
-#endif
+				CreateMagicArmor(object[i]._o, ITYPE_HARMOR, ICURS_BREAST_PLATE, FALSE, TRUE);
+				#ifndef SPAWN
+				PlaySfxLoc(PS_WARR9, myplr().data._p);
+				#endif
 			} else if (plr[pnum].data._pClass == PC_ROGUE) {
-				CreateMagicWeapon(object[i]._ox, object[i]._oy, ITYPE_BOW, ICURS_LONG_WAR_BOW, FALSE, TRUE);
-#ifndef SPAWN
-				PlaySfxLoc(PS_ROGUE9, myplr().data._px, myplr().data._py);
-#endif
+				CreateMagicWeapon(object[i]._o, ITYPE_BOW, ICURS_LONG_WAR_BOW, FALSE, TRUE);
+				#ifndef SPAWN
+				PlaySfxLoc(PS_ROGUE9, myplr().data._p);
+				#endif
 			} else if (plr[pnum].data._pClass == PC_SORCERER) {
-				CreateSpellBook(object[i]._ox, object[i]._oy, SPL_LIGHTNING, FALSE, TRUE);
-#ifndef SPAWN
-				PlaySfxLoc(PS_MAGE9, myplr().data._px, myplr().data._py);
-#endif
+				CreateSpellBook(object[i]._o, SPL_LIGHTNING, FALSE, TRUE);
+				#ifndef SPAWN
+				PlaySfxLoc(PS_MAGE9, myplr().data._p);
+				#endif
 			}
 			if (pnum == myplr())
 				NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
@@ -2699,7 +2566,7 @@ void OperateSarc(int pnum, int i, BOOL sendmsg)
 {
 	if (object[i]._oSelFlag != 0) {
 		if (!deltaload)
-			PlaySfxLoc(IS_SARC, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(IS_SARC, object[i]._o);
 		object[i]._oSelFlag = 0;
 		if (deltaload) {
 			object[i]._oAnimFrame = object[i]._oAnimLen;
@@ -2708,9 +2575,9 @@ void OperateSarc(int pnum, int i, BOOL sendmsg)
 			object[i]._oAnimDelay = 3;
 			SetRndSeed(object[i]._oRndSeed);
 			if (object[i]._oVar1 <= 2)
-				CreateRndItem(object[i]._ox, object[i]._oy, FALSE, sendmsg, FALSE);
+				CreateRndItem(object[i]._o, FALSE, sendmsg, FALSE);
 			if (object[i]._oVar1 >= 8)
-				SpawnSkeleton(object[i]._oVar2, object[i]._ox, object[i]._oy);
+				SpawnSkeleton(object[i]._oVar2, object[i]._o);
 			if (pnum == myplr())
 				NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
 		}
@@ -2719,25 +2586,19 @@ void OperateSarc(int pnum, int i, BOOL sendmsg)
 
 void OperateL2Door(int pnum, int i, BOOL sendflag)
 {
-	int dpx, dpy;
-
-	dpx = abs(object[i]._ox - plr[pnum].data._px);
-	dpy = abs(object[i]._oy - plr[pnum].data._py);
-	if (dpx == 1 && dpy <= 1 && object[i]._otype == OBJ_L2LDOOR)
+	V2Di dp = (object[i]._o - plr[pnum].data._p).abs();
+	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == OBJ_L2LDOOR)
 		OperateL2LDoor(pnum, i, sendflag);
-	if (dpx <= 1 && dpy == 1 && object[i]._otype == OBJ_L2RDOOR)
+	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == OBJ_L2RDOOR)
 		OperateL2RDoor(pnum, i, sendflag);
 }
 
 void OperateL3Door(int pnum, int i, BOOL sendflag)
 {
-	int dpx, dpy;
-
-	dpx = abs(object[i]._ox - plr[pnum].data._px);
-	dpy = abs(object[i]._oy - plr[pnum].data._py);
-	if (dpx == 1 && dpy <= 1 && object[i]._otype == OBJ_L3RDOOR)
+	V2Di dp = (object[i]._o - plr[pnum].data._p).abs();
+	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == OBJ_L3RDOOR)
 		OperateL3RDoor(pnum, i, sendflag);
-	if (dpx <= 1 && dpy == 1 && object[i]._otype == OBJ_L3LDOOR)
+	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == OBJ_L3LDOOR)
 		OperateL3LDoor(pnum, i, sendflag);
 }
 
@@ -2754,22 +2615,22 @@ void OperatePedistal(int pnum, int i)
 		}
 		if (object[i]._oVar6 == 1) {
 			if (!deltaload)
-				PlaySfxLoc(LS_PUDDLE, object[i]._ox, object[i]._oy);
-			ObjChangeMap(setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7);
+				PlaySfxLoc(LS_PUDDLE, object[i]._o);
+			ObjChangeMap({ setpc.x, setpc.y + 3 }, { setpc.x + 2, setpc.y + 7 });
 		}
 		if (object[i]._oVar6 == 2) {
 			if (!deltaload)
-				PlaySfxLoc(LS_PUDDLE, object[i]._ox, object[i]._oy);
-			ObjChangeMap(setpc.x + 6, setpc.y + 3, setpc.x + setpc_w, setpc.y + 7);
+				PlaySfxLoc(LS_PUDDLE, object[i]._o);
+			ObjChangeMap({ setpc.x + 6, setpc.y + 3 }, { setpc.x + setpc.w, setpc.y + 7 });
 		}
 		if (object[i]._oVar6 == 3) {
 			if (!deltaload)
-				PlaySfxLoc(LS_BLODSTAR, object[i]._ox, object[i]._oy);
-			ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+				PlaySfxLoc(LS_BLODSTAR, object[i]._o);
+			ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 			mem = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-			LoadMapObjs(mem, 2 * setpc.x, 2 * setpc.y);
+			LoadMapObjs(mem, { 2 * setpc.x, 2 * setpc.y });
 			mem_free_dbg(mem);
-			CreateItem(7, 2 * setpc.x + 25, 2 * setpc.y + 19);
+			CreateItem(7, { 2 * setpc.x + 25, 2 * setpc.y + 19 });
 			object[i]._oSelFlag = 0;
 		}
 	}
@@ -2779,7 +2640,6 @@ void TryDisarm(int pnum, int i)
 {
 	int j, oi, oti, trapdisper;
 	BOOL checkflag;
-
 	if (pnum == myplr())
 		SetCursor_(CURSOR_HAND);
 	if (object[i]._oTrapFlag) {
@@ -2807,13 +2667,10 @@ void TryDisarm(int pnum, int i)
 
 int ItemMiscIdIdx(int imiscid)
 {
-	int i;
-
-	i = 0;
+	int i = 0;
 	while (AllItemsList[i].iRnd == 0 || AllItemsList[i].iMiscId != imiscid) {
 		i++;
 	}
-
 	return i;
 }
 
@@ -2822,7 +2679,7 @@ void OperateShrine(int pnum, int i, int sType)
 	int cnt;
 	int r, j;
 	DWORD lv, t;
-	int xx, yy;
+	V2Di p;
 	int v1, v2, v3, v4;
 	unsigned __int64 spell, spells;
 
@@ -2840,7 +2697,7 @@ void OperateShrine(int pnum, int i, int sType)
 	object[i]._oSelFlag = 0;
 
 	if (!deltaload) {
-		PlaySfxLoc(sType, object[i]._ox, object[i]._oy);
+		PlaySfxLoc(sType, object[i]._o);
 		object[i]._oAnimFlag = 1;
 		object[i]._oAnimDelay = 1;
 	} else {
@@ -2998,10 +2855,8 @@ void OperateShrine(int pnum, int i, int sType)
 		if (deltaload)
 			return;
 		AddMissile(
-		    plr[pnum].data._px,
-		    plr[pnum].data._py,
-		    plr[pnum].data._px,
-		    plr[pnum].data._py,
+		    plr[pnum].data._p,
+		    plr[pnum].data._p,
 		    plr[pnum].data._pdir,
 		    MIS_MANASHIELD,
 		    -1,
@@ -3128,10 +2983,8 @@ void OperateShrine(int pnum, int i, int sType)
 		if (deltaload)
 			return;
 		AddMissile(
-		    plr[pnum].data._px,
-		    plr[pnum].data._py,
-		    plr[pnum].data._px,
-		    plr[pnum].data._py,
+		    plr[pnum].data._p,
+		    plr[pnum].data._p,
 		    plr[pnum].data._pdir,
 		    MIS_NOVA,
 		    -1,
@@ -3202,11 +3055,11 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			return;
 		if (2 * level.currlevel < 7) {
-			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_FULLMANA, FALSE, TRUE);
-			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_FULLHEAL, FALSE, TRUE);
+			CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_FULLMANA, FALSE, TRUE);
+			CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_FULLHEAL, FALSE, TRUE);
 		} else {
-			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_FULLREJUV, FALSE, TRUE);
-			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_FULLREJUV, FALSE, TRUE);
+			CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_FULLREJUV, FALSE, TRUE);
+			CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_FULLREJUV, FALSE, TRUE);
 		}
 		plr[pnum].data._pMana = plr[pnum].data._pMaxMana;
 		plr[pnum].data._pManaBase = plr[pnum].data._pMaxManaBase;
@@ -3219,14 +3072,14 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		j = 0;
 		do {
-			xx = random_(159, MAXDUNX);
-			yy = random_(159, MAXDUNY);
+			p.x = random_(159, MAXDUNX);
+			p.y = random_(159, MAXDUNY);
 			j++;
 			if (j > MAXDUNX * 112)
 				break;
-			lv = grid[xx][yy].dPiece;
-		} while (pieces[lv].nSolidTable || grid[xx][yy].dObject || grid[xx][yy].dMonster);
-		AddMissile(plr[pnum].data._px, plr[pnum].data._py, xx, yy, plr[pnum].data._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * level.leveltype);
+			lv = grid.at(p).dPiece;
+		} while (pieces[lv].nSolidTable || grid.at(p).dObject || grid.at(p).dMonster);
+		AddMissile(plr[pnum].data._p, p, plr[pnum].data._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * level.leveltype);
 		if (pnum != myplr())
 			return;
 		InitDiabloMsg(EMSG_SHRINE_HOLY);
@@ -3325,9 +3178,9 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			break;
 
-		for (yy = 0; yy < DMAXY; yy++) {
-			for (xx = 0; xx < DMAXX; xx++) {
-				automap.getView()[xx][yy] = TRUE;
+		for (p.y = 0; p.y < DMAXY; p.y++) {
+			for (p.x = 0; p.x < DMAXX; p.x++) {
+				automap.getView()[p.x][p.y] = TRUE;
 			}
 		}
 		InitDiabloMsg(EMSG_SHRINE_SECLUDED);
@@ -3424,15 +3277,15 @@ void OperateSkelBook(int pnum, int i, BOOL sendmsg)
 {
 	if (object[i]._oSelFlag != 0) {
 		if (!deltaload)
-			PlaySfxLoc(IS_ISCROL, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(IS_ISCROL, object[i]._o);
 		object[i]._oSelFlag = 0;
 		object[i]._oAnimFrame += 2;
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
 			if (random_(161, 5))
-				CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_SCROLL, sendmsg, FALSE);
+				CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_SCROLL, sendmsg, FALSE);
 			else
-				CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, sendmsg, FALSE);
+				CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_BOOK, sendmsg, FALSE);
 			if (pnum == myplr())
 				NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
 		}
@@ -3443,12 +3296,12 @@ void OperateBookCase(int pnum, int i, BOOL sendmsg)
 {
 	if (object[i]._oSelFlag != 0) {
 		if (!deltaload)
-			PlaySfxLoc(IS_ISCROL, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(IS_ISCROL, object[i]._o);
 		object[i]._oSelFlag = 0;
 		object[i]._oAnimFrame -= 2;
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
-			CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, sendmsg, FALSE);
+			CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_BOOK, sendmsg, FALSE);
 			if (QuestStatus(Q_ZHAR)
 			    && monsters[MAX_PLRS].data.mName == UniqMonst[UMT_ZHAR].mName
 			    && monsters[MAX_PLRS].data._msquelch == UCHAR_MAX
@@ -3470,7 +3323,7 @@ void OperateDecap(int pnum, int i, BOOL sendmsg)
 		object[i]._oSelFlag = 0;
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
-			CreateRndItem(object[i]._ox, object[i]._oy, FALSE, sendmsg, FALSE);
+			CreateRndItem(object[i]._o, FALSE, sendmsg, FALSE);
 			if (pnum == myplr())
 				NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
 		}
@@ -3488,13 +3341,13 @@ void OperateArmorStand(int pnum, int i, BOOL sendmsg)
 			SetRndSeed(object[i]._oRndSeed);
 			uniqueRnd = random_(0, 2);
 			if (level.currlevel <= 5) {
-				CreateTypeItem(object[i]._ox, object[i]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, sendmsg, FALSE);
+				CreateTypeItem(object[i]._o, TRUE, ITYPE_LARMOR, IMISC_NONE, sendmsg, FALSE);
 			} else if (level.currlevel >= 6 && level.currlevel <= 9) {
-				CreateTypeItem(object[i]._ox, object[i]._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, sendmsg, FALSE);
+				CreateTypeItem(object[i]._o, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, sendmsg, FALSE);
 			} else if (level.currlevel >= 10 && level.currlevel <= 12) {
-				CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, sendmsg, FALSE);
+				CreateTypeItem(object[i]._o, FALSE, ITYPE_HARMOR, IMISC_NONE, sendmsg, FALSE);
 			} else if (level.currlevel >= 13 && level.currlevel <= 16) {
-				CreateTypeItem(object[i]._ox, object[i]._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, sendmsg, FALSE);
+				CreateTypeItem(object[i]._o, TRUE, ITYPE_HARMOR, IMISC_NONE, sendmsg, FALSE);
 			}
 			if (pnum == myplr())
 				NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
@@ -3564,7 +3417,7 @@ BOOL OperateFountains(int pnum, int i)
 			return FALSE;
 
 		if (plr[pnum].data._pHitPoints < plr[pnum].data._pMaxHP) {
-			PlaySfxLoc(LS_FOUNTAIN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 			plr[pnum].data._pHitPoints += 64;
 			plr[pnum].data._pHPBase += 64;
 			if (plr[pnum].data._pHitPoints > plr[pnum].data._pMaxHP) {
@@ -3573,7 +3426,7 @@ BOOL OperateFountains(int pnum, int i)
 			}
 			applied = TRUE;
 		} else
-			PlaySfxLoc(LS_FOUNTAIN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		break;
 	case OBJ_PURIFYINGFTN:
 		if (deltaload)
@@ -3582,7 +3435,7 @@ BOOL OperateFountains(int pnum, int i)
 			return FALSE;
 
 		if (plr[pnum].data._pMana < plr[pnum].data._pMaxMana) {
-			PlaySfxLoc(LS_FOUNTAIN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 
 			plr[pnum].data._pMana += 64;
 			plr[pnum].data._pManaBase += 64;
@@ -3593,21 +3446,19 @@ BOOL OperateFountains(int pnum, int i)
 
 			applied = TRUE;
 		} else
-			PlaySfxLoc(LS_FOUNTAIN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		break;
 	case OBJ_MURKYFTN:
 		if (object[i]._oSelFlag == 0)
 			break;
 		if (!deltaload)
-			PlaySfxLoc(LS_FOUNTAIN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		object[i]._oSelFlag = 0;
 		if (deltaload)
 			return FALSE;
 		AddMissile(
-		    plr[pnum].data._px,
-		    plr[pnum].data._py,
-		    plr[pnum].data._px,
-		    plr[pnum].data._py,
+		    plr[pnum].data._p,
+		    plr[pnum].data._p,
 		    plr[pnum].data._pdir,
 		    MIS_INFRA,
 		    -1,
@@ -3626,7 +3477,7 @@ BOOL OperateFountains(int pnum, int i)
 		done = FALSE;
 		cnt = 0;
 		if (!deltaload)
-			PlaySfxLoc(LS_FOUNTAIN, object[i]._ox, object[i]._oy);
+			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		object[i]._oSelFlag = 0;
 		if (deltaload)
 			return FALSE;
@@ -3697,9 +3548,9 @@ void OperateWeaponRack(int pnum, int i, BOOL sendmsg)
 		return;
 
 	if (level.leveltype > 1)
-		CreateTypeItem(object[i]._ox, object[i]._oy, TRUE, weaponType, IMISC_NONE, sendmsg, FALSE);
+		CreateTypeItem(object[i]._o, TRUE, weaponType, IMISC_NONE, sendmsg, FALSE);
 	else
-		CreateTypeItem(object[i]._ox, object[i]._oy, FALSE, weaponType, IMISC_NONE, sendmsg, FALSE);
+		CreateTypeItem(object[i]._o, FALSE, weaponType, IMISC_NONE, sendmsg, FALSE);
 	if (pnum == myplr())
 		NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
 }
@@ -3708,7 +3559,7 @@ void OperateStoryBook(int pnum, int i)
 {
 	if (object[i]._oSelFlag != 0 && !deltaload && !qtextflag && pnum == myplr()) {
 		object[i]._oAnimFrame = object[i]._oVar4;
-		PlaySfxLoc(IS_ISCROL, object[i]._ox, object[i]._oy);
+		PlaySfxLoc(IS_ISCROL, object[i]._o);
 		InitQTextMsg(object[i]._oVar2);
 		NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
 	}
@@ -3716,20 +3567,18 @@ void OperateStoryBook(int pnum, int i)
 
 void OperateLazStand(int pnum, int i)
 {
-	int xx, yy;
-
+	V2Di p;
 	if (object[i]._oSelFlag != 0 && !deltaload && !qtextflag && pnum == myplr()) {
 		object[i]._oAnimFrame++;
 		object[i]._oSelFlag = 0;
-		GetSuperItemLoc(object[i]._ox, object[i]._oy, &xx, &yy);
-		SpawnQuestItem(IDI_LAZSTAFF, xx, yy, 0, 0);
+		GetSuperItemLoc(object[i]._o, p);
+		SpawnQuestItem(IDI_LAZSTAFF, p, 0, 0);
 	}
 }
 
 void OperateObject(int pnum, int i, BOOL TeleFlag)
 {
 	BOOL sendmsg;
-
 	sendmsg = (pnum == myplr());
 	switch (object[i]._otype) {
 	case OBJ_L1LDOOR:
@@ -4026,8 +3875,8 @@ void BreakCrux(int i)
 	if (!triggered)
 		return;
 	if (!deltaload)
-		PlaySfxLoc(IS_LEVER, object[i]._ox, object[i]._oy);
-	ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+		PlaySfxLoc(IS_LEVER, object[i]._o);
+	ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 }
 
 void BreakBarrel(int pnum, int i, int dam, BOOL forcebreak, BOOL sendmsg)
@@ -4048,7 +3897,7 @@ void BreakBarrel(int pnum, int i, int dam, BOOL forcebreak, BOOL sendmsg)
 		if (deltaload)
 			return;
 
-		PlaySfxLoc(IS_IBOW, object[i]._ox, object[i]._oy);
+		PlaySfxLoc(IS_IBOW, object[i]._o);
 		return;
 	}
 
@@ -4069,9 +3918,9 @@ void BreakBarrel(int pnum, int i, int dam, BOOL forcebreak, BOOL sendmsg)
 	}
 
 	if (object[i]._otype == OBJ_BARRELEX) {
-		PlaySfxLoc(IS_BARLFIRE, object[i]._ox, object[i]._oy);
-		for (yp = object[i]._oy - 1; yp <= object[i]._oy + 1; yp++) {
-			for (xp = object[i]._ox - 1; xp <= object[i]._ox + 1; xp++) {
+		PlaySfxLoc(IS_BARLFIRE, object[i]._o);
+		for (yp = object[i]._o.y - 1; yp <= object[i]._o.y + 1; yp++) {
+			for (xp = object[i]._o.x - 1; xp <= object[i]._o.x + 1; xp++) {
 				if (grid[xp][yp].dMonster > 0)
 					MonsterTrapHit(grid[xp][yp].dMonster - 1, 1, 4, 0, 1, FALSE);
 				if (grid[xp][yp].dPlayer > 0)
@@ -4084,16 +3933,16 @@ void BreakBarrel(int pnum, int i, int dam, BOOL forcebreak, BOOL sendmsg)
 			}
 		}
 	} else {
-		PlaySfxLoc(IS_BARREL, object[i]._ox, object[i]._oy);
+		PlaySfxLoc(IS_BARREL, object[i]._o);
 		SetRndSeed(object[i]._oRndSeed);
 		if (object[i]._oVar2 <= 1) {
 			if (!object[i]._oVar3)
-				CreateRndUseful(pnum, object[i]._ox, object[i]._oy, sendmsg);
+				CreateRndUseful(pnum, object[i]._o, sendmsg);
 			else
-				CreateRndItem(object[i]._ox, object[i]._oy, FALSE, sendmsg, FALSE);
+				CreateRndItem(object[i]._o, FALSE, sendmsg, FALSE);
 		}
 		if (object[i]._oVar2 >= 8)
-			SpawnSkeleton(object[i]._oVar4, object[i]._ox, object[i]._oy);
+			SpawnSkeleton(object[i]._oVar4, object[i]._o);
 	}
 	if (pnum == myplr())
 		NetSendCmdParam2(FALSE, CMD_BREAKOBJ, pnum, i);
@@ -4132,40 +3981,35 @@ void SyncBreakObj(int pnum, int oi)
 
 void SyncL1Doors(int i)
 {
-	int x, y;
-
 	if (object[i]._oVar4 == 0) {
 		object[i]._oMissFlag = FALSE;
 		return;
 	}
-
-	x = object[i]._ox;
-	y = object[i]._oy;
+	V2Di p = object[i]._o;
 	object[i]._oMissFlag = TRUE;
 	object[i]._oSelFlag = 2;
 	if (object[i]._otype == OBJ_L1LDOOR) {
 		if (object[i]._oVar1 == 214)
-			ObjSetMicro(x, y, 408);
+			ObjSetMicro(p, 408);
 		else
-			ObjSetMicro(x, y, 393);
-		grid[x][y].dSpecial = 7;
-		objects_set_door_piece(x - 1, y);
-		y--;
+			ObjSetMicro(p, 393);
+		grid.at(p).dSpecial = 7;
+		objects_set_door_piece({ p.x - 1, p.y });
+		p.y--;
 	} else {
-		ObjSetMicro(x, y, 395);
-		grid[x][y].dSpecial = 8;
-		objects_set_door_piece(x, y - 1);
-		x--;
+		ObjSetMicro({ p.x, p.y }, 395);
+		grid.at(p).dSpecial = 8;
+		objects_set_door_piece({ p.x, p.y - 1 });
+		p.x--;
 	}
-	DoorSet(i, x, y);
+	DoorSet(i, p);
 }
 
 void SyncCrux(int i)
 {
-	BOOL found;
 	int j, oi, type;
 
-	found = TRUE;
+	BOOL found = TRUE;
 	for (j = 0; j < nobjects; j++) {
 		oi = objectactive[j];
 		type = object[oi]._otype;
@@ -4176,13 +4020,13 @@ void SyncCrux(int i)
 		found = FALSE;
 	}
 	if (found)
-		ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+		ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 }
 
 void SyncLever(int i)
 {
 	if (object[i]._oSelFlag == 0)
-		ObjChangeMap(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+		ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 }
 
 void SyncQSTLever(int i)
@@ -4190,11 +4034,11 @@ void SyncQSTLever(int i)
 	int tren;
 
 	if (object[i]._oAnimFrame == object[i]._oVar6) {
-		ObjChangeMapResync(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+		ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 		if (object[i]._otype == OBJ_BLINDBOOK) {
 			tren = TransVal;
 			TransVal = 9;
-			DRLG_MRectTrans(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+			DRLG_MRectTrans( object[i]._oVar1, object[i]._oVar2 , object[i]._oVar3, object[i]._oVar4 );
 			TransVal = tren;
 		}
 	}
@@ -4205,57 +4049,51 @@ void SyncPedistal(int i)
 	BYTE *setp;
 
 	if (object[i]._oVar6 == 1)
-		ObjChangeMapResync(setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7);
+		ObjChangeMapResync({ setpc.x, setpc.y + 3 }, { setpc.x + 2, setpc.y + 7 });
 	if (object[i]._oVar6 == 2) {
-		ObjChangeMapResync(setpc.x, setpc.y + 3, setpc.x + 2, setpc.y + 7);
-		ObjChangeMapResync(setpc.x + 6, setpc.y + 3, setpc.x + setpc_w, setpc.y + 7);
+		ObjChangeMapResync({ setpc.x, setpc.y + 3 }, { setpc.x + 2, setpc.y + 7 });
+		ObjChangeMapResync({ setpc.x + 6, setpc.y + 3 }, { setpc.x + setpc.w, setpc.y + 7 });
 	}
 	if (object[i]._oVar6 == 3) {
-		ObjChangeMapResync(object[i]._oVar1, object[i]._oVar2, object[i]._oVar3, object[i]._oVar4);
+		ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 		setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-		LoadMapObjs(setp, 2 * setpc.x, 2 * setpc.y);
+		LoadMapObjs(setp, { 2 * setpc.x, 2 * setpc.y });
 		mem_free_dbg(setp);
 	}
 }
 
 void SyncL2Doors(int i)
 {
-	int x, y;
-
 	if (object[i]._oVar4 == 0)
 		object[i]._oMissFlag = FALSE;
 	else
 		object[i]._oMissFlag = TRUE;
-	x = object[i]._ox;
-	y = object[i]._oy;
+	V2Di p = object[i]._o;
 	object[i]._oSelFlag = 2;
 	if (object[i]._otype == OBJ_L2LDOOR && object[i]._oVar4 == 0) {
-		ObjSetMicro(x, y, 538);
+		ObjSetMicro(p, 538);
 	} else if (object[i]._otype == OBJ_L2LDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
-		ObjSetMicro(x, y, 13);
+		ObjSetMicro(p, 13);
 	} else if (object[i]._otype == OBJ_L2RDOOR && object[i]._oVar4 == 0) {
-		ObjSetMicro(x, y, 540);
+		ObjSetMicro(p, 540);
 	} else if (object[i]._otype == OBJ_L2RDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
-		ObjSetMicro(x, y, 17);
+		ObjSetMicro(p, 17);
 	}
 }
 
 void SyncL3Doors(int i)
 {
-	int x, y;
-
 	object[i]._oMissFlag = TRUE;
-	x = object[i]._ox;
-	y = object[i]._oy;
+	V2Di p = object[i]._o;
 	object[i]._oSelFlag = 2;
 	if (object[i]._otype == OBJ_L3LDOOR && object[i]._oVar4 == 0) {
-		ObjSetMicro(x, y, 531);
+		ObjSetMicro(p, 531);
 	} else if (object[i]._otype == OBJ_L3LDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
-		ObjSetMicro(x, y, 538);
+		ObjSetMicro(p, 538);
 	} else if (object[i]._otype == OBJ_L3RDOOR && object[i]._oVar4 == 0) {
-		ObjSetMicro(x, y, 534);
+		ObjSetMicro(p, 534);
 	} else if (object[i]._otype == OBJ_L3RDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
-		ObjSetMicro(x, y, 541);
+		ObjSetMicro(p, 541);
 	}
 }
 

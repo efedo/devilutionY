@@ -103,7 +103,7 @@ BOOL CheckSpell(int id, int sn, char st, BOOL manaonly)
 	return result;
 }
 
-void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int spllvl)
+void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 {
 	int i;
 	int dir; // missile direction
@@ -125,7 +125,7 @@ void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int 
 	}
 
 	for (i = 0; spelldata[spl].sMissiles[i] != MIS_ARROW && i < 3; i++) {
-		AddMissile(sx, sy, dx, dy, dir, spelldata[spl].sMissiles[i], caster, id, 0, spllvl);
+		AddMissile(s, d, dir, spelldata[spl].sMissiles[i], caster, id, 0, spllvl);
 	}
 
 	if (spelldata[spl].sMissiles[0] == MIS_TOWN) {
@@ -135,7 +135,7 @@ void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int 
 		UseMana(id, SPL_CBOLT);
 
 		for (i = (spllvl >> 1) + 3; i > 0; i--) {
-			AddMissile(sx, sy, dx, dy, dir, MIS_CBOLT, caster, id, 0, spllvl);
+			AddMissile(s, d, dir, MIS_CBOLT, caster, id, 0, spllvl);
 		}
 	}
 }
@@ -148,25 +148,23 @@ static void PlacePlayer(int pnum)
 
 	if (plr[pnum].data.plrlevel == level.currlevel) {
 		for (i = 0; i < 8; i++) {
-			nx = plr[pnum].data._px + plrxoff2[i];
-			ny = plr[pnum].data._py + plryoff2[i];
+			nx = plr[pnum].data._p.x + plrxoff2[i];
+			ny = plr[pnum].data._p.y + plryoff2[i];
 
-			if (PosOkPlayer(pnum, nx, ny)) {
+			if (PosOkPlayer(pnum, { nx, ny })) {
 				break;
 			}
 		}
 
-		if (!PosOkPlayer(pnum, nx, ny)) {
+		if (!PosOkPlayer(pnum, { nx, ny })) {
 			done = FALSE;
 
 			for (max = 1, min = -1; min > -50 && !done; max++, min--) {
 				for (y = min; y <= max && !done; y++) {
-					ny = plr[pnum].data._py + y;
-
+					ny = plr[pnum].data._p.y + y;
 					for (x = min; x <= max && !done; x++) {
-						nx = plr[pnum].data._px + x;
-
-						if (PosOkPlayer(pnum, nx, ny)) {
+						nx = plr[pnum].data._p.x + x;
+						if (PosOkPlayer(pnum, { nx, ny })) {
 							done = TRUE;
 						}
 					}
@@ -174,14 +172,11 @@ static void PlacePlayer(int pnum)
 			}
 		}
 
-		plr[pnum].data._px = nx;
-		plr[pnum].data._py = ny;
-
+		plr[pnum].data._p = { nx, ny };
 		grid[nx][ny].dPlayer = pnum + 1;
 
 		if (pnum == myplr()) {
-			View.x = nx;
-			View.y = ny;
+			View = { nx, ny };
 		}
 	}
 }
@@ -195,7 +190,7 @@ void DoResurrect(int pnum, int rid)
 	int hp;
 
 	if ((char)rid != -1) {
-		AddMissile(plr[rid].data._px, plr[rid].data._py, plr[rid].data._px, plr[rid].data._py, 0, MIS_RESURRECTBEAM, 0, pnum, 0, 0);
+		AddMissile(plr[rid].data._p, plr[rid].data._p, 0, MIS_RESURRECTBEAM, 0, pnum, 0, 0);
 	}
 
 	if (pnum == myplr()) {

@@ -33,9 +33,9 @@ PATHNODE *path_pop_active_step();
 PATHNODE *path_new_step();
 
 /* rdata */
-
-extern const char pathxdir[8];
-extern const char pathydir[8];
+extern const V2Di pathdir[8];
+//extern const char pathxdir[8];
+//extern const char pathydir[8];
 
 /* data */
 extern char path_directions[9];

@@ -274,27 +274,27 @@ void MonsterManager::PlaceQuestMonsters()
 
 		if (QuestStatus(Q_LTBANNER)) {
 			setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc.x, 2 * setpc.y);
+			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLOOD)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc.x, 2 * setpc.y);
+			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLIND)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc.x, 2 * setpc.y);
+			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_ANVIL)) {
 			setp = LoadFileInMem("Levels\\L3Data\\Anvil.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc.x + 2, 2 * setpc.y + 2);
+			SetMapMonsters(setp, { 2 * setpc.x + 2, 2 * setpc.y + 2 });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc.x, 2 * setpc.y);
+			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
 			mem_free_dbg(setp);
 			beastiary.AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 1);
 		}
@@ -312,7 +312,7 @@ void MonsterManager::PlaceQuestMonsters()
 			PlaceUniqueMonster(UMT_RED_VEX, 0, 0);
 			PlaceUniqueMonster(UMT_BLACKJADE, 0, 0);
 			setp = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc.x, 2 * setpc.y);
+			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
 			mem_free_dbg(setp);
 		}
 	} else if (level.setlvlnum == SL_SKELKING) {
@@ -336,9 +336,9 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 		}
 
 		if (leaderf & 1) {
-			int offset = random_(92, 8);
-			x1 = xp = list[leader].data._m.x + offset_x[offset];
-			y1 = yp = list[leader].data._m.y + offset_y[offset];
+			int off = random_(92, 8);
+			x1 = xp = list[leader].data._m.x + offset[off].x;
+			y1 = yp = list[leader].data._m.y + offset[off].y;
 		} else {
 			do {
 				x1 = xp = random_(93, 80) + 16;
@@ -351,7 +351,7 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 		}
 
 		j = 0;
-		for (try2 = 0; j < num && try2 < 100; xp += offset_x[random_(94, 8)], yp += offset_x[random_(94, 8)]) { /// BUGFIX: `yp += offset_y`
+		for (try2 = 0; j < num && try2 < 100; xp += offset[random_(94, 8)].x, yp += offset[random_(94, 8)].y) { /// BUGFIX: `yp += offset_y`
 			if (!MonstPlace({ xp, yp })
 			    || (grid[xp][yp].dTransVal != grid[x1][y1].dTransVal)
 			    || (leaderf & 2) && ((abs(xp - x1) >= 4) || (abs(yp - y1) >= 4))) {

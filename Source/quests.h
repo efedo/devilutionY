@@ -49,7 +49,7 @@ void SetMultiQuest(int q, int s, int l, int v1);
 
 /* rdata */
 extern QuestData questlist[MAXQUESTS];
-extern char questxoff[7];
+extern V2Di questoff[7];
 extern char questyoff[7];
 extern char *questtrigstr[5];
 extern int QuestGroup1[3];

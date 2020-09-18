@@ -672,14 +672,12 @@ void DrawLine(int x0, int y0, int x1, int y1, BYTE col)
  */
 void DrawLine(V2Di p0, V2Di p1, BYTE col)
 {
-	int i, dx, dy, steps;
+	int i, steps;
 	float ix, iy, sx, sy;
-
-	dx = p1.x - p0.x;
-	dy = p1.y - p0.y;
-	steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
-	ix = dx / (float)steps;
-	iy = dy / (float)steps;
+	V2Di d = p1 - p0;
+	steps = d.abs().maxdim();
+	ix = d.x / (float)steps;
+	iy = d.y / (float)steps;
 	sx = p0.x;
 	sy = p0.y;
 

@@ -73,7 +73,7 @@ int ObjIndex(int x, int y)
 
 	for (i = 0; i < nobjects; i++) {
 		oi = objectactive[i];
-		if (object[oi]._ox == x && object[oi]._oy == y)
+		if (object[oi]._o.x == x && object[oi]._o.y == y)
 			return oi;
 	}
 	app_fatal("ObjIndex: Active object not found at (%d,%d)", x, y);
@@ -83,25 +83,25 @@ int ObjIndex(int x, int y)
 #ifndef SPAWN
 void AddSKingObjs()
 {
-	SetObjMapRange(ObjIndex(64, 34), 20, 7, 23, 10, 1);
-	SetObjMapRange(ObjIndex(64, 59), 20, 14, 21, 16, 2);
-	SetObjMapRange(ObjIndex(27, 37), 8, 1, 15, 11, 3);
-	SetObjMapRange(ObjIndex(46, 35), 8, 1, 15, 11, 3);
-	SetObjMapRange(ObjIndex(49, 53), 8, 1, 15, 11, 3);
-	SetObjMapRange(ObjIndex(27, 53), 8, 1, 15, 11, 3);
+	SetObjMapRange(ObjIndex(64, 34), { 20, 7 }, { 23, 10 }, 1);
+	SetObjMapRange(ObjIndex(64, 59), { 20, 14 }, { 21, 16 }, 2);
+	SetObjMapRange(ObjIndex(27, 37), { 8, 1 }, { 15, 11 }, 3);
+	SetObjMapRange(ObjIndex(46, 35), { 8, 1 }, { 15, 11 }, 3);
+	SetObjMapRange(ObjIndex(49, 53), { 8, 1 }, { 15, 11 }, 3);
+	SetObjMapRange(ObjIndex(27, 53), { 8, 1 }, { 15, 11 }, 3);
 }
 
 void AddSChamObjs()
 {
-	SetObjMapRange(ObjIndex(37, 30), 17, 0, 21, 5, 1);
-	SetObjMapRange(ObjIndex(37, 46), 13, 0, 16, 5, 2);
+	SetObjMapRange(ObjIndex(37, 30), { 17, 0 }, { 21, 5 }, 1);
+	SetObjMapRange(ObjIndex(37, 46), { 13, 0 }, { 16, 5 }, 2);
 }
 
 void AddVileObjs()
 {
-	SetObjMapRange(ObjIndex(26, 45), 1, 1, 9, 10, 1);
-	SetObjMapRange(ObjIndex(45, 46), 11, 1, 20, 10, 2);
-	SetObjMapRange(ObjIndex(35, 36), 7, 11, 13, 18, 3);
+	SetObjMapRange(ObjIndex(26, 45), { 1, 1 }, { 9, 10 }, 1);
+	SetObjMapRange(ObjIndex(45, 46), { 11, 1 }, { 20, 10 }, 2);
+	SetObjMapRange(ObjIndex(35, 36), { 7, 11 }, { 13, 18 }, 3);
 }
 
 void DRLG_SetMapTrans(char *sFileName)
@@ -146,7 +146,7 @@ void LoadSetMap()
 		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
 		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
 		DRLG_ListTrans(sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
-		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 		AddSKingObjs();
 		InitSKingTriggers();
 		break;
@@ -157,7 +157,7 @@ void LoadSetMap()
 		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
 		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
 		DRLG_ListTrans(sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
-		AddL2Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL2Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 		AddSChamObjs();
 		InitSChambTriggers();
 		break;
@@ -165,7 +165,7 @@ void LoadSetMap()
 		LoadPreL1Dungeon("Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
 		LoadL1Dungeon("Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
 		LoadPalette("Levels\\L1Data\\L1_5.pal");
-		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
 		break;
 	case SL_POISONWATER:
@@ -185,7 +185,7 @@ void LoadSetMap()
 		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
 		LoadL1Dungeon("Levels\\L1Data\\Vile2.DUN", 35, 36);
 		LoadPalette("Levels\\L1Data\\L1_2.pal");
-		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 		AddVileObjs();
 		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");
 		InitNoTriggers();

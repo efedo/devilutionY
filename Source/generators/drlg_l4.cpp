@@ -1529,8 +1529,8 @@ static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 	}
 
 	if (level.currlevel == 15) {
-		quests[Q_BETRAYER]._qtx = sx + 1;
-		quests[Q_BETRAYER]._qty = sy + 1;
+		quests[Q_BETRAYER]._qt.x = sx + 1;
+		quests[Q_BETRAYER]._qt.y = sy + 1;
 	}
 	if (setview == TRUE) {
 		View.x = 2 * sx + 21;
@@ -1984,8 +1984,8 @@ void LoadL4Dungeon(char *sFileName, int vx, int vy)
 	DRLG_L4Pass3();
 	DRLG_Init_Globals();
 
-	SetMapMonsters(pLevelMap, 0, 0);
-	SetMapObjects(pLevelMap, 0, 0);
+	SetMapMonsters(pLevelMap, { 0, 0 });
+	SetMapObjects(pLevelMap, { 0, 0 });
 	mem_free_dbg(pLevelMap);
 }
 

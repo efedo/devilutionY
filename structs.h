@@ -994,8 +994,9 @@ typedef struct QuestStruct {
 	unsigned char _qtype;
 	unsigned char _qactive;
 	unsigned char _qlvltype;
-	int _qtx;
-	int _qty;
+	V2Di _qt;
+	//int _qtx;
+	//int _qty;
 	unsigned char _qslvl;
 	unsigned char _qidx;
 	unsigned char _qmsg;

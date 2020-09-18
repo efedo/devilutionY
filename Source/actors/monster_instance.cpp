@@ -143,6 +143,10 @@ void MonsterInstance::NewMonsterAnim(AnimStruct *anim, int md)
 	data._mdir = md;
 }
 
+void MonsterInstance::GetTargetLoc(V2Di &pos, int &dist, int &dir)
+{
+}
+
 BOOL MonsterInstance::M_Ranged()
 {
 	char ai = data._mAi;
@@ -183,11 +187,7 @@ void MonsterInstance::M_Enemy()
 				sameroom = TRUE;
 			else
 				sameroom = FALSE;
-			if (abs(data._m.x - plr[pnum].data._p.x) > abs(data._m.y - plr[pnum].data._p.y))
-				dist = data._m.x - plr[pnum].data._p.x;
-			else
-				dist = data._m.y - plr[pnum].data._p.y;
-			dist = abs(dist);
+			int dist = (data._m - plr[pnum].data._p).maxabs();
 			if ((sameroom && !bestsameroom)
 			    || ((sameroom || !bestsameroom) && dist < best_dist)
 			    || (_menemy == -1)) {
@@ -208,19 +208,17 @@ void MonsterInstance::M_Enemy()
 			continue;
 		if (monsters[mi].M_Talker() && monsters[mi].data.mtalkmsg)
 			continue;
+
+		int dista = (monsters[mi].data._m - data._m).maxabs();
 		if (!(data._mFlags & MFLAG_GOLEM)
-		    && ((abs(monsters[mi].data._m.x - data._m.x) >= 2 || abs(monsters[mi].data._m.y - data._m.y) >= 2) && !M_Ranged()
+		        && ((dista >= 2) && !M_Ranged()
 		        || (!(data._mFlags & MFLAG_GOLEM) && !(monsters[mi].data._mFlags & MFLAG_GOLEM)))) {
 			continue;
 		}
 		sameroom = grid.at(data._m).dTransVal == grid.at(monsters[mi].data._m).dTransVal;
-		if (abs(data._m.x - monsters[mi].data._m.x) > abs(data._m.y - monsters[mi].data._m.y))
-			dist = data._m.x - monsters[mi].data._m.x;
-		else
-			dist = data._m.y - monsters[mi].data._m.y;
-		dist = abs(dist);
+		int distb = (data._m - monsters[mi].data._m).maxabs();
 		if ((sameroom && !bestsameroom)
-		    || ((sameroom || !bestsameroom) && dist < best_dist)
+		    || ((sameroom || !bestsameroom) && distb < best_dist)
 		    || (_menemy == -1)) {
 			data._mFlags |= MFLAG_TARGETS_MONSTER;
 			_menemy = mi;
@@ -418,8 +416,7 @@ void MonsterInstance::M_GetKnockback()
 	int d = (data._mdir - 4) & 7;
 	if (DirOK(d)) {
 		M_ClearSquares();
-		data._mold.x += offset_x[d];
-		data._mold.y += offset_y[d];
+		data._mold += offset[d];
 		NewMonsterAnim(&data.MType->Anims[MA_GOTHIT], data._mdir);
 		data._mmode = MM_GOTHIT;
 		data._moff = { 0, 0 };
@@ -465,7 +462,6 @@ void MonsterInstance::M_StartHit(int pnum, int dam)
 
 void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
 {
-	int dist;
 	int j, k;
 	V2Di _mold;
 
@@ -493,12 +489,9 @@ void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
 	}
 	AddLight(monsters[k].data._m, 8);
 	DoVision(monsters[k].data._m, 8, FALSE, TRUE);
-	if (abs(View.x - monsters[k].data._m.x) > abs(View.y - monsters[k].data._m.y))
-		dist = abs(View.x - monsters[k].data._m.x);
-	else
-		dist = abs(View.y - monsters[k].data._m.y);
-	if (dist > 20)
-		dist = 20;
+
+	int dist = (View - monsters[k].data._m).maxabs();
+	if (dist > 20) dist = 20;
 	j = View.x << 16;
 	k = View.y << 16;
 	monsters[k].data._mVar3 = j;
@@ -819,7 +812,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	int hit, hper;
 	int blk, blkper;
 	int dam, mdam;
-	V2Di d, newpos;
+	V2Di newpos;
 	int j, misnum, ms_num, cur_ms_num, new_hp;
 
 	if (data._mFlags & MFLAG_TARGETS_MONSTER) {
@@ -828,10 +821,9 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	}
 	if (plr[pnum].data._pHitPoints >> 6 <= 0 || plr[pnum].data._pInvincible || plr[pnum].data._pSpellFlags & 1)
 		return;
-	d.x = abs(data._m.x - plr[pnum].data._p.x);
-	d.y = abs(data._m.y - plr[pnum].data._p.y);
-	if (d.x >= 2 || d.y >= 2)
-		return;
+
+	int dist = (data._m - plr[pnum].data._p).maxabs();
+	if (dist >= 2) return;
 
 	hper = random_(98, 100);
 #ifdef _DEBUG
@@ -932,8 +924,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	if (data._mFlags & MFLAG_KNOCKBACK) {
 		if (plr[pnum].data._pmode != PM_GOTHIT)
 			plr[pnum].StartPlrHit(0, TRUE);
-		newpos.x = plr[pnum].data._p.x + offset_x[data._mdir];
-		newpos.y = plr[pnum].data._p.y + offset_y[data._mdir];
+		newpos = plr[pnum].data._p + offset[data._mdir];
 		if (PosOkPlayer(pnum, newpos)) {
 			plr[pnum].data._p = newpos;
 			plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
@@ -1117,7 +1108,7 @@ int MonsterInstance::M_DoTalk()
 	}
 	if (data.mName == UniqMonst[UMT_SNOTSPIL].mName) {
 		if (data.mtalkmsg == TEXT_BANNER10 && !(data._mFlags & MFLAG_QUEST_COMPLETE)) {
-			ObjChangeMap(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 2, (setpc.h >> 1) + setpc.y - 2);
+			ObjChangeMap({ setpc.x, setpc.y }, { (setpc.w >> 1) + setpc.x + 2, (setpc.h >> 1) + setpc.y - 2 });
 			tren = TransVal;
 			TransVal = 9;
 			DRLG_MRectTrans(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 4, setpc.y + (setpc.h >> 1));
@@ -1194,6 +1185,1543 @@ BOOL MonsterInstance::M_DoGotHit()
 		return TRUE;
 	}
 	return FALSE;
+}
+
+BOOL MonsterInstance::M_DoDeath()
+{
+	int var1;
+	int x, y;
+	data._mVar1++;
+	var1 = data._mVar1;
+	if (data.MType->mtype == MT_DIABLO) {
+		x = data._m.x - View.x;
+		if (x < 0)
+			x = -1;
+		else
+			x = x > 0;
+		View.x += x;
+
+		y = data._m.y - View.y;
+		if (y < 0) {
+			y = -1;
+		} else {
+			y = y > 0;
+		}
+		View.y += y;
+
+		if (var1 == 140)
+			PrepDoEnding();
+	} else if (data._mAnimFrame == data._mAnimLen) {
+		if (data._uniqtype == 0)
+			AddDead(data._m, data.MType->mdeadval, (direction)data._mdir);
+		else
+			AddDead(data._m, data._udeadval, (direction)data._mdir);
+
+		grid.at(data._m).dMonster = 0;
+		data._mDelFlag = TRUE;
+
+		M_UpdateLeader();
+	}
+	return FALSE;
+}
+
+BOOL MonsterInstance::M_DoSpStand()
+{
+	if (data._mAnimFrame == data.MData->mAFNum2)
+		PlayEffect(i, 3);
+
+	if (data._mAnimFrame == data._mAnimLen) {
+		M_StartStand(data._mdir);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL MonsterInstance::M_DoDelay()
+{
+	int mVar2;
+	int oFrame;
+	data._mAnimData = data.MType->Anims[MA_STAND].Data[M_GetDir()];
+	if (data._mAi == AI_LAZURUS) {
+		if (data._mVar2 > 8 || data._mVar2 < 0)
+			data._mVar2 = 8;
+	}
+
+	mVar2 = data._mVar2;
+	data._mVar2--;
+
+	if (!mVar2) {
+		oFrame = data._mAnimFrame;
+		M_StartStand(data._mdir);
+		data._mAnimFrame = oFrame;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL MonsterInstance::M_DoStone()
+{
+	if (!data._mhitpoints) {
+		grid.at(data._m).dMonster = 0;
+		data._mDelFlag = TRUE;
+	}
+	return FALSE;
+}
+
+void MonsterInstance::M_WalkDir(int md)
+{
+	int mwi = data.MType->Anims[MA_WALK].Frames - 1;
+	switch (md) {
+	case DIR_N:
+		M_StartWalk({ 0, -MWVel[mwi][1] }, { -1, -1 }, DIR_N);
+		break;
+	case DIR_NE:
+		M_StartWalk({ MWVel[mwi][1], -MWVel[mwi][0] }, { 0, -1 }, DIR_NE);
+		break;
+	case DIR_E:
+		M_StartWalk3({ MWVel[mwi][2], 0 }, { -32, -16 }, { 1, -1 }, { 1, 0 }, DIR_E);
+		break;
+	case DIR_SE:
+		M_StartWalk2({ MWVel[mwi][1], MWVel[mwi][0] }, { -32, -16 }, { 1, 0 }, DIR_SE);
+		break;
+	case DIR_S:
+		M_StartWalk2({ 0, MWVel[mwi][1] }, { 0, -32 }, { 1, 1 }, DIR_S);
+		break;
+	case DIR_SW:
+		M_StartWalk2({ -MWVel[mwi][1], MWVel[mwi][0] }, { 32, -16 }, { 0, 1 }, DIR_SW);
+		break;
+	case DIR_W:
+		M_StartWalk3({ -MWVel[mwi][2], 0 }, { 32, -16 }, { -1, 1 }, { 0, 1 }, DIR_W);
+		break;
+	case DIR_NW:
+		M_StartWalk({ -MWVel[mwi][1], -MWVel[mwi][0] }, { -1, 0 }, DIR_NW);
+		break;
+	}
+}
+
+void MonsterInstance::GroupUnity()
+{
+	int leader, m, j;
+	BOOL clear;
+	if (data.leaderflag) {
+		leader = data.leader;
+		clear = LineClearF(CheckNoSolid, data._m, monsters[leader].data._mfut);
+		if (clear || data.leaderflag != 1) {
+			int dist = (data._m - monsters[leader].data._mfut).maxabs();
+			if (clear
+			    && data.leaderflag == 2
+			    && dist < 4) {
+				monsters[leader].data.packsize++;
+				data.leaderflag = 1;
+			}
+		} else {
+			monsters[leader].data.packsize--;
+			data.leaderflag = 2;
+		}
+	}
+
+	if (data.leaderflag == 1) {
+		if (data._msquelch > monsters[leader].data._msquelch) {
+			monsters[leader].data._last = data._m;
+			monsters[leader].data._msquelch = data._msquelch - 1;
+		}
+		if (monsters[leader].data._mAi == AI_GARG) {
+			if (monsters[leader].data._mFlags & MFLAG_ALLOW_SPECIAL) {
+				monsters[leader].data._mmode = MM_SATTACK;
+				monsters[leader].data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
+			}
+		}
+		return;
+	}
+	if (data._uniqtype != 0) {
+		if (UniqMonst[data._uniqtype - 1].mUnqAttr & 2) {
+			for (j = 0; j < nummonsters; j++) {
+				m = monstactive[j];
+				if (monsters[m].data.leaderflag == 1 && monsters[m].data.leader == i) {
+					if (data._msquelch > monsters[m].data._msquelch) {
+						monsters[m].data._last = data._m;
+						monsters[m].data._msquelch = data._msquelch - 1;
+					}
+					if (monsters[m].data._mAi == AI_GARG) {
+						if (monsters[m].data._mFlags & MFLAG_ALLOW_SPECIAL) {
+							monsters[m].data._mmode = MM_SATTACK;
+							monsters[m].data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BOOL MonsterInstance::M_CallWalk(int md)
+{
+	int mdtemp = md;
+	BOOL ok = DirOK(md);
+	if (random_(101, 2))
+		ok = ok || (md = left[mdtemp], DirOK(md)) || (md = right[mdtemp], DirOK(md));
+	else
+		ok = ok || (md = right[mdtemp], DirOK(md)) || (md = left[mdtemp], DirOK(md));
+	if (random_(102, 2))
+		ok = ok
+		    || (md = right[right[mdtemp]], DirOK(md))
+		    || (md = left[left[mdtemp]], DirOK(md));
+	else
+		ok = ok
+		    || (md = left[left[mdtemp]], DirOK(md))
+		    || (md = right[right[mdtemp]], DirOK(md));
+	if (ok)
+		M_WalkDir(md);
+	return ok;
+}
+
+BOOL MonsterInstance::M_PathWalk()
+{
+	char path[25];
+	BOOL (*Check)
+	(int, V2Di) = PosOkMonst3;
+	if (!(data._mFlags & MFLAG_CAN_OPEN_DOOR))
+		Check = PosOkMonst;
+
+	if (FindPath(Check, i, data._m, data._menemypos, path)) {
+		M_CallWalk(plr2monst[path[0]]); /* plr2monst is local */
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL MonsterInstance::M_CallWalk2(int md)
+{
+	BOOL ok = DirOK(md); // Can we continue in the same direction
+	int mdtemp = md;
+	if (random_(101, 2)) { // Randomly go left or right
+		ok = ok || (mdtemp = left[md], DirOK(left[md])) || (mdtemp = right[md], DirOK(right[md]));
+	} else {
+		ok = ok || (mdtemp = right[md], DirOK(right[md])) || (mdtemp = left[md], DirOK(left[md]));
+	}
+
+	if (ok)
+		M_WalkDir(mdtemp);
+	return ok;
+}
+
+BOOL MonsterInstance::M_DumbWalk(int md)
+{
+	BOOL ok = DirOK(md);
+	if (ok)
+		M_WalkDir(md);
+	return ok;
+}
+
+BOOL MonsterInstance::M_RoundWalk(int md, int *dir)
+{
+	int mdtemp = md;
+	BOOL ok = DirOK(md);
+	if (*dir)
+		md = left[left[md]];
+	else
+		md = right[right[md]];
+
+	if (!ok) {
+		if (*dir) {
+			md = right[mdtemp];
+			ok = DirOK(md) || (md = right[right[mdtemp]], DirOK(md));
+		} else {
+			md = left[mdtemp];
+			ok = (DirOK(md) || (md = left[left[mdtemp]], DirOK(md)));
+		}
+	}
+	if (ok) {
+		M_WalkDir(md);
+	} else {
+		*dir = !*dir;
+		ok = M_CallWalk(opposite[mdtemp]);
+	}
+	return ok;
+}
+
+void MonsterInstance::MAI_Zombie()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di m = data._m;
+	if (!(grid.at(m).dFlags & BFLAG_VISIBLE)) {
+		return;
+	}
+	int dist = (m - data._menemypos).maxabs();
+	int md = data._mdir;
+	int v = random_(103, 100);
+	if (dist >= 2) {
+		if (v < 2 * data._mint + 10) {
+			if (dist >= 2 * data._mint + 4) {
+				if (random_(104, 100) < 2 * data._mint + 20) {
+					md = random_(104, 8);
+				}
+				M_DumbWalk(md);
+			} else {
+				md = M_GetDir();
+				M_CallWalk(md);
+			}
+		}
+	} else if (v < 2 * data._mint + 10) {
+		M_StartAttack();
+	}
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+}
+
+void MonsterInstance::MAI_SkelSd()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di m = data._m;
+	int dist = (m - data._menemypos).maxabs();
+	int md = GetDirection(m, data._last);
+	data._mdir = md;
+	if (dist >= 2) {
+		if (data._mVar1 == MM_DELAY || (random_(106, 100) >= 35 - 4 * data._mint)) {
+			M_CallWalk(md);
+		} else {
+			M_StartDelay(15 - 2 * data._mint + random_(106, 10));
+		}
+	} else {
+		if (data._mVar1 == MM_DELAY || (random_(105, 100) < 2 * data._mint + 20)) {
+			M_StartAttack();
+		} else {
+			M_StartDelay(2 * (5 - data._mint) + random_(105, 10));
+		}
+	}
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+BOOL MonsterInstance::MAI_Path()
+{
+	if (data.MType->mtype != MT_GOLEM) {
+		if (data._msquelch == 0)
+			return FALSE;
+		if (data._mmode != MM_STAND)
+			return FALSE;
+		if (data._mgoal != MGOAL_NORMAL && data._mgoal != MGOAL_MOVE && data._mgoal != MGOAL_SHOOT)
+			return FALSE;
+		if (data._m.x == 1 && data._m.y == 0)
+			return FALSE;
+	}
+
+	BOOL clear = LineClearF1(PosOkMonst2, i, data._m, data._menemypos);
+	if (!clear || data._pathcount >= 5 && data._pathcount < 8) {
+		if (data._mFlags & MFLAG_CAN_OPEN_DOOR)
+			MonstCheckDoors(i);
+		data._pathcount++;
+		if (data._pathcount < 5)
+			return FALSE;
+		if (M_PathWalk())
+			return TRUE;
+	}
+
+	if (data.MType->mtype != MT_GOLEM)
+		data._pathcount = 0;
+
+	return FALSE;
+}
+
+void MonsterInstance::MAI_Snake()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	int tmp;
+	char pattern[6] = { 1, 1, 0, -1, -1, 0 };
+	int pnum = data._menemy;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	data._mdir = md;
+
+	if (dist >= 2) {
+		if (dist < 3 && LineClearF1(PosOkMonst, i, data._m, f) && data._mVar1 != MM_CHARGE) {
+			if (AddMissile(data._m, f, md, MIS_RHINO, pnum, i, 0, 0) != -1) {
+				PlayEffect(i, 0);
+				grid.at(data._m).dMonster = -(i + 1);
+				data._mmode = MM_CHARGE;
+			}
+		} else if (data._mVar1 == MM_DELAY || random_(106, 100) >= 35 - 2 * data._mint) {
+			if (md + pattern[data._mgoalvar1] < 0) {
+				tmp = md + pattern[data._mgoalvar1] + 8;
+			} else {
+				tmp = md + pattern[data._mgoalvar1] - 8;
+				if (md + pattern[data._mgoalvar1] < 8)
+					tmp = md + pattern[data._mgoalvar1];
+			}
+			data._mgoalvar1++;
+			if (data._mgoalvar1 > 5)
+				data._mgoalvar1 = 0;
+			if (tmp - data._mgoalvar2 < 0) {
+				md = tmp - data._mgoalvar2 + 8;
+			} else if (tmp - data._mgoalvar2 >= 8) {
+				md = tmp - data._mgoalvar2 - 8;
+			} else
+				md = tmp - data._mgoalvar2;
+			if (md > 0) {
+				if (md < 4) {
+					if (data._mgoalvar2 + 1 < 0) {
+						md = data._mgoalvar2 + 9;
+					} else if (data._mgoalvar2 + 1 >= 8) {
+						md = data._mgoalvar2 - 7;
+					} else
+						md = data._mgoalvar2 + 1;
+					data._mgoalvar2 = md;
+				} else if (md == 4) {
+					data._mgoalvar2 = tmp;
+				} else {
+					if (data._mgoalvar2 - 1 < 0) {
+						md = data._mgoalvar2 + 7;
+					} else if (data._mgoalvar2 - 1 >= 8) {
+						md = data._mgoalvar2 - 9;
+					} else
+						md = data._mgoalvar2 - 1;
+					data._mgoalvar2 = md;
+				}
+			}
+			if (!M_DumbWalk(data._mgoalvar2))
+				M_CallWalk2(data._mdir);
+		} else {
+			M_StartDelay(15 - data._mint + random_(106, 10));
+		}
+	} else {
+		if (data._mVar1 == MM_DELAY
+		    || data._mVar1 == MM_CHARGE
+		    || (random_(105, 100) < data._mint + 20)) {
+			M_StartAttack();
+		} else
+			M_StartDelay(10 - data._mint + random_(105, 10));
+	}
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+}
+
+void MonsterInstance::MAI_Bat()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	int pnum = data._menemy;
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	data._mdir = md;
+	int v = random_(107, 100);
+
+	if (data._mgoal == MGOAL_RETREAT) {
+		if (!data._mgoalvar1) {
+			M_CallWalk(opposite[md]);
+			data._mgoalvar1++;
+		} else {
+			if (random_(108, 2))
+				M_CallWalk(left[md]);
+			else
+				M_CallWalk(right[md]);
+			data._mgoal = MGOAL_NORMAL;
+		}
+		return;
+	}
+
+	if (data.MType->mtype == MT_GLOOM
+	    && (dist >= 5)
+	    && v < 4 * data._mint + 33
+	    && LineClearF1(PosOkMonst, i, data._m, f)) {
+		if (AddMissile(data._m, f, md, MIS_RHINO, pnum, i, 0, 0) != -1) {
+			grid.at(data._m).dMonster = -(i + 1);
+			data._mmode = MM_CHARGE;
+		}
+	} else if (dist >= 2) {
+		if (data._mVar2 > 20 && v < data._mint + 13
+		    || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3)
+		        && data._mVar2 == 0
+		        && v < data._mint + 63) {
+			M_CallWalk(md);
+		}
+	} else if (v < 4 * data._mint + 8) {
+		M_StartAttack();
+		data._mgoal = MGOAL_RETREAT;
+		data._mgoalvar1 = 0;
+		if (data.MType->mtype == MT_FAMILIAR) {
+			AddMissile(data._menemypos, { data._menemypos.x + 1, 0 }, -1, MIS_LIGHTNING, 1, i, random_(109, 10) + 1, 0);
+		}
+	}
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_SkelBow()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	BOOL walking = FALSE;
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	data._mdir = md;
+
+	int v = random_(110, 100);
+
+	if (dist < 4) {
+		if (data._mVar2 > 20 && v < 2 * data._mint + 13
+		    || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3)
+		        && data._mVar2 == 0
+		        && v < 2 * data._mint + 63) {
+			walking = M_DumbWalk(opposite[md]);
+		}
+	}
+
+	V2Di m = data._menemypos;
+	if (!walking) {
+		if (random_(110, 100) < 2 * data._mint + 3) {
+			if (LineClear(data._m, m))
+				M_StartRAttack(MIS_ARROW, 4);
+		}
+	}
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Fat()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	data._mdir = md;
+	int v = random_(111, 100);
+	if (dist >= 2) {
+		if (data._mVar2 > 20 && v < 4 * data._mint + 20
+		    || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3)
+		        && data._mVar2 == 0
+		        && v < 4 * data._mint + 70) {
+			M_CallWalk(md);
+		}
+	} else if (v < 4 * data._mint + 15) {
+		M_StartAttack();
+	} else if (v < 4 * data._mint + 20) {
+		M_StartSpAttack();
+	}
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Sneak()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di mb = data._m;
+	if (grid.at(mb).dLight != lightmax) {
+		V2Di d = (mb - data._menemypos).abs();
+		int md = M_GetDir();
+		int dist = 5 - data._mint;
+		if (data._mVar1 == MM_GOTHIT) {
+			data._mgoalvar1 = 0;
+			data._mgoal = MGOAL_RETREAT;
+		} else {
+			if (d.maxdim() >= dist + 3 || data._mgoalvar1 > 8) {
+				data._mgoalvar1 = 0;
+				data._mgoal = MGOAL_NORMAL;
+			}
+		}
+		if (data._mgoal == MGOAL_RETREAT) {
+			if (data._mFlags & MFLAG_TARGETS_MONSTER)
+				md = GetDirection(data._m, plr[data._menemy].data._powner);
+			md = opposite[md];
+			if (data.MType->mtype == MT_UNSEEN) {
+				if (random_(112, 2))
+					md = left[md];
+				else
+					md = right[md];
+			}
+		}
+		data._mdir = md;
+		int v = random_(112, 100);
+		if (d.maxdim() < dist && data._mFlags & MFLAG_HIDDEN) {
+			M_StartFadein(md, FALSE);
+		} else {
+			if ((d.maxdim() >= dist + 1) && !(data._mFlags & MFLAG_HIDDEN)) {
+				M_StartFadeout(md, TRUE);
+			} else {
+				if (data._mgoal == MGOAL_RETREAT
+				    || (d.maxdim() >= 2) && (data._mVar2 > 20 && v < 4 * data._mint + 14 || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3) && data._mVar2 == 0 && v < 4 * data._mint + 64)) {
+					data._mgoalvar1++;
+					M_CallWalk(md);
+				}
+			}
+		}
+		if (data._mmode == MM_STAND) {
+			if (d.maxdim() >= 2 || v >= 4 * data._mint + 10)
+				data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+			else
+				M_StartAttack();
+		}
+	}
+}
+
+void MonsterInstance::MAI_Fireman()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	int pnum = data._menemy;
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = M_GetDir();
+	if (data._mgoal == MGOAL_NORMAL) {
+		if (LineClear(data._m, f)
+		    && AddMissile(data._m, f, md, MIS_FIREMAN, pnum, i, 0, 0) != -1) {
+			data._mmode = MM_CHARGE;
+			data._mgoal = MGOAL_SHOOT;
+			data._mgoalvar1 = 0;
+		}
+	} else if (data._mgoal == MGOAL_SHOOT) {
+		if (data._mgoalvar1 == 3) {
+			data._mgoal = MGOAL_NORMAL;
+			M_StartFadeout(md, TRUE);
+		} else if (LineClear(data._m, f)) {
+			M_StartRAttack(MIS_KRULL, 4);
+			data._mgoalvar1++;
+		} else {
+			M_StartDelay(random_(112, 10) + 5);
+			data._mgoalvar1++;
+		}
+	} else if (data._mgoal == MGOAL_RETREAT) {
+		M_StartFadein(md, FALSE);
+		data._mgoal = MGOAL_SHOOT;
+	}
+	data._mdir = md;
+	random_(112, 100);
+	if (data._mmode != MM_STAND)
+		return;
+
+	if (dist < 2 && data._mgoal == MGOAL_NORMAL) {
+		M_TryH2HHit(data._menemy, data.mHit, data.mMinDamage, data.mMaxDamage);
+		data._mgoal = MGOAL_RETREAT;
+		if (!M_CallWalk(opposite[md])) {
+			M_StartFadein(md, FALSE);
+			data._mgoal = MGOAL_SHOOT;
+		}
+	} else if (!M_CallWalk(md) && (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_RETREAT)) {
+		M_StartFadein(md, FALSE);
+		data._mgoal = MGOAL_SHOOT;
+	}
+}
+
+void MonsterInstance::MAI_Fallen()
+{
+	int m, rad, md;
+
+	if (data._mgoal == MGOAL_SHOOT) {
+		if (data._mgoalvar1)
+			data._mgoalvar1--;
+		else
+			data._mgoal = MGOAL_NORMAL;
+	}
+
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	if (data._mgoal == MGOAL_RETREAT) {
+		if (!data._mgoalvar1--) {
+			data._mgoal = MGOAL_NORMAL;
+			M_StartStand(opposite[data._mdir]);
+		}
+	}
+
+	if (data._mAnimFrame == data._mAnimLen) {
+		if (random_(113, 4)) {
+			return;
+		}
+		if (!(data._mFlags & MFLAG_NOHEAL)) {
+			M_StartSpStand(data._mdir);
+			rad = 2 * data._mint + 2;
+			if (data._mmaxhp - rad >= data._mhitpoints)
+				data._mhitpoints = rad + data._mhitpoints;
+			else
+				data._mhitpoints = data._mmaxhp;
+		}
+		rad = 2 * data._mint + 4;
+		for (int y = -rad; y <= rad; y++) {
+			for (int x = -rad; x <= rad; x++) {
+				if (y >= 0 && y < MAXDUNY && x >= 0 && x < MAXDUNX) {
+					m = grid[x + data._m.x][y + data._m.y].dMonster;
+					if (m > 0) {
+						m--;
+						if (monsters[m].data._mAi == AI_FALLEN) {
+							monsters[m].data._mgoal = MGOAL_SHOOT;
+							monsters[m].data._mgoalvar1 = 30 * data._mint + 105;
+						}
+					}
+				}
+			}
+		}
+	} else if (data._mgoal == MGOAL_RETREAT) {
+		md = data._mdir;
+		M_CallWalk(md);
+	} else if (data._mgoal == MGOAL_SHOOT) {
+		int dist = (data._m - data._menemypos).maxabs();
+		if (dist < 2) {
+			M_StartAttack();
+		} else {
+			md = M_GetDir();
+			M_CallWalk(md);
+		}
+	} else {
+		MAI_SkelSd();
+	}
+}
+
+void MonsterInstance::MAI_Cleaver()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	data._mdir = md;
+
+	if (dist >= 2)
+		M_CallWalk(md);
+	else
+		M_StartAttack();
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Round(BOOL special)
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	if (data._msquelch < UCHAR_MAX)
+		MonstCheckDoors(i);
+	int v = random_(114, 100);
+	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+		if (data._mgoal == MGOAL_MOVE || (dist >= 4) && random_(115, 4) == 0) {
+			if (data._mgoal != MGOAL_MOVE) {
+				data._mgoalvar1 = 0;
+				data._mgoalvar2 = random_(116, 2);
+			}
+			data._mgoal = MGOAL_MOVE;
+			if (data._mgoalvar1++ >= 2 * dist && DirOK(md) || grid.at(data._m).dTransVal != grid.at(f).dTransVal) {
+				data._mgoal = MGOAL_NORMAL;
+			} else if (!M_RoundWalk(md, &data._mgoalvar2)) {
+				M_StartDelay(random_(125, 10) + 10);
+			}
+		}
+	} else
+		data._mgoal = MGOAL_NORMAL;
+	if (data._mgoal == MGOAL_NORMAL) {
+		if (dist >= 2) {
+			if (data._mVar2 > 20 && v < 2 * data._mint + 28
+			    || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3)
+			        && data._mVar2 == 0
+			        && v < 2 * data._mint + 78) {
+				M_CallWalk(md);
+			}
+		} else if (v < 2 * data._mint + 23) {
+			data._mdir = md;
+			if (special && data._mhitpoints < (data._mmaxhp >> 1) && random_(117, 2) != 0)
+				M_StartSpAttack();
+			else
+				M_StartAttack();
+		}
+	}
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_GoatMc()
+{
+	MAI_Round(TRUE);
+}
+
+void MonsterInstance::MAI_Ranged(int missile_type, BOOL special)
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	if (data._msquelch == UCHAR_MAX || data._mFlags & MFLAG_TARGETS_MONSTER) {
+		V2Di f = data._menemypos;
+		int dist = (data._m - f).maxabs();
+		int md = M_GetDir();
+		if (data._msquelch < UCHAR_MAX)
+			MonstCheckDoors(i);
+		data._mdir = md;
+		if (data._mVar1 == MM_RATTACK) {
+			M_StartDelay(random_(118, 20));
+		} else if (dist < 4) {
+			if (random_(119, 100) < 10 * (data._mint + 7))
+				M_CallWalk(opposite[md]);
+		}
+		if (data._mmode == MM_STAND) {
+			if (LineClear(data._m, f)) {
+				if (special)
+					M_StartRSpAttack(missile_type, 4);
+				else
+					M_StartRAttack(missile_type, 4);
+			} else {
+				data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+			}
+		}
+	} else if (data._msquelch != 0) {
+		int md = GetDirection(data._m, data._last);
+		M_CallWalk(md);
+	}
+}
+
+void MonsterInstance::MAI_GoatBow()
+{
+	MAI_Ranged(MIS_ARROW, FALSE);
+}
+
+void MonsterInstance::MAI_Succ()
+{
+	MAI_Ranged(MIS_FLARE, FALSE);
+}
+
+void MonsterInstance::MAI_AcidUniq()
+{
+	MAI_Ranged(MIS_ACID, TRUE);
+}
+
+void MonsterInstance::MAI_Scav()
+{
+	int x, y;
+	V2Di _m = data._m;
+	BOOL done = FALSE;
+	if (data._mmode != MM_STAND)
+		return;
+	if (data._mhitpoints < (data._mmaxhp >> 1) && data._mgoal != MGOAL_HEALING) {
+		if (data.leaderflag) {
+			monsters[data.leader].data.packsize--;
+			data.leaderflag = 0;
+		}
+		data._mgoal = MGOAL_HEALING;
+		data._mgoalvar3 = 10;
+	}
+	if (data._mgoal == MGOAL_HEALING && data._mgoalvar3 != 0) {
+		data._mgoalvar3--;
+		if (grid.at(data._m).dDead) {
+			M_StartEat();
+			if (!(data._mFlags & MFLAG_NOHEAL))
+				data._mhitpoints += 64;
+			if (data._mhitpoints >= (data._mmaxhp >> 1) + (data._mmaxhp >> 2)) {
+				data._mgoal = MGOAL_NORMAL;
+				data._mgoalvar1 = 0;
+				data._mgoalvar2 = 0;
+			}
+		} else {
+			if (data._mgoalvar1 == 0) {
+				if (random_(120, 2) != 0) {
+					for (y = -4; y <= 4 && !done; y++) {
+						for (x = -4; x <= 4 && !done; x++) {
+							// BUGFIX: incorrect check of offset against limits of the dungeon
+							if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
+								continue;
+							done = grid[data._m.x + x][data._m.y + y].dDead != 0
+							    && LineClearF(
+							        CheckNoSolid,
+							        data._m,
+							        { data._m.x + x,
+							            data._m.y + y });
+						}
+					}
+					x--;
+					y--;
+				} else {
+					for (y = 4; y >= -4 && !done; y--) {
+						for (x = 4; x >= -4 && !done; x--) {
+							// BUGFIX: incorrect check of offset against limits of the dungeon
+							if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
+								continue;
+							done = grid[data._m.x + x][data._m.y + y].dDead != 0
+							    && LineClearF(
+							        CheckNoSolid,
+							        data._m,
+							        { data._m.x + x,
+							            data._m.y + y });
+						}
+					}
+					x++;
+					y++;
+				}
+				if (done) {
+					data._mgoalvar1 = x + data._m.x + 1;
+					data._mgoalvar2 = y + data._m.y + 1;
+				}
+			}
+			if (data._mgoalvar1) {
+				x = data._mgoalvar1 - 1;
+				y = data._mgoalvar2 - 1;
+				data._mdir = GetDirection(data._m, { x, y });
+				M_CallWalk(data._mdir);
+			}
+		}
+	}
+	if (data._mmode == MM_STAND)
+		MAI_SkelSd();
+}
+
+void MonsterInstance::MAI_Garg()
+{
+	int md = M_GetDir();
+	if (data._msquelch != 0 && data._mFlags & MFLAG_ALLOW_SPECIAL) {
+		M_Enemy();
+		int dist = (data._m - data._last).maxabs();
+		if (dist < data._mint + 2) {
+			data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
+		}
+		return;
+	}
+
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	if (data._mhitpoints<data._mmaxhp >> 1 && !(data._mFlags & MFLAG_NOHEAL))
+		data._mgoal = MGOAL_RETREAT;
+	if (data._mgoal == MGOAL_RETREAT) {
+		int dist = (data._m - data._last).maxabs();
+		if (dist >= data._mint + 2) {
+			data._mgoal = MGOAL_NORMAL;
+			M_StartHeal();
+		} else if (!M_CallWalk(opposite[md])) {
+			data._mgoal = MGOAL_NORMAL;
+		}
+	}
+	MAI_Round(FALSE);
+}
+
+void MonsterInstance::MAI_RoundRanged(int missile_type, BOOL checkdoors, int dam, int lessmissiles)
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	if (checkdoors && data._msquelch < UCHAR_MAX)
+		MonstCheckDoors(i);
+	int v = random_(121, 10000);
+	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+		if (data._mgoal == MGOAL_MOVE || ((dist >= 3) && random_(122, 4 << lessmissiles) == 0)) {
+			if (data._mgoal != MGOAL_MOVE) {
+				data._mgoalvar1 = 0;
+				data._mgoalvar2 = random_(123, 2);
+			}
+			data._mgoal = MGOAL_MOVE;
+			if (data._mgoalvar1++ >= 2 * dist && DirOK(md)) {
+				data._mgoal = MGOAL_NORMAL;
+			} else if (v < 500 * (data._mint + 1) >> lessmissiles
+			    && (LineClear(data._m, f))) {
+				M_StartRSpAttack(missile_type, dam);
+			} else {
+				M_RoundWalk(md, &data._mgoalvar2);
+			}
+		}
+	} else {
+		data._mgoal = MGOAL_NORMAL;
+	}
+	if (data._mgoal == MGOAL_NORMAL) {
+		if (((dist >= 3) && v < ((500 * (data._mint + 2)) >> lessmissiles)
+		        || v < ((500 * (data._mint + 1)) >> lessmissiles))
+		    && LineClear(data._m, f)) {
+			M_StartRSpAttack(missile_type, dam);
+		} else if (dist >= 2) {
+			v = random_(124, 100);
+			if (v < 1000 * (data._mint + 5)
+			    || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3) && data._mVar2 == 0 && v < 1000 * (data._mint + 8)) {
+				M_CallWalk(md);
+			}
+		} else if (v < 1000 * (data._mint + 6)) {
+			data._mdir = md;
+			M_StartAttack();
+		}
+	}
+	if (data._mmode == MM_STAND) {
+		M_StartDelay(random_(125, 10) + 5);
+	}
+}
+
+void MonsterInstance::MAI_Magma()
+{
+	MAI_RoundRanged(MIS_MAGMABALL, TRUE, 4, 0);
+}
+
+void MonsterInstance::MAI_Storm()
+{
+	MAI_RoundRanged(MIS_LIGHTCTRL2, TRUE, 4, 0);
+}
+
+void MonsterInstance::MAI_Acid()
+{
+	MAI_RoundRanged(MIS_ACID, FALSE, 4, 1);
+}
+
+void MonsterInstance::MAI_Diablo()
+{
+	MAI_RoundRanged(MIS_DIABAPOCA, FALSE, 40, 0);
+}
+
+void MonsterInstance::MAI_RR2(int mistype, int dam)
+{
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	if (dist >= 5) {
+		MAI_SkelSd();
+		return;
+	}
+
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
+
+	int md = GetDirection(data._m, data._last);
+	if (data._msquelch < UCHAR_MAX)
+		MonstCheckDoors(i);
+	int v = random_(121, 100);
+	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+		if (data._mgoal == MGOAL_MOVE || (dist >= 3)) {
+			if (data._mgoal != MGOAL_MOVE) {
+				data._mgoalvar1 = 0;
+				data._mgoalvar2 = random_(123, 2);
+			}
+			data._mgoal = MGOAL_MOVE;
+			data._mgoalvar3 = 4;
+			if (data._mgoalvar1++ < 2 * dist || !DirOK(md)) {
+				if (v < 5 * (data._mint + 16))
+					M_RoundWalk(md, &data._mgoalvar2);
+			} else
+				data._mgoal = MGOAL_NORMAL;
+		}
+	} else
+		data._mgoal = MGOAL_NORMAL;
+	if (data._mgoal == MGOAL_NORMAL) {
+		if (((dist >= 3) && v < 5 * (data._mint + 2) || v < 5 * (data._mint + 1) || data._mgoalvar3 == 4) && LineClear(data._m, f)) {
+			M_StartRSpAttack(mistype, dam);
+		} else if (dist >= 2) {
+			v = random_(124, 100);
+			if (v < 2 * (5 * data._mint + 25)
+				|| (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3)
+				    && data._mVar2 == 0
+				    && v < 2 * (5 * data._mint + 40)) {
+				M_CallWalk(md);
+			}
+		} else {
+			if (random_(124, 100) < 10 * (data._mint + 4)) {
+				data._mdir = md;
+				if (random_(124, 2) != 0)
+					M_StartAttack();
+				else
+					M_StartRSpAttack(mistype, dam);
+			}
+		}
+		data._mgoalvar3 = 1;
+	}
+	if (data._mmode == MM_STAND) {
+		M_StartDelay(random_(125, 10) + 5);
+	}
+}
+
+void MonsterInstance::MAI_Mega()
+{
+	MAI_RR2(MIS_FLAMEC, 0);
+}
+
+void MonsterInstance::MAI_Golum()
+{
+	int md, j, k, _menemy;
+	BOOL have_enemy, ok;
+	if (data._m.x == 1 && data._m.y == 0) {
+		return;
+	}
+
+	if (data._mmode == MM_DEATH
+	    || data._mmode == MM_SPSTAND
+	    || (data._mmode >= MM_WALK && data._mmode <= MM_WALK3)) {
+		return;
+	}
+
+	if (!(data._mFlags & MFLAG_TARGETS_MONSTER))
+		M_Enemy();
+
+	have_enemy = !(data._mFlags & MFLAG_NO_ENEMY);
+
+	if (data._mmode == MM_ATTACK)
+		return;
+	_menemy = data._menemy;
+	V2Di m = data._m;
+	int dist = (m - monsters[_menemy].data._mfut).maxabs();
+	md = GetDirection(m, monsters[_menemy].data._m);
+	data._mdir = md;
+	if (dist >= 2) {
+		if (have_enemy && MAI_Path())
+			return;
+	} else if (have_enemy) {
+		_menemy = data._menemy;
+		data._menemypos = monsters[_menemy].data._m;
+		if (monsters[_menemy].data._msquelch == 0) {
+			monsters[_menemy].data._msquelch = UCHAR_MAX;
+			monsters[data._menemy].data._last = data._m;
+			for (j = 0; j < 5; j++) {
+				for (k = 0; k < 5; k++) {
+					_menemy = grid[data._m.x + k - 2][data._m.y + j - 2].dMonster;
+					if (_menemy > 0)
+						monsters[_menemy].data._msquelch = UCHAR_MAX;
+				}
+			}
+		}
+		M_StartAttack();
+		return;
+	}
+
+	data._pathcount++;
+	if (data._pathcount > 8)
+		data._pathcount = 5;
+
+	ok = M_CallWalk(plr[i].data._pdir);
+	if (!ok) {
+		md = (md - 1) & 7;
+		for (j = 0; j < 8 && !ok; j++) {
+			md = (md + 1) & 7;
+			ok = DirOK(md);
+		}
+		if (!ok) {
+			return;
+		}
+		M_WalkDir(md);
+	}
+}
+
+void MonsterInstance::MAI_SkelKing()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	if (data._msquelch < UCHAR_MAX)
+		MonstCheckDoors(i);
+	int v = random_(126, 100);
+	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+		if (data._mgoal == MGOAL_MOVE || (dist >= 3) && random_(127, 4) == 0) {
+			if (data._mgoal != MGOAL_MOVE) {
+				data._mgoalvar1 = 0;
+				data._mgoalvar2 = random_(128, 2);
+			}
+			data._mgoal = MGOAL_MOVE;
+			if (data._mgoalvar1++ >= 2 * dist && DirOK(md) || grid.at(data._m).dTransVal != grid.at(f).dTransVal) {
+				data._mgoal = MGOAL_NORMAL;
+			} else if (!M_RoundWalk(md, &data._mgoalvar2)) {
+				M_StartDelay(random_(125, 10) + 10);
+			}
+		}
+	} else
+		data._mgoal = MGOAL_NORMAL;
+	if (data._mgoal == MGOAL_NORMAL) {
+		if (gbMaxPlayers == 1
+		    && ((dist >= 3) && v < 4 * data._mint + 35 || v < 6)
+		    && LineClear(data._m, f)) {
+			V2Di n = data._m + offset[md];
+			if (PosOkMonst(i, n) && nummonsters < MAXMONSTERS) {
+				M_SpawnSkel(n, md);
+				M_StartSpStand(md);
+			}
+		} else {
+			if (dist >= 2) {
+				v = random_(129, 100);
+				if (v >= data._mint + 25
+				    && (data._mVar1 != MM_WALK && data._mVar1 != MM_WALK2 && data._mVar1 != MM_WALK3 || data._mVar2 != 0 || (v >= data._mint + 75))) {
+					M_StartDelay(random_(130, 10) + 10);
+				} else {
+					M_CallWalk(md);
+				}
+			} else if (v < data._mint + 20) {
+				data._mdir = md;
+				M_StartAttack();
+			}
+		}
+	}
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Rhino()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0)
+		return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	if (data._msquelch < UCHAR_MAX)
+		MonstCheckDoors(i);
+	int v = random_(131, 100);
+	if (dist >= 2) {
+		if (data._mgoal == MGOAL_MOVE || (dist >= 5) && random_(132, 4) != 0) {
+			if (data._mgoal != MGOAL_MOVE) {
+				data._mgoalvar1 = 0;
+				data._mgoalvar2 = random_(133, 2);
+			}
+			data._mgoal = MGOAL_MOVE;
+			if (data._mgoalvar1++ >= 2 * dist || grid.at(data._m).dTransVal != grid.at(f).dTransVal) {
+				data._mgoal = MGOAL_NORMAL;
+			} else if (!M_RoundWalk(md, &data._mgoalvar2)) {
+				M_StartDelay(random_(125, 10) + 10);
+			}
+		}
+	} else
+		data._mgoal = MGOAL_NORMAL;
+	if (data._mgoal == MGOAL_NORMAL) {
+		if ((dist >= 5)
+		    && v < 2 * data._mint + 43
+		    && LineClearF1(PosOkMonst, i, data._m, f)) {
+			if (AddMissile(data._m, f, md, MIS_RHINO, data._menemy, i, 0, 0) != -1) {
+				if (data.MData->snd_special)
+					PlayEffect(i, 3);
+				data._mmode = MM_CHARGE;
+				grid.at(data._m).dMonster = -1 - i;
+			}
+		} else {
+			if (dist >= 2) {
+				v = random_(134, 100);
+				if (v >= 2 * data._mint + 33
+				    && (data._mVar1 != MM_WALK && data._mVar1 != MM_WALK2 && data._mVar1 != MM_WALK3
+				        || data._mVar2
+				        || v >= 2 * data._mint + 83)) {
+					M_StartDelay(random_(135, 10) + 10);
+				} else {
+					M_CallWalk(md);
+				}
+			} else if (v < 2 * data._mint + 28) {
+				data._mdir = md;
+				M_StartAttack();
+			}
+		}
+	}
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+}
+
+void MonsterInstance::MAI_Counselor()
+{
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
+
+	V2Di f = data._menemypos;
+	int dist = (data._m - f).maxabs();
+	int md = GetDirection(data._m, data._last);
+	if (data._msquelch < UCHAR_MAX)
+		MonstCheckDoors(i);
+	int v = random_(121, 100);
+	if (data._mgoal == MGOAL_RETREAT) {
+		if (data._mgoalvar1++ <= 3)
+			M_CallWalk(opposite[md]);
+		else {
+			data._mgoal = MGOAL_NORMAL;
+			M_StartFadein(md, TRUE);
+		}
+	} else if (data._mgoal == MGOAL_MOVE) {
+		if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+			if (data._mgoalvar1++ < 2 * dist || !DirOK(md)) {
+				M_RoundWalk(md, &data._mgoalvar2);
+			} else {
+				data._mgoal = MGOAL_NORMAL;
+				M_StartFadein(md, TRUE);
+			}
+		} else {
+			data._mgoal = MGOAL_NORMAL;
+			M_StartFadein(md, TRUE);
+		}
+	} else if (data._mgoal == MGOAL_NORMAL) {
+		if (dist >= 2) {
+			if (v < 5 * (data._mint + 10) && LineClear(data._m, f)) {
+				M_StartRAttack(counsmiss[data._mint], data.mMinDamage + random_(77, data.mMaxDamage - data.mMinDamage + 1));
+			} else if (random_(124, 100) < 30) {
+				data._mgoal = MGOAL_MOVE;
+				data._mgoalvar1 = 0;
+				M_StartFadeout(md, FALSE);
+			} else
+				M_StartDelay(random_(105, 10) + 2 * (5 - data._mint));
+		} else {
+			data._mdir = md;
+			if (data._mhitpoints < (data._mmaxhp >> 1)) {
+				data._mgoal = MGOAL_RETREAT;
+				data._mgoalvar1 = 0;
+				M_StartFadeout(md, FALSE);
+			} else if (data._mVar1 == MM_DELAY
+			    || random_(105, 100) < 2 * data._mint + 20) {
+				M_StartRAttack(-1, 0);
+				AddMissile(data._m, { 0, 0 }, data._mdir, MIS_FLASH, 1, i, 4, 0);
+				AddMissile(data._m, { 0, 0 }, data._mdir, MIS_FLASH2, 1, i, 4, 0);
+			} else
+				M_StartDelay(random_(105, 10) + 2 * (5 - data._mint));
+		}
+	}
+	if (data._mmode == MM_STAND) {
+		M_StartDelay(random_(125, 10) + 5);
+	}
+}
+
+void MonsterInstance::MAI_Garbud()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di _m = data._m;
+	int md = M_GetDir();
+
+	if (data.mtalkmsg < TEXT_GARBUD4
+	    && data.mtalkmsg > TEXT_DOOM10
+	    && !(grid.at(_m).dFlags & BFLAG_VISIBLE)
+	    && data._mgoal == MGOAL_TALKING) {
+		data._mgoal = MGOAL_INQUIRING;
+		data.mtalkmsg++;
+	}
+
+	if (grid.at(_m).dFlags & BFLAG_VISIBLE) {
+#ifndef SPAWN
+		if (data.mtalkmsg == TEXT_GARBUD4) {
+			if (!effect_is_playing(USFX_GARBUD4) && data._mgoal == MGOAL_TALKING) {
+				data._mgoal = MGOAL_NORMAL;
+				data._msquelch = UCHAR_MAX;
+				data.mtalkmsg = 0;
+			}
+		}
+#endif
+	}
+
+	if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_MOVE)
+		MAI_Round(TRUE);
+
+	data._mdir = md;
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Zhar()
+{
+	if (data._mmode != MM_STAND) {
+		return;
+	}
+
+	V2Di m = data._m;
+	int md = M_GetDir();
+	if (data.mtalkmsg == TEXT_ZHAR1 && !(grid.at(m).dFlags & BFLAG_VISIBLE) && data._mgoal == MGOAL_TALKING) {
+		data.mtalkmsg = TEXT_ZHAR2;
+		data._mgoal = MGOAL_INQUIRING;
+	}
+
+	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
+		V2Di _m = data._m - data._menemy;
+#ifndef SPAWN
+		if (data.mtalkmsg == TEXT_ZHAR2) {
+			if (!effect_is_playing(USFX_ZHAR2) && data._mgoal == MGOAL_TALKING) {
+				data._msquelch = UCHAR_MAX;
+				data.mtalkmsg = 0;
+				data._mgoal = MGOAL_NORMAL;
+			}
+		}
+#endif
+	}
+
+	if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_RETREAT || data._mgoal == MGOAL_MOVE)
+		MAI_Counselor();
+
+	data._mdir = md;
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_SnotSpil()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di m = data._m;
+	int md = M_GetDir();
+
+	if (data.mtalkmsg == TEXT_BANNER10 && !(grid.at(m).dFlags & BFLAG_VISIBLE) && data._mgoal == MGOAL_TALKING) {
+		data.mtalkmsg = TEXT_BANNER11;
+		data._mgoal = MGOAL_INQUIRING;
+	}
+
+	if (data.mtalkmsg == TEXT_BANNER11 && quests[Q_LTBANNER]._qvar1 == 3) {
+		data.mtalkmsg = 0;
+		data._mgoal = MGOAL_NORMAL;
+	}
+
+	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
+#ifndef SPAWN
+		if (data.mtalkmsg == TEXT_BANNER12) {
+			if (!effect_is_playing(USFX_SNOT3) && data._mgoal == MGOAL_TALKING) {
+				ObjChangeMap({ setpc.x, setpc.y }, { setpc.x + setpc.w + 1, setpc.y + setpc.h + 1 });
+				quests[Q_LTBANNER]._qvar1 = 3;
+				RedoPlayerVision();
+				data._msquelch = UCHAR_MAX;
+				data.mtalkmsg = 0;
+				data._mgoal = MGOAL_NORMAL;
+			}
+		}
+#endif
+		if (quests[Q_LTBANNER]._qvar1 == 3) {
+			if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_SHOOT)
+				MAI_Fallen();
+		}
+	}
+
+	data._mdir = md;
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Lazurus()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di m = data._m;
+	int md = M_GetDir();
+	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
+		if (gbMaxPlayers == 1) {
+			if (data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && myplr().data._p.x == TEXT_VILE13 && myplr().data._p.y == 46) {
+				PlayInGameMovie("gendata\\fprst3.smk");
+				data._mmode = MM_TALK;
+				quests[Q_BETRAYER]._qvar1 = 5;
+			}
+
+#ifndef SPAWN
+			if (data.mtalkmsg == TEXT_VILE13 && !effect_is_playing(USFX_LAZ1) && data._mgoal == MGOAL_TALKING) {
+				ObjChangeMapResync({ 1, 18 }, { 20, 24 });
+				RedoPlayerVision();
+				data._msquelch = UCHAR_MAX;
+				data.mtalkmsg = 0;
+				quests[Q_BETRAYER]._qvar1 = 6;
+				data._mgoal = MGOAL_NORMAL;
+			}
+#endif
+		}
+
+		if (gbMaxPlayers != 1 && data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && quests[Q_BETRAYER]._qvar1 <= 3) {
+			data._mmode = MM_TALK;
+		}
+	}
+
+	if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_RETREAT || data._mgoal == MGOAL_MOVE) {
+		data.mtalkmsg = 0;
+		MAI_Counselor();
+	}
+
+	data._mdir = md;
+	if (data._mmode == MM_STAND || data._mmode == MM_TALK)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Lazhelp()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di _m = data._m;
+	int md = M_GetDir();
+
+	if (grid.at(_m).dFlags & BFLAG_VISIBLE) {
+		if (gbMaxPlayers == 1) {
+			if (quests[Q_BETRAYER]._qvar1 <= 5) {
+				data._mgoal = MGOAL_INQUIRING;
+			} else {
+				data.mtalkmsg = 0;
+				data._mgoal = MGOAL_NORMAL;
+			}
+		} else
+			data._mgoal = MGOAL_NORMAL;
+	}
+	if (data._mgoal == MGOAL_NORMAL)
+		MAI_Succ();
+	data._mdir = md;
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Lachdanan()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di _m = data._m;
+	int md = M_GetDir();
+#ifndef SPAWN
+	if (data.mtalkmsg == TEXT_VEIL9 && !(grid.at(_m).dFlags & BFLAG_VISIBLE) && data._mgoal == MGOAL_TALKING) {
+		data.mtalkmsg = TEXT_VEIL10;
+		data._mgoal = MGOAL_INQUIRING;
+	}
+
+	if (grid.at(_m).dFlags & BFLAG_VISIBLE) {
+		if (data.mtalkmsg == TEXT_VEIL11) {
+			if (!effect_is_playing(USFX_LACH3) && data._mgoal == MGOAL_TALKING) {
+				data.mtalkmsg = 0;
+				quests[Q_VEIL]._qactive = QUEST_DONE;
+				M_StartKill(-1);
+			}
+		}
+	}
+#endif
+
+	data._mdir = md;
+
+	if (data._mmode == MM_STAND)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+}
+
+void MonsterInstance::MAI_Warlord()
+{
+	if (data._mmode != MM_STAND)
+		return;
+
+	V2Di m = data._m;
+	int md = M_GetDir();
+	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
+		if (data.mtalkmsg == TEXT_WARLRD9 && data._mgoal == MGOAL_INQUIRING)
+			data._mmode = MM_TALK;
+#ifndef SPAWN
+		if (data.mtalkmsg == TEXT_WARLRD9 && !effect_is_playing(USFX_WARLRD1) && data._mgoal == MGOAL_TALKING) {
+			data._msquelch = UCHAR_MAX;
+			data.mtalkmsg = 0;
+			data._mgoal = MGOAL_NORMAL;
+		}
+#endif
+	}
+
+	if (data._mgoal == MGOAL_NORMAL)
+		MAI_SkelSd();
+
+	data._mdir = md;
+
+	if (data._mmode == MM_STAND || data._mmode == MM_TALK)
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
 }
 
 DEVILUTION_END_NAMESPACE

@@ -12,18 +12,18 @@ extern PortalStruct portal[MAXPORTAL];
 extern int portalindex;
 
 void InitPortals();
-void SetPortalStats(int i, BOOL o, int x, int y, int lvl, int lvltype);
-void AddWarpMissile(int i, int x, int y);
+void SetPortalStats(int i, BOOL o, V2Di p, int lvl, int lvltype);
+void AddWarpMissile(int i, V2Di p);
 void SyncPortals();
 void AddInTownPortal(int i);
-void ActivatePortal(int i, int x, int y, int lvl, int lvltype, BOOL sp);
+void ActivatePortal(int i, V2Di p, int lvl, int lvltype, BOOL sp);
 void DeactivatePortal(int i);
 BOOL PortalOnLevel(int i);
 void RemovePortalMissile(int id);
 void SetCurrentPortal(int p);
 void GetPortalLevel();
 void GetPortalLvlPos();
-BOOL PosOkPortal(int lvl, int x, int y);
+BOOL PosOkPortal(int lvl, V2Di p);
 
 /* rdata */
 extern int WarpDropX[MAXPORTAL];

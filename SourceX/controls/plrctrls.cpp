@@ -40,20 +40,13 @@ int spbslot = 0;
  * @param y Tile coordinates
  * @return -1 == down
  */
-int GetRotaryDistance(int x, int y)
+int GetRotaryDistance(V2Di p)
 {
-	int d, d1, d2;
-
-	if (myplr().data._pfutx == x && myplr().data._pfuty == y)
-		return -1;
-
-	d1 = myplr().data._pdir;
-	d2 = GetDirection(myplr().data._pfutx, myplr().data._pfuty, x, y);
-
-	d = abs(d1 - d2);
-	if (d > 4)
-		return 4 - (d % 4);
-
+	if (myplr().data._pfut == p) return -1;
+	int d1 = myplr().data._pdir;
+	int d2 = GetDirection(myplr().data._pfut, p);
+	int d = abs(d1 - d2);
+	if (d > 4) return 4 - (d % 4);
 	return d;
 }
 
@@ -62,9 +55,9 @@ int GetRotaryDistance(int x, int y)
  * @param dx Tile coordinates
  * @param dy Tile coordinates
  */
-int GetMinDistance(int dx, int dy)
+int GetMinDistance(V2Di p)
 {
-	return std::max(abs(myplr().data._pfutx - dx), abs(myplr().data._pfuty - dy));
+	return (myplr().data._pfut - p).maxabs();
 }
 
 /**
@@ -74,17 +67,12 @@ int GetMinDistance(int dx, int dy)
  * @param maxDistance the max number of steps to search
  * @return number of steps, or 0 if not reachable
  */
-int GetDistance(int dx, int dy, int maxDistance)
+int GetDistance(V2Di d, int maxDistance)
 {
-	if (GetMinDistance(dx, dy) > maxDistance) {
-		return 0;
-	}
-
+	if (GetMinDistance(d) > maxDistance) return 0;
 	char walkpath[MAX_PATH_LENGTH];
-	int steps = FindPath(PosOkPlayer, myplr(), myplr().data._pfutx, myplr().data._pfuty, dx, dy, walkpath);
-	if (steps > maxDistance)
-		return 0;
-
+	int steps = FindPath(PosOkPlayer, myplr(), myplr().data._pfut, d, walkpath);
+	if (steps > maxDistance) return 0;
 	return steps;
 }
 
@@ -93,62 +81,58 @@ int GetDistance(int dx, int dy, int maxDistance)
  * @param dx Tile coordinates
  * @param dy Tile coordinates
  */
-int GetDistanceRanged(int dx, int dy)
+int GetDistanceRanged(V2Di d)
 {
-	int a = myplr().data._pfutx - dx;
-	int b = myplr().data._pfuty - dy;
-
-	return sqrt(a * a + b * b);
+	V2Di off = myplr().data._pfut - d;
+	return sqrt(off.x * off.x + off.y * off.y);
 }
 
 void FindItemOrObject()
 {
-	int mx = myplr().data._pfutx;
-	int my = myplr().data._pfuty;
+	V2Di m = myplr().data._pfut;
 	int rotations = 5;
 
 	// As the player can not stand on the edge fo the map this is safe from OOB
-	for (int xx = -1; xx < 2; xx++) {
-		for (int yy = -1; yy < 2; yy++) {
-			if (grid[mx + xx][my + yy].dItem <= 0)
+	V2Di a;
+	for (a.x = -1; a.x < 2; a.x++) {
+		for (a.y = -1; a.y < 2; a.y++) {
+			if (grid.at(m + a).dItem <= 0)
 				continue;
-			int i = grid[mx + xx][my + yy].dItem - 1;
+			int i = grid.at(m + a).dItem - 1;
 			if (item[i]._itype == ITYPE_NONE
 			    || item[i]._iSelFlag == 0)
 				continue;
-			int newRotations = GetRotaryDistance(mx + xx, my + yy);
+			int newRotations = GetRotaryDistance(m + a);
 			if (rotations < newRotations)
 				continue;
-			if (xx != 0 && yy != 0 && GetDistance(mx + xx, my + yy, 1) == 0)
+			if (a != V2Di(0, 0) && GetDistance(m + a, 1) == 0)
 				continue;
 			rotations = newRotations;
 			pcursitem = i;
-			cursmx = mx + xx;
-			cursmy = my + yy;
+			cursm = m + a;
 		}
 	}
 
 	if (level.leveltype == DTYPE_TOWN || pcursitem != -1)
 		return; // Don't look for objects in town
 
-	for (int xx = -1; xx < 2; xx++) {
-		for (int yy = -1; yy < 2; yy++) {
-			if (grid[mx + xx][my + yy].dObject == 0)
+	for (a.x = -1; a.x < 2; a.x++) {
+		for (a.y = -1; a.y < 2; a.y++) {
+			if (grid.at(m + a).dObject == 0)
 				continue;
-			int o = grid[mx + xx][my + yy].dObject > 0 ? grid[mx + xx][my + yy].dObject - 1 : -(grid[mx + xx][my + yy].dObject + 1);
+			int o = grid.at(m + a).dObject > 0 ? grid.at(m + a).dObject - 1 : -(grid.at(m + a).dObject + 1);
 			if (object[o]._oSelFlag == 0)
 				continue;
-			if (xx == 0 && yy == 0 && object[o]._oDoorFlag)
+			if (a == V2Di(0, 0) && object[o]._oDoorFlag)
 				continue; // Ignore doorway so we don't get stuck behind barrels
-			int newRotations = GetRotaryDistance(mx + xx, my + yy);
+			int newRotations = GetRotaryDistance(m + a);
 			if (rotations < newRotations)
 				continue;
-			if (xx != 0 && yy != 0 && GetDistance(mx + xx, my + yy, 1) == 0)
+			if (a != V2Di(0, 0) && GetDistance(m + a, 1) == 0)
 				continue;
 			rotations = newRotations;
 			pcursobj = o;
-			cursmx = mx + xx;
-			cursmy = my + yy;
+			cursm = m + a;
 		}
 	}
 }
@@ -156,7 +140,7 @@ void FindItemOrObject()
 void CheckTownersNearby()
 {
 	for (int i = 0; i < 16; i++) {
-		int distance = GetDistance(towner[i]._tx, towner[i]._ty, 2);
+		int distance = GetDistance(towner[i]._t, 2);
 		if (distance == 0)
 			continue;
 		pcursmonst = i;
@@ -183,11 +167,10 @@ bool CanTargetMonster(int mi)
 	if (monst._mhitpoints >> 6 <= 0) // dead
 		return false;
 
-	const int mx = monst._mx;
-	const int my = monst._my;
-	if (!(grid[mx][my].dFlags & BFLAG_LIT)) // not visable
+	const V2Di m = monst._m;
+	if (!(grid.at(m).dFlags & BFLAG_LIT)) // not visable
 		return false;
-	if (grid[mx][my].dMonster == 0)
+	if (grid.at(m).dMonster == 0)
 		return false;
 
 	return true;
@@ -201,21 +184,17 @@ void FindRangedTarget()
 	// The first MAX_PLRS monsters are reserved for players' golems.
 	for (int mi = MAX_PLRS; mi < MAXMONSTERS; mi++) {
 		const MonsterStruct &monst = monsters[mi].data;
-		const int mx = monst._mfutx;
-		const int my = monst._mfuty;
-		if (!CanTargetMonster(mi))
-			continue;
+		const V2Di m = monst._mfut;
+		if (!CanTargetMonster(mi)) continue;
 
 		const bool newCanTalk = CanTalkToMonst(mi);
 		if (pcursmonst != -1 && !canTalk && newCanTalk)
 			continue;
-		const int newDdistance = GetDistanceRanged(mx, my);
-		const int newRotations = GetRotaryDistance(mx, my);
+		const int newDdistance = GetDistanceRanged(m);
+		const int newRotations = GetRotaryDistance(m);
 		if (pcursmonst != -1 && canTalk == newCanTalk) {
-			if (distance < newDdistance)
-				continue;
-			if (distance == newDdistance && rotations < newRotations)
-				continue;
+			if (distance < newDdistance) continue;
+			if (distance == newDdistance && rotations < newRotations) continue;
 		}
 		distance = newDdistance;
 		rotations = newRotations;
@@ -232,16 +211,15 @@ void FindMeleeTarget()
 	bool canTalk;
 
 	struct SearchNode {
-		int x, y;
+		V2Di p;
 		int steps;
 	};
 	std::list<SearchNode> queue;
 
 	{
-		const int start_x = myplr().data._pfutx;
-		const int start_y = myplr().data._pfuty;
-		visited[start_x][start_y] = true;
-		queue.push_back({ start_x, start_y, 0 });
+		const V2Di start = myplr().data._pfut;
+		visited[start.x][start.y] = true;
+		queue.push_back({ start, 0 });
 	}
 
 	while (!queue.empty()) {
@@ -249,34 +227,33 @@ void FindMeleeTarget()
 		queue.pop_front();
 
 		for (int i = 0; i < 8; i++) {
-			const int dx = node.x + pathxdir[i];
-			const int dy = node.y + pathydir[i];
+			V2Di d = node.p + pathdir[i];
 
-			if (visited[dx][dy])
+			if (visited[d.x][d.y])
 				continue; // already visisted
 
 			if (node.steps > maxSteps) {
-				visited[dx][dy] = true;
+				visited[d.x][d.y] = true;
 				continue;
 			}
 
-			if (!PosOkPlayer(myplr(), dx, dy)) {
-				visited[dx][dy] = true;
+			if (!PosOkPlayer(myplr(), d)) {
+				visited[d.x][d.y] = true;
 
-				if (grid[dx][dy].dMonster != 0) {
-					const int mi = grid[dx][dy].dMonster > 0 ? grid[dx][dy].dMonster - 1 : -(grid[dx][dy].dMonster + 1);
+				const int m = grid.at(d).dMonster;
+				if (m != 0) {
+					const int mi = m > 0 ? m - 1 : -(m + 1);
 					if (CanTargetMonster(mi)) {
 						const bool newCanTalk = CanTalkToMonst(mi);
 						if (pcursmonst != -1 && !canTalk && newCanTalk)
 							continue;
-						const int newRotations = GetRotaryDistance(dx, dy);
+						const int newRotations = GetRotaryDistance(d);
 						if (pcursmonst != -1 && canTalk == newCanTalk && rotations < newRotations)
 							continue;
 						rotations = newRotations;
 						canTalk = newCanTalk;
 						pcursmonst = mi;
-						if (!canTalk)
-							maxSteps = node.steps; // Monsters found, cap search to current steps
+						if (!canTalk) maxSteps = node.steps; // Monsters found, cap search to current steps
 					}
 				}
 
@@ -284,12 +261,11 @@ void FindMeleeTarget()
 			}
 
 			PATHNODE pPath;
-			pPath.x = node.x;
-			pPath.y = node.y;
+			pPath.pos = node.p;
 
-			if (path_solid_pieces(&pPath, dx, dy)) {
-				queue.push_back({ dx, dy, node.steps + 1 });
-				visited[dx][dy] = true;
+			if (path_solid_pieces(&pPath, d)) {
+				queue.push_back({ d, node.steps + 1 });
+				visited[d.x][d.y] = true;
 			}
 		}
 	}
@@ -317,26 +293,22 @@ void CheckPlayerNearby()
 		return;
 
 	for (int i = 0; i < MAX_PLRS; i++) {
-		if (i == myplr())
-			continue;
-		const int mx = plr[i].data._pfutx;
-		const int my = plr[i].data._pfuty;
-		if (grid[mx][my].dPlayer == 0
-		    || !(grid[mx][my].dFlags & BFLAG_LIT)
+		if (i == myplr()) continue;
+		const V2Di m = plr[i].data._pfut;
+		if (grid.at(m).dPlayer == 0
+		    || !(grid.at(m).dFlags & BFLAG_LIT)
 		    || (plr[i].data._pHitPoints == 0 && spl != SPL_RESURRECT))
 			continue;
 
 		if (myplr().data._pwtype == WT_RANGED || HasRangedSpell() || spl == SPL_HEALOTHER) {
-			newDdistance = GetDistanceRanged(mx, my);
+			newDdistance = GetDistanceRanged(m);
 		} else {
-			newDdistance = GetDistance(mx, my, distance);
-			if (newDdistance == 0)
-				continue;
+			newDdistance = GetDistance(m, distance);
+			if (newDdistance == 0) continue;
 		}
 
-		if (pcursplr != -1 && distance < newDdistance)
-			continue;
-		const int newRotations = GetRotaryDistance(mx, my);
+		if (pcursplr != -1 && distance < newDdistance) continue;
+		const int newRotations = GetRotaryDistance(m);
 		if (pcursplr != -1 && distance == newDdistance && rotations < newRotations)
 			continue;
 
@@ -348,13 +320,13 @@ void CheckPlayerNearby()
 
 void FindActor()
 {
-	if (level.leveltype != DTYPE_TOWN)
+	if (level.leveltype != DTYPE_TOWN) {
 		CheckMonstersNearby();
-	else
+	} else {
 		CheckTownersNearby();
+	}
 
-	if (gbMaxPlayers != 1)
-		CheckPlayerNearby();
+	if (gbMaxPlayers != 1) CheckPlayerNearby();
 }
 
 int pcursmissile;
@@ -371,18 +343,17 @@ void FindTrigger()
 	for (int i = 0; i < nummissiles; i++) {
 		int mi = missileactive[i];
 		if (missile[mi]._mitype == MIS_TOWN || missile[mi]._mitype == MIS_RPORTAL) {
-			int mix = missile[mi]._mix;
-			int miy = missile[mi]._miy;
-			const int newDdistance = GetDistance(mix, miy, 2);
+
+			V2Di miv = missile[mi]._mi;
+			const int newDdistance = GetDistance(miv, 2);
 			if (newDdistance == 0)
 				continue;
 			if (pcursmissile != -1 && distance < newDdistance)
 				continue;
-			const int newRotations = GetRotaryDistance(mix, miy);
+			const int newRotations = GetRotaryDistance(miv);
 			if (pcursmissile != -1 && distance == newDdistance && rotations < newRotations)
 				continue;
-			cursmx = mix;
-			cursmy = miy;
+			cursm = miv;
 			pcursmissile = mi;
 			distance = newDdistance;
 			rotations = newRotations;
@@ -391,15 +362,13 @@ void FindTrigger()
 
 	if (pcursmissile == -1) {
 		for (int i = 0; i < numtrigs; i++) {
-			int tx = trigs[i]._tx;
-			int ty = trigs[i]._ty;
+			V2Di t = trigs[i]._t;
 			if (trigs[i]._tlvl == 13)
-				ty -= 1;
-			const int newDdistance = GetDistance(tx, ty, 2);
+				t.y -= 1;
+			const int newDdistance = GetDistance(t, 2);
 			if (newDdistance == 0)
 				continue;
-			cursmx = tx;
-			cursmy = ty;
+			cursm = t;
 			pcurstrig = i;
 		}
 
@@ -407,17 +376,16 @@ void FindTrigger()
 			for (int i = 0; i < MAXQUESTS; i++) {
 				if (i == Q_BETRAYER || level.currlevel != quests[i]._qlevel || quests[i]._qslvl == 0)
 					continue;
-				const int newDdistance = GetDistance(quests[i]._qtx, quests[i]._qty, 2);
+				const int newDdistance = GetDistance(quests[i]._qt, 2);
 				if (newDdistance == 0)
 					continue;
-				cursmx = quests[i]._qtx;
-				cursmy = quests[i]._qty;
+				cursm = quests[i]._qt;
 				pcursquest = i;
 			}
 		}
 	}
 
-	if (pcursmonst != -1 || pcursplr != -1 || cursmx == -1 || cursmy == -1)
+	if (pcursmonst != -1 || pcursplr != -1 || cursm.x == -1 || cursm.y == -1)
 		return; // Prefer monster/player info text
 
 	CheckTrigForce();
@@ -428,7 +396,7 @@ void FindTrigger()
 void Interact()
 {
 	if (level.leveltype == DTYPE_TOWN && pcursmonst != -1) {
-		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._tx, towner[pcursmonst]._ty, pcursmonst);
+		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._t, pcursmonst);
 	} else if (pcursmonst != -1) {
 		if (myplr().data._pwtype != WT_RANGED || CanTalkToMonst(pcursmonst)) {
 			NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
@@ -742,7 +710,7 @@ static const direction kFaceDir[3][3] = {
 	{ DIR_W, DIR_NW, DIR_SW },  // LEFT
 	{ DIR_E, DIR_NE, DIR_SE },  // RIGHT
 };
-static const int kOffsets[8][2] = {
+static const V2Di kOffsets[8] = {
 	{ 1, 1 },   // DIR_S
 	{ 0, 1 },   // DIR_SW
 	{ -1, 1 },  // DIR_W
@@ -763,9 +731,9 @@ static const int kOffsets[8][2] = {
  *
  *  @return true if step is blocked
  */
-bool IsPathBlocked(int x, int y, int dir)
+bool IsPathBlocked(V2Di pos, int dir)
 {
-	int d1, d2, d1x, d1y, d2x, d2y;
+	int d1, d2;
 
 	switch (dir) {
 	case DIR_N:
@@ -788,37 +756,33 @@ bool IsPathBlocked(int x, int y, int dir)
 		return false;
 	}
 
-	d1x = x + kOffsets[d1][0];
-	d1y = y + kOffsets[d1][1];
-	d2x = x + kOffsets[d2][0];
-	d2y = y + kOffsets[d2][1];
+	V2Di d1v = kOffsets[d1];
+	V2Di d2v = kOffsets[d2];
 
-	if (!pieces[grid[d1x][d1y].dPiece].nSolidTable && !pieces[grid[d2x][d2y].dPiece].nSolidTable)
+	if (!pieces[grid.at(d1).dPiece].nSolidTable && !pieces[grid.at(d1).dPiece].nSolidTable)
 		return false;
 
-	return !PosOkPlayer(myplr(), d1x, d1y) && !PosOkPlayer(myplr(), d2x, d2y);
+	return !PosOkPlayer(myplr(), d1) && !PosOkPlayer(myplr(), d2);
 }
 
 void WalkInDir(MoveDirection dir)
 {
-	const int x = myplr().data._pfutx;
-	const int y = myplr().data._pfuty;
+	V2Di pos = myplr().data._pfut;
 
 	if (dir.x == MoveDirectionX_NONE && dir.y == MoveDirectionY_NONE) {
 		if (sgbControllerActive && myplr().data.walkpath[0] != WALK_NONE && myplr().data.destAction == ACTION_NONE)
-			NetSendCmdLoc(true, CMD_WALKXY, x, y); // Stop walking
+			NetSendCmdLoc(true, CMD_WALKXY, pos); // Stop walking
 		return;
 	}
 
 	const int pdir = kFaceDir[static_cast<std::size_t>(dir.x)][static_cast<std::size_t>(dir.y)];
-	const int dx = x + kOffsets[pdir][0];
-	const int dy = y + kOffsets[pdir][1];
+	const V2Di dv = pos + kOffsets[pdir];
 	myplr().data._pdir = pdir;
 
-	if (PosOkPlayer(myplr(), dx, dy) && IsPathBlocked(x, y, pdir))
+	if (PosOkPlayer(myplr(), dv) && IsPathBlocked(pos, pdir))
 		return; // Don't start backtrack around obstacles
 
-	NetSendCmdLoc(true, CMD_WALKXY, dx, dy);
+	NetSendCmdLoc(true, CMD_WALKXY, dv);
 }
 
 void Movement()
@@ -935,8 +899,7 @@ void plrctrls_after_check_curs_move()
 		pcursmissile = -1;
 		pcurstrig = -1;
 		pcursquest = -1;
-		cursmx = -1;
-		cursmy = -1;
+		cursm = { -1, -1 };
 		if (!invflag) {
 			*infostr = '\0';
 			ClearPanel();
@@ -1010,8 +973,7 @@ bool SpellHasActorTarget()
 		return false;
 
 	if (spl == SPL_FIREWALL && pcursmonst != -1) {
-		cursmx = monsters[pcursmonst].data._mx;
-		cursmy = monsters[pcursmonst].data._my;
+		cursm = monsters[pcursmonst].data._m;
 	}
 
 	return pcursplr != -1 || pcursmonst != -1;
@@ -1031,8 +993,7 @@ void UpdateSpellTarget()
 	if (myplr().data._pRSpell == SPL_TELEPORT)
 		range = 4;
 
-	cursmx = player._pfutx + kOffsets[player._pdir][0] * range;
-	cursmy = player._pfuty + kOffsets[player._pdir][1] * range;
+	cursm = player._pfut + kOffsets[player._pdir] * range;
 }
 
 /**
@@ -1040,15 +1001,14 @@ void UpdateSpellTarget()
  */
 bool TryDropItem()
 {
-	cursmx = myplr().data._pfutx + 1;
-	cursmy = myplr().data._pfuty;
+	cursm.x = myplr().data._pfut.x + 1;
+	cursm.y = myplr().data._pfut.y;
 	if (!DropItemBeforeTrig()) {
 		// Try to drop on the other side
-		cursmx = myplr().data._pfutx;
-		cursmy = myplr().data._pfuty + 1;
+		cursm.x = myplr().data._pfut.x;
+		cursm.y = myplr().data._pfut.y + 1;
 		DropItemBeforeTrig();
 	}
-
 	return pcurs == CURSOR_HAND;
 }
 
@@ -1128,17 +1088,17 @@ void PerformSecondaryAction()
 		SetCursor_(CURSOR_HAND);
 
 	if (pcursitem != -1) {
-		NetSendCmdLocParam1(true, CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
+		NetSendCmdLocParam1(true, CMD_GOTOAGETITEM, cursm, pcursitem);
 	} else if (pcursobj != -1) {
-		NetSendCmdLocParam1(true, CMD_OPOBJXY, cursmx, cursmy, pcursobj);
+		NetSendCmdLocParam1(true, CMD_OPOBJXY, cursm, pcursobj);
 	} else if (pcursmissile != -1) {
-		myplr().MakePlrPath(missile[pcursmissile]._mix, missile[pcursmissile]._miy, true);
+		myplr().MakePlrPath(missile[pcursmissile]._mi, true);
 		myplr().data.destAction = ACTION_WALK;
 	} else if (pcurstrig != -1) {
-		myplr().MakePlrPath(trigs[pcurstrig]._tx, trigs[pcurstrig]._ty, true);
+		myplr().MakePlrPath(trigs[pcurstrig]._t, true);
 		myplr().data.destAction = ACTION_WALK;
 	} else if (pcursquest != -1) {
-		myplr().MakePlrPath(quests[pcursquest]._qtx, quests[pcursquest]._qty, true);
+		myplr().MakePlrPath(quests[pcursquest]._qt, true);
 		myplr().data.destAction = ACTION_WALK;
 	}
 }

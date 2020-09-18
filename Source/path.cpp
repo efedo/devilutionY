@@ -27,8 +27,17 @@ PATHNODE *path_2_nodes;
 PATHNODE path_unusednodes[MAXPATHNODES];
 
 /** For iterating over the 8 possible movement directions */
-const char pathxdir[8] = { -1, -1, 1, 1, -1, 0, 1, 0 };
-const char pathydir[8] = { -1, 1, -1, 1, 0, -1, 0, 1 };
+const V2Di pathdir[8] = {
+	{ -1, -1 },
+	{ -1,  1 },
+	{  1, -1 },
+	{  1,  1 },
+	{ -1,  0 },
+	{  0, -1 },
+	{  1,  0 },
+	{  0,  1 }
+};
+
 
 /* data */
 
@@ -174,10 +183,9 @@ BOOL path_get_path(BOOL (*PosOk)(int, V2Di), int PosOkArg, PATHNODE *pPath, V2Di
 	BOOL ok;
 
 	for (i = 0; i < 8; i++) {
-		d.x = pPath->pos.x + pathxdir[i];
-		d.y = pPath->pos.y + pathydir[i];
+		d = pPath->pos + pathdir[i];
 		ok = PosOk(PosOkArg, d);
-		if (ok && path_solid_pieces(pPath, d) || !ok && d.x == pos.x && d.y == pos.y) {
+		if (ok && path_solid_pieces(pPath, d) || !ok && d == pos.y) {
 			if (!path_parent_path(pPath, d, pos))
 				return FALSE;
 		}

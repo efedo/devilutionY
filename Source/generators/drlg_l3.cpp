@@ -1747,8 +1747,8 @@ void LoadL3Dungeon(char *sFileName, int vx, int vy)
 	DRLG_Init_Globals();
 	View.x = vx;
 	View.y = vy;
-	SetMapMonsters(pLevelMap, 0, 0);
-	SetMapObjects(pLevelMap, 0, 0);
+	SetMapMonsters(pLevelMap, { 0, 0 });
+	SetMapObjects(pLevelMap, { 0, 0 });
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {

@@ -713,7 +713,7 @@ BOOL LeftMouseCmd(BOOL bShift)
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	} else {
-		bNear = abs(myplr().data._p.x - cursm.x) < 2 && abs(myplr().data._p.y - cursm.y) < 2;
+		bNear = (myplr().data._p - cursm).abs().maxdim() < 2;
 		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
 			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {

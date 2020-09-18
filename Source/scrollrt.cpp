@@ -201,14 +201,14 @@ static void scrollrt_draw_cursor_item()
 		if (!myplr().data.HoldItem._iStatFlag) {
 			col = PAL16_RED + 5;
 		}
-		CelBlitOutline(col, mx + SCREEN_X, my + cursH + SCREEN_Y - 1, pCursCels, pcurs, cursW);
+		CelBlitOutline(col, { mx + SCREEN_X, my + cursH + SCREEN_Y - 1 }, pCursCels, pcurs, cursW);
 		if (col != PAL16_RED + 5) {
-			CelClippedDrawSafe(mx + SCREEN_X, my + cursH + SCREEN_Y - 1, pCursCels, pcurs, cursW);
+			CelClippedDrawSafe({ mx + SCREEN_X, my + cursH + SCREEN_Y - 1 }, pCursCels, pcurs, cursW);
 		} else {
-			CelDrawLightRedSafe(mx + SCREEN_X, my + cursH + SCREEN_Y - 1, pCursCels, pcurs, cursW, 1);
+			CelDrawLightRedSafe({ mx + SCREEN_X, my + cursH + SCREEN_Y - 1 }, pCursCels, pcurs, cursW, 1);
 		}
 	} else {
-		CelClippedDrawSafe(mx + SCREEN_X, my + cursH + SCREEN_Y - 1, pCursCels, pcurs, cursW);
+		CelClippedDrawSafe({ mx + SCREEN_X, my + cursH + SCREEN_Y - 1 }, pCursCels, pcurs, cursW);
 	}
 }
 
@@ -219,9 +219,10 @@ static void scrollrt_draw_cursor_item()
  * @param sy Back buffer coordinate
  * @param pre Is the sprite in the background
  */
-void DrawMissilePrivate(MissileStruct *m, int sx, int sy, BOOL pre)
+void DrawMissilePrivate(MissileStruct *m, V2Di s, BOOL pre)
 {
-	int mx, my, nCel, frames;
+	int nCel, frames;
+	V2Di mv;
 	BYTE *pCelBuff;
 
 	if (m->_miPreFlag != pre || !m->_miDrawFlag)
@@ -238,14 +239,14 @@ void DrawMissilePrivate(MissileStruct *m, int sx, int sy, BOOL pre)
 		// app_fatal("Draw Missile 2: frame %d of %d, missile type==%d", nCel, frames, m->_mitype);
 		return;
 	}
-	mx = sx + m->_mixoff - m->_miAnimWidth2;
-	my = sy + m->_miyoff;
+	mv.x = s.x + m->_mioff.x - m->_miAnimWidth2;
+	mv.y = s.y + m->_mioff.y;
 	if (m->_miUniqTrans)
-		Cl2DrawLightTbl(mx, my, m->_miAnimData, m->_miAnimFrame, m->_miAnimWidth, m->_miUniqTrans + 3);
+		Cl2DrawLightTbl(mv, m->_miAnimData, m->_miAnimFrame, m->_miAnimWidth, m->_miUniqTrans + 3);
 	else if (m->_miLightFlag)
-		Cl2DrawLight(mx, my, m->_miAnimData, m->_miAnimFrame, m->_miAnimWidth);
+		Cl2DrawLight(mv, m->_miAnimData, m->_miAnimFrame, m->_miAnimWidth);
 	else
-		Cl2Draw(mx, my, m->_miAnimData, m->_miAnimFrame, m->_miAnimWidth);
+		Cl2Draw(mv, m->_miAnimData, m->_miAnimFrame, m->_miAnimWidth);
 }
 
 /**
@@ -256,26 +257,26 @@ void DrawMissilePrivate(MissileStruct *m, int sx, int sy, BOOL pre)
  * @param sy Back buffer coordinate
  * @param pre Is the sprite in the background
  */
-void DrawMissile(int x, int y, int sx, int sy, BOOL pre)
+void DrawMissile(V2Di p, V2Di s, BOOL pre)
 {
 	int i;
 	MissileStruct *m;
 
-	if (!(grid[x][y].dFlags & BFLAG_MISSILE))
+	if (!(grid.at(p).dFlags & BFLAG_MISSILE))
 		return;
 
-	if (grid[x][y].dMissile != -1) {
-		m = &missile[grid[x][y].dMissile - 1];
-		DrawMissilePrivate(m, sx, sy, pre);
+	if (grid.at(p).dMissile != -1) {
+		m = &missile[grid.at(p).dMissile - 1];
+		DrawMissilePrivate(m, s, pre);
 		return;
 	}
 
 	for (i = 0; i < nummissiles; i++) {
 		assert(missileactive[i] < MAXMISSILES);
 		m = &missile[missileactive[i]];
-		if (m->_mix != x || m->_miy != y)
+		if (m->_mi.x != p.x || m->_mi.y != p.y)
 			continue;
-		DrawMissilePrivate(m, sx, sy, pre);
+		DrawMissilePrivate(m, s, pre);
 	}
 }
 
@@ -287,7 +288,7 @@ void DrawMissile(int x, int y, int sx, int sy, BOOL pre)
  * @param my Back buffer coordinate
  * @param m Id of monster
  */
-static void DrawMonster(int x, int y, int mx, int my, int m)
+static void DrawMonster(V2Di p, V2Di mv, int m)
 {
 	int nCel, frames;
 	char trans;
@@ -322,8 +323,8 @@ static void DrawMonster(int x, int y, int mx, int my, int m)
 		return;
 	}
 
-	if (!(grid[x][y].dFlags & BFLAG_LIT)) {
-		Cl2DrawLightTbl(mx, my, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width, 1);
+	if (!(grid.at(p).dFlags & BFLAG_LIT)) {
+		Cl2DrawLightTbl(mv, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width, 1);
 	} else {
 		trans = 0;
 		if (monsters[m].data._uniqtype)
@@ -333,9 +334,9 @@ static void DrawMonster(int x, int y, int mx, int my, int m)
 		if (myplr().data._pInfraFlag && light_table_index > 8)
 			trans = 1;
 		if (trans)
-			Cl2DrawLightTbl(mx, my, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width, trans);
+			Cl2DrawLightTbl(mv, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width, trans);
 		else
-			Cl2DrawLight(mx, my, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width);
+			Cl2DrawLight(mv, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width);
 	}
 }
 
@@ -350,8 +351,10 @@ static void DrawMonster(int x, int y, int mx, int my, int m)
  * @param nCel frame
  * @param nWidth width
  */
-static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, int nCel, int nWidth)
+static void DrawPlayer(int pnum, V2Di n, V2Di p, BYTE *pCelBuff, int nCel, int nWidth)
 {
+	int x = n.x;
+	int y = n.y;
 	int l, frames;
 
 	if (grid[x][y].dFlags & BFLAG_LIT || myplr().data._pInfraFlag || !level.setlevel && !level.currlevel) {
@@ -377,39 +380,32 @@ static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, i
 			return;
 		}
 		if (pnum == pcursplr)
-			Cl2DrawOutline(165, px, py, pCelBuff, nCel, nWidth);
+			Cl2DrawOutline(165, p, pCelBuff, nCel, nWidth);
 		if (pnum == myplr()) {
-			Cl2Draw(px, py, pCelBuff, nCel, nWidth);
+			Cl2Draw(p, pCelBuff, nCel, nWidth);
 			if (plr[pnum].data.pManaShield)
 				Cl2Draw(
-				    px + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
-				    py,
-				    misfiledata[MFILE_MANASHLD].mAnimData[0],
-				    1,
+				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0], p.y },
+				    misfiledata[MFILE_MANASHLD].mAnimData[0], 1,
 				    misfiledata[MFILE_MANASHLD].mAnimWidth[0]);
 		} else if (!(grid[x][y].dFlags & BFLAG_LIT) || myplr().data._pInfraFlag && light_table_index > 8) {
-			Cl2DrawLightTbl(px, py, pCelBuff, nCel, nWidth, 1);
+			Cl2DrawLightTbl(p, pCelBuff, nCel, nWidth, 1);
 			if (plr[pnum].data.pManaShield)
 				Cl2DrawLightTbl(
-				    px + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
-				    py,
-				    misfiledata[MFILE_MANASHLD].mAnimData[0],
-				    1,
-				    misfiledata[MFILE_MANASHLD].mAnimWidth[0],
-				    1);
+				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0], p.y },
+				    misfiledata[MFILE_MANASHLD].mAnimData[0], 1,
+				    misfiledata[MFILE_MANASHLD].mAnimWidth[0], 1);
 		} else {
 			l = light_table_index;
 			if (light_table_index < 5)
 				light_table_index = 0;
 			else
 				light_table_index -= 5;
-			Cl2DrawLight(px, py, pCelBuff, nCel, nWidth);
+			Cl2DrawLight(p, pCelBuff, nCel, nWidth);
 			if (plr[pnum].data.pManaShield)
 				Cl2DrawLight(
-				    px + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0],
-				    py,
-				    misfiledata[MFILE_MANASHLD].mAnimData[0],
-				    1,
+				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0], p.y },
+				    misfiledata[MFILE_MANASHLD].mAnimData[0], 1,
 				    misfiledata[MFILE_MANASHLD].mAnimWidth[0]);
 			light_table_index = l;
 		}
@@ -423,8 +419,10 @@ static void DrawPlayer(int pnum, int x, int y, int px, int py, BYTE *pCelBuff, i
  * @param sx Back buffer coordinate
  * @param sy Back buffer coordinate
  */
-void DrawDeadPlayer(int x, int y, int sx, int sy)
+void DrawDeadPlayer(V2Di pv, V2Di s)
 {
+	int x = pv.x;
+	int y = pv.y;
 	int i, px, py, nCel, frames;
 	PlayerStruct *p;
 	BYTE *pCelBuff;
@@ -433,7 +431,7 @@ void DrawDeadPlayer(int x, int y, int sx, int sy)
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i].data;
-		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && p->_px == x && p->_py == y) {
+		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && p->_p.x == x && p->_p.y == y) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
 				// app_fatal("Drawing dead player %d \"%s\": NULL Cel Buffer", i, p->_pName);
@@ -446,9 +444,9 @@ void DrawDeadPlayer(int x, int y, int sx, int sy)
 				break;
 			}
 			grid[x][y].dFlags |= BFLAG_DEAD_PLAYER;
-			px = sx + p->_pxoff - p->_pAnimWidth2;
-			py = sy + p->_pyoff;
-			DrawPlayer(i, x, y, px, py, p->_pAnimData, p->_pAnimFrame, p->_pAnimWidth);
+			px = s.x + p->_poff.x - p->_pAnimWidth2;
+			py = s.y + p->_poff.y;
+			DrawPlayer(i, { x, y }, { px, py }, p->_pAnimData, p->_pAnimFrame, p->_pAnimWidth);
 		}
 	}
 }
@@ -480,8 +478,8 @@ static void DrawObject(int x, int y, int ox, int oy, BOOL pre)
 		bv = -(grid[x][y].dObject + 1);
 		if (object[bv]._oPreFlag != pre)
 			return;
-		xx = object[bv]._ox - x;
-		yy = object[bv]._oy - y;
+		xx = object[bv]._o.x - x;
+		yy = object[bv]._o.y - y;
 		sx = (xx << 5) + ox - object[bv]._oAnimWidth2 - (yy << 5);
 		sy = oy + (yy << 4) + (xx << 4);
 	}
@@ -502,11 +500,11 @@ static void DrawObject(int x, int y, int ox, int oy, BOOL pre)
 	}
 
 	if (bv == pcursobj)
-		CelBlitOutline(194, sx, sy, object[bv]._oAnimData, object[bv]._oAnimFrame, object[bv]._oAnimWidth);
+		CelBlitOutline(194, { sx, sy }, object[bv]._oAnimData, object[bv]._oAnimFrame, object[bv]._oAnimWidth);
 	if (object[bv]._oLight) {
-		CelClippedDrawLight(sx, sy, object[bv]._oAnimData, object[bv]._oAnimFrame, object[bv]._oAnimWidth);
+		CelClippedDrawLight({ sx, sy }, object[bv]._oAnimData, object[bv]._oAnimFrame, object[bv]._oAnimWidth);
 	} else {
-		CelClippedDraw(sx, sy, object[bv]._oAnimData, object[bv]._oAnimFrame, object[bv]._oAnimWidth);
+		CelClippedDraw({ sx, sy }, object[bv]._oAnimData, object[bv]._oAnimFrame, object[bv]._oAnimWidth);
 	}
 }
 
@@ -593,9 +591,9 @@ static void DrawItem(int x, int y, int sx, int sy, BOOL pre)
 	assert((unsigned char)bItem <= MAXITEMS);
 	int px = sx - pItem->_iAnimWidth2;
 	if (bItem - 1 == pcursitem) {
-		CelBlitOutline(181, px, sy, pItem->_iAnimData, pItem->_iAnimFrame, pItem->_iAnimWidth);
+		CelBlitOutline(181, { px, sy }, pItem->_iAnimData, pItem->_iAnimFrame, pItem->_iAnimWidth);
 	}
-	CelClippedDrawLight(px, sy, pItem->_iAnimData, pItem->_iAnimFrame, pItem->_iAnimWidth);
+	CelClippedDrawLight({ px, sy }, pItem->_iAnimData, pItem->_iAnimFrame, pItem->_iAnimWidth);
 }
 
 /**
@@ -617,10 +615,10 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 	if (level.leveltype == DTYPE_TOWN) {
 		px = sx - towner[mi]._tAnimWidth2;
 		if (mi == pcursmonst) {
-			CelBlitOutline(166, px, sy, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
+			CelBlitOutline(166, { px, sy }, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
 		}
 		assert(towner[mi]._tAnimData);
-		CelClippedDraw(px, sy, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
+		CelClippedDraw({ px, sy }, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
 		return;
 	}
 
@@ -640,12 +638,12 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 		// app_fatal("Draw Monster \"%s\": uninitialized monster", pMonster->mName);
 	}
 
-	px = sx + pMonster->_mxoff - pMonster->MType->width2;
-	py = sy + pMonster->_myoff;
+	px = sx + pMonster->_moff.x - pMonster->MType->width2;
+	py = sy + pMonster->_moff.y;
 	if (mi == pcursmonst) {
-		Cl2DrawOutline(233, px, py, pMonster->_mAnimData, pMonster->_mAnimFrame, pMonster->MType->width);
+		Cl2DrawOutline(233, { px, py }, pMonster->_mAnimData, pMonster->_mAnimFrame, pMonster->MType->width);
 	}
-	DrawMonster(x, y, px, py, mi);
+	DrawMonster({ x, y }, { px, py }, mi);
 }
 
 /**
@@ -661,10 +659,10 @@ static void DrawPlayerHelper(int x, int y, int oy, int sx, int sy)
 	int p = grid[x][y + oy].dPlayer;
 	p = p > 0 ? p - 1 : -(p + 1);
 	PlayerStruct *pPlayer = &plr[p].data;
-	int px = sx + pPlayer->_pxoff - pPlayer->_pAnimWidth2;
-	int py = sy + pPlayer->_pyoff;
+	int px = sx + pPlayer->_poff.x - pPlayer->_pAnimWidth2;
+	int py = sy + pPlayer->_poff.y;
 
-	DrawPlayer(p, x, y + oy, px, py, pPlayer->_pAnimData, pPlayer->_pAnimFrame, pPlayer->_pAnimWidth);
+	DrawPlayer(p, { x, y + oy }, { px, py }, pPlayer->_pAnimData, pPlayer->_pAnimFrame, pPlayer->_pAnimWidth);
 }
 
 /**
@@ -701,11 +699,11 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 		negMon = grid[sx][sy - 1].dMonster;
 
 	if (visiondebug && bFlag & BFLAG_LIT) {
-		CelClippedDraw(dx, dy, pSquareCel, 1, 64);
+		CelClippedDraw({ dx, dy }, pSquareCel, 1, 64);
 	}
 
 	if (MissilePreFlag) {
-		DrawMissile(sx, sy, dx, dy, TRUE);
+		DrawMissile({ sx, sy }, { dx, dy }, TRUE);
 	}
 
 	if (light_table_index < lightmax && bDead != 0) {
@@ -716,9 +714,9 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 		assert(pDeadGuy->_deadData[dd] != NULL);
 		if (pCelBuff != NULL) {
 			if (pDeadGuy->_deadtrans != 0) {
-				Cl2DrawLightTbl(px, dy, pCelBuff, pDeadGuy->_deadFrame, pDeadGuy->_deadWidth, pDeadGuy->_deadtrans);
+				Cl2DrawLightTbl({ px, dy }, pCelBuff, pDeadGuy->_deadFrame, pDeadGuy->_deadWidth, pDeadGuy->_deadtrans);
 			} else {
-				Cl2DrawLight(px, dy, pCelBuff, pDeadGuy->_deadFrame, pDeadGuy->_deadWidth);
+				Cl2DrawLight({ px, dy }, pCelBuff, pDeadGuy->_deadFrame, pDeadGuy->_deadWidth);
 			}
 		}
 	}
@@ -732,7 +730,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 		DrawMonsterHelper(sx, sy, -1, dx, dy);
 	}
 	if (bFlag & BFLAG_DEAD_PLAYER) {
-		DrawDeadPlayer(sx, sy, dx, dy);
+		DrawDeadPlayer({ sx, sy }, { dx, dy });
 	}
 	if (grid[sx][sy].dPlayer > 0) {
 		DrawPlayerHelper(sx, sy, 0, dx, dy);
@@ -740,7 +738,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	if (grid[sx][sy].dMonster > 0) {
 		DrawMonsterHelper(sx, sy, 0, dx, dy);
 	}
-	DrawMissile(sx, sy, dx, dy, FALSE);
+	DrawMissile({ sx, sy }, { dx, dy }, FALSE);
 	DrawObject(sx, sy, dx, dy, 0);
 	DrawItem(sx, sy, dx, dy, 0);
 
@@ -1009,8 +1007,8 @@ static void DrawGame(int x, int y)
 
 	// Adjust by player offset and tile grid alignment
 	CalcTileOffset(&xo, &yo);
-	sx = ScrollInfo._sxoff - xo + SCREEN_X;
-	sy = ScrollInfo._syoff - yo + SCREEN_Y + (TILE_HEIGHT / 2 - 1);
+	sx = ScrollInfo._soff.x - xo + SCREEN_X;
+	sy = ScrollInfo._soff.y - yo + SCREEN_Y + (TILE_HEIGHT / 2 - 1);
 
 	// Center player tile on screen
 	TilesInView(&columns, &rows);
@@ -1108,9 +1106,9 @@ extern void DrawControllerModifierHints();
  * @param StartX Center of view in dPiece coordinate
  * @param StartY Center of view in dPiece coordinate
  */
-void DrawView(int StartX, int StartY)
+void DrawView(V2Di Start)
 {
-	DrawGame(StartX, StartY);
+	DrawGame(Start.x, Start.y);
 	if (automap.enabled()) {
 		automap.draw();
 	}
@@ -1202,12 +1200,12 @@ void ScrollView()
 	scroll = FALSE;
 
 	if (Mouse.x < 20) {
-		if (dmaxy - 1 <= View.y || dminx >= View.x) {
-			if (dmaxy - 1 > View.y) {
+		if (dmax.y - 1 <= View.y || dmin.x >= View.x) {
+			if (dmax.y - 1 > View.y) {
 				View.y++;
 				scroll = TRUE;
 			}
-			if (dminx < View.x) {
+			if (dmin.x < View.x) {
 				View.x--;
 				scroll = TRUE;
 			}
@@ -1218,12 +1216,12 @@ void ScrollView()
 		}
 	}
 	if (Mouse.x > SCREEN_WIDTH - 20) {
-		if (dmaxx - 1 <= View.x || dminy >= View.y) {
-			if (dmaxx - 1 > View.x) {
+		if (dmax.x - 1 <= View.x || dmin.y >= View.y) {
+			if (dmax.x - 1 > View.x) {
 				View.x++;
 				scroll = TRUE;
 			}
-			if (dminy < View.y) {
+			if (dmin.y < View.y) {
 				View.y--;
 				scroll = TRUE;
 			}
@@ -1234,12 +1232,12 @@ void ScrollView()
 		}
 	}
 	if (Mouse.y < 20) {
-		if (dminy >= View.y || dminx >= View.x) {
-			if (dminy < View.y) {
+		if (dmin.y >= View.y || dmin.x >= View.x) {
+			if (dmin.y < View.y) {
 				View.y--;
 				scroll = TRUE;
 			}
-			if (dminx < View.x) {
+			if (dmin.x < View.x) {
 				View.x--;
 				scroll = TRUE;
 			}
@@ -1250,12 +1248,12 @@ void ScrollView()
 		}
 	}
 	if (Mouse.y > SCREEN_HEIGHT - 20) {
-		if (dmaxy - 1 <= View.y || dmaxx - 1 <= View.x) {
-			if (dmaxy - 1 > View.y) {
+		if (dmax.y - 1 <= View.y || dmax.x - 1 <= View.x) {
+			if (dmax.y - 1 > View.y) {
 				View.y++;
 				scroll = TRUE;
 			}
-			if (dmaxx - 1 > View.x) {
+			if (dmax.x - 1 > View.x) {
 				View.x++;
 				scroll = TRUE;
 			}
@@ -1265,9 +1263,7 @@ void ScrollView()
 			scroll = TRUE;
 		}
 	}
-
-	if (scroll)
-		ScrollInfo._sdir = SDIR_NONE;
+	if (scroll) ScrollInfo._sdir = SDIR_NONE;
 }
 #endif
 
@@ -1299,7 +1295,7 @@ static void DrawFPS()
 			frameend = 0;
 		}
 		snprintf(String, 12, "%d FPS", framerate);
-		PrintGameStr(8, 65, String, COL_RED);
+		PrintGameStr({ 8, 65 }, String, COL_RED);
 	}
 }
 
@@ -1445,7 +1441,7 @@ void DrawAndBlit()
 	force_redraw = 0;
 
 	lock_buf(0);
-	DrawView(View.x, View.y);
+	DrawView(View);
 	if (ctrlPan) {
 		DrawCtrlPan();
 	}

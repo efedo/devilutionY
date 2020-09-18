@@ -357,7 +357,7 @@ BOOL CheckThemeRoom(int tv)
 	int i, j, tarea;
 
 	for (i = 0; i < numtrigs; i++) {
-		if (grid[trigs[i]._tx][trigs[i]._ty].dTransVal == tv)
+		if (grid.at(trigs[i]._t).dTransVal == tv)
 			return FALSE;
 	}
 
@@ -508,7 +508,7 @@ void PlaceThemeMonsts(int t, int f)
 		for (xp = 0; xp < MAXDUNX; xp++) {
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable && grid[xp][yp].dItem == 0 && grid[xp][yp].dObject == 0) {
 				if (random_(0, f) == 0) {
-					AddMonster(xp, yp, random_(0, 8), mtype, TRUE);
+					AddMonster({ xp, yp }, random_(0, 8), mtype, TRUE);
 				}
 			}
 		}
@@ -597,7 +597,7 @@ void Theme_MonstPit(int t)
 			}
 		}
 	}
-	CreateRndItem(ixp, iyp, TRUE, FALSE, TRUE);
+	CreateRndItem({ ixp, iyp }, TRUE, FALSE, TRUE);
 	ItemNoFlippy();
 	PlaceThemeMonsts(t, monstrnd[level.leveltype - 1]);
 }
@@ -621,45 +621,45 @@ void Theme_SkelRoom(int t)
 
 	if (random_(0, monstrnd[level.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton();
-		SpawnSkeleton(i, xp - 1, yp - 1);
+		SpawnSkeleton(i, { xp - 1, yp - 1 });
 	} else {
 		AddObject(OBJ_BANNERL, xp - 1, yp - 1);
 	}
 
 	i = PreSpawnSkeleton();
-	SpawnSkeleton(i, xp, yp - 1);
+	SpawnSkeleton(i, { xp, yp - 1 });
 
 	if (random_(0, monstrnd[level.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton();
-		SpawnSkeleton(i, xp + 1, yp - 1);
+		SpawnSkeleton(i, { xp + 1, yp - 1 });
 	} else {
 		AddObject(OBJ_BANNERR, xp + 1, yp - 1);
 	}
 	if (random_(0, monstrnd[level.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton();
-		SpawnSkeleton(i, xp - 1, yp);
+		SpawnSkeleton(i, { xp - 1, yp });
 	} else {
 		AddObject(OBJ_BANNERM, xp - 1, yp);
 	}
 	if (random_(0, monstrnd[level.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton();
-		SpawnSkeleton(i, xp + 1, yp);
+		SpawnSkeleton(i, { xp + 1, yp });
 	} else {
 		AddObject(OBJ_BANNERM, xp + 1, yp);
 	}
 	if (random_(0, monstrnd[level.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton();
-		SpawnSkeleton(i, xp - 1, yp + 1);
+		SpawnSkeleton(i, { xp - 1, yp + 1 });
 	} else {
 		AddObject(OBJ_BANNERR, xp - 1, yp + 1);
 	}
 
 	i = PreSpawnSkeleton();
-	SpawnSkeleton(i, xp, yp + 1);
+	SpawnSkeleton(i, { xp, yp + 1 });
 
 	if (random_(0, monstrnd[level.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton();
-		SpawnSkeleton(i, xp + 1, yp + 1);
+		SpawnSkeleton(i, { xp + 1, yp + 1 });
 	} else {
 		AddObject(OBJ_BANNERL, xp + 1, yp + 1);
 	}
@@ -691,11 +691,11 @@ void Theme_Treasure(int t)
 				int rv = random_(0, treasrnd[level.leveltype - 1]);
 				// BUGFIX: the `2*` in `2*random_(0, treasrnd...) == 0` has no effect, should probably be `random_(0, 2*treasrnd...) == 0`
 				if ((2 * random_(0, treasrnd[level.leveltype - 1])) == 0) {
-					CreateTypeItem(xp, yp, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
+					CreateTypeItem({ xp, yp }, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
 					ItemNoFlippy();
 				}
 				if (rv == 0) {
-					CreateRndItem(xp, yp, FALSE, FALSE, TRUE);
+					CreateRndItem({ xp, yp }, FALSE, FALSE, TRUE);
 					ItemNoFlippy();
 				}
 				if (rv == 0 || rv >= treasrnd[level.leveltype - 1] - 2) {
@@ -877,7 +877,7 @@ void Theme_GoatShrine(int t)
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
 			if (grid[xx][yy].dTransVal == themes[t].ttval && !pieces[grid[xx][yy].dPiece].nSolidTable && (xx != themex || yy != themey)) {
-				AddMonster(xx, yy, DIR_SW, themeVar1, TRUE);
+				AddMonster({ xx, yy }, DIR_SW, themeVar1, TRUE);
 			}
 		}
 	}

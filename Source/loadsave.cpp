@@ -761,8 +761,8 @@ void LoadQuest(int i)
 	CopyChar(tbuff, &pQuest->_qtype);
 	CopyChar(tbuff, &pQuest->_qactive);
 	CopyChar(tbuff, &pQuest->_qlvltype);
-	CopyInt(tbuff, &pQuest->_qtx);
-	CopyInt(tbuff, &pQuest->_qty);
+	CopyInt(tbuff, &pQuest->_qt.x);
+	CopyInt(tbuff, &pQuest->_qt.y);
 	CopyChar(tbuff, &pQuest->_qslvl);
 	CopyChar(tbuff, &pQuest->_qidx);
 	CopyChar(tbuff, &pQuest->_qmsg);
@@ -1479,8 +1479,8 @@ void SaveQuest(int i)
 	CopyChar(&pQuest->_qtype, tbuff);
 	CopyChar(&pQuest->_qactive, tbuff);
 	CopyChar(&pQuest->_qlvltype, tbuff);
-	CopyInt(&pQuest->_qtx, tbuff);
-	CopyInt(&pQuest->_qty, tbuff);
+	CopyInt(&pQuest->_qt.x, tbuff);
+	CopyInt(&pQuest->_qt.y, tbuff);
 	CopyChar(&pQuest->_qslvl, tbuff);
 	CopyChar(&pQuest->_qidx, tbuff);
 	CopyChar(&pQuest->_qmsg, tbuff);

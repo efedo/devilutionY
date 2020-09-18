@@ -103,7 +103,7 @@ void AddBoneSpirit(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int 
 void AddRportal(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam);
 void AddDiabApoca(int mi, V2Di s, V2Di d, int midir, char mienemy, int id, int dam);
 int AddMissile(V2Di s, V2Di d, int midir, int mitype, char micaster, int id, int midam, int spllvl);
-int Sentfire(int i, int sx, int sy);
+int Sentfire(int i, V2Di s);
 void MI_Dummy(int i);
 void MI_Golem(int i);
 void MI_SetManashield(int i);

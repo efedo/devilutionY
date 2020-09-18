@@ -31,6 +31,7 @@ public:
 	BOOL M_Talker();
 	void M_Enemy();
 	int M_GetDir();
+	void GetTargetLoc(V2Di & pos, int & dist, int & dir);
 	void M_CheckEFlag();
 	void M_StartStand(int md);
 	void M_StartDelay(int len);

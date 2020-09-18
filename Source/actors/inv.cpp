@@ -1757,18 +1757,18 @@ BOOL TryInvPut()
 	int dir;
 	if (numitems >= 127) return FALSE;
 	dir = GetDirection(myplr().data._p, cursm);
-	V2Di offset = { offset_x[dir], offset_y[dir] };
-	if (CanPut(myplr().data._p + offset)) {
+	V2Di off = offset[dir];
+	if (CanPut(myplr().data._p + off)) {
 		return TRUE;
 	}
 
 	dir = (dir - 1) & 7;
-	if (CanPut(myplr().data._p + offset)) {
+	if (CanPut(myplr().data._p + off)) {
 		return TRUE;
 	}
 
 	dir = (dir + 2) & 7;
-	if (CanPut(myplr().data._p + offset)) {
+	if (CanPut(myplr().data._p + off)) {
 		return TRUE;
 	}
 	return CanPut(myplr().data._p);
@@ -1793,17 +1793,17 @@ int PlayerInventory::_PrepPutItem(V2Di &pos)
 	if (numitems >= 127) return -1;
 
 	int d = GetDirection(owner.data._p, pos);
-	V2Di offset = { offset_x[d], offset_y[d] };
+	V2Di off = offset[d];
 	n = pos - owner.data._p;
 	if (abs(n.x) > 1 || abs(n.y) > 1) {
-		pos = owner.data._p + offset;
+		pos = owner.data._p + off;
 	}
 	if (!CanPut(pos)) {
 		d = (d - 1) & 7;
-		pos = owner.data._p + offset;
+		pos = owner.data._p + off;
 		if (!CanPut(pos)) {
 			d = (d + 2) & 7;
-			pos = owner.data._p + offset;
+			pos = owner.data._p + off;
 			if (!CanPut(pos)) {
 				for (l = 1; l < 50; l++) {
 					for (j = -l; j <= l; j++) {

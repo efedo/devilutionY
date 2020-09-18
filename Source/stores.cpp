@@ -157,7 +157,7 @@ void PrintSString(int x, int y, BOOL cjustflag, char *str, char col, int val)
 		c = fontframe[gbFontTransTbl[(BYTE)str[i]]];
 		k += fontkern[c] + 1;
 		if (c && k <= yy) {
-			PrintChar(sx, sy, c, col);
+			PrintChar({ sx, sy }, c, col);
 		}
 		sx += fontkern[c] + 1;
 	}
@@ -168,7 +168,7 @@ void PrintSString(int x, int y, BOOL cjustflag, char *str, char col, int val)
 			c = fontframe[gbFontTransTbl[(BYTE)valstr[i]]];
 			sx -= fontkern[c] + 1;
 			if (c) {
-				PrintChar(sx, sy, c, col);
+				PrintChar({ sx, sy }, c, col);
 			}
 		}
 	}
@@ -306,54 +306,54 @@ void StoreAutoPlace()
 			}
 		}
 		for (i = 30; i <= 39 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 20; i <= 29 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 10; i <= 19 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 0; i <= 9 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 	}
 	if (w == 1 && h == 2) {
 		for (i = 29; i >= 20 && !done; i--) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 9; i >= 0 && !done; i--) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 19; i >= 10 && !done; i--) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 	}
 	if (w == 1 && h == 3) {
 		for (i = 0; i < 20 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 	}
 	if (w == 2 && h == 2) {
 		for (i = 0; i < 10 && !done; i++) {
-			done = myplr().inventory.AutoPlace(AP2x2Tbl[i], w, h, TRUE);
+			done = myplr().inventory.AutoPlace(AP2x2Tbl[i], { w, h }, TRUE);
 		}
 		for (i = 21; i < 29 && !done; i += 2) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 1; i < 9 && !done; i += 2) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 10; i < 19 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 	}
 	if (w == 2 && h == 3) {
 		for (i = 0; i < 9 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 		for (i = 10; i < 19 && !done; i++) {
-			done = myplr().inventory.AutoPlace(i, w, h, TRUE);
+			done = myplr().inventory.AutoPlace(i, { w, h }, TRUE);
 		}
 	}
 }
@@ -1886,7 +1886,7 @@ void S_SBuyEnter()
 			done = FALSE;
 
 			for (i = 0; i < 40 && !done; i++) {
-				done = myplr().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.AutoPlace(i, { cursW / 28, cursH / 28 }, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -1947,7 +1947,7 @@ void S_SPBuyEnter()
 			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 			for (i = 0; i < 40 && !done; i++) {
-				done = myplr().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.AutoPlace(i, { cursW / 28, cursH / 28 }, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -2198,7 +2198,7 @@ void S_WBuyEnter()
 			done = FALSE;
 
 			for (i = 0; i < 40 && !done; i++) {
-				done = myplr().inventory.SpecialAutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.SpecialAutoPlace(i, { cursW / 28, cursH / 28 }, FALSE);
 			}
 
 			if (done)
@@ -2365,7 +2365,7 @@ void S_BBuyEnter()
 			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			done = FALSE;
 			for (i = 0; i < 40 && !done; i++) {
-				done = myplr().inventory.AutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.AutoPlace(i, { cursW / 28, cursH / 28 }, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);
@@ -2496,7 +2496,7 @@ void S_HBuyEnter()
 			done = FALSE;
 			i = 0;
 			for (i = 0; i < 40 && !done; i++) {
-				done = myplr().inventory.SpecialAutoPlace(i, cursW / 28, cursH / 28, FALSE);
+				done = myplr().inventory.SpecialAutoPlace(i, { cursW / 28, cursH / 28 }, FALSE);
 			}
 			if (done)
 				StartStore(STORE_CONFIRM);

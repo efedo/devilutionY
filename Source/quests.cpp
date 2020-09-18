@@ -36,8 +36,16 @@ QuestData questlist[MAXQUESTS] = {
 	{      15,         15, DTYPE_CATHEDRAL, Q_BETRAYER,     100,      5,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
 	// clang-format on
 };
-char questxoff[7] = { 0, -1, 0, -1, -2, -1, -2 };
-char questyoff[7] = { 0, 0, -1, -1, -1, -2, -2 };
+V2Di questoff[7] = {
+	{ 0, 0 },
+	{ -1, 0 },
+	{ 0, -1 },
+	{ -1, -1 },
+	{ -2, -1 },
+	{ -1, -2 },
+	{ -2, -2 }
+};
+
 char *questtrigstr[5] = {
 	"King Leoric's Tomb",
 	"The Chamber of Bone",
@@ -91,8 +99,7 @@ void InitQuests()
 			}
 
 			quests[z]._qslvl = questlist[z]._qslvl;
-			quests[z]._qtx = 0;
-			quests[z]._qty = 0;
+			quests[z]._qt = { 0, 0 };
 			quests[z]._qidx = z;
 			quests[z]._qlvltype = questlist[z]._qlvlt;
 			quests[z]._qvar2 = 0;
@@ -135,7 +142,8 @@ void InitQuests()
 void CheckQuests()
 {
 #ifndef SPAWN
-	int i, rportx, rporty;
+	int i;
+	V2Di rport;
 
 	if (QuestStatus(Q_BETRAYER) && gbMaxPlayers != 1 && quests[Q_BETRAYER]._qvar1 == 2) {
 		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
@@ -152,11 +160,9 @@ void CheckQuests()
 	    && quests[Q_BETRAYER]._qvar1 >= 2
 	    && (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE || quests[Q_BETRAYER]._qactive == QUEST_DONE)
 	    && (quests[Q_BETRAYER]._qvar2 == 0 || quests[Q_BETRAYER]._qvar2 == 2)) {
-		quests[Q_BETRAYER]._qtx = 2 * quests[Q_BETRAYER]._qtx + 16;
-		quests[Q_BETRAYER]._qty = 2 * quests[Q_BETRAYER]._qty + 16;
-		rportx = quests[Q_BETRAYER]._qtx;
-		rporty = quests[Q_BETRAYER]._qty;
-		AddMissile(rportx, rporty, rportx, rporty, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
+		quests[Q_BETRAYER]._qt = 2 * quests[Q_BETRAYER]._qt + V2Di(16, 16);
+		rport = quests[Q_BETRAYER]._qt;
+		AddMissile(rport, rport, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 1;
 		if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
 			quests[Q_BETRAYER]._qvar1 = 3;
@@ -167,9 +173,8 @@ void CheckQuests()
 	    && level.setlevel
 	    && level.setlvlnum == SL_VILEBETRAYER
 	    && quests[Q_BETRAYER]._qvar2 == 4) {
-		rportx = 35;
-		rporty = 32;
-		AddMissile(rportx, rporty, rportx, rporty, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
+		rport = { 35, 32 };
+		AddMissile(rport, rport, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 3;
 	}
 
@@ -180,7 +185,7 @@ void CheckQuests()
 		    && nummonsters == 4
 		    && quests[Q_PWATER]._qactive != QUEST_DONE) {
 			quests[Q_PWATER]._qactive = QUEST_DONE;
-			PlaySfxLoc(IS_QUESTDN, myplr().data._px, myplr().data._py);
+			PlaySfxLoc(IS_QUESTDN, myplr().data._p);
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
 			WaterDone = 32;
 		}
@@ -193,8 +198,7 @@ void CheckQuests()
 			if (level.currlevel == quests[i]._qlevel
 			    && quests[i]._qslvl != 0
 			    && quests[i]._qactive != QUEST_NOTAVAIL
-			    && myplr().data._px == quests[i]._qtx
-			    && myplr().data._py == quests[i]._qty) {
+			    && myplr().data._p == quests[i]._qt) {
 				if (quests[i]._qlvltype != DTYPE_NONE) {
 					level.setlvltype = quests[i]._qlvltype;
 				}
@@ -208,7 +212,8 @@ void CheckQuests()
 BOOL ForceQuests()
 {
 #ifndef SPAWN
-	int i, j, qx, qy, ql;
+	int i, j, ql;
+	V2Di q;
 
 	if (gbMaxPlayers != 1) {
 		return FALSE;
@@ -218,14 +223,12 @@ BOOL ForceQuests()
 
 		if (i != Q_BETRAYER && level.currlevel == quests[i]._qlevel && quests[i]._qslvl != 0) {
 			ql = quests[quests[i]._qidx]._qslvl - 1;
-			qx = quests[i]._qtx;
-			qy = quests[i]._qty;
+			q = quests[i]._qt;
 
 			for (j = 0; j < 7; j++) {
-				if (qx + questxoff[j] == cursmx && qy + questyoff[j] == cursmy) {
+				if (q + questoff[j] == cursm) {
 					sprintf(infostr, "To %s", questtrigstr[ql]);
-					cursmx = qx;
-					cursmy = qy;
+					cursm = q;
 					return TRUE;
 				}
 			}
@@ -308,8 +311,8 @@ void CheckQuestKill(int m, BOOL sendmsg)
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
 				if (grid[i][j].dPiece == 370) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
+					trigs[numtrigs]._t.x = i;
+					trigs[numtrigs]._t.y = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 					numtrigs++;
 				}
@@ -333,7 +336,7 @@ void CheckQuestKill(int m, BOOL sendmsg)
 		quests[Q_BETRAYER]._qvar1 = 7;
 		quests[Q_BETRAYER]._qvar2 = 4;
 		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
-		AddMissile(35, 32, 35, 32, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile({ 35, 32 }, { 35, 32 }, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR83;
 		} else if (myplr().data._pClass == PC_ROGUE) {
@@ -366,8 +369,8 @@ void DrawButcher()
 
 void DrawSkelKing(int q, int x, int y)
 {
-	quests[q]._qtx = 2 * x + 28;
-	quests[q]._qty = 2 * y + 23;
+	quests[q]._qt.x = 2 * x + 28;
+	quests[q]._qt.y = 2 * y + 23;
 }
 
 void DrawWarLord(int x, int y)
@@ -382,8 +385,8 @@ void DrawWarLord(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc.w = rw;
+	setpc.h = rh;
 	setpc.x = x;
 	setpc.y = y;
 	for (j = y; j < y + rh; j++) {
@@ -413,8 +416,8 @@ void DrawSChamber(int q, int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc.w = rw;
+	setpc.h = rh;
 	setpc.x = x;
 	setpc.y = y;
 	for (j = y; j < y + rh; j++) {
@@ -430,8 +433,8 @@ void DrawSChamber(int q, int x, int y)
 	}
 	xx = 2 * x + 22;
 	yy = 2 * y + 23;
-	quests[q]._qtx = xx;
-	quests[q]._qty = yy;
+	quests[q]._qt.x = xx;
+	quests[q]._qt.y = yy;
 	mem_free_dbg(setp);
 }
 
@@ -446,8 +449,8 @@ void DrawLTBanner(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc.w = rw;
+	setpc.h = rh;
 	setpc.x = x;
 	setpc.y = y;
 	for (j = 0; j < rh; j++) {
@@ -474,8 +477,8 @@ void DrawBlind(int x, int y)
 	sp += 2;
 	setpc.x = x;
 	setpc.y = y;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc.w = rw;
+	setpc.h = rh;
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -500,8 +503,8 @@ void DrawBlood(int x, int y)
 	sp += 2;
 	setpc.x = x;
 	setpc.y = y;
-	setpc_w = rw;
-	setpc_h = rh;
+	setpc.w = rw;
+	setpc.h = rh;
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -550,26 +553,26 @@ void SetReturnLvlPos()
 {
 	switch (level.setlvlnum) {
 	case SL_SKELKING:
-		ReturnLvlX = quests[Q_SKELKING]._qtx + 1;
-		ReturnLvlY = quests[Q_SKELKING]._qty;
+		ReturnLvlX = quests[Q_SKELKING]._qt.x + 1;
+		ReturnLvlY = quests[Q_SKELKING]._qt.y;
 		ReturnLvl = quests[Q_SKELKING]._qlevel;
 		ReturnLvlT = DTYPE_CATHEDRAL;
 		break;
 	case SL_BONECHAMB:
-		ReturnLvlX = quests[Q_SCHAMB]._qtx + 1;
-		ReturnLvlY = quests[Q_SCHAMB]._qty;
+		ReturnLvlX = quests[Q_SCHAMB]._qt.x + 1;
+		ReturnLvlY = quests[Q_SCHAMB]._qt.y;
 		ReturnLvl = quests[Q_SCHAMB]._qlevel;
 		ReturnLvlT = DTYPE_CATACOMBS;
 		break;
 	case SL_POISONWATER:
-		ReturnLvlX = quests[Q_PWATER]._qtx;
-		ReturnLvlY = quests[Q_PWATER]._qty + 1;
+		ReturnLvlX = quests[Q_PWATER]._qt.x;
+		ReturnLvlY = quests[Q_PWATER]._qt.y + 1;
 		ReturnLvl = quests[Q_PWATER]._qlevel;
 		ReturnLvlT = DTYPE_CATHEDRAL;
 		break;
 	case SL_VILEBETRAYER:
-		ReturnLvlX = quests[Q_BETRAYER]._qtx + 1;
-		ReturnLvlY = quests[Q_BETRAYER]._qty - 1;
+		ReturnLvlX = quests[Q_BETRAYER]._qt.x + 1;
+		ReturnLvlY = quests[Q_BETRAYER]._qt.y - 1;
 		ReturnLvl = quests[Q_BETRAYER]._qlevel;
 		ReturnLvlT = DTYPE_HELL;
 		break;
@@ -629,39 +632,39 @@ void ResyncQuests()
 	if (QuestStatus(Q_LTBANNER)) {
 		if (quests[Q_LTBANNER]._qvar1 == 1)
 			ObjChangeMapResync(
-			    setpc_w + setpc.x - 2,
-			    setpc_h + setpc.y - 2,
-			    setpc_w + setpc.x + 1,
-			    setpc_h + setpc.y + 1);
+			    { setpc.w + setpc.x - 2,
+			        setpc.h + setpc.y - 2 },
+			    { setpc.w + setpc.x + 1,
+			        setpc.h + setpc.y + 1 });
 		if (quests[Q_LTBANNER]._qvar1 == 2) {
 			ObjChangeMapResync(
-			    setpc_w + setpc.x - 2,
-			    setpc_h + setpc.y - 2,
-			    setpc_w + setpc.x + 1,
-			    setpc_h + setpc.y + 1);
-			ObjChangeMapResync(setpc.x, setpc.y, (setpc_w >> 1) + setpc.x + 2, (setpc_h >> 1) + setpc.y - 2);
+			    { setpc.w + setpc.x - 2,
+			        setpc.h + setpc.y - 2 },
+			    { setpc.w + setpc.x + 1,
+			        setpc.h + setpc.y + 1 });
+			ObjChangeMapResync({ setpc.x, setpc.y }, { (setpc.w >> 1) + setpc.x + 2, (setpc.h >> 1) + setpc.y - 2 });
 			for (i = 0; i < nobjects; i++)
 				SyncObjectAnim(objectactive[i]);
 			tren = TransVal;
 			TransVal = 9;
-			DRLG_MRectTrans(setpc.x, setpc.y, (setpc_w >> 1) + setpc.x + 4, setpc.y + (setpc_h >> 1));
+			DRLG_MRectTrans(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 4, setpc.y + (setpc.h >> 1));
 			TransVal = tren;
 		}
 		if (quests[Q_LTBANNER]._qvar1 == 3) {
 			x = setpc.x;
 			y = setpc.y;
-			ObjChangeMapResync(x, y, x + setpc_w + 1, y + setpc_h + 1);
+			ObjChangeMapResync({ x, y }, { x + setpc.w + 1, y + setpc.h + 1 });
 			for (i = 0; i < nobjects; i++)
 				SyncObjectAnim(objectactive[i]);
 			tren = TransVal;
 			TransVal = 9;
-			DRLG_MRectTrans(setpc.x, setpc.y, (setpc_w >> 1) + setpc.x + 4, setpc.y + (setpc_h >> 1));
+			DRLG_MRectTrans(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 4, setpc.y + (setpc.h >> 1));
 			TransVal = tren;
 		}
 	}
 	if (level.currlevel == quests[Q_MUSHROOM]._qlevel) {
 		if (quests[Q_MUSHROOM]._qactive == QUEST_INIT && !quests[Q_MUSHROOM]._qvar1) {
-			SpawnQuestItem(IDI_FUNGALTM, 0, 0, 5, 1);
+			SpawnQuestItem(IDI_FUNGALTM, { 0, 0 }, 5, 1);
 			quests[Q_MUSHROOM]._qvar1 = QS_TOMESPAWNED;
 		} else {
 			if (quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE) {
@@ -676,13 +679,13 @@ void ResyncQuests()
 	}
 	if (level.currlevel == quests[Q_VEIL]._qlevel + 1 && quests[Q_VEIL]._qactive == QUEST_ACTIVE && !quests[Q_VEIL]._qvar1) {
 		quests[Q_VEIL]._qvar1 = 1;
-		SpawnQuestItem(IDI_GLDNELIX, 0, 0, 5, 1);
+		SpawnQuestItem(IDI_GLDNELIX, { 0, 0 }, 5, 1);
 	}
 	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
 		if (quests[Q_BETRAYER]._qvar1 >= 4)
-			ObjChangeMapResync(1, 11, 20, 18);
+			ObjChangeMapResync({ 1, 11 }, { 20, 18 });
 		if (quests[Q_BETRAYER]._qvar1 >= 6)
-			ObjChangeMapResync(1, 18, 20, 24);
+			ObjChangeMapResync({ 1, 18 }, { 20, 24 });
 		if (quests[Q_BETRAYER]._qvar1 >= 7)
 			InitVPTriggers();
 		for (i = 0; i < nobjects; i++)
@@ -721,7 +724,7 @@ void PrintQLString(int x, int y, BOOL cjustflag, char *str, int col)
 		c = fontframe[gbFontTransTbl[(BYTE)str[i]]];
 		k += fontkern[c] + 1;
 		if (c && k <= 257) {
-			PrintChar(sx, sy, c, col);
+			PrintChar({ sx, sy }, c, col);
 		}
 		sx += fontkern[c] + 1;
 	}
