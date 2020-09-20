@@ -8,7 +8,6 @@ DEBUG_OPTION(UBSAN "Enable undefined behaviour sanitizer")
 DEBUG_OPTION(DEBUG "Enable debug mode in engine")
 option(DISABLE_LTO "Disable link-time optimization (by default enabled in release mode)" OFF)
 option(PIE "Generate position-independent code" OFF)
-option(SPAWN "Build the shareware version" OFF)
 option(DIST "Dynamically link only glibc and SDL2" OFF)
 option(BINARY_RELEASE "Enable options for binary release" OFF)
 option(NIGHTLY_BUILD "Enable options for nightly build" OFF)
@@ -47,10 +46,10 @@ if(CCACHE_PROGRAM)
 endif()
 
 if(VERSION_NUM MATCHES untagged)
-  project(DevilutionX
+  project(DevilutionY
     LANGUAGES C CXX)
 else()
-  project(DevilutionX
+  project(DevilutionY
     VERSION ${VERSION_NUM}
     LANGUAGES C CXX)
 endif()
@@ -68,14 +67,14 @@ if(NOT DISABLE_LTO)
   endif()
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${DevilutionX_SOURCE_DIR}/CMake")
+list(APPEND CMAKE_MODULE_PATH "${DevilutionY_SOURCE_DIR}/CMake")
 
 if(SWITCH)
   set(ASAN OFF)
   set(UBSAN OFF)
   set(PIE ON)
 
-  list(APPEND CMAKE_MODULE_PATH "${DevilutionX_SOURCE_DIR}/CMake/switch")
+  list(APPEND CMAKE_MODULE_PATH "${DevilutionY_SOURCE_DIR}/CMake/switch")
   find_package(LIBNX REQUIRED)
   include(switch_defs)
 endif()
@@ -190,6 +189,7 @@ add_library(devilution STATIC
   Source/dead.cpp
   Source/debug.cpp
   Source/diablo.cpp
+  Source/directions.cpp
   Source/doom.cpp
   Source/generators/drlg_l1.cpp
   Source/generators/drlg_l2.cpp
@@ -231,6 +231,8 @@ add_library(devilution STATIC
   Source/pack.cpp
   Source/palette.cpp
   Source/path.cpp
+  Source/micropather/pathfinder.cpp
+  Source/micropather/micropather.cpp
   Source/pfile.cpp
   Source/actors/player.cpp
   Source/plrmsg.cpp
@@ -400,7 +402,6 @@ target_compile_definitions(${BIN_TARGET} PRIVATE ASIO_STANDALONE)
 # Defines without value
 foreach(
   def_name
-  SPAWN
   NONET
   PREFILL_PLAYER_NAME
 )
@@ -595,7 +596,7 @@ if(APPLE)
 endif()
 
 if(SWITCH)
-  set(APP_TITLE "DevilutionX")
+  set(APP_TITLE "DevilutionY")
   set(APP_AUTHOR "Devilution Team")
   set(APP_ICON "${PROJECT_SOURCE_DIR}/Packaging/switch/icon.jpg")
   set(APP_VERSION ${PROJECT_VERSION})

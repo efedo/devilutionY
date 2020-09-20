@@ -17,7 +17,7 @@ extern DeadStruct dead[MAXDEAD];
 extern int stonendx;
 
 void InitDead();
-void AddDead(V2Di pos, char dv, int ddir);
+void AddDead(V2Di pos, char dv, Dir ddir);
 void SetDead();
 
 //#ifdef __cplusplus

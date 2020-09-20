@@ -959,7 +959,7 @@ void ToggleLighting()
 		grid.prelightToLight();
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel) {
-				DoLighting(plr[i].data._p, plr[i].data._pLightRad, -1);
+				DoLighting(plr[i].pos(), plr[i].data._pLightRad, -1);
 			}
 		}
 	}

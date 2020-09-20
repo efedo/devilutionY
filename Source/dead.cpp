@@ -71,9 +71,9 @@ void InitDead()
 	assert(nd <= MAXDEAD);
 }
 
-void AddDead(V2Di pos, char dv, int ddir)
+void AddDead(V2Di pos, char dv, Dir ddir)
 {
-	grid[pos.x][pos.y].dDead = (dv & 0x1F) + (ddir << 5);
+	grid[pos.x][pos.y].dDead = (dv & 0x1F) + (int(ddir) << 5);
 }
 
 void SetDead()

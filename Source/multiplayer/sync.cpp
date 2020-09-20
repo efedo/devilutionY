@@ -224,8 +224,10 @@ DWORD sync_update(int pnum, const BYTE *pbBuf)
 
 void sync_monster(int pnum, const TSyncMonster *p)
 {
-	int i, ndx, md, mdx, mdy;
+	int i, ndx;
 	DWORD delta;
+	Dir md;
+	V2Di mdv;
 
 	ndx = p->_mndx;
 
@@ -253,10 +255,9 @@ void sync_monster(int pnum, const TSyncMonster *p)
 	if (monsters[ndx].data._mmode == MM_CHARGE || monsters[ndx].data._mmode == MM_STONE) {
 		return;
 	}
-
-	mdx = abs(monsters[ndx].data._m.x - p->_mx);
-	mdy = abs(monsters[ndx].data._m.y - p->_my);
-	if (mdx <= 2 && mdy <= 2) {
+	mdv = monsters[ndx].data._m;
+	mdv -= { p->_mx, p->_my	};
+	if (mdv.maxabs() <= 2) {
 		if (monsters[ndx].data._mmode < MM_WALK || monsters[ndx].data._mmode > MM_WALK3) {
 			md = GetDirection(monsters[ndx].data._m, { p->_mx, p->_my });
 			if (monsters[ndx].DirOK(md)) {
@@ -271,7 +272,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 		grid[p->_mx][p->_my].dMonster = ndx + 1;
 		monsters[ndx].data._m = { p->_mx, p->_my };
 		decode_enemy(ndx, p->_menemy);
-		md = GetDirection({ p->_mx, p->_my }, monsters[ndx].data._menemy);
+		md = GetDirection({ p->_mx, p->_my }, monsters[ndx].data._menemypos);
 		monsters[ndx].M_StartStand(md);
 		monsters[ndx].data._msquelch = UCHAR_MAX;
 	}

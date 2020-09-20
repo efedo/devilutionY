@@ -83,7 +83,7 @@ void ENG_set_pixel(V2Di s, BYTE col);
 void engine_draw_pixel(V2Di s);
 void DrawLine(int x0, int y0, int x1, int y1, BYTE col);
 void DrawLine(V2Di p0, V2Di p1, BYTE col);
-int GetDirection(V2Di t1, V2Di t2);
+Dir GetDirection(V2Di t1, V2Di t2);
 void SetRndSeed(int s);
 int GetRndSeed();
 int random_(BYTE idx, int v);

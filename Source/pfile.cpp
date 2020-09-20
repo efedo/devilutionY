@@ -5,13 +5,8 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#ifdef SPAWN
-#define PASSWORD_SINGLE "adslhfb1"
-#define PASSWORD_MULTI "lshbkfg1"
-#else
 #define PASSWORD_SINGLE "xrgyrkj1"
 #define PASSWORD_MULTI "szqnlsk1"
-#endif
 
 /** List of character names for the character selection screen. */
 static char hero_names[MAX_CHARACTERS][PLR_NAME_LEN];
@@ -73,19 +68,10 @@ BOOL pfile_open_archive(BOOL update, DWORD save_num)
 void pfile_get_save_path(char *pszBuf, DWORD dwBufSize, DWORD save_num)
 {
 	char path[MAX_PATH];
-
-#ifdef SPAWN
-	const char *fmt = "%sshare_%d.sv";
-
-	if (gbMaxPlayers <= 1)
-		fmt = "%sspawn%d.sv";
-#else
 	const char *fmt = "%smulti_%d.sv";
 
 	if (gbMaxPlayers <= 1)
 		fmt = "%ssingle_%d.sv";
-#endif
-
 	GetPrefPath(path, MAX_PATH);
 	snprintf(pszBuf, MAX_PATH, fmt, path, save_num);
 }
@@ -167,11 +153,7 @@ void game_2_ui_player(const PlayerStruct *p, _uiheroinfo *heroinfo, BOOL bHasSav
 	heroinfo->gold = p->_pGold;
 	heroinfo->hassaved = bHasSaveFile;
 	heroinfo->herorank = p->pDiabloKillLevel;
-#ifdef SPAWN
-	heroinfo->spawned = TRUE;
-#else
 	heroinfo->spawned = FALSE;
-#endif
 }
 
 BYTE game_2_ui_class(const PlayerStruct *p)

@@ -43,9 +43,9 @@ int spbslot = 0;
 int GetRotaryDistance(V2Di p)
 {
 	if (myplr().data._pfut == p) return -1;
-	int d1 = myplr().data._pdir;
-	int d2 = GetDirection(myplr().data._pfut, p);
-	int d = abs(d1 - d2);
+	Dir d1 = myplr().data._pdir;
+	Dir d2 = GetDirection(myplr().data._pfut, p);
+	int d = abs(int(d1) - int(d2));
 	if (d > 4) return 4 - (d % 4);
 	return d;
 }
@@ -70,8 +70,9 @@ int GetMinDistance(V2Di p)
 int GetDistance(V2Di d, int maxDistance)
 {
 	if (GetMinDistance(d) > maxDistance) return 0;
-	char walkpath[MAX_PATH_LENGTH];
-	int steps = FindPath(PosOkPlayer, myplr(), myplr().data._pfut, d, walkpath);
+	//char walkpath[MAX_PATH_LENGTH];
+	std::queue<PathNode> walkpath;
+	int steps = pathfinder.FindPath(PosOkPlayer, myplr(), myplr().data._pfut, d, walkpath);
 	if (steps > maxDistance) return 0;
 	return steps;
 }
@@ -227,7 +228,7 @@ void FindMeleeTarget()
 		queue.pop_front();
 
 		for (int i = 0; i < 8; i++) {
-			V2Di d = node.p + pathdir[i];
+			V2Di d = node.p + offset(Dir(i));
 
 			if (visited[d.x][d.y])
 				continue; // already visisted
@@ -260,13 +261,13 @@ void FindMeleeTarget()
 				continue;
 			}
 
-			PATHNODE pPath;
-			pPath.pos = node.p;
+			//PATHNODE pPath;
+			//pPath.pos = node.p;
 
-			if (path_solid_pieces(&pPath, d)) {
-				queue.push_back({ d, node.steps + 1 });
-				visited[d.x][d.y] = true;
-			}
+			//if (path_solid_pieces(&pPath, d)) {
+			//	queue.push_back({ d, node.steps + 1 });
+			//	visited[d.x][d.y] = true;
+			//}
 		}
 	}
 }
@@ -704,21 +705,21 @@ void SpellBookMove(MoveDirection dir)
 	}
 }
 
-static const direction kFaceDir[3][3] = {
+static const Dir kFaceDir[3][3] = {
 	// NONE      UP      DOWN
-	{ DIR_OMNI, DIR_N, DIR_S }, // NONE
-	{ DIR_W, DIR_NW, DIR_SW },  // LEFT
-	{ DIR_E, DIR_NE, DIR_SE },  // RIGHT
+	{ Dir::OMNI, Dir::N, Dir::S }, // NONE
+	{ Dir::W, Dir::NW, Dir::SW },  // LEFT
+	{ Dir::E, Dir::NE, Dir::SE },  // RIGHT
 };
 static const V2Di kOffsets[8] = {
-	{ 1, 1 },   // DIR_S
-	{ 0, 1 },   // DIR_SW
-	{ -1, 1 },  // DIR_W
-	{ -1, 0 },  // DIR_NW
-	{ -1, -1 }, // DIR_N
-	{ 0, -1 },  // DIR_NE
-	{ 1, -1 },  // DIR_E
-	{ 1, 0 },   // DIR_SE
+	{ 1, 1 },   // Dir::S
+	{ 0, 1 },   // Dir::SW
+	{ -1, 1 },  // Dir::W
+	{ -1, 0 },  // Dir::NW
+	{ -1, -1 }, // Dir::N
+	{ 0, -1 },  // Dir::NE
+	{ 1, -1 },  // Dir::E
+	{ 1, 0 },   // Dir::SE
 };
 
 /**
@@ -731,38 +732,38 @@ static const V2Di kOffsets[8] = {
  *
  *  @return true if step is blocked
  */
-bool IsPathBlocked(V2Di pos, int dir)
+bool IsPathBlocked(V2Di pos, Dir dir)
 {
-	int d1, d2;
+	Dir d1, d2;
 
 	switch (dir) {
-	case DIR_N:
-		d1 = DIR_NW;
-		d2 = DIR_NE;
+	case Dir::N:
+		d1 = Dir::NW;
+		d2 = Dir::NE;
 		break;
-	case DIR_E:
-		d1 = DIR_NE;
-		d2 = DIR_SE;
+	case Dir::E:
+		d1 = Dir::NE;
+		d2 = Dir::SE;
 		break;
-	case DIR_S:
-		d1 = DIR_SE;
-		d2 = DIR_SW;
+	case Dir::S:
+		d1 = Dir::SE;
+		d2 = Dir::SW;
 		break;
-	case DIR_W:
-		d1 = DIR_SW;
-		d2 = DIR_NW;
+	case Dir::W:
+		d1 = Dir::SW;
+		d2 = Dir::NW;
 		break;
 	default:
 		return false;
 	}
 
-	V2Di d1v = kOffsets[d1];
-	V2Di d2v = kOffsets[d2];
+	V2Di d1v = kOffsets[int(d1)];
+	V2Di d2v = kOffsets[int(d2)];
 
-	if (!pieces[grid.at(d1).dPiece].nSolidTable && !pieces[grid.at(d1).dPiece].nSolidTable)
+	if (!pieces[grid.at(d1v).dPiece].nSolidTable && !pieces[grid.at(d1v).dPiece].nSolidTable)
 		return false;
 
-	return !PosOkPlayer(myplr(), d1) && !PosOkPlayer(myplr(), d2);
+	return !PosOkPlayer(myplr(), d1v) && !PosOkPlayer(myplr(), d2v);
 }
 
 void WalkInDir(MoveDirection dir)
@@ -770,13 +771,13 @@ void WalkInDir(MoveDirection dir)
 	V2Di pos = myplr().data._pfut;
 
 	if (dir.x == MoveDirectionX_NONE && dir.y == MoveDirectionY_NONE) {
-		if (sgbControllerActive && myplr().data.walkpath[0] != WALK_NONE && myplr().data.destAction == ACTION_NONE)
+		if (sgbControllerActive && !myplr().data.wkpath.empty() && myplr().data.destAction == ACTION_NONE)
 			NetSendCmdLoc(true, CMD_WALKXY, pos); // Stop walking
 		return;
 	}
 
-	const int pdir = kFaceDir[static_cast<std::size_t>(dir.x)][static_cast<std::size_t>(dir.y)];
-	const V2Di dv = pos + kOffsets[pdir];
+	const Dir pdir = kFaceDir[static_cast<std::size_t>(dir.x)][static_cast<std::size_t>(dir.y)];
+	const V2Di dv = pos + kOffsets[int(pdir)];
 	myplr().data._pdir = pdir;
 
 	if (PosOkPlayer(myplr(), dv) && IsPathBlocked(pos, pdir))
@@ -993,7 +994,7 @@ void UpdateSpellTarget()
 	if (myplr().data._pRSpell == SPL_TELEPORT)
 		range = 4;
 
-	cursm = player._pfut + kOffsets[player._pdir] * range;
+	cursm = player._pfut + kOffsets[int(player._pdir)] * range;
 }
 
 /**
@@ -1042,12 +1043,10 @@ void PerformSpellAction()
 	    || (pcursobj == -1 && spl == SPL_DISARM)) {
 		if (myplr().data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE27);
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE27);
-#endif
 		}
 		return;
 	}

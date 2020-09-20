@@ -492,7 +492,7 @@ void HoldThemeRooms()
  */
 void PlaceThemeMonsts(int t, int f)
 {
-	int xp, yp;
+	V2Di p;
 	int scattertypes[111];
 	int numscattypes, mtype, i;
 
@@ -504,11 +504,11 @@ void PlaceThemeMonsts(int t, int f)
 		}
 	}
 	mtype = scattertypes[random_(0, numscattypes)];
-	for (yp = 0; yp < MAXDUNY; yp++) {
-		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable && grid[xp][yp].dItem == 0 && grid[xp][yp].dObject == 0) {
+	for (p.y = 0; p.y < MAXDUNY; p.y++) {
+		for (p.x = 0; p.x < MAXDUNX; p.x++) {
+			if (grid.at(p).dTransVal == themes[t].ttval && !pieces[grid.at(p).dPiece].nSolidTable && grid.at(p).dItem == 0 && grid.at(p).dObject == 0) {
 				if (random_(0, f) == 0) {
-					AddMonster({ xp, yp }, random_(0, 8), mtype, TRUE);
+					AddMonster(p , Dir(random_(0, 8)), mtype, TRUE);
 				}
 			}
 		}
@@ -877,7 +877,7 @@ void Theme_GoatShrine(int t)
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
 			if (grid[xx][yy].dTransVal == themes[t].ttval && !pieces[grid[xx][yy].dPiece].nSolidTable && (xx != themex || yy != themey)) {
-				AddMonster({ xx, yy }, DIR_SW, themeVar1, TRUE);
+				AddMonster({ xx, yy }, Dir::SW, themeVar1, TRUE);
 			}
 		}
 	}

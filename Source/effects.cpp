@@ -170,7 +170,6 @@ TSFX sgSFX[] = {
 	{ sfx_MISC,                  "Sfx\\Misc\\Vtheft.wav",       NULL },
 	{ sfx_MISC,                  "Sfx\\Misc\\Wallloop.wav",     NULL },
 	{ sfx_MISC,                  "Sfx\\Misc\\Wallstrt.wav",     NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid01.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid02.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid03.wav",   NULL },
@@ -201,9 +200,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid28.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid29.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid30.wav",   NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid31.wav",   NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid32.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid33.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bmaid34.wav",   NULL },
@@ -256,9 +253,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith41.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith42.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith43.wav",  NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith44.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith45.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith46.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith47.wav",  NULL },
@@ -271,10 +266,8 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith54.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith55.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Bsmith56.wav",  NULL },
-#endif
 	{ 0,                         "Sfx\\Towners\\Cow1.wav",      NULL },
 	{ 0,                         "Sfx\\Towners\\Cow2.wav",      NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Deadguy2.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk01.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk02.wav",   NULL },
@@ -302,9 +295,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk24.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk25.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk26.wav",   NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk27.wav",   NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk28.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk29.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Drunk30.wav",   NULL },
@@ -349,9 +340,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer34.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer35.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer36.wav",  NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer37.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer38.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer39.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Healer40.wav",  NULL },
@@ -393,9 +382,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy29.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy30.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy31.wav",  NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy32.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy33.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy34.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Pegboy35.wav",  NULL },
@@ -440,9 +427,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt22.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt23.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt24.wav",  NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt25.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt26.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt27.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt28.wav",  NULL },
@@ -456,9 +441,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt36.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt37.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Storyt38.wav",  NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown00.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown01.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown02.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown03.wav",  NULL },
@@ -494,9 +477,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown33.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown34.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown35.wav",  NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown36.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown37.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown38.wav",  NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Tavown39.wav",  NULL },
@@ -543,9 +524,7 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch35.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch36.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch37.wav",   NULL },
-#endif
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch38.wav",   NULL },
-#ifndef SPAWN
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch39.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch40.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Towners\\Witch41.wav",   NULL },
@@ -777,7 +756,6 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior10.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior11.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior12.wav",  NULL },
-#endif
 	{ sfx_WARRIOR,               "Sfx\\Warrior\\Warior13.wav",  NULL },
 	{ sfx_WARRIOR,               "Sfx\\Warrior\\Warior14.wav",  NULL },
 	{ sfx_WARRIOR,               "Sfx\\Warrior\\Wario14b.wav",  NULL },
@@ -852,7 +830,6 @@ TSFX sgSFX[] = {
 	{ sfx_WARRIOR,               "Sfx\\Warrior\\Warior77.wav",  NULL },
 	{ sfx_WARRIOR,               "Sfx\\Warrior\\Warior78.wav",  NULL },
 	{ sfx_WARRIOR,               "Sfx\\Warrior\\Warior79.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior80.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior81.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior82.wav",  NULL },
@@ -874,12 +851,10 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario95d.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario95e.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario95f.wav",  NULL },
-#endif
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario96b.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario97.wav",   NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario98.wav",   NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Warior99.wav",  NULL },
-#ifndef SPAWN
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario100.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario101.wav",  NULL },
 	{ sfx_STREAM | sfx_WARRIOR,  "Sfx\\Warrior\\Wario102.wav",  NULL },
@@ -913,7 +888,6 @@ TSFX sgSFX[] = {
 	{ sfx_STREAM,                "Sfx\\Monsters\\Zhar01.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Monsters\\Zhar02.wav",   NULL },
 	{ sfx_STREAM,                "Sfx\\Monsters\\DiabloD.wav",  NULL },
-#endif
 	// clang-format on
 };
 
@@ -1022,7 +996,7 @@ BOOL calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 {
 	int pan, volume;
 
-	pos -= myplr().data._p;
+	pos -= myplr().pos();
 
 	pan = (pos.x - pos.y) * 256;
 	*plPan = pan;
@@ -1116,12 +1090,10 @@ int RndSFX(int psfx)
 		nRand = 3;
 	else if (psfx == PS_WARR16)
 		nRand = 3;
-#ifndef SPAWN
 	else if (psfx == PS_MAGE69)
 		nRand = 2;
 	else if (psfx == PS_ROGUE69)
 		nRand = 2;
-#endif
 	else if (psfx == PS_SWING)
 		nRand = 2;
 	else if (psfx == LS_ACID)
@@ -1132,10 +1104,8 @@ int RndSFX(int psfx)
 		nRand = 2;
 	else if (psfx == IS_BHIT)
 		nRand = 2;
-#ifndef SPAWN
 	else if (psfx == PS_WARR2)
 		nRand = 3;
-#endif
 	else
 		return psfx;
 	return psfx + random_(165, nRand);

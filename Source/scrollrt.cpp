@@ -1046,39 +1046,39 @@ static void DrawGame(int x, int y)
 
  	// Draw areas moving in and out of the screen
  	switch (ScrollInfo._sdir) {
-	case SDIR_N:
+	case ScrollDir::N:
 		sy -= TILE_HEIGHT;
 		ShiftGrid(&x, &y, 0, -1);
 		rows += 2;
 		break;
-	case SDIR_NE:
+	case ScrollDir::NE:
 		sy -= TILE_HEIGHT;
 		ShiftGrid(&x, &y, 0, -1);
 		columns++;
 		rows += 2;
 		break;
-	case SDIR_E:
+	case ScrollDir::E:
 		columns++;
 		break;
-	case SDIR_SE:
+	case ScrollDir::SE:
 		columns++;
 		rows++;
 		break;
-	case SDIR_S:
+	case ScrollDir::S:
 		rows += 2;
 		break;
-	case SDIR_SW:
+	case ScrollDir::SW:
 		sx -= TILE_WIDTH;
 		ShiftGrid(&x, &y, -1, 0);
 		columns++;
 		rows++;
 		break;
-	case SDIR_W:
+	case ScrollDir::W:
 		sx -= TILE_WIDTH;
 		ShiftGrid(&x, &y, -1, 0);
 		columns++;
 		break;
-	case SDIR_NW:
+	case ScrollDir::NW:
 		sx -= TILE_WIDTH / 2;
 		sy -= TILE_HEIGHT / 2;
 		x--;
@@ -1263,7 +1263,7 @@ void ScrollView()
 			scroll = TRUE;
 		}
 	}
-	if (scroll) ScrollInfo._sdir = SDIR_NONE;
+	if (scroll) ScrollInfo._sdir = ScrollDir::NONE;
 }
 #endif
 

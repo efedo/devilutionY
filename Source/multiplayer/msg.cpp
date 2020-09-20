@@ -316,7 +316,7 @@ void delta_kill_monster(int mi, V2Di pos, BYTE bLevel)
 		pD = &sgLevels[bLevel].monster[mi];
 		pD->_mx = pos.x;
 		pD->_my = pos.y;
-		pD->_mdir = monsters[mi].data._mdir;
+		pD->_mdir = int(monsters[mi].data._mdir);
 		pD->_mhitpoints = 0;
 	}
 }
@@ -387,7 +387,7 @@ void delta_leave_sync(BYTE bLevel)
 					pD = &sgLevels[bLevel].monster[ma];
 					pD->_mx = monsters[ma].data._m.x;
 					pD->_my = monsters[ma].data._m.y;
-					pD->_mdir = monsters[ma].data._mdir;
+					pD->_mdir = int(monsters[ma].data._mdir);
 					pD->_menemy = encode_enemy(ma);
 					pD->_mhitpoints = monsters[ma].data._mhitpoints;
 					pD->_mactive = monsters[ma].data._msquelch;
@@ -491,9 +491,9 @@ void DeltaLoadLevel()
 					if (monsters[i].data._mAi != AI_DIABLO) {
 						if (!monsters[i].data._uniqtype)
 							/// ASSERT: assert(monsters[i].data.MType != NULL);
-							AddDead(monsters[i].data._m, monsters[i].data.MType->mdeadval, (direction)monsters[i].data._mdir);
+							AddDead(monsters[i].data._m, monsters[i].data.MType->mdeadval, monsters[i].data._mdir);
 						else
-							AddDead(monsters[i].data._m, monsters[i].data._udeadval, (direction)monsters[i].data._mdir);
+							AddDead(monsters[i].data._m, monsters[i].data._udeadval, monsters[i].data._mdir);
 					}
 					monsters[i].data._mDelFlag = TRUE;
 					monsters[i].M_UpdateLeader();
@@ -1444,7 +1444,7 @@ DWORD On_GETITEM(TCmd *pCmd, int pnum)
 			if ((level.currlevel == p->bLevel || p->bPnum == myplr()) && p->bMaster != myplr()) {
 				if (p->bPnum == myplr()) {
 					if (level.currlevel != p->bLevel) {			
-						ii = myplr().inventory.SyncPutItem(myplr().data._p, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+						ii = myplr().inventory.SyncPutItem(myplr().pos(), p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 						if (ii != -1)
 							myplr().inventory.InvGetItem(ii);
 					} else
@@ -1566,7 +1566,7 @@ DWORD On_AGETITEM(TCmd *pCmd, int pnum)
 			if ((level.currlevel == p->bLevel || p->bPnum == myplr()) && p->bMaster != myplr()) {
 				if (p->bPnum == myplr()) {
 					if (level.currlevel != p->bLevel) {
-						int ii = myplr().inventory.SyncPutItem(myplr().data._p, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+						int ii = myplr().inventory.SyncPutItem(myplr().pos(), p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 						if (ii != -1)
 							myplr().inventory.AutoGetItem(ii);
 					} else
@@ -2116,7 +2116,7 @@ DWORD On_AWAKEGOLEM(TCmd *pCmd, int pnum)
 			}
 		}
 		if (addGolem)
-			AddMissile(plr[pnum].data._p, { p->_mx, p->_my }, p->_mdir, MIS_GOLEM, 0, pnum, 0, 1);
+			AddMissile(plr[pnum].pos(), { p->_mx, p->_my }, Dir(p->_mdir), MIS_GOLEM, 0, pnum, 0, 1);
 	}
 
 	return sizeof(*p);
@@ -2351,7 +2351,7 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 				plr[pnum].LoadPlrGFX(PFILE_STAND);
 				plr[pnum].SyncInitPlr();
 				if ((plr[pnum].data._pHitPoints >> 6) > 0)
-					plr[pnum].StartStand(0);
+					plr[pnum].StartStand(Dir(0));
 				else {
 					plr[pnum].data._pgfxnum = 0;
 					plr[pnum].LoadPlrGFX(PFILE_DEATH);
@@ -2359,10 +2359,10 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 					plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
 					plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;
 					plr[pnum].data._pVar8 = plr[pnum].data._pAnimLen << 1;
-					grid.at(plr[pnum].data._p).dFlags |= BFLAG_DEAD_PLAYER;
+					grid.at(plr[pnum].pos()).dFlags |= BFLAG_DEAD_PLAYER;
 				}
 
-				plr[pnum].data._pvid = AddVision(plr[pnum].data._p, plr[pnum].data._pLightRad, pnum == myplr());
+				plr[pnum].data._pvid = AddVision(plr[pnum].pos(), plr[pnum].data._pLightRad, pnum == myplr());
 				plr[pnum].data._plid = -1;
 			}
 		}

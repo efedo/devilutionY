@@ -449,7 +449,7 @@ void multi_process_network_packets()
 						plr[dwID].data._p.x = pkt->px;
 						plr[dwID].data._p.y = pkt->py;
 						plr[dwID].data._pfut = plr[dwID].data._p;
-						grid.at(plr[dwID].data._p).dPlayer = dwID + 1;
+						grid.at(plr[dwID].pos()).dPlayer = dwID + 1;
 					}
 					dx = abs(plr[dwID].data._pfut.x - plr[dwID].data._p.x);
 					dy = abs(plr[dwID].data._pfut.y - plr[dwID].data._p.y);
@@ -645,11 +645,7 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 		sgGameInitInfo.bDiff = gnDifficulty;
 		memset(&ProgramData, 0, sizeof(ProgramData));
 		ProgramData.size = sizeof(ProgramData);
-#ifdef SPAWN
-		ProgramData.programname = "Diablo Shareware";
-#else
 		ProgramData.programname = "Diablo Retail";
-#endif
 		ProgramData.programdescription = gszVersionNumber;
 		ProgramData.programid = 'DRTL';
 		ProgramData.versionid = 42;
@@ -770,7 +766,7 @@ void SetupLocalCoords()
 		pos = { 49, 23 };
 	}
 	#endif
-	pos += { plrxoff[myplr()], plryoff[myplr()] };
+	pos += plroff[myplr()];
 	myplr().data._p = pos;
 	myplr().data._pfut = pos;
 	myplr().data._ptarg = pos;
@@ -911,7 +907,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 
 	if (plr[pnum].data.plrlevel == level.currlevel) {
 		if (plr[pnum].data._pHitPoints >> 6 > 0) {
-			plr[pnum].StartStand(0);
+			plr[pnum].StartStand(Dir(0));
 		} else {
 			plr[pnum].data._pgfxnum = 0;
 			plr[pnum].LoadPlrGFX(PFILE_DEATH);
@@ -919,7 +915,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
 			plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
 			plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;
 			plr[pnum].data._pVar8 = 2 * plr[pnum].data._pAnimLen;
-			grid.at(plr[pnum].data._p).dFlags |= BFLAG_DEAD_PLAYER;
+			grid.at(plr[pnum].pos()).dFlags |= BFLAG_DEAD_PLAYER;
 		}
 	}
 }

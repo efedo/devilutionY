@@ -8,10 +8,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 class Automap {
 public:
 	void enable(bool var = true) { automapflag = var; }
@@ -60,10 +56,6 @@ private:
 };
 
 extern Automap automap;
-
-//#ifdef __cplusplus
-//}
-//#endif
 
 DEVILUTION_END_NAMESPACE
 

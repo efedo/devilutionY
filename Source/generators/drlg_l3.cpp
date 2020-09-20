@@ -3,7 +3,6 @@
  *
  * Implementation of the caves level generation algorithms.
  */
-#ifndef SPAWN
 
 #include <algorithm>
 
@@ -1806,4 +1805,3 @@ void LoadPreL3Dungeon(char *sFileName, int vx, int vy)
 }
 
 DEVILUTION_END_NAMESPACE
-#endif

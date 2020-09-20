@@ -2,6 +2,10 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
+V2Di::V2Di()
+{
+}
+
 V2Di::V2Di(int nx, int ny)
 	: x(nx)
 	, y(ny)
@@ -103,5 +107,126 @@ bool operator!=(const V2Di &lhs, const V2Di &rhs)
 {
 	return (!(lhs == rhs));
 }
+
+
+
+
+//// Dir
+//
+//Dir::Dir()
+//{
+//}
+//
+//Dir::Dir(const Dir &rhs)
+//{
+//	data = rhs.data;
+//}
+//
+//Dir::Dir(const int &rhs)
+//{
+//	data = Dir(rhs);
+//}
+//
+//Dir::operator int()
+//{
+//	return int(data);
+//}
+//
+//Dir &Dir::operator=(const Dir &rhs)
+//{
+//	data = rhs;
+//	return *this;
+//}
+//
+//Dir &Dir::operator=(const Dir &rhs)
+//{
+//	data = rhs.data;
+//	return *this;
+//}
+//
+//Dir &Dir::operator=(const int &rhs)
+//{
+//	data = Dir(rhs);
+//	return *this;
+//}
+//
+//V2Di Dir::offset()
+//{
+//	throw;
+//}
+//
+//Dir operator+(const Dir &lhs, const Dir &rhs)
+//{
+//	return Dir(int(lhs.data) + int(rhs.data));
+//}
+//
+//Dir operator-(const Dir &lhs, const Dir &rhs)
+//{
+//	return Dir(int(lhs.data) - int(rhs.data));
+//}
+//
+//Dir operator-(const Dir &lhs)
+//{
+//	return Dir(int(lhs.data));
+//}
+//
+//Dir operator*(const Dir &lhs, const Dir &rhs)
+//{
+//	return Dir(int(lhs.data) * int(rhs.data));
+//}
+//
+//
+//Dir operator/(const Dir &lhs, const Dir &rhs)
+//{
+//	return Dir(int(lhs.data) / int(rhs.data));
+//}
+//
+//Dir operator>>(const Dir &lhs, const Dir &rhs)
+//{
+//	return Dir(int(lhs.data) >> int(rhs.data));
+//}
+//
+//Dir operator<<(const Dir &lhs, const Dir &rhs)
+//{
+//	return Dir(int(lhs.data) << int(rhs.data));
+//}
+//
+//Dir &operator+=(Dir &lhs, const Dir &rhs)
+//{
+//	lhs.data = Dir(int(lhs.data) + int(rhs.data));
+//	return lhs;
+//}
+//
+//Dir &operator/=(Dir &lhs, const Dir &rhs)
+//{
+//	lhs.data = Dir(int(lhs.data) / int(rhs.data));
+//	return lhs;
+//}
+//
+//Dir &operator*=(Dir &lhs, const Dir &rhs)
+//{
+//	lhs.data = Dir(int(lhs.data) * int(rhs.data));
+//	return lhs;
+//}
+//
+//Dir &operator-=(Dir &lhs, const Dir &rhs)
+//{
+//	lhs.data = Dir(int(lhs.data) - int(rhs.data));
+//	return lhs;
+//}
+//
+//bool operator==(const Dir &lhs, const Dir &rhs)
+//{
+//	if (lhs.data != rhs.data)
+//		return false;
+//	if (lhs.data != rhs.data)
+//		return false;
+//	return true;
+//}
+//
+//bool operator!=(const Dir &lhs, const Dir &rhs)
+//{
+//	return (!(lhs == rhs));
+//}
 
 DEVILUTION_END_NAMESPACE

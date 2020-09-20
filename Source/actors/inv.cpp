@@ -120,12 +120,10 @@ void InitInv()
 {
 	if (myplr().data._pClass == PC_WARRIOR) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv.CEL", NULL);
-#ifndef SPAWN
 	} else if (myplr().data._pClass == PC_ROGUE) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_rog.CEL", NULL);
 	} else if (myplr().data._pClass == PC_SORCERER) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_Sor.CEL", NULL);
-#endif
 	}
 
 	invflag = FALSE;
@@ -802,12 +800,10 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 		done = FALSE;
 		if (owner.data._pClass == PC_WARRIOR)
 			PlaySFX(PS_WARR13);
-#ifndef SPAWN
 		else if (owner.data._pClass == PC_ROGUE)
 			PlaySFX(PS_ROGUE13);
 		else if (owner.data._pClass == PC_SORCERER)
 			PlaySFX(PS_MAGE13);
-#endif
 	}
 
 	if (!done)
@@ -1408,7 +1404,6 @@ void PlayerInventory::CheckQuestItem()
 	if (owner.data.HoldItem.IDidx == IDI_OPTAMULET)
 		quests[Q_BLIND]._qactive = QUEST_DONE;
 	if (owner.data.HoldItem.IDidx == IDI_MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
-#ifndef SPAWN
 		sfxdelay = 10;
 		if (owner.data._pClass == PC_WARRIOR) { // BUGFIX: Voice for this quest might be wrong in MP
 			sfxdnum = PS_WARR95;
@@ -1417,7 +1412,6 @@ void PlayerInventory::CheckQuestItem()
 		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE95;
 		}
-#endif
 		quests[Q_MUSHROOM]._qvar1 = QS_MUSHPICKED;
 	}
 	if (owner.data.HoldItem.IDidx == IDI_ANVIL) {
@@ -1425,7 +1419,6 @@ void PlayerInventory::CheckQuestItem()
 			quests[Q_ANVIL]._qactive = QUEST_ACTIVE;
 			quests[Q_ANVIL]._qvar1 = 1;
 		}
-#ifndef SPAWN
 		if (quests[Q_ANVIL]._qlog == TRUE) {
 			sfxdelay = 10;
 			if (myplr().data._pClass == PC_WARRIOR) {
@@ -1436,9 +1429,7 @@ void PlayerInventory::CheckQuestItem()
 				sfxdnum = PS_MAGE89;
 			}
 		}
-#endif
 	}
-#ifndef SPAWN
 	if (owner.data.HoldItem.IDidx == IDI_GLDNELIX) {
 		sfxdelay = 30;
 		if (myplr().data._pClass == PC_WARRIOR) {
@@ -1449,13 +1440,11 @@ void PlayerInventory::CheckQuestItem()
 			sfxdnum = PS_MAGE88;
 		}
 	}
-#endif
 	if (owner.data.HoldItem.IDidx == IDI_ROCK) {
 		if (quests[Q_ROCK]._qactive == QUEST_INIT) {
 			quests[Q_ROCK]._qactive = QUEST_ACTIVE;
 			quests[Q_ROCK]._qvar1 = 1;
 		}
-#ifndef SPAWN
 		if (quests[Q_ROCK]._qlog == TRUE) {
 			sfxdelay = 10;
 			if (myplr().data._pClass == PC_WARRIOR) {
@@ -1466,11 +1455,9 @@ void PlayerInventory::CheckQuestItem()
 				sfxdnum = PS_MAGE87;
 			}
 		}
-#endif
 	}
 	if (owner.data.HoldItem.IDidx == IDI_ARMOFVAL) {
 		quests[Q_BLOOD]._qactive = QUEST_DONE;
-#ifndef SPAWN
 		sfxdelay = 20;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR91;
@@ -1479,7 +1466,6 @@ void PlayerInventory::CheckQuestItem()
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE91;
 		}
-#endif
 	}
 }
 
@@ -1637,12 +1623,10 @@ void PlayerInventory::AutoGetItem(int ii)
 		if (owner.isLocal()) {
 			if (owner.data._pClass == PC_WARRIOR) {
 				PlaySFX(random_(0, 3) + PS_WARR14);
-#ifndef SPAWN
 			} else if (owner.data._pClass == PC_ROGUE) {
 				PlaySFX(random_(0, 3) + PS_ROGUE14);
 			} else if (owner.data._pClass == PC_SORCERER) {
 				PlaySFX(random_(0, 3) + PS_MAGE14);
-#endif
 			}
 		}
 		owner.data.HoldItem = item[ii];
@@ -1655,7 +1639,6 @@ void PlayerInventory::AutoGetItem(int ii)
 int FindGetItem(int idx, WORD ci, int iseed)
 {
 	int i, ii;
-
 	i = 0;
 	if (numitems <= 0)
 		return -1;
@@ -1670,7 +1653,6 @@ int FindGetItem(int idx, WORD ci, int iseed)
 		if (i >= numitems)
 			return -1;
 	}
-
 	return ii;
 }
 
@@ -1678,7 +1660,6 @@ void SyncGetItem(V2Di pos, int idx, WORD ci, int iseed)
 {
 	int x = pos.x;
 	int y = pos.y;
-
 	int i, ii;
 
 	if (grid[x][y].dItem) {
@@ -1754,24 +1735,23 @@ BOOL CanPut(V2Di pos)
 
 BOOL TryInvPut()
 {
-	int dir;
 	if (numitems >= 127) return FALSE;
-	dir = GetDirection(myplr().data._p, cursm);
-	V2Di off = offset[dir];
+	Dir dir = GetDirection(myplr().pos(), cursm);
+	V2Di off = offset(dir);
 	if (CanPut(myplr().data._p + off)) {
 		return TRUE;
 	}
 
-	dir = (dir - 1) & 7;
+	//dir = (dir - 1) & 7;
 	if (CanPut(myplr().data._p + off)) {
 		return TRUE;
 	}
 
-	dir = (dir + 2) & 7;
+	//dir = (dir + 2) & 7;
 	if (CanPut(myplr().data._p + off)) {
 		return TRUE;
 	}
-	return CanPut(myplr().data._p);
+	return CanPut(myplr().pos());
 }
 
 void DrawInvMsg(char *msg)
@@ -1792,17 +1772,17 @@ int PlayerInventory::_PrepPutItem(V2Di &pos)
 	V2Di n, p;
 	if (numitems >= 127) return -1;
 
-	int d = GetDirection(owner.data._p, pos);
-	V2Di off = offset[d];
+	Dir d2 = GetDirection(owner.pos(), pos);
+	V2Di off = offset(d2);
 	n = pos - owner.data._p;
 	if (abs(n.x) > 1 || abs(n.y) > 1) {
 		pos = owner.data._p + off;
 	}
 	if (!CanPut(pos)) {
-		d = (d - 1) & 7;
+		//d = (d - 1) & 7;
 		pos = owner.data._p + off;
 		if (!CanPut(pos)) {
-			d = (d + 2) & 7;
+			//d = (d + 2) & 7;
 			pos = owner.data._p + off;
 			if (!CanPut(pos)) {
 				for (l = 1; l < 50; l++) {
@@ -2083,7 +2063,6 @@ BOOL PlayerInventory::UseInvItem(int cii)
 	switch (Item->IDidx) {
 	case IDI_MUSHROOM:
 		sfxdelay = 10;
-#ifndef SPAWN
 		if (owner.data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR95;
 		} else if (owner.data._pClass == PC_ROGUE) {
@@ -2091,19 +2070,16 @@ BOOL PlayerInventory::UseInvItem(int cii)
 		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE95;
 		}
-#endif
 		return TRUE;
 	case IDI_FUNGALTM:
 		PlaySFX(IS_IBOOK);
 		sfxdelay = 10;
 		if (owner.data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR29;
-#ifndef SPAWN
 		} else if (owner.data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE29;
 		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE29;
-#endif
 		}
 		return TRUE;
 	}
@@ -2114,12 +2090,10 @@ BOOL PlayerInventory::UseInvItem(int cii)
 	if (!Item->_iStatFlag) {
 		if (owner.data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR13);
-#ifndef SPAWN
 		} else if (owner.data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE13);
 		} else if (owner.data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE13);
-#endif
 		}
 		return TRUE;
 	}

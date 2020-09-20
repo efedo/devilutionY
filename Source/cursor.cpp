@@ -221,7 +221,7 @@ void CheckCursMove()
 	f.y = myplr().data._pVar7 / 256;
 	f.x -= (myplr().data._pVar6 + myplr().data._pvel.x) / 256;
 	f.y -= (myplr().data._pVar7 + myplr().data._pvel.y) / 256;
-	if (ScrollInfo._sdir != SDIR_NONE) {
+	if (ScrollInfo._sdir != ScrollDir::NONE) {
 		s -= f;
 	}
 
@@ -268,9 +268,8 @@ void CheckCursMove()
 	panelflag = FALSE;
 	trigflag = FALSE;
 
-	if (myplr().data._pInvincible) {
-		return;
-	}
+	if (myplr().data._pInvincible) return;
+
 	if (pcurs >= CURSOR_FIRSTITEM || spselflag) {
 		cursm = m;
 		return;
@@ -434,30 +433,30 @@ void CheckCursMove()
 	}
 
 	if (pcursmonst == -1) {
-		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].dPlayer != 0) {
-			bv = grid[m.x + 1][m.y].dPlayer > 0 ? grid[m.x + 1][m.y].dPlayer - 1 : -(grid[m.x + 1][m.y].dPlayer + 1);
+		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].isPlayer()) {
+			bv = grid[m.x + 1][m.y].getPlayerNum();
 			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursm = { m.x + 1, m.y };
 				pcursplr = bv;
 			}
 		}
-		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].dPlayer != 0) {
-			bv = grid[m.x][m.y + 1].dPlayer > 0 ? grid[m.x][m.y + 1].dPlayer - 1 : -(grid[m.x][m.y + 1].dPlayer + 1);
+		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].isPlayer()) {
+			bv = grid[m.x][m.y + 1].getPlayerNum();
 			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursm = { m.x, m.y + 1 };
 				pcursplr = bv;
 			}
 		}
-		if (grid[m.x][m.y].dPlayer != 0) {
-			bv = grid[m.x][m.y].dPlayer > 0 ? grid[m.x][m.y].dPlayer - 1 : -(grid[m.x][m.y].dPlayer + 1);
+		if (grid.at(m).isPlayer()) {
+			bv = grid.at(m).getPlayerNum(); 
 			if (bv != myplr()) {
 				cursm = m;
 				pcursplr = bv;
 			}
 		}
-		if (grid[m.x][m.y].dFlags & BFLAG_DEAD_PLAYER) {
+		if (grid.at(m).dFlags & BFLAG_DEAD_PLAYER) {
 			for (i = 0; i < MAX_PLRS; i++) {
-				if (plr[i].data._p.x == m.x && plr[i].data._p.y == m.y && i != myplr()) {
+				if (plr[i].pos() == m && i != myplr()) {
 					cursm = m;
 					pcursplr = i;
 				}
@@ -466,10 +465,10 @@ void CheckCursMove()
 		if (pcurs == CURSOR_RESURRECT) {
 			for (n.x = -1; n.x < 2; n.x++) {
 				for (n.y = -1; n.y < 2; n.y++) {
-					if (m.x + n.x < MAXDUNX && m.y + n.y < MAXDUNY && grid[m.x + n.x][m.y + n.y].dFlags & BFLAG_DEAD_PLAYER) {
+					if (m.x + n.x < MAXDUNX && m.y + n.y < MAXDUNY && grid.at(m + n).dFlags & BFLAG_DEAD_PLAYER) {
 						for (i = 0; i < MAX_PLRS; i++) {
-							if (plr[i].data._p.x == m.x + n.x && plr[i].data._p.y == m.y + n.y && i != myplr()) {
-								cursm = { m.x + n.x, m.y + n.y };
+							if (plr[i].pos() == m + n && i != myplr()) {
+								cursm = m + n;
 								pcursplr = i;
 							}
 						}
@@ -477,8 +476,8 @@ void CheckCursMove()
 				}
 			}
 		}
-		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].dPlayer != 0) {
-			bv = grid[m.x + 1][m.y + 1].dPlayer > 0 ? grid[m.x + 1][m.y + 1].dPlayer - 1 : -(grid[m.x + 1][m.y + 1].dPlayer + 1);
+		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].isPlayer()) {
+			bv = grid[m.x + 1][m.y + 1].getPlayerNum();
 			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursm = { m.x + 1, m.y + 1 };
 				pcursplr = bv;

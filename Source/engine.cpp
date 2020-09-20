@@ -694,42 +694,43 @@ void DrawLine(V2Di p0, V2Di p1, BYTE col)
  * @param y2 Tile coordinate
  * @return A value from the direction enum
  */
-int GetDirection(V2Di t1, V2Di t2)
+Dir GetDirection(V2Di t1, V2Di t2)
 {
 	int mx, my;
-	int md, ny;
+	int ny;
+	Dir md;
 
 	mx = t2.x - t1.x;
 	my = t2.y - t1.y;
 
 	if (mx >= 0) {
 		if (my >= 0) {
-			md = DIR_S;
+			md = Dir::S;
 			if (2 * mx < my)
-				md = DIR_SW;
+				md = Dir::SW;
 		} else {
 			my = -my;
-			md = DIR_E;
+			md = Dir::E;
 			if (2 * mx < my)
-				md = DIR_NE;
+				md = Dir::NE;
 		}
 		if (2 * my < mx)
-			return DIR_SE;
+			return Dir::SE;
 	} else {
 		if (my >= 0) {
 			ny = -mx;
-			md = DIR_W;
+			md = Dir::W;
 			if (2 * ny < my)
-				md = DIR_SW;
+				md = Dir::SW;
 		} else {
 			ny = -mx;
 			my = -my;
-			md = DIR_N;
+			md = Dir::N;
 			if (2 * ny < my)
-				md = DIR_NE;
+				md = Dir::NE;
 		}
 		if (2 * my < ny)
-			return DIR_NW;
+			return Dir::NW;
 	}
 
 	return md;

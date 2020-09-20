@@ -13,32 +13,27 @@ DEVILUTION_BEGIN_NAMESPACE
 class MonsterInstance {
 public:
 	MonsterInstance() {};
-	MonsterInstance(int i, int rd, int mtype, V2Di pos);
-	void NewMonsterAnim(AnimStruct *anim, int md);
-
-	void PlantInPosition(int dir = std::numeric_limits<int>::max(), V2Di *pos = 0);
-
+	MonsterInstance(int i, Dir rd, int mtype, V2Di pos);
+	void NewMonsterAnim(AnimStruct *anim, Dir md);
+	void PlantInPosition(Dir dir = Dir::NONE, V2Di *pos = 0);
 	void ClearMVars();
-
 	void SyncMonsterAnim();
-
-	void ActivateSpawn(V2Di pos, int dir);
+	void ActivateSpawn(V2Di pos, Dir dir);
 	void SpawnGolum(V2Di pos, int mi);
 	void TalktoMonster();
-
-	BOOL DirOK(int mdir);
+	BOOL DirOK(Dir mdir);
 	BOOL M_Ranged();
 	BOOL M_Talker();
 	void M_Enemy();
-	int M_GetDir();
-	void GetTargetLoc(V2Di & pos, int & dist, int & dir);
+	Dir M_GetDir();
+	void GetTargetLoc(V2Di &pos, int &dist, Dir &dir);
 	void M_CheckEFlag();
-	void M_StartStand(int md);
+	void M_StartStand(Dir md);
 	void M_StartDelay(int len);
-	void M_StartSpStand(int md);
-	void M_StartWalk(V2Di vel, V2Di add, int EndDir);
-	void M_StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir);
-	void M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir);
+	void M_StartSpStand(Dir md);
+	void M_StartWalk(V2Di vel, V2Di add, Dir EndDir);
+	void M_StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir);
+	void M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir);
 	void M_StartAttack();
 	void M_StartRAttack(int missile_type, int dam);
 	void M_StartRSpAttack(int missile_type, int dam);
@@ -53,8 +48,8 @@ public:
 	void M2MStartKill(int mid);
 	void M_StartKill(int pnum);
 	void M_SyncStartKill(V2Di pos, int pnum);
-	void M_StartFadein(int md, BOOL backwards);
-	void M_StartFadeout(int md, BOOL backwards);
+	void M_StartFadein(Dir md, BOOL backwards);
+	void M_StartFadeout(Dir md, BOOL backwards);
 	void M_StartHeal();
 	void M_ChangeLightOffset();
 	BOOL M_DoStand();
@@ -78,13 +73,13 @@ public:
 	BOOL M_DoSpStand();
 	BOOL M_DoDelay();
 	BOOL M_DoStone();
-	void M_WalkDir(int md);
+	void M_WalkDir(Dir md);
 	void GroupUnity();
-	BOOL M_CallWalk(int md);
+	BOOL M_CallWalk(Dir md);
 	BOOL M_PathWalk();
-	BOOL M_CallWalk2(int md);
-	BOOL M_DumbWalk(int md);
-	BOOL M_RoundWalk(int md, int *dir);
+	BOOL M_CallWalk2(Dir md);
+	BOOL M_DumbWalk(Dir md);
+	BOOL M_RoundWalk(Dir md, int *dir);
 	void MAI_Zombie();
 	void MAI_SkelSd();
 	BOOL MAI_Path();

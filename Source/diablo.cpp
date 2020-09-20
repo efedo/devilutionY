@@ -251,15 +251,13 @@ void start_game(unsigned int uMsg)
 
 void free_game()
 {
-	int i;
-
 	FreeControlPan();
 	FreeInvGFX();
 	FreeGMenu();
 	FreeQuestText();
 	FreeStoreMem();
 
-	for (i = 0; i < MAX_PLRS; i++)
+	for (int i = 0; i < MAX_PLRS; i++)
 		plr[i].FreePlayerGFX();
 
 	FreeItemGFX();
@@ -276,36 +274,20 @@ void diablo_init()
 	init_archives();
 	was_archives_init = true;
 	UiInitialize();
-#ifdef SPAWN
-	UiSetSpawned(TRUE);
-#endif
 	was_ui_init = true;
-
 	ReadOnlyTest();
-
 	InitHash();
-
 	diablo_init_screen();
-
 	snd_init(NULL);
 	was_snd_init = true;
-
 	sound_init();
 	was_sfx_init = true;
 }
 
 void diablo_splash()
 {
-	if (!showintrodebug)
-		return;
-
+	if (!showintrodebug) return;
 	play_movie("gendata\\logo.smk", TRUE);
-#ifndef SPAWN
-	if (getIniBool("Diablo", "Intro", true)) {
-		play_movie("gendata\\diablo1.smk", TRUE);
-		setIniValue("Diablo", "Intro", "0");
-	}
-#endif
 	UiTitleDialog();
 }
 
@@ -464,7 +446,7 @@ void diablo_init_screen()
 	ScrollInfo._sd.y = 0;
 	ScrollInfo._soff.x = 0;
 	ScrollInfo._soff.y = 0;
-	ScrollInfo._sdir = SDIR_NONE;
+	ScrollInfo._sdir = ScrollDir::NONE;
 
 	ClrDiabloMsg();
 }
@@ -713,7 +695,7 @@ BOOL LeftMouseCmd(BOOL bShift)
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	} else {
-		bNear = (myplr().data._p - cursm).abs().maxdim() < 2;
+		bNear = (myplr().pos() - cursm).abs().maxdim() < 2;
 		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
 			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
@@ -1029,6 +1011,8 @@ void PressKey(int vkey)
 			HelpScrollUp();
 		} else if (automap.enabled()) {
 			automap.up();
+		} else {
+			myplr().StartWalk(Dir::N);
 		}
 	} else if (vkey == DVL_VK_DOWN) {
 		if (stextflag) {
@@ -1039,6 +1023,8 @@ void PressKey(int vkey)
 			HelpScrollDown();
 		} else if (automap.enabled()) {
 			automap.down();
+		} else {
+			myplr().StartWalk(Dir::S);
 		}
 	} else if (vkey == DVL_VK_PRIOR) {
 		if (stextflag) {
@@ -1051,10 +1037,14 @@ void PressKey(int vkey)
 	} else if (vkey == DVL_VK_LEFT) {
 		if (automap.enabled() && !talkflag) {
 			automap.left();
+		} else {
+			myplr().StartWalk(Dir::W);
 		}
 	} else if (vkey == DVL_VK_RIGHT) {
 		if (automap.enabled() && !talkflag) {
 			automap.right();
+		} else {
+			myplr().StartWalk(Dir::E);
 		}
 	} else if (vkey == DVL_VK_TAB) {
 		DoAutoMap();
@@ -1338,7 +1328,7 @@ void PressChar(int vkey)
 	case 'T':
 	case 't':
 		if (debug_mode_key_inverted_v) {
-			sprintf(tempstr, "PX = %i  PY = %i", myplr().data._p.x, myplr().data._p.y);
+			sprintf(tempstr, "PX = %i  PY = %i", myplr().pos().x, myplr().pos().y);
 			NetSendCmdString(1 << myplr(), tempstr);
 			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursm.x, cursm.y, dgrid[cursm.x][cursm.y].dungeon);
 			NetSendCmdString(1 << myplr(), tempstr);
@@ -1375,7 +1365,6 @@ void LoadLvlGFX()
 		pLevelPieces = LoadFileInMem("Levels\\L1Data\\L1.MIN", NULL);
 		pSpecialCels = LoadFileInMem("Levels\\L1Data\\L1S.CEL", NULL);
 		break;
-#ifndef SPAWN
 	case DTYPE_CATACOMBS:
 		pDungeonCels = LoadFileInMem("Levels\\L2Data\\L2.CEL", NULL);
 		pMegaTiles = LoadFileInMem("Levels\\L2Data\\L2.TIL", NULL);
@@ -1394,7 +1383,6 @@ void LoadLvlGFX()
 		pLevelPieces = LoadFileInMem("Levels\\L4Data\\L4.MIN", NULL);
 		pSpecialCels = LoadFileInMem("Levels\\L2Data\\L2S.CEL", NULL);
 		break;
-#endif
 	default:
 		app_fatal("LoadLvlGFX");
 		break;
@@ -1428,7 +1416,6 @@ void CreateLevel(int lvldir)
 		Freeupstairs();
 		LoadRndLvlPal(1);
 		break;
-#ifndef SPAWN
 	case DTYPE_CATACOMBS:
 		CreateL2Dungeon(glSeedTbl[level.currlevel], lvldir);
 		InitL2Triggers();
@@ -1447,7 +1434,6 @@ void CreateLevel(int lvldir)
 		Freeupstairs();
 		LoadRndLvlPal(4);
 		break;
-#endif
 	default:
 		app_fatal("CreateLevel");
 		break;
@@ -1597,7 +1583,6 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			ResyncQuests();
 		else
 			ResyncMPQuests();
-#ifndef SPAWN
 	} else {
 		LoadSetMap();
 		IncProgress();
@@ -1637,7 +1622,6 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 		InitMissiles();
 		IncProgress();
-#endif
 	}
 
 	SyncPortals();
@@ -1646,11 +1630,11 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
 			if (plr[i].data._pHitPoints > 0) {
 				if (gbMaxPlayers == 1)
-					grid[plr[i].data._p.x][plr[i].data._p.y].dPlayer = i + 1;
+					grid.addPlayer(i, plr[i].pos());
 				else
 					plr[i].SyncInitPlrPos();
 			} else {
-				grid[plr[i].data._p.x][plr[i].data._p.y].dFlags |= BFLAG_DEAD_PLAYER;
+				grid.at(plr[i].pos()).dFlags |= BFLAG_DEAD_PLAYER;
 			}
 		}
 	}
@@ -1675,10 +1659,8 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 	while (!IncProgress())
 		;
 
-#ifndef SPAWN
 	if (level.setlevel && level.setlvlnum == SL_SKELKING && quests[Q_SKELKING]._qactive == QUEST_ACTIVE)
 		PlaySFX(USFX_SKING1);
-#endif
 }
 
 void game_loop(BOOL bStartup)

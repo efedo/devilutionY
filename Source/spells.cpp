@@ -106,7 +106,7 @@ BOOL CheckSpell(int id, int sn, char st, BOOL manaonly)
 void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 {
 	int i;
-	int dir; // missile direction
+	Dir dir; // missile direction
 
 	switch (caster) {
 	case 1:
@@ -119,7 +119,7 @@ void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 		dir = plr[id].data._pdir;
 
 		if (spl == SPL_FIREWALL) {
-			dir = plr[id].data._pVar3;
+			dir = Dir(plr[id].data._pVar3);
 		}
 		break;
 	}
@@ -142,29 +142,29 @@ void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 
 static void PlacePlayer(int pnum)
 {
-	int nx, ny, max, min, x, y;
+	V2Di n, p;
+	int max, min, x, y;
 	DWORD i;
 	BOOL done;
 
 	if (plr[pnum].data.plrlevel == level.currlevel) {
 		for (i = 0; i < 8; i++) {
-			nx = plr[pnum].data._p.x + plrxoff2[i];
-			ny = plr[pnum].data._p.y + plryoff2[i];
+			n = plr[pnum].data._p + plroff2[i];
 
-			if (PosOkPlayer(pnum, { nx, ny })) {
+			if (PosOkPlayer(pnum, n)) {
 				break;
 			}
 		}
 
-		if (!PosOkPlayer(pnum, { nx, ny })) {
+		if (!PosOkPlayer(pnum, n)) {
 			done = FALSE;
 
 			for (max = 1, min = -1; min > -50 && !done; max++, min--) {
 				for (y = min; y <= max && !done; y++) {
-					ny = plr[pnum].data._p.y + y;
+					n.y = plr[pnum].data._p.y + y;
 					for (x = min; x <= max && !done; x++) {
-						nx = plr[pnum].data._p.x + x;
-						if (PosOkPlayer(pnum, { nx, ny })) {
+						n.x = plr[pnum].data._p.x + x;
+						if (PosOkPlayer(pnum, n)) {
 							done = TRUE;
 						}
 					}
@@ -172,11 +172,11 @@ static void PlacePlayer(int pnum)
 			}
 		}
 
-		plr[pnum].data._p = { nx, ny };
-		grid[nx][ny].dPlayer = pnum + 1;
+		plr[pnum].data._p = n;
+		grid.at(n).dPlayer = pnum + 1;
 
 		if (pnum == myplr()) {
-			View = { nx, ny };
+			View = n;
 		}
 	}
 }
@@ -190,7 +190,7 @@ void DoResurrect(int pnum, int rid)
 	int hp;
 
 	if ((char)rid != -1) {
-		AddMissile(plr[rid].data._p, plr[rid].data._p, 0, MIS_RESURRECTBEAM, 0, pnum, 0, 0);
+		AddMissile(plr[rid].pos(), plr[rid].pos(), Dir(0), MIS_RESURRECTBEAM, 0, pnum, 0, 0);
 	}
 
 	if (pnum == myplr()) {

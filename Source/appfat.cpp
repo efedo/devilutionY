@@ -25,8 +25,7 @@ void app_fatal(const char *pszFmt, ...)
 	va_start(va, pszFmt);
 	FreeDlg();
 
-	if (pszFmt)
-		MsgBox(pszFmt, va);
+	if (pszFmt) MsgBox(pszFmt, va);
 
 	va_end(va);
 

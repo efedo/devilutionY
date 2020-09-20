@@ -23,13 +23,11 @@ int L4DownList[] = { 120, 130, 131, 132, 133, -1 };
 int L4TWarpUpList[] = { 421, 422, 429, -1 };
 int L4PentaList[] = { 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, -1 };
 
-#ifndef SPAWN
 void InitNoTriggers()
 {
 	numtrigs = 0;
 	trigflag = FALSE;
 }
-#endif
 
 void InitTownTriggers()
 {
@@ -39,7 +37,6 @@ void InitTownTriggers()
 	trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 	numtrigs++;
 
-	#ifndef SPAWN
 	if (gbMaxPlayers == MAX_PLRS) {
 		for (i = 0; i < sizeof(townwarps) / sizeof(townwarps[0]); i++) {
 			townwarps[i] = TRUE;
@@ -57,11 +54,9 @@ void InitTownTriggers()
 		trigs[numtrigs]._tlvl = 13;
 		numtrigs++;
 	} else {
-	#endif
 		for (i = 0; i < MAX_PLRS - 1; i++) {
 			townwarps[i] = FALSE;
 		}
-		#ifndef SPAWN
 		if (myplr().data.pTownWarps & 1) {
 			trigs[numtrigs]._t = { 49, 21 };
 			trigs[numtrigs]._tmsg = WM_DIABTOWNWARP;
@@ -84,7 +79,6 @@ void InitTownTriggers()
 			numtrigs++;
 		}
 	}
-#endif
 
 	trigflag = FALSE;
 }
@@ -111,7 +105,6 @@ void InitL1Triggers()
 	trigflag = FALSE;
 }
 
-#ifndef SPAWN
 void InitL2Triggers()
 {
 	V2Di p;
@@ -242,7 +235,6 @@ void InitVPTriggers()
 	trigs[0]._t = { 35, 32 };
 	trigs[0]._tmsg = WM_DIABRTNLVL;
 }
-#endif
 
 BOOL ForceTownTrig()
 {
@@ -601,19 +593,9 @@ void CheckTriggers()
 
 		switch (trigs[i]._tmsg) {
 		case WM_DIABNEXTLVL:
-#ifdef SPAWN
-			if (level.currlevel >= 2) {
-				NetSendCmdLoc(TRUE, CMD_WALKXY, myplr().data._px, myplr().data._py + 1);
-				PlaySFX(PS_WARR18);
-				InitDiabloMsg(EMSG_NOT_IN_SHAREWARE);
-			} else {
-#endif
 				if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
 					return;
 				myplr().StartNewLvl(trigs[i]._tmsg, level.currlevel + 1);
-#ifdef SPAWN
-			}
-#endif
 			break;
 		case WM_DIABPREVLVL:
 			if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
@@ -651,12 +633,6 @@ void CheckTriggers()
 				if (abort) {
 					if (myplr().data._pClass == PC_WARRIOR) {
 						PlaySFX(PS_WARR43);
-#ifndef SPAWN
-					} else if (myplr().data._pClass == PC_ROGUE) {
-						PlaySFX(PS_ROGUE43);
-					} else if (myplr().data._pClass == PC_SORCERER) {
-						PlaySFX(PS_MAGE43);
-#endif
 					}
 
 					InitDiabloMsg(abortflag);

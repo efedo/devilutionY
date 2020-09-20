@@ -39,7 +39,7 @@ void CheckDungeonClear()
 		for (i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].dMonster != 0)
 				app_fatal("Monsters not cleared");
-			if (grid[i][j].dPlayer != 0)
+			if (grid[i][j].isPlayer())
 				app_fatal("Players not cleared");
 
 			dMonsDbg[level.currlevel][i][j] = grid[i][j].dFlags & BFLAG_VISIBLE;
@@ -161,9 +161,9 @@ void PrintDebugPlayer(BOOL bNextPlayer)
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  Lvl = %i : Change = %i", plr[dbgplr].data.plrlevel, plr[dbgplr].data._pLvlChanging);
 		NetSendCmdString(1 << myplr(), dstr);
-		sprintf(dstr, "  x = %i, y = %i : tx = %i, ty = %i", plr[dbgplr].data._p.x, plr[dbgplr].data._p.y, plr[dbgplr].data._ptarg.x, plr[dbgplr].data._ptarg.y);
+		sprintf(dstr, "  x = %i, y = %i : tx = %i, ty = %i", plr[dbgplr].pos().x, plr[dbgplr].pos().y, plr[dbgplr].data._ptarg.x, plr[dbgplr].data._ptarg.y);
 		NetSendCmdString(1 << myplr(), dstr);
-		sprintf(dstr, "  mode = %i : daction = %i : walk[0] = %i", plr[dbgplr].data._pmode, plr[dbgplr].data.destAction, plr[dbgplr].data.walkpath[0]);
+		sprintf(dstr, "  mode = %i : daction = %i : walk[0] = %i", plr[dbgplr].data._pmode, plr[dbgplr].data.destAction, plr[dbgplr].data.wkpath.size());
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  inv = %i : hp = %i", plr[dbgplr].data._pInvincible, plr[dbgplr].data._pHitPoints);
 		NetSendCmdString(1 << myplr(), dstr);

@@ -12,13 +12,11 @@ BOOL boyloadflag;
 BYTE *pCowCels;
 TownerStruct towner[NUM_TOWNERS];
 
-#ifndef SPAWN
 const int snSFX[3][NUM_CLASSES] = {
 	{ PS_WARR52, PS_ROGUE52, PS_MAGE52 },
 	{ PS_WARR49, PS_ROGUE49, PS_MAGE49 },
 	{ PS_WARR50, PS_ROGUE50, PS_MAGE50 },
 };
-#endif
 
 /* data */
 
@@ -90,7 +88,7 @@ char AnimOrder[6][148] = {
 };
 int TownCowX[] = { 58, 56, 59 };
 int TownCowY[] = { 16, 14, 20 };
-int TownCowDir[] = { DIR_SW, DIR_NW, DIR_N };
+Dir TownCowDir[] = { Dir::SW, Dir::NW, Dir::N };
 int cowoffx[8] = { -1, 0, -1, -1, -1, 0, -1, -1 };
 int cowoffy[8] = { -1, -1, -1, 0, -1, -1, -1, 0 };
 QuestTalkData Qtalklist[] = {
@@ -186,7 +184,7 @@ void InitSmith()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 16;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_SW], towner[numtowners]._tNFrames, 3);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::SW)], towner[numtowners]._tNFrames, 3);
 	strcpy(towner[numtowners]._tName, "Griswold the Blacksmith");
 	numtowners++;
 }
@@ -203,7 +201,7 @@ void InitBarOwner()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 16;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_SW], towner[numtowners]._tNFrames, 3);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::SW)], towner[numtowners]._tNFrames, 3);
 	strcpy(towner[numtowners]._tName, "Ogden the Tavern owner");
 	numtowners++;
 }
@@ -219,7 +217,7 @@ void InitTownDead()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 8;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_N], towner[numtowners]._tNFrames, 6);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::N)], towner[numtowners]._tNFrames, 6);
 	strcpy(towner[numtowners]._tName, "Wounded Townsman");
 	numtowners++;
 }
@@ -235,7 +233,7 @@ void InitWitch()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 19;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_S], towner[numtowners]._tNFrames, 6);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::S)], towner[numtowners]._tNFrames, 6);
 	strcpy(towner[numtowners]._tName, "Adria the Witch");
 	numtowners++;
 }
@@ -251,7 +249,7 @@ void InitBarmaid()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 18;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_S], towner[numtowners]._tNFrames, 6);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::S)], towner[numtowners]._tNFrames, 6);
 	strcpy(towner[numtowners]._tName, "Gillian the Barmaid");
 	numtowners++;
 }
@@ -268,7 +266,7 @@ void InitBoy()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 20;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_S], towner[numtowners]._tNFrames, 6);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::S)], towner[numtowners]._tNFrames, 6);
 	strcpy(towner[numtowners]._tName, "Wirt the Peg-legged boy");
 	numtowners++;
 }
@@ -284,7 +282,7 @@ void InitHealer()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 20;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_SE], towner[numtowners]._tNFrames, 6);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::SE)], towner[numtowners]._tNFrames, 6);
 	strcpy(towner[numtowners]._tName, "Pepin the Healer");
 	numtowners++;
 }
@@ -300,7 +298,7 @@ void InitTeller()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 25;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_S], towner[numtowners]._tNFrames, 3);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::S)], towner[numtowners]._tNFrames, 3);
 	strcpy(towner[numtowners]._tName, "Cain the Elder");
 	numtowners++;
 }
@@ -316,14 +314,15 @@ void InitDrunk()
 		towner[numtowners]._tNAnim[i] = towner[numtowners]._tNData;
 	}
 	towner[numtowners]._tNFrames = 18;
-	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[DIR_S], towner[numtowners]._tNFrames, 3);
+	NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(Dir::S)], towner[numtowners]._tNFrames, 3);
 	strcpy(towner[numtowners]._tName, "Farnham the Drunk");
 	numtowners++;
 }
 
 void InitCows()
 {
-	int i, dir;
+	Dir dir;
+	int i;
 	int x, y, xo, yo;
 
 	//if ( pCowCels )
@@ -337,13 +336,13 @@ void InitCows()
 		towner[numtowners]._tNData = pCowCels;
 		SetTownerGPtrs(towner[numtowners]._tNData, towner[numtowners]._tNAnim);
 		towner[numtowners]._tNFrames = 12;
-		NewTownerAnim(numtowners, towner[numtowners]._tNAnim[dir], towner[numtowners]._tNFrames, 3);
+		NewTownerAnim(numtowners, towner[numtowners]._tNAnim[int(dir)], towner[numtowners]._tNFrames, 3);
 		towner[numtowners]._tAnimFrame = random_(0, 11) + 1;
 		towner[numtowners]._tSelFlag = TRUE;
 		strcpy(towner[numtowners]._tName, "Cow");
 
-		xo = x + cowoffx[dir];
-		yo = y + cowoffy[dir];
+		xo = x + cowoffx[int(dir)];
+		yo = y + cowoffy[int(dir)];
 		if (grid[x][yo].dMonster == 0)
 			grid[x][yo].dMonster = -(numtowners + 1);
 		if (grid[xo][y].dMonster == 0)
@@ -388,7 +387,7 @@ void TownCtrlMsg(int i)
 {
 	if (towner[i]._tbtcnt != 0) {
 		int p = towner[i]._tVar1;
-		int dist = (towner[i]._t - plr[p].data._p).maxabs();
+		int dist = (towner[i]._t - plr[p].pos()).maxabs();
 		if (dist >= 2)
 			towner[i]._tbtcnt = 0;
 		if (!towner[i]._tbtcnt) {
@@ -653,7 +652,6 @@ void TalkToTowner(int p, int t)
 			towner[t]._tbtcnt = 150;
 			towner[t]._tVar1 = p;
 			quests[Q_BUTCHER]._qvar1 = 1;
-#ifndef SPAWN
 			if (plr[p].data._pClass == PC_WARRIOR && !effect_is_playing(PS_WARR8)) {
 				PlaySFX(PS_WARR8);
 			} else if (plr[p].data._pClass == PC_ROGUE && !effect_is_playing(PS_ROGUE8)) {
@@ -661,7 +659,6 @@ void TalkToTowner(int p, int t)
 			} else if (plr[p].data._pClass == PC_SORCERER && !effect_is_playing(PS_MAGE8)) {
 				PlaySFX(PS_MAGE8);
 			}
-#endif
 			towner[t]._tMsgSaid = TRUE;
 		} else if (quests[Q_BUTCHER]._qactive == QUEST_DONE && quests[Q_BUTCHER]._qvar1 == 1) {
 			quests[Q_BUTCHER]._qvar1 = 1;
@@ -909,14 +906,6 @@ void CowSFX(int pnum)
 {
 	if (CowPlaying == -1 || !effect_is_playing(CowPlaying)) {
 		sgdwCowClicks++;
-#ifdef SPAWN
-		if (sgdwCowClicks == 4) {
-			sgdwCowClicks = 0;
-			CowPlaying = TSFX_COW2;
-		} else {
-			CowPlaying = TSFX_COW1;
-		}
-#else
 		if (sgdwCowClicks >= 8) {
 			PlaySfxLoc(TSFX_COW1, { plr[pnum].data._p.x, plr[pnum].data._p.y + 5 });
 			sgdwCowClicks = 4;
@@ -927,8 +916,7 @@ void CowSFX(int pnum)
 		} else {
 			CowPlaying = sgdwCowClicks == 4 ? TSFX_COW2 : TSFX_COW1;
 		}
-#endif
-		PlaySfxLoc(CowPlaying, plr[pnum].data._p);
+		PlaySfxLoc(CowPlaying, plr[pnum].pos());
 	}
 }
 

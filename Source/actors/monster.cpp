@@ -60,19 +60,6 @@ int MWVel[24][3] = {
 	{ 10, 21, 42 }
 };
 char animletter[7] = "nwahds";
-int left[8] = { 7, 0, 1, 2, 3, 4, 5, 6 };
-int right[8] = { 1, 2, 3, 4, 5, 6, 7, 0 };
-int opposite[8] = { 4, 5, 6, 7, 0, 1, 2, 3 };
-V2Di offset[8] = {
-	{  1,  1 },
-	{  0,  1 },
-	{ -1,  1 },
-	{ -1,  0 },
-	{ -1, -1 },
-	{  0, -1 },
-	{  1, -1 },
-	{  1,  0 },
-};
 
 void (MonsterInstance:: *AiProc[])() = {
 	&MonsterInstance::MAI_Zombie,
@@ -118,7 +105,7 @@ BOOL MonstPlace(V2Di p)
 	if (p.x < 0 || p.x >= MAXDUNX
 	    || p.y < 0 || p.y >= MAXDUNY
 	    || grid.at(p).dMonster
-	    || grid.at(p).dPlayer) {
+	    || grid.at(p).isPlayer()) {
 		return FALSE;
 	}
 
@@ -128,9 +115,6 @@ BOOL MonstPlace(V2Di p)
 	return !SolidLoc(p);
 }
 
-
-
-#ifndef SPAWN
 void LoadDiabMonsts()
 {
 	BYTE *lpSetPiece;
@@ -148,7 +132,6 @@ void LoadDiabMonsts()
 	SetMapMonsters(lpSetPiece, { 2 * diabquad4x, 2 * diabquad4y });
 	mem_free_dbg(lpSetPiece);
 }
-#endif
 
 void InitMonsters()
 {
@@ -163,31 +146,25 @@ void InitMonsters()
 	if (gbMaxPlayers != 1)
 		CheckDungeonClear();
 	if (!level.setlevel) {
-		AddMonster({ 1, 0 }, 0, 0, FALSE);
-		AddMonster({ 1, 0 }, 0, 0, FALSE);
-		AddMonster({ 1, 0 }, 0, 0, FALSE);
-		AddMonster({ 1, 0 }, 0, 0, FALSE);
+		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	}
-#ifndef SPAWN
 	if (!level.setlevel && level.currlevel == 16)
 		LoadDiabMonsts();
-#endif
 	nt = numtrigs;
 	if (level.currlevel == 15)
 		nt = 1;
 	for (i = 0; i < nt; i++) {
 		for (s = -2; s < 2; s++) {
 			for (t = -2; t < 2; t++)
-				DoVision(s + trigs[i]._t, 15, FALSE, FALSE);
+				DoVision({ s + trigs[i]._t.x, t + trigs[i]._t.y }, 15, FALSE, FALSE);
 		}
 	}
-#ifndef SPAWN
 	monsters.PlaceQuestMonsters();
-#endif
 	if (!level.setlevel) {
-#ifndef SPAWN
 		PlaceUniques();
-#endif
 		na = 0;
 		for (s = 16; s < 96; s++)
 			for (t = 16; t < 96; t++)
@@ -224,7 +201,6 @@ void InitMonsters()
 	}
 }
 
-#ifndef SPAWN
 void PlaceUniques()
 {
 	int u, mt;
@@ -263,10 +239,10 @@ void SetMapMonsters(BYTE *pMap, V2Di start)
 	int mtype;
 
 	beastiary.AddMonsterType(MT_GOLEM, 2);
-	AddMonster({ 1, 0 }, 0, 0, FALSE);
-	AddMonster({ 1, 0 }, 0, 0, FALSE);
-	AddMonster({ 1, 0 }, 0, 0, FALSE);
-	AddMonster({ 1, 0 }, 0, 0, FALSE);
+	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
 		beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 		beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
@@ -294,9 +270,8 @@ void SetMapMonsters(BYTE *pMap, V2Di start)
 		}
 	}
 }
-#endif
 
-int AddMonster(V2Di pos, int dir, int mtype, BOOL InMap)
+int AddMonster(V2Di pos, Dir dir, int mtype, BOOL InMap)
 {
 	if (nummonsters < MAXMONSTERS) {
 		int i = monstactive[nummonsters++];
@@ -329,7 +304,7 @@ void M2MStartHit(int mid, int i, int dam)
 
 	if (monsters[mid].data.MType->mtype >= MT_SNEAK && monsters[mid].data.MType->mtype <= MT_ILLWEAV || dam >> 6 >= monsters[mid].data.mLevel + 3) {
 		if (i >= 0)
-			monsters[mid].data._mdir = (monsters[i].data._mdir - 4) & 7;
+			monsters[mid].data._mdir = rotate(monsters[i].data._mdir, -4);
 
 		if (monsters[mid].data.MType->mtype == MT_BLINK) {
 			monsters[mid].M_Teleport();
@@ -368,20 +343,12 @@ void MonsterInstance::M_UpdateLeader()
 
 void DoEnding()
 {
-	BOOL bMusicOn;
-	int musicVolume;
-
-	if (gbMaxPlayers > 1) {
-		SNetLeaveGame(0x40000004);
-	}
+	if (gbMaxPlayers > 1) SNetLeaveGame(0x40000004);
 
 	music_stop();
 
-	if (gbMaxPlayers > 1) {
-		SDL_Delay(1000);
-	}
+	if (gbMaxPlayers > 1) SDL_Delay(1000);
 
-#ifndef SPAWN
 	if (myplr().data._pClass == PC_WARRIOR) {
 		play_movie("gendata\\DiabVic2.smk", FALSE);
 	} else if (myplr().data._pClass == PC_SORCERER) {
@@ -391,10 +358,10 @@ void DoEnding()
 	}
 	play_movie("gendata\\Diabend.smk", FALSE);
 
-	bMusicOn = gbMusicOn;
+	BOOL bMusicOn = gbMusicOn;
 	gbMusicOn = TRUE;
 
-	musicVolume = sound_get_or_set_music_volume(1);
+	int musicVolume = sound_get_or_set_music_volume(1);
 	sound_get_or_set_music_volume(0);
 
 	music_start(TMUSIC_L2);
@@ -405,7 +372,6 @@ void DoEnding()
 
 	sound_get_or_set_music_volume(musicVolume);
 	gbMusicOn = bMusicOn;
-#endif
 }
 
 void PrepDoEnding()
@@ -487,13 +453,11 @@ void ProcessMonsters()
 			}
 		}
 		m = Monst->_m;
-		#ifndef SPAWN
 		if (grid.at(m).dFlags & BFLAG_VISIBLE && Monst->_msquelch == 0) {
 			if (Monst->MType->mtype == MT_CLEAVER) {
 				PlaySFX(USFX_CLEAVER);
 			}
 		}
-		#endif
 		if (Monst->_mFlags & MFLAG_TARGETS_MONSTER) {
 			_menemy = Monst->_menemy;
 			if ((DWORD)_menemy >= MAXMONSTERS) {
@@ -621,26 +585,26 @@ void FreeMonsters()
 	FreeMissiles2();
 }
 
-BOOL MonsterInstance::DirOK(int mdir)
+BOOL MonsterInstance::DirOK(Dir mdir)
 {
 	V2Di p;
 	int mcount, mi;
-	V2Di f = data._m + offset[mdir];
+	V2Di f = data._m + offset(mdir);
 	if (f.y < 0 || f.y >= MAXDUNY || f.x < 0 || f.x >= MAXDUNX || !PosOkMonst(i, f))
 		return FALSE;
-	if (mdir == DIR_E) {
+	if (mdir == Dir::E) {
 		if (SolidLoc({ f.x, f.y + 1 }) || grid[f.x][f.y + 1].dFlags & BFLAG_MONSTLR)
 			return FALSE;
 	}
-	if (mdir == DIR_W) {
+	if (mdir == Dir::W) {
 		if (SolidLoc({ f.x + 1, f.y }) || grid[f.x + 1][f.y].dFlags & BFLAG_MONSTLR)
 			return FALSE;
 	}
-	if (mdir == DIR_N) {
+	if (mdir == Dir::N) {
 		if (SolidLoc({ f.x + 1, f.y }) || SolidLoc({ f.x, f.y + 1 }))
 			return FALSE;
 	}
-	if (mdir == DIR_S)
+	if (mdir == Dir::S)
 		if (SolidLoc({ f.x - 1, f.y }) || SolidLoc({ f.x, f.y - 1 }))
 			return FALSE;
 	if (data.leaderflag == 1) {
@@ -850,7 +814,7 @@ BOOL LineClearF1(BOOL (*Clear)(int, V2Di), int monst, V2Di p1, V2Di p2)
 void MonsterInstance::SyncMonsterAnim()
 {
 	MonsterData *MData;
-	int _mdir;
+	Dir _mdir;
 	data.MType->mtype = beastiary[data._mMTidx].data.mtype;
 	MData = beastiary[data._mMTidx].data.MData;
 	data.MData = MData;
@@ -864,46 +828,46 @@ void MonsterInstance::SyncMonsterAnim()
 	case MM_WALK:
 	case MM_WALK2:
 	case MM_WALK3:
-		data._mAnimData = data.MType->Anims[MA_WALK].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_WALK].Data[int(_mdir)];
 		return;
 	case MM_ATTACK:
 	case MM_RATTACK:
-		data._mAnimData = data.MType->Anims[MA_ATTACK].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_ATTACK].Data[int(_mdir)];
 		return;
 	case MM_GOTHIT:
-		data._mAnimData = data.MType->Anims[MA_GOTHIT].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_GOTHIT].Data[int(_mdir)];
 		return;
 	case MM_DEATH:
-		data._mAnimData = data.MType->Anims[MA_DEATH].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_DEATH].Data[int(_mdir)];
 		return;
 	case MM_SATTACK:
 	case MM_FADEIN:
 	case MM_FADEOUT:
-		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(_mdir)];
 		return;
 	case MM_SPSTAND:
 	case MM_RSPATTACK:
-		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(_mdir)];
 		return;
 	case MM_HEAL:
-		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(_mdir)];
 		return;
 	case MM_STAND:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
 		return;
 	case MM_DELAY:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
 		return;
 	case MM_TALK:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
 		return;
 	case MM_CHARGE:
-		data._mAnimData = data.MType->Anims[MA_ATTACK].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_ATTACK].Data[int(_mdir)];
 		data._mAnimFrame = 1;
 		data._mAnimLen = data.MType->Anims[MA_ATTACK].Frames;
 		break;
 	default:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[_mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
 		data._mAnimFrame = 1;
 		data._mAnimLen = data.MType->Anims[MA_STAND].Frames;
 		break;
@@ -1056,7 +1020,7 @@ void MissToMonst(int i, V2Di pos)
 	Monst = &monsters[m].data;
 	old = Miss->_mi;
 	grid[pos.x][pos.y].dMonster = m + 1;
-	Monst->_mdir = Miss->_mimfnum;
+	Monst->_mdir = Dir(Miss->_mimfnum);
 	Monst->_m = pos;
 	monsters[m].M_StartStand(Monst->_mdir);
 	if (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN) {
@@ -1069,19 +1033,20 @@ void MissToMonst(int i, V2Di pos)
 	}
 
 	if (!(Monst->_mFlags & MFLAG_TARGETS_MONSTER)) {
-		pnum = grid[old.x][old.y].dPlayer - 1;
-		if (grid[old.x][old.y].dPlayer > 0) {
+		pnum = grid.at(old).getPlayerNum();
+		if (pnum > 0) {
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
-				monsters[m].M_TryH2HHit(grid[old.x][old.y].dPlayer - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
-				if (pnum == grid[old.x][old.y].dPlayer - 1 && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
+				monsters[m].M_TryH2HHit(pnum, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
+				if (pnum == myplr() && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
 					if (plr[pnum].data._pmode != 7 && plr[pnum].data._pmode != 8)
 						plr[pnum].StartPlrHit(0, TRUE);
-					n = old + offset[Monst->_mdir];
+					n = old + offset(Monst->_mdir);
 					if (PosOkPlayer(pnum, n)) {
+						const V2Di oldpos = plr[pnum].data._p;
 						plr[pnum].data._p = n;
 						plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
 						plr[pnum].FixPlrWalkTags();
-						grid.at(n).dPlayer = pnum + 1;
+						grid.movePlayer(pnum);
 						plr[pnum].SetPlayerOld();
 					}
 				}
@@ -1092,7 +1057,7 @@ void MissToMonst(int i, V2Di pos)
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
 				monsters[m].M_TryM2MHit(grid.at(old).dMonster - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
 				if (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE) {
-					n = old + offset[Monst->_mdir];
+					n = old + offset(Monst->_mdir);
 					if (PosOkMonst(grid.at(old).dMonster - 1, n)) {
 						m = grid.at(old).dMonster;
 						grid.at(n).dMonster = m;
@@ -1227,7 +1192,7 @@ BOOL IsGoat(int mt)
 	    || mt >= MT_NGOATBW && mt <= MT_GGOATBW;
 }
 
-int M_SpawnSkel(V2Di pos, int dir)
+int M_SpawnSkel(V2Di pos, Dir dir)
 {
 	int i, j = 0;
 	for (i = 0; i < nummtypes; i++) {
@@ -1247,7 +1212,7 @@ int M_SpawnSkel(V2Di pos, int dir)
 	return -1;
 }
 
-void MonsterInstance::ActivateSpawn(V2Di pos, int dir)
+void MonsterInstance::ActivateSpawn(V2Di pos, Dir dir)
 {
 	grid[pos.x][pos.y].dMonster = i + 1;
 	data._m = pos;
@@ -1259,7 +1224,8 @@ void MonsterInstance::ActivateSpawn(V2Di pos, int dir)
 BOOL SpawnSkeleton(int ii, V2Di pos)
 {
 	V2Di d, n;
-	int dir, j, k, rs;
+	Dir dir;
+	int j, k, rs;
 	BOOL savail;
 	int monstok[3][3];
 
@@ -1302,8 +1268,7 @@ BOOL SpawnSkeleton(int ii, V2Di pos)
 		}
 	}
 
-	d.x = pos.x - 1 + n.x;
-	d.y = pos.y - 1 + n.y;
+	d = pos + n - V2Di(1, 1);
 	dir = GetDirection(d, pos);
 	monsters[ii].ActivateSpawn(d, dir);
 	return TRUE;
@@ -1326,9 +1291,9 @@ int PreSpawnSkeleton()
 			if (IsSkel(beastiary[i].data.mtype))
 				j++;
 		}
-		skel = AddMonster({ 0, 0 }, 0, i - 1, FALSE);
+		skel = AddMonster({ 0, 0 }, Dir(0), i - 1, FALSE);
 		if (skel != -1)
-			monsters[skel].M_StartStand(0);
+			monsters[skel].M_StartStand(Dir(0));
 		return skel;
 	}
 	return -1;
@@ -1370,12 +1335,12 @@ void MonsterInstance::SpawnGolum(V2Di pos, int mi)
 	data.mHit = 5 * (missile[mi]._mispllvl + 8) + 2 * plr[i].data._pLevel;
 	data.mMinDamage = 2 * (missile[mi]._mispllvl + 4);
 	data.mMaxDamage = 2 * (missile[mi]._mispllvl + 8);
-	M_StartSpStand(0);
+	M_StartSpStand(Dir(0));
 	M_Enemy();
 	if (i == myplr()) {
 		NetSendCmdGolem(
 		    data._m,
-		    data._mdir,
+		    int(data._mdir),
 		    data._menemy,
 		    data._mhitpoints,
 		    level.currlevel);

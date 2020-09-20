@@ -10,19 +10,17 @@ DEVILUTION_BEGIN_NAMESPACE
 
 class Player {
 public:
-	Player(int newpnum)
-		: pnum(newpnum), inventory(*this)
+	Player(int newpnum);
+	const int id() const;
+	operator int() const;
+	void ChangePlayerPos(const V2Di newpos)
 	{
-		memset(&data, 0, sizeof(data)); // 0 out data struct
+		grid.movePlayer(id(), data._pos, newpos);
+		data._pos = newpos;
 	}
-	const int id() const
+	const V2Di &pos() const
 	{
-		return pnum;
-	};
-
-	operator int() const
-	{
-		return id();
+		return data._pos;
 	}
 
 	bool isLocal();
@@ -42,20 +40,21 @@ public:
 	void ProcessPlayer(); // New
 	void InitPlayer(BOOL FirstTime);
 	void CheckEFlag(BOOL flag);
-	BOOL PlrDirOK(int dir);
+	BOOL PlrDirOK(Dir dir);
 	void SetPlayerOld();
-	void FixPlayerLocation(int bDir);
-	void StartStand(int dir);
+	void FixPlayerLocation(Dir bDir);
+	void StartStand(Dir dir);
 	void StartWalkStand();
 	void PM_ChangeLightOff();
 	void PM_ChangeOffset();
-	void StartWalk(V2Di vel, V2Di add, int EndDir, int sdir);
-	void StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir, int sdir);
-	void StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir, int sdir);
-	void StartAttack(int d);
-	void StartRangeAttack(int d, V2Di c);
-	void StartPlrBlock(int dir);
-	void StartSpell(int d, V2Di c);
+	void StartWalk(Dir);
+	void StartWalk(V2Di vel, V2Di add, Dir EndDir, ScrollDir sdir);
+	void StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir, ScrollDir sdir);
+	void StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir, ScrollDir sdir);
+	void StartAttack(Dir d);
+	void StartRangeAttack(Dir d, V2Di c);
+	void StartPlrBlock(Dir dir);
+	void StartSpell(Dir d, V2Di c);
 	void FixPlrWalkTags();
 	void RemovePlrFromMap();
 	void StartPlrHit(int dam, BOOL forcehit);
@@ -87,16 +86,16 @@ public:
 	void ArmorDur();
 	BOOL PM_DoDeath();
 	void CheckNewPath();
-	void CheckCheatStats();
 	void ClrPlrPath();
 	BOOL PosOkPlayer(V2Di pos);
 	void MakePlrPath(V2Di pos, BOOL endspace);
 	void SyncPlrAnim();
 	void SyncInitPlrPos();
 	void SyncInitPlr();
-	void SetPlayerHitPoints(int val);
 	void InitDungMsgs();
+
 	void CheckStats();
+	void CheckCheatStats();
 	void ModifyPlrStr(int l);
 	void ModifyPlrMag(int l);
 	void ModifyPlrDex(int l);
@@ -105,6 +104,8 @@ public:
 	void SetPlrMag(int v);
 	void SetPlrDex(int v);
 	void SetPlrVit(int v);
+	void SetPlayerHitPoints(int val);
+
 	PlayerStruct data;
 	PlayerInventory inventory;
 private:
@@ -135,7 +136,12 @@ public:
 	{
 		myplr = newlocal;
 	}
-
+	bool isValidPlayer(int number)
+	{
+		if (number < 0) return false;
+		if (number >= list.size()) return false;
+		return true;
+	}
 private:
 	friend Player & myplr();
 
@@ -188,12 +194,8 @@ extern const char CharChar[];
 
 /* data */
 
-extern int plrxoff[9]; // stores x and y offsets for players independently for multiplayer for some reason
-						// 9 slots even though only 4 players max (assuming higher slots are not used?)
-extern int plryoff[9];
-extern int plrxoff2[9];
-extern int plryoff2[9];
-
+extern V2Di plroff[9];
+extern V2Di plroff2[9];
 
 extern int ExpLvlsTbl[MAXCHARLEVEL];
 extern BYTE fix[9];

@@ -22,21 +22,12 @@ BOOLEAN gbSoundOn = true;
 int sgnMusicTrack = NUM_MUSIC;
 
 char *sgszMusicTracks[NUM_MUSIC] = {
-#ifdef SPAWN
-	"Music\\sTowne.wav",
-	"Music\\sLvlA.wav",
-	"Music\\sLvlA.wav",
-	"Music\\sLvlA.wav",
-	"Music\\sLvlA.wav",
-	"Music\\sintro.wav",
-#else
 	"Music\\DTowne.wav",
 	"Music\\DLvlA.wav",
 	"Music\\DLvlB.wav",
 	"Music\\DLvlC.wav",
 	"Music\\DLvlD.wav",
 	"Music\\Dintro.wav",
-#endif
 };
 
 BOOL snd_playing(TSnd *pSnd)

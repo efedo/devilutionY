@@ -123,13 +123,6 @@ void InitQuests()
 	if (questdebug != -1)
 		quests[questdebug]._qactive = QUEST_ACTIVE;
 #endif
-
-#ifdef SPAWN
-	for (z = 0; z < MAXQUESTS; z++) {
-		quests[z]._qactive = QUEST_NOTAVAIL;
-	}
-#endif
-
 	if (!quests[Q_SKELKING]._qactive)
 		quests[Q_SKELKING]._qvar2 = 2;
 	if (!quests[Q_ROCK]._qactive)
@@ -141,7 +134,6 @@ void InitQuests()
 
 void CheckQuests()
 {
-#ifndef SPAWN
 	int i;
 	V2Di rport;
 
@@ -162,7 +154,7 @@ void CheckQuests()
 	    && (quests[Q_BETRAYER]._qvar2 == 0 || quests[Q_BETRAYER]._qvar2 == 2)) {
 		quests[Q_BETRAYER]._qt = 2 * quests[Q_BETRAYER]._qt + V2Di(16, 16);
 		rport = quests[Q_BETRAYER]._qt;
-		AddMissile(rport, rport, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile(rport, rport, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 1;
 		if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
 			quests[Q_BETRAYER]._qvar1 = 3;
@@ -174,7 +166,7 @@ void CheckQuests()
 	    && level.setlvlnum == SL_VILEBETRAYER
 	    && quests[Q_BETRAYER]._qvar2 == 4) {
 		rport = { 35, 32 };
-		AddMissile(rport, rport, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile(rport, rport, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 3;
 	}
 
@@ -185,7 +177,7 @@ void CheckQuests()
 		    && nummonsters == 4
 		    && quests[Q_PWATER]._qactive != QUEST_DONE) {
 			quests[Q_PWATER]._qactive = QUEST_DONE;
-			PlaySfxLoc(IS_QUESTDN, myplr().data._p);
+			PlaySfxLoc(IS_QUESTDN, myplr().pos());
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
 			WaterDone = 32;
 		}
@@ -206,12 +198,10 @@ void CheckQuests()
 			}
 		}
 	}
-#endif
 }
 
 BOOL ForceQuests()
 {
-#ifndef SPAWN
 	int i, j, ql;
 	V2Di q;
 
@@ -234,7 +224,6 @@ BOOL ForceQuests()
 			}
 		}
 	}
-#endif
 
 	return FALSE;
 }
@@ -254,7 +243,6 @@ BOOL QuestStatus(int i)
 
 void CheckQuestKill(int m, BOOL sendmsg)
 {
-#ifndef SPAWN
 	int i, j;
 
 	if (monsters[m].data.MType->mtype == MT_SKING) {
@@ -336,7 +324,7 @@ void CheckQuestKill(int m, BOOL sendmsg)
 		quests[Q_BETRAYER]._qvar1 = 7;
 		quests[Q_BETRAYER]._qvar2 = 4;
 		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
-		AddMissile({ 35, 32 }, { 35, 32 }, 0, MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile({ 35, 32 }, { 35, 32 }, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR83;
 		} else if (myplr().data._pClass == PC_ROGUE) {
@@ -355,7 +343,6 @@ void CheckQuestKill(int m, BOOL sendmsg)
 			sfxdnum = PS_MAGE94;
 		}
 	}
-#endif
 }
 
 void DrawButcher()
@@ -591,7 +578,6 @@ void GetReturnLvlPos()
 
 void ResyncMPQuests()
 {
-#ifndef SPAWN
 	if (quests[Q_SKELKING]._qactive == QUEST_INIT
 	    && level.currlevel >= quests[Q_SKELKING]._qlevel - 1
 	    && level.currlevel <= quests[Q_SKELKING]._qlevel + 1) {
@@ -610,12 +596,10 @@ void ResyncMPQuests()
 	}
 	if (QuestStatus(Q_BETRAYER))
 		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
-#endif
 }
 
 void ResyncQuests()
 {
-#ifndef SPAWN
 	int i, tren, x, y;
 
 	if (level.setlevel && level.setlvlnum == quests[Q_PWATER]._qslvl && quests[Q_PWATER]._qactive != QUEST_INIT && level.leveltype == quests[Q_PWATER]._qlvltype) {
@@ -697,7 +681,6 @@ void ResyncQuests()
 	    && (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE || quests[Q_BETRAYER]._qactive == QUEST_DONE)) {
 		quests[Q_BETRAYER]._qvar2 = 2;
 	}
-#endif
 }
 
 void PrintQLString(int x, int y, BOOL cjustflag, char *str, int col)
@@ -828,7 +811,6 @@ void QuestlogESC()
 
 void SetMultiQuest(int q, int s, int l, int v1)
 {
-#ifndef SPAWN
 	if (quests[q]._qactive != QUEST_DONE) {
 		if (s > quests[q]._qactive)
 			quests[q]._qactive = s;
@@ -836,7 +818,6 @@ void SetMultiQuest(int q, int s, int l, int v1)
 		if (v1 > quests[q]._qvar1)
 			quests[q]._qvar1 = v1;
 	}
-#endif
 }
 
 DEVILUTION_END_NAMESPACE

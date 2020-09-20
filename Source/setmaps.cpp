@@ -80,7 +80,6 @@ int ObjIndex(int x, int y)
 	return -1;
 }
 
-#ifndef SPAWN
 void AddSKingObjs()
 {
 	SetObjMapRange(ObjIndex(64, 34), { 20, 7 }, { 23, 10 }, 1);
@@ -192,6 +191,5 @@ void LoadSetMap()
 		break;
 	}
 }
-#endif
 
 DEVILUTION_END_NAMESPACE

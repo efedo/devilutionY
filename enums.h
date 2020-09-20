@@ -422,7 +422,6 @@ typedef enum _sfx_id {
 	LS_VTHEFT,
 	LS_WALLLOOP,
 	LS_WALLSTRT,
-#ifndef SPAWN
 	TSFX_BMAID1,
 	TSFX_BMAID2,
 	TSFX_BMAID3,
@@ -453,9 +452,7 @@ typedef enum _sfx_id {
 	TSFX_BMAID28,
 	TSFX_BMAID29,
 	TSFX_BMAID30,
-#endif
 	TSFX_BMAID31,
-#ifndef SPAWN
 	TSFX_BMAID32,
 	TSFX_BMAID33,
 	TSFX_BMAID34,
@@ -508,9 +505,7 @@ typedef enum _sfx_id {
 	TSFX_SMITH41,
 	TSFX_SMITH42,
 	TSFX_SMITH43,
-#endif
 	TSFX_SMITH44,
-#ifndef SPAWN
 	TSFX_SMITH45,
 	TSFX_SMITH46,
 	TSFX_SMITH47,
@@ -523,10 +518,8 @@ typedef enum _sfx_id {
 	TSFX_SMITH54,
 	TSFX_SMITH55,
 	TSFX_SMITH56,
-#endif
 	TSFX_COW1,
 	TSFX_COW2,
-#ifndef SPAWN
 	TSFX_DEADGUY,
 	TSFX_DRUNK1,
 	TSFX_DRUNK2,
@@ -554,9 +547,7 @@ typedef enum _sfx_id {
 	TSFX_DRUNK24,
 	TSFX_DRUNK25,
 	TSFX_DRUNK26,
-#endif
 	TSFX_DRUNK27,
-#ifndef SPAWN
 	TSFX_DRUNK28,
 	TSFX_DRUNK29,
 	TSFX_DRUNK30,
@@ -601,9 +592,7 @@ typedef enum _sfx_id {
 	TSFX_HEALER34,
 	TSFX_HEALER35,
 	TSFX_HEALER36,
-#endif
 	TSFX_HEALER37,
-#ifndef SPAWN
 	TSFX_HEALER38,
 	TSFX_HEALER39,
 	TSFX_HEALER40,
@@ -645,9 +634,7 @@ typedef enum _sfx_id {
 	TSFX_PEGBOY29,
 	TSFX_PEGBOY30,
 	TSFX_PEGBOY31,
-#endif
 	TSFX_PEGBOY32,
-#ifndef SPAWN
 	TSFX_PEGBOY33,
 	TSFX_PEGBOY34,
 	TSFX_PEGBOY35,
@@ -692,9 +679,7 @@ typedef enum _sfx_id {
 	TSFX_STORY22,
 	TSFX_STORY23,
 	TSFX_STORY24,
-#endif
 	TSFX_STORY25,
-#ifndef SPAWN
 	TSFX_STORY26,
 	TSFX_STORY27,
 	TSFX_STORY28,
@@ -708,9 +693,7 @@ typedef enum _sfx_id {
 	TSFX_STORY36,
 	TSFX_STORY37,
 	TSFX_STORY38,
-#endif
 	TSFX_TAVERN0,
-#ifndef SPAWN
 	TSFX_TAVERN1,
 	TSFX_TAVERN2,
 	TSFX_TAVERN3,
@@ -746,9 +729,7 @@ typedef enum _sfx_id {
 	TSFX_TAVERN33,
 	TSFX_TAVERN34,
 	TSFX_TAVERN35,
-#endif
 	TSFX_TAVERN36,
-#ifndef SPAWN
 	TSFX_TAVERN37,
 	TSFX_TAVERN38,
 	TSFX_TAVERN39,
@@ -795,9 +776,7 @@ typedef enum _sfx_id {
 	TSFX_WITCH35,
 	TSFX_WITCH36,
 	TSFX_WITCH37,
-#endif
 	TSFX_WITCH38,
-#ifndef SPAWN
 	TSFX_WITCH39,
 	TSFX_WITCH40,
 	TSFX_WITCH41,
@@ -1029,7 +1008,6 @@ typedef enum _sfx_id {
 	PS_WARR10,
 	PS_WARR11,
 	PS_WARR12,
-#endif
 	PS_WARR13,
 	PS_WARR14,
 	PS_WARR14B,
@@ -1104,7 +1082,6 @@ typedef enum _sfx_id {
 	PS_WARR77,
 	PS_WARR78,
 	PS_WARR79,
-#ifndef SPAWN
 	PS_WARR80,
 	PS_WARR81,
 	PS_WARR82,
@@ -1126,12 +1103,10 @@ typedef enum _sfx_id {
 	PS_WARR95D,
 	PS_WARR95E,
 	PS_WARR95F,
-#endif
 	PS_WARR96B,
 	PS_WARR97,
 	PS_WARR98,
 	PS_WARR99,
-#ifndef SPAWN
 	PS_WARR100,
 	PS_WARR101,
 	PS_WARR102,
@@ -1165,7 +1140,6 @@ typedef enum _sfx_id {
 	USFX_ZHAR1,
 	USFX_ZHAR2,
 	USFX_DIABLOD,
-#endif
 } _sfx_id;
 
 typedef enum sfx_flag {
@@ -2081,30 +2055,6 @@ typedef enum cursor_id {
 	CURSOR_FIRSTITEM   = 0xC,
 } cursor_id;
 
-typedef enum direction {
-	DIR_S    = 0x0,
-	DIR_SW   = 0x1,
-	DIR_W    = 0x2,
-	DIR_NW   = 0x3,
-	DIR_N    = 0x4,
-	DIR_NE   = 0x5,
-	DIR_E    = 0x6,
-	DIR_SE   = 0x7,
-	DIR_OMNI = 0x8,
-} direction;
-
-typedef enum _scroll_direction {
-	SDIR_NONE = 0x0,
-	SDIR_N    = 0x1,
-	SDIR_NE   = 0x2,
-	SDIR_E    = 0x3,
-	SDIR_SE   = 0x4,
-	SDIR_S    = 0x5,
-	SDIR_SW   = 0x6,
-	SDIR_W    = 0x7,
-	SDIR_NW   = 0x8,
-} _scroll_direction;
-
 typedef enum interface_mode {
 	WM_DIABNEXTLVL  = 0x402, // WM_USER+2
 	WM_DIABPREVLVL  = 0x403,
@@ -2720,17 +2670,17 @@ typedef enum _ui_classes {
 	UI_NUM_CLASSES,
 } _ui_classes;
 
-typedef enum _walk_path {
-	WALK_NE   = 0x1,
-	WALK_NW   = 0x2,
-	WALK_SE   = 0x3,
-	WALK_SW   = 0x4,
-	WALK_N    = 0x5,
-	WALK_E    = 0x6,
-	WALK_S    = 0x7,
-	WALK_W    = 0x8,
-	WALK_NONE = -1,
-} _walk_path;
+//typedef enum _walk_path {
+//	WALK_NE   = 0x1,
+//	WALK_NW   = 0x2,
+//	WALK_SE   = 0x3,
+//	WALK_SW   = 0x4,
+//	WALK_N    = 0x5,
+//	WALK_E    = 0x6,
+//	WALK_S    = 0x7,
+//	WALK_W    = 0x8,
+////	WALK_NONE = -1,
+//} _walk_path;
 
 typedef enum player_weapon_type {
 	WT_MELEE  = 0,
@@ -2869,10 +2819,8 @@ typedef enum anim_weapon_id {
 
 typedef enum anim_armor_id {
 	ANIM_ID_LIGHT_ARMOR = 0x00,
-#ifndef SPAWN
 	ANIM_ID_MEDIUM_ARMOR = 0x10,
 	ANIM_ID_HEAVY_ARMOR  = 0x20
-#endif
 } anim_armor_id;
 
 typedef enum shrine_type {

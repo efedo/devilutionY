@@ -32,14 +32,14 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "WinRel"
-# PROP BASE Intermediate_Dir "WinRel"
-# PROP BASE Target_Dir ""
+# PROP BASE OutputDir "WinRel"
+# PROP BASE IntermediateDir "WinRel"
+# PROP BASE TargetDir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "WinRel"
-# PROP Intermediate_Dir "WinRel"
-# PROP Target_Dir ""
+# PROP OutputDir "WinRel"
+# PROP IntermediateDir "WinRel"
+# PROP TargetDir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -55,14 +55,14 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "WinDebug"
-# PROP BASE Intermediate_Dir "WinDebug"
-# PROP BASE Target_Dir ""
+# PROP BASE OutputDir "WinDebug"
+# PROP BASE IntermediateDir "WinDebug"
+# PROP BASE TargetDir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "WinDebug"
-# PROP Intermediate_Dir "WinDebug"
-# PROP Target_Dir ""
+# PROP OutputDir "WinDebug"
+# PROP IntermediateDir "WinDebug"
+# PROP TargetDir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"

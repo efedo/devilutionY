@@ -7,29 +7,56 @@ DEVILUTION_BEGIN_NAMESPACE
 // Lean 2D int vector
 class V2Di {
 public:
-	V2Di(int nx = 0, int ny = 0);
-	int x;
-	int y;
+	V2Di();
+	V2Di(int nx, int ny);
+	int x = 0;
+	int y = 0;
 	V2Di abs();
 	int maxdim();
 	int maxabs();
+	friend V2Di operator+(const V2Di &lhs, const V2Di &rhs);
+	friend V2Di operator-(const V2Di &lhs, const V2Di &rhs);
+	friend V2Di operator-(const V2Di &lhs);
+	friend V2Di operator*(const int &lhs, const V2Di &rhs);
+	friend V2Di operator*(const V2Di &lhs, const int &rhs);
+	friend V2Di operator/(const V2Di &lhs, const int &rhs);
+	friend V2Di operator>>(const V2Di &lhs, const int &rhs);
+	friend V2Di operator<<(const V2Di &lhs, const int &rhs);
+	friend V2Di &operator+=(V2Di &lhs, const V2Di &rhs);
+	friend V2Di &operator-=(V2Di &lhs, const V2Di &rhs);
+	friend V2Di &operator*=(V2Di &lhs, const int &rhs);
+	friend V2Di &operator/=(V2Di &lhs, const int &rhs);
+	friend bool operator==(const V2Di &lhs, const V2Di &rhs);
+	friend bool operator!=(const V2Di &lhs, const V2Di &rhs);
 };
 
-V2Di operator+(const V2Di &lhs, const V2Di &rhs);
-V2Di operator-(const V2Di &lhs, const V2Di &rhs);
-V2Di operator-(const V2Di &lhs);
-V2Di operator*(const int &lhs, const V2Di &rhs);
-V2Di operator*(const V2Di &lhs, const int &rhs);
-V2Di operator/(const int &lhs, const V2Di &rhs);
-V2Di operator/(const V2Di &lhs, const int &rhs);
-V2Di operator>>(const int &lhs, const V2Di &rhs);
-V2Di operator>>(const V2Di &lhs, const int &rhs);
-V2Di operator<<(const int &lhs, const V2Di &rhs);
-V2Di operator<<(const V2Di &lhs, const int &rhs);
-V2Di& operator+=(V2Di &lhs, const V2Di &rhs);
-V2Di& operator-=(V2Di &lhs, const V2Di &rhs);
-bool operator==(const V2Di &lhs, const V2Di &rhs);
-bool operator!=(const V2Di &lhs, const V2Di &rhs);
+//class Dir {
+//public:
+//	Dir();
+//	Dir(const typename Dir &rhs) { data = rhs; }
+//	Dir(const Dir &rhs);
+//	Dir(const int &rhs);
+//	operator int();
+//	Dir &operator=(const Dir &rhs);
+//	Dir &operator=(const Dir &rhs);
+//	Dir &operator=(const int &rhs);
+//	V2Di offset();
+//	friend Dir operator+(const Dir &lhs, const Dir &rhs);
+//	friend Dir operator-(const Dir &lhs, const Dir &rhs);
+//	friend Dir operator-(const Dir &lhs);
+//	friend Dir operator*(const Dir &lhs, const Dir &rhs);
+//	friend Dir operator/(const Dir &lhs, const Dir &rhs);
+//	friend Dir operator>>(const Dir &lhs, const Dir &rhs);
+//	friend Dir operator<<(const Dir &lhs, const Dir &rhs);
+//	friend Dir &operator+=(Dir &lhs, const Dir &rhs);
+//	friend Dir &operator-=(Dir &lhs, const Dir &rhs);
+//	friend Dir &operator*=(Dir &lhs, const Dir &rhs);
+//	friend Dir &operator/=(Dir &lhs, const Dir &rhs);
+//	friend bool operator==(const Dir &lhs, const Dir &rhs);
+//	friend bool operator!=(const Dir &lhs, const Dir &rhs);
+//private:
+//	Dir data = Dir::NONE;
+//};
 
 DEVILUTION_END_NAMESPACE
 

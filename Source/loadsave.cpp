@@ -118,7 +118,7 @@ void LoadGame(BOOL firstflag)
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			grid[i][j].dPlayer = BLoad();
+			grid[i][j].setPlayerNumUnsafe(BLoad());
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
@@ -280,7 +280,7 @@ void LoadPlayer(int i)
 	PlayerStruct *pPlayer = &plr[i].data;
 
 	CopyInt(tbuff, &pPlayer->_pmode);
-	CopyBytes(tbuff, MAX_PATH_LENGTH, pPlayer->walkpath);
+	//CopyBytes(tbuff, MAX_PATH_LENGTH, pPlayer->wkpath;
 	CopyBytes(tbuff, 1, &pPlayer->plractive);
 	tbuff += 2; // Alignment
 	CopyInt(tbuff, &pPlayer->destAction);
@@ -304,7 +304,7 @@ void LoadPlayer(int i)
 	CopyInt(tbuff, &pPlayer->_pvel.x);
 	CopyInt(tbuff, &pPlayer->_pvel.y);
 	CopyInt(tbuff, &pPlayer->_pdir);
-	CopyInt(tbuff, &pPlayer->_nextdir);
+	//CopyInt(tbuff, &pPlayer->_nextdir);
 	CopyInt(tbuff, &pPlayer->_pgfxnum);
 	tbuff += 4; // Skip pointer _pAnimData
 	CopyInt(tbuff, &pPlayer->_pAnimDelay);
@@ -916,7 +916,7 @@ void SaveGame()
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(grid[i][j].dPlayer);
+			BSave(grid[i][j].getPlayerNumUnsafe());
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
@@ -1005,7 +1005,7 @@ void SavePlayer(int i)
 	PlayerStruct *pPlayer = &plr[i].data;
 
 	CopyInt(&pPlayer->_pmode, tbuff);
-	CopyBytes(&pPlayer->walkpath, MAX_PATH_LENGTH, tbuff);
+	//CopyBytes(&pPlayer->walkpath, MAX_PATH_LENGTH, tbuff);
 	CopyBytes(&pPlayer->plractive, 1, tbuff);
 	tbuff += 2; // Alignment
 	CopyInt(&pPlayer->destAction, tbuff);
@@ -1029,7 +1029,7 @@ void SavePlayer(int i)
 	CopyInt(&pPlayer->_pvel.x, tbuff);
 	CopyInt(&pPlayer->_pvel.y, tbuff);
 	CopyInt(&pPlayer->_pdir, tbuff);
-	CopyInt(&pPlayer->_nextdir, tbuff);
+	//CopyInt(&pPlayer->_nextdir, tbuff);
 	CopyInt(&pPlayer->_pgfxnum, tbuff);
 	tbuff += 4; // Skip pointer _pAnimData
 	CopyInt(&pPlayer->_pAnimDelay, tbuff);

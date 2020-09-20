@@ -454,19 +454,20 @@ void Automap::drawTile(V2Di s, WORD automap_type)
  */
 void Automap::drawPlayer()
 {
+	// Not worth changing to vec: see below
 	int px, py;
 	int x, y;
 
 	if (myplr().data._pmode == PM_WALK3) {
 		x = myplr().data._pfut.x;
 		y = myplr().data._pfut.y;
-		if (myplr().data._pdir == DIR_W)
+		if (myplr().data._pdir == Dir::W)
 			x++;
 		else
 			y++;
 	} else {
-		x = myplr().data._p.x;
-		y = myplr().data._p.y;
+		x = myplr().pos().x;
+		y = myplr().pos().y;
 	}
 	px = x - 2 * AutoMapOfs.x - View.x;
 	py = y - 2 * AutoMapOfs.y - View.y;
@@ -483,42 +484,42 @@ void Automap::drawPlayer()
 	y -= AmLine8;
 
 	switch (myplr().data._pdir) {
-	case DIR_N:
+	case Dir::N:
 		DrawLine(x, y, x, y - AmLine16, COLOR_PLAYER);
 		DrawLine(x, y - AmLine16, x - AmLine4, y - AmLine8, COLOR_PLAYER);
 		DrawLine(x, y - AmLine16, x + AmLine4, y - AmLine8, COLOR_PLAYER);
 		break;
-	case DIR_NE:
+	case Dir::NE:
 		DrawLine(x, y, x + AmLine16, y - AmLine8, COLOR_PLAYER);
 		DrawLine(x + AmLine16, y - AmLine8, x + AmLine8, y - AmLine8, COLOR_PLAYER);
 		DrawLine(x + AmLine16, y - AmLine8, x + AmLine8 + AmLine4, y, COLOR_PLAYER);
 		break;
-	case DIR_E:
+	case Dir::E:
 		DrawLine(x, y, x + AmLine16, y, COLOR_PLAYER);
 		DrawLine(x + AmLine16, y, x + AmLine8, y - AmLine4, COLOR_PLAYER);
 		DrawLine(x + AmLine16, y, x + AmLine8, y + AmLine4, COLOR_PLAYER);
 		break;
-	case DIR_SE:
+	case Dir::SE:
 		DrawLine(x, y, x + AmLine16, y + AmLine8, COLOR_PLAYER);
 		DrawLine(x + AmLine16, y + AmLine8, x + AmLine8 + AmLine4, y, COLOR_PLAYER);
 		DrawLine(x + AmLine16, y + AmLine8, x + AmLine8, y + AmLine8, COLOR_PLAYER);
 		break;
-	case DIR_S:
+	case Dir::S:
 		DrawLine(x, y, x, y + AmLine16, COLOR_PLAYER);
 		DrawLine(x, y + AmLine16, x + AmLine4, y + AmLine8, COLOR_PLAYER);
 		DrawLine(x, y + AmLine16, x - AmLine4, y + AmLine8, COLOR_PLAYER);
 		break;
-	case DIR_SW:
+	case Dir::SW:
 		DrawLine(x, y, x - AmLine16, y + AmLine8, COLOR_PLAYER);
 		DrawLine(x - AmLine16, y + AmLine8, x - AmLine4 - AmLine8, y, COLOR_PLAYER);
 		DrawLine(x - AmLine16, y + AmLine8, x - AmLine8, y + AmLine8, COLOR_PLAYER);
 		break;
-	case DIR_W:
+	case Dir::W:
 		DrawLine(x, y, x - AmLine16, y, COLOR_PLAYER);
 		DrawLine(x - AmLine16, y, x - AmLine8, y - AmLine4, COLOR_PLAYER);
 		DrawLine(x - AmLine16, y, x - AmLine8, y + AmLine4, COLOR_PLAYER);
 		break;
-	case DIR_NW:
+	case Dir::NW:
 		DrawLine(x, y, x - AmLine16, y - AmLine8, COLOR_PLAYER);
 		DrawLine(x - AmLine16, y - AmLine8, x - AmLine8, y - AmLine8, COLOR_PLAYER);
 		DrawLine(x - AmLine16, y - AmLine8, x - AmLine4 - AmLine8, y, COLOR_PLAYER);

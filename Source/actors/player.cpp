@@ -34,10 +34,29 @@ const char CharChar[] = {
 
 /* data */
 
-int plrxoff[9] = { 0, 2, 0, 2, 1, 0, 1, 2, 1 };
-int plryoff[9] = { 0, 2, 2, 0, 1, 1, 0, 1, 2 };
-int plrxoff2[9] = { 0, 1, 0, 1, 2, 0, 1, 2, 2 };
-int plryoff2[9] = { 0, 0, 1, 1, 0, 2, 2, 1, 2 };
+V2Di plroff[9] = {
+	{ 0, 0 },
+	{ 2, 2 },
+	{ 0, 2 },
+	{ 2, 0 },
+	{ 1, 1 },
+	{ 0, 1 },
+	{ 1, 0 },
+	{ 2, 1 },
+	{ 1, 2 }
+};
+
+V2Di plroff2[9] = {
+	{ 0, 0 },
+	{ 1, 0 },
+	{ 0, 1 },
+	{ 1, 1 },
+	{ 2, 0},
+	{ 0, 2 },
+	{ 1, 2 },
+	{ 2, 1 },
+	{ 2, 2 }
+};
 
 CharacterTypes classes;
 
@@ -104,6 +123,26 @@ void SetPlayerGPtrs(BYTE *pData, BYTE **pAnim)
 	for (i = 0; i < 8; i++) {
 		pAnim[i] = CelGetFrameStart(pData, i);
 	}
+}
+
+
+
+
+Player::Player(int newpnum)
+: pnum(newpnum)
+    , inventory(*this)
+{
+	memset(&data, 0, sizeof(data)); // 0 out data struct
+}
+
+const int Player::id() const
+{
+	return pnum;
+};
+
+Player::operator int() const
+{
+	return id();
 }
 
 bool Player::isLocal()
@@ -307,15 +346,7 @@ DWORD GetPlrGFXSize(char *szCel)
 
 	for (c = 0; c < classes.numclasses; c++) {
 	//for (c = 0; c < sizeof(ClassStrTbl) / sizeof(*ClassStrTbl); c++) {
-#ifdef SPAWN
-		if (c != 0)
-			continue;
-#endif
 		for (a = &ArmourChar[0]; *a; a++) {
-#ifdef SPAWN
-			if (a != &ArmourChar[0])
-				break;
-#endif
 			for (w = &WepChar[0]; *w; w++) {
 				if (szCel[0] == 'D' && szCel[1] == 'T' && *w != 'N') {
 					continue; //Death has no weapon
@@ -342,10 +373,6 @@ DWORD GetPlrGFXSize(char *szCel)
 
 void Player::FreePlayerGFX()
 {
-	//if ((DWORD)pnum >= MAX_PLRS) {
-	//	app_fatal("FreePlayerGFX: illegal player %d", pnum);
-	//}
-
 	MemFreeDbg(data._pNData);
 	MemFreeDbg(data._pWData);
 	MemFreeDbg(data._pAData);
@@ -428,7 +455,6 @@ void Player::SetPlrAnims()
 			data._pAFrames = 16;
 			data._pAFNum = 11;
 		}
-#ifndef SPAWN
 	} else if (pc == PC_ROGUE) {
 		if (gn == ANIM_ID_AXE) {
 			data._pAFrames = 22;
@@ -453,7 +479,6 @@ void Player::SetPlrAnims()
 			data._pAFrames = 24;
 			data._pAFNum = 16;
 		}
-#endif
 	}
 }
 
@@ -576,12 +601,10 @@ void Player::CreatePlayer(char c)
 
 	if (c == PC_WARRIOR) {
 		data._pAblSpells = (__int64)1 << (SPL_REPAIR - 1);
-#ifndef SPAWN
 	} else if (c == PC_ROGUE) {
 		data._pAblSpells = (__int64)1 << (SPL_DISARM - 1);
 	} else if (c == PC_SORCERER) {
 		data._pAblSpells = (__int64)1 << (SPL_RECHARGE - 1);
-#endif
 	}
 
 	if (c == PC_SORCERER) {
@@ -608,12 +631,10 @@ void Player::CreatePlayer(char c)
 
 	if (c == PC_WARRIOR) {
 		data._pgfxnum = ANIM_ID_SWORD_SHIELD;
-#ifndef SPAWN
 	} else if (c == PC_ROGUE) {
 		data._pgfxnum = ANIM_ID_BOW;
 	} else if (c == PC_SORCERER) {
 		data._pgfxnum = ANIM_ID_STAFF;
-#endif
 	}
 
 	for (i = 0; i < NUMLEVELS; i++) {
@@ -813,17 +834,17 @@ void Player::InitPlayer(BOOL FirstTime)
 
 		if (data._pHitPoints >> 6 > 0) {
 			data._pmode = PM_STAND;
-			NewPlrAnim(data._pNAnim[DIR_S], data._pNFrames, 3, data._pNWidth);
+			NewPlrAnim(data._pNAnim[int(Dir::S)], data._pNFrames, 3, data._pNWidth);
 			data._pAnimFrame = random_(2, data._pNFrames - 1) + 1;
 			data._pAnimCnt = random_(2, 3);
 		} else {
 			data._pmode = PM_DEATH;
-			NewPlrAnim(data._pDAnim[DIR_S], data._pDFrames, 1, data._pDWidth);
+			NewPlrAnim(data._pDAnim[int(Dir::S)], data._pDFrames, 1, data._pDWidth);
 			data._pAnimFrame = data._pAnimLen - 1;
 			data._pVar8 = 2 * data._pAnimLen;
 		}
 
-		data._pdir = DIR_S;
+		data._pdir = Dir::S;
 
 		if (pnum == myplr()) {
 			if (!FirstTime || level.currlevel != 0) {
@@ -832,14 +853,14 @@ void Player::InitPlayer(BOOL FirstTime)
 			data._ptarg = data._p;
 		} else {
 			data._ptarg = data._p;
-			for (i = 0; i < 8 && !PosOkPlayer(plrxoff2[i] + data._p); i++)
+
+			for (i = 0; i < 8 && !PosOkPlayer(plroff2[i] + data._p); i++)
 				;
-			data._p.x += plrxoff2[i];
-			data._p.y += plryoff2[i];
+			data._p += plroff2[i];
 		}
 
 		data._pfut = data._p;
-		data.walkpath[0] = WALK_NONE;
+		ClrPlrPath();
 		data.destAction = ACTION_NONE;
 
 		if (pnum == myplr()) {
@@ -852,12 +873,10 @@ void Player::InitPlayer(BOOL FirstTime)
 
 	if (data._pClass == PC_WARRIOR) {
 		data._pAblSpells = 1 << (SPL_REPAIR - 1);
-	#ifndef SPAWN
 	} else if (data._pClass == PC_ROGUE) {
 		data._pAblSpells = 1 << (SPL_DISARM - 1);
 	} else if (data._pClass == PC_SORCERER) {
 		data._pAblSpells = 1 << (SPL_RECHARGE - 1);
-	#endif
 	}
 
 	#ifdef _DEBUG
@@ -879,7 +898,7 @@ void Player::InitPlayer(BOOL FirstTime)
 		deathdelay = 0;
 		deathflag = FALSE;
 		ScrollInfo._soff = { 0, 0 };
-		ScrollInfo._sdir = SDIR_NONE;
+		ScrollInfo._sdir = ScrollDir::NONE;
 	}
 }
 
@@ -899,21 +918,21 @@ BOOL SolidLoc(V2Di pos)
 	return pieces[grid.at(pos).dPiece].nSolidTable;
 }
 
-BOOL Player::PlrDirOK(int dir)
+BOOL Player::PlrDirOK(Dir dir)
 {
 	BOOL isOk;
-	V2Di p = data._p + offset[dir];
+	V2Di p = data._p + offset(dir);
 
 	if (p.x < 0 || !grid.at(p).dPiece || !PosOkPlayer(p)) {
 		return FALSE;
 	}
 
 	isOk = TRUE;
-	if (dir == DIR_E) {
+	if (dir == Dir::E) {
 		isOk = !SolidLoc({ p.x, p.y + 1 }) && !(grid[p.x][p.y + 1].dFlags & BFLAG_PLAYERLR);
 	}
 
-	if (isOk && dir == DIR_W) {
+	if (isOk && dir == Dir::W) {
 		isOk = !SolidLoc({ p.x + 1, p.y }) && !(grid[p.x + 1][p.y].dFlags & BFLAG_PLAYERLR);
 	}
 
@@ -949,7 +968,7 @@ void Player::SetPlayerOld()
 	data._pold = data._p;
 }
 
-void Player::FixPlayerLocation(int bDir)
+void Player::FixPlayerLocation(Dir bDir)
 {
 	data._pfut = data._p;
 	data._ptarg = data._p;
@@ -957,19 +976,19 @@ void Player::FixPlayerLocation(int bDir)
 	data._pdir = bDir;
 	if (pnum == myplr()) {
 		ScrollInfo._soff = { 0, 0 };
-		ScrollInfo._sdir = SDIR_NONE;
+		ScrollInfo._sdir = ScrollDir::NONE;
 		View = data._p;
 	}
 }
 
-void Player::StartStand(int dir)
+void Player::StartStand(Dir dir)
 {
 	if (!data._pInvincible || data._pHitPoints || pnum != myplr()) {
 		if (!(data._pGFXLoad & PFILE_STAND)) {
 			LoadPlrGFX(PFILE_STAND);
 		}
 
-		NewPlrAnim(data._pNAnim[dir], data._pNFrames, 3, data._pNWidth);
+		NewPlrAnim(data._pNAnim[int(dir)], data._pNFrames, 3, data._pNWidth);
 		data._pmode = PM_STAND;
 		FixPlayerLocation(dir);
 		FixPlrWalkTags();
@@ -988,7 +1007,7 @@ void Player::StartWalkStand()
 
 	if (pnum == myplr()) {
 		ScrollInfo._soff = { 0, 0 };
-		ScrollInfo._sdir = SDIR_NONE;
+		ScrollInfo._sdir = ScrollDir::NONE;
 		View = data._p;
 	}
 }
@@ -1045,14 +1064,14 @@ void Player::PM_ChangeOffset()
 	p.x -= data._pVar6 >> 8;
 	p.y -= data._pVar7 >> 8;
 
-	if (pnum == myplr() && ScrollInfo._sdir) {
+	if (pnum == myplr() && int(ScrollInfo._sdir)) {
 		ScrollInfo._soff += p;
 	}
 
 	PM_ChangeLightOff();
 }
 
-void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
+void Player::StartWalk(V2Di vel, V2Di add, Dir EndDir, ScrollDir sdir)
 {
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1064,9 +1083,7 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 	if (!PlrDirOK(EndDir)) return;
 	data._pfut = p;
 
-	if (pnum == myplr()) {
-		ScrollInfo._sd = data._p - View;
-	}
+	if (pnum == myplr()) ScrollInfo._sd = data._p - View;
 
 	grid.at(p).dPlayer = -(pnum + 1);
 	data._pmode = PM_WALK;
@@ -1074,13 +1091,13 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 	data._poff = { 0, 0 };
 	data._pVar1 = add.x;
 	data._pVar2 = add.y;
-	data._pVar3 = EndDir;
+	data._pVar3 = int(EndDir);
 
 	if (!(data._pGFXLoad & PFILE_WALK)) {
 		LoadPlrGFX(PFILE_WALK);
 	}
 
-	NewPlrAnim(data._pWAnim[EndDir], data._pWFrames, 0, data._pWWidth);
+	NewPlrAnim(data._pWAnim[int(EndDir)], data._pWFrames, 0, data._pWWidth);
 
 	data._pdir = EndDir;
 	data._pVar6 = 0;
@@ -1095,12 +1112,12 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 	if (zoomflag) {
 
 		if (dist >= 3) {
-			ScrollInfo._sdir = SDIR_NONE;
+			ScrollInfo._sdir = ScrollDir::NONE;
 		} else {
 			ScrollInfo._sdir = sdir;
 		}
 	} else if (dist >= 2) {
-		ScrollInfo._sdir = SDIR_NONE;
+		ScrollInfo._sdir = ScrollDir::NONE;
 	} else {
 		ScrollInfo._sdir = sdir;
 	}
@@ -1109,7 +1126,8 @@ void Player::StartWalk(V2Di vel, V2Di add, int EndDir, int sdir)
 #if defined(__clang__) || defined(__GNUC__)
 __attribute__((no_sanitize("shift-base")))
 #endif
-void Player::StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir, int sdir)
+void
+Player::StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir, ScrollDir sdir)
 {
 	V2Di p = add + data._p;
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
@@ -1118,15 +1136,9 @@ void Player::StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir, int sdir)
 	}
 
 	SetPlayerOld();
-	if (!PlrDirOK(EndDir)) {
-		return;
-	}
-
+	if (!PlrDirOK(EndDir)) return;
 	data._pfut = p;
-
-	if (pnum == myplr()) {
-		ScrollInfo._sd = data._p - View;
-	}
+	if (pnum == myplr()) ScrollInfo._sd = data._p - View;
 
 	grid.at(data._p).dPlayer = -1 - pnum;
 	data._pVar1 = data._p.x;
@@ -1142,29 +1154,25 @@ void Player::StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir, int sdir)
 	data._pvel = vel;
 	data._pVar6 = off.x * 256;
 	data._pVar7 = off.y * 256;
-	data._pVar3 = EndDir;
+	data._pVar3 = int(EndDir);
 
-	if (!(data._pGFXLoad & PFILE_WALK)) {
-		LoadPlrGFX(PFILE_WALK);
-	}
-	NewPlrAnim(data._pWAnim[EndDir], data._pWFrames, 0, data._pWWidth);
+	if (!(data._pGFXLoad & PFILE_WALK)) LoadPlrGFX(PFILE_WALK);
+	NewPlrAnim(data._pWAnim[int(EndDir)], data._pWFrames, 0, data._pWWidth);
 
 	data._pdir = EndDir;
 	data._pVar8 = 0;
 
-	if (pnum != myplr()) {
-		return;
-	}
+	if (pnum != myplr()) return;
 
 	int dist = (ScrollInfo._sd).maxabs();
 	if (zoomflag) {
 		if (dist >= 3) {
-			ScrollInfo._sdir = SDIR_NONE;
+			ScrollInfo._sdir = ScrollDir::NONE;
 		} else {
 			ScrollInfo._sdir = sdir;
 		}
 	} else if (dist >= 2) {
-		ScrollInfo._sdir = SDIR_NONE;
+		ScrollInfo._sdir = ScrollDir::NONE;
 	} else {
 		ScrollInfo._sdir = sdir;
 	}
@@ -1173,7 +1181,8 @@ void Player::StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir, int sdir)
 #if defined(__clang__) || defined(__GNUC__)
 __attribute__((no_sanitize("shift-base")))
 #endif
-void Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir, int sdir)
+void
+Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir, ScrollDir sdir)
 {
 	V2Di p, n;
 
@@ -1214,12 +1223,12 @@ void Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir, int 
 	data._pVar2 = p.y;
 	data._pVar6 = off.x * 256;
 	data._pVar7 = off.y * 256;
-	data._pVar3 = EndDir;
+	data._pVar3 = int(EndDir);
 
 	if (!(data._pGFXLoad & PFILE_WALK)) {
 		LoadPlrGFX(PFILE_WALK);
 	}
-	NewPlrAnim(data._pWAnim[EndDir], data._pWFrames, 0, data._pWWidth);
+	NewPlrAnim(data._pWAnim[int(EndDir)], data._pWFrames, 0, data._pWWidth);
 
 	data._pdir = EndDir;
 	data._pVar8 = 0;
@@ -1230,18 +1239,18 @@ void Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir, int 
 	int dist = (ScrollInfo._sd).maxabs();
 	if (zoomflag) {
 		if (dist >= 3) {
-			ScrollInfo._sdir = SDIR_NONE;
+			ScrollInfo._sdir = ScrollDir::NONE;
 		} else {
 			ScrollInfo._sdir = sdir;
 		}
 	} else if (dist >= 2) {
-		ScrollInfo._sdir = SDIR_NONE;
+		ScrollInfo._sdir = ScrollDir::NONE;
 	} else {
 		ScrollInfo._sdir = sdir;
 	}
 }
 
-void Player::StartAttack(int d)
+void Player::StartAttack(Dir d)
 {
 
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
@@ -1253,13 +1262,13 @@ void Player::StartAttack(int d)
 		LoadPlrGFX(PFILE_ATTACK);
 	}
 
-	NewPlrAnim(data._pAAnim[d], data._pAFrames, 0, data._pAWidth);
+	NewPlrAnim(data._pAAnim[int(d)], data._pAFrames, 0, data._pAWidth);
 	data._pmode = PM_ATTACK;
 	FixPlayerLocation(d);
 	SetPlayerOld();
 }
 
-void Player::StartRangeAttack(int d, V2Di c)
+void Player::StartRangeAttack(Dir d, V2Di c)
 {
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1269,7 +1278,7 @@ void Player::StartRangeAttack(int d, V2Di c)
 	if (!(data._pGFXLoad & PFILE_ATTACK)) {
 		LoadPlrGFX(PFILE_ATTACK);
 	}
-	NewPlrAnim(data._pAAnim[d], data._pAFrames, 0, data._pAWidth);
+	NewPlrAnim(data._pAAnim[int(d)], data._pAFrames, 0, data._pAWidth);
 
 	data._pmode = PM_RATTACK;
 	FixPlayerLocation(d);
@@ -1278,7 +1287,7 @@ void Player::StartRangeAttack(int d, V2Di c)
 	data._pVar2 = c.y;
 }
 
-void Player::StartPlrBlock(int dir)
+void Player::StartPlrBlock(Dir dir)
 {
 
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
@@ -1291,14 +1300,14 @@ void Player::StartPlrBlock(int dir)
 	if (!(data._pGFXLoad & PFILE_BLOCK)) {
 		LoadPlrGFX(PFILE_BLOCK);
 	}
-	NewPlrAnim(data._pBAnim[dir], data._pBFrames, 2, data._pBWidth);
+	NewPlrAnim(data._pBAnim[int(dir)], data._pBFrames, 2, data._pBWidth);
 
 	data._pmode = PM_BLOCK;
 	FixPlayerLocation(dir);
 	SetPlayerOld();
 }
 
-void Player::StartSpell(int d, V2Di c)
+void Player::StartSpell(Dir d, V2Di c)
 {
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1311,19 +1320,19 @@ void Player::StartSpell(int d, V2Di c)
 			if (!(data._pGFXLoad & PFILE_FIRE)) {
 				LoadPlrGFX(PFILE_FIRE);
 			}
-			NewPlrAnim(data._pFAnim[d], data._pSFrames, 0, data._pSWidth);
+			NewPlrAnim(data._pFAnim[int(d)], data._pSFrames, 0, data._pSWidth);
 			break;
 		case STYPE_LIGHTNING:
 			if (!(data._pGFXLoad & PFILE_LIGHTNING)) {
 				LoadPlrGFX(PFILE_LIGHTNING);
 			}
-			NewPlrAnim(data._pLAnim[d], data._pSFrames, 0, data._pSWidth);
+			NewPlrAnim(data._pLAnim[int(d)], data._pSFrames, 0, data._pSWidth);
 			break;
 		case STYPE_MAGIC:
 			if (!(data._pGFXLoad & PFILE_MAGIC)) {
 				LoadPlrGFX(PFILE_MAGIC);
 			}
-			NewPlrAnim(data._pTAnim[d], data._pSFrames, 0, data._pSWidth);
+			NewPlrAnim(data._pTAnim[int(d)], data._pSFrames, 0, data._pSWidth);
 			break;
 		}
 	}
@@ -1385,7 +1394,7 @@ void Player::RemovePlrFromMap()
 
 void Player::StartPlrHit(int dam, BOOL forcehit)
 {
-	int pd;
+	Dir pd;
 
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
@@ -1394,12 +1403,10 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 
 	if (data._pClass == PC_WARRIOR) {
 		PlaySfxLoc(PS_WARR69, data._p);
-#ifndef SPAWN
 	} else if (data._pClass == PC_ROGUE) {
 		PlaySfxLoc(PS_ROGUE69, data._p);
 	} else if (data._pClass == PC_SORCERER) {
 		PlaySfxLoc(PS_MAGE69, data._p);
-#endif
 	}
 
 	drawhpflag = TRUE;
@@ -1409,7 +1416,7 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 		if (!(data._pGFXLoad & PFILE_HIT)) {
 			LoadPlrGFX(PFILE_HIT);
 		}
-		NewPlrAnim(data._pHAnim[pd], data._pHFrames, 0, data._pHWidth);
+		NewPlrAnim(data._pHAnim[int(pd)], data._pHFrames, 0, data._pHWidth);
 
 		data._pmode = PM_GOTHIT;
 		FixPlayerLocation(pd);
@@ -1447,7 +1454,8 @@ __attribute__((no_sanitize("shift-base")))
 void Player::StartPlayerKill(int earflag)
 {
 	BOOL diablolevel;
-	int i, pdd;
+	int i;
+	Dir pdd;
 	ItemStruct ear;
 	ItemStruct *pi;
 
@@ -1467,12 +1475,10 @@ void Player::StartPlayerKill(int earflag)
 
 	if (data._pClass == PC_WARRIOR) {
 		PlaySfxLoc(PS_DEAD, data._p); // BUGFIX: should use `PS_WARR71` like other classes
-	#ifndef SPAWN
 	} else if (data._pClass == PC_ROGUE) {
 		PlaySfxLoc(PS_ROGUE71, data._p);
 	} else if (data._pClass == PC_SORCERER) {
 		PlaySfxLoc(PS_MAGE71, data._p);
-	#endif
 	}
 
 	if (data._pgfxnum) {
@@ -1485,7 +1491,7 @@ void Player::StartPlayerKill(int earflag)
 		LoadPlrGFX(PFILE_DEATH);
 	}
 
-	NewPlrAnim(data._pDAnim[data._pdir], data._pDFrames, 1, data._pDWidth);
+	NewPlrAnim(data._pDAnim[int(data._pdir)], data._pDFrames, 1, data._pDWidth);
 
 	data._pBlockFlag = FALSE;
 	data._pmode = PM_DEATH;
@@ -1540,8 +1546,8 @@ void Player::StartPlayerKill(int earflag)
 						pi = &data.InvBody[0];
 						i = NUM_INVLOC;
 						while (i--) {
-							pdd = (i + data._pdir) & 7;
-							PlrDeadItem(pi, offset[pdd]);
+							pdd = rotate(data._pdir, i);
+							PlrDeadItem(pi, offset(pdd));
 							pi++;
 						}
 
@@ -1853,6 +1859,48 @@ BOOL Player::PM_DoStand()
 	return FALSE;
 }
 
+void Player::StartWalk(Dir walkdir)
+{
+	int xvel3;
+	V2Di vel;
+	if (level.currlevel != 0) {
+		xvel3 = classes[data._pClass].PWVel[0];
+		vel.x = classes[data._pClass].PWVel[1];
+		vel.y = classes[data._pClass].PWVel[2];
+	} else {
+		xvel3 = 2048;
+		vel = { 1024, 512 };
+	}
+
+	switch (walkdir) {
+	case Dir::N:
+			StartWalk({ 0, -vel.x }, { -1, -1 }, Dir::N, ScrollDir::N);
+			break;
+		case Dir::NE:
+			StartWalk({ vel.x, -vel.y }, { 0, -1 }, Dir::NE, ScrollDir::NE);
+			break;
+		case Dir::E:
+			StartWalk3({ xvel3, 0 }, { -32, -16 }, { 1, -1 }, { 1, 0 }, Dir::E, ScrollDir::E);
+			break;
+		case Dir::SE:
+			StartWalk2(vel, { -32, -16 }, { 1, 0 }, Dir::SE, ScrollDir::SE);
+			break;
+		case Dir::S:
+			StartWalk2({ 0, vel.x }, { 0, -32 }, { 1, 1 }, Dir::S, ScrollDir::S);
+			break;
+		case Dir::SW:
+			StartWalk2({ -vel.x, vel.y }, { 32, -16 }, { 0, 1 }, Dir::SW, ScrollDir::SW);
+			break;
+		case Dir::W:
+			StartWalk3({ -xvel3, 0 }, { 32, -16 }, { -1, 1 }, { 0, 1 }, Dir::W, ScrollDir::W);
+			break;
+		case Dir::NW:
+			StartWalk({ -vel.x, -vel.y }, { -1, 0 }, Dir::NW, ScrollDir::NW);
+			break;
+	}
+}
+
+
 BOOL Player::PM_DoWalk()
 {
 	int anim_len;
@@ -1880,14 +1928,14 @@ BOOL Player::PM_DoWalk()
 			ChangeVisionXY(data._pvid, data._p);
 		}
 
-		if (pnum == myplr() && ScrollInfo._sdir) {
+		if (pnum == myplr() && int(ScrollInfo._sdir)) {
 			View = data._p - ScrollInfo._sd;
 		}
 
-		if (data.walkpath[0] != WALK_NONE) {
+		if (!data.wkpath.empty()) {
 			StartWalkStand();
 		} else {
-			StartStand(data._pVar3);
+			StartStand(Dir(data._pVar3));
 		}
 
 		ClearPlrPVars();
@@ -1928,14 +1976,14 @@ BOOL Player::PM_DoWalk2()
 			ChangeVisionXY(data._pvid, data._p);
 		}
 
-		if (pnum == myplr() && ScrollInfo._sdir) {
+		if (pnum == myplr() && int(ScrollInfo._sdir)) {
 			View = data._p - ScrollInfo._sd;
 		}
 
-		if (data.walkpath[0] != WALK_NONE) {
+		if (!data.wkpath.empty()) {
 			StartWalkStand();
 		} else {
-			StartStand(data._pVar3);
+			StartStand(Dir(data._pVar3));
 		}
 
 		ClearPlrPVars();
@@ -1979,14 +2027,14 @@ BOOL Player::PM_DoWalk3()
 			ChangeVisionXY(data._pvid, data._p);
 		}
 
-		if (pnum == myplr() && ScrollInfo._sdir) {
+		if (pnum == myplr() && int(ScrollInfo._sdir)) {
 			View = data._p - ScrollInfo._sd;
 		}
 
-		if (data.walkpath[0] != WALK_NONE) {
+		if (!data.wkpath.empty()) {
 			StartWalkStand();
 		} else {
-			StartStand(data._pVar3);
+			StartStand(Dir(data._pVar3));
 		}
 
 		ClearPlrPVars();
@@ -2254,7 +2302,8 @@ BOOL Player::PlrHitMonst(int m)
 BOOL Player::PlrHitPlr(char p)
 {
 	BOOL rv;
-	int hit, hper, blk, blkper, dir, mind, maxd, dam, lvl, skdam, tac;
+	int hit, hper, blk, blkper, mind, maxd, dam, lvl, skdam, tac;
+	Dir dir;
 
 	if ((DWORD)p >= MAX_PLRS) {
 		app_fatal("PlrHitPlr: illegal target player %d", p);
@@ -2305,7 +2354,7 @@ BOOL Player::PlrHitPlr(char p)
 
 	if (hit < hper) {
 		if (blk < blkper) {
-			dir = GetDirection(plr[p].data._p, data._p);
+			dir = GetDirection(plr[p].pos(), pos());
 			plr[p].StartPlrBlock(dir);
 		} else {
 			mind = data._pIMinDam;
@@ -2363,7 +2412,8 @@ BOOL Player::PlrHitObj(V2Di m)
 
 BOOL Player::PM_DoAttack()
 {
-	int frame, dir, m;
+	Dir dir;
+	int frame, m;
 	BOOL didhit;
 	V2Di d;
 	frame = data._pAnimFrame;
@@ -2385,7 +2435,7 @@ BOOL Player::PM_DoAttack()
 
 	if (data._pAnimFrame == data._pAFNum) {
 		dir = data._pdir;
-		d = data._p + offset[dir];
+		d = data._p + offset(dir);
 		if (grid.at(d).dMonster) {
 			if (grid.at(d).dMonster > 0) {
 				m = grid.at(d).dMonster - 1;
@@ -2399,10 +2449,10 @@ BOOL Player::PM_DoAttack()
 		}
 
 		if (data._pIFlags & ISPL_FIREDAM) {
-			AddMissile(d, { 1, 0 }, 0, MIS_WEAPEXP, 0, pnum, 0, 0);
+			AddMissile(d, { 1, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
 		if (data._pIFlags & ISPL_LIGHTDAM) {
-			AddMissile(d, { 2, 0 }, 0, MIS_WEAPEXP, 0, pnum, 0, 0);
+			AddMissile(d, { 2, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
 
 		didhit = FALSE;
@@ -2703,7 +2753,8 @@ BOOL Player::PM_DoNewLvl()
 
 void Player::CheckNewPath()
 {
-	int i, d;
+	int i;
+	Dir d;
 	V2Di n, vel;
 	int xvel3;
 
@@ -2715,7 +2766,7 @@ void Player::CheckNewPath()
 		MakePlrPath(plr[data.destParam1].data._pfut, FALSE);
 	}
 
-	if (data.walkpath[0] != WALK_NONE) {
+	if (!data.wkpath.empty()) {
 		if (data._pmode == PM_STAND) {
 			if (pnum == myplr()) {
 				if (data.destAction == ACTION_ATTACKMON || data.destAction == ACTION_ATTACKPLR) {
@@ -2741,48 +2792,11 @@ void Player::CheckNewPath()
 				}
 			}
 
-			if (level.currlevel != 0) {
-				xvel3 = classes[data._pClass].PWVel[0];
-				vel.x = classes[data._pClass].PWVel[1];
-				vel.y = classes[data._pClass].PWVel[2];
-			} else {
-				xvel3 = 2048;
-				vel.x = 1024;
-				vel.y = 512;
-			}
+			const V2Di nextpos = data.wkpath.front().pos();
+			Dir dir = GetDirection(data._p, nextpos);
+			//data._pdir = Dir::NE; //GetDirection(data._pfut, nextpos);
 
-			switch (data.walkpath[0]) {
-			case WALK_N:
-				StartWalk({ 0, -vel.x }, { -1, -1 }, DIR_N, SDIR_N);
-				break;
-			case WALK_NE:
-				StartWalk({ vel.x, -vel.y }, { 0, -1 }, DIR_NE, SDIR_NE);
-				break;
-			case WALK_E:
-				StartWalk3({ xvel3, 0 }, { -32, -16 }, { 1, -1 }, { 1, 0 }, DIR_E, SDIR_E);
-				break;
-			case WALK_SE:
-				StartWalk2(vel, { -32, -16 }, { 1, 0 }, DIR_SE, SDIR_SE);
-				break;
-			case WALK_S:
-				StartWalk2({ 0, vel.x }, { 0, -32 }, { 1, 1 }, DIR_S, SDIR_S);
-				break;
-			case WALK_SW:
-				StartWalk2({ -vel.x, vel.y }, { 32, -16 }, { 0, 1 }, DIR_SW, SDIR_SW);
-				break;
-			case WALK_W:
-				StartWalk3({ -xvel3, 0 }, { 32, -16 }, { -1, 1 }, { 0, 1 }, DIR_W, SDIR_W);
-				break;
-			case WALK_NW:
-				StartWalk({ -vel.x, -vel.y }, { -1, 0 }, DIR_NW, SDIR_NW);
-				break;
-			}
-
-			for (i = 1; i < MAX_PATH_LENGTH; i++) {
-				data.walkpath[i - 1] = data.walkpath[i];
-			}
-
-			data.walkpath[MAX_PATH_LENGTH - 1] = WALK_NONE;
+			data.wkpath.pop(); //= std::queue<PathNode>();
 
 			if (data._pmode == PM_STAND) {
 				StartStand(data._pdir);
@@ -2846,7 +2860,7 @@ void Player::CheckNewPath()
 			data._pVar4 = data.destParam3;
 			break;
 		case ACTION_SPELLWALL:
-			StartSpell(data.destParam3, { data.destParam1, data.destParam2 });
+			StartSpell(Dir(data.destParam3), { data.destParam1, data.destParam2 });
 			data._pVar3 = data.destParam3;
 			data._pVar4 = data.destParam4;
 			break;
@@ -3213,7 +3227,7 @@ void Player::CheckCheatStats()
 
 void Player::ClrPlrPath()
 {
-	memset(data.walkpath, WALK_NONE, sizeof(data.walkpath));
+	data.wkpath = std::queue<PathNode>();
 }
 
 BOOL PosOkPlayer(int pnum, V2Di pos)
@@ -3277,57 +3291,19 @@ BOOL Player::PosOkPlayer(V2Di pos)
 void Player::MakePlrPath(V2Di p, BOOL endspace)
 {
 	data._ptarg = p;
-	if (data._pfut == p) {
-		return;
+	if (data._pfut == p) return; // already moving there
+	int dist = pathfinder.FindPath(::dvl::PosOkPlayer, pnum, data._pfut, p, data.wkpath);
+	if (!data.wkpath.empty()) {
+		//data._ptarg = data.wkpath.front().pos();
+		//data.wkpath.pop(); // pops the front, which is the starting location
 	}
-
-	int path = FindPath(::dvl::PosOkPlayer, pnum, data._pfut, p, data.walkpath);
-	if (!path) return;
-
-	if (!endspace) {
-		path--;
-
-		switch (data.walkpath[path]) {
-		case WALK_NE:
-			p.y++;
-			break;
-		case WALK_NW:
-			p.x++;
-			break;
-		case WALK_SE:
-			p.x--;
-			break;
-		case WALK_SW:
-			p.y--;
-			break;
-		case WALK_N:
-			p.x++;
-			p.y++;
-			break;
-		case WALK_E:
-			p.x--;
-			p.y++;
-			break;
-		case WALK_S:
-			p.x--;
-			p.y--;
-			break;
-		case WALK_W:
-			p.x++;
-			p.y--;
-			break;
-		}
-
-		data._ptarg = p;
-	}
-
-	data.walkpath[path] = WALK_NONE;
 }
 
 void CheckPlrSpell()
 {
 	BOOL addflag;
-	int rspell, sd, sl;
+	int rspell, sl;
+	Dir sd;
 
 	if ((DWORD)myplr() >= MAX_PLRS) {
 		app_fatal("CheckPlrSpell: illegal player %d", myplr());
@@ -3337,12 +3313,10 @@ void CheckPlrSpell()
 	if (rspell == SPL_INVALID) {
 		if (myplr().data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR34);
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE34);
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE34);
-#endif
 		}
 		return;
 	}
@@ -3350,12 +3324,10 @@ void CheckPlrSpell()
 	if (level.leveltype == DTYPE_TOWN && !spelldata[rspell].sTownSpell) {
 		if (myplr().data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE27);
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE27);
-#endif
 		}
 		return;
 	}
@@ -3390,9 +3362,9 @@ void CheckPlrSpell()
 
 	if (addflag) {
 		if (myplr().data._pRSpell == SPL_FIREWALL) {
-			sd = GetDirection(myplr().data._p, cursm);
+			sd = GetDirection(myplr().pos(), cursm);
 			sl = GetSpellLevel(myplr(), myplr().data._pRSpell);
-			NetSendCmdLocParam3(TRUE, CMD_SPELLXYD, cursm, myplr().data._pRSpell, sd, sl);
+			NetSendCmdLocParam3(TRUE, CMD_SPELLXYD, cursm, myplr().data._pRSpell, int(sd), sl);
 		} else if (pcursmonst != -1) {
 			sl = GetSpellLevel(myplr(), myplr().data._pRSpell);
 			NetSendCmdParam3(TRUE, CMD_SPELLID, pcursmonst, myplr().data._pRSpell, sl);
@@ -3409,37 +3381,36 @@ void CheckPlrSpell()
 	if (myplr().data._pRSplType == RSPLTYPE_SPELL) {
 		if (myplr().data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR35);
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			PlaySFX(PS_ROGUE35);
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE35);
-#endif
 		}
 	}
 }
 
 void Player::SyncPlrAnim()
 {
-	int dir, sType;
+	Dir dir;
+	int sType;
 	dir = data._pdir;
 	switch (data._pmode) {
 	case PM_STAND:
-		data._pAnimData = data._pNAnim[dir];
+		data._pAnimData = data._pNAnim[int(dir)];
 		break;
 	case PM_WALK:
 	case PM_WALK2:
 	case PM_WALK3:
-		data._pAnimData = data._pWAnim[dir];
+		data._pAnimData = data._pWAnim[int(dir)];
 		break;
 	case PM_ATTACK:
-		data._pAnimData = data._pAAnim[dir];
+		data._pAnimData = data._pAAnim[int(dir)];
 		break;
 	case PM_RATTACK:
-		data._pAnimData = data._pAAnim[dir];
+		data._pAnimData = data._pAAnim[int(dir)];
 		break;
 	case PM_BLOCK:
-		data._pAnimData = data._pBAnim[dir];
+		data._pAnimData = data._pBAnim[int(dir)];
 		break;
 	case PM_SPELL:
 		if (pnum == myplr())
@@ -3447,23 +3418,23 @@ void Player::SyncPlrAnim()
 		else
 			sType = STYPE_FIRE;
 		if (sType == STYPE_FIRE)
-			data._pAnimData = data._pFAnim[dir];
+			data._pAnimData = data._pFAnim[int(dir)];
 		if (sType == STYPE_LIGHTNING)
-			data._pAnimData = data._pLAnim[dir];
+			data._pAnimData = data._pLAnim[int(dir)];
 		if (sType == STYPE_MAGIC)
-			data._pAnimData = data._pTAnim[dir];
+			data._pAnimData = data._pTAnim[int(dir)];
 		break;
 	case PM_GOTHIT:
-		data._pAnimData = data._pHAnim[dir];
+		data._pAnimData = data._pHAnim[int(dir)];
 		break;
 	case PM_NEWLVL:
-		data._pAnimData = data._pNAnim[dir];
+		data._pAnimData = data._pNAnim[int(dir)];
 		break;
 	case PM_DEATH:
-		data._pAnimData = data._pDAnim[dir];
+		data._pAnimData = data._pDAnim[int(dir)];
 		break;
 	case PM_QUIT:
-		data._pAnimData = data._pNAnim[dir];
+		data._pAnimData = data._pNAnim[int(dir)];
 		break;
 	default:
 		app_fatal("SyncPlrAnim");
@@ -3473,7 +3444,8 @@ void Player::SyncPlrAnim()
 
 void Player::SyncInitPlrPos()
 {
-	int x, y, xx, yy, range;
+	V2Di p;
+	int xx, yy, range;
 	DWORD i;
 	BOOL posOk;
 
@@ -3484,21 +3456,20 @@ void Player::SyncInitPlrPos()
 	}
 
 	for (i = 0; i < 8; i++) {
-		x = data._p.x + plrxoff2[i];
-		y = data._p.y + plryoff2[i];
-		if (PosOkPlayer({ x, y })) {
+		p = data._p + plroff2[i];
+		if (PosOkPlayer(p)) {
 			break;
 		}
 	}
 
-	if (!PosOkPlayer({ x, y })) {
+	if (!PosOkPlayer(p)) {
 		posOk = FALSE;
 		for (range = 1; range < 50 && !posOk; range++) {
 			for (yy = -range; yy <= range && !posOk; yy++) {
-				y = yy + data._p.y;
+				p.y = yy + data._p.y;
 				for (xx = -range; xx <= range && !posOk; xx++) {
-					x = xx + data._p.x;
-					if (PosOkPlayer({ x, y }) && !PosOkPortal(level.currlevel, { x, y })) {
+					p.x = xx + data._p.x;
+					if (PosOkPlayer(p) && !PosOkPortal(level.currlevel, p)) {
 						posOk = TRUE;
 					}
 				}
@@ -3506,13 +3477,13 @@ void Player::SyncInitPlrPos()
 		}
 	}
 
-	data._p = { x, y };
-	grid[x][y].dPlayer = pnum + 1;
+	data._p = p;
+	grid.at(p).dPlayer = pnum + 1;
 
 	if (pnum == myplr()) {
-		data._pfut = { x, y };
-		data._ptarg = { x, y };
-		View = { x, y };
+		data._pfut = p;
+		data._ptarg = p;
+		View = p;
 	}
 }
 
@@ -3763,57 +3734,47 @@ void PlayDungMsgs()
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR97;
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE97;
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE97;
-#endif
 		}
 		myplr().data.pDungMsgs = myplr().data.pDungMsgs | DMSG_CATHEDRAL;
 	} else if (level.currlevel == 5 && !myplr().data._pLvlVisited[5] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_CATACOMBS)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR96B;
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE96;
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE96;
-#endif
 		}
 		myplr().data.pDungMsgs |= DMSG_CATACOMBS;
 	} else if (level.currlevel == 9 && !myplr().data._pLvlVisited[9] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_CAVES)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR98;
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE98;
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE98;
-#endif
 		}
 		myplr().data.pDungMsgs |= DMSG_CAVES;
 	} else if (level.currlevel == 13 && !myplr().data._pLvlVisited[13] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_HELL)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR99;
-#ifndef SPAWN
 		} else if (myplr().data._pClass == PC_ROGUE) {
 			sfxdnum = PS_ROGUE99;
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE99;
-#endif
 		}
 		myplr().data.pDungMsgs |= DMSG_HELL;
 	} else if (level.currlevel == 16 && !myplr().data._pLvlVisited[15] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
 		sfxdelay = 40;
-#ifndef SPAWN
 		if (myplr().data._pClass == PC_WARRIOR || myplr().data._pClass == PC_ROGUE || myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_DIABLVLINT;
 		}
-#endif
 		myplr().data.pDungMsgs |= DMSG_DIABLO;
 	} else {
 		sfxdelay = 0;

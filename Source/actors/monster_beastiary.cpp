@@ -65,16 +65,9 @@ void Beastiary::GetLevelMTypes()
 
 	int minl; // min level
 	int maxl; // max level
-	char mamask;
 	const int numskeltypes = 19;
-
 	int nt; // number of types
-
-#ifdef SPAWN
-	mamask = 1; // monster availability mask
-#else
-	mamask = 3; // monster availability mask
-#endif
+	char mamask = 3; // monster availability mask
 
 	AddMonsterType(MT_GOLEM, 2);
 	if (level.currlevel == 16) {

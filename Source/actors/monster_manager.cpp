@@ -24,7 +24,7 @@ void MonsterManager::ClrAllMonsters()
 		Monst->_m = { 0, 0 };
 		Monst->_mfut = { 0, 0 };
 		Monst->_mold = { 0, 0 };
-		Monst->_mdir = random_(89, 8);
+		Monst->_mdir = Dir(random_(89, 8));
 		Monst->_mvel = { 0, 0 };
 		Monst->_mAnimData = NULL;
 		Monst->_mAnimDelay = 0;
@@ -48,13 +48,11 @@ MonsterInstance &MonsterManager::operator[](size_t n)
 
 void MonsterManager::PlaceMonster(int i, int mtype, V2Di pos)
 {
-	int rd;
 	grid.at(pos).dMonster = i + 1;
-	rd = random_(90, 8);
+	Dir rd = Dir(random_(90, 8));
 	list[i] = MonsterInstance(i, rd, mtype, pos);
 }
 
-#ifndef SPAWN
 void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpackfilesize)
 {
 	V2Di p, n;
@@ -243,7 +241,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	}
 
 	if (Monst->_mAi != AI_GARG) {
-		Monst->_mAnimData = Monst->MType->Anims[MA_STAND].Data[Monst->_mdir];
+		Monst->_mAnimData = Monst->MType->Anims[MA_STAND].Data[int(Monst->_mdir)];
 		Monst->_mAnimFrame = random_(88, Monst->_mAnimLen - 1) + 1;
 		Monst->_mFlags &= ~MFLAG_ALLOW_SPECIAL;
 		Monst->_mmode = MM_STAND;
@@ -319,16 +317,14 @@ void MonsterManager::PlaceQuestMonsters()
 		PlaceUniqueMonster(UMT_SKELKING, 0, 0);
 	}
 }
-#endif
 
 void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 {
-	int placed, try1, try2, j;
-	int xp, yp, x1, y1;
+	int j;
+	V2Di p, v;
+	int placed = 0;
 
-	placed = 0;
-
-	for (try1 = 0; try1 < 10; try1++) {
+	for (int try1 = 0; try1 < 10; try1++) {
 		while (placed) {
 			nummonsters--;
 			placed--;
@@ -337,13 +333,12 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 
 		if (leaderf & 1) {
 			int off = random_(92, 8);
-			x1 = xp = list[leader].data._m.x + offset[off].x;
-			y1 = yp = list[leader].data._m.y + offset[off].y;
+			v = p = list[leader].data._m + offset(Dir(off));
 		} else {
 			do {
-				x1 = xp = random_(93, 80) + 16;
-				y1 = yp = random_(93, 80) + 16;
-			} while (!MonstPlace({ xp, yp }));
+				v.x = p.x = random_(93, 80) + 16;
+				v.y = p.y = random_(93, 80) + 16;
+			} while (!MonstPlace(p));
 		}
 
 		if (num + nummonsters > totalmonsters) {
@@ -351,15 +346,15 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 		}
 
 		j = 0;
-		for (try2 = 0; j < num && try2 < 100; xp += offset[random_(94, 8)].x, yp += offset[random_(94, 8)].y) { /// BUGFIX: `yp += offset_y`
-			if (!MonstPlace({ xp, yp })
-			    || (grid[xp][yp].dTransVal != grid[x1][y1].dTransVal)
-			    || (leaderf & 2) && ((abs(xp - x1) >= 4) || (abs(yp - y1) >= 4))) {
+		for (int try2 = 0; j < num && try2 < 100; p.x += offset(Dir(random_(94, 8))).x, p.y += offset(Dir(random_(94, 8))).y) { /// BUGFIX: `yp += offset_y`
+			if (!MonstPlace(p)
+			    || (grid.at(p).dTransVal != grid.at(v).dTransVal)
+			    || (leaderf & 2) && ((p-v).maxabs() >= 4)) {
 				try2++;
 				continue;
 			}
 
-			PlaceMonster(nummonsters, mtype, { xp, yp });
+			PlaceMonster(nummonsters, mtype, p);
 			if (leaderf & 1) {
 				list[nummonsters].data._mmaxhp *= 2;
 				list[nummonsters].data._mhitpoints = list[nummonsters].data._mmaxhp;
@@ -372,7 +367,7 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 				}
 
 				if (list[nummonsters].data._mAi != AI_GARG) {
-					list[nummonsters].data._mAnimData = list[nummonsters].data.MType->Anims[MA_STAND].Data[list[nummonsters].data._mdir];
+					list[nummonsters].data._mAnimData = list[nummonsters].data.MType->Anims[MA_STAND].Data[int(list[nummonsters].data._mdir)];
 					list[nummonsters].data._mAnimFrame = random_(88, list[nummonsters].data._mAnimLen - 1) + 1;
 					list[nummonsters].data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
 					list[nummonsters].data._mmode = MM_STAND;

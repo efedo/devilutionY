@@ -37,10 +37,10 @@ void AddWarpMissile(int i, V2Di p)
 
 	missiledata[MIS_TOWN].mlSFX = -1;
 	grid[p.x][p.y].dMissile = 0;
-	mi = AddMissile({ 0, 0 }, { p.x, p.y }, 0, MIS_TOWN, 0, i, 0, 0);
+	mi = AddMissile({ 0, 0 }, p, Dir(0), MIS_TOWN, 0, i, 0, 0);
 
 	if (mi != -1) {
-		SetMissDir(mi, 1);
+		SetMissDir(mi, Dir(1));
 
 		if (level.currlevel != 0)
 			missile[mi]._mlid = AddLight(missile[mi]._mi, 15);

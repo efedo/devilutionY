@@ -8,7 +8,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-MonsterInstance::MonsterInstance(int new_i, int rd, int mtype, V2Di pos)
+MonsterInstance::MonsterInstance(int new_i, Dir rd, int mtype, V2Di pos)
     : i(new_i)
 {
 	CMonster *monst = &beastiary[mtype].data;
@@ -22,7 +22,7 @@ MonsterInstance::MonsterInstance(int new_i, int rd, int mtype, V2Di pos)
 	data.mName = monst->MData->mName;
 	data.MType = monst;
 	data.MData = monst->MData;
-	data._mAnimData = monst->Anims[MA_STAND].Data[rd];
+	data._mAnimData = monst->Anims[MA_STAND].Data[int(rd)];
 	data._mAnimDelay = monst->Anims[MA_STAND].Rate;
 	data._mAnimCnt = random_(88, data._mAnimDelay - 1);
 	data._mAnimLen = monst->Anims[MA_STAND].Frames;
@@ -72,7 +72,7 @@ MonsterInstance::MonsterInstance(int new_i, int rd, int mtype, V2Di pos)
 	data.mtalkmsg = 0;
 
 	if (data._mAi == AI_GARG) {
-		data._mAnimData = monst->Anims[MA_SPECIAL].Data[rd];
+		data._mAnimData = monst->Anims[MA_SPECIAL].Data[int(rd)];
 		data._mAnimFrame = 1;
 		data._mFlags |= MFLAG_ALLOW_SPECIAL;
 		data._mmode = MM_SATTACK;
@@ -111,13 +111,13 @@ MonsterInstance::MonsterInstance(int new_i, int rd, int mtype, V2Di pos)
 // Plants in stationary position (no velocity or offset) facing specified direction
 // Often called before starting a new action
 // If no position specified, plants in current position
-void MonsterInstance::PlantInPosition(int dir, V2Di * pos)
+void MonsterInstance::PlantInPosition(Dir dir, V2Di * pos)
 {
 	if (pos) data._m = *pos;
 	data._moff = { 0, 0 };
 	data._mfut = data._m;
 	data._mold = data._m;
-	if (dir != std::numeric_limits<int>::max()) data._mdir = dir;
+	if (dir != Dir::NONE) data._mdir = dir;
 }
 
 void MonsterInstance::ClearMVars()
@@ -132,9 +132,9 @@ void MonsterInstance::ClearMVars()
 	data._mVar8 = 0;
 }
 
-void MonsterInstance::NewMonsterAnim(AnimStruct *anim, int md)
+void MonsterInstance::NewMonsterAnim(AnimStruct *anim, Dir md)
 {
-	data._mAnimData = anim->Data[md];
+	data._mAnimData = anim->Data[int(md)];
 	data._mAnimLen = anim->Frames;
 	data._mAnimCnt = 0;
 	data._mAnimFrame = 1;
@@ -143,7 +143,7 @@ void MonsterInstance::NewMonsterAnim(AnimStruct *anim, int md)
 	data._mdir = md;
 }
 
-void MonsterInstance::GetTargetLoc(V2Di &pos, int &dist, int &dir)
+void MonsterInstance::GetTargetLoc(V2Di &pos, int &dist, Dir &dir)
 {
 }
 
@@ -183,11 +183,11 @@ void MonsterInstance::M_Enemy()
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
 			if (!plr[pnum].data.plractive || level.currlevel != plr[pnum].data.plrlevel || plr[pnum].data._pLvlChanging || (plr[pnum].data._pHitPoints == 0 && gbMaxPlayers != 1))
 				continue;
-			if (grid.at(data._m).dTransVal == grid.at(plr[pnum].data._p).dTransVal)
+			if (grid.at(data._m).dTransVal == grid.at(plr[pnum].pos()).dTransVal)
 				sameroom = TRUE;
 			else
 				sameroom = FALSE;
-			int dist = (data._m - plr[pnum].data._p).maxabs();
+			int dist = (data._m - plr[pnum].pos()).maxabs();
 			if ((sameroom && !bestsameroom)
 			    || ((sameroom || !bestsameroom) && dist < best_dist)
 			    || (_menemy == -1)) {
@@ -237,12 +237,12 @@ void MonsterInstance::M_Enemy()
 	}
 }
 
-int MonsterInstance::M_GetDir()
+Dir MonsterInstance::M_GetDir()
 {
 	return GetDirection(data._m, data._menemypos);
 }
 
-void MonsterInstance::M_StartStand(int md)
+void MonsterInstance::M_StartStand(Dir md)
 {
 	ClearMVars();
 	if (data.MType->mtype == MT_GOLEM)
@@ -268,14 +268,14 @@ void MonsterInstance::M_StartDelay(int len)
 	}
 }
 
-void MonsterInstance::M_StartSpStand(int md)
+void MonsterInstance::M_StartSpStand(Dir md)
 {
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_SPSTAND;
 	PlantInPosition(md);
 }
 
-void MonsterInstance::M_StartWalk(V2Di vel, V2Di add, int EndDir)
+void MonsterInstance::M_StartWalk(V2Di vel, V2Di add, Dir EndDir)
 {
 	V2Di f = add + data._m;
 	grid[f.x][f.y].dMonster = -(i + 1);
@@ -285,7 +285,7 @@ void MonsterInstance::M_StartWalk(V2Di vel, V2Di add, int EndDir)
 	data._mvel = vel;
 	data._mVar1 = add.x;
 	data._mVar2 = add.y;
-	data._mVar3 = EndDir;
+	data._mVar3 = int(EndDir);
 	data._mdir = EndDir;
 	NewMonsterAnim(&data.MType->Anims[MA_WALK], EndDir);
 	data._mVar6 = 0;
@@ -293,10 +293,10 @@ void MonsterInstance::M_StartWalk(V2Di vel, V2Di add, int EndDir)
 	data._mVar8 = 0;
 }
 
-void MonsterInstance::M_StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir)
+void MonsterInstance::M_StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir)
 {
 	V2Di f = add + data._m;
-	grid[data._m.x][data._m.y].dMonster = -(i + 1);
+	grid.at(data._m).dMonster = -(i + 1);
 	data._mVar1 = data._m.x;
 	data._mVar2 = data._m.y;
 	data._mold = data._m;
@@ -308,7 +308,7 @@ void MonsterInstance::M_StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir)
 	data._moff = off;
 	data._mmode = MM_WALK2;
 	data._mvel = vel;
-	data._mVar3 = EndDir;
+	data._mVar3 = int(EndDir);
 	data._mdir = EndDir;
 	NewMonsterAnim(&data.MType->Anims[MA_WALK], EndDir);
 	data._mVar6 = 16 * off.x;
@@ -316,7 +316,7 @@ void MonsterInstance::M_StartWalk2(V2Di vel, V2Di off, V2Di add, int EndDir)
 	data._mVar8 = 0;
 }
 
-void MonsterInstance::M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int EndDir)
+void MonsterInstance::M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir)
 {
 	V2Di f = add + data._m;
 	V2Di n = map + data._m;
@@ -336,7 +336,7 @@ void MonsterInstance::M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int E
 	data._mvel = vel;
 	data._mVar1 = f.x;
 	data._mVar2 = f.y;
-	data._mVar3 = EndDir;
+	data._mVar3 = int(EndDir);
 	data._mdir = EndDir;
 	NewMonsterAnim(&data.MType->Anims[MA_WALK], EndDir);
 	data._mVar6 = 16 * off.x;
@@ -346,7 +346,7 @@ void MonsterInstance::M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, int E
 
 void MonsterInstance::M_StartAttack()
 {
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	NewMonsterAnim(&data.MType->Anims[MA_ATTACK], md);
 	data._mmode = MM_ATTACK;
 	PlantInPosition(md);
@@ -354,7 +354,7 @@ void MonsterInstance::M_StartAttack()
 
 void MonsterInstance::M_StartRAttack(int missile_type, int dam)
 {
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	NewMonsterAnim(&data.MType->Anims[MA_ATTACK], md);
 	data._mmode = MM_RATTACK;
 	data._mVar1 = missile_type;
@@ -364,7 +364,7 @@ void MonsterInstance::M_StartRAttack(int missile_type, int dam)
 
 void MonsterInstance::M_StartRSpAttack(int missile_type, int dam)
 {
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_RSPATTACK;
 	data._mVar1 = missile_type;
@@ -375,7 +375,7 @@ void MonsterInstance::M_StartRSpAttack(int missile_type, int dam)
 
 void MonsterInstance::M_StartSpAttack()
 {
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_SATTACK;
 	PlantInPosition(md);
@@ -413,10 +413,10 @@ void MonsterInstance::M_ClearSquares()
 
 void MonsterInstance::M_GetKnockback()
 {
-	int d = (data._mdir - 4) & 7;
+	Dir d = rotate(data._mdir, -4);
 	if (DirOK(d)) {
 		M_ClearSquares();
-		data._mold += offset[d];
+		data._mold += offset(d);
 		NewMonsterAnim(&data.MType->Anims[MA_GOTHIT], data._mdir);
 		data._mmode = MM_GOTHIT;
 		data._moff = { 0, 0 };
@@ -464,13 +464,9 @@ void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
 {
 	int j, k;
 	V2Di _mold;
-
-#ifndef SPAWN
 	PlaySFX(USFX_DIABLOD);
-#endif
 	quests[Q_DIABLO]._qactive = QUEST_DONE;
-	if (sendmsg)
-		NetSendCmdQuest(TRUE, Q_DIABLO);
+	if (sendmsg) NetSendCmdQuest(TRUE, Q_DIABLO);
 	gbProcessPlayers = FALSE;
 	sgbSaveSoundOn = gbSoundOn;
 
@@ -502,7 +498,7 @@ void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
 
 void MonsterInstance::MonstStartKill(int pnum, BOOL sendmsg)
 {
-	int md;
+	Dir md;
 
 	//MonsterStruct *Monst;
 	if (pnum >= 0)
@@ -537,12 +533,12 @@ void MonsterInstance::MonstStartKill(int pnum, BOOL sendmsg)
 	CheckQuestKill(i, sendmsg);
 	M_FallenFear(data._m);
 	if (data.MType->mtype >= MT_NACID && data.MType->mtype <= MT_XACID)
-		AddMissile(data._m, { 0, 0 }, 0, MIS_ACIDPUD, 1, i, data._mint + 1, 0);
+		AddMissile(data._m, { 0, 0 }, Dir(0), MIS_ACIDPUD, 1, i, data._mint + 1, 0);
 }
 
 void MonsterInstance::M2MStartKill(int mid)
 {
-	int md;
+	Dir md;
 
 	if ((DWORD)i >= MAXMONSTERS) { /// BUGFIX: should check `mid`
 		app_fatal("M2MStartKill: Invalid monster (killed) %d", mid);
@@ -571,9 +567,8 @@ void MonsterInstance::M2MStartKill(int mid)
 
 	PlayEffect(mid, 2);
 
-	md = (data._mdir - 4) & 7;
-	if (monsters[mid].data.MType->mtype == MT_GOLEM)
-		md = 0;
+	md = rotate(data._mdir, -4);
+	if (monsters[mid].data.MType->mtype == MT_GOLEM) md = Dir(0);
 
 	monsters[mid].data._mdir = md;
 	monsters[mid].NewMonsterAnim(&monsters[mid].data.MType->Anims[MA_DEATH], md);
@@ -584,7 +579,7 @@ void MonsterInstance::M2MStartKill(int mid)
 	CheckQuestKill(mid, TRUE);
 	M_FallenFear(monsters[mid].data._m);
 	if (monsters[mid].data.MType->mtype >= MT_NACID && monsters[mid].data.MType->mtype <= MT_XACID)
-		AddMissile(monsters[mid].data._m, { 0, 0 }, 0, MIS_ACIDPUD, 1, mid, monsters[mid].data._mint + 1, 0);
+		AddMissile(monsters[mid].data._m, { 0, 0 }, Dir(0), MIS_ACIDPUD, 1, mid, monsters[mid].data._mint + 1, 0);
 }
 
 void MonsterInstance::M_StartKill(int pnum)
@@ -620,7 +615,7 @@ void MonsterInstance::M_SyncStartKill(V2Di pos, int pnum)
 	}
 }
 
-void MonsterInstance::M_StartFadein(int md, BOOL backwards)
+void MonsterInstance::M_StartFadein(Dir md, BOOL backwards)
 {
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_FADEIN;
@@ -632,7 +627,7 @@ void MonsterInstance::M_StartFadein(int md, BOOL backwards)
 	}
 }
 
-void MonsterInstance::M_StartFadeout(int md, BOOL backwards)
+void MonsterInstance::M_StartFadeout(Dir md, BOOL backwards)
 {
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_FADEOUT;
@@ -645,7 +640,7 @@ void MonsterInstance::M_StartFadeout(int md, BOOL backwards)
 
 void MonsterInstance::M_StartHeal()
 {
-	data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[data._mdir];
+	data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(data._mdir)];
 	data._mAnimFrame = data.MType->Anims[MA_SPECIAL].Frames;
 	data._mFlags |= MFLAG_LOCK_ANIMATION;
 	data._mmode = MM_HEAL;
@@ -681,9 +676,9 @@ void MonsterInstance::M_ChangeLightOffset()
 BOOL MonsterInstance::M_DoStand()
 {
 	if (data.MType->mtype == MT_GOLEM)
-		data._mAnimData = data.MType->Anims[MA_WALK].Data[data._mdir];
+		data._mAnimData = data.MType->Anims[MA_WALK].Data[int(data._mdir)];
 	else
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(data._mdir)];
 
 	if (data._mAnimFrame == data._mAnimLen)
 		M_Enemy();
@@ -822,7 +817,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	if (plr[pnum].data._pHitPoints >> 6 <= 0 || plr[pnum].data._pInvincible || plr[pnum].data._pSpellFlags & 1)
 		return;
 
-	int dist = (data._m - plr[pnum].data._p).maxabs();
+	int dist = (data._m - plr[pnum].pos()).maxabs();
 	if (dist >= 2) return;
 
 	hper = random_(98, 100);
@@ -860,7 +855,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	if (hper >= hit)
 		return;
 	if (blkper < blk) {
-		plr[pnum].StartPlrBlock(GetDirection(plr[pnum].data._p, data._m));
+		plr[pnum].StartPlrBlock(GetDirection(plr[pnum].pos(), data._m));
 		return;
 	}
 	if (data.MType->mtype == MT_YZOMBIE && pnum == myplr()) {
@@ -924,7 +919,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	if (data._mFlags & MFLAG_KNOCKBACK) {
 		if (plr[pnum].data._pmode != PM_GOTHIT)
 			plr[pnum].StartPlrHit(0, TRUE);
-		newpos = plr[pnum].data._p + offset[data._mdir];
+		newpos = plr[pnum].data._p + offset(data._mdir);
 		if (PosOkPlayer(pnum, newpos)) {
 			plr[pnum].data._p = newpos;
 			plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
@@ -1213,9 +1208,9 @@ BOOL MonsterInstance::M_DoDeath()
 			PrepDoEnding();
 	} else if (data._mAnimFrame == data._mAnimLen) {
 		if (data._uniqtype == 0)
-			AddDead(data._m, data.MType->mdeadval, (direction)data._mdir);
+			AddDead(data._m, data.MType->mdeadval, data._mdir);
 		else
-			AddDead(data._m, data._udeadval, (direction)data._mdir);
+			AddDead(data._m, data._udeadval, data._mdir);
 
 		grid.at(data._m).dMonster = 0;
 		data._mDelFlag = TRUE;
@@ -1241,7 +1236,7 @@ BOOL MonsterInstance::M_DoDelay()
 {
 	int mVar2;
 	int oFrame;
-	data._mAnimData = data.MType->Anims[MA_STAND].Data[M_GetDir()];
+	data._mAnimData = data.MType->Anims[MA_STAND].Data[int(M_GetDir())];
 	if (data._mAi == AI_LAZURUS) {
 		if (data._mVar2 > 8 || data._mVar2 < 0)
 			data._mVar2 = 8;
@@ -1268,33 +1263,33 @@ BOOL MonsterInstance::M_DoStone()
 	return FALSE;
 }
 
-void MonsterInstance::M_WalkDir(int md)
+void MonsterInstance::M_WalkDir(Dir md)
 {
 	int mwi = data.MType->Anims[MA_WALK].Frames - 1;
 	switch (md) {
-	case DIR_N:
-		M_StartWalk({ 0, -MWVel[mwi][1] }, { -1, -1 }, DIR_N);
+	case Dir::N:
+		M_StartWalk({ 0, -MWVel[mwi][1] }, { -1, -1 }, Dir::N);
 		break;
-	case DIR_NE:
-		M_StartWalk({ MWVel[mwi][1], -MWVel[mwi][0] }, { 0, -1 }, DIR_NE);
+	case Dir::NE:
+		M_StartWalk({ MWVel[mwi][1], -MWVel[mwi][0] }, { 0, -1 }, Dir::NE);
 		break;
-	case DIR_E:
-		M_StartWalk3({ MWVel[mwi][2], 0 }, { -32, -16 }, { 1, -1 }, { 1, 0 }, DIR_E);
+	case Dir::E:
+		M_StartWalk3({ MWVel[mwi][2], 0 }, { -32, -16 }, { 1, -1 }, { 1, 0 }, Dir::E);
 		break;
-	case DIR_SE:
-		M_StartWalk2({ MWVel[mwi][1], MWVel[mwi][0] }, { -32, -16 }, { 1, 0 }, DIR_SE);
+	case Dir::SE:
+		M_StartWalk2({ MWVel[mwi][1], MWVel[mwi][0] }, { -32, -16 }, { 1, 0 }, Dir::SE);
 		break;
-	case DIR_S:
-		M_StartWalk2({ 0, MWVel[mwi][1] }, { 0, -32 }, { 1, 1 }, DIR_S);
+	case Dir::S:
+		M_StartWalk2({ 0, MWVel[mwi][1] }, { 0, -32 }, { 1, 1 }, Dir::S);
 		break;
-	case DIR_SW:
-		M_StartWalk2({ -MWVel[mwi][1], MWVel[mwi][0] }, { 32, -16 }, { 0, 1 }, DIR_SW);
+	case Dir::SW:
+		M_StartWalk2({ -MWVel[mwi][1], MWVel[mwi][0] }, { 32, -16 }, { 0, 1 }, Dir::SW);
 		break;
-	case DIR_W:
-		M_StartWalk3({ -MWVel[mwi][2], 0 }, { 32, -16 }, { -1, 1 }, { 0, 1 }, DIR_W);
+	case Dir::W:
+		M_StartWalk3({ -MWVel[mwi][2], 0 }, { 32, -16 }, { -1, 1 }, { 0, 1 }, Dir::W);
 		break;
-	case DIR_NW:
-		M_StartWalk({ -MWVel[mwi][1], -MWVel[mwi][0] }, { -1, 0 }, DIR_NW);
+	case Dir::NW:
+		M_StartWalk({ -MWVel[mwi][1], -MWVel[mwi][0] }, { -1, 0 }, Dir::NW);
 		break;
 	}
 }
@@ -1354,22 +1349,25 @@ void MonsterInstance::GroupUnity()
 	}
 }
 
-BOOL MonsterInstance::M_CallWalk(int md)
+BOOL MonsterInstance::M_CallWalk(Dir md)
 {
-	int mdtemp = md;
-	BOOL ok = DirOK(md);
+	const Dir mdtemp = md;
+	BOOL ok = DirOK(Dir(md));
+
+	bool test = (md = left(mdtemp), DirOK(md));
+
 	if (random_(101, 2))
-		ok = ok || (md = left[mdtemp], DirOK(md)) || (md = right[mdtemp], DirOK(md));
+		ok = ok || (md = left(mdtemp), DirOK(md)) || (md = right(mdtemp), DirOK(md));
 	else
-		ok = ok || (md = right[mdtemp], DirOK(md)) || (md = left[mdtemp], DirOK(md));
+		ok = ok || (md = right(mdtemp), DirOK(md)) || (md = left(mdtemp), DirOK(md));
 	if (random_(102, 2))
 		ok = ok
-		    || (md = right[right[mdtemp]], DirOK(md))
-		    || (md = left[left[mdtemp]], DirOK(md));
+		    || (md = right(right(mdtemp)), DirOK(md))
+		    || (md = left(left(mdtemp)), DirOK(md));
 	else
 		ok = ok
-		    || (md = left[left[mdtemp]], DirOK(md))
-		    || (md = right[right[mdtemp]], DirOK(md));
+		    || (md = left(left(mdtemp)), DirOK(md))
+		    || (md = right(right(mdtemp)), DirOK(md));
 	if (ok)
 		M_WalkDir(md);
 	return ok;
@@ -1377,66 +1375,67 @@ BOOL MonsterInstance::M_CallWalk(int md)
 
 BOOL MonsterInstance::M_PathWalk()
 {
-	char path[25];
+	//char path[25];
+	std::queue<PathNode> path;
+
 	BOOL (*Check)
 	(int, V2Di) = PosOkMonst3;
 	if (!(data._mFlags & MFLAG_CAN_OPEN_DOOR))
 		Check = PosOkMonst;
 
-	if (FindPath(Check, i, data._m, data._menemypos, path)) {
-		M_CallWalk(plr2monst[path[0]]); /* plr2monst is local */
+	int dist = pathfinder.FindPath(Check, i, data._m, data._menemypos, path);
+	if (dist > 1) {
+		M_CallWalk(GetDirection(data._m, path.front().pos())); /* plr2monst is local */
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_CallWalk2(int md)
+BOOL MonsterInstance::M_CallWalk2(Dir md)
 {
 	BOOL ok = DirOK(md); // Can we continue in the same direction
-	int mdtemp = md;
+	Dir mdtemp = md;
 	if (random_(101, 2)) { // Randomly go left or right
-		ok = ok || (mdtemp = left[md], DirOK(left[md])) || (mdtemp = right[md], DirOK(right[md]));
+		ok = ok || (mdtemp = left(md), DirOK(left(md))) || (mdtemp = right(md), DirOK(right(md)));
 	} else {
-		ok = ok || (mdtemp = right[md], DirOK(right[md])) || (mdtemp = left[md], DirOK(left[md]));
+		ok = ok || (mdtemp = right(md), DirOK(right(md))) || (mdtemp = left(md), DirOK(left(md)));
 	}
 
-	if (ok)
-		M_WalkDir(mdtemp);
+	if (ok) M_WalkDir(mdtemp);
 	return ok;
 }
 
-BOOL MonsterInstance::M_DumbWalk(int md)
+BOOL MonsterInstance::M_DumbWalk(Dir md)
 {
 	BOOL ok = DirOK(md);
-	if (ok)
-		M_WalkDir(md);
+	if (ok) M_WalkDir(md);
 	return ok;
 }
 
-BOOL MonsterInstance::M_RoundWalk(int md, int *dir)
+BOOL MonsterInstance::M_RoundWalk(Dir md, int *dir)
 {
-	int mdtemp = md;
+	Dir mdtemp = md;
 	BOOL ok = DirOK(md);
 	if (*dir)
-		md = left[left[md]];
+		md = left(left(md));
 	else
-		md = right[right[md]];
+		md = right(right(md));
 
 	if (!ok) {
 		if (*dir) {
-			md = right[mdtemp];
-			ok = DirOK(md) || (md = right[right[mdtemp]], DirOK(md));
+			md = right(mdtemp);
+			ok = DirOK(md) || (md = right(right(mdtemp)), DirOK(md));
 		} else {
-			md = left[mdtemp];
-			ok = (DirOK(md) || (md = left[left[mdtemp]], DirOK(md)));
+			md = left(mdtemp);
+			ok = (DirOK(md) || (md = left(left(mdtemp)), DirOK(md)));
 		}
 	}
 	if (ok) {
 		M_WalkDir(md);
 	} else {
 		*dir = !*dir;
-		ok = M_CallWalk(opposite[mdtemp]);
+		ok = M_CallWalk(opposite(mdtemp));
 	}
 	return ok;
 }
@@ -1451,13 +1450,13 @@ void MonsterInstance::MAI_Zombie()
 		return;
 	}
 	int dist = (m - data._menemypos).maxabs();
-	int md = data._mdir;
+	Dir md = data._mdir;
 	int v = random_(103, 100);
 	if (dist >= 2) {
 		if (v < 2 * data._mint + 10) {
 			if (dist >= 2 * data._mint + 4) {
 				if (random_(104, 100) < 2 * data._mint + 20) {
-					md = random_(104, 8);
+					md = Dir(random_(104, 8));
 				}
 				M_DumbWalk(md);
 			} else {
@@ -1470,7 +1469,7 @@ void MonsterInstance::MAI_Zombie()
 	}
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(data._mdir)];
 }
 
 void MonsterInstance::MAI_SkelSd()
@@ -1480,7 +1479,7 @@ void MonsterInstance::MAI_SkelSd()
 
 	V2Di m = data._m;
 	int dist = (m - data._menemypos).maxabs();
-	int md = GetDirection(m, data._last);
+	Dir md = GetDirection(m, data._last);
 	data._mdir = md;
 	if (dist >= 2) {
 		if (data._mVar1 == MM_DELAY || (random_(106, 100) >= 35 - 4 * data._mint)) {
@@ -1497,7 +1496,7 @@ void MonsterInstance::MAI_SkelSd()
 	}
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 BOOL MonsterInstance::MAI_Path()
@@ -1532,16 +1531,15 @@ BOOL MonsterInstance::MAI_Path()
 
 void MonsterInstance::MAI_Snake()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
-	int tmp;
+	Dir tmp;
 	char pattern[6] = { 1, 1, 0, -1, -1, 0 };
 	int pnum = data._menemy;
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	data._mdir = md;
 
 	if (dist >= 2) {
@@ -1551,46 +1549,25 @@ void MonsterInstance::MAI_Snake()
 				grid.at(data._m).dMonster = -(i + 1);
 				data._mmode = MM_CHARGE;
 			}
+		// This is all just code to choose a direction
 		} else if (data._mVar1 == MM_DELAY || random_(106, 100) >= 35 - 2 * data._mint) {
-			if (md + pattern[data._mgoalvar1] < 0) {
-				tmp = md + pattern[data._mgoalvar1] + 8;
-			} else {
-				tmp = md + pattern[data._mgoalvar1] - 8;
-				if (md + pattern[data._mgoalvar1] < 8)
-					tmp = md + pattern[data._mgoalvar1];
-			}
+			tmp = rotate(md, pattern[data._mgoalvar1]);
 			data._mgoalvar1++;
-			if (data._mgoalvar1 > 5)
-				data._mgoalvar1 = 0;
-			if (tmp - data._mgoalvar2 < 0) {
-				md = tmp - data._mgoalvar2 + 8;
-			} else if (tmp - data._mgoalvar2 >= 8) {
-				md = tmp - data._mgoalvar2 - 8;
-			} else
-				md = tmp - data._mgoalvar2;
-			if (md > 0) {
-				if (md < 4) {
-					if (data._mgoalvar2 + 1 < 0) {
-						md = data._mgoalvar2 + 9;
-					} else if (data._mgoalvar2 + 1 >= 8) {
-						md = data._mgoalvar2 - 7;
-					} else
-						md = data._mgoalvar2 + 1;
-					data._mgoalvar2 = md;
-				} else if (md == 4) {
-					data._mgoalvar2 = tmp;
+			if (data._mgoalvar1 > 5) data._mgoalvar1 = 0;
+			tmp = rotate(md, -data._mgoalvar2);
+
+			if (int(md) > 0) {
+				if (int(md) < 4) {
+					md = right(Dir(data._mgoalvar2));
+					data._mgoalvar2 = int(md);
+				} else if (md == Dir(4)) {
+					data._mgoalvar2 = int(tmp);
 				} else {
-					if (data._mgoalvar2 - 1 < 0) {
-						md = data._mgoalvar2 + 7;
-					} else if (data._mgoalvar2 - 1 >= 8) {
-						md = data._mgoalvar2 - 9;
-					} else
-						md = data._mgoalvar2 - 1;
-					data._mgoalvar2 = md;
+					md = left(Dir(data._mgoalvar2));
+					data._mgoalvar2 = int(md);
 				}
 			}
-			if (!M_DumbWalk(data._mgoalvar2))
-				M_CallWalk2(data._mdir);
+			if (!M_DumbWalk(Dir(data._mgoalvar2))) M_CallWalk2(data._mdir);
 		} else {
 			M_StartDelay(15 - data._mint + random_(106, 10));
 		}
@@ -1603,30 +1580,29 @@ void MonsterInstance::MAI_Snake()
 			M_StartDelay(10 - data._mint + random_(105, 10));
 	}
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(data._mdir)];
 }
 
 void MonsterInstance::MAI_Bat()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	int pnum = data._menemy;
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	data._mdir = md;
 	int v = random_(107, 100);
 
 	if (data._mgoal == MGOAL_RETREAT) {
 		if (!data._mgoalvar1) {
-			M_CallWalk(opposite[md]);
+			M_CallWalk(opposite(md));
 			data._mgoalvar1++;
 		} else {
 			if (random_(108, 2))
-				M_CallWalk(left[md]);
+				M_CallWalk(left(md));
 			else
-				M_CallWalk(right[md]);
+				M_CallWalk(right(md));
 			data._mgoal = MGOAL_NORMAL;
 		}
 		return;
@@ -1652,23 +1628,22 @@ void MonsterInstance::MAI_Bat()
 		data._mgoal = MGOAL_RETREAT;
 		data._mgoalvar1 = 0;
 		if (data.MType->mtype == MT_FAMILIAR) {
-			AddMissile(data._menemypos, { data._menemypos.x + 1, 0 }, -1, MIS_LIGHTNING, 1, i, random_(109, 10) + 1, 0);
+			AddMissile(data._menemypos, { data._menemypos.x + 1, 0 }, Dir(-1), MIS_LIGHTNING, 1, i, random_(109, 10) + 1, 0);
 		}
 	}
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_SkelBow()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	BOOL walking = FALSE;
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	data._mdir = md;
 
 	int v = random_(110, 100);
@@ -1678,7 +1653,7 @@ void MonsterInstance::MAI_SkelBow()
 		    || (data._mVar1 == MM_WALK || data._mVar1 == MM_WALK2 || data._mVar1 == MM_WALK3)
 		        && data._mVar2 == 0
 		        && v < 2 * data._mint + 63) {
-			walking = M_DumbWalk(opposite[md]);
+			walking = M_DumbWalk(opposite(md));
 		}
 	}
 
@@ -1690,8 +1665,7 @@ void MonsterInstance::MAI_SkelBow()
 		}
 	}
 
-	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+	if (data._mmode == MM_STAND) data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Fat()
@@ -1701,7 +1675,7 @@ void MonsterInstance::MAI_Fat()
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	data._mdir = md;
 	int v = random_(111, 100);
 	if (dist >= 2) {
@@ -1718,7 +1692,7 @@ void MonsterInstance::MAI_Fat()
 	}
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Sneak()
@@ -1729,7 +1703,7 @@ void MonsterInstance::MAI_Sneak()
 	V2Di mb = data._m;
 	if (grid.at(mb).dLight != lightmax) {
 		V2Di d = (mb - data._menemypos).abs();
-		int md = M_GetDir();
+		Dir md = M_GetDir();
 		int dist = 5 - data._mint;
 		if (data._mVar1 == MM_GOTHIT) {
 			data._mgoalvar1 = 0;
@@ -1743,12 +1717,12 @@ void MonsterInstance::MAI_Sneak()
 		if (data._mgoal == MGOAL_RETREAT) {
 			if (data._mFlags & MFLAG_TARGETS_MONSTER)
 				md = GetDirection(data._m, plr[data._menemy].data._powner);
-			md = opposite[md];
+			md = opposite(md);
 			if (data.MType->mtype == MT_UNSEEN) {
 				if (random_(112, 2))
-					md = left[md];
+					md = left(md);
 				else
-					md = right[md];
+					md = right(md);
 			}
 		}
 		data._mdir = md;
@@ -1768,7 +1742,7 @@ void MonsterInstance::MAI_Sneak()
 		}
 		if (data._mmode == MM_STAND) {
 			if (d.maxdim() >= 2 || v >= 4 * data._mint + 10)
-				data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+				data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 			else
 				M_StartAttack();
 		}
@@ -1777,13 +1751,12 @@ void MonsterInstance::MAI_Sneak()
 
 void MonsterInstance::MAI_Fireman()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	int pnum = data._menemy;
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	if (data._mgoal == MGOAL_NORMAL) {
 		if (LineClear(data._m, f)
 		    && AddMissile(data._m, f, md, MIS_FIREMAN, pnum, i, 0, 0) != -1) {
@@ -1814,7 +1787,7 @@ void MonsterInstance::MAI_Fireman()
 	if (dist < 2 && data._mgoal == MGOAL_NORMAL) {
 		M_TryH2HHit(data._menemy, data.mHit, data.mMinDamage, data.mMaxDamage);
 		data._mgoal = MGOAL_RETREAT;
-		if (!M_CallWalk(opposite[md])) {
+		if (!M_CallWalk(opposite(md))) {
 			M_StartFadein(md, FALSE);
 			data._mgoal = MGOAL_SHOOT;
 		}
@@ -1826,7 +1799,8 @@ void MonsterInstance::MAI_Fireman()
 
 void MonsterInstance::MAI_Fallen()
 {
-	int m, rad, md;
+	int m, rad;
+	Dir md;
 
 	if (data._mgoal == MGOAL_SHOOT) {
 		if (data._mgoalvar1)
@@ -1835,13 +1809,11 @@ void MonsterInstance::MAI_Fallen()
 			data._mgoal = MGOAL_NORMAL;
 	}
 
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
-
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 	if (data._mgoal == MGOAL_RETREAT) {
 		if (!data._mgoalvar1--) {
 			data._mgoal = MGOAL_NORMAL;
-			M_StartStand(opposite[data._mdir]);
+			M_StartStand(opposite(data._mdir));
 		}
 	}
 
@@ -1890,31 +1862,27 @@ void MonsterInstance::MAI_Fallen()
 
 void MonsterInstance::MAI_Cleaver()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	data._mdir = md;
 
-	if (dist >= 2)
-		M_CallWalk(md);
-	else
-		M_StartAttack();
+	if (dist >= 2) M_CallWalk(md);
+	else M_StartAttack();
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Round(BOOL special)
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	if (data._msquelch < UCHAR_MAX)
 		MonstCheckDoors(i);
 	int v = random_(114, 100);
@@ -1950,7 +1918,7 @@ void MonsterInstance::MAI_Round(BOOL special)
 		}
 	}
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_GoatMc()
@@ -1960,13 +1928,12 @@ void MonsterInstance::MAI_GoatMc()
 
 void MonsterInstance::MAI_Ranged(int missile_type, BOOL special)
 {
-	if (data._mmode != MM_STAND)
-		return;
+	if (data._mmode != MM_STAND) return;
 
 	if (data._msquelch == UCHAR_MAX || data._mFlags & MFLAG_TARGETS_MONSTER) {
 		V2Di f = data._menemypos;
 		int dist = (data._m - f).maxabs();
-		int md = M_GetDir();
+		Dir md = M_GetDir();
 		if (data._msquelch < UCHAR_MAX)
 			MonstCheckDoors(i);
 		data._mdir = md;
@@ -1974,7 +1941,7 @@ void MonsterInstance::MAI_Ranged(int missile_type, BOOL special)
 			M_StartDelay(random_(118, 20));
 		} else if (dist < 4) {
 			if (random_(119, 100) < 10 * (data._mint + 7))
-				M_CallWalk(opposite[md]);
+				M_CallWalk(opposite(md));
 		}
 		if (data._mmode == MM_STAND) {
 			if (LineClear(data._m, f)) {
@@ -1983,11 +1950,11 @@ void MonsterInstance::MAI_Ranged(int missile_type, BOOL special)
 				else
 					M_StartRAttack(missile_type, 4);
 			} else {
-				data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+				data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 			}
 		}
 	} else if (data._msquelch != 0) {
-		int md = GetDirection(data._m, data._last);
+		Dir md = GetDirection(data._m, data._last);
 		M_CallWalk(md);
 	}
 }
@@ -2087,7 +2054,7 @@ void MonsterInstance::MAI_Scav()
 
 void MonsterInstance::MAI_Garg()
 {
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	if (data._msquelch != 0 && data._mFlags & MFLAG_ALLOW_SPECIAL) {
 		M_Enemy();
 		int dist = (data._m - data._last).maxabs();
@@ -2097,8 +2064,7 @@ void MonsterInstance::MAI_Garg()
 		return;
 	}
 
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	if (data._mhitpoints<data._mmaxhp >> 1 && !(data._mFlags & MFLAG_NOHEAL))
 		data._mgoal = MGOAL_RETREAT;
@@ -2107,7 +2073,7 @@ void MonsterInstance::MAI_Garg()
 		if (dist >= data._mint + 2) {
 			data._mgoal = MGOAL_NORMAL;
 			M_StartHeal();
-		} else if (!M_CallWalk(opposite[md])) {
+		} else if (!M_CallWalk(opposite(md))) {
 			data._mgoal = MGOAL_NORMAL;
 		}
 	}
@@ -2121,7 +2087,7 @@ void MonsterInstance::MAI_RoundRanged(int missile_type, BOOL checkdoors, int dam
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	if (checkdoors && data._msquelch < UCHAR_MAX)
 		MonstCheckDoors(i);
 	int v = random_(121, 10000);
@@ -2196,7 +2162,7 @@ void MonsterInstance::MAI_RR2(int mistype, int dam)
 
 	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	if (data._msquelch < UCHAR_MAX)
 		MonstCheckDoors(i);
 	int v = random_(121, 100);
@@ -2250,7 +2216,8 @@ void MonsterInstance::MAI_Mega()
 
 void MonsterInstance::MAI_Golum()
 {
-	int md, j, k, _menemy;
+	int j, k, _menemy;
+	Dir md;
 	BOOL have_enemy, ok;
 	if (data._m.x == 1 && data._m.y == 0) {
 		return;
@@ -2262,8 +2229,7 @@ void MonsterInstance::MAI_Golum()
 		return;
 	}
 
-	if (!(data._mFlags & MFLAG_TARGETS_MONSTER))
-		M_Enemy();
+	if (!(data._mFlags & MFLAG_TARGETS_MONSTER)) M_Enemy();
 
 	have_enemy = !(data._mFlags & MFLAG_NO_ENEMY);
 
@@ -2275,8 +2241,7 @@ void MonsterInstance::MAI_Golum()
 	md = GetDirection(m, monsters[_menemy].data._m);
 	data._mdir = md;
 	if (dist >= 2) {
-		if (have_enemy && MAI_Path())
-			return;
+		if (have_enemy && MAI_Path()) return;
 	} else if (have_enemy) {
 		_menemy = data._menemy;
 		data._menemypos = monsters[_menemy].data._m;
@@ -2296,14 +2261,13 @@ void MonsterInstance::MAI_Golum()
 	}
 
 	data._pathcount++;
-	if (data._pathcount > 8)
-		data._pathcount = 5;
+	if (data._pathcount > 8) data._pathcount = 5;
 
 	ok = M_CallWalk(plr[i].data._pdir);
 	if (!ok) {
-		md = (md - 1) & 7;
+		md = rotate(md, -1);
 		for (j = 0; j < 8 && !ok; j++) {
-			md = (md + 1) & 7;
+			md = rotate(md, 1);
 			ok = DirOK(md);
 		}
 		if (!ok) {
@@ -2315,14 +2279,12 @@ void MonsterInstance::MAI_Golum()
 
 void MonsterInstance::MAI_SkelKing()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
-	if (data._msquelch < UCHAR_MAX)
-		MonstCheckDoors(i);
+	Dir md = GetDirection(data._m, data._last);
+	if (data._msquelch < UCHAR_MAX) MonstCheckDoors(i);
 	int v = random_(126, 100);
 	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
 		if (data._mgoal == MGOAL_MOVE || (dist >= 3) && random_(127, 4) == 0) {
@@ -2343,7 +2305,7 @@ void MonsterInstance::MAI_SkelKing()
 		if (gbMaxPlayers == 1
 		    && ((dist >= 3) && v < 4 * data._mint + 35 || v < 6)
 		    && LineClear(data._m, f)) {
-			V2Di n = data._m + offset[md];
+			V2Di n = data._m + offset(md);
 			if (PosOkMonst(i, n) && nummonsters < MAXMONSTERS) {
 				M_SpawnSkel(n, md);
 				M_StartSpStand(md);
@@ -2363,18 +2325,16 @@ void MonsterInstance::MAI_SkelKing()
 			}
 		}
 	}
-	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+	if (data._mmode == MM_STAND) data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Rhino()
 {
-	if (data._mmode != MM_STAND || data._msquelch == 0)
-		return;
+	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	if (data._msquelch < UCHAR_MAX)
 		MonstCheckDoors(i);
 	int v = random_(131, 100);
@@ -2421,7 +2381,7 @@ void MonsterInstance::MAI_Rhino()
 		}
 	}
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(data._mdir)];
 }
 
 void MonsterInstance::MAI_Counselor()
@@ -2430,13 +2390,13 @@ void MonsterInstance::MAI_Counselor()
 
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
-	int md = GetDirection(data._m, data._last);
+	Dir md = GetDirection(data._m, data._last);
 	if (data._msquelch < UCHAR_MAX)
 		MonstCheckDoors(i);
 	int v = random_(121, 100);
 	if (data._mgoal == MGOAL_RETREAT) {
 		if (data._mgoalvar1++ <= 3)
-			M_CallWalk(opposite[md]);
+			M_CallWalk(opposite(md));
 		else {
 			data._mgoal = MGOAL_NORMAL;
 			M_StartFadein(md, TRUE);
@@ -2489,7 +2449,7 @@ void MonsterInstance::MAI_Garbud()
 		return;
 
 	V2Di _m = data._m;
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 
 	if (data.mtalkmsg < TEXT_GARBUD4
 	    && data.mtalkmsg > TEXT_DOOM10
@@ -2500,7 +2460,6 @@ void MonsterInstance::MAI_Garbud()
 	}
 
 	if (grid.at(_m).dFlags & BFLAG_VISIBLE) {
-#ifndef SPAWN
 		if (data.mtalkmsg == TEXT_GARBUD4) {
 			if (!effect_is_playing(USFX_GARBUD4) && data._mgoal == MGOAL_TALKING) {
 				data._mgoal = MGOAL_NORMAL;
@@ -2508,7 +2467,6 @@ void MonsterInstance::MAI_Garbud()
 				data.mtalkmsg = 0;
 			}
 		}
-#endif
 	}
 
 	if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_MOVE)
@@ -2517,7 +2475,7 @@ void MonsterInstance::MAI_Garbud()
 	data._mdir = md;
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Zhar()
@@ -2527,15 +2485,14 @@ void MonsterInstance::MAI_Zhar()
 	}
 
 	V2Di m = data._m;
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	if (data.mtalkmsg == TEXT_ZHAR1 && !(grid.at(m).dFlags & BFLAG_VISIBLE) && data._mgoal == MGOAL_TALKING) {
 		data.mtalkmsg = TEXT_ZHAR2;
 		data._mgoal = MGOAL_INQUIRING;
 	}
 
 	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
-		V2Di _m = data._m - data._menemy;
-#ifndef SPAWN
+		V2Di _m = data._m - data._menemypos;
 		if (data.mtalkmsg == TEXT_ZHAR2) {
 			if (!effect_is_playing(USFX_ZHAR2) && data._mgoal == MGOAL_TALKING) {
 				data._msquelch = UCHAR_MAX;
@@ -2543,7 +2500,6 @@ void MonsterInstance::MAI_Zhar()
 				data._mgoal = MGOAL_NORMAL;
 			}
 		}
-#endif
 	}
 
 	if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_RETREAT || data._mgoal == MGOAL_MOVE)
@@ -2552,16 +2508,15 @@ void MonsterInstance::MAI_Zhar()
 	data._mdir = md;
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_SnotSpil()
 {
-	if (data._mmode != MM_STAND)
-		return;
+	if (data._mmode != MM_STAND) return;
 
 	V2Di m = data._m;
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 
 	if (data.mtalkmsg == TEXT_BANNER10 && !(grid.at(m).dFlags & BFLAG_VISIBLE) && data._mgoal == MGOAL_TALKING) {
 		data.mtalkmsg = TEXT_BANNER11;
@@ -2574,7 +2529,6 @@ void MonsterInstance::MAI_SnotSpil()
 	}
 
 	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
-#ifndef SPAWN
 		if (data.mtalkmsg == TEXT_BANNER12) {
 			if (!effect_is_playing(USFX_SNOT3) && data._mgoal == MGOAL_TALKING) {
 				ObjChangeMap({ setpc.x, setpc.y }, { setpc.x + setpc.w + 1, setpc.y + setpc.h + 1 });
@@ -2585,7 +2539,6 @@ void MonsterInstance::MAI_SnotSpil()
 				data._mgoal = MGOAL_NORMAL;
 			}
 		}
-#endif
 		if (quests[Q_LTBANNER]._qvar1 == 3) {
 			if (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_SHOOT)
 				MAI_Fallen();
@@ -2595,7 +2548,7 @@ void MonsterInstance::MAI_SnotSpil()
 	data._mdir = md;
 
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Lazurus()
@@ -2604,7 +2557,7 @@ void MonsterInstance::MAI_Lazurus()
 		return;
 
 	V2Di m = data._m;
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
 		if (gbMaxPlayers == 1) {
 			if (data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && myplr().data._p.x == TEXT_VILE13 && myplr().data._p.y == 46) {
@@ -2613,7 +2566,6 @@ void MonsterInstance::MAI_Lazurus()
 				quests[Q_BETRAYER]._qvar1 = 5;
 			}
 
-#ifndef SPAWN
 			if (data.mtalkmsg == TEXT_VILE13 && !effect_is_playing(USFX_LAZ1) && data._mgoal == MGOAL_TALKING) {
 				ObjChangeMapResync({ 1, 18 }, { 20, 24 });
 				RedoPlayerVision();
@@ -2622,7 +2574,6 @@ void MonsterInstance::MAI_Lazurus()
 				quests[Q_BETRAYER]._qvar1 = 6;
 				data._mgoal = MGOAL_NORMAL;
 			}
-#endif
 		}
 
 		if (gbMaxPlayers != 1 && data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && quests[Q_BETRAYER]._qvar1 <= 3) {
@@ -2637,7 +2588,7 @@ void MonsterInstance::MAI_Lazurus()
 
 	data._mdir = md;
 	if (data._mmode == MM_STAND || data._mmode == MM_TALK)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Lazhelp()
@@ -2646,7 +2597,7 @@ void MonsterInstance::MAI_Lazhelp()
 		return;
 
 	V2Di _m = data._m;
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 
 	if (grid.at(_m).dFlags & BFLAG_VISIBLE) {
 		if (gbMaxPlayers == 1) {
@@ -2663,7 +2614,7 @@ void MonsterInstance::MAI_Lazhelp()
 		MAI_Succ();
 	data._mdir = md;
 	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Lachdanan()
@@ -2672,8 +2623,7 @@ void MonsterInstance::MAI_Lachdanan()
 		return;
 
 	V2Di _m = data._m;
-	int md = M_GetDir();
-#ifndef SPAWN
+	Dir md = M_GetDir();
 	if (data.mtalkmsg == TEXT_VEIL9 && !(grid.at(_m).dFlags & BFLAG_VISIBLE) && data._mgoal == MGOAL_TALKING) {
 		data.mtalkmsg = TEXT_VEIL10;
 		data._mgoal = MGOAL_INQUIRING;
@@ -2688,12 +2638,10 @@ void MonsterInstance::MAI_Lachdanan()
 			}
 		}
 	}
-#endif
 
 	data._mdir = md;
 
-	if (data._mmode == MM_STAND)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[md];
+	if (data._mmode == MM_STAND) data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
 void MonsterInstance::MAI_Warlord()
@@ -2702,17 +2650,15 @@ void MonsterInstance::MAI_Warlord()
 		return;
 
 	V2Di m = data._m;
-	int md = M_GetDir();
+	Dir md = M_GetDir();
 	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
 		if (data.mtalkmsg == TEXT_WARLRD9 && data._mgoal == MGOAL_INQUIRING)
 			data._mmode = MM_TALK;
-#ifndef SPAWN
 		if (data.mtalkmsg == TEXT_WARLRD9 && !effect_is_playing(USFX_WARLRD1) && data._mgoal == MGOAL_TALKING) {
 			data._msquelch = UCHAR_MAX;
 			data.mtalkmsg = 0;
 			data._mgoal = MGOAL_NORMAL;
 		}
-#endif
 	}
 
 	if (data._mgoal == MGOAL_NORMAL)
@@ -2721,7 +2667,7 @@ void MonsterInstance::MAI_Warlord()
 	data._mdir = md;
 
 	if (data._mmode == MM_STAND || data._mmode == MM_TALK)
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[data._mdir];
+		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(data._mdir)];
 }
 
 DEVILUTION_END_NAMESPACE

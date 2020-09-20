@@ -216,7 +216,7 @@ void InitItemGFX()
 BOOL ItemPlace(V2Di pos)
 {
 	if (grid.at(pos).dMonster != 0) return FALSE;
-	if (grid.at(pos).dPlayer != 0) return FALSE;
+	if (grid.at(pos).isPlayer()) return FALSE;
 	if (grid.at(pos).dItem != 0) return FALSE;
 	if (grid.at(pos).dObject != 0) return FALSE;
 	if (grid.at(pos).dFlags & BFLAG_POPULATED) return FALSE;
@@ -297,7 +297,8 @@ void InitItems()
 
 void CalcPlrItemVals(int p, BOOL Loadgfx)
 {
-	int pvid, d;
+	int pvid;
+	Dir d;
 
 	int mind = 0; // min damage
 	int maxd = 0; // max damage
@@ -567,26 +568,21 @@ void CalcPlrItemVals(int p, BOOL Loadgfx)
 		g++;
 	}
 
-#ifndef SPAWN
 	if (plr[p].data.InvBody[INVLOC_CHEST]._itype == ITYPE_MARMOR && plr[p].data.InvBody[INVLOC_CHEST]._iStatFlag) {
 		g += ANIM_ID_MEDIUM_ARMOR;
 	}
 	if (plr[p].data.InvBody[INVLOC_CHEST]._itype == ITYPE_HARMOR && plr[p].data.InvBody[INVLOC_CHEST]._iStatFlag) {
 		g += ANIM_ID_HEAVY_ARMOR;
 	}
-#endif
 
 	if (plr[p].data._pgfxnum != g && Loadgfx) {
 		plr[p].data._pgfxnum = g;
 		plr[p].data._pGFXLoad = 0;
 		plr[p].LoadPlrGFX(PFILE_STAND);
 		plr[p].SetPlrAnims();
-
 		d = plr[p].data._pdir;
-
-		assert(plr[p].data._pNAnim[d]);
-		plr[p].data._pAnimData = plr[p].data._pNAnim[d];
-
+		assert(plr[p].data._pNAnim[size_t(d)]);
+		plr[p].data._pAnimData = plr[p].data._pNAnim[int(d)];
 		plr[p].data._pAnimLen = plr[p].data._pNFrames;
 		plr[p].data._pAnimFrame = 1;
 		plr[p].data._pAnimCnt = 0;
@@ -910,7 +906,6 @@ void CreatePlrItems(int p)
 		SetPlrHandItem(&plr[p].data.SpdList[1], IDI_HEAL);
 		GetPlrHandSeed(&plr[p].data.SpdList[1]);
 		break;
-#ifndef SPAWN
 	case PC_ROGUE:
 		SetPlrHandItem(&plr[p].data.InvBody[INVLOC_HAND_LEFT], IDI_ROGUE);
 		GetPlrHandSeed(&plr[p].data.InvBody[INVLOC_HAND_LEFT]);
@@ -931,7 +926,6 @@ void CreatePlrItems(int p)
 		SetPlrHandItem(&plr[p].data.SpdList[1], IDI_MANA);
 		GetPlrHandSeed(&plr[p].data.SpdList[1]);
 		break;
-#endif
 	}
 
 	SetPlrHandItem(&plr[p].data.HoldItem, IDI_GOLD);
@@ -972,7 +966,7 @@ BOOL ItemSpaceOk(int i, int j)
 	if (grid[i][j].dMonster != 0)
 		return FALSE;
 
-	if (grid[i][j].dPlayer != 0)
+	if (grid[i][j].isPlayer() != 0)
 		return FALSE;
 
 	if (grid[i][j].dItem != 0)
@@ -1104,16 +1098,12 @@ void CalcItemValue(int i)
 
 void GetBookSpell(int i, int lvl)
 {
-	int rv, s, bs;
-
+	int bs;
 	if (lvl == 0)
 		lvl = 1;
-	rv = random_(14, MAX_SPELLS) + 1;
-#ifdef SPAWN
-	if (lvl > 5)
-		lvl = 5;
-#endif
-	s = SPL_FIREBOLT;
+	int rv = random_(14, MAX_SPELLS) + 1;
+
+	int s = SPL_FIREBOLT;
 	while (rv > 0) {
 		if (spelldata[s].sBookLvl != -1 && lvl >= spelldata[s].sBookLvl) {
 			rv--;
@@ -1214,10 +1204,6 @@ void GetStaffSpell(int i, int lvl, BOOL onlygood)
 		if (l == 0)
 			l = 1;
 		rv = random_(18, MAX_SPELLS) + 1;
-#ifdef SPAWN
-		if (lvl > 10)
-			lvl = 10;
-#endif
 		s = SPL_FIREBOLT;
 		while (rv > 0) {
 			if (spelldata[s].sStaffLvl != -1 && l >= spelldata[s].sStaffLvl) {
@@ -2510,19 +2496,17 @@ void CheckIdentify(int pnum, int cii)
 
 void DoRepair(int pnum, int cii)
 {
-	PlayerStruct *p;
 	ItemStruct *pi;
-
-	p = &plr[pnum].data;
-	PlaySfxLoc(IS_REPAIR, p->_p);
+	Player & p = plr[pnum];
+	PlaySfxLoc(IS_REPAIR, p.pos());
 
 	if (cii >= NUM_INVLOC) {
-		pi = &p->InvList[cii - NUM_INVLOC];
+		pi = p.data.InvList[cii - NUM_INVLOC];
 	} else {
-		pi = &p->InvBody[cii];
+		pi = p.data.InvBody[cii];
 	}
 
-	RepairItem(pi, p->_pLevel);
+	RepairItem(pi, p.data._pLevel);
 	CalcPlrInv(pnum, TRUE);
 
 	if (pnum == myplr())

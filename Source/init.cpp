@@ -69,23 +69,11 @@ void init_archives()
 	fileinfo.originalarchivefile = diabdat_mpq_path;
 	fileinfo.patcharchivefile = patch_rt_mpq_path;
 	init_get_file_info();
-#ifdef SPAWN
-		diabdat_mpq = init_test_access(diabdat_mpq_path, "spawn.mpq", "DiabloSpawn", 1000, FS_PC);
-#else
 	diabdat_mpq = init_test_access(diabdat_mpq_path, "diabdat.mpq", "DiabloCD", 1000, FS_CD);
-#endif
 	if (!SFileOpenFile("ui_art\\title.pcx", &fh))
-#ifdef SPAWN
-		InsertCDDlg("spawn.mpq");
-#else
 		InsertCDDlg("diabdat.mpq");
-#endif
 	SFileCloseFile(fh);
-#ifdef SPAWN
-	patch_rt_mpq = init_test_access(patch_rt_mpq_path, "patch_sh.mpq", "DiabloSpawn", 2000, FS_PC);
-#else
 	patch_rt_mpq = init_test_access(patch_rt_mpq_path, "patch_rt.mpq", "DiabloInstall", 2000, FS_PC);
-#endif
 }
 
 HANDLE init_test_access(char *mpq_path, char *mpq_name, char *reg_loc, int dwPriority, int fs)
