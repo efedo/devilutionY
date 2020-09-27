@@ -309,6 +309,7 @@ bool pfile_ui_save_create(_uiheroinfo *heroinfo)
 	strncpy(hero_names[save_num], heroinfo->name, PLR_NAME_LEN);
 	hero_names[save_num][PLR_NAME_LEN - 1] = '\0';
 	cl = pfile_get_player_class(heroinfo->heroclass);
+	if (!plr.isValidPlayer(0)) plr.addPlayer(0);
 	plr[0].CreatePlayer(cl);
 	strncpy(plr[0].data._pName, heroinfo->name, PLR_NAME_LEN);
 	plr[0].data._pName[PLR_NAME_LEN - 1] = '\0';

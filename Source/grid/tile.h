@@ -21,6 +21,9 @@ public:
 	[[nodiscard]] bool isTransparent() const;
 	[[nodiscard]] bool isTrap() const;
 
+	[[nodiscard]] bool isWall() const;
+	[[nodiscard]] bool isWalkable() const;
+
 	// Content checks
 	[[nodiscard]] bool isPiece() const;
 	[[nodiscard]] bool isPlayer() const;
@@ -57,6 +60,7 @@ public:
 	void setPlayer(const int num);
 	void setPlayerDraw(const int num);
 	void setPiece(int pieceNum);
+	void _setPieceNegFormat(int pieceNum); // For loading from files etc.
 	void setMonster(int monsterNum);
 	void setObject(int objectNum);
 	void setItem(int itemNum);
@@ -80,10 +84,10 @@ private:
 	void setPlayerDrawUnsafe(const int num);
 	[[nodiscard]] uint8_t getPlayerDrawUnsafe() const;
 
-	uint16_t piece = UINT8_MAX;
+	uint16_t piece = UINT16_MAX;
 	uint8_t player = UINT8_MAX;
 	uint8_t drawplayer = UINT8_MAX; // temporary, due to original player rendering being offset from actual player position
-	uint16_t monster = UINT8_MAX;
+	uint16_t monster = UINT16_MAX;
 	uint8_t object = UINT8_MAX;
 	uint8_t item = UINT8_MAX;
 	uint8_t missile = UINT8_MAX;

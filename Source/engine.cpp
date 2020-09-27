@@ -426,7 +426,7 @@ void CelBlitLightTransSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int 
  * @param nCel CEL frame number
  * @param nWidth Width of sprite
  */
-void CelClippedBlitLightTrans(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth)
+void CelClippedBlitLightTrans(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth, int trans)
 {
 	int nDataSize;
 	BYTE *pRLEBytes;
@@ -435,7 +435,7 @@ void CelClippedBlitLightTrans(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth)
 
 	pRLEBytes = CelGetFrameClipped(pCelBuff, nCel, &nDataSize);
 
-	if (cel_transparency_active)
+	if (trans)
 		CelBlitLightTransSafe(pBuff, pRLEBytes, nDataSize, nWidth);
 	else if (light_table_index)
 		CelBlitLightSafe(pBuff, pRLEBytes, nDataSize, nWidth, NULL);

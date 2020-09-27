@@ -184,7 +184,7 @@ __attribute__((no_sanitize("shift-base")))
  * @brief Blit current world CEL to the given buffer
  * @param pBuff Output buffer
  */
-void RenderTile(BYTE *pBuff, int level_piece_id)
+void RenderTile(BYTE *pBuff, int level_piece_id, int trans, int foliage)
 {
 	int i, j;
 	char c, v, tile;
@@ -200,7 +200,7 @@ void RenderTile(BYTE *pBuff, int level_piece_id)
 
 	mask = &SolidMask[TILE_HEIGHT - 1];
 
-	if (cel_transparency_active) {
+	if (trans) {
 		if (arch_draw_type == 0) {
 			mask = &WallMask[TILE_HEIGHT - 1];
 		}
@@ -216,7 +216,7 @@ void RenderTile(BYTE *pBuff, int level_piece_id)
 				mask = &RightMask[TILE_HEIGHT - 1];
 			}
 		}
-	} else if (arch_draw_type && cel_foliage_active) {
+	} else if (arch_draw_type && foliage) {
 		if (tile != RT_TRANSPARENT) {
 			return;
 		}
@@ -314,6 +314,11 @@ void world_draw_black_tile(int sx, int sy)
 void world_draw_red_tile(int sx, int sy)
 {
 	world_draw_color_tile(sx, sy, 50);
+}
+
+void world_draw_gray_tile(int sx, int sy)
+{
+	world_draw_color_tile(sx, sy, 20);
 }
 
 void world_draw_color_tile(int sx, int sy, const uint8_t color)

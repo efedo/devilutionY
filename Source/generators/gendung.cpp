@@ -90,6 +90,27 @@ void SetDungeonMicros()
 			}
 		}
 	}
+
+	//for (y = 0; y < MAXDUNY; y++) {
+	//	for (x = 0; x < MAXDUNX; x++) {
+	//		if (!grid[x][y].isPiece())
+	//			continue;
+	//		lv = grid[x][y].getPiece();
+	//		pMap = &grid[x][y].dpiece_defs_map_2;
+	//		if (lv != 0) {
+	//			lv--;
+	//			if (level.leveltype != DTYPE_HELL && level.leveltype != DTYPE_TOWN)
+	//				pPiece = (WORD *)&pLevelPieces[20 * lv];
+	//			else
+	//				pPiece = (WORD *)&pLevelPieces[32 * lv];
+	//			for (i = 0; i < blocks; i++)
+	//				pMap->mt[i] = SDL_SwapLE16(pPiece[(i & 1) + blocks - 2 - (i & 0xE)]);
+	//		} else {
+	//			for (i = 0; i < blocks; i++)
+	//				pMap->mt[i] = 0;
+	//		}
+	//	}
+	//}
 }
 
 void DRLG_InitTrans()

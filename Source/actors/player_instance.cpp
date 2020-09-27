@@ -3274,8 +3274,8 @@ bool PosOkPlayer(int pnum, V2Di pos)
 bool Player::PosOkPlayer(V2Di pos)
 {
 	if (!grid.isValid(pos)) return false;
-	if (grid.at(pos).isSolid()) return false;
 	if (!grid.at(pos).isPiece()) return false;
+	if (grid.at(pos).isSolid()) return false;
 
 	if (grid.at(pos).isPlayer()) { // is another living player
 		int p = grid.at(pos).getPlayer();

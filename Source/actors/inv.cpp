@@ -286,14 +286,11 @@ void DrawInv()
 		if (myplr().data.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND) {
 			InvDrawSlotBack({ RIGHT_PANEL_X + 247, 160 + SCREEN_Y, 2 * INV_SLOT_SIZE_PX, 3 * INV_SLOT_SIZE_PX });
 			light_table_index = 0;
-			cel_transparency_active = TRUE;
 
 			pBuff = frame_width == INV_SLOT_SIZE_PX
 			    ? &gpBuffer[SCREENXY(RIGHT_PANEL_X + 197, SCREEN_Y)]
 			    : &gpBuffer[SCREENXY(RIGHT_PANEL_X + 183, SCREEN_Y)];
-			CelClippedBlitLightTrans(pBuff, pCursCels, frame, frame_width);
-
-			cel_transparency_active = FALSE;
+			CelClippedBlitLightTrans(pBuff, pCursCels, frame, frame_width, true);
 		}
 	}
 	if (myplr().data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {

@@ -204,7 +204,7 @@ void CheckCursMove()
 	int i, mi, columns, rows;
 	char bv;
 
-	V2Di & mouse = Mouse;
+	V2Di mouse = Mouse;
 
 	if (PANELS_COVER) {
 		if (chrflag || questlog) {
@@ -230,13 +230,13 @@ void CheckCursMove()
 		mouse.y >>= 1;
 	}
 
+
+	// The code below moves the mouse
+
 	// Adjust by player offset and tile grid alignment
 	V2Di offset;
 	CalcTileOffset(&offset.x, &offset.y);
 	mouse -= ScrollInfo._soff - offset;
-
-	return;
-
 
 	// Predict the next frame when walking to avoid input jitter
 	V2Di f;

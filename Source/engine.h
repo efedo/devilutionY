@@ -69,7 +69,7 @@ void CelBlitFrame(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth);
 void CelClippedDraw(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
 void CelDrawLight(V2Di s, BYTE *pCelBuff, int nCel, int nWidth, BYTE *tbl);
 void CelClippedDrawLight(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void CelClippedBlitLightTrans(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth);
+void CelClippedBlitLightTrans(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth, int trans);
 void CelDrawLightRed(V2Di s, BYTE *pCelBuff, int nCel, int nWidth, char light);
 void CelBlitSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth);
 void CelClippedDrawSafe(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);

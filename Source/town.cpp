@@ -39,10 +39,11 @@ void T_FillSector(BYTE *P3Tiles, BYTE *pSector, int xi, int yi, int w, int h)
 				v3 = 0;
 				v4 = 0;
 			}
-			grid[xx][yy].setPiece(v1);
-			grid[xx + 1][yy].setPiece(v2);
-			grid[xx][yy + 1].setPiece(v3);
-			grid[xx + 1][yy + 1].setPiece(v4);
+
+			grid[xx][yy]._setPieceNegFormat(v1);
+			grid[xx + 1][yy]._setPieceNegFormat(v2);
+			grid[xx][yy + 1]._setPieceNegFormat(v3);
+			grid[xx + 1][yy + 1]._setPieceNegFormat(v4);
 			xx += 2;
 			ii += 2;
 		}
@@ -95,15 +96,15 @@ void T_Pass3()
 	pSector = LoadFileInMem("Levels\\TownData\\Sector1s.DUN", NULL);
 	T_FillSector(P3Tiles, pSector, 46, 46, 25, 25);
 	mem_free_dbg(pSector);
-	//pSector = LoadFileInMem("Levels\\TownData\\Sector2s.DUN", NULL);
-	//T_FillSector(P3Tiles, pSector, 46, 0, 25, 23);
-	//mem_free_dbg(pSector);
-	//pSector = LoadFileInMem("Levels\\TownData\\Sector3s.DUN", NULL);
-	//T_FillSector(P3Tiles, pSector, 0, 46, 23, 25);
-	//mem_free_dbg(pSector);
-	//pSector = LoadFileInMem("Levels\\TownData\\Sector4s.DUN", NULL);
-	//T_FillSector(P3Tiles, pSector, 0, 0, 23, 23);
-	//mem_free_dbg(pSector);
+	pSector = LoadFileInMem("Levels\\TownData\\Sector2s.DUN", NULL);
+	T_FillSector(P3Tiles, pSector, 46, 0, 25, 23);
+	mem_free_dbg(pSector);
+	pSector = LoadFileInMem("Levels\\TownData\\Sector3s.DUN", NULL);
+	T_FillSector(P3Tiles, pSector, 0, 46, 23, 25);
+	mem_free_dbg(pSector);
+	pSector = LoadFileInMem("Levels\\TownData\\Sector4s.DUN", NULL);
+	T_FillSector(P3Tiles, pSector, 0, 0, 23, 23);
+	mem_free_dbg(pSector);
 
 	if (plr.isSingleplayer()) {
 		if (!(myplr().data.pTownWarps & 1)) {

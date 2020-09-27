@@ -9,14 +9,14 @@ DEVILUTION_BEGIN_NAMESPACE
 
 void Tile::setPlayer(const int pnum)
 {
-	assert(pnum >= 0);
+	assert(pnum >= 0 && pnum < UINT8_MAX);
 	assert(plr.isValidPlayer(pnum));
 	player = pnum; // Check that position is not blocked (or in player code?)
 }
 
 void Tile::setPlayerUnsafe(const int pnum)
 {
-	assert(pnum >= 0);
+	assert(pnum >= 0 && pnum < UINT8_MAX);
 	player = pnum;
 }
 
@@ -33,19 +33,19 @@ void Tile::clearPlayer(const int pnum)
 
 void Tile::clearPiece()
 {
-	piece = UINT8_MAX;
+	piece = UINT16_MAX;
 }
 
 void Tile::setPlayerDraw(const int pnum)
 {
-	assert(pnum >= 0);
+	assert(pnum >= 0 && pnum < UINT8_MAX);
 	assert(plr.isValidPlayer(pnum));
 	drawplayer = pnum; // Check that position is not blocked (or in player code?)
 }
 
 void Tile::setPlayerDrawUnsafe(const int pnum)
 {
-	assert(pnum >= 0);
+	assert(pnum >= 0 && pnum < UINT8_MAX);
 	drawplayer = pnum;
 }
 
@@ -62,7 +62,7 @@ void Tile::clearPlayerDraw(const int pnum)
 
 void Tile::clearMonster()
 {
-	monster = UINT8_MAX;
+	monster = UINT16_MAX;
 }
 
 void Tile::clearObject()
@@ -93,7 +93,7 @@ void Tile::clearMissile()
 
 [[nodiscard]] bool Tile::isMonster() const
 {
-	return (monster != UINT8_MAX);
+	return (monster != UINT16_MAX);
 }
 
 [[nodiscard]] bool Tile::isObject() const
@@ -103,7 +103,7 @@ void Tile::clearMissile()
 
 [[nodiscard]] bool Tile::isPiece() const
 {
-	return (piece != UINT8_MAX);
+	return (piece != UINT16_MAX);
 }
 
 [[nodiscard]] bool Tile::isItem() const
@@ -129,31 +129,44 @@ void Tile::clearMissile()
 
 void Tile::setPiece(int pieceNum)
 {
-	assert(pieceNum >= 0);
+	assert(pieceNum >= 0 && pieceNum < UINT16_MAX);
 	piece = pieceNum;
 }
 
+// Loads pieces in original format, where 0 is invalid, values can be positive or negative,
+// and 0 is invalid/empty (For loading from files etc.)
+void Tile::_setPieceNegFormat(int pieceNum)
+{
+	assert(pieceNum >= 0 && pieceNum < UINT16_MAX);
+	if (pieceNum == 0) {
+		piece = UINT16_MAX;
+	} else {
+		piece = pieceNum - 1;
+	}
+}
+
+
 void Tile::setMonster(int monsterNum)
 {
-	assert(monsterNum >= 0);
+	assert(monsterNum >= 0 && monsterNum < UINT16_MAX);
 	monster = monsterNum;
 }
 
 void Tile::setObject(int objectNum)
 {
-	assert(objectNum >= 0);
+	assert(objectNum >= 0 && objectNum < UINT8_MAX);
 	object = objectNum;
 }
 
 void Tile::setItem(int itemNum)
 {
-	assert(itemNum >= 0);
+	assert(itemNum >= 0 && itemNum < UINT8_MAX);
 	item = itemNum;
 }
 
 void Tile::setMissile(int missileNum)
 {
-	assert(missileNum >= 0);
+	assert(missileNum >= 0 && missileNum < UINT8_MAX);
 	missile = missileNum;
 }
 
@@ -177,9 +190,25 @@ void Tile::setMissile(int missileNum)
 	return !(pieces[piece].trap);
 }
 
+[[nodiscard]] bool Tile::isWall() const
+{
+	//#define IsWall(x, y) (!grid[x][y].isPiece() || grid[x][y].isSolid() || grid[x][y].dSpecial != 0)
+	if (!isPiece()) return true;
+	if (isSolid()) return true;
+	if (dSpecial != 0) return true;
+	return false;
+}
+
+[[nodiscard]] bool Tile::isWalkable() const
+{
+	//#define IsWalkable(x, y) (grid[x][y].isPiece() && !grid[x][y].isSolid())
+	return isPiece() && !isSolid();
+}
+
+
 [[nodiscard]] uint8_t Tile::getPiece() const
 {
-	assert(piece != UINT8_MAX);
+	assert(piece != UINT16_MAX);
 	return piece;
 }
 
@@ -203,7 +232,7 @@ void Tile::setMissile(int missileNum)
 
 [[nodiscard]] uint16_t Tile::getMonster() const
 {
-	assert(monster != UINT8_MAX);
+	assert(monster != UINT16_MAX);
 	return monster;
 }
 

@@ -32,14 +32,7 @@ DWORD sgdwCursYOld;
  * Specifies the type of arches to render.
  */
 char arch_draw_type;
-/**
- * Specifies whether transparency is active for the current CEL file being decoded.
- */
-int cel_transparency_active;
-/**
- * Specifies whether foliage (tile has extra content that overlaps previous tile) being rendered.
- */
-int cel_foliage_active = false;
+
 /**
  * Specifies the current dungeon piece ID of the level, as used during rendering of the level tiles.
  */
@@ -523,18 +516,45 @@ static void drawCell(int x, int y, int sx, int sy)
 	dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
 	pMap = &grid[x][y].dpiece_defs_map_2;
 	int level_piece_id = grid[x][y].getPiece();
-	cel_transparency_active = (BYTE)(pieces[level_piece_id].trans & TransList[grid[x][y].dTransVal]);
-	cel_foliage_active = !pieces[level_piece_id].solid;
-	for (int i = 0; i<MicroTileLen>> 1; i++) {
+
+	// Specifies whether transparency is active for the current CEL file being decoded.
+	int cel_transparency_active = (BYTE)(pieces[level_piece_id].trans & TransList[grid[x][y].dTransVal]);
+
+	// Specifies whether foliage(tile has extra content that overlaps previous tile) being rendered.
+	int cel_foliage_active = !pieces[level_piece_id].solid;
+
+	if (x == 63 && y == 75) {
+		static BYTE *last_dst;
+		static MICROS *last_pMap;
+		static int last_level_piece_id;
+
+		if (dst != last_dst) {
+			std::cout << "mismatch!";
+		}
+
+		if (pMap != last_pMap) {
+			std::cout << "mismatch!";
+		}
+
+		if (level_piece_id != last_level_piece_id) {
+			std::cout << "mismatch!";
+		}
+
+		last_dst = dst;
+		last_pMap = pMap;
+		last_level_piece_id = level_piece_id;
+	}
+
+	for (int i = 0; i < MicroTileLen >> 1; i++) {
 		level_cel_block = pMap->mt[2 * i];
 		if (level_cel_block != 0) {
 			arch_draw_type = i == 0 ? 1 : 0;
-			RenderTile(dst, level_piece_id);
+			RenderTile(dst, level_piece_id, cel_transparency_active, cel_foliage_active);
 		}
 		level_cel_block = pMap->mt[2 * i + 1];
 		if (level_cel_block != 0) {
 			arch_draw_type = i == 0 ? 2 : 0;
-			RenderTile(dst + TILE_WIDTH / 2, level_piece_id);
+			RenderTile(dst + TILE_WIDTH / 2, level_piece_id, cel_transparency_active, cel_foliage_active);
 		}
 		dst -= BUFFER_WIDTH * TILE_HEIGHT;
 	}
@@ -550,7 +570,7 @@ static void drawCell(int x, int y, int sx, int sy)
  */
 static void drawFloor(int x, int y, int sx, int sy)
 {
-	cel_transparency_active = 0;
+	int cel_transparency_active = 0;
 	light_table_index = grid[x][y].dLight;
 
 	BYTE *dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
@@ -558,12 +578,12 @@ static void drawFloor(int x, int y, int sx, int sy)
 	int level_piece_id = grid[x][y].getPieceUnsafe();
 	level_cel_block = grid[x][y].dpiece_defs_map_2.mt[0];
 	if (level_cel_block != 0) {
-		RenderTile(dst, level_piece_id);
+		RenderTile(dst, level_piece_id, cel_transparency_active, false);
 	}
 	arch_draw_type = 2; // Right
 	level_cel_block = grid[x][y].dpiece_defs_map_2.mt[1];
 	if (level_cel_block != 0) {
-		RenderTile(dst + TILE_WIDTH / 2, level_piece_id);
+		RenderTile(dst + TILE_WIDTH / 2, level_piece_id, cel_transparency_active, false);
 	}
 }
 
@@ -672,13 +692,12 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	assert((DWORD)sx < MAXDUNX);
 	assert((DWORD)sy < MAXDUNY);
 
-	if (dRendered[sx][sy])
-		return;
+	if (dRendered[sx][sy]) return;
 	dRendered[sx][sy] = true;
 
 	light_table_index = grid[sx][sy].dLight;
 
-	drawCell(sx, sy, dx, dy);
+	//drawCell(sx, sy, dx, dy);
 
 	bFlag = grid[sx][sy].dFlags;
 	bDead = grid[sx][sy].dDead;
@@ -734,8 +753,8 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	if (level.leveltype != DTYPE_TOWN) {
 		bArch = grid[sx][sy].dSpecial;
 		if (bArch != 0) {
-			cel_transparency_active = TransList[bMap];
-			CelClippedBlitLightTrans(&gpBuffer[dx + BUFFER_WIDTH * dy], pSpecialCels, bArch, 64);
+			int cel_transparency_active = TransList[bMap];
+			CelClippedBlitLightTrans(&gpBuffer[dx + BUFFER_WIDTH * dy], pSpecialCels, bArch, 64, cel_transparency_active);
 		}
 	} else {
 		// Tree leafs should always cover player when entering or leaving the tile,
@@ -767,18 +786,18 @@ static void scrollrt_drawFloor(int x, int y, int sx, int sy, int rows, int colum
 		for (int j = 0; j < columns; j++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY) {
 				if (grid[x][y].isPiece()) {
-					int level_piece_id = grid[x][y].getPieceUnsafe();
-					if (!pieces[level_piece_id].solid)
-						drawFloor(x, y, sx, sy);
+					//int level_piece_id = grid[x][y].getPiece();
+					//if (!pieces[level_piece_id].solid)
+					drawFloor(x, y, sx, sy);
 				} else {
 					world_draw_black_tile(sx, sy);
 				}
 				if (grid[x][y].isPlayer()) {
 					//world_draw_red_tile(sx, sy);
-					world_draw_color_tile(sx, sy, 20);
+					world_draw_gray_tile(sx, sy);
 				}
 				if (grid[x][y].isPlayerDraw()) {
-					world_draw_color_tile(sx, sy, 50);
+					world_draw_red_tile(sx, sy);
 				}
 			} else {
 				world_draw_black_tile(sx, sy);
@@ -804,9 +823,6 @@ static void scrollrt_drawFloor(int x, int y, int sx, int sy, int rows, int colum
 	}
 }
 
-#define IsWall(x, y) (!grid[x][y].isPiece() || grid[x][y].isSolid() || grid[x][y].dSpecial != 0)
-#define IsWalkable(x, y) (grid[x][y].isPiece() && !grid[x][y].isSolid())
-
 /**
  * @brief Render a row of tile
  * @param x dPiece coordinate
@@ -827,20 +843,21 @@ static void scrollrt_draw(int x, int y, int sx, int sy, int rows, int columns)
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns ; j++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY) {
+				bool ispiece = grid[x][y].isPiece();
+				if (!ispiece) continue;
 				if (x + 1 < MAXDUNX && y - 1 >= 0 && sx + TILE_WIDTH <= SCREEN_X + SCREEN_WIDTH) {
 					// Render objects behind walls first to prevent sprites, that are moving
 					// between tiles, from poking through the walls as they exceed the tile bounds.
 					// A proper fix for this would probably be to layout the sceen and render by
 					// sprite screen position rather than tile position.
-					if (IsWall(x, y) && (IsWall(x + 1, y) || (x > 0 && IsWall(x - 1, y)))) { // Part of a wall aligned on the x-axis
-						if (IsWalkable(x + 1, y - 1) && IsWalkable(x, y - 1) ) { // Has walkable area behind it
-							scrollrt_draw_dungeon(x + 1, y - 1, sx + TILE_WIDTH, sy);
+
+					if (grid[x][y].isWall() && (grid[x + 1][y].isWall() || (x > 0 && grid[x - 1][y].isWall()))) { // Part of a wall aligned on the x-axis
+						if (grid[x + 1][y - 1].isWalkable() && grid[x][y - 1].isWalkable()) { // Has walkable area behind it
+							//scrollrt_draw_dungeon(x + 1, y - 1, sx + TILE_WIDTH, sy);
 						}
 					}
 				}
-				if (grid[x][y].isPiece()) {
-					scrollrt_draw_dungeon(x, y, sx, sy);
-				}
+				scrollrt_draw_dungeon(x, y, sx, sy);
 			}
 			ShiftGrid(&x, &y, 1, 0);
 			sx += TILE_WIDTH;
@@ -1083,7 +1100,7 @@ static void DrawGame(int x, int y)
 		break;
 	}
 
-	scrollrt_drawFloor(x, y, sx, sy, rows, columns);
+	scrollrt_drawFloor(x, y, sx, sy, rows, columns); // s positions are fine here
 	scrollrt_draw(x, y, sx, sy, rows, columns);
 
 	// Allow rendering to the whole screen
