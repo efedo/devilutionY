@@ -12,8 +12,8 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BOOL invflag;
-extern BOOL drawsbarflag;
+extern bool invflag;
+extern bool drawsbarflag;
 extern const InvXY InvRect[73];
 
 class Player;
@@ -21,12 +21,12 @@ class Player;
 class PlayerInventory {
 public:
 	PlayerInventory(Player &);
-	BOOL AutoPlace(int ii, V2Di pos, BOOL saveflag);
-	BOOL SpecialAutoPlace(int ii, V2Di pos, BOOL saveflag);
-	BOOL GoldAutoPlace();
-	BOOL WeaponAutoPlace();
+	bool AutoPlace(int ii, V2Di pos, bool saveflag);
+	bool SpecialAutoPlace(int ii, V2Di pos, bool saveflag);
+	bool GoldAutoPlace();
+	bool WeaponAutoPlace();
 	void CheckInvPaste(V2Di pos);
-	void CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, BOOL bId);
+	void CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, bool bId);
 	void CheckInvCut(V2Di pos);
 	void inv_update_rem_item(BYTE iv);
 	void RemoveInvItem(int iv);
@@ -41,7 +41,7 @@ public:
 	int _PrepPutItem(V2Di &pos); // EF Added
 	void RemoveScroll();
 	void UseStaffCharge();
-	BOOL UseInvItem(int cii);
+	bool UseInvItem(int cii);
 	int CalculateGold();
 private:
 	Player & owner;
@@ -57,15 +57,15 @@ void CheckInvItem();
 void CheckInvScrn();
 int FindGetItem(int idx, WORD ci, int iseed);
 void SyncGetItem(V2Di pos, int idx, WORD ci, int iseed);
-BOOL CanPut(V2Di pos);
-BOOL TryInvPut();
+bool CanPut(V2Di pos);
+bool TryInvPut();
 void DrawInvMsg(char *msg);
 char CheckInvHLight();
-BOOL UseScroll();
-BOOL UseStaff();
+bool UseScroll();
+bool UseStaff();
 void StartGoldDrop();
 void DoTelekinesis();
-BOOL DropItemBeforeTrig();
+bool DropItemBeforeTrig();
 
 /* data */
 

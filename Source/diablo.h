@@ -18,27 +18,27 @@ extern int glMid1Seed[NUMLEVELS];
 extern int glMid2Seed[NUMLEVELS];
 extern int glMid3Seed[NUMLEVELS];
 extern V2Di Mouse;
-extern BOOL gbGameLoopStartup;
-extern BOOL gbRunGame;
-extern BOOL gbRunGameResult;
-extern BOOL zoomflag;
-extern BOOL gbProcessPlayers;
-extern BOOL gbLoadGame;
+extern bool gbGameLoopStartup;
+extern bool gbRunGame;
+extern bool gbRunGameResult;
+extern bool zoomflag;
+extern bool gbProcessPlayers;
+extern bool gbLoadGame;
 extern HINSTANCE ghInst;
 extern int DebugMonsters[10];
 extern BOOLEAN cineflag;
 extern int force_redraw;
-extern BOOL visiondebug;
+extern bool visiondebug;
 /* These are defined in fonts.h */
-extern BOOL was_fonts_init;
+extern bool was_fonts_init;
 extern void FontsCleanup();
 /** unused */
-extern BOOL scrollflag;
-extern BOOL light4flag;
-extern BOOL leveldebug;
-extern BOOL monstdebug;
+extern bool scrollflag;
+extern bool light4flag;
+extern bool leveldebug;
+extern bool monstdebug;
 /** unused */
-extern BOOL trigdebug;
+extern bool trigdebug;
 extern int setseed;
 extern int debugmonsttypes;
 extern int PauseMode;
@@ -46,7 +46,7 @@ extern char sgbMouseDown;
 extern int color_cycle_timer;
 
 void FreeGameMem();
-BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer);
+bool StartGame(bool bNewGame, bool bSinglePlayer);
 void run_game_loop(unsigned int uMsg);
 void start_game(unsigned int uMsg);
 void free_game();
@@ -55,16 +55,16 @@ void diablo_parse_flags(int argc, char **argv);
 void diablo_init_screen();
 void diablo_reload_process(HINSTANCE hInstance);
 void diablo_quit(int exitStatus);
-BOOL PressEscKey();
+bool PressEscKey();
 LRESULT DisableInputWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-BOOL LeftMouseDown(int wParam);
-BOOL LeftMouseCmd(BOOL bShift);
-BOOL TryIconCurs();
+bool LeftMouseDown(int wParam);
+bool LeftMouseCmd(bool bShift);
+bool TryIconCurs();
 void LeftMouseUp();
 void RightMouseDown();
 void j_gmenu_on_mouse_move(LPARAM lParam);
-BOOL PressSysKey(int wParam);
+bool PressSysKey(int wParam);
 void diablo_hotkey_msg(DWORD dwMsg);
 void ReleaseKey(int vkey);
 void PressKey(int vkey);
@@ -73,17 +73,17 @@ void PressChar(int vkey);
 void LoadLvlGFX();
 void LoadAllGFX();
 void CreateLevel(int lvldir);
-void LoadGameLevel(BOOL firstflag, int lvldir);
-void game_loop(BOOL bStartup);
+void LoadGameLevel(bool firstflag, int lvldir);
+void game_loop(bool bStartup);
 void game_logic();
-void timeout_cursor(BOOL bTimeout);
+void timeout_cursor(bool bTimeout);
 void diablo_color_cyc_logic();
 
 /* data */
 
 /* rdata */
 
-extern BOOL fullscreen;
+extern bool fullscreen;
 extern int showintrodebug;
 #ifdef _DEBUG
 extern int questdebug;
@@ -102,7 +102,7 @@ extern int frameflag;
 extern int frameend;
 extern int framerate;
 extern int framestart;
-extern BOOL FriendlyMode;
+extern bool FriendlyMode;
 extern char *spszMsgTbl[4];
 extern char *spszMsgHotKeyTbl[4];
 

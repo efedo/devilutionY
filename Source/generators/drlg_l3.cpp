@@ -94,7 +94,7 @@ static void InitL3Dungeon()
 	//}
 }
 
-static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
+static bool DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 {
 	int i, j, v;
 
@@ -141,7 +141,7 @@ static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 static void DRLG_L3CreateBlock(int x, int y, int obs, int dir)
 {
 	int blksizex, blksizey, x1, y1, x2, y2;
-	BOOL contflag;
+	bool contflag;
 
 	blksizex = random_(0, 2) + 3;
 	blksizey = random_(0, 2) + 3;
@@ -419,7 +419,7 @@ static void DRLG_L3River()
 	int river[3][100];
 	int rivercnt, riveramt;
 	int i, trys, found, bridge, lpcnt;
-	BOOL bail;
+	bool bail;
 
 	rivercnt = 0;
 	bail = FALSE;
@@ -665,9 +665,9 @@ static void DRLG_L3River()
 	}
 }
 
-static BOOL DRLG_L3Spawn(int x, int y, int *totarea);
+static bool DRLG_L3Spawn(int x, int y, int *totarea);
 
-static BOOL DRLG_L3SpawnEdge(int x, int y, int *totarea)
+static bool DRLG_L3SpawnEdge(int x, int y, int *totarea)
 {
 	BYTE i;
 	static BYTE spawntable[15] = { 0, 0x0A, 0x43, 0x05, 0x2C, 0x06, 0x09, 0, 0, 0x1C, 0x83, 0x06, 0x09, 0x0A, 0x05 };
@@ -717,7 +717,7 @@ static BOOL DRLG_L3SpawnEdge(int x, int y, int *totarea)
 	return FALSE;
 }
 
-static BOOL DRLG_L3Spawn(int x, int y, int *totarea)
+static bool DRLG_L3Spawn(int x, int y, int *totarea)
 {
 	BYTE i;
 	static BYTE spawntable[15] = { 0, 0x0A, 0x03, 0x05, 0x0C, 0x06, 0x09, 0, 0, 0x012, 0x03, 0x06, 0x09, 0x0A, 0x05 };
@@ -778,7 +778,7 @@ static BOOL DRLG_L3Spawn(int x, int y, int *totarea)
 static void DRLG_L3Pool()
 {
 	int i, j, dunx, duny, totarea, poolchance;
-	BOOL found;
+	bool found;
 	BYTE k;
 	static BYTE poolsub[15] = { 0, 35, 26, 36, 25, 29, 34, 7, 33, 28, 27, 37, 32, 31, 30 };
 
@@ -852,10 +852,10 @@ static void DRLG_L3PoolFix()
 	}
 }
 
-static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
+static bool DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, trys;
-	BOOL found;
+	bool found;
 
 	sw = miniset[0];
 	sh = miniset[1];
@@ -936,7 +936,7 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 {
 	int sx, sy, sw, sh, xx, yy, ii, kk;
-	BOOL found;
+	bool found;
 
 	sw = miniset[0];
 	sh = miniset[1];
@@ -987,7 +987,7 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 	}
 }
 
-static BOOL WoodVertU(int i, int y)
+static bool WoodVertU(int i, int y)
 {
 	if ((dgrid[i + 1][y].dungeon > 152 || dgrid[i + 1][y].dungeon < 130)
 	    && (dgrid[i - 1][y].dungeon > 152 || dgrid[i - 1][y].dungeon < 130)) {
@@ -1014,7 +1014,7 @@ static BOOL WoodVertU(int i, int y)
 	return FALSE;
 }
 
-static BOOL WoodVertD(int i, int y)
+static bool WoodVertD(int i, int y)
 {
 	if ((dgrid[i + 1][y].dungeon > 152 || dgrid[i + 1][y].dungeon < 130)
 	    && (dgrid[i - 1][y].dungeon > 152 || dgrid[i - 1][y].dungeon < 130)) {
@@ -1035,7 +1035,7 @@ static BOOL WoodVertD(int i, int y)
 	return FALSE;
 }
 
-static BOOL WoodHorizL(int x, int j)
+static bool WoodHorizL(int x, int j)
 {
 	if ((dgrid[x][j + 1].dungeon > 152 || dgrid[x][j + 1].dungeon < 130)
 	    && (dgrid[x][j - 1].dungeon > 152 || dgrid[x][j - 1].dungeon < 130)) {
@@ -1062,7 +1062,7 @@ static BOOL WoodHorizL(int x, int j)
 	return FALSE;
 }
 
-static BOOL WoodHorizR(int x, int j)
+static bool WoodHorizR(int x, int j)
 {
 	if ((dgrid[x][j + 1].dungeon > 152 || dgrid[x][j + 1].dungeon < 130)
 	    && (dgrid[x][j - 1].dungeon > 152 || dgrid[x][j - 1].dungeon < 130)) {
@@ -1158,7 +1158,7 @@ void FenceDoorFix()
 static void DRLG_L3Wood()
 {
 	int i, j, x, y, xx, yy, rt, rp, x1, y1, x2, y2;
-	BOOL skip;
+	bool skip;
 
 	for (j = 1; j < DMAXY - 1; j++) {     // BUGFIX: Change '0' to '1' (fixed)
 		for (i = 1; i < DMAXX - 1; i++) { // BUGFIX: Change '0' to '1' (fixed)
@@ -1350,10 +1350,10 @@ static void DRLG_L3Wood()
 	FenceDoorFix();
 }
 
-BOOL DRLG_L3Anvil()
+bool DRLG_L3Anvil()
 {
 	int sx, sy, sw, sh, xx, yy, ii, trys;
-	BOOL found;
+	bool found;
 
 	sw = L3ANVIL[0];
 	sh = L3ANVIL[1];
@@ -1469,7 +1469,7 @@ void DRLG_L3LockRec(int x, int y)
 	DRLG_L3LockRec(x + 1, y);
 }
 
-BOOL DRLG_L3Lockout()
+bool DRLG_L3Lockout()
 {
 	int i, j, t, fx, fy;
 
@@ -1496,7 +1496,7 @@ BOOL DRLG_L3Lockout()
 static void DRLG_L3(int entry)
 {
 	int x1, y1, x2, y2, i, j;
-	BOOL found, genok;
+	bool found, genok;
 
 	lavapool = FALSE;
 
@@ -1643,10 +1643,10 @@ static void DRLG_L3Pass3()
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
 		for (i = 0; i < MAXDUNX; i += 2) {
-			grid[i][j].dPiece = v1;
-			grid[i + 1][j].dPiece = v2;
-			grid[i][j + 1].dPiece = v3;
-			grid[i + 1][j + 1].dPiece = v4;
+			grid[i][j].setPiece(v1);
+			grid[i + 1][j].setPiece(v2);
+			grid[i][j + 1].setPiece(v3);
+			grid[i + 1][j + 1].setPiece(v4);
 		}
 	}
 
@@ -1667,10 +1667,10 @@ static void DRLG_L3Pass3()
 				v3 = 0;
 				v4 = 0;
 			}
-			grid[xx][yy].dPiece = v1;
-			grid[xx + 1][yy].dPiece = v2;
-			grid[xx][yy + 1].dPiece = v3;
-			grid[xx + 1][yy + 1].dPiece = v4;
+			grid[xx][yy].setPiece(v1);
+			grid[xx + 1][yy].setPiece(v2);
+			grid[xx][yy + 1].setPiece(v3);
+			grid[xx + 1][yy + 1].setPiece(v4);
 			xx += 2;
 		}
 		yy += 2;
@@ -1691,13 +1691,13 @@ void CreateL3Dungeon(DWORD rseed, int entry)
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dPiece >= 56 && grid[i][j].dPiece <= 147) {
+			if (grid[i][j].getPiece() >= 56 && grid[i][j].getPiece() <= 147) {
 				DoLighting({ i, j }, 7, -1);
-			} else if (grid[i][j].dPiece >= 154 && grid[i][j].dPiece <= 161) {
+			} else if (grid[i][j].getPiece() >= 154 && grid[i][j].getPiece() <= 161) {
 				DoLighting({ i, j }, 7, -1);
-			} else if (grid[i][j].dPiece == 150) {
+			} else if (grid[i][j].getPiece() == 150) {
 				DoLighting({ i, j }, 7, -1);
-			} else if (grid[i][j].dPiece == 152) {
+			} else if (grid[i][j].getPiece() == 152) {
 				DoLighting({ i, j }, 7, -1);
 			}
 		}
@@ -1751,13 +1751,13 @@ void LoadL3Dungeon(char *sFileName, int vx, int vy)
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dPiece >= 56 && grid[i][j].dPiece <= 147) {
+			if (grid[i][j].getPiece() >= 56 && grid[i][j].getPiece() <= 147) {
 				DoLighting({ i, j }, 7, -1);
-			} else if (grid[i][j].dPiece >= 154 && grid[i][j].dPiece <= 161) {
+			} else if (grid[i][j].getPiece() >= 154 && grid[i][j].getPiece() <= 161) {
 				DoLighting({ i, j }, 7, -1);
-			} else if (grid[i][j].dPiece == 150) {
+			} else if (grid[i][j].getPiece() == 150) {
 				DoLighting({ i, j }, 7, -1);
-			} else if (grid[i][j].dPiece == 152) {
+			} else if (grid[i][j].getPiece() == 152) {
 				DoLighting({ i, j }, 7, -1);
 			}
 		}

@@ -21,7 +21,7 @@ void InitPortals()
 	}
 }
 
-void SetPortalStats(int i, BOOL o, V2Di p, int lvl, int lvltype)
+void SetPortalStats(int i, bool o, V2Di p, int lvl, int lvltype)
 {
 	portal[i].open = o;
 	portal[i].pos.x = p.x;
@@ -36,7 +36,7 @@ void AddWarpMissile(int i, V2Di p)
 	int mi;
 
 	missiledata[MIS_TOWN].mlSFX = -1;
-	grid[p.x][p.y].dMissile = 0;
+	grid.at(p).clearMissile();
 	mi = AddMissile({ 0, 0 }, p, Dir(0), MIS_TOWN, 0, i, 0, 0);
 
 	if (mi != -1) {
@@ -73,7 +73,7 @@ void AddInTownPortal(int i)
 	AddWarpMissile(i, { WarpDropX[i], WarpDropY[i] });
 }
 
-void ActivatePortal(int i, V2Di p, int lvl, int lvltype, BOOL sp)
+void ActivatePortal(int i, V2Di p, int lvl, int lvltype, bool sp)
 {
 	portal[i].open = TRUE;
 
@@ -90,7 +90,7 @@ void DeactivatePortal(int i)
 	portal[i].open = FALSE;
 }
 
-BOOL PortalOnLevel(int i)
+bool PortalOnLevel(int i)
 {
 	if (portal[i].level == level.currlevel)
 		return TRUE;
@@ -107,11 +107,8 @@ void RemovePortalMissile(int id)
 		mi = missileactive[i];
 		if (missile[mi]._mitype == MIS_TOWN && missile[mi]._misource == id) {
 			grid.at(missile[mi]._mi).dFlags &= ~BFLAG_MISSILE;
-			grid.at(missile[mi]._mi).dMissile = 0;
-
-			if (portal[id].level != 0)
-				AddUnLight(missile[mi]._mlid);
-
+			grid.at(missile[mi]._mi).clearMissile();
+			if (portal[id].level != 0) AddUnLight(missile[mi]._mlid);
 			DeleteMissile(mi, i);
 		}
 	}
@@ -164,7 +161,7 @@ void GetPortalLvlPos()
 	}
 }
 
-BOOL PosOkPortal(int lvl, V2Di p)
+bool PosOkPortal(int lvl, V2Di p)
 {
 	int i;
 

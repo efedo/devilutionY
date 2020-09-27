@@ -8,15 +8,13 @@ BYTE plr_gfx_flag = 0;
 int plr_aframe_size;
 int plr_fframe_size;
 int plr_qframe_size;
-BOOL deathflag;
+bool deathflag;
 int plr_hframe_size;
 int plr_bframe_size;
 BYTE plr_gfx_bflag = 0;
 int plr_sframe_size;
 int deathdelay;
 int plr_dframe_size;
-
-PlayerManager plr;
 
 Player & myplr()
 {
@@ -118,21 +116,20 @@ BYTE fix[9] = { 0, 0, 3, 3, 3, 6, 6, 6, 8 }; /* PM_ChangeLightOff local type */
 
 void SetPlayerGPtrs(BYTE *pData, BYTE **pAnim)
 {
-	int i;
-
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		pAnim[i] = CelGetFrameStart(pData, i);
 	}
 }
-
-
-
 
 Player::Player(int newpnum)
 : pnum(newpnum)
     , inventory(*this)
 {
 	memset(&data, 0, sizeof(data)); // 0 out data struct
+}
+
+Player::~Player()
+{
 }
 
 const int Player::id() const
@@ -145,9 +142,88 @@ Player::operator int() const
 	return id();
 }
 
-bool Player::isLocal()
+bool Player::isMyPlr()
 {
 	return id() == myplr();
+}
+
+// Used to assign pos when map not fully set up
+void Player::_changePosOffMap(const V2Di newpos)
+{
+	data._pos = newpos;
+	data._posdraw = newpos;
+}
+
+// Changes current position
+void Player::changePos(const V2Di newpos)
+{
+	changeFutPos(newpos);
+	advancePos();
+}
+
+// Used to assign future pos when map not fully set up
+void Player::_changeFutPosOffMap(const V2Di newpos)
+{
+	data._posfut = newpos;
+}
+
+// Changes future position
+void Player::changeFutPos(const V2Di newpos)
+{
+	if (newpos == data._posfut) return;
+	assert(PosOkPlayer(newpos));
+
+	// remove from old future position unless same as current position
+	if (data._posfut != data._pos)
+		grid.at(data._posfut).clearPlayer(pnum);
+	// add to new position unless same as current position
+	if (newpos != data._posfut)
+		grid.at(newpos).setPlayer(pnum);
+	data._posfut = newpos;
+}
+
+// Changes draw position
+void Player::changeDrawPos(const V2Di newpos)
+{
+	if (newpos == data._posdraw) return;
+	grid.at(drawpos()).clearPlayerDraw(pnum);
+	data._posdraw = newpos;
+	grid.at(drawpos()).setPlayerDraw(pnum);
+}
+
+// Makes current position = future position
+void Player::advancePos()
+{
+	if (data._posfut == data._pos) return;
+	grid.at(pos()).clearPlayer(pnum);
+	if (futpos() != drawpos()) grid.at(drawpos()).clearPlayerDraw(pnum);
+	data._pos = futpos();
+	data._posdraw = pos();
+	grid.at(pos()).setPlayerDraw(pnum);
+}
+
+
+// Adds the player to the map (upon level change/game entry)
+void Player::addToMap()
+{
+	grid.at(pos()).setPlayer(pnum);
+	grid.at(drawpos()).setPlayerDraw(pnum);
+	grid.at(futpos()).setPlayer(pnum);
+}
+
+V2Di Player::pos() const
+{
+	return data._pos;
+}
+
+V2Di Player::futpos() const
+{
+	return data._posfut;
+}
+
+V2Di Player::drawpos() const
+{
+	return data._posdraw;
 }
 
 void Player::LoadPlrGFX(player_graphic gfxflag)
@@ -387,7 +463,6 @@ void Player::FreePlayerGFX()
 
 void Player::NewPlrAnim(BYTE *Peq, int numFrames, int Delay, int width)
 {
-
 	data._pAnimData = Peq;
 	data._pAnimLen = numFrames;
 	data._pAnimFrame = 1;
@@ -687,7 +762,7 @@ void Player::NextPlrLevel()
 	data._pNextExper = ExpLvlsTbl[data._pLevel];
 
 	hp = data._pClass == PC_SORCERER ? 64 : 128;
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		hp++;
 	}
 	data._pMaxHP += hp;
@@ -704,7 +779,7 @@ void Player::NextPlrLevel()
 	else
 		mana = 128;
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		mana++;
 	}
 	data._pMaxMana += mana;
@@ -746,7 +821,7 @@ void Player::AddPlrExperience(int lvl, int exp)
 	}
 
 	// Prevent power leveling
-	if (gbMaxPlayers > 1) {
+	if (plr.isMultiplayer()) {
 		powerLvlCap = data._pLevel < 0 ? 0 : data._pLevel;
 		if (powerLvlCap >= 50) {
 			powerLvlCap = 50;
@@ -804,7 +879,7 @@ void AddPlrMonstExper(int lvl, int exp, char pmask)
 	}
 }
 
-void Player::InitPlayer(BOOL FirstTime)
+void Player::InitPlayer(bool FirstTime)
 {
 	DWORD i;
 
@@ -848,27 +923,27 @@ void Player::InitPlayer(BOOL FirstTime)
 
 		if (pnum == myplr()) {
 			if (!FirstTime || level.currlevel != 0) {
-				data._p = View;
+				changePos(View);
 			}
-			data._ptarg = data._p;
+			data._pathtarg = pos();
 		} else {
-			data._ptarg = data._p;
+			data._pathtarg = pos();
 
-			for (i = 0; i < 8 && !PosOkPlayer(plroff2[i] + data._p); i++)
+			for (i = 0; i < 8 && !PosOkPlayer(plroff2[i] + pos()); i++)
 				;
-			data._p += plroff2[i];
+			changePos(pos() + plroff2[i]);
 		}
 
-		data._pfut = data._p;
+		changeFutPos(pos());
 		ClrPlrPath();
 		data.destAction = ACTION_NONE;
 
 		if (pnum == myplr()) {
-			data._plid = AddLight(data._p, data._pLightRad);
+			data._plid = AddLight(pos(), data._pLightRad);
 		} else {
 			data._plid = -1;
 		}
-		data._pvid = AddVision(data._p, data._pLightRad, pnum == myplr());
+		data._pvid = AddVision(pos(), data._pLightRad, pnum == myplr());
 	}
 
 	if (data._pClass == PC_WARRIOR) {
@@ -907,33 +982,22 @@ void InitMultiView()
 	if ((DWORD)myplr() >= MAX_PLRS) {
 		app_fatal("InitPlayer: illegal player %d", myplr());
 	}
-	View = myplr().data._p;
+	View = myplr().pos();
 }
 
-BOOL SolidLoc(V2Di pos)
+bool Player::PlrDirOK(Dir dir)
 {
-	if (pos.x < 0 || pos.y < 0 || pos.x >= MAXDUNX || pos.y >= MAXDUNY) {
-		return FALSE;
-	}
-	return pieces[grid.at(pos).dPiece].nSolidTable;
-}
+	V2Di p = pos() + offset(dir);
 
-BOOL Player::PlrDirOK(Dir dir)
-{
-	BOOL isOk;
-	V2Di p = data._p + offset(dir);
+	if (p.x < 0 || !grid.at(p).isPiece() || !PosOkPlayer(p)) return FALSE;
 
-	if (p.x < 0 || !grid.at(p).dPiece || !PosOkPlayer(p)) {
-		return FALSE;
-	}
-
-	isOk = TRUE;
+	bool isOk = TRUE;
 	if (dir == Dir::E) {
-		isOk = !SolidLoc({ p.x, p.y + 1 }) && !(grid[p.x][p.y + 1].dFlags & BFLAG_PLAYERLR);
+		isOk = !grid.at({ p.x, p.y + 1 }).isSolid() && !(grid[p.x][p.y + 1].dFlags & BFLAG_PLAYERLR);
 	}
 
 	if (isOk && dir == Dir::W) {
-		isOk = !SolidLoc({ p.x + 1, p.y }) && !(grid[p.x + 1][p.y].dFlags & BFLAG_PLAYERLR);
+		isOk = !grid.at({ p.x + 1, p.y }).isSolid() && !(grid[p.x + 1][p.y].dFlags & BFLAG_PLAYERLR);
 	}
 
 	return isOk;
@@ -955,7 +1019,7 @@ void PlrDoTrans(V2Di pos)
 	} else {
 		for (int i = pos.y - 1; i <= pos.y + 1; i++) {
 			for (int j = pos.x - 1; j <= pos.x + 1; j++) {
-				if (!pieces[grid[j][i].dPiece].nSolidTable && grid[j][i].dTransVal) {
+				if (!grid[j][i].isSolid() && grid[j][i].dTransVal) {
 					TransList[grid[j][i].dTransVal] = TRUE;
 				}
 			}
@@ -965,19 +1029,19 @@ void PlrDoTrans(V2Di pos)
 
 void Player::SetPlayerOld()
 {
-	data._pold = data._p;
+	data._pold = pos();
 }
 
-void Player::FixPlayerLocation(Dir bDir)
+void Player::PlantInPlace(Dir bDir)
 {
-	data._pfut = data._p;
-	data._ptarg = data._p;
+	changeFutPos(pos());
+	data._pathtarg = pos();
 	data._poff = { 0, 0 };
 	data._pdir = bDir;
 	if (pnum == myplr()) {
 		ScrollInfo._soff = { 0, 0 };
 		ScrollInfo._sdir = ScrollDir::NONE;
-		View = data._p;
+		View = pos();
 	}
 }
 
@@ -990,9 +1054,8 @@ void Player::StartStand(Dir dir)
 
 		NewPlrAnim(data._pNAnim[int(dir)], data._pNFrames, 3, data._pNWidth);
 		data._pmode = PM_STAND;
-		FixPlayerLocation(dir);
+		PlantInPlace(dir);
 		FixPlrWalkTags();
-		grid.at(data._p).dPlayer = pnum + 1;
 		SetPlayerOld();
 	} else {
 		SyncPlrKill(-1);
@@ -1002,13 +1065,13 @@ void Player::StartStand(Dir dir)
 void Player::StartWalkStand()
 {
 	data._pmode = PM_STAND;
-	data._pfut = data._p;
+	changeFutPos(pos());
 	data._poff = { 0, 0 };
 
 	if (pnum == myplr()) {
 		ScrollInfo._soff = { 0, 0 };
 		ScrollInfo._sdir = ScrollDir::NONE;
-		View = data._p;
+		View = pos();
 	}
 }
 
@@ -1043,8 +1106,7 @@ void Player::PM_ChangeLightOff()
 	off.x = l->_off.x + (l->_l.x << 3);
 	off.y = l->_off.y + (l->_l.y << 3);
 
-	if (abs(lv.x - off.x) < 3 && abs(lv.y - off.y) < 3)
-		return;
+	if (abs(lv.x - off.x) < 3 && abs(lv.y - off.y) < 3) return;
 
 	ChangeLightOff(data._plid, p);
 }
@@ -1079,18 +1141,17 @@ void Player::StartWalk(V2Di vel, V2Di add, Dir EndDir, ScrollDir sdir)
 	}
 
 	SetPlayerOld();
-	V2Di p = add + data._p;
+	V2Di p = add + pos();
 	if (!PlrDirOK(EndDir)) return;
-	data._pfut = p;
+	changeFutPos(p);
 
-	if (pnum == myplr()) ScrollInfo._sd = data._p - View;
+	if (pnum == myplr()) ScrollInfo._sd = pos() - View;
 
-	grid.at(p).dPlayer = -(pnum + 1);
 	data._pmode = PM_WALK;
 	data._pvel = vel;
 	data._poff = { 0, 0 };
-	data._pVar1 = add.x;
-	data._pVar2 = add.y;
+	//data._pVar1 = add.x;
+	//data._pVar2 = add.y;
 	data._pVar3 = int(EndDir);
 
 	if (!(data._pGFXLoad & PFILE_WALK)) {
@@ -1129,25 +1190,22 @@ __attribute__((no_sanitize("shift-base")))
 void
 Player::StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir, ScrollDir sdir)
 {
-	V2Di p = add + data._p;
 	if (data._pInvincible && !data._pHitPoints && pnum == myplr()) {
 		SyncPlrKill(-1);
 		return;
 	}
 
 	SetPlayerOld();
+	V2Di p = add + pos();
 	if (!PlrDirOK(EndDir)) return;
-	data._pfut = p;
-	if (pnum == myplr()) ScrollInfo._sd = data._p - View;
-
-	grid.at(data._p).dPlayer = -1 - pnum;
-	data._pVar1 = data._p.x;
-	data._pVar2 = data._p.y;
-	data._p = p;
-	grid.at(data._p).dPlayer = pnum + 1;
+	changeFutPos(p);
+	changeDrawPos(p);
+	if (pnum == myplr()) ScrollInfo._sd = pos() - View;
+	//data._pVar1 = pos().x;
+	//data._pVar2 = pos().y;
 	data._poff = off;
 
-	ChangeLightXY(data._plid, data._p);
+	ChangeLightXY(data._plid, pos());
 	PM_ChangeLightOff();
 
 	data._pmode = PM_WALK2;
@@ -1192,23 +1250,20 @@ Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir, ScrollDir
 	}
 
 	SetPlayerOld();
-	p = add + data._p;
-	n = map + data._p;
+	p = add + pos();
+	n = map + pos();
 
-	if (!PlrDirOK(EndDir)) {
-		return;
-	}
+	if (!PlrDirOK(EndDir)) return;
 
-	data._pfut = p;
+	changeFutPos(p);
+	changeDrawPos(n);
 
 	if (pnum == myplr()) {
-		ScrollInfo._sd = data._p - View;
+		ScrollInfo._sd = pos() - View;
 	}
 
-	grid.at(data._p).dPlayer = -1 - pnum;
-	grid.at(p).dPlayer = -1 - pnum;
-	data._pVar4 = n.x;
-	data._pVar5 = n.y;
+	//data._pVar4 = n.x;
+	//data._pVar5 = n.y;
 	grid.at(n).dFlags |= BFLAG_PLAYERLR;
 	data._poff = off;
 
@@ -1219,8 +1274,8 @@ Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir, ScrollDir
 
 	data._pmode = PM_WALK3;
 	data._pvel = vel;
-	data._pVar1 = p.x;
-	data._pVar2 = p.y;
+	//data._pVar1 = p.x;
+	//data._pVar2 = p.y;
 	data._pVar6 = off.x * 256;
 	data._pVar7 = off.y * 256;
 	data._pVar3 = int(EndDir);
@@ -1264,7 +1319,7 @@ void Player::StartAttack(Dir d)
 
 	NewPlrAnim(data._pAAnim[int(d)], data._pAFrames, 0, data._pAWidth);
 	data._pmode = PM_ATTACK;
-	FixPlayerLocation(d);
+	PlantInPlace(d);
 	SetPlayerOld();
 }
 
@@ -1281,7 +1336,7 @@ void Player::StartRangeAttack(Dir d, V2Di c)
 	NewPlrAnim(data._pAAnim[int(d)], data._pAFrames, 0, data._pAWidth);
 
 	data._pmode = PM_RATTACK;
-	FixPlayerLocation(d);
+	PlantInPlace(d);
 	SetPlayerOld();
 	data._pVar1 = c.x;
 	data._pVar2 = c.y;
@@ -1295,7 +1350,7 @@ void Player::StartPlrBlock(Dir dir)
 		return;
 	}
 
-	PlaySfxLoc(IS_ISWORD, data._p);
+	PlaySfxLoc(IS_ISWORD, pos());
 
 	if (!(data._pGFXLoad & PFILE_BLOCK)) {
 		LoadPlrGFX(PFILE_BLOCK);
@@ -1303,7 +1358,7 @@ void Player::StartPlrBlock(Dir dir)
 	NewPlrAnim(data._pBAnim[int(dir)], data._pBFrames, 2, data._pBWidth);
 
 	data._pmode = PM_BLOCK;
-	FixPlayerLocation(dir);
+	PlantInPlace(dir);
 	SetPlayerOld();
 }
 
@@ -1337,11 +1392,11 @@ void Player::StartSpell(Dir d, V2Di c)
 		}
 	}
 
-	PlaySfxLoc(spelldata[data._pSpell].sSFX, data._p);
+	PlaySfxLoc(spelldata[data._pSpell].sSFX, pos());
 
 	data._pmode = PM_SPELL;
 
-	FixPlayerLocation(d);
+	PlantInPlace(d);
 	SetPlayerOld();
 
 	data._pVar1 = c.x;
@@ -1352,47 +1407,61 @@ void Player::StartSpell(Dir d, V2Di c)
 
 void Player::FixPlrWalkTags()
 {
-	int pp, pn;
-	V2Di d, n;
+	V2Di d = data._pold;
 
-	pp = pnum + 1;
-	pn = -(pnum + 1);
-	d = data._pold;
-	for (int y = d.y - 1; y <= d.y + 1; y++) {
-		for (int x = d.x - 1; x <= d.x + 1; x++) {
-			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && (grid[x][y].dPlayer == pp || grid[x][y].dPlayer == pn)) {
-				grid[x][y].dPlayer = 0;
-			}
-		}
-	}
+	//// Covers 9-squares around player position
+	//V2Di i;
+	//for (i.y = d.y - 1; i.y <= d.y + 1; i.y++) {
+	//	for (i.x = d.x - 1; i.x <= d.x + 1; i.x++) {
+	//		if (grid.isValid(i) && grid.at(i).isPlayer() && grid.at(i).getPlayer() == pnum) {
+	//			throw; // Should have made it so that you no longer have errant player positions
+	//		}
+	//	}
+	//}
 
-	if (d.x >= 0 && d.x < MAXDUNX - 1 && d.y >= 0 && d.y < MAXDUNY - 1) {
+	if (grid.isValid(d)) {
 		grid[d.x + 1][d.y].dFlags &= ~BFLAG_PLAYERLR;
 		grid[d.x][d.y + 1].dFlags &= ~BFLAG_PLAYERLR;
 	}
 }
 
-void Player::RemovePlrFromMap()
+void Player::RemoveFromMap()
 {
-	int x, y;
-	int pp, pn;
+	// Check if at pos and remove
+	if (grid.at(pos()).isPlayer()) {
+		if (grid.at(pos()).getPlayer() == pnum) {
+			grid.at(pos()).clearPlayer(pnum);
+		}
+	}
 
-	pp = pnum + 1;
-	pn = -(pnum + 1);
+	// Check if futpos and remove
+	if (grid.at(futpos()).isPlayer()) {
+		if (grid.at(futpos()).getPlayer() == pnum) {
+			grid.at(futpos()).clearPlayer(pnum);
+		}
+	}
 
-	for (y = 1; y < MAXDUNY; y++)
-		for (x = 1; x < MAXDUNX; x++)
-			if (grid[x][y - 1].dPlayer == pn || grid[x - 1][y].dPlayer == pn)
-				if (grid[x][y].dFlags & BFLAG_PLAYERLR)
-					grid[x][y].dFlags &= ~BFLAG_PLAYERLR;
+	// Check if drawpos is set and remove
+	if (grid.at(drawpos()).isPlayerDraw()) {
+		if (grid.at(drawpos()).getPlayer() == pnum) {
+			grid.at(drawpos()).clearPlayer(pnum);
+		}
+	}
 
-	for (y = 0; y < MAXDUNY; y++)
-		for (x = 0; x < MAXDUNX; x++)
-			if (grid[x][y].dPlayer == pp || grid[x][y].dPlayer == pn)
-				grid[x][y].dPlayer = 0;
+	//V2Di i;
+	//for (i.y = 1; i.y < MAXDUNY; i.y++)
+	//	for (i.x = 1; i.x < MAXDUNX; i.x++)
+	//		if (grid.at(i).isPlayer() && grid.at(i).getPlayer() == pnum)
+	//			if (grid.at(i).dFlags & BFLAG_PLAYERLR)
+	//				grid.at(i).dFlags &= ~BFLAG_PLAYERLR;
+
+	//for (i.y = 0; i.y < MAXDUNY; i.y++)
+	//	for (i.x = 0; i.x < MAXDUNX; i.x++)
+	//		if (grid.at(i).isPlayer() && grid.at(i).getPlayer() == pnum)
+	//			throw; // Should have made it so that you no longer have errant player positions
 }
 
-void Player::StartPlrHit(int dam, BOOL forcehit)
+void Player::StartPlrHit(int dam, bool forcehit)
 {
 	Dir pd;
 
@@ -1402,11 +1471,11 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 	}
 
 	if (data._pClass == PC_WARRIOR) {
-		PlaySfxLoc(PS_WARR69, data._p);
+		PlaySfxLoc(PS_WARR69, pos());
 	} else if (data._pClass == PC_ROGUE) {
-		PlaySfxLoc(PS_ROGUE69, data._p);
+		PlaySfxLoc(PS_ROGUE69, pos());
 	} else if (data._pClass == PC_SORCERER) {
-		PlaySfxLoc(PS_MAGE69, data._p);
+		PlaySfxLoc(PS_MAGE69, pos());
 	}
 
 	drawhpflag = TRUE;
@@ -1417,12 +1486,10 @@ void Player::StartPlrHit(int dam, BOOL forcehit)
 			LoadPlrGFX(PFILE_HIT);
 		}
 		NewPlrAnim(data._pHAnim[int(pd)], data._pHFrames, 0, data._pHWidth);
-
 		data._pmode = PM_GOTHIT;
-		FixPlayerLocation(pd);
+		PlantInPlace(pd);
 		data._pVar8 = 1;
 		FixPlrWalkTags();
-		grid.at(data._p).dPlayer = pnum + 1;
 		SetPlayerOld();
 	}
 }
@@ -1438,7 +1505,7 @@ void RespawnDeadItem(ItemStruct *itm, V2Di pos)
 	}
 
 	ii = itemavail[0];
-	grid.at(pos).dItem = ii + 1;
+	grid.at(pos).setItem(ii);
 	itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 	itemactive[numitems] = ii;
 	item[ii] = *itm;
@@ -1453,7 +1520,7 @@ __attribute__((no_sanitize("shift-base")))
 #endif
 void Player::StartPlayerKill(int earflag)
 {
-	BOOL diablolevel;
+	bool diablolevel;
 	int i;
 	Dir pdd;
 	ItemStruct ear;
@@ -1467,18 +1534,18 @@ void Player::StartPlayerKill(int earflag)
 		NetSendCmdParam1(TRUE, CMD_PLRDEAD, earflag);
 	}
 
-	diablolevel = gbMaxPlayers > 1 && data.plrlevel == 16;
+	diablolevel = plr.isMultiplayer() && data.plrlevel == 16;
 
 	if ((DWORD)pnum >= MAX_PLRS) {
 		app_fatal("StartPlayerKill: illegal player %d", pnum);
 	}
 
 	if (data._pClass == PC_WARRIOR) {
-		PlaySfxLoc(PS_DEAD, data._p); // BUGFIX: should use `PS_WARR71` like other classes
+		PlaySfxLoc(PS_DEAD, pos()); // BUGFIX: should use `PS_WARR71` like other classes
 	} else if (data._pClass == PC_ROGUE) {
-		PlaySfxLoc(PS_ROGUE71, data._p);
+		PlaySfxLoc(PS_ROGUE71, pos());
 	} else if (data._pClass == PC_SORCERER) {
-		PlaySfxLoc(PS_MAGE71, data._p);
+		PlaySfxLoc(PS_MAGE71, pos());
 	}
 
 	if (data._pgfxnum) {
@@ -1507,9 +1574,9 @@ void Player::StartPlayerKill(int earflag)
 	}
 
 	if (data.plrlevel == level.currlevel) {
-		FixPlayerLocation(data._pdir);
-		RemovePlrFromMap();
-		grid.at(data._p).dFlags |= BFLAG_DEAD_PLAYER;
+		PlantInPlace(data._pdir);
+		RemoveFromMap();
+		grid.at(pos()).dFlags |= BFLAG_DEAD_PLAYER;
 		SetPlayerOld();
 
 		if (pnum == myplr()) {
@@ -1564,7 +1631,7 @@ void Player::PlrDeadItem(ItemStruct *itm, V2Di n)
 {
 	if (itm->_itype == ITYPE_NONE) return;
 
-	V2Di p = n + data._p;
+	V2Di p = n + pos();
 	if ((n.x || n.y) && ItemSpaceOk(p.x, p.y)) {
 		RespawnDeadItem(itm, p);
 		data.HoldItem = *itm;
@@ -1574,9 +1641,9 @@ void Player::PlrDeadItem(ItemStruct *itm, V2Di n)
 
 	for (int k = 1; k < 50; k++) {
 		for (int j = -k; j <= k; j++) {
-			p.y = j + data._p.y;
+			p.y = j + pos().y;
 			for (int i = -k; i <= k; i++) {
-				p.x = i + data._p.x;
+				p.x = i + pos().x;
 				if (ItemSpaceOk(p.x, p.y)) {
 					RespawnDeadItem(itm, p);
 					data.HoldItem = *itm;
@@ -1728,7 +1795,7 @@ void Player::RemovePlrMissiles()
 		monsters[myplr()].M_StartKill(myplr());
 		AddDead(monsters[myplr()].data._m, (monsters[myplr()].data.MType)->mdeadval, monsters[myplr()].data._mdir);
 		m = monsters[myplr()].data._m;
-		grid.at(m).dMonster = 0;
+		grid.at(m).clearMonster();
 		monsters[myplr()].data._mDelFlag = TRUE;
 		DeleteMonsterList();
 	}
@@ -1757,10 +1824,10 @@ void Player::InitLevelChange()
 		stream_stop();
 	}
 
-	RemovePlrFromMap();
+	RemoveFromMap();
 	SetPlayerOld();
 	if (pnum == myplr()) {
-		grid.at(data._p).dPlayer = myplr() + 1;
+		addToMap();
 	} else {
 		data._pLvlVisited[data.plrlevel] = TRUE;
 	}
@@ -1808,7 +1875,7 @@ void Player::StartNewLvl(int fom, int lvl)
 		data._pmode = PM_NEWLVL;
 		data._pInvincible = TRUE;
 		PostMessage(fom, 0, 0);
-		if (gbMaxPlayers > 1) {
+		if (plr.isMultiplayer()) {
 			NetSendCmdParam2(TRUE, CMD_NEWLVL, fom, lvl);
 		}
 	}
@@ -1838,7 +1905,7 @@ void Player::StartWarpLvl(int pidx)
 {
 	InitLevelChange();
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		if (data.plrlevel != 0) {
 			data.plrlevel = 0;
 		} else {
@@ -1854,7 +1921,7 @@ void Player::StartWarpLvl(int pidx)
 	}
 }
 
-BOOL Player::PM_DoStand()
+bool Player::PM_DoStand()
 {
 	return FALSE;
 }
@@ -1901,35 +1968,29 @@ void Player::StartWalk(Dir walkdir)
 }
 
 
-BOOL Player::PM_DoWalk()
+bool Player::PM_DoWalk()
 {
-	int anim_len;
-	BOOL rv;
-
 	if (data._pAnimFrame == 3
 	    || (data._pWFrames == 8 && data._pAnimFrame == 7)
 	    || (data._pWFrames != 8 && data._pAnimFrame == 4)) {
-		PlaySfxLoc(PS_WALK1, data._p);
+		PlaySfxLoc(PS_WALK1, pos());
 	}
 
-	anim_len = 8;
+	int anim_len = 8;
 	if (level.currlevel != 0) {
 		anim_len = classes[data._pClass].AnimLenFromClass;
 	}
 
-	if (data._pVar8 == anim_len) {
-		grid.at(data._p).dPlayer = 0;
-		data._p.x += data._pVar1;
-		data._p.y += data._pVar2;
-		grid.at(data._p).dPlayer = pnum + 1;
+	if (data._pVar8 == anim_len) { // end of anim
+		advancePos();
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightXY(data._plid, data._p);
-			ChangeVisionXY(data._pvid, data._p);
+			ChangeLightXY(data._plid, pos());
+			ChangeVisionXY(data._pvid, pos());
 		}
 
 		if (pnum == myplr() && int(ScrollInfo._sdir)) {
-			View = data._p - ScrollInfo._sd;
+			View = pos() - ScrollInfo._sd;
 		}
 
 		if (!data.wkpath.empty()) {
@@ -1943,41 +2004,36 @@ BOOL Player::PM_DoWalk()
 		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightOff(data._plid, { 0, 0 });
 		}
-		rv = TRUE;
+		return true;
 	} else {
 		PM_ChangeOffset();
-		rv = FALSE;
+		return false;
 	}
-
-	return rv;
 }
 
-BOOL Player::PM_DoWalk2()
+bool Player::PM_DoWalk2()
 {
-	int anim_len;
-	BOOL rv;
-
 	if (data._pAnimFrame == 3
 	    || (data._pWFrames == 8 && data._pAnimFrame == 7)
 	    || (data._pWFrames != 8 && data._pAnimFrame == 4)) {
-		PlaySfxLoc(PS_WALK1, data._p);
+		PlaySfxLoc(PS_WALK1, pos());
 	}
 
-	anim_len = 8;
+	int anim_len = 8;
 	if (level.currlevel != 0) {
 		anim_len = classes[data._pClass].AnimLenFromClass;
 	}
 
-	if (data._pVar8 == anim_len) {
-		grid[data._pVar1][data._pVar2].dPlayer = 0;
+	if (data._pVar8 == anim_len) { // end of anim
+		advancePos();
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightXY(data._plid, data._p);
-			ChangeVisionXY(data._pvid, data._p);
+			ChangeLightXY(data._plid, pos());
+			ChangeVisionXY(data._pvid, pos());
 		}
 
 		if (pnum == myplr() && int(ScrollInfo._sdir)) {
-			View = data._p - ScrollInfo._sd;
+			View = pos() - ScrollInfo._sd;
 		}
 
 		if (!data.wkpath.empty()) {
@@ -1990,45 +2046,37 @@ BOOL Player::PM_DoWalk2()
 		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightOff(data._plid, { 0, 0 });
 		}
-		rv = TRUE;
+		return true;
 	} else {
 		PM_ChangeOffset();
-		rv = FALSE;
+		return false;
 	}
-
-	return rv;
 }
 
-BOOL Player::PM_DoWalk3()
+bool Player::PM_DoWalk3()
 {
-	int anim_len;
-	BOOL rv;
-
 	if (data._pAnimFrame == 3
 	    || (data._pWFrames == 8 && data._pAnimFrame == 7)
 	    || (data._pWFrames != 8 && data._pAnimFrame == 4)) {
-		PlaySfxLoc(PS_WALK1, data._p);
+		PlaySfxLoc(PS_WALK1, pos());
 	}
 
-	anim_len = 8;
+	int anim_len = 8;
 	if (level.currlevel != 0) {
 		anim_len = classes[data._pClass].AnimLenFromClass;
 	}
 
-	if (data._pVar8 == anim_len) {
-		grid.at(data._p).dPlayer = 0;
-		grid[data._pVar4][data._pVar5].dFlags &= ~BFLAG_PLAYERLR;
-		data._p.x = data._pVar1;
-		data._p.y = data._pVar2;
-		grid.at(data._p).dPlayer = pnum + 1;
+	if (data._pVar8 == anim_len) { // end of anim
+		grid[data._pVar4][data._pVar5].dFlags &= ~BFLAG_PLAYERLR; // makes old pos have lr flag
+		advancePos();
 
 		if (level.leveltype != DTYPE_TOWN) {
-			ChangeLightXY(data._plid, data._p);
-			ChangeVisionXY(data._pvid, data._p);
+			ChangeLightXY(data._plid, pos());
+			ChangeVisionXY(data._pvid, pos());
 		}
 
 		if (pnum == myplr() && int(ScrollInfo._sdir)) {
-			View = data._p - ScrollInfo._sd;
+			View = pos() - ScrollInfo._sd;
 		}
 
 		if (!data.wkpath.empty()) {
@@ -2042,16 +2090,14 @@ BOOL Player::PM_DoWalk3()
 		if (level.leveltype != DTYPE_TOWN) {
 			ChangeLightOff(data._plid, { 0, 0 });
 		}
-		rv = TRUE;
+		return true;
 	} else {
 		PM_ChangeOffset();
-		rv = FALSE;
+		return false;
 	}
-
-	return rv;
 }
 
-BOOL Player::WeaponDur(int durrnd)
+bool Player::WeaponDur(int durrnd)
 {
 	if (pnum != myplr()) {
 		return FALSE;
@@ -2124,9 +2170,9 @@ BOOL Player::WeaponDur(int durrnd)
 	return FALSE;
 }
 
-BOOL Player::PlrHitMonst(int m)
+bool Player::PlrHitMonst(int m)
 {
-	BOOL rv, ret;
+	bool rv, ret;
 	int hit, hper, mind, maxd, ddp, dam, skdam, phanditype, tmac;
 
 	if ((DWORD)m >= MAXMONSTERS) {
@@ -2299,9 +2345,9 @@ BOOL Player::PlrHitMonst(int m)
 	return rv;
 }
 
-BOOL Player::PlrHitPlr(char p)
+bool Player::PlrHitPlr(char p)
 {
-	BOOL rv;
+	bool rv;
 	int hit, hper, blk, blkper, mind, maxd, dam, lvl, skdam, tac;
 	Dir dir;
 
@@ -2393,16 +2439,9 @@ BOOL Player::PlrHitPlr(char p)
 	return rv;
 }
 
-BOOL Player::PlrHitObj(V2Di m)
+bool Player::PlrHitObj(V2Di m)
 {
-	int oi;
-
-	if (grid.at(m).dObject > 0) {
-		oi = grid.at(m).dObject - 1;
-	} else {
-		oi = -grid.at(m).dObject - 1;
-	}
-
+	int oi = grid.at(m).getObject();
 	if (object[oi]._oBreak == 1) {
 		BreakObject(pnum, oi);
 		return TRUE;
@@ -2410,11 +2449,11 @@ BOOL Player::PlrHitObj(V2Di m)
 	return FALSE;
 }
 
-BOOL Player::PM_DoAttack()
+bool Player::PM_DoAttack()
 {
 	Dir dir;
 	int frame, m;
-	BOOL didhit;
+	bool didhit;
 	V2Di d;
 	frame = data._pAnimFrame;
 	if (data._pIFlags & ISPL_QUICKATTACK && frame == 1) {
@@ -2430,17 +2469,17 @@ BOOL Player::PM_DoAttack()
 		data._pAnimFrame += 2;
 	}
 	if (data._pAnimFrame == data._pAFNum - 1) {
-		PlaySfxLoc(PS_SWING, data._p);
+		PlaySfxLoc(PS_SWING, pos());
 	}
 
 	if (data._pAnimFrame == data._pAFNum) {
 		dir = data._pdir;
-		d = data._p + offset(dir);
-		if (grid.at(d).dMonster) {
-			if (grid.at(d).dMonster > 0) {
-				m = grid.at(d).dMonster - 1;
+		d = pos() + offset(dir);
+		if (grid.at(d).getMonster()) {
+			if (grid.at(d).getMonster() > 0) {
+				m = grid.at(d).getMonster() - 1;
 			} else {
-				m = -(grid.at(d).dMonster + 1);
+				m = -(grid.at(d).getMonster() + 1);
 			}
 			if (CanTalkToMonst(m)) {
 				data._pVar1 = 0;
@@ -2456,23 +2495,18 @@ BOOL Player::PM_DoAttack()
 		}
 
 		didhit = FALSE;
-		if (grid.at(d).dMonster) {
-			m = grid.at(d).dMonster;
-			if (grid.at(d).dMonster > 0) {
-				m = grid.at(d).dMonster - 1;
+		if (grid.at(d).getMonster()) {
+			m = grid.at(d).getMonster();
+			if (grid.at(d).getMonster() > 0) {
+				m = grid.at(d).getMonster() - 1;
 			} else {
-				m = -(grid.at(d).dMonster + 1);
+				m = -(grid.at(d).getMonster() + 1);
 			}
 			didhit = PlrHitMonst(m);
-		} else if (grid.at(d).dPlayer && !FriendlyMode) {
-			BYTE p = grid.at(d).dPlayer;
-			if (grid.at(d).dPlayer > 0) {
-				p = grid.at(d).dPlayer - 1;
-			} else {
-				p = -(grid.at(d).dPlayer + 1);
-			}
+		} else if (grid.at(d).isPlayer() && !FriendlyMode) {
+			BYTE p = grid.at(d).getPlayer();
 			didhit = PlrHitPlr(p);
-		} else if (grid.at(d).dObject > 0) {
+		} else if (grid.at(d).isObject()) {
 			didhit = PlrHitObj(d);
 		}
 
@@ -2492,7 +2526,7 @@ BOOL Player::PM_DoAttack()
 	}
 }
 
-BOOL Player::PM_DoRangeAttack()
+bool Player::PM_DoRangeAttack()
 {
 	int origFrame, mistype;
 
@@ -2513,7 +2547,7 @@ BOOL Player::PM_DoRangeAttack()
 			mistype = MIS_LARROW;
 		}
 		AddMissile(
-		    data._p,
+		    pos(),
 		    { data._pVar1, data._pVar2 },
 		    data._pdir,
 		    mistype,
@@ -2522,7 +2556,7 @@ BOOL Player::PM_DoRangeAttack()
 		    4,
 		    0);
 
-		PlaySfxLoc(PS_BFIRE, data._p);
+		PlaySfxLoc(PS_BFIRE, pos());
 
 		if (WeaponDur(40)) {
 			StartStand(data._pdir);
@@ -2575,7 +2609,7 @@ void Player::ShieldDur()
 	}
 }
 
-BOOL Player::PM_DoBlock()
+bool Player::PM_DoBlock()
 {
 	if (data._pIFlags & ISPL_FASTBLOCK && data._pAnimFrame != 1) {
 		data._pAnimFrame = data._pBFrames;
@@ -2594,13 +2628,13 @@ BOOL Player::PM_DoBlock()
 	return FALSE;
 }
 
-BOOL Player::PM_DoSpell()
+bool Player::PM_DoSpell()
 {
 	if (data._pVar8 == data._pSFNum) {
 		CastSpell(
 		    pnum,
 		    data._pSpell,
-		    data._p,
+		    pos(),
 		    { data._pVar1, data._pVar2 },
 		    0,
 		    data._pVar4);
@@ -2643,7 +2677,7 @@ BOOL Player::PM_DoSpell()
 	return FALSE;
 }
 
-BOOL Player::PM_DoGotHit()
+bool Player::PM_DoGotHit()
 {
 	int frame;
 
@@ -2721,14 +2755,14 @@ void Player::ArmorDur()
 	CalcPlrInv(pnum, TRUE);
 }
 
-BOOL Player::PM_DoDeath()
+bool Player::PM_DoDeath()
 {
 	if (data._pVar8 >= 2 * data._pDFrames) {
 		if (deathdelay > 1 && pnum == myplr()) {
 			deathdelay--;
 			if (deathdelay == 1) {
 				deathflag = TRUE;
-				if (gbMaxPlayers == 1) {
+				if (plr.isSingleplayer()) {
 					gamemenu_on();
 				}
 			}
@@ -2736,7 +2770,7 @@ BOOL Player::PM_DoDeath()
 
 		data._pAnimDelay = 10000;
 		data._pAnimFrame = data._pAnimLen;
-		grid.at(data._p).dFlags |= BFLAG_DEAD_PLAYER;
+		grid.at(pos()).dFlags |= BFLAG_DEAD_PLAYER;
 	}
 
 	if (data._pVar8 < 100) {
@@ -2746,7 +2780,7 @@ BOOL Player::PM_DoDeath()
 	return FALSE;
 }
 
-BOOL Player::PM_DoNewLvl()
+bool Player::PM_DoNewLvl()
 {
 	return FALSE;
 }
@@ -2763,7 +2797,7 @@ void Player::CheckNewPath()
 	}
 
 	if (data.destAction == ACTION_ATTACKPLR) {
-		MakePlrPath(plr[data.destParam1].data._pfut, FALSE);
+		MakePlrPath(plr[data.destParam1].futpos(), FALSE);
 	}
 
 	if (!data.wkpath.empty()) {
@@ -2773,11 +2807,11 @@ void Player::CheckNewPath()
 					i = data.destParam1;
 
 					if (data.destAction == ACTION_ATTACKMON) {
-						n = (data._pfut - monsters[i].data._mfut).abs();
-						d = GetDirection(data._pfut, monsters[i].data._mfut);
+						n = (futpos() - monsters[i].data._mfut).abs();
+						d = GetDirection(futpos(), monsters[i].data._mfut);
 					} else {
-						n = (data._pfut - plr[i].data._pfut).abs();
-						d = GetDirection(data._pfut, plr[i].data._pfut);
+						n = (futpos() - plr[i].futpos()).abs();
+						d = GetDirection(futpos(), plr[i].futpos());
 					}
 
 					if (n.x < 2 && n.y < 2) {
@@ -2793,10 +2827,12 @@ void Player::CheckNewPath()
 			}
 
 			const V2Di nextpos = data.wkpath.front().pos();
-			Dir dir = GetDirection(data._p, nextpos);
-			//data._pdir = Dir::NE; //GetDirection(data._pfut, nextpos);
-
-			data.wkpath.pop(); //= std::queue<PathNode>();
+			if (pos() != nextpos) {
+				Dir dir = GetDirection(pos(), nextpos);
+				data._pdir = dir;
+				StartWalk(dir);
+				data.wkpath.pop();
+			}
 
 			if (data._pmode == PM_STAND) {
 				StartStand(data._pdir);
@@ -2813,14 +2849,14 @@ void Player::CheckNewPath()
 	if (data._pmode == PM_STAND) {
 		switch (data.destAction) {
 		case ACTION_ATTACK:
-			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			d = GetDirection(pos(), { data.destParam1, data.destParam2 });
 			StartAttack(d);
 			break;
 		case ACTION_ATTACKMON:
 			i = data.destParam1;
-			n = (data._p - monsters[i].data._mfut).abs();
+			n = (pos() - monsters[i].data._mfut).abs();
 			if (n.x <= 1 && n.y <= 1) {
-				d = GetDirection(data._pfut, monsters[i].data._mfut);
+				d = GetDirection(futpos(), monsters[i].data._mfut);
 				if (monsters[i].data.mtalkmsg && monsters[i].data.mtalkmsg != TEXT_VILE14) {
 					monsters[i].TalktoMonster();
 				} else {
@@ -2830,19 +2866,19 @@ void Player::CheckNewPath()
 			break;
 		case ACTION_ATTACKPLR:
 			i = data.destParam1;
-			n = (data._p - plr[i].data._pfut).abs();
+			n = (pos() - plr[i].futpos()).abs();
 			if (n.x <= 1 && n.y <= 1) {
-				d = GetDirection(data._pfut, plr[i].data._pfut);
+				d = GetDirection(futpos(), plr[i].futpos());
 				StartAttack(d);
 			}
 			break;
 		case ACTION_RATTACK:
-			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			d = GetDirection(pos(), { data.destParam1, data.destParam2 });
 			StartRangeAttack(d, { data.destParam1, data.destParam2 });
 			break;
 		case ACTION_RATTACKMON:
 			i = data.destParam1;
-			d = GetDirection(data._pfut, monsters[i].data._mfut);
+			d = GetDirection(futpos(), monsters[i].data._mfut);
 			if (monsters[i].data.mtalkmsg && monsters[i].data.mtalkmsg != TEXT_VILE14) {
 				monsters[i].TalktoMonster();
 			} else {
@@ -2851,11 +2887,11 @@ void Player::CheckNewPath()
 			break;
 		case ACTION_RATTACKPLR:
 			i = data.destParam1;
-			d = GetDirection(data._pfut, plr[i].data._pfut);
-			StartRangeAttack(d, plr[i].data._pfut);
+			d = GetDirection(futpos(), plr[i].futpos());
+			StartRangeAttack(d, plr[i].futpos());
 			break;
 		case ACTION_SPELL:
-			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			d = GetDirection(pos(), { data.destParam1, data.destParam2 });
 			StartSpell(d, { data.destParam1, data.destParam2 });
 			data._pVar4 = data.destParam3;
 			break;
@@ -2866,25 +2902,25 @@ void Player::CheckNewPath()
 			break;
 		case ACTION_SPELLMON:
 			i = data.destParam1;
-			d = GetDirection(data._p, monsters[i].data._mfut);
+			d = GetDirection(pos(), monsters[i].data._mfut);
 			StartSpell(d, monsters[i].data._mfut);
 			data._pVar4 = data.destParam2;
 			break;
 		case ACTION_SPELLPLR:
 			i = data.destParam1;
-			d = GetDirection(data._p, plr[i].data._pfut);
-			StartSpell(d, plr[i].data._pfut);
+			d = GetDirection(pos(), plr[i].futpos());
+			StartSpell(d, plr[i].futpos());
 			data._pVar4 = data.destParam2;
 			break;
 		case ACTION_OPERATE:
 			i = data.destParam1;
-			n = (data._p - object[i]._o).abs();
-			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].dObject == -1 - i) {
-				n.y = abs(data._p.y - object[i]._o.y + 1);
+			n = (pos() - object[i]._o).abs();
+			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].getObject() == i) {
+				n.y = abs(pos().y - object[i]._o.y + 1);
 			}
 			if (n.x <= 1 && n.y <= 1) {
 				if (object[i]._oBreak == 1) {
-					d = GetDirection(data._p, object[i]._o);
+					d = GetDirection(pos(), object[i]._o);
 					StartAttack(d);
 				} else {
 					OperateObject(pnum, i, FALSE);
@@ -2893,13 +2929,13 @@ void Player::CheckNewPath()
 			break;
 		case ACTION_DISARM:
 			i = data.destParam1;
-			n = (data._p - object[i]._o).abs();
-			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].dObject == -1 - i) {
-				n.y = abs(data._p.y - object[i]._o.y + 1);
+			n = (pos() - object[i]._o).abs();
+			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].getObject() == i) {
+				n.y = abs(pos().y - object[i]._o.y + 1);
 			}
 			if (n.x <= 1 && n.y <= 1) {
 				if (object[i]._oBreak == 1) {
-					d = GetDirection(data._p, object[i]._o);
+					d = GetDirection(pos(), object[i]._o);
 					StartAttack(d);
 				} else {
 					TryDisarm(pnum, i);
@@ -2916,7 +2952,7 @@ void Player::CheckNewPath()
 		case ACTION_PICKUPITEM:
 			if (pnum == myplr()) {
 				i = data.destParam1;
-				n = (data._p - item[i]._i).abs();
+				n = (pos() - item[i]._i).abs();
 				if (n.x <= 1 && n.y <= 1 && pcurs == CURSOR_HAND && !item[i]._iRequest) {
 					NetSendCmdGItem(TRUE, CMD_REQUESTGITEM, myplr(), myplr(), i);
 					item[i]._iRequest = TRUE;
@@ -2926,7 +2962,7 @@ void Player::CheckNewPath()
 		case ACTION_PICKUPAITEM:
 			if (pnum == myplr()) {
 				i = data.destParam1;
-				n = (data._p - item[i]._i).abs();
+				n = (pos() - item[i]._i).abs();
 				if (n.x <= 1 && n.y <= 1 && pcurs == CURSOR_HAND) {
 					NetSendCmdGItem(TRUE, CMD_REQUESTAGITEM, myplr(), myplr(), i);
 				}
@@ -2939,7 +2975,7 @@ void Player::CheckNewPath()
 			break;
 		}
 
-		FixPlayerLocation(data._pdir);
+		PlantInPlace(data._pdir);
 		data.destAction = ACTION_NONE;
 
 		return;
@@ -2947,34 +2983,34 @@ void Player::CheckNewPath()
 
 	if (data._pmode == PM_ATTACK && data._pAnimFrame > myplr().data._pAFNum) {
 		if (data.destAction == ACTION_ATTACK) {
-			d = GetDirection(data._pfut, { data.destParam1, data.destParam2 });
+			d = GetDirection(futpos(), { data.destParam1, data.destParam2 });
 			StartAttack(d);
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_ATTACKMON) {
 			i = data.destParam1;
-			n = (data._p - monsters[i].data._mfut).abs();
+			n = (pos() - monsters[i].data._mfut).abs();
 			if (n.x <= 1 && n.y <= 1) {
-				d = GetDirection(data._pfut, monsters[i].data._mfut);
+				d = GetDirection(futpos(), monsters[i].data._mfut);
 				StartAttack(d);
 			}
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_ATTACKPLR) {
 			i = data.destParam1;
-			n = (data._p - plr[i].data._pfut).abs();
+			n = (pos() - plr[i].futpos()).abs();
 			if (n.x <= 1 && n.y <= 1) {
-				d = GetDirection(data._pfut, plr[i].data._pfut);
+				d = GetDirection(futpos(), plr[i].futpos());
 				StartAttack(d);
 			}
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_OPERATE) {
 			i = data.destParam1;
-			n = (data._p - object[i]._o).abs();
-			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].dObject == -1 - i) {
-				n.y = abs(data._p.y - object[i]._o.y + 1);
+			n = (pos() - object[i]._o).abs();
+			if (n.y > 1 && grid[object[i]._o.x][object[i]._o.y - 1].getObject() == i) {
+				n.y = abs(pos().y - object[i]._o.y + 1);
 			}
 			if (n.x <= 1 && n.y <= 1) {
 				if (object[i]._oBreak == 1) {
-					d = GetDirection(data._p, object[i]._o);
+					d = GetDirection(pos(), object[i]._o);
 					StartAttack(d);
 				} else {
 					OperateObject(pnum, i, FALSE);
@@ -2985,42 +3021,42 @@ void Player::CheckNewPath()
 
 	if (data._pmode == PM_RATTACK && data._pAnimFrame > myplr().data._pAFNum) {
 		if (data.destAction == ACTION_RATTACK) {
-			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			d = GetDirection(pos(), { data.destParam1, data.destParam2 });
 			StartRangeAttack(d, { data.destParam1, data.destParam2 });
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_RATTACKMON) {
 			i = data.destParam1;
-			d = GetDirection(data._p, monsters[i].data._mfut);
+			d = GetDirection(pos(), monsters[i].data._mfut);
 			StartRangeAttack(d, monsters[i].data._mfut);
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_RATTACKPLR) {
 			i = data.destParam1;
-			d = GetDirection(data._p, plr[i].data._pfut);
-			StartRangeAttack(d, plr[i].data._pfut);
+			d = GetDirection(pos(), plr[i].pos());
+			StartRangeAttack(d, plr[i].pos());
 			data.destAction = ACTION_NONE;
 		}
 	}
 
 	if (data._pmode == PM_SPELL && data._pAnimFrame > data._pSFNum) {
 		if (data.destAction == ACTION_SPELL) {
-			d = GetDirection(data._p, { data.destParam1, data.destParam2 });
+			d = GetDirection(pos(), { data.destParam1, data.destParam2 });
 			StartSpell(d, { data.destParam1, data.destParam2 });
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_SPELLMON) {
 			i = data.destParam1;
-			d = GetDirection(data._p, monsters[i].data._mfut);
+			d = GetDirection(pos(), monsters[i].data._mfut);
 			StartSpell(d, monsters[i].data._mfut);
 			data.destAction = ACTION_NONE;
 		} else if (data.destAction == ACTION_SPELLPLR) {
 			i = data.destParam1;
-			d = GetDirection(data._p, plr[i].data._pfut);
-			StartSpell(d, plr[i].data._pfut);
+			d = GetDirection(pos(), plr[i].pos());
+			StartSpell(d, plr[i].pos());
 			data.destAction = ACTION_NONE;
 		}
 	}
 }
 
-BOOL PlrDeathModeOK(int p)
+bool PlrDeathModeOK(int p)
 {
 	if (p != myplr()) {
 		return TRUE;
@@ -3107,7 +3143,7 @@ void ProcessPlayers()
 void Player::ProcessPlayer()
 {
 	int pnum;
-	BOOL tplayer;
+	bool tplayer;
 
 	if (data.pLvlLoad > 0) {
 		data.pLvlLoad--;
@@ -3230,78 +3266,48 @@ void Player::ClrPlrPath()
 	data.wkpath = std::queue<PathNode>();
 }
 
-BOOL PosOkPlayer(int pnum, V2Di pos)
+bool PosOkPlayer(int pnum, V2Di pos)
 {
 	return plr[pnum].PosOkPlayer(pos);
 }
 
-BOOL Player::PosOkPlayer(V2Di pos)
+bool Player::PosOkPlayer(V2Di pos)
 {
-	int x = pos.x;
-	int y = pos.y;
-	BOOL PosOK;
-	DWORD p;
-	char bv;
+	if (!grid.isValid(pos)) return false;
+	if (grid.at(pos).isSolid()) return false;
+	if (!grid.at(pos).isPiece()) return false;
 
-	PosOK = FALSE;
-	if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY && !SolidLoc({ x, y }) && grid[x][y].dPiece) {
-
-		if (grid[x][y].dPlayer) {
-			if (grid[x][y].dPlayer > 0) {
-				p = grid[x][y].dPlayer - 1;
-			} else {
-				p = -(grid[x][y].dPlayer + 1);
-			}
-			if (p != pnum && p < MAX_PLRS && plr[p].data._pHitPoints) {
-				return FALSE;
-			}
-		}
-
-		if (grid[x][y].dMonster) {
-			if (level.currlevel == 0) {
-				return FALSE;
-			}
-			if (grid[x][y].dMonster <= 0) {
-				return FALSE;
-			}
-			if ((monsters[grid[x][y].dMonster - 1].data._mhitpoints >> 6) > 0) {
-				return FALSE;
-			}
-		}
-
-		if (grid[x][y].dObject) {
-			if (grid[x][y].dObject > 0) {
-				bv = grid[x][y].dObject - 1;
-			} else {
-				bv = -(grid[x][y].dObject + 1);
-			}
-			if (object[bv]._oSolidFlag) {
-				return FALSE;
-			}
-		}
-
-		PosOK = TRUE;
+	if (grid.at(pos).isPlayer()) { // is another living player
+		int p = grid.at(pos).getPlayer();
+		if (p != pnum && plr[p].data._pHitPoints) return false;
 	}
 
-	if (!PosOK)
-		return FALSE;
-	return TRUE;
+	if (grid.at(pos).isMonster()) { // is another living monster
+		if (level.currlevel == 0) return false;
+		if ((monsters[grid.at(pos).getMonster() - 1].data._mhitpoints >> 6) > 0) return false;
+	}
+
+	if (grid.at(pos).isObject()) {
+		char bv = grid.at(pos).getObject();
+		if (object[bv]._oSolidFlag) return false;
+	}
+	return true;
 }
 
-void Player::MakePlrPath(V2Di p, BOOL endspace)
+void Player::MakePlrPath(V2Di p, bool endspace)
 {
-	data._ptarg = p;
-	if (data._pfut == p) return; // already moving there
-	int dist = pathfinder.FindPath(::dvl::PosOkPlayer, pnum, data._pfut, p, data.wkpath);
+	data._pathtarg = p;
+	if (futpos() == p) return; // already moving there
+	int dist = pathfinder.FindPath(::dvl::PosOkPlayer, pnum, futpos(), p, data.wkpath);
 	if (!data.wkpath.empty()) {
-		//data._ptarg = data.wkpath.front().pos();
-		//data.wkpath.pop(); // pops the front, which is the starting location
+		data._pathtarg = data.wkpath.front().pos();
+		data.wkpath.pop(); // pops the front, which should be the starting location
 	}
 }
 
 void CheckPlrSpell()
 {
-	BOOL addflag;
+	bool addflag;
 	int rspell, sl;
 	Dir sd;
 
@@ -3447,16 +3453,16 @@ void Player::SyncInitPlrPos()
 	V2Di p;
 	int xx, yy, range;
 	DWORD i;
-	BOOL posOk;
+	bool posOk;
 
-	data._ptarg = data._p;
+	data._pathtarg = pos();
 
-	if (gbMaxPlayers == 1 || data.plrlevel != level.currlevel) {
+	if (plr.isSingleplayer() || data.plrlevel != level.currlevel) {
 		return;
 	}
 
 	for (i = 0; i < 8; i++) {
-		p = data._p + plroff2[i];
+		p = pos() + plroff2[i];
 		if (PosOkPlayer(p)) {
 			break;
 		}
@@ -3466,9 +3472,9 @@ void Player::SyncInitPlrPos()
 		posOk = FALSE;
 		for (range = 1; range < 50 && !posOk; range++) {
 			for (yy = -range; yy <= range && !posOk; yy++) {
-				p.y = yy + data._p.y;
+				p.y = yy + pos().y;
 				for (xx = -range; xx <= range && !posOk; xx++) {
-					p.x = xx + data._p.x;
+					p.x = xx + pos().x;
 					if (PosOkPlayer(p) && !PosOkPortal(level.currlevel, p)) {
 						posOk = TRUE;
 					}
@@ -3477,12 +3483,12 @@ void Player::SyncInitPlrPos()
 		}
 	}
 
-	data._p = p;
-	grid.at(p).dPlayer = pnum + 1;
+	plr[i]._changePosOffMap(p);
+	plr[i].addToMap();
 
 	if (pnum == myplr()) {
-		data._pfut = p;
-		data._ptarg = p;
+		changeFutPos(p);
+		data._pathtarg = p;
 		View = p;
 	}
 }
@@ -3730,7 +3736,7 @@ void PlayDungMsgs()
 		app_fatal("PlayDungMsgs: illegal player %d", myplr());
 	}
 
-	if (level.currlevel == 1 && !myplr().data._pLvlVisited[1] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_CATHEDRAL)) {
+	if (level.currlevel == 1 && !myplr().data._pLvlVisited[1] && plr.isSingleplayer() && !(myplr().data.pDungMsgs & DMSG_CATHEDRAL)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR97;
@@ -3740,7 +3746,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE97;
 		}
 		myplr().data.pDungMsgs = myplr().data.pDungMsgs | DMSG_CATHEDRAL;
-	} else if (level.currlevel == 5 && !myplr().data._pLvlVisited[5] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_CATACOMBS)) {
+	} else if (level.currlevel == 5 && !myplr().data._pLvlVisited[5] && plr.isSingleplayer() && !(myplr().data.pDungMsgs & DMSG_CATACOMBS)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR96B;
@@ -3750,7 +3756,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE96;
 		}
 		myplr().data.pDungMsgs |= DMSG_CATACOMBS;
-	} else if (level.currlevel == 9 && !myplr().data._pLvlVisited[9] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_CAVES)) {
+	} else if (level.currlevel == 9 && !myplr().data._pLvlVisited[9] && plr.isSingleplayer() && !(myplr().data.pDungMsgs & DMSG_CAVES)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR98;
@@ -3760,7 +3766,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE98;
 		}
 		myplr().data.pDungMsgs |= DMSG_CAVES;
-	} else if (level.currlevel == 13 && !myplr().data._pLvlVisited[13] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_HELL)) {
+	} else if (level.currlevel == 13 && !myplr().data._pLvlVisited[13] && plr.isSingleplayer() && !(myplr().data.pDungMsgs & DMSG_HELL)) {
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR99;
@@ -3770,7 +3776,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE99;
 		}
 		myplr().data.pDungMsgs |= DMSG_HELL;
-	} else if (level.currlevel == 16 && !myplr().data._pLvlVisited[15] && gbMaxPlayers == 1 && !(myplr().data.pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
+	} else if (level.currlevel == 16 && !myplr().data._pLvlVisited[15] && plr.isSingleplayer() && !(myplr().data.pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
 		sfxdelay = 40;
 		if (myplr().data._pClass == PC_WARRIOR || myplr().data._pClass == PC_ROGUE || myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_DIABLVLINT;

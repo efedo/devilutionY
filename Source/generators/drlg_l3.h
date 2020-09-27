@@ -19,11 +19,11 @@ extern BOOLEAN lockout[DMAXX][DMAXY];
 
 void AddFenceDoors();
 void FenceDoorFix();
-BOOL DRLG_L3Anvil();
+bool DRLG_L3Anvil();
 void FixL3Warp();
 void FixL3HallofHeroes();
 void DRLG_L3LockRec(int x, int y);
-BOOL DRLG_L3Lockout();
+bool DRLG_L3Lockout();
 void CreateL3Dungeon(DWORD rseed, int entry);
 void LoadL3Dungeon(char *sFileName, int vx, int vy);
 void LoadPreL3Dungeon(char *sFileName, int vx, int vy);

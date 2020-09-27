@@ -893,7 +893,7 @@ TSFX sgSFX[] = {
 
 #define PLRSFXS (sfx_WARRIOR | sfx_ROGUE | sfx_SORCEROR)
 
-BOOL effect_is_playing(int nSFX)
+bool effect_is_playing(int nSFX)
 {
 	TSFX *sfx = &sgSFX[nSFX];
 	if (sfx->pSnd)
@@ -992,7 +992,7 @@ void PlayEffect(int i, int mode)
 	snd_play_snd(snd, lVolume, lPan);
 }
 
-BOOL calc_snd_position(V2Di pos, int *plVolume, int *plPan)
+bool calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 {
 	int pan, volume;
 
@@ -1022,11 +1022,11 @@ void PlaySFX(int psfx)
 	PlaySFX_priv(&sgSFX[psfx], FALSE, { 0, 0 });
 }
 
-void PlaySFX_priv(TSFX *pSFX, BOOL loc, V2Di pos)
+void PlaySFX_priv(TSFX *pSFX, bool loc, V2Di pos)
 {
 	int lPan, lVolume;
 
-	if (myplr().data.pLvlLoad && gbMaxPlayers != 1) {
+	if (myplr().data.pLvlLoad && plr.isMultiplayer()) {
 		return;
 	}
 	if (!gbSndInited || !gbSoundOn || gbBufferMsgs) {
@@ -1057,7 +1057,7 @@ void PlaySFX_priv(TSFX *pSFX, BOOL loc, V2Di pos)
 
 void stream_play(TSFX *pSFX, int lVolume, int lPan)
 {
-	BOOL success;
+	bool success;
 
 	assert(pSFX);
 	assert(pSFX->bFlags & sfx_STREAM);
@@ -1166,9 +1166,9 @@ void effects_cleanup_sfx()
 void sound_init()
 {
 	BYTE mask = 0;
-	if (gbMaxPlayers > 1) {
+	if (plr.isMultiplayer()) {
 		mask = PLRSFXS;
-	} else if (myplr().data._pClass == PC_WARRIOR) {
+	} else if (!plr.maxPlayers() ||	myplr().data._pClass == PC_WARRIOR) {
 		mask = sfx_WARRIOR;
 	} else if (myplr().data._pClass == PC_ROGUE) {
 		mask = sfx_ROGUE;

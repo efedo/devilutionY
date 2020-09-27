@@ -28,7 +28,7 @@ void interface_msg_pump()
 	}
 }
 
-BOOL IncProgress()
+bool IncProgress()
 {
 	interface_msg_pump();
 	sgdwProgress += 23;
@@ -110,7 +110,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABNEXTLVL:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -126,7 +126,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABPREVLVL:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -143,7 +143,7 @@ void ShowProgress(unsigned int uMsg)
 	case WM_DIABSETLVL:
 		SetReturnLvlPos();
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -158,7 +158,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABRTNLVL:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -173,7 +173,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABWARPLVL:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -187,7 +187,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABTOWNWARP:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -203,7 +203,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABTWARPUP:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -219,7 +219,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABRETOWN:
 		IncProgress();
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();

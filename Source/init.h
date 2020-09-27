@@ -30,10 +30,10 @@ void init_archives();
 HANDLE init_test_access(char *mpq_path, char *mpq_name, char *reg_loc, int flags, int fs);
 void init_get_file_info();
 LRESULT MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-void init_activate_window(HWND hWnd, BOOL bActive);
+void init_activate_window(HWND hWnd, bool bActive);
 WNDPROC SetWindowProc(WNDPROC NewProc);
 
-extern BOOL was_window_init;   /** defined in dx.cpp */
+extern bool was_window_init;   /** defined in dx.cpp */
 
 /* rdata */
 

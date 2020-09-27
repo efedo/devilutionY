@@ -23,37 +23,37 @@ extern int uniquetrans;
 extern int nummtypes;
 
 void MissToMonst(int i, V2Di pos);
-BOOL MonstPlace(V2Di p);
+bool MonstPlace(V2Di p);
 void LoadDiabMonsts();
 void InitMonsters();
 void PlaceUniques();
 void SetMapMonsters(BYTE *pMap, V2Di start);
-int AddMonster(V2Di pos, Dir dir, int mtype, BOOL InMap);
+int AddMonster(V2Di pos, Dir dir, int mtype, bool InMap);
 
 void DeleteMonsterList();
 void ProcessMonsters();
 void FreeMonsters();
-BOOL PosOkMissile(V2Di pos);
-BOOL CheckNoSolid(V2Di pos);
-BOOL LineClearF(BOOL (*Clear)(V2Di), V2Di p1, V2Di p2);
-BOOL LineClear(V2Di p1, V2Di p2);
-BOOL LineClearF1(BOOL (*Clear)(int, V2Di), int monst, V2Di p1, V2Di p2);
+bool PosOkMissile(V2Di pos);
+bool CheckNoSolid(V2Di pos);
+bool LineClearF(bool (*Clear)(V2Di), V2Di p1, V2Di p2);
+bool LineClear(V2Di p1, V2Di p2);
+bool LineClearF1(bool (*Clear)(int, V2Di), int monst, V2Di p1, V2Di p2);
 void M_FallenFear(V2Di pos);
 void PrintMonstHistory(int mt);
 void PrintUniqueHistory();
-BOOL PosOkMonst(int i, V2Di pos);
-BOOL PosOkMonst2(int i, V2Di pos);
-BOOL PosOkMonst3(int i, V2Di pos);
+bool PosOkMonst(int i, V2Di pos);
+bool PosOkMonst2(int i, V2Di pos);
+bool PosOkMonst3(int i, V2Di pos);
 void M2MStartHit(int mid, int i, int dam);
 
-BOOL IsSkel(int mt);
-BOOL IsGoat(int mt);
-BOOL CanTalkToMonst(int m);
-BOOL CheckMonsterHit(int m, BOOL *ret);
+bool IsSkel(int mt);
+bool IsGoat(int mt);
+bool CanTalkToMonst(int m);
+bool CheckMonsterHit(int m, bool *ret);
 
 
 int M_SpawnSkel(V2Di pos, Dir dir);
-BOOL SpawnSkeleton(int ii, V2Di pos);
+bool SpawnSkeleton(int ii, V2Di pos);
 int PreSpawnSkeleton();
 
 int encode_enemy(int m);

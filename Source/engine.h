@@ -25,13 +25,13 @@ DEVILUTION_BEGIN_NAMESPACE
 /** automap pixel color 8-bit (palette entry) */
 extern char gbPixelCol;
 /** flip - if y < x */
-extern BOOL gbRotateMap;
+extern bool gbRotateMap;
 /** Seed value before the most recent call to SetRndSeed() */
 extern int orgseed;
 /** Track number of calls to GetRndSeed() since last call to SetRndSeed() */
 extern int SeedCount;
 /** valid - if x/y are in bounds */
-extern BOOL gbNotInView;
+extern bool gbNotInView;
 
 inline BYTE *CelGetFrameStart(BYTE *pCelBuff, int nCel)
 {
@@ -87,7 +87,7 @@ Dir GetDirection(V2Di t1, V2Di t2);
 void SetRndSeed(int s);
 int GetRndSeed();
 int random_(BYTE idx, int v);
-void engine_debug_trap(BOOL show_cursor);
+void engine_debug_trap(bool show_cursor);
 BYTE *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
 BYTE *LoadFileInMem(char *pszName, DWORD *pdwFileLen);

@@ -265,10 +265,10 @@ void Automap::draw()
  */
 void Automap::drawTile(V2Di s, WORD automap_type)
 {
-	BOOL do_vert;
-	BOOL do_horz;
-	BOOL do_cave_horz;
-	BOOL do_cave_vert;
+	bool do_vert;
+	bool do_horz;
+	bool do_cave_horz;
+	bool do_cave_vert;
 	//int t1.x, t1.y, t2.x, t2.y;
 	V2Di t1, t2;
 
@@ -459,8 +459,8 @@ void Automap::drawPlayer()
 	int x, y;
 
 	if (myplr().data._pmode == PM_WALK3) {
-		x = myplr().data._pfut.x;
-		y = myplr().data._pfut.y;
+		x = myplr().futpos().x;
+		y = myplr().futpos().y;
 		if (myplr().data._pdir == Dir::W)
 			x++;
 		else
@@ -530,7 +530,7 @@ void Automap::drawPlayer()
 /**
  * @brief Returns the automap shape at the given coordinate.
  */
-WORD Automap::GetAutomapType(V2Di pos, BOOL view)
+WORD Automap::GetAutomapType(V2Di pos, bool view)
 {
 	WORD rv;
 	int x = pos.x;
@@ -581,7 +581,7 @@ void Automap::drawText()
 	char desc[256];
 	int nextline = 20;
 
-	if (gbMaxPlayers > 1) {
+	if (plr.isMultiplayer()) {
 		strcat(strcpy(desc, "game: "), szPlayerName);
 		PrintGameStr({ 8, 20 }, desc, COL_GOLD);
 		nextline = 35;

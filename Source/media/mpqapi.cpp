@@ -449,7 +449,7 @@ int mpqapi_get_hash_index(short index, int hash_a, int hash_b, int locale)
 	return -1;
 }
 
-void mpqapi_remove_hash_entries(BOOL (*fnGetName)(DWORD, char *))
+void mpqapi_remove_hash_entries(bool (*fnGetName)(DWORD, char *))
 {
 	DWORD dwIndex, i;
 	char pszFileName[MAX_PATH];
@@ -460,7 +460,7 @@ void mpqapi_remove_hash_entries(BOOL (*fnGetName)(DWORD, char *))
 	}
 }
 
-BOOL mpqapi_write_file(const char *pszName, const BYTE *pbData, DWORD dwLen)
+bool mpqapi_write_file(const char *pszName, const BYTE *pbData, DWORD dwLen)
 {
 	_BLOCKENTRY *blockEntry;
 
@@ -504,7 +504,7 @@ _BLOCKENTRY *mpqapi_add_file(const char *pszName, _BLOCKENTRY *pBlk, int block_i
 	return pBlk;
 }
 
-BOOL mpqapi_write_file_contents(const char *pszName, const BYTE *pbData, DWORD dwLen, _BLOCKENTRY *pBlk)
+bool mpqapi_write_file_contents(const char *pszName, const BYTE *pbData, DWORD dwLen, _BLOCKENTRY *pBlk)
 {
 	const char *str_ptr = pszName;
 	const char *tmp;
@@ -634,12 +634,12 @@ void mpqapi_rename(char *pszOld, char *pszNew)
 	}
 }
 
-BOOL mpqapi_has_file(const char *pszName)
+bool mpqapi_has_file(const char *pszName)
 {
 	return FetchHandle(pszName) != -1;
 }
 
-BOOL OpenMPQ(const char *pszArchive, DWORD dwChar)
+bool OpenMPQ(const char *pszArchive, DWORD dwChar)
 {
 	DWORD dwFlagsAndAttributes;
 	DWORD key;
@@ -693,7 +693,7 @@ on_error:
 	return FALSE;
 }
 
-BOOL mpqapi_flush_and_close(const char *pszArchive, BOOL bFree, DWORD dwChar)
+bool mpqapi_flush_and_close(const char *pszArchive, bool bFree, DWORD dwChar)
 {
 	return cur_archive.Close(/*clear_tables=*/bFree);
 }

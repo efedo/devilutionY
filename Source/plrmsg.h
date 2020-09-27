@@ -10,7 +10,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern _plrmsg plr_msgs[PMSG_COUNT];
 
-void plrmsg_delay(BOOL delay);
+void plrmsg_delay(bool delay);
 char *ErrorPlrMsg(const char *pszMsg);
 size_t EventPlrMsg(const char *pszFmt, ...);
 void SendPlrMsg(int pnum, const char *pszStr);

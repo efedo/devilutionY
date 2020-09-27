@@ -12,7 +12,7 @@ DWORD sync_all_monsters(const BYTE *pbBuf, DWORD dwMaxLen)
 {
 	TSyncHeader *pHdr;
 	int i;
-	BOOL sync;
+	bool sync;
 
 	if (nummonsters < 1) {
 		return dwMaxLen;
@@ -57,7 +57,7 @@ void sync_one_monster()
 
 	for (i = 0; i < nummonsters; i++) {
 		m = monstactive[i];
-		sync_word_6AA708[m] = abs(myplr().data._p.x - monsters[m].data._m.x) + abs(myplr().data._p.y - monsters[m].data._m.y);
+		sync_word_6AA708[m] = abs(myplr().pos().x - monsters[m].data._m.x) + abs(myplr().pos().y - monsters[m].data._m.y);
 		if (monsters[m].data._msquelch == 0) {
 			sync_word_6AA708[m] += 0x1000;
 		} else if (sgwLRU[m] != 0) {
@@ -66,7 +66,7 @@ void sync_one_monster()
 	}
 }
 
-BOOL sync_monster_active(TSyncMonster *p)
+bool sync_monster_active(TSyncMonster *p)
 {
 	int i, m, ndx;
 	DWORD lru;
@@ -102,7 +102,7 @@ void sync_monster_pos(TSyncMonster *p, int ndx)
 	sgwLRU[ndx] = monsters[ndx].data._msquelch == 0 ? 0xFFFF : 0xFFFE;
 }
 
-BOOL sync_monster_active2(TSyncMonster *p)
+bool sync_monster_active2(TSyncMonster *p)
 {
 	int i, m, ndx;
 	DWORD lru;
@@ -241,7 +241,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 		}
 	}
 
-	delta = abs(myplr().data._p.x - monsters[ndx].data._m.x) + abs(myplr().data._p.y - monsters[ndx].data._m.y);
+	delta = abs(myplr().pos().x - monsters[ndx].data._m.x) + abs(myplr().pos().y - monsters[ndx].data._m.y);
 	if (delta > 255) {
 		delta = 255;
 	}
@@ -262,14 +262,14 @@ void sync_monster(int pnum, const TSyncMonster *p)
 			md = GetDirection(monsters[ndx].data._m, { p->_mx, p->_my });
 			if (monsters[ndx].DirOK(md)) {
 				monsters[ndx].M_ClearSquares();
-				grid.at(monsters[ndx].data._m).dMonster = ndx + 1;
+				grid.at(monsters[ndx].data._m).setMonster(ndx);
 				monsters[ndx].M_WalkDir(md);
 				monsters[ndx].data._msquelch = UCHAR_MAX;
 			}
 		}
-	} else if (grid[p->_mx][p->_my].dMonster == 0) {
+	} else if (grid[p->_mx][p->_my].getMonster() == 0) {
 		monsters[ndx].M_ClearSquares();
-		grid[p->_mx][p->_my].dMonster = ndx + 1;
+		grid[p->_mx][p->_my].setMonster(ndx);
 		monsters[ndx].data._m = { p->_mx, p->_my };
 		decode_enemy(ndx, p->_menemy);
 		md = GetDirection({ p->_mx, p->_my }, monsters[ndx].data._menemypos);

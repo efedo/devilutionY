@@ -34,7 +34,7 @@ void MonsterManager::ClrAllMonsters()
 		Monst->_mFlags = 0;
 		Monst->_mDelFlag = FALSE;
 		Monst->_menemy = random_(89, gbActivePlayers);
-		Monst->_menemypos = plr[Monst->_menemy].data._pfut;
+		Monst->_menemypos = plr[Monst->_menemy].futpos();
 	}
 }
 
@@ -48,7 +48,7 @@ MonsterInstance &MonsterManager::operator[](size_t n)
 
 void MonsterManager::PlaceMonster(int i, int mtype, V2Di pos)
 {
-	grid.at(pos).dMonster = i + 1;
+	grid.at(pos).setMonster(i);
 	Dir rd = Dir(random_(90, 8));
 	list[i] = MonsterInstance(i, rd, mtype, pos);
 }
@@ -60,7 +60,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	int uniqtype;
 	int count2;
 	char filestr[64];
-	BOOL zharflag, done;
+	bool zharflag, done;
 	UniqMonstStruct *Uniq;
 	MonsterStruct *Monst;
 	int count;
@@ -119,7 +119,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 			}
 		}
 	}
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		if (uniqindex == UMT_LAZURUS) {
 			p = { 32, 46 };
 		}
@@ -150,7 +150,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		done = FALSE;
 		for (p.y = 0; p.y < MAXDUNY && !done; p.y++) {
 			for (p.x = 0; p.x < MAXDUNX && !done; p.x++) {
-				done = grid[p.x][p.y].dPiece == 367;
+				done = grid[p.x][p.y].getPiece() == 367;
 			}
 		}
 	}
@@ -168,7 +168,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	Monst->mName = Uniq->mName;
 	Monst->_mmaxhp = Uniq->mmaxhp << 6;
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		Monst->_mmaxhp = Monst->_mmaxhp >> 1;
 		if (Monst->_mmaxhp < 64) {
 			Monst->_mmaxhp = 64;
@@ -186,7 +186,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	Monst->mtalkmsg = Uniq->mtalkmsg;
 	Monst->mlid = AddLight(Monst->_m, 3);
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		if (Monst->_mAi == AI_LAZHELP)
 			Monst->mtalkmsg = 0;
 		if (Monst->_mAi != AI_LAZURUS || quests[Q_BETRAYER]._qvar1 <= 3) {
@@ -258,7 +258,7 @@ void MonsterManager::PlaceQuestMonsters()
 			PlaceUniqueMonster(UMT_BUTCHER, 0, 0);
 		}
 
-		if (level.currlevel == quests[Q_SKELKING]._qlevel && gbMaxPlayers != 1) {
+		if (level.currlevel == quests[Q_SKELKING]._qlevel && plr.isMultiplayer()) {
 			skeltype = 0;
 
 			for (skeltype = 0; skeltype < nummtypes; skeltype++) {
@@ -303,7 +303,7 @@ void MonsterManager::PlaceQuestMonsters()
 			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
-		if (level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		if (level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 			beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 			beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
 			PlaceUniqueMonster(UMT_LAZURUS, 0, 0);
@@ -328,7 +328,7 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 		while (placed) {
 			nummonsters--;
 			placed--;
-			grid.at(list[nummonsters].data._m).dMonster = 0;
+			grid.at(list[nummonsters].data._m).clearMonster();
 		}
 
 		if (leaderf & 1) {

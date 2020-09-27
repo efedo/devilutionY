@@ -12,7 +12,7 @@ DGrid dgrid;
 
 RECT32 setpc;
 BYTE *pSetPiece;
-BOOL setloadflag;
+bool setloadflag;
 BYTE *pSpecialCels;
 BYTE *pMegaTiles;
 BYTE *pLevelPieces;
@@ -28,8 +28,6 @@ int tile_defs[MAXTILES];
 WORD level_frame_types[MAXTILES];
 int level_frame_sizes[MAXTILES];
 int nlevel_frames;
-
-PieceInventory pieces;
 
 V2Di dmin;
 V2Di dmax;
@@ -54,71 +52,9 @@ int MicroTileLen;
 char TransVal;
 BOOLEAN TransList[256];
 
-//int grid[MAXDUNX][MAXDUNY].dPiece;
-//MICROS grid[MAXDUNX][MAXDUNY].dpiece_defs_map_2;
 MICROS dpiece_defs_map_1[MAXDUNX * MAXDUNY];
-//char grid[MAXDUNX][MAXDUNY].dTransVal;
-//char grid[MAXDUNX][MAXDUNY].dLight;
-//char grid[MAXDUNX][MAXDUNY].dPreLight;
-//char grid[MAXDUNX][MAXDUNY].dFlags;
-//char grid[MAXDUNX][MAXDUNY].dPlayer;
-//int grid[MAXDUNX][MAXDUNY].dMonster;
-//char grid[MAXDUNX][MAXDUNY].dDead;
-//char grid[MAXDUNX][MAXDUNY].dObject;
-//char grid[MAXDUNX][MAXDUNY].dItem;
-//char grid[MAXDUNX][MAXDUNY].dMissile;
-//char grid[MAXDUNX][MAXDUNY].dSpecial;
 int themeCount;
 THEME_LOC themeLoc[MAXTHEMES];
-
-void FillSolidBlockTbls()
-{
-	BYTE bv;
-	DWORD dwTiles;
-	BYTE *pSBFile, *pTmp;
-	int i;
-
-	pieces.clear();
-
-	switch (level.leveltype) {
-	case DTYPE_TOWN:
-		pSBFile = LoadFileInMem("Levels\\TownData\\Town.SOL", &dwTiles);
-		break;
-	case DTYPE_CATHEDRAL:
-		pSBFile = LoadFileInMem("Levels\\L1Data\\L1.SOL", &dwTiles);
-		break;
-	case DTYPE_CATACOMBS:
-		pSBFile = LoadFileInMem("Levels\\L2Data\\L2.SOL", &dwTiles);
-		break;
-	case DTYPE_CAVES:
-		pSBFile = LoadFileInMem("Levels\\L3Data\\L3.SOL", &dwTiles);
-		break;
-	case DTYPE_HELL:
-		pSBFile = LoadFileInMem("Levels\\L4Data\\L4.SOL", &dwTiles);
-		break;
-	default:
-		app_fatal("FillSolidBlockTbls");
-	}
-
-	pTmp = pSBFile;
-
-	for (i = 1; i <= dwTiles; i++) {
-		bv = *pTmp++;
-		if (bv & 1)
-			pieces[i].nSolidTable = TRUE;
-		if (bv & 2)
-			pieces[i].nBlockTable = TRUE;
-		if (bv & 4)
-			pieces[i].nMissileTable = TRUE;
-		if (bv & 8)
-			pieces[i].nTransTable = TRUE;
-		if (bv & 0x80)
-			pieces[i].nTrapTable = TRUE;
-		block_lvid[i] = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
-	}
-
-	mem_free_dbg(pSBFile);
-}
 
 void SetDungeonMicros()
 {
@@ -139,10 +75,9 @@ void SetDungeonMicros()
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {
-			lv = grid[x][y].dPiece;
 			pMap = &grid[x][y].dpiece_defs_map_2;
-			if (lv != 0) {
-				lv--;
+			if (grid[x][y].isPiece()) {
+				lv = grid[x][y].getPiece();
 				if (level.leveltype != DTYPE_HELL && level.leveltype != DTYPE_TOWN)
 					pPiece = (WORD *)&pLevelPieces[20 * lv];
 				else
@@ -269,13 +204,13 @@ void Make_SetPC(int x, int y, int w, int h)
 	}
 }
 
-BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, int *width, int *height)
+bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, int *width, int *height)
 {
 	int ii, xx, yy;
 	int xSmallest, ySmallest;
 	int xArray[20], yArray[20];
 	int xCount, yCount;
-	BOOL yFlag, xFlag;
+	bool yFlag, xFlag;
 
 	yFlag = TRUE;
 	xFlag = TRUE;
@@ -537,7 +472,7 @@ void DRLG_HoldThemeRooms()
 	}
 }
 
-BOOL SkipThemeRoom(int x, int y)
+bool SkipThemeRoom(int x, int y)
 {
 	int i;
 

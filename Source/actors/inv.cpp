@@ -7,9 +7,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BOOL invflag;
+bool invflag;
 BYTE *pInvCels;
-BOOL drawsbarflag;
+bool drawsbarflag;
 int sgdwLastTime; // check name
 
 /**
@@ -154,7 +154,7 @@ void InvDrawSlotBack(RECT32 r)
 
 void DrawInv()
 {
-	BOOL invtest[NUM_INV_GRID_ELEM];
+	bool invtest[NUM_INV_GRID_ELEM];
 	int frame, frame_width, color, i, j, ii;
 	V2Di screen;
 	BYTE *pBuff;
@@ -449,10 +449,10 @@ PlayerInventory::PlayerInventory(Player &new_owner)
 } 
 
 
-BOOL PlayerInventory::AutoPlace(int ii, V2Di size, BOOL saveflag)
+bool PlayerInventory::AutoPlace(int ii, V2Di size, bool saveflag)
 {
 	int i, j, xx, yy;
-	BOOL done;
+	bool done;
 
 	done = TRUE;
 	yy = 10 * (ii / 10);
@@ -504,13 +504,13 @@ BOOL PlayerInventory::AutoPlace(int ii, V2Di size, BOOL saveflag)
 	return done;
 }
 
-BOOL PlayerInventory::SpecialAutoPlace(int ii, V2Di pos, BOOL saveflag)
+bool PlayerInventory::SpecialAutoPlace(int ii, V2Di pos, bool saveflag)
 {
 	int sx = pos.x;
 	int sy = pos.y;
 
 	int i, j, xx, yy;
-	BOOL done;
+	bool done;
 
 	done = TRUE;
 	yy = 10 * (ii / 10);
@@ -574,9 +574,9 @@ BOOL PlayerInventory::SpecialAutoPlace(int ii, V2Di pos, BOOL saveflag)
 	return done;
 }
 
-BOOL PlayerInventory::GoldAutoPlace()
+bool PlayerInventory::GoldAutoPlace()
 {
-	BOOL done;
+	bool done;
 	int i, ii;
 	int xx, yy;
 
@@ -639,7 +639,7 @@ BOOL PlayerInventory::GoldAutoPlace()
 	return done;
 }
 
-BOOL PlayerInventory::WeaponAutoPlace()
+bool PlayerInventory::WeaponAutoPlace()
 {
 	if (owner.data.HoldItem._iLoc != ILOC_TWOHAND) {
 		if (owner.data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && owner.data.InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON)
@@ -683,7 +683,7 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 
 	int r, sx, sy;
 	int i, j, xx, yy, ii;
-	BOOL done, done2h;
+	bool done, done2h;
 	int il, cn, it, iv, ig, gt;
 	ItemStruct tempitem;
 
@@ -809,7 +809,7 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 	if (!done)
 		return;
 
-	if (owner.isLocal())
+	if (owner.isMyPlr())
 		PlaySFX(ItemInvSnds[ItemCAnimTbl[owner.data.HoldItem._iCurs]]);
 
 	cn = CURSOR_HAND;
@@ -899,7 +899,7 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 				owner.data.HoldItem = owner.data.InvBody[INVLOC_HAND_RIGHT];
 			else
 				owner.data.HoldItem = owner.data.InvBody[INVLOC_HAND_LEFT];
-			if (owner.isLocal())
+			if (owner.isMyPlr())
 				SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			else
 				SetICursor(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
@@ -907,7 +907,7 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 			for (i = 0; i < NUM_INV_GRID_ELEM && !done2h; i++)
 				done2h = AutoPlace(i, { icursW28, icursH28 }, TRUE);
 			owner.data.HoldItem = tempitem;
-			if (owner.isLocal())
+			if (owner.isMyPlr())
 				SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			else
 				SetICursor(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
@@ -1077,14 +1077,14 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 		break;
 	}
 	CalcPlrInv(owner.id(), TRUE);
-	if (owner.isLocal()) {
+	if (owner.isMyPlr()) {
 		if (cn == 1)
 			SetCursorPos(Mouse.x + (cursW >> 1), Mouse.y + (cursH >> 1));
 		SetCursor_(cn);
 	}
 }
 
-void PlayerInventory::CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, BOOL bId)
+void PlayerInventory::CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, bool bId)
 {
 	PlayerStruct *p;
 
@@ -1116,7 +1116,7 @@ void PlayerInventory::CheckInvCut(V2Di pos)
 	int my = pos.y;
 
 	int r;
-	BOOL done;
+	bool done;
 	char ii;
 	int iv, i, j, offs, ig;
 	Player & owner = myplr();
@@ -1262,7 +1262,7 @@ void PlayerInventory::CheckInvCut(V2Di pos)
 		CalcPlrInv(owner.id(), TRUE);
 		owner.inventory.CheckItemStats();
 
-		if (owner.isLocal()) {
+		if (owner.isMyPlr()) {
 			PlaySFX(IS_IGRAB);
 			SetCursor_(owner.data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 			SetCursorPos(mx - (cursW >> 1), Mouse.y - (cursH >> 1));
@@ -1478,15 +1478,15 @@ void PlayerInventory::InvGetItem(int ii)
 		dropGoldValue = 0;
 	}
 
-	if (grid[item[ii]._i.x][item[ii]._i.y].dItem != 0) {
-		if (owner.isLocal() && pcurs >= CURSOR_FIRSTITEM)
-			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, myplr().data._p.x, myplr().data._p.y);
+	if (grid[item[ii]._i.x][item[ii]._i.y].isItem()) {
+		if (owner.isMyPlr() && pcurs >= CURSOR_FIRSTITEM)
+			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, myplr().pos().x, myplr().pos().y);
 		item[ii]._iCreateInfo &= ~0x8000;
 		owner.data.HoldItem = item[ii];
 		CheckQuestItem();
 		CheckBookLevel();
 		CheckItemStats();
-		grid[item[ii]._i.x][item[ii]._i.y].dItem = 0;
+		grid[item[ii]._i.x][item[ii]._i.y].clearItem();
 		i = 0;
 		while (i < numitems) {
 			if (itemactive[i] == ii) {
@@ -1505,7 +1505,7 @@ void PlayerInventory::AutoGetItem(int ii)
 {
 	int i, idx;
 	int w, h;
-	BOOL done;
+	bool done;
 
 	if (pcurs != CURSOR_HAND) {
 		return;
@@ -1517,7 +1517,7 @@ void PlayerInventory::AutoGetItem(int ii)
 	}
 
 	if (ii != MAXITEMS) {
-		if (grid[item[ii]._i.x][item[ii]._i.y].dItem == 0)
+		if (grid[item[ii]._i.x][item[ii]._i.y].isItem())
 			return;
 	}
 
@@ -1609,7 +1609,7 @@ void PlayerInventory::AutoGetItem(int ii)
 		}
 	}
 	if (done) {
-		grid[item[ii]._i.x][item[ii]._i.y].dItem = 0;
+		grid[item[ii]._i.x][item[ii]._i.y].clearItem();
 		i = 0;
 		while (i < numitems) {
 			if (itemactive[i] == ii) {
@@ -1620,7 +1620,7 @@ void PlayerInventory::AutoGetItem(int ii)
 			}
 		}
 	} else {
-		if (owner.isLocal()) {
+		if (owner.isMyPlr()) {
 			if (owner.data._pClass == PC_WARRIOR) {
 				PlaySFX(random_(0, 3) + PS_WARR14);
 			} else if (owner.data._pClass == PC_ROGUE) {
@@ -1662,8 +1662,8 @@ void SyncGetItem(V2Di pos, int idx, WORD ci, int iseed)
 	int y = pos.y;
 	int i, ii;
 
-	if (grid[x][y].dItem) {
-		ii = grid[x][y].dItem - 1;
+	if (grid[x][y].isItem()) {
+		ii = grid[x][y].getItem();
 		if (item[ii].IDidx == idx
 		    && item[ii]._iSeed == iseed
 		    && item[ii]._iCreateInfo == ci) {
@@ -1676,7 +1676,7 @@ void SyncGetItem(V2Di pos, int idx, WORD ci, int iseed)
 	}
 
 	if (ii != -1) {
-		grid[item[ii]._i.x][item[ii]._i.y].dItem = 0;
+		grid[item[ii]._i.x][item[ii]._i.y].clearItem();
 		i = 0;
 		while (i < numitems) {
 			if (itemactive[i] == ii) {
@@ -1694,61 +1694,52 @@ void SyncGetItem(V2Di pos, int idx, WORD ci, int iseed)
 	}
 }
 
-BOOL CanPut(V2Di pos)
+bool CanPut(V2Di p)
 {
-	char oi, oi2;
-	int x = pos.x;
-	int y = pos.y;
-
-	if (grid[x][y].dItem)
+	if (grid.at(p).isItem())
 		return FALSE;
-	if (pieces[grid[x][y].dPiece].nSolidTable)
+	if (grid.at(p).isSolid())
 		return FALSE;
 
-	if (grid[x][y].dObject != 0) {
-		if (object[grid[x][y].dObject > 0 ? grid[x][y].dObject - 1 : -1 - grid[x][y].dObject]._oSolidFlag)
-			return FALSE;
+	if (grid.at(p).isObject()) {
+		uint8_t oi = grid.at(p).getObject();
+		if (object[oi]._oSolidFlag) return FALSE;
 	}
 
-	oi = grid[x + 1][y + 1].dObject;
-	if (oi > 0 && object[oi - 1]._oSelFlag != 0) {
-		return FALSE;
-	}
-	if (oi < 0 && object[-(oi + 1)]._oSelFlag != 0) {
-		return FALSE;
+	V2Di f = p + V2Di(1, 1);
+	if (grid.at(f).isObject()) {
+		uint8_t oi = grid.at(f).getObject();
+		if (object[oi]._oSelFlag != 0) return FALSE;
 	}
 
-	oi = grid[x + 1][y].dObject;
-	if (oi > 0) {
-		oi2 = grid[x][y + 1].dObject;
-		if (oi2 > 0 && object[oi - 1]._oSelFlag != 0 && object[oi2 - 1]._oSelFlag != 0)
-			return FALSE;
+	V2Di g = p + V2Di(1, 0);
+	if (grid.at(g).isObject()) {
+		uint8_t oi = grid.at(g).getObject();
+		if (object[oi]._oSelFlag != 0) return FALSE;
 	}
 
-	if (level.currlevel == 0 && grid[x][y].dMonster != 0)
-		return FALSE;
-	if (level.currlevel == 0 && grid[x + 1][y + 1].dMonster != 0)
-		return FALSE;
+	if (level.currlevel == 0 && !grid.at(p).isMonster()) return FALSE;
+	if (level.currlevel == 0 && !grid.at(f).isMonster()) return FALSE;
 
 	return TRUE;
 }
 
-BOOL TryInvPut()
+bool TryInvPut()
 {
 	if (numitems >= 127) return FALSE;
 	Dir dir = GetDirection(myplr().pos(), cursm);
 	V2Di off = offset(dir);
-	if (CanPut(myplr().data._p + off)) {
+	if (CanPut(myplr().pos() + off)) {
 		return TRUE;
 	}
 
 	//dir = (dir - 1) & 7;
-	if (CanPut(myplr().data._p + off)) {
+	if (CanPut(myplr().pos() + off)) {
 		return TRUE;
 	}
 
 	//dir = (dir + 2) & 7;
-	if (CanPut(myplr().data._p + off)) {
+	if (CanPut(myplr().pos() + off)) {
 		return TRUE;
 	}
 	return CanPut(myplr().pos());
@@ -1774,22 +1765,22 @@ int PlayerInventory::_PrepPutItem(V2Di &pos)
 
 	Dir d2 = GetDirection(owner.pos(), pos);
 	V2Di off = offset(d2);
-	n = pos - owner.data._p;
+	n = pos - owner.pos();
 	if (abs(n.x) > 1 || abs(n.y) > 1) {
-		pos = owner.data._p + off;
+		pos = owner.pos() + off;
 	}
 	if (!CanPut(pos)) {
 		//d = (d - 1) & 7;
-		pos = owner.data._p + off;
+		pos = owner.pos() + off;
 		if (!CanPut(pos)) {
 			//d = (d + 2) & 7;
-			pos = owner.data._p + off;
+			pos = owner.pos() + off;
 			if (!CanPut(pos)) {
 				for (l = 1; l < 50; l++) {
 					for (j = -l; j <= l; j++) {
-						p.y = j + owner.data._p.y;
+						p.y = j + owner.pos().y;
 						for (i = -l; i <= l; i++) {
-							p.x = i + owner.data._p.x;
+							p.x = i + owner.pos().x;
 							if (CanPut(p)) {
 								pos = p;
 								goto valid;
@@ -1803,7 +1794,7 @@ int PlayerInventory::_PrepPutItem(V2Di &pos)
 	}
 	valid:
 	int ii = itemavail[0];
-	grid[pos.x][pos.y].dItem = ii + 1;
+	grid[pos.x][pos.y].setItem(ii);
 	itemavail[0] = itemavail[MAXITEMS - (numitems + 1)];
 	itemactive[numitems] = ii;
 	return ii;
@@ -1968,7 +1959,7 @@ void PlayerInventory::RemoveScroll()
 	}
 }
 
-BOOL UseScroll()
+bool UseScroll()
 {
 	int i;
 
@@ -2006,7 +1997,7 @@ void PlayerInventory::UseStaffCharge()
 	}
 }
 
-BOOL UseStaff()
+bool UseStaff()
 {
 	if (pcurs == CURSOR_HAND) {
 		if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
@@ -2033,13 +2024,13 @@ void StartGoldDrop()
 		control_reset_talk();
 }
 
-BOOL PlayerInventory::UseInvItem(int cii)
+bool PlayerInventory::UseInvItem(int cii)
 {
 	int c, idata;
 	ItemStruct *Item;
-	BOOL speedlist;
+	bool speedlist;
 
-	if (owner.data._pInvincible && !owner.data._pHitPoints && owner.isLocal())
+	if (owner.data._pInvincible && !owner.data._pHitPoints && owner.isMyPlr())
 		return TRUE;
 	if (pcurs != CURSOR_HAND)
 		return TRUE;
@@ -2119,7 +2110,7 @@ BOOL PlayerInventory::UseInvItem(int cii)
 	idata = ItemCAnimTbl[Item->_iCurs];
 	if (Item->_iMiscId == IMISC_BOOK)
 		PlaySFX(IS_RBOOK);
-	else if (owner.isLocal())
+	else if (owner.isMyPlr())
 		PlaySFX(ItemInvSnds[idata]);
 
 	UseItem(owner.id(), Item->_iMiscId, Item->_iSpell);
@@ -2162,11 +2153,11 @@ int PlayerInventory::CalculateGold()
 		if (owner.data.InvList[i]._itype == ITYPE_GOLD)
 			gold += owner.data.InvList[i]._ivalue;
 	}
-
+	assert(gold >= 0);
 	return gold;
 }
 
-BOOL DropItemBeforeTrig()
+bool DropItemBeforeTrig()
 {
 	if (TryInvPut()) {
 		NetSendCmdPItem(TRUE, CMD_PUTITEM, cursm.x, cursm.y);

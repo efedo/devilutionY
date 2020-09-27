@@ -17,14 +17,14 @@ extern int sfxdnum;
 extern HANDLE sghStream;
 extern TSFX *sgpStreamSFX;
 
-BOOL effect_is_playing(int nSFX);
+bool effect_is_playing(int nSFX);
 void stream_stop();
 void InitMonsterSND(int monst);
 void FreeMonsterSnd();
 void PlayEffect(int i, int mode);
-BOOL calc_snd_position(V2Di pos, int *plVolume, int *plPan);
+bool calc_snd_position(V2Di pos, int *plVolume, int *plPan);
 void PlaySFX(int psfx);
-void PlaySFX_priv(TSFX *pSFX, BOOL loc, V2Di pos);
+void PlaySFX_priv(TSFX *pSFX, bool loc, V2Di pos);
 void stream_play(TSFX *pSFX, int lVolume, int lPan);
 int RndSFX(int psfx);
 void PlaySfxLoc(int psfx, V2Di pos);

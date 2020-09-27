@@ -14,7 +14,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern BYTE L5dungeon[80][80];
 extern BYTE L5dflags[DMAXX][DMAXY];
-extern BOOL L5setloadflag;
+extern bool L5setloadflag;
 extern int HR1;
 extern int HR2;
 extern int HR3;

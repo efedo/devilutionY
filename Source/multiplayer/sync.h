@@ -15,9 +15,9 @@ extern int sgnSyncItem;
 
 DWORD sync_all_monsters(const BYTE *pbBuf, DWORD dwMaxLen);
 void sync_one_monster();
-BOOL sync_monster_active(TSyncMonster *p);
+bool sync_monster_active(TSyncMonster *p);
 void sync_monster_pos(TSyncMonster *p, int ndx);
-BOOL sync_monster_active2(TSyncMonster *p);
+bool sync_monster_active2(TSyncMonster *p);
 void SyncPlrInv(TSyncHeader *pHdr);
 DWORD sync_update(int pnum, const BYTE *pbBuf);
 void sync_monster(int pnum, const TSyncMonster *p);

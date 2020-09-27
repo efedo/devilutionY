@@ -12,29 +12,29 @@ V2Di::V2Di(int nx, int ny)
 {
 }
 
-int V2Di::maxdim()
+int V2Di::maxdim() const
 {
 	return (x > y) ? x : y;
 }
 
-int V2Di::maxabs()
+int V2Di::maxabs() const
 {
 	return (::abs(x) > ::abs(y)) ? ::abs(x) : ::abs(y);
 }
 
-V2Di V2Di::abs()
+V2Di V2Di::abs() const
 {
 	return V2Di(::abs(x), ::abs(y));
 }
 
 V2Di operator+(const V2Di &lhs, const V2Di &rhs)
 {
-	return V2Di(lhs.x + rhs.y, lhs.y + rhs.y);
+	return V2Di(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
 V2Di operator-(const V2Di &lhs, const V2Di &rhs)
 {
-	return V2Di(lhs.x - rhs.y, lhs.y - rhs.y);
+	return V2Di(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
 V2Di operator-(const V2Di &lhs)

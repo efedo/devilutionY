@@ -11,7 +11,7 @@ SDL_Color orig_palette[256];
 /* data */
 
 int gamma_correction = 100;
-BOOL color_cycling_enabled = TRUE;
+bool color_cycling_enabled = TRUE;
 BOOLEAN sgbFadedIn = TRUE;
 
 void palette_update()
@@ -222,12 +222,12 @@ void palette_update_quest_palette(int n)
 	palette_update();
 }
 
-BOOL palette_get_color_cycling()
+bool palette_get_color_cycling()
 {
 	return color_cycling_enabled;
 }
 
-BOOL palette_set_color_cycling(BOOL enabled)
+bool palette_set_color_cycling(bool enabled)
 {
 	color_cycling_enabled = enabled;
 	return enabled;

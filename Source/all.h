@@ -17,7 +17,8 @@
 #include "sdl_compat.h"
 
 #include "../types.h"
-
+#include "actors/actor.h"
+#include "appfat.h"
 #include "appfat.h"
 #include "automap.h"
 #include "capture.h"
@@ -75,7 +76,9 @@
 #include "micropather/pathfinder.h"
 #include "micropather/micropather.h"
 #include "pfile.h"
-#include "actors/player.h"
+#include "grid/pieces.h"
+#include "actors/player_instance.h"
+#include "actors/player_manager.h"
 #include "plrmsg.h"
 #include "portal.h"
 #include "quests.h"

@@ -16,11 +16,11 @@ extern BOOLEAN gbSomebodyWonGameKludge;
 extern char szPlayerDescript[128];
 extern WORD sgwPackPlrOffsetTbl[MAX_PLRS];
 extern PkPlayerStruct netplr[MAX_PLRS];
-extern BOOL gbShouldValidatePackage;
+extern bool gbShouldValidatePackage;
 extern BYTE gbActivePlayers;
 extern BOOLEAN gbGameDestroyed;
 extern BOOLEAN gbSelectProvider;
-extern BYTE gbMaxPlayers;
+//extern BYTE gbMaxPlayers;
 extern char szPlayerName[128];
 extern BYTE gbDeltaSender;
 extern int player_state[MAX_PLRS];
@@ -50,17 +50,17 @@ void multi_handle_all_packets(int pnum, BYTE *pData, int nSize);
 void multi_process_tmsgs();
 void multi_send_zero_packet(int pnum, BYTE bCmd, BYTE *pbSrc, DWORD dwLen);
 void NetClose();
-void multi_event_handler(BOOL add);
+void multi_event_handler(bool add);
 void multi_handle_events(_SNETEVENT *pEvt);
-BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram);
+bool NetInit(bool bSinglePlayer, bool *pfExitProgram);
 void buffer_init(TBuffer *pBuf);
 void multi_send_pinfo(int pnum, char cmd);
 int InitLevelType(int l);
 void SetupLocalCoords();
-BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info);
-BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, BOOL *pfExitProgram);
-BOOL multi_upgrade(BOOL *pfExitProgram);
-void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv);
+bool multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info);
+bool multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, bool *pfExitProgram);
+bool multi_upgrade(bool *pfExitProgram);
+void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv);
 
 /* rdata */
 

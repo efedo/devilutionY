@@ -184,7 +184,7 @@ __attribute__((no_sanitize("shift-base")))
  * @brief Blit current world CEL to the given buffer
  * @param pBuff Output buffer
  */
-void RenderTile(BYTE *pBuff)
+void RenderTile(BYTE *pBuff, int level_piece_id)
 {
 	int i, j;
 	char c, v, tile;
@@ -308,6 +308,16 @@ void RenderTile(BYTE *pBuff)
  */
 void world_draw_black_tile(int sx, int sy)
 {
+	world_draw_color_tile(sx, sy, 0);
+}
+
+void world_draw_red_tile(int sx, int sy)
+{
+	world_draw_color_tile(sx, sy, 50);
+}
+
+void world_draw_color_tile(int sx, int sy, const uint8_t color)
+{
 	int i, j, k;
 	BYTE *dst;
 
@@ -321,14 +331,15 @@ void world_draw_black_tile(int sx, int sy)
 
 	for (i = TILE_HEIGHT - 2, j = 1; i >= 0; i -= 2, j++, dst -= BUFFER_WIDTH + 2) {
 		if (dst < gpBufEnd)
-			memset(dst, 0, 4 * j);
+			memset(dst, color, 4 * j);
 	}
 	dst += 4;
 	for (i = 2, j = TILE_HEIGHT / 2 - 1; i != TILE_HEIGHT; i += 2, j--, dst -= BUFFER_WIDTH - 2) {
 		if (dst < gpBufEnd)
-			memset(dst, 0, 4 * j);
+			memset(dst, color, 4 * j);
 	}
 }
+
 
 /**
  * Draws a half-transparent rectangle by blacking out odd pixels on odd lines,

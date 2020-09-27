@@ -13,7 +13,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //#endif
 
 extern char sz_error_buf[256];
-extern BOOL terminating;
+extern bool terminating;
 extern int cleanup_thread_id;
 
 void TriggerBreak();

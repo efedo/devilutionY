@@ -11,27 +11,27 @@ BYTE sgbNextTalkSave;
 BYTE sgbTalkSavePos;
 BYTE *pDurIcons;
 BYTE *pChrButtons;
-BOOL drawhpflag;
-BOOL dropGoldFlag;
-BOOL panbtn[8];
-BOOL chrbtn[4];
+bool drawhpflag;
+bool dropGoldFlag;
+bool panbtn[8];
+bool chrbtn[4];
 BYTE *pMultiBtns;
 BYTE *pPanelButtons;
 BYTE *pChrPanel;
-BOOL lvlbtndown;
+bool lvlbtndown;
 char sgszTalkSave[8][80];
 int dropGoldValue;
-BOOL drawmanaflag;
-BOOL chrbtnactive;
+bool drawmanaflag;
+bool chrbtnactive;
 char sgszTalkMsg[MAX_SEND_STR_LEN];
 BYTE *pPanelText;
 BYTE *pLifeBuff;
 BYTE *pBtmBuff;
 BYTE *pTalkBtns;
-BOOL pstrjust[4];
+bool pstrjust[4];
 int pnumlines;
-BOOL pinfoflag;
-BOOL talkbtndown[3];
+bool pinfoflag;
+bool talkbtndown[3];
 int pSpell;
 BYTE *pManaBuff;
 char infoclr;
@@ -43,23 +43,23 @@ BOOLEAN whisper[MAX_PLRS];
 int sbooktab;
 int pSplType;
 int initialDropGoldIndex;
-BOOL talkflag;
+bool talkflag;
 BYTE *pSBkIconCels;
-BOOL sbookflag;
-BOOL chrflag;
-BOOL drawbtnflag;
+bool sbookflag;
+bool chrflag;
+bool drawbtnflag;
 BYTE *pSpellBkCel;
 char infostr[256];
 int numpanbtns;
 BYTE *pStatusPanel;
 char panelstr[4][64];
-BOOL panelflag;
+bool panelflag;
 BYTE SplTransTbl[256];
 int initialDropGoldValue;
 BYTE *pSpellCels;
-BOOL panbtndown;
+bool panbtndown;
 BYTE *pTalkPanel;
-BOOL spselflag;
+bool spselflag;
 
 /** Maps from font index to smaltext.cel frame number. */
 const BYTE fontframe[128] = {
@@ -552,7 +552,7 @@ void PrintChar(V2Di s, int nCel, char col)
 	CelDrawLight(s, pPanelText, nCel, 13, tbl);
 }
 
-void AddPanelString(char *str, BOOL just)
+void AddPanelString(char *str, bool just)
 {
 	strcpy(panelstr[pnumlines], str);
 	pstrjust[pnumlines] = just;
@@ -759,7 +759,7 @@ void InitControlPan()
 {
 	int i;
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		pBtmBuff = DiabloAllocPtr((PANEL_HEIGHT + 16) * PANEL_WIDTH);
 		memset(pBtmBuff, 0, (PANEL_HEIGHT + 16) * PANEL_WIDTH);
 	} else {
@@ -782,7 +782,7 @@ void InitControlPan()
 	CelBlitWidth(pManaBuff, { 0, 87 }, 88, pStatusPanel, 2, 88);
 	MemFreeDbg(pStatusPanel);
 	talkflag = FALSE;
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		pTalkPanel = LoadFileInMem("CtrlPan\\TalkPanl.CEL", NULL);
 		CelBlitWidth(pBtmBuff, { 0, (PANEL_HEIGHT + 16) * 2 - 1 }, PANEL_WIDTH, pTalkPanel, 1, PANEL_WIDTH);
 		MemFreeDbg(pTalkPanel);
@@ -801,7 +801,7 @@ void InitControlPan()
 	for (i = 0; i < sizeof(panbtn) / sizeof(panbtn[0]); i++)
 		panbtn[i] = FALSE;
 	panbtndown = FALSE;
-	if (gbMaxPlayers == 1)
+	if (plr.isSingleplayer())
 		numpanbtns = 6;
 	else
 		numpanbtns = 8;
@@ -970,7 +970,7 @@ void control_check_btn_press()
 
 void DoAutoMap()
 {
-	if (level.currlevel != 0 || gbMaxPlayers != 1) {
+	if (level.currlevel != 0 || plr.isMultiplayer()) {
 		if (!automap.enabled())
 			automap.start();
 		else
@@ -1176,7 +1176,7 @@ void FreeControlPan()
 	MemFreeDbg(pGBoxBuff);
 }
 
-BOOL control_WriteStringToBuffer(BYTE *str)
+bool control_WriteStringToBuffer(BYTE *str)
 {
 	int k;
 	BYTE ichar;
@@ -1279,7 +1279,7 @@ void PrintInfo()
 	}
 }
 
-void CPrintString(int y, char *str, BOOL center, int lines)
+void CPrintString(int y, char *str, bool center, int lines)
 {
 	BYTE c;
 	char *tmp;
@@ -1760,7 +1760,7 @@ void RedBack()
 	}
 }
 
-char GetSBookTrans(int ii, BOOL townok)
+char GetSBookTrans(int ii, bool townok)
 {
 	char st;
 
@@ -1845,7 +1845,7 @@ void DrawSpellBook()
 	}
 }
 
-void PrintSBookStr(V2Di pos, BOOL cjustflag, char *pszStr, char col)
+void PrintSBookStr(V2Di pos, bool cjustflag, char *pszStr, char col)
 {
 	BYTE c;
 	char *tmp;
@@ -2098,7 +2098,7 @@ char *control_print_talk_msg(char *msg, int *x, int y, int color)
 	return NULL;
 }
 
-BOOL control_check_talk_btn()
+bool control_check_talk_btn()
 {
 	int i;
 
@@ -2159,7 +2159,7 @@ void control_type_message()
 {
 	int i;
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		return;
 	}
 
@@ -2181,11 +2181,11 @@ void control_reset_talk()
 	force_redraw = 255;
 }
 
-BOOL control_talk_last_key(int vkey)
+bool control_talk_last_key(int vkey)
 {
 	int result;
 
-	if (gbMaxPlayers == 1)
+	if (plr.isSingleplayer())
 		return FALSE;
 
 	if (!talkflag)
@@ -2202,12 +2202,12 @@ BOOL control_talk_last_key(int vkey)
 	return TRUE;
 }
 
-BOOL control_presskeys(int vkey)
+bool control_presskeys(int vkey)
 {
 	int len;
-	BOOL ret;
+	bool ret;
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		if (!talkflag) {
 			ret = FALSE;
 		} else {

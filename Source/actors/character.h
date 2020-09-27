@@ -9,7 +9,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 // These are all character class templates
 
-class CharType {
+class CharType : public ActorType {
 public:
 	std::array<char, 11> PlrGFXAnimLens;
 	int PWVel[3] = { 2048, 1024, 512 };

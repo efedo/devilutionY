@@ -78,9 +78,9 @@ void UseMana(int id, int sn)
 	}
 }
 
-BOOL CheckSpell(int id, int sn, char st, BOOL manaonly)
+bool CheckSpell(int id, int sn, char st, bool manaonly)
 {
-	BOOL result;
+	bool result;
 
 #ifdef _DEBUG
 	if (debug_mode_key_inverted_v)
@@ -145,11 +145,11 @@ static void PlacePlayer(int pnum)
 	V2Di n, p;
 	int max, min, x, y;
 	DWORD i;
-	BOOL done;
+	bool done;
 
 	if (plr[pnum].data.plrlevel == level.currlevel) {
 		for (i = 0; i < 8; i++) {
-			n = plr[pnum].data._p + plroff2[i];
+			n = plr[pnum].pos() + plroff2[i];
 
 			if (PosOkPlayer(pnum, n)) {
 				break;
@@ -161,9 +161,9 @@ static void PlacePlayer(int pnum)
 
 			for (max = 1, min = -1; min > -50 && !done; max++, min--) {
 				for (y = min; y <= max && !done; y++) {
-					n.y = plr[pnum].data._p.y + y;
+					n.y = plr[pnum].pos().y + y;
 					for (x = min; x <= max && !done; x++) {
-						n.x = plr[pnum].data._p.x + x;
+						n.x = plr[pnum].pos().x + x;
 						if (PosOkPlayer(pnum, n)) {
 							done = TRUE;
 						}
@@ -172,12 +172,8 @@ static void PlacePlayer(int pnum)
 			}
 		}
 
-		plr[pnum].data._p = n;
-		grid.at(n).dPlayer = pnum + 1;
-
-		if (pnum == myplr()) {
-			View = n;
-		}
+		plr[pnum].changePos(n);
+		if (pnum == myplr()) View = n;
 	}
 }
 

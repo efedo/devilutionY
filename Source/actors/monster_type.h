@@ -13,7 +13,7 @@ public:
 	MonsterType(int new_monst = 0)
 	{
 	}
-	void InitMonsterTRN(BOOL special);
+	void InitMonsterTRN(bool special);
 	void InitMonsterGFX();
 	CMonster data;
 };

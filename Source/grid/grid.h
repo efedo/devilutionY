@@ -14,7 +14,8 @@ class Grid {
 public:
 	Tile &at(V2Di pos);
 	Tile &at(const size_t x, const size_t y);
-	Tile* &operator[](const size_t n);
+	Tile* operator[](const size_t n);
+	bool isValid(V2Di pos); // is a valid position
 
 	// Setup
 	void clearTrans();
@@ -23,12 +24,6 @@ public:
 	void lightToPrelight();
 	void init(char light);
 	void initTown();
-
-	// Change player
-	void movePlayer(uint8_t pnum,V2Di from, V2Di to);
-	void addPlayer(uint8_t pnum, V2Di pos);
-	void removePlayer(uint8_t pnum, V2Di pos);
-
 private:
 	Tile tiles[MAXDUNX][MAXDUNY];
 };

@@ -19,7 +19,7 @@
 
 namespace dvl {
 
-extern BOOL was_window_init; /** defined in dx.cpp */
+extern bool was_window_init; /** defined in dx.cpp */
 
 extern SDL_Surface *renderer_texture_surface; /** defined in dx.cpp */
 

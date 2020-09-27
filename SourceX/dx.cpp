@@ -33,7 +33,7 @@ SDL_Surface *renderer_texture_surface = NULL;
 SDL_Surface *pal_surface;
 
 /** To know if surfaces have been initialized or not */
-BOOL was_window_init = false;
+bool was_window_init = false;
 
 static void dx_create_back_buffer()
 {

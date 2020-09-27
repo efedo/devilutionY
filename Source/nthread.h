@@ -27,13 +27,13 @@ extern int last_tick;
 
 void nthread_terminate_game(const char *pszFcn);
 DWORD nthread_send_and_recv_turn(DWORD cur_turn, int turn_delta);
-BOOL nthread_recv_turns(BOOL *pfSendAsync);
+bool nthread_recv_turns(bool *pfSendAsync);
 void nthread_set_turn_upper_bit();
-void nthread_start(BOOL set_turn_upper_bit);
+void nthread_start(bool set_turn_upper_bit);
 unsigned int nthread_handler(void *data);
 void nthread_cleanup();
-void nthread_ignore_mutex(BOOL bStart);
-BOOL nthread_has_500ms_passed(BOOL unused);
+void nthread_ignore_mutex(bool bStart);
+bool nthread_has_500ms_passed(bool unused);
 
 /* rdata */
 //#ifdef __cplusplus

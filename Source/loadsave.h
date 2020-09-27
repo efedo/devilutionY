@@ -14,11 +14,11 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern BYTE *tbuff;
 
-void LoadGame(BOOL firstflag);
+void LoadGame(bool firstflag);
 char BLoad();
 int WLoad();
 int ILoad();
-BOOL OLoad();
+bool OLoad();
 
 
 void LoadItems(const int n, ItemStruct *pItem);
@@ -42,7 +42,7 @@ void SaveGame();
 void BSave(char v);
 void WSave(int v);
 void ISave(int v);
-void OSave(BOOL v);
+void OSave(bool v);
 void SavePlayer(int i);
 void SaveMonster(int i);
 void SaveMissile(int i);

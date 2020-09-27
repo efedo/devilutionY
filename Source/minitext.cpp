@@ -111,7 +111,7 @@ void DrawQText()
 	BYTE c;
 	char *p, *pnl, *s;
 	char tempstr[128];
-	BOOL doneflag;
+	bool doneflag;
 	DWORD currTime;
 
 	DrawQTextBack();

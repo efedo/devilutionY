@@ -12,9 +12,9 @@ DEVILUTION_BEGIN_NAMESPACE
 /** Should the movie continue playing. */
 BYTE movie_playing;
 /** Should the movie play in a loop. */
-BOOL loop_movie;
+bool loop_movie;
 
-void play_movie(char *pszMovie, BOOL user_can_close)
+void play_movie(char *pszMovie, bool user_can_close)
 {
 	HANDLE video_stream;
 

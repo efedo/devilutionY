@@ -15,7 +15,7 @@ DEVILUTION_BEGIN_NAMESPACE
 extern int progress_id;
 
 void interface_msg_pump();
-BOOL IncProgress();
+bool IncProgress();
 void DrawCutscene();
 void DrawProgress(int screen_x, int screen_y, int progress_id);
 void ShowProgress(unsigned int uMsg);

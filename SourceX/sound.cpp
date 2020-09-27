@@ -30,7 +30,7 @@ char *sgszMusicTracks[NUM_MUSIC] = {
 	"Music\\Dintro.wav",
 };
 
-BOOL snd_playing(TSnd *pSnd)
+bool snd_playing(TSnd *pSnd)
 {
 	if (pSnd == NULL || pSnd->DSB == NULL)
 		return false;
@@ -177,7 +177,7 @@ void music_stop()
 
 void music_start(int nTrack)
 {
-	BOOL success;
+	bool success;
 
 	assert((DWORD)nTrack < NUM_MUSIC);
 	music_stop();
@@ -203,7 +203,7 @@ void music_start(int nTrack)
 	}
 }
 
-void sound_disable_music(BOOL disable)
+void sound_disable_music(bool disable)
 {
 	if (disable) {
 		music_stop();

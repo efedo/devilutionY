@@ -18,7 +18,7 @@ int stextsmax;
 ItemStruct storehold[48];
 int gossipstart;
 ItemStruct witchitem[20];
-BOOL stextscrl;
+bool stextscrl;
 int numpremium;
 ItemStruct healitem[20];
 ItemStruct golditem;
@@ -87,7 +87,7 @@ void SetupTownStores()
 	int i, l;
 
 	SetRndSeed(glSeedTbl[level.currlevel] * SDL_GetTicks());
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		l = 0;
 		for (i = 0; i < NUMLEVELS; i++) {
 			if (myplr().data._pLvlVisited[i])
@@ -122,7 +122,7 @@ void DrawSTextBack()
 	trans_rect(PANEL_LEFT + 347, 28, 265, 297);
 }
 
-void PrintSString(int x, int y, BOOL cjustflag, char *str, char col, int val)
+void PrintSString(int x, int y, bool cjustflag, char *str, char col, int val)
 {
 	int xx, yy;
 	int len, width, sx, sy, i, k, s;
@@ -275,7 +275,7 @@ void OffsetSTextY(int y, int yo)
 	stext[y]._syoff = yo;
 }
 
-void AddSText(int x, int y, BOOL j, char *str, char clr, BOOL sel)
+void AddSText(int x, int y, bool j, char *str, char clr, bool sel)
 {
 	stext[y]._sx = x;
 	stext[y]._syoff = 0;
@@ -288,17 +288,16 @@ void AddSText(int x, int y, BOOL j, char *str, char clr, BOOL sel)
 
 void StoreAutoPlace()
 {
-	BOOL done;
 	int i, w, h, idx;
 
 	SetICursor(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 	w = icursW28;
 	h = icursH28;
-	done = FALSE;
+	bool done = FALSE;
 	if (w == 1 && h == 1) {
 		idx = myplr().data.HoldItem.IDidx;
 		if (myplr().data.HoldItem._iStatFlag && AllItemsList[idx].iUsable) {
-			for (i = 0; i < 8 && !done; i++) {
+			for (i = 0; i < 8 && !done; i++) { // try to place in speed list
 				if (myplr().data.SpdList[i]._itype == ITYPE_NONE) {
 					myplr().data.SpdList[i] = myplr().data.HoldItem;
 					done = TRUE;
@@ -536,7 +535,7 @@ void S_ScrollSPBuy(int idx)
 		stextsel = stextdown;
 }
 
-BOOL S_StartSPBuy()
+bool S_StartSPBuy()
 {
 	int i;
 
@@ -571,7 +570,7 @@ BOOL S_StartSPBuy()
 	return TRUE;
 }
 
-BOOL SmithSellOk(int i)
+bool SmithSellOk(int i)
 {
 	if (myplr().data.InvList[i]._itype == ITYPE_NONE)
 		return FALSE;
@@ -632,7 +631,7 @@ void S_ScrollSSell(int idx)
 void S_StartSSell()
 {
 	int i;
-	BOOL sellok;
+	bool sellok;
 
 	stextsize = TRUE;
 	sellok = FALSE;
@@ -679,7 +678,7 @@ void S_StartSSell()
 	}
 }
 
-BOOL SmithRepairOk(int i)
+bool SmithRepairOk(int i)
 {
 	if (myplr().data.InvList[i]._itype == ITYPE_NONE)
 		return FALSE;
@@ -697,7 +696,7 @@ BOOL SmithRepairOk(int i)
 
 void S_StartSRepair()
 {
-	BOOL repairok;
+	bool repairok;
 	int i;
 
 	stextsize = TRUE;
@@ -850,9 +849,9 @@ void S_StartWBuy()
 		stextsmax = 0;
 }
 
-BOOL WitchSellOk(int i)
+bool WitchSellOk(int i)
 {
-	BOOL rv;
+	bool rv;
 	ItemStruct *pI;
 
 	rv = FALSE;
@@ -876,7 +875,7 @@ BOOL WitchSellOk(int i)
 void S_StartWSell()
 {
 	int i;
-	BOOL sellok;
+	bool sellok;
 
 	stextsize = TRUE;
 	sellok = FALSE;
@@ -939,9 +938,9 @@ void S_StartWSell()
 	}
 }
 
-BOOL WitchRechargeOk(int i)
+bool WitchRechargeOk(int i)
 {
-	BOOL rv;
+	bool rv;
 
 	rv = FALSE;
 	if (myplr().data.InvList[i]._itype == ITYPE_STAFF
@@ -964,7 +963,7 @@ void AddStoreHoldRecharge(ItemStruct itm, int i)
 void S_StartWRecharge()
 {
 	int i;
-	BOOL rechargeok;
+	bool rechargeok;
 
 	stextsize = TRUE;
 	rechargeok = FALSE;
@@ -1028,7 +1027,7 @@ void S_StartNoRoom()
 
 void S_StartConfirm()
 {
-	BOOL idprint;
+	bool idprint;
 	char iclr;
 
 	StartStore(stextshold);
@@ -1215,7 +1214,7 @@ void S_StartStory()
 	AddSLine(5);
 }
 
-BOOL IdItemOk(ItemStruct *i)
+bool IdItemOk(ItemStruct *i)
 {
 	if (i->_itype == ITYPE_NONE) {
 		return FALSE;
@@ -1237,7 +1236,7 @@ void AddStoreHoldId(ItemStruct itm, int i)
 
 void S_StartSIdentify()
 {
-	BOOL idok;
+	bool idok;
 	int i;
 
 	idok = FALSE;
@@ -1839,13 +1838,11 @@ void TakePlrsMoney(int cost)
 
 void SmithBuyItem()
 {
-	int idx;
-
 	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
 		myplr().data.HoldItem._iIdentified = FALSE;
 	StoreAutoPlace();
-	idx = stextvhold + ((stextlhold - stextup) >> 2);
+	int idx = stextvhold + ((stextlhold - stextup) >> 2);
 	if (idx == SMITH_ITEMS - 1) {
 		smithitem[SMITH_ITEMS - 1]._itype = ITYPE_NONE;
 	} else {
@@ -1860,7 +1857,7 @@ void SmithBuyItem()
 void S_SBuyEnter()
 {
 	int idx, i;
-	BOOL done;
+	bool done;
 
 	if (stextsel == 22) {
 		StartStore(STORE_SMITH);
@@ -1915,7 +1912,7 @@ void SmithBuyPItem()
 void S_SPBuyEnter()
 {
 	int i, idx, xx;
-	BOOL done;
+	bool done;
 
 	if (stextsel == 22) {
 		StartStore(STORE_SMITH);
@@ -1950,7 +1947,7 @@ void S_SPBuyEnter()
 	}
 }
 
-BOOL StoreGoldFit(int idx)
+bool StoreGoldFit(int idx)
 {
 	int i, sz, cost, numsqrs;
 
@@ -1989,7 +1986,7 @@ BOOL StoreGoldFit(int idx)
 
 void PlaceStoreGold(int v)
 {
-	BOOL done;
+	bool done;
 	int ii, xx, yy, i;
 
 	done = FALSE;
@@ -2171,7 +2168,7 @@ void WitchBuyItem()
 void S_WBuyEnter()
 {
 	int i, idx;
-	BOOL done;
+	bool done;
 
 	if (stextsel == 22) {
 		StartStore(STORE_WITCH);
@@ -2297,12 +2294,12 @@ void BoyBuyItem()
 void HealerBuyItem()
 {
 	int idx;
-	BOOL ok;
+	bool ok;
 
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 
 	ok = FALSE;
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		if (idx < 2)
 			ok = TRUE;
 	} else {
@@ -2319,7 +2316,7 @@ void HealerBuyItem()
 	StoreAutoPlace();
 
 	ok = FALSE;
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		if (idx >= 2)
 			ok = TRUE;
 	} else {
@@ -2342,7 +2339,7 @@ void HealerBuyItem()
 
 void S_BBuyEnter()
 {
-	BOOL done;
+	bool done;
 	int i;
 
 	if (stextsel == 10) {
@@ -2470,7 +2467,7 @@ void S_HealerEnter()
 void S_HBuyEnter()
 {
 	int i, idx;
-	BOOL done;
+	bool done;
 
 	if (stextsel == 22) {
 		StartStore(STORE_HEALER);

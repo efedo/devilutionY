@@ -8,7 +8,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 #ifdef _DEBUG
-BOOL update_seed_check = FALSE;
+bool update_seed_check = FALSE;
 #endif
 
 #define DEBUGSEEDS 4096
@@ -33,17 +33,16 @@ void FreeDebugGFX()
 
 void CheckDungeonClear()
 {
-	int i, j;
-
-	for (j = 0; j < MAXDUNY; j++) {
-		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dMonster != 0)
+	V2Di n;
+	for (n.y = 0; n.y < MAXDUNY; n.y++) {
+		for (n.x = 0; n.x < MAXDUNX; n.x++) {
+			if (grid.at(n).isMonster())
 				app_fatal("Monsters not cleared");
-			if (grid[i][j].isPlayer())
+			if (grid.at(n).isPlayer())
 				app_fatal("Players not cleared");
 
-			dMonsDbg[level.currlevel][i][j] = grid[i][j].dFlags & BFLAG_VISIBLE;
-			dFlagDbg[level.currlevel][i][j] = grid[i][j].dFlags & BFLAG_POPULATED;
+			dMonsDbg[level.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_VISIBLE;
+			dFlagDbg[level.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_POPULATED;
 		}
 	}
 }
@@ -146,7 +145,7 @@ void SetAllSpellsCheat()
 	SetSpellLevelCheat(SPL_BONESPIRIT, 1);
 }
 
-void PrintDebugPlayer(BOOL bNextPlayer)
+void PrintDebugPlayer(bool bNextPlayer)
 {
 	char dstr[128];
 
@@ -161,7 +160,7 @@ void PrintDebugPlayer(BOOL bNextPlayer)
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  Lvl = %i : Change = %i", plr[dbgplr].data.plrlevel, plr[dbgplr].data._pLvlChanging);
 		NetSendCmdString(1 << myplr(), dstr);
-		sprintf(dstr, "  x = %i, y = %i : tx = %i, ty = %i", plr[dbgplr].pos().x, plr[dbgplr].pos().y, plr[dbgplr].data._ptarg.x, plr[dbgplr].data._ptarg.y);
+		sprintf(dstr, "  x = %i, y = %i : tx = %i, ty = %i", plr[dbgplr].pos().x, plr[dbgplr].pos().y, plr[dbgplr].data._pathtarg.x, plr[dbgplr].data._pathtarg.y);
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  mode = %i : daction = %i : walk[0] = %i", plr[dbgplr].data._pmode, plr[dbgplr].data.destAction, plr[dbgplr].data.wkpath.size());
 		NetSendCmdString(1 << myplr(), dstr);
@@ -184,7 +183,7 @@ void PrintDebugQuest()
 
 void PrintDebugMonster(int m)
 {
-	BOOL bActive;
+	bool bActive;
 	int i;
 	char dstr[128];
 
@@ -214,7 +213,7 @@ void GetDebugMonster()
 
 	mi1 = pcursmonst;
 	if (mi1 == -1) {
-		mi2 = grid[cursm.x][cursm.y].dMonster;
+		mi2 = grid.at(cursm).getMonster();
 		if (mi2 != 0) {
 			mi1 = mi2 - 1;
 			if (mi2 <= 0)

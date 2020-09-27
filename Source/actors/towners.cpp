@@ -2,13 +2,13 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BOOL storeflag;
+bool storeflag;
 int sgnCowMsg;
 int numtowners;
 DWORD sgdwCowClicks;
 /** unused 0x6AAC28 */
-BOOL bannerflag;
-BOOL boyloadflag;
+bool bannerflag;
+bool boyloadflag;
 BYTE *pCowCels;
 TownerStruct towner[NUM_TOWNERS];
 
@@ -151,7 +151,7 @@ void InitTownerInfo(int i, int w, int sel, int t, int x, int y, int ao, int tp)
 	towner[i]._tMsgSaid = FALSE;
 	towner[i]._ttype = t;
 	towner[i]._t = { x, y };
-	grid[x][y].dMonster = i + 1;
+	grid[x][y].setMonster(i);
 	towner[i]._tAnimOrder = ao;
 	towner[i]._tTenPer = tp;
 	towner[i]._tSeed = GetRndSeed();
@@ -343,12 +343,12 @@ void InitCows()
 
 		xo = x + cowoffx[int(dir)];
 		yo = y + cowoffy[int(dir)];
-		if (grid[x][yo].dMonster == 0)
-			grid[x][yo].dMonster = -(numtowners + 1);
-		if (grid[xo][y].dMonster == 0)
-			grid[xo][y].dMonster = -(numtowners + 1);
-		if (grid[xo][yo].dMonster == 0)
-			grid[xo][yo].dMonster = -(numtowners + 1);
+		if (!grid[x][yo].isMonster())
+			grid[x][yo].setMonster(numtowners);
+		if (!grid[x][yo].isMonster())
+			grid[xo][y].setMonster(numtowners);
+		if (!grid[x][yo].isMonster())
+			grid[xo][yo].setMonster(numtowners);
 
 		numtowners++;
 	}
@@ -563,7 +563,7 @@ void TalkToTowner(int p, int t)
 	rv1 = random_(6, 3); /* unused */
 	rv2 = random_(6, 4); /* unused */
 	rv3 = random_(6, 5); /* unused */
-	int dist = (plr[p].data._p - towner[t]._t).maxabs();
+	int dist = (plr[p].pos() - towner[t]._t).maxabs();
 	#ifdef _DEBUG
 	if (!debug_mode_key_d && (dist >= 2)) {
 		return;
@@ -615,7 +615,7 @@ void TalkToTowner(int p, int t)
 				NetSendCmdQuest(TRUE, Q_SKELKING);
 			}
 		}
-		if (gbMaxPlayers == 1 && plr[p].data._pLvlVisited[3] && quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
+		if (plr.isSingleplayer() && plr[p].data._pLvlVisited[3] && quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
 			if ((quests[Q_LTBANNER]._qactive == QUEST_INIT || quests[Q_LTBANNER]._qactive == QUEST_ACTIVE) && quests[Q_LTBANNER]._qvar2 == 0 && !towner[t]._tMsgSaid) {
 				quests[Q_LTBANNER]._qvar2 = 1;
 				if (quests[Q_LTBANNER]._qactive == QUEST_INIT) {
@@ -678,7 +678,7 @@ void TalkToTowner(int p, int t)
 			NetSendCmdQuest(TRUE, Q_BUTCHER);
 		}
 	} else if (t == GetActiveTowner(TOWN_SMITH)) {
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			if (plr[p].data._pLvlVisited[4] && quests[Q_ROCK]._qactive != QUEST_NOTAVAIL) {
 				if (quests[Q_ROCK]._qvar2 == 0) {
 					quests[Q_ROCK]._qvar2 = 1;
@@ -810,7 +810,7 @@ void TalkToTowner(int p, int t)
 			}
 		}
 	} else if (t == GetActiveTowner(TOWN_HEALER)) {
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			if (plr[p].data._pLvlVisited[1] && !towner[t]._tMsgSaid) {
 				if (quests[Q_PWATER]._qactive == QUEST_INIT) {
 					quests[Q_PWATER]._qactive = QUEST_ACTIVE;
@@ -852,7 +852,7 @@ void TalkToTowner(int p, int t)
 			}
 		}
 	} else if (t == GetActiveTowner(TOWN_STORY)) {
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			if (quests[Q_BETRAYER]._qactive == QUEST_INIT && PlrHasItem(p, IDI_LAZSTAFF, &i) != NULL) {
 				plr[p].inventory.RemoveInvItem(i);
 				quests[Q_BETRAYER]._qvar1 = 2;
@@ -871,7 +871,7 @@ void TalkToTowner(int p, int t)
 				quests[Q_DIABLO]._qlog = TRUE;
 			}
 		}
-		if (gbMaxPlayers != 1) {
+		if (plr.isMultiplayer()) {
 			if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE && !quests[Q_BETRAYER]._qlog) {
 				towner[t]._tbtcnt = 150;
 				towner[t]._tVar1 = p;
@@ -907,7 +907,7 @@ void CowSFX(int pnum)
 	if (CowPlaying == -1 || !effect_is_playing(CowPlaying)) {
 		sgdwCowClicks++;
 		if (sgdwCowClicks >= 8) {
-			PlaySfxLoc(TSFX_COW1, { plr[pnum].data._p.x, plr[pnum].data._p.y + 5 });
+			PlaySfxLoc(TSFX_COW1, { plr[pnum].pos().x, plr[pnum].pos().y + 5 });
 			sgdwCowClicks = 4;
 			CowPlaying = snSFX[sgnCowMsg][plr[pnum].data._pClass]; /* snSFX is local */
 			sgnCowMsg++;

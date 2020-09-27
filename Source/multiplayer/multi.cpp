@@ -17,7 +17,7 @@ PkPlayerStruct netplr[MAX_PLRS];
 BOOLEAN sgbPlayerTurnBitTbl[MAX_PLRS];
 BOOLEAN sgbPlayerLeftGameTbl[MAX_PLRS];
 int sgbSentThisCycle;
-BOOL gbShouldValidatePackage;
+bool gbShouldValidatePackage;
 BYTE gbActivePlayers;
 BOOLEAN gbGameDestroyed;
 BOOLEAN sgbSendDeltaTbl[MAX_PLRS];
@@ -31,11 +31,11 @@ DWORD sgdwGameLoops;
  * Specifies the maximum number of players in a game, where 1
  * represents a single player game and 4 represents a multi player game.
  */
-BYTE gbMaxPlayers = 0;
+//BYTE gbMaxPlayers = 0;
 BOOLEAN sgbTimeout;
 char szPlayerName[128];
 BYTE gbDeltaSender;
-BOOL sgbNetInited;
+bool sgbNetInited;
 int player_state[MAX_PLRS];
 
 /**
@@ -93,10 +93,10 @@ void multi_send_packet(void *packet, BYTE dwSize)
 void NetRecvPlrData(TPkt *pkt)
 {
 	pkt->hdr.wCheck = 'ip';
-	pkt->hdr.px = myplr().data._p.x;
-	pkt->hdr.py = myplr().data._p.y;
-	pkt->hdr.targx = myplr().data._ptarg.x;
-	pkt->hdr.targy = myplr().data._ptarg.y;
+	pkt->hdr.px = myplr().pos().x;
+	pkt->hdr.py = myplr().pos().y;
+	pkt->hdr.targx = myplr().data._pathtarg.x;
+	pkt->hdr.targy = myplr().data._pathtarg.y;
 	pkt->hdr.php = myplr().data._pHitPoints;
 	pkt->hdr.pmhp = myplr().data._pMaxHP;
 	pkt->hdr.bstr = myplr().data._pBaseStr;
@@ -247,7 +247,7 @@ void multi_player_left_msg(int pnum, int left)
 	char *pszFmt;
 
 	if (plr[pnum].data.plractive) {
-		plr[pnum].RemovePlrFromMap();
+		plr[pnum].RemoveFromMap();
 		RemovePortalMissile(pnum);
 		DeactivatePortal(pnum);
 		delta_close_portal(pnum);
@@ -280,7 +280,7 @@ void multi_net_ping()
 int multi_handle_delta()
 {
 	int i;
-	BOOL received;
+	bool received;
 
 	if (gbGameDestroyed) {
 		gbRunGame = FALSE;
@@ -411,7 +411,7 @@ void multi_process_network_packets()
 	TPktHdr *pkt;
 	DWORD dwMsgSize;
 	DWORD dwID;
-	BOOL cond;
+	bool cond;
 	char *data;
 
 	multi_clear_left_tbl();
@@ -440,30 +440,26 @@ void multi_process_network_packets()
 			plr[dwID].data._pBaseDex = pkt->bdex;
 			if (!cond && plr[dwID].data.plractive && plr[dwID].data._pHitPoints) {
 				if (level.currlevel == plr[dwID].data.plrlevel && !plr[dwID].data._pLvlChanging) {
-					dx = abs(plr[dwID].data._p.x - pkt->px);
-					dy = abs(plr[dwID].data._p.y - pkt->py);
-					if ((dx > 3 || dy > 3) && grid[pkt->px][pkt->py].dPlayer == 0) {
+					dx = abs(plr[dwID].pos().x - pkt->px);
+					dy = abs(plr[dwID].pos().y - pkt->py);
+					if ((dx > 3 || dy > 3) && !grid[pkt->px][pkt->py].isPlayer()) {
 						plr[dwID].FixPlrWalkTags();
-						plr[dwID].data._pold = plr[dwID].data._p;
+						plr[dwID].data._pold = plr[dwID].pos();
 						plr[dwID].FixPlrWalkTags();
-						plr[dwID].data._p.x = pkt->px;
-						plr[dwID].data._p.y = pkt->py;
-						plr[dwID].data._pfut = plr[dwID].data._p;
-						grid.at(plr[dwID].pos()).dPlayer = dwID + 1;
+						plr[dwID].changePos({ pkt->px, pkt->py });
+						plr[dwID].changeFutPos(plr[dwID].pos());
 					}
-					dx = abs(plr[dwID].data._pfut.x - plr[dwID].data._p.x);
-					dy = abs(plr[dwID].data._pfut.y - plr[dwID].data._p.y);
+					dx = abs(plr[dwID].futpos().x - plr[dwID].pos().x);
+					dy = abs(plr[dwID].futpos().y - plr[dwID].pos().y);
 					if (dx > 1 || dy > 1) {
-						plr[dwID].data._pfut = plr[dwID].data._p;
+						plr[dwID].changeFutPos(plr[dwID].pos());
 					}
 					plr[dwID].MakePlrPath({ pkt->targx, pkt->targy }, TRUE);
 				} else {
-					plr[dwID].data._p.x = pkt->px;
-					plr[dwID].data._p.y = pkt->py;
-					plr[dwID].data._pfut.x = pkt->px;
-					plr[dwID].data._pfut.y = pkt->py;
-					plr[dwID].data._ptarg.x = pkt->targx;
-					plr[dwID].data._ptarg.y = pkt->targy;
+					plr[dwID].changePos({ pkt->px, pkt->py });
+					plr[dwID].changeFutPos({ pkt->px, pkt->py });
+					plr[dwID].data._pathtarg.x = pkt->targx;
+					plr[dwID].data._pathtarg.y = pkt->targy;
 				}
 			}
 		}
@@ -574,11 +570,11 @@ void NetClose()
 	tmsg_cleanup();
 	multi_event_handler(FALSE);
 	SNetLeaveGame(3);
-	if (gbMaxPlayers > 1)
+	if (plr.isMultiplayer())
 		SDL_Delay(2000);
 }
 
-void multi_event_handler(BOOL add)
+void multi_event_handler(bool add)
 {
 	DWORD i;
 	BOOL(STORMAPI * fn)
@@ -630,7 +626,7 @@ void multi_handle_events(_SNETEVENT *pEvt)
 	}
 }
 
-BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
+bool NetInit(bool bSinglePlayer, bool *pfExitProgram)
 {
 	int i;
 	_SNETPROGRAMDATA ProgramData;
@@ -755,7 +751,7 @@ int InitLevelType(int l)
 
 void SetupLocalCoords()
 {
-	if (!leveldebug || gbMaxPlayers > 1) {
+	if (!leveldebug || plr.isMultiplayer()) {
 		level.currlevel = 0;
 		level.leveltype = DTYPE_TOWN;
 		level.setlevel = FALSE;
@@ -767,9 +763,9 @@ void SetupLocalCoords()
 	}
 	#endif
 	pos += plroff[myplr()];
-	myplr().data._p = pos;
-	myplr().data._pfut = pos;
-	myplr().data._ptarg = pos;
+	myplr()._changePosOffMap(pos);
+	myplr()._changeFutPosOffMap(pos);
+	myplr().data._pathtarg = pos;
 	myplr().data.plrlevel = level.currlevel;
 	myplr().data._pLvlChanging = TRUE;
 	myplr().data.pLvlLoad = 0;
@@ -777,7 +773,7 @@ void SetupLocalCoords()
 	myplr().data.destAction = ACTION_NONE;
 }
 
-BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info)
+bool multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info)
 {
 	int unused;
 
@@ -792,14 +788,14 @@ BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info
 	}
 
 	plr.setLocal(0);
-	gbMaxPlayers = 1;
+	plr.setMaxPlayers(1);
 
 	return TRUE;
 }
 
-BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, BOOL *pfExitProgram)
+bool multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, bool *pfExitProgram)
 {
-	BOOL first;
+	bool first;
 	int playerId;
 	int type;
 
@@ -825,7 +821,7 @@ BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info,
 		return FALSE;
 	} else {
 		plr.setLocal(playerId);
-		gbMaxPlayers = MAX_PLRS;
+		plr.setMaxPlayers(MAX_PLRS);
 
 		pfile_read_player_from_save();
 
@@ -836,9 +832,9 @@ BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info,
 	}
 }
 
-BOOL multi_upgrade(BOOL *pfExitProgram)
+bool multi_upgrade(bool *pfExitProgram)
 {
-	BOOL result;
+	bool result;
 	int status;
 
 	SNetPerformUpgrade((LPDWORD)&status);
@@ -858,7 +854,7 @@ BOOL multi_upgrade(BOOL *pfExitProgram)
 	return result;
 }
 
-void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv)
+void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv)
 {
 	char *szEvent;
 

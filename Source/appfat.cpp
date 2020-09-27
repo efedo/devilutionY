@@ -11,7 +11,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 char sz_error_buf[256];
 /** Set to true when a fatal error is encountered and the application should shut down. */
-BOOL terminating;
+bool terminating;
 /** Thread id of the last callee to FreeDlg(). */
 int cleanup_thread_id;
 
@@ -21,14 +21,10 @@ int cleanup_thread_id;
 void app_fatal(const char *pszFmt, ...)
 {
 	va_list va;
-
 	va_start(va, pszFmt);
 	FreeDlg();
-
 	if (pszFmt) MsgBox(pszFmt, va);
-
 	va_end(va);
-
 	diablo_quit(1);
 }
 
@@ -38,9 +34,7 @@ void app_fatal(const char *pszFmt, ...)
 void MsgBox(const char *pszFmt, va_list va)
 {
 	char text[256];
-
 	vsnprintf(text, 256, pszFmt, va);
-
 	UiErrorOkDialog("Error", text);
 }
 
@@ -55,7 +49,7 @@ void FreeDlg()
 	terminating = TRUE;
 	cleanup_thread_id = SDL_GetThreadID(NULL);
 
-	if (gbMaxPlayers > 1) {
+	if (plr.isMultiplayer()) {
 		if (SNetLeaveGame(3))
 			SDL_Delay(2000);
 	}

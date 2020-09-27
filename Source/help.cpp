@@ -9,7 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 int help_select_line;
 int dword_634494;
-BOOL helpflag;
+bool helpflag;
 int displayinghelp[22]; /* check, does nothing? */
 int HelpTop;
 

@@ -14,7 +14,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern int help_select_line;
 extern int dword_634494;
-extern BOOL helpflag;
+extern bool helpflag;
 extern int displayinghelp[22];
 extern int HelpTop;
 

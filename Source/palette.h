@@ -28,15 +28,15 @@ void PaletteFadeIn(int fr);
 void PaletteFadeOut(int fr);
 void palette_update_caves();
 void palette_update_quest_palette(int n);
-BOOL palette_get_color_cycling();
-BOOL palette_set_color_cycling(BOOL enabled);
+bool palette_get_color_cycling();
+bool palette_set_color_cycling(bool enabled);
 
 /* rdata */
 
 /* data */
 
 extern int gamma_correction;
-extern BOOL color_cycling_enabled;
+extern bool color_cycling_enabled;
 
 //#ifdef __cplusplus
 //}

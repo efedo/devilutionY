@@ -8,9 +8,9 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield);
+void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield);
 void VerifyGoldSeeds(PlayerStruct *pPlayer);
-void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok);
+void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok);
 
 /* rdata */
 //#ifdef __cplusplus

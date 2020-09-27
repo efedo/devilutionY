@@ -8,6 +8,15 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
+Beastiary::Beastiary()
+{
+}
+
+MonsterType & Beastiary::operator[](size_t n)
+{
+	return types[n];
+}
+
 void Beastiary::InitLevelMonsters()
 {
 	int i;
@@ -33,7 +42,7 @@ void Beastiary::InitLevelMonsters()
 
 int Beastiary::AddMonsterType(int type, int placeflag)
 {
-	BOOL done = FALSE;
+	bool done = FALSE;
 	int i;
 
 	for (i = 0; i < nummtypes && !done; i++) {
@@ -91,7 +100,7 @@ void Beastiary::GetLevelMTypes()
 		if (QuestStatus(Q_WARLORD))
 			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 4);
 
-		if (gbMaxPlayers != 1 && level.currlevel == quests[Q_SKELKING]._qlevel) {
+		if (plr.isMultiplayer() && level.currlevel == quests[Q_SKELKING]._qlevel) {
 
 			AddMonsterType(MT_SKING, 4);
 

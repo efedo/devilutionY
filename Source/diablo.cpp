@@ -18,23 +18,23 @@ int glMid1Seed[NUMLEVELS];
 int glMid2Seed[NUMLEVELS];
 int glMid3Seed[NUMLEVELS];
 V2Di Mouse;
-BOOL gbGameLoopStartup;
-BOOL gbRunGame;
-BOOL gbRunGameResult;
-BOOL zoomflag;
-BOOL gbProcessPlayers;
-BOOL gbLoadGame;
+bool gbGameLoopStartup;
+bool gbRunGame;
+bool gbRunGameResult;
+bool zoomflag;
+bool gbProcessPlayers;
+bool gbLoadGame;
 int DebugMonsters[10];
 BOOLEAN cineflag;
 int force_redraw;
-BOOL visiondebug;
+bool visiondebug;
 /** unused */
-BOOL scrollflag;
-BOOL light4flag;
-BOOL leveldebug;
-BOOL monstdebug;
+bool scrollflag;
+bool light4flag;
+bool leveldebug;
+bool monstdebug;
 /** unused */
-BOOL trigdebug;
+bool trigdebug;
 int setseed;
 int debugmonsttypes;
 int PauseMode;
@@ -48,7 +48,7 @@ int color_cycle_timer;
  * Specifies whether to give the game exclusive access to the
  * screen, as needed for efficient rendering in fullscreen mode.
  */
-BOOL fullscreen = TRUE;
+bool fullscreen = TRUE;
 int showintrodebug = 1;
 #ifdef _DEBUG
 int questdebug = -1;
@@ -68,7 +68,7 @@ int frameend;
 int framerate;
 int framestart;
 /** Specifies whether players are in non-PvP mode. */
-BOOL FriendlyMode = TRUE;
+bool FriendlyMode = TRUE;
 /** Default quick messages */
 char *spszMsgTbl[4] = {
 	"I need help! Come Here!",
@@ -80,10 +80,10 @@ char *spszMsgTbl[4] = {
 char *spszMsgHotKeyTbl[4] = { "F9", "F10", "F11", "F12" };
 
 /** To know if these things have been done when we get to the diablo_deinit() function */
-BOOL was_archives_init = false;
-BOOL was_ui_init = false;
-BOOL was_snd_init = false;
-BOOL was_sfx_init = false;
+bool was_archives_init = false;
+bool was_ui_init = false;
+bool was_snd_init = false;
+bool was_sfx_init = false;
 
 void FreeGameMem()
 {
@@ -101,9 +101,9 @@ void FreeGameMem()
 	FreeTownerGFX();
 }
 
-BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
+bool StartGame(bool bNewGame, bool bSinglePlayer)
 {
-	BOOL fExitProgram;
+	bool fExitProgram;
 	unsigned int uMsg;
 
 	gbSelectProvider = TRUE;
@@ -149,7 +149,7 @@ static bool ProcessInput()
 	if (PauseMode == 2) {
 		return false;
 	}
-	if (gbMaxPlayers == 1 && gmenu_is_active()) {
+	if (plr.isSingleplayer() && gmenu_is_active()) {
 		force_redraw |= 1;
 		return false;
 	}
@@ -212,7 +212,7 @@ void run_game_loop(unsigned int uMsg)
 		DrawAndBlit();
 	}
 
-	if (gbMaxPlayers > 1) {
+	if (plr.isMultiplayer()) {
 		pfile_write_hero();
 	}
 
@@ -257,8 +257,11 @@ void free_game()
 	FreeQuestText();
 	FreeStoreMem();
 
-	for (int i = 0; i < MAX_PLRS; i++)
+	for (int i = 0; i < plr.maxPlayers(); i++) {
+		if (!plr.isValidPlayer(i))
+			continue;
 		plr[i].FreePlayerGFX();
+	}
 
 	FreeItemGFX();
 	FreeCursor();
@@ -451,9 +454,9 @@ void diablo_init_screen()
 	ClrDiabloMsg();
 }
 
-BOOL PressEscKey()
+bool PressEscKey()
 {
-	BOOL rv = FALSE;
+	bool rv = FALSE;
 
 	if (doomflag) {
 		doom_close();
@@ -609,7 +612,7 @@ LRESULT GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DIABTOWNWARP:
 	case WM_DIABTWARPUP:
 	case WM_DIABRETOWN:
-		if (gbMaxPlayers > 1)
+		if (plr.isMultiplayer())
 			pfile_write_hero();
 		nthread_ignore_mutex(TRUE);
 		PaletteFadeOut(8);
@@ -630,7 +633,7 @@ LRESULT GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return MainWndProc(hWnd, uMsg, wParam, lParam);
 }
 
-BOOL LeftMouseDown(int wParam)
+bool LeftMouseDown(int wParam)
 {
 	if (!gmenu_left_mouse(TRUE) && !control_check_talk_btn() && sgnTimeoutCurs == CURSOR_NONE) {
 		if (deathflag) {
@@ -681,9 +684,9 @@ BOOL LeftMouseDown(int wParam)
 	return FALSE;
 }
 
-BOOL LeftMouseCmd(BOOL bShift)
+bool LeftMouseCmd(bool bShift)
 {
-	BOOL bNear;
+	bool bNear;
 
 	assert(Mouse.y < PANEL_TOP || Mouse.x < PANEL_LEFT || Mouse.x >= PANEL_LEFT + PANEL_WIDTH);
 
@@ -736,7 +739,7 @@ BOOL LeftMouseCmd(BOOL bShift)
 	return FALSE;
 }
 
-BOOL TryIconCurs()
+bool TryIconCurs()
 {
 	if (pcurs == CURSOR_RESURRECT) {
 		NetSendCmdParam1(TRUE, CMD_RESURRECT, pcursplr);
@@ -823,7 +826,7 @@ void RightMouseDown()
 	}
 }
 
-BOOL PressSysKey(int wParam)
+bool PressSysKey(int wParam)
 {
 	if (gmenu_is_active() || wParam != DVL_VK_F10)
 		return FALSE;
@@ -835,7 +838,7 @@ void diablo_hotkey_msg(DWORD dwMsg)
 {
 	char szMsg[MAX_SEND_STR_LEN];
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		return;
 	}
 
@@ -1074,7 +1077,7 @@ void PressKey(int vkey)
 
 void diablo_pause_game()
 {
-	if (gbMaxPlayers <= 1) {
+	if (plr.isSingleplayer()) {
 		if (PauseMode) {
 			PauseMode = 0;
 		} else {
@@ -1440,10 +1443,10 @@ void CreateLevel(int lvldir)
 	}
 }
 
-void LoadGameLevel(BOOL firstflag, int lvldir)
+void LoadGameLevel(bool firstflag, int lvldir)
 {
 	int i, j;
-	BOOL visited;
+	bool visited;
 
 	if (setseed)
 		glSeedTbl[level.currlevel] = setseed;
@@ -1461,8 +1464,10 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		InitItemGFX();
 		InitQuestText();
 
-		for (i = 0; i < gbMaxPlayers; i++)
+		for (i = 0; i < plr.maxPlayers(); i++) {
+			if (!plr.isValidPlayer(i)) continue;
 			plr[i].InitPlrGFXMem();
+		}
 
 		InitStores();
 		automap.initOnce();
@@ -1488,7 +1493,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 	if (!level.setlevel) {
 		CreateLevel(lvldir);
 		IncProgress();
-		FillSolidBlockTbls();
+		pieces.FillSolidBlockTbls();
 		SetRndSeed(glSeedTbl[level.currlevel]);
 
 		if (level.leveltype != DTYPE_TOWN) {
@@ -1513,6 +1518,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		IncProgress();
 
 		for (i = 0; i < MAX_PLRS; i++) {
+			if (!plr.isValidPlayer(i)) continue;
 			if (plr[i].data.plractive && level.currlevel == plr[i].data.plrlevel) {
 				plr[i].InitPlayerGFX();
 				if (lvldir != 4)
@@ -1525,7 +1531,8 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		IncProgress();
 
 		visited = FALSE;
-		for (i = 0; i < gbMaxPlayers; i++) {
+		for (i = 0; i < plr.maxPlayers(); i++) {
+			if (!plr.isValidPlayer(i)) continue;
 			if (plr[i].data.plractive)
 				visited = visited || plr[i].data._pLvlVisited[level.currlevel];
 		}
@@ -1533,7 +1540,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		SetRndSeed(glSeedTbl[level.currlevel]);
 
 		if (level.leveltype != DTYPE_TOWN) {
-			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[level.currlevel] || gbMaxPlayers != 1) {
+			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[level.currlevel] || plr.isMultiplayer()) {
 				HoldThemeRooms();
 				glMid1Seed[level.currlevel] = GetRndSeed();
 				InitMonsters();
@@ -1548,7 +1555,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 				InitDead();
 				glEndSeed[level.currlevel] = GetRndSeed();
 
-				if (gbMaxPlayers != 1)
+				if (plr.isMultiplayer())
 					DeltaLoadLevel();
 
 				IncProgress();
@@ -1572,14 +1579,14 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			InitMissiles();
 			IncProgress();
 
-			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[level.currlevel] && gbMaxPlayers == 1)
+			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[level.currlevel] && plr.isSingleplayer())
 				LoadLevel();
-			if (gbMaxPlayers != 1)
+			if (plr.isMultiplayer())
 				DeltaLoadLevel();
 
 			IncProgress();
 		}
-		if (gbMaxPlayers == 1)
+		if (plr.isSingleplayer())
 			ResyncQuests();
 		else
 			ResyncMPQuests();
@@ -1594,7 +1601,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		IncProgress();
 		InitDead();
 		IncProgress();
-		FillSolidBlockTbls();
+		pieces.FillSolidBlockTbls();
 		IncProgress();
 
 		if (lvldir == 5)
@@ -1627,10 +1634,11 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 	SyncPortals();
 
 	for (i = 0; i < MAX_PLRS; i++) {
+		if (!plr.isValidPlayer(i)) continue;
 		if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
 			if (plr[i].data._pHitPoints > 0) {
-				if (gbMaxPlayers == 1)
-					grid.addPlayer(i, plr[i].pos());
+				if (plr.isSingleplayer())
+					plr[i].addToMap();
 				else
 					plr[i].SyncInitPlrPos();
 			} else {
@@ -1663,7 +1671,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		PlaySFX(USFX_SKING1);
 }
 
-void game_loop(BOOL bStartup)
+void game_loop(bool bStartup)
 {
 	int i;
 
@@ -1677,7 +1685,7 @@ void game_loop(BOOL bStartup)
 			timeout_cursor(FALSE);
 			game_logic();
 		}
-		if (!gbRunGame || gbMaxPlayers == 1 || !nthread_has_500ms_passed(TRUE))
+		if (!gbRunGame || plr.isSingleplayer() || !nthread_has_500ms_passed(TRUE))
 			break;
 	}
 }
@@ -1723,7 +1731,7 @@ void game_logic()
 	plrctrls_after_game_logic();
 }
 
-void timeout_cursor(BOOL bTimeout)
+void timeout_cursor(bool bTimeout)
 {
 	if (bTimeout) {
 		if (sgnTimeoutCurs == CURSOR_NONE && !sgbMouseDown) {

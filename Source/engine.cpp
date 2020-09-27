@@ -16,7 +16,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 char gbPixelCol;  // automap pixel color 8-bit (palette entry)
-BOOL gbRotateMap; // flip - if y < x
+bool gbRotateMap; // flip - if y < x
 int orgseed;
 /** Width of sprite being blitted */
 int sgnWidth;
@@ -24,7 +24,7 @@ int sgnWidth;
 int sglGameSeed;
 static CCritSect sgMemCrit;
 int SeedCount;
-BOOL gbNotInView; // valid - if x/y are in bounds
+bool gbNotInView; // valid - if x/y are in bounds
 
 /**
  * Specifies the increment used in the Borland C/C++ pseudo-random.
@@ -339,7 +339,7 @@ void CelBlitLightSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidt
 void CelBlitLightTransSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth)
 {
 	int w;
-	BOOL shift;
+	bool shift;
 	BYTE *tbl;
 
 	assert(pDecodeTo != NULL);

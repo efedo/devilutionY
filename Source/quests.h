@@ -9,7 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //#endif
 
 extern int qtopline;
-extern BOOL questlog;
+extern bool questlog;
 extern BYTE *pQLogCel;
 extern QuestStruct quests[MAXQUESTS];
 extern int qline;
@@ -23,9 +23,9 @@ extern int ReturnLvl;
 
 void InitQuests();
 void CheckQuests();
-BOOL ForceQuests();
-BOOL QuestStatus(int i);
-void CheckQuestKill(int m, BOOL sendmsg);
+bool ForceQuests();
+bool QuestStatus(int i);
+void CheckQuestKill(int m, bool sendmsg);
 void DrawButcher();
 void DrawSkelKing(int q, int x, int y);
 void DrawWarLord(int x, int y);
@@ -38,7 +38,7 @@ void SetReturnLvlPos();
 void GetReturnLvlPos();
 void ResyncMPQuests();
 void ResyncQuests();
-void PrintQLString(int x, int y, BOOL cjustflag, char *str, int col);
+void PrintQLString(int x, int y, bool cjustflag, char *str, int col);
 void DrawQuestLog();
 void StartQuestlog();
 void QuestlogUp();

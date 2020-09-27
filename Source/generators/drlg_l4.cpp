@@ -15,7 +15,7 @@ int diabquad3x;
 int diabquad3y;
 int diabquad4x;
 int diabquad4y;
-BOOL hallok[20];
+bool hallok[20];
 int l4holdx;
 int l4holdy;
 int SP4x1;
@@ -297,7 +297,7 @@ const BYTE L4BTYPES[140] = {
 static void DRLG_L4Shadows()
 {
 	int x, y;
-	BOOL okflag;
+	bool okflag;
 
 	for (y = 1; y < DMAXY; y++) {
 		for (x = 1; x < DMAXY; x++) {
@@ -349,7 +349,7 @@ void DRLG_LoadL4SP()
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 		setloadflag = TRUE;
 	}
-	if (level.currlevel == 15 && gbMaxPlayers != 1) {
+	if (level.currlevel == 15 && plr.isMultiplayer()) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
 		setloadflag = TRUE;
 	}
@@ -402,7 +402,7 @@ static void L4makeDmt()
 static int L4HWallOk(int i, int j)
 {
 	int x;
-	BOOL wallok;
+	bool wallok;
 
 	for (x = 1; dgrid[i + x][j].dungeon == 6; x++) {
 		if (dgrid[i + x][j].dflags != 0) {
@@ -453,7 +453,7 @@ static int L4HWallOk(int i, int j)
 static int L4VWallOk(int i, int j)
 {
 	int y;
-	BOOL wallok;
+	bool wallok;
 
 	for (y = 1; dgrid[i][j + y].dungeon == 6; y++) {
 		if (dgrid[i][j + y].dflags != 0) {
@@ -1237,7 +1237,7 @@ static void L4drawRoom(int x, int y, int width, int height)
 	}
 }
 
-static BOOL L4checkRoom(int x, int y, int width, int height)
+static bool L4checkRoom(int x, int y, int width, int height)
 {
 	int i, j;
 
@@ -1262,7 +1262,7 @@ static BOOL L4checkRoom(int x, int y, int width, int height)
 static void L4roomGen(int x, int y, int w, int h, int dir)
 {
 	int num;
-	BOOL ran, ran2;
+	bool ran, ran2;
 	int width, height, rx, ry, ry2;
 	int cw, ch, cx1, cy1, cx2;
 
@@ -1322,10 +1322,10 @@ static void L4firstRoom()
 
 	if (level.currlevel != 16) {
 		if (level.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive) {
-			/// ASSERT: assert(gbMaxPlayers == 1);
+			/// ASSERT: assert(plr.isSingleplayer());
 			w = 11;
 			h = 11;
-		} else if (level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		} else if (level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 			w = 11;
 			h = 11;
 		} else {
@@ -1360,7 +1360,7 @@ static void L4firstRoom()
 		l4holdx = x;
 		l4holdy = y;
 	}
-	if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+	if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 		SP4x1 = x + 1;
 		SP4y1 = y + 1;
 		SP4x2 = SP4x1 + w;
@@ -1415,7 +1415,7 @@ void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
 	}
 }
 
-void DRLG_LoadDiabQuads(BOOL preflag)
+void DRLG_LoadDiabQuads(bool preflag)
 {
 	BYTE *lpSetPiece;
 
@@ -1456,10 +1456,10 @@ void DRLG_LoadDiabQuads(BOOL preflag)
 	mem_free_dbg(lpSetPiece);
 }
 
-static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
+static bool DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, bailcnt;
-	BOOL found;
+	bool found;
 
 	sw = miniset[0];
 	sh = miniset[1];
@@ -1608,7 +1608,7 @@ static void DRLG_L4FloodTVal()
 	}
 }
 
-BOOL IsDURWall(char d)
+bool IsDURWall(char d)
 {
 	if (d == 25) {
 		return TRUE;
@@ -1623,7 +1623,7 @@ BOOL IsDURWall(char d)
 	return FALSE;
 }
 
-BOOL IsDLLWall(char dd)
+bool IsDLLWall(char dd)
 {
 	if (dd == 27) {
 		return TRUE;
@@ -1726,7 +1726,7 @@ void DRLG_L4GeneralFix()
 static void DRLG_L4(int entry)
 {
 	int i, j, spi, spj, ar;
-	BOOL doneflag;
+	bool doneflag;
 
 	do {
 		DRLG_InitTrans();
@@ -1745,7 +1745,7 @@ static void DRLG_L4(int entry)
 		if (level.currlevel == 16) {
 			L4SaveQuads();
 		}
-		if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 			for (spi = SP4x1; spi < SP4x2; spi++) {
 				for (spj = SP4y1; spj < SP4y2; spj++) {
 					dgrid[spi][spj].dflags = 1;
@@ -1815,7 +1815,7 @@ static void DRLG_L4(int entry)
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
 				if (doneflag) {
-					if (gbMaxPlayers == 1 && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
+					if (plr.isSingleplayer() && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA, 1, 1, -1, -1, 0, 1);
 					} else {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, 0, 1);
@@ -1825,7 +1825,7 @@ static void DRLG_L4(int entry)
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag) {
-					if (gbMaxPlayers == 1 && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
+					if (plr.isSingleplayer() && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA, 1, 1, -1, -1, 1, 1);
 					} else {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, 1, 1);
@@ -1895,10 +1895,10 @@ static void DRLG_L4Pass3()
 
 	for (j = 0; j < MAXDUNY; j += 2) {
 		for (i = 0; i < MAXDUNX; i += 2) {
-			grid[i][j].dPiece = v1;
-			grid[i + 1][j].dPiece = v2;
-			grid[i][j + 1].dPiece = v3;
-			grid[i + 1][j + 1].dPiece = v4;
+			grid[i][j].setPiece(v1);
+			grid[i + 1][j].setPiece(v2);
+			grid[i][j + 1].setPiece(v3);
+			grid[i + 1][j + 1].setPiece(v4);
 		}
 	}
 
@@ -1919,10 +1919,10 @@ static void DRLG_L4Pass3()
 				v3 = 0;
 				v4 = 0;
 			}
-			grid[xx][yy].dPiece = v1;
-			grid[xx + 1][yy].dPiece = v2;
-			grid[xx][yy + 1].dPiece = v3;
-			grid[xx + 1][yy + 1].dPiece = v4;
+			grid[xx][yy].setPiece(v1);
+			grid[xx + 1][yy].setPiece(v2);
+			grid[xx][yy + 1].setPiece(v3);
+			grid[xx + 1][yy + 1].setPiece(v4);
 			xx += 2;
 		}
 		yy += 2;

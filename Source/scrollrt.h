@@ -16,11 +16,11 @@ extern DWORD level_cel_block;
 extern char arch_draw_type;
 extern int cel_transparency_active;
 extern int cel_foliage_active;
-extern int level_piece_id;
+//extern int level_piece_id;
 extern void (*DrawPlrProc)(int, int, int, int, int, BYTE *, int, int, int, int);
 
 void ClearCursor();
-void DrawMissile(V2Di p, V2Di s, BOOL pre);
+void DrawMissile(V2Di p, V2Di s, bool pre);
 void DrawDeadPlayer(V2Di p, V2Di s);
 void ShiftGrid(int *x, int *y, int horizontal, int vertical);
 int RowsCoveredByPanel();
@@ -32,7 +32,7 @@ void ClearScreenBuffer();
 void ScrollView();
 #endif
 void EnableFrameCount();
-void scrollrt_draw_game_screen(BOOL draw_cursor);
+void scrollrt_draw_game_screen(bool draw_cursor);
 void DrawAndBlit();
 
 /* rdata */

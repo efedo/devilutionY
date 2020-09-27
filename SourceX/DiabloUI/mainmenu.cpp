@@ -60,7 +60,7 @@ void mainmenu_Free()
 	ArtBackground.Unload();
 }
 
-BOOL UiMainMenuDialog(char *name, int *pdwResult, void (*fnSound)(char *file), int attractTimeOut)
+bool UiMainMenuDialog(char *name, int *pdwResult, void (*fnSound)(char *file), int attractTimeOut)
 {
 	MainMenuResult = 0;
 	while (MainMenuResult == 0) {

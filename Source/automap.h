@@ -30,7 +30,7 @@ public:
 	void drawText();
 
 
-	WORD GetAutomapType(V2Di pos, BOOL view);
+	WORD GetAutomapType(V2Di pos, bool view);
 	void SetAutomapView(V2Di pos);
 	auto & getView() { return automapview; }
 	int &getScale() { return AutoMapScale; }
@@ -41,7 +41,7 @@ private:
 							// BUGFIX: only the first 256 elements are ever read
 
 	V2Di AutoMap;
-	BOOL automapflag; // Specifies whether the automap is enabled.
+	bool automapflag; // Specifies whether the automap is enabled.
 	char AmShiftTab[31];
 	BOOLEAN automapview[DMAXX][DMAXY]; // Tracks the explored areas of the map.
 	int AutoMapScale; // Specifies the scale of the automap.

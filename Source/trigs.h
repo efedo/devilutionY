@@ -8,8 +8,8 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BOOL townwarps[3];
-extern BOOL trigflag;
+extern bool townwarps[3];
+extern bool trigflag;
 extern int numtrigs;
 extern TriggerStruct trigs[MAXTRIGGERS];
 extern int TWarpFrom;
@@ -24,15 +24,15 @@ void InitSKingTriggers();
 void InitSChambTriggers();
 void InitPWaterTriggers();
 void InitVPTriggers();
-BOOL ForceTownTrig();
-BOOL ForceL1Trig();
-BOOL ForceL2Trig();
-BOOL ForceL3Trig();
-BOOL ForceL4Trig();
+bool ForceTownTrig();
+bool ForceL1Trig();
+bool ForceL2Trig();
+bool ForceL3Trig();
+bool ForceL4Trig();
 void Freeupstairs();
-BOOL ForceSKingTrig();
-BOOL ForceSChambTrig();
-BOOL ForcePWaterTrig();
+bool ForceSKingTrig();
+bool ForceSChambTrig();
+bool ForcePWaterTrig();
 void CheckTrigForce();
 void CheckTriggers();
 

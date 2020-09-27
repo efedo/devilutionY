@@ -242,10 +242,10 @@ int Patterns[100][10] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-static BOOL DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
+static bool DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, bailcnt;
-	BOOL found;
+	bool found;
 
 	sw = miniset[0];
 	sh = miniset[1];
@@ -331,7 +331,7 @@ static BOOL DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int c
 static void DRLG_L2PlaceRndSet(BYTE *miniset, int rndper)
 {
 	int sx, sy, sw, sh, xx, yy, ii, kk;
-	BOOL found;
+	bool found;
 
 	sw = miniset[0];
 	sh = miniset[1];
@@ -420,7 +420,7 @@ static void DRLG_L2Subs()
 static void DRLG_L2Shadows()
 {
 	int x, y, i;
-	BOOL patflag;
+	bool patflag;
 	BYTE sd[2][2];
 
 	for (y = 1; y < DMAXY; y++) {
@@ -519,7 +519,7 @@ static void DRLG_L2SetRoom(int rx1, int ry1)
 	}
 }
 
-static void DefineRoom(int nX1, int nY1, int nX2, int nY2, BOOL ForceHW)
+static void DefineRoom(int nX1, int nY1, int nX2, int nY2, bool ForceHW)
 {
 	int i, j;
 
@@ -559,7 +559,7 @@ static void DefineRoom(int nX1, int nY1, int nX2, int nY2, BOOL ForceHW)
 
 static void CreateDoorType(int nX, int nY)
 {
-	BOOL fDoneflag;
+	bool fDoneflag;
 
 	fDoneflag = FALSE;
 
@@ -631,7 +631,7 @@ static void AddHall(int nX1, int nY1, int nX2, int nY2, int nHd)
  * @param nH Height of the room, if ForceHW is set.
  * @param nW Width of the room, if ForceHW is set.
  */
-static void CreateRoom(int nX1, int nY1, int nX2, int nY2, int nRDest, int nHDir, BOOL ForceHW, int nH, int nW)
+static void CreateRoom(int nX1, int nY1, int nX2, int nY2, int nRDest, int nHDir, bool ForceHW, int nH, int nW)
 {
 	int nAw, nAh, nRw, nRh, nRx1, nRy1, nRx2, nRy2, nHw, nHh, nHx1, nHy1, nHx2, nHy2, nRid;
 
@@ -776,7 +776,7 @@ static void GetHall(int *nX1, int *nY1, int *nX2, int *nY2, int *nHd)
 static void ConnectHall(int nX1, int nY1, int nX2, int nY2, int nHd)
 {
 	int nCurrd, nDx, nDy, nRp, nOrigX1, nOrigY1, fMinusFlag, fPlusFlag;
-	BOOL fDoneflag, fInroom;
+	bool fDoneflag, fInroom;
 
 	fDoneflag = FALSE;
 	fMinusFlag = random_(0, 100);
@@ -1020,7 +1020,7 @@ static void L2TileFix()
 	}
 }
 
-static BOOL DL2_Cont(BOOL x1f, BOOL y1f, BOOL x2f, BOOL y2f)
+static bool DL2_Cont(bool x1f, bool y1f, bool x2f, bool y2f)
 {
 	if (x1f && x2f && y1f && y2f) {
 		return FALSE;
@@ -1104,10 +1104,10 @@ static void DL2_KnockWalls(int x1, int y1, int x2, int y2)
 	}
 }
 
-static BOOL DL2_FillVoids()
+static bool DL2_FillVoids()
 {
 	int ii, jj, xx, yy, x1, x2, y1, y2;
-	BOOL xf1, xf2, yf1, yf2;
+	bool xf1, xf2, yf1, yf2;
 	int to;
 
 	to = 0;
@@ -1376,10 +1376,10 @@ static BOOL DL2_FillVoids()
 	return DL2_NumNoChar() <= 700;
 }
 
-static BOOL CreateDungeon()
+static bool CreateDungeon()
 {
 	int i, j, nHx1, nHy1, nHx2, nHy2, nHd, ForceH, ForceW;
-	BOOL ForceHW;
+	bool ForceHW;
 
 	ForceW = 0;
 	ForceH = 0;
@@ -1491,10 +1491,10 @@ static void DRLG_L2Pass3()
 
 	for (j = 0; j < MAXDUNY; j += 2) {
 		for (i = 0; i < MAXDUNX; i += 2) {
-			grid[i][j].dPiece = v1;
-			grid[i + 1][j].dPiece = v2;
-			grid[i][j + 1].dPiece = v3;
-			grid[i + 1][j + 1].dPiece = v4;
+			grid[i][j].setPiece(v1);
+			grid[i + 1][j].setPiece(v2);
+			grid[i][j + 1].setPiece(v3);
+			grid[i + 1][j + 1].setPiece(v4);
 		}
 	}
 
@@ -1508,10 +1508,10 @@ static void DRLG_L2Pass3()
 			v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
 			v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
 			v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
-			grid[xx][yy].dPiece = v1;
-			grid[xx + 1][yy].dPiece = v2;
-			grid[xx][yy + 1].dPiece = v3;
-			grid[xx + 1][yy + 1].dPiece = v4;
+			grid[xx][yy].setPiece(v1);
+			grid[xx + 1][yy].setPiece(v2);
+			grid[xx][yy + 1].setPiece(v3);
+			grid[xx + 1][yy + 1].setPiece(v4);
 			xx += 2;
 		}
 		yy += 2;
@@ -1649,7 +1649,7 @@ static void L2DirtFix()
 void L2LockoutFix()
 {
 	int i, j;
-	BOOL doorok;
+	bool doorok;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -1732,7 +1732,7 @@ void L2DoorFix()
 static void DRLG_L2(int entry)
 {
 	int i, j;
-	BOOL doneflag;
+	bool doneflag;
 
 	doneflag = FALSE;
 	while (!doneflag) {
@@ -1910,19 +1910,19 @@ static void DRLG_InitL2Vals()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dPiece == 541) {
+			if (grid[i][j].getPiece() == 541) {
 				pc = 5;
-			} else if (grid[i][j].dPiece == 178) {
+			} else if (grid[i][j].getPiece() == 178) {
 				pc = 5;
-			} else if (grid[i][j].dPiece == 551) {
+			} else if (grid[i][j].getPiece() == 551) {
 				pc = 5;
-			} else if (grid[i][j].dPiece == 542) {
+			} else if (grid[i][j].getPiece() == 542) {
 				pc = 6;
-			} else if (grid[i][j].dPiece == 553) {
+			} else if (grid[i][j].getPiece() == 553) {
 				pc = 6;
-			} else if (grid[i][j].dPiece == 13) {
+			} else if (grid[i][j].getPiece() == 13) {
 				pc = 5;
-			} else if (grid[i][j].dPiece == 17) {
+			} else if (grid[i][j].getPiece() == 17) {
 				pc = 6;
 			} else {
 				continue;
@@ -1932,10 +1932,10 @@ static void DRLG_InitL2Vals()
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dPiece == 132) {
+			if (grid[i][j].getPiece() == 132) {
 				grid[i][j + 1].dSpecial = 2;
 				grid[i][j + 2].dSpecial = 1;
-			} else if (grid[i][j].dPiece == 135 || grid[i][j].dPiece == 139) {
+			} else if (grid[i][j].getPiece() == 135 || grid[i][j].getPiece() == 139) {
 				grid[i + 1][j].dSpecial = 3;
 				grid[i + 2][j].dSpecial = 4;
 			}
@@ -1990,25 +1990,25 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			pc = 0;
-			if (grid[i][j].dPiece == 541) {
+			if (grid[i][j].getPiece() == 541) {
 				pc = 5;
 			}
-			if (grid[i][j].dPiece == 178) {
+			if (grid[i][j].getPiece() == 178) {
 				pc = 5;
 			}
-			if (grid[i][j].dPiece == 551) {
+			if (grid[i][j].getPiece() == 551) {
 				pc = 5;
 			}
-			if (grid[i][j].dPiece == 542) {
+			if (grid[i][j].getPiece() == 542) {
 				pc = 6;
 			}
-			if (grid[i][j].dPiece == 553) {
+			if (grid[i][j].getPiece() == 553) {
 				pc = 6;
 			}
-			if (grid[i][j].dPiece == 13) {
+			if (grid[i][j].getPiece() == 13) {
 				pc = 5;
 			}
-			if (grid[i][j].dPiece == 17) {
+			if (grid[i][j].getPiece() == 17) {
 				pc = 6;
 			}
 			grid[i][j].dSpecial = pc;
@@ -2016,10 +2016,10 @@ void LoadL2Dungeon(char *sFileName, int vx, int vy)
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dPiece == 132) {
+			if (grid[i][j].getPiece() == 132) {
 				grid[i][j + 1].dSpecial = 2;
 				grid[i][j + 2].dSpecial = 1;
-			} else if (grid[i][j].dPiece == 135 || grid[i][j].dPiece == 139) {
+			} else if (grid[i][j].getPiece() == 135 || grid[i][j].getPiece() == 139) {
 				grid[i + 1][j].dSpecial = 3;
 				grid[i + 2][j].dSpecial = 4;
 			}
@@ -2084,7 +2084,7 @@ void LoadPreL2Dungeon(char *sFileName, int vx, int vy)
 
 void CreateL2Dungeon(DWORD rseed, int entry)
 {
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		if (level.currlevel == 7 && !quests[Q_BLIND]._qactive) {
 			level.currlevel = 6;
 			CreateL2Dungeon(glSeedTbl[6], 4);

@@ -203,6 +203,8 @@ add_library(devilution STATIC
   Source/gamemenu.cpp
   Source/generators/gendung.cpp
   Source/gmenu.cpp
+  Source/grid/grid.cpp
+  Source/grid/tile.cpp
   Source/help.cpp
   Source/init.cpp
   Source/interfac.cpp
@@ -223,6 +225,7 @@ add_library(devilution STATIC
   Source/actors/monster_type.cpp
   Source/media/movie.cpp
   Source/media/mpqapi.cpp
+  Source/micropather/micropather.cpp
   Source/multiplayer/msg.cpp
   Source/multiplayer/multi.cpp
   Source/nthread.cpp
@@ -232,9 +235,10 @@ add_library(devilution STATIC
   Source/palette.cpp
   Source/path.cpp
   Source/micropather/pathfinder.cpp
-  Source/micropather/micropather.cpp
   Source/pfile.cpp
-  Source/actors/player.cpp
+  Source/grid/pieces.cpp
+  Source/actors/player_instance.cpp
+  Source/actors/player_manager.cpp
   Source/plrmsg.cpp
   Source/portal.cpp
   Source/quests.cpp
@@ -249,6 +253,7 @@ add_library(devilution STATIC
   Source/multiplayer/sync.cpp
   Source/textdat.cpp
   Source/themes.cpp
+  Source/grid/tile.cpp
   Source/tmsg.cpp
   Source/town.cpp
   Source/actors/towners.cpp

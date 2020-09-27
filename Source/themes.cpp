@@ -8,21 +8,21 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 int numthemes;
-BOOL armorFlag;
-BOOL ThemeGoodIn[4];
-BOOL weaponFlag;
-BOOL treasureFlag;
-BOOL mFountainFlag;
-BOOL cauldronFlag;
-BOOL tFountainFlag;
+bool armorFlag;
+bool ThemeGoodIn[4];
+bool weaponFlag;
+bool treasureFlag;
+bool mFountainFlag;
+bool cauldronFlag;
+bool tFountainFlag;
 int zharlib;
 int themex;
 int themey;
 int themeVar1;
 ThemeStruct themes[MAXTHEMES];
-BOOL pFountainFlag;
-BOOL bFountainFlag;
-BOOL bCrossFlag;
+bool pFountainFlag;
+bool bFountainFlag;
+bool bCrossFlag;
 
 int ThemeGood[4] = { THEME_GOATSHRINE, THEME_SHRINE, THEME_SKELROOM, THEME_LIBRARY };
 
@@ -54,7 +54,7 @@ int trm3y[] = {
 	1, 1, 1
 };
 
-BOOL TFit_Shrine(int i)
+bool TFit_Shrine(int i)
 {
 	int xp, yp, found;
 
@@ -63,23 +63,23 @@ BOOL TFit_Shrine(int i)
 	found = 0;
 	while (found == 0) {
 		if (grid[xp][yp].dTransVal == themes[i].ttval) {
-			if (pieces[grid[xp][yp - 1].dPiece].nTrapTable
-			    && !pieces[grid[xp - 1][yp].dPiece].nSolidTable
-			    && !pieces[grid[xp + 1][yp].dPiece].nSolidTable
+			if (grid[xp][yp - 1].isTrap()
+			    && !grid[xp - 1][yp].isSolid()
+			    && !grid[xp + 1][yp].isSolid()
 			    && grid[xp - 1][yp].dTransVal == themes[i].ttval
 			    && grid[xp + 1][yp].dTransVal == themes[i].ttval
-			    && grid[xp - 1][yp - 1].dObject == 0
-			    && grid[xp + 1][yp - 1].dObject == 0) {
+			    && !grid[xp - 1][yp - 1].isObject()
+			    && !grid[xp + 1][yp - 1].isObject()) {
 				found = 1;
 			}
 			if (found == 0
-			    && pieces[grid[xp - 1][yp].dPiece].nTrapTable
-			    && !pieces[grid[xp][yp - 1].dPiece].nSolidTable
-			    && !pieces[grid[xp][yp + 1].dPiece].nSolidTable
+			    && grid[xp - 1][yp].isTrap()
+			    && !grid[xp][yp - 1].isSolid()
+			    && !grid[xp][yp + 1].isSolid()
 			    && grid[xp][yp - 1].dTransVal == themes[i].ttval
 			    && grid[xp][yp + 1].dTransVal == themes[i].ttval
-			    && grid[xp - 1][yp - 1].dObject == 0
-			    && grid[xp - 1][yp + 1].dObject == 0) {
+			    && !grid[xp - 1][yp - 1].isObject()
+			    && !grid[xp - 1][yp + 1].isObject()) {
 				found = 2;
 			}
 		}
@@ -99,11 +99,11 @@ BOOL TFit_Shrine(int i)
 	return TRUE;
 }
 
-BOOL TFit_Obj5(int t)
+bool TFit_Obj5(int t)
 {
 	int xp, yp;
 	int i, r, rs;
-	BOOL found;
+	bool found;
 
 	xp = 0;
 	yp = 0;
@@ -111,10 +111,10 @@ BOOL TFit_Obj5(int t)
 	rs = r;
 	while (r > 0) {
 		found = FALSE;
-		if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+		if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 			found = TRUE;
 			for (i = 0; found && i < 25; i++) {
-				if (pieces[grid[xp + trm5x[i]][yp + trm5y[i]].dPiece].nSolidTable) {
+				if (grid[xp + trm5x[i]][yp + trm5y[i]].isSolid()) {
 					found = FALSE;
 				}
 				if (grid[xp + trm5x[i]][yp + trm5y[i]].dTransVal != themes[t].ttval) {
@@ -147,7 +147,7 @@ BOOL TFit_Obj5(int t)
 	return TRUE;
 }
 
-BOOL TFit_SkelRoom(int t)
+bool TFit_SkelRoom(int t)
 {
 	int i;
 
@@ -165,7 +165,7 @@ BOOL TFit_SkelRoom(int t)
 	return FALSE;
 }
 
-BOOL TFit_GoatShrine(int t)
+bool TFit_GoatShrine(int t)
 {
 	int i;
 
@@ -179,33 +179,29 @@ BOOL TFit_GoatShrine(int t)
 	return FALSE;
 }
 
-BOOL CheckThemeObj3(int xp, int yp, int t, int f)
+bool CheckThemeObj3(int xp, int yp, int t, int f)
 {
-	int i;
-
-	for (i = 0; i < 9; i++) {
-		if (xp + trm3x[i] < 0 || yp + trm3y[i] < 0)
+	for (int i = 0; i < 9; i++) {
+		V2Di p = { xp + trm3x[i], yp + trm3y[i] };
+		if (p.x < 0 || p.y < 0)
 			return FALSE;
-		if (pieces[grid[xp + trm3x[i]][yp + trm3y[i]].dPiece].nSolidTable)
+		if (grid.at(p).isSolid())
 			return FALSE;
-		if (grid[xp + trm3x[i]][yp + trm3y[i]].dTransVal != themes[t].ttval)
+		if (grid.at(p).dTransVal != themes[t].ttval)
 			return FALSE;
-		if (grid[xp + trm3x[i]][yp + trm3y[i]].dObject)
+		if (grid.at(p).isObject())
 			return FALSE;
 		if (f != -1 && !random_(0, f))
 			return FALSE;
 	}
-
 	return TRUE;
 }
 
-BOOL TFit_Obj3(int t)
+bool TFit_Obj3(int t)
 {
-	int xp, yp;
 	char objrnd[4] = { 4, 4, 3, 5 };
-
-	for (yp = 1; yp < MAXDUNY - 1; yp++) {
-		for (xp = 1; xp < MAXDUNX - 1; xp++) {
+	for (int yp = 1; yp < MAXDUNY - 1; yp++) {
+		for (int xp = 1; xp < MAXDUNX - 1; xp++) {
 			if (CheckThemeObj3(xp, yp, t, objrnd[level.leveltype - 1])) {
 				themex = xp;
 				themey = yp;
@@ -213,15 +209,12 @@ BOOL TFit_Obj3(int t)
 			}
 		}
 	}
-
 	return FALSE;
 }
 
-BOOL CheckThemeReqs(int t)
+bool CheckThemeReqs(int t)
 {
-	BOOL rv;
-
-	rv = TRUE;
+	bool rv = TRUE;
 	switch (t) {
 	case THEME_SHRINE:
 	case THEME_SKELROOM:
@@ -270,11 +263,9 @@ BOOL CheckThemeReqs(int t)
 	return rv;
 }
 
-BOOL SpecialThemeFit(int i, int t)
+bool SpecialThemeFit(int i, int t)
 {
-	BOOL rv;
-
-	rv = CheckThemeReqs(t);
+	bool rv = CheckThemeReqs(t);
 	switch (t) {
 	case THEME_SHRINE:
 	case THEME_LIBRARY:
@@ -348,27 +339,24 @@ BOOL SpecialThemeFit(int i, int t)
 		}
 		break;
 	}
-
 	return rv;
 }
 
-BOOL CheckThemeRoom(int tv)
+bool CheckThemeRoom(int tv)
 {
-	int i, j, tarea;
-
-	for (i = 0; i < numtrigs; i++) {
+	for (int i = 0; i < numtrigs; i++) {
 		if (grid.at(trigs[i]._t).dTransVal == tv)
 			return FALSE;
 	}
 
-	tarea = 0;
-	for (j = 0; j < MAXDUNY; j++) {
-		for (i = 0; i < MAXDUNX; i++) {
+	int tarea = 0;
+
+	for (int j = 0; j < MAXDUNY; j++) {
+		for (int i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].dTransVal != tv)
 				continue;
 			if (grid[i][j].dFlags & BFLAG_POPULATED)
 				return FALSE;
-
 			tarea++;
 		}
 	}
@@ -376,17 +364,17 @@ BOOL CheckThemeRoom(int tv)
 	if (level.leveltype == DTYPE_CATHEDRAL && (tarea < 9 || tarea > 100))
 		return FALSE;
 
-	for (j = 0; j < MAXDUNY; j++) {
-		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dTransVal != tv || pieces[grid[i][j].dPiece].nSolidTable)
+	for (int j = 0; j < MAXDUNY; j++) {
+		for (int i = 0; i < MAXDUNX; i++) {
+			if (grid[i][j].dTransVal != tv || grid[i][j].isSolid())
 				continue;
-			if (grid[i - 1][j].dTransVal != tv && !pieces[grid[i - 1][j].dPiece].nSolidTable)
+			if (grid[i - 1][j].dTransVal != tv && !grid[i - 1][j].isSolid())
 				return FALSE;
-			if (grid[i + 1][j].dTransVal != tv && !pieces[grid[i + 1][j].dPiece].nSolidTable)
+			if (grid[i + 1][j].dTransVal != tv && !grid[i + 1][j].isSolid())
 				return FALSE;
-			if (grid[i][j - 1].dTransVal != tv && !pieces[grid[i][j - 1].dPiece].nSolidTable)
+			if (grid[i][j - 1].dTransVal != tv && !grid[i][j - 1].isSolid())
 				return FALSE;
-			if (grid[i][j + 1].dTransVal != tv && !pieces[grid[i][j + 1].dPiece].nSolidTable)
+			if (grid[i][j + 1].dTransVal != tv && !grid[i][j + 1].isSolid())
 				return FALSE;
 		}
 	}
@@ -506,7 +494,7 @@ void PlaceThemeMonsts(int t, int f)
 	mtype = scattertypes[random_(0, numscattypes)];
 	for (p.y = 0; p.y < MAXDUNY; p.y++) {
 		for (p.x = 0; p.x < MAXDUNX; p.x++) {
-			if (grid.at(p).dTransVal == themes[t].ttval && !pieces[grid.at(p).dPiece].nSolidTable && grid.at(p).dItem == 0 && grid.at(p).dObject == 0) {
+			if (grid.at(p).dTransVal == themes[t].ttval && !grid.at(p).isSolid() && !grid.at(p).isItem() && !grid.at(p).isObject()) {
 				if (random_(0, f) == 0) {
 					AddMonster(p , Dir(random_(0, 8)), mtype, TRUE);
 				}
@@ -528,7 +516,7 @@ void Theme_Barrel(int t)
 
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (random_(0, barrnd[level.leveltype - 1]) == 0) {
 					if (random_(0, barrnd[level.leveltype - 1]) == 0) {
 						r = OBJ_BARREL;
@@ -581,7 +569,7 @@ void Theme_MonstPit(int t)
 	iyp = 0;
 	if (r > 0) {
 		while (TRUE) {
-			if (grid[ixp][iyp].dTransVal == themes[t].ttval && !pieces[grid[ixp][iyp].dPiece].nSolidTable) {
+			if (grid[ixp][iyp].dTransVal == themes[t].ttval && !grid[ixp][iyp].isSolid()) {
 				--r;
 			}
 			if (r <= 0) {
@@ -664,10 +652,10 @@ void Theme_SkelRoom(int t)
 		AddObject(OBJ_BANNERL, xp + 1, yp + 1);
 	}
 
-	if (grid[xp][yp - 3].dObject == 0) {
+	if (!grid[xp][yp - 3].isObject()) {
 		AddObject(OBJ_SKELBOOK, xp, yp - 2);
 	}
-	if (grid[xp][yp + 3].dObject == 0) {
+	if (!grid[xp][yp + 3].isObject()) {
 		AddObject(OBJ_SKELBOOK, xp, yp + 2);
 	}
 }
@@ -687,7 +675,7 @@ void Theme_Treasure(int t)
 	GetRndSeed();
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				int rv = random_(0, treasrnd[level.leveltype - 1]);
 				// BUGFIX: the `2*` in `2*random_(0, treasrnd...) == 0` has no effect, should probably be `random_(0, 2*treasrnd...) == 0`
 				if ((2 * random_(0, treasrnd[level.leveltype - 1])) == 0) {
@@ -735,10 +723,10 @@ void Theme_Library(int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (CheckThemeObj3(xp, yp, t, -1) && grid[xp][yp].dMonster == 0 && random_(0, librnd[level.leveltype - 1]) == 0) {
+			if (CheckThemeObj3(xp, yp, t, -1) && grid[xp][yp].getMonster() == 0 && random_(0, librnd[level.leveltype - 1]) == 0) {
 				AddObject(OBJ_BOOKSTAND, xp, yp);
-				if (random_(0, 2 * librnd[level.leveltype - 1]) != 0 && grid[xp][yp].dObject) { /// BUGFIX: check grid[xp][yp].dObject was populated by AddObject (fixed)
-					oi = grid[xp][yp].dObject - 1;
+				if (random_(0, 2 * librnd[level.leveltype - 1]) != 0 && grid[xp][yp].isObject()) { /// BUGFIX: check grid[xp][yp].dObject was populated by AddObject (fixed)
+					oi = grid[xp][yp].getObject();
 					object[oi]._oSelFlag = 0;
 					object[oi]._oAnimFrame += 2;
 				}
@@ -769,7 +757,7 @@ void Theme_Torture(int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, tortrnd[level.leveltype - 1]) == 0) {
 						AddObject(OBJ_TNUDEM2, xp, yp);
@@ -807,7 +795,7 @@ void Theme_Decap(int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, decaprnd[level.leveltype - 1]) == 0) {
 						AddObject(OBJ_DECAP, xp, yp);
@@ -850,7 +838,7 @@ void Theme_ArmorStand(int t)
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, armorrnd[level.leveltype - 1]) == 0) {
 						AddObject(OBJ_ARMORSTANDN, xp, yp);
@@ -876,7 +864,7 @@ void Theme_GoatShrine(int t)
 	AddObject(OBJ_GOATSHRINE, themex, themey);
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
-			if (grid[xx][yy].dTransVal == themes[t].ttval && !pieces[grid[xx][yy].dPiece].nSolidTable && (xx != themex || yy != themey)) {
+			if (grid[xx][yy].dTransVal == themes[t].ttval && !grid[xx][yy].isSolid() && (xx != themex || yy != themey)) {
 				AddMonster({ xx, yy }, Dir::SW, themeVar1, TRUE);
 			}
 		}
@@ -938,7 +926,7 @@ void Theme_BrnCross(int t)
 
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, bcrossrnd[level.leveltype - 1]) == 0) {
 						AddObject(OBJ_TBCROSS, xp, yp);
@@ -968,7 +956,7 @@ void Theme_WeaponRack(int t)
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (grid[xp][yp].dTransVal == themes[t].ttval && !pieces[grid[xp][yp].dPiece].nSolidTable) {
+			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, weaponrnd[level.leveltype - 1]) == 0) {
 						AddObject(OBJ_WEAPONRACKN, xp, yp);

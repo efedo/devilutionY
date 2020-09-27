@@ -9,7 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 BYTE *tbuff;
 
-void LoadGame(BOOL firstflag)
+void LoadGame(bool firstflag)
 {
 	int i, j;
 	DWORD dwLen;
@@ -118,17 +118,17 @@ void LoadGame(BOOL firstflag)
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			grid[i][j].setPlayerNumUnsafe(BLoad());
+			grid[i][j].setPlayerUnsafe(BLoad());
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			grid[i][j].dItem = BLoad();
+			grid[i][j].setItem(BLoad());
 	}
 
 	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].dMonster = WLoad();
+				grid[i][j].setMonster(WLoad());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -136,7 +136,7 @@ void LoadGame(BOOL firstflag)
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].dObject = BLoad();
+				grid[i][j].setObject(BLoad());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -152,7 +152,7 @@ void LoadGame(BOOL firstflag)
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].dMissile = BLoad();
+				grid[i][j].setMissile(BLoad());
 		}
 	}
 
@@ -206,7 +206,7 @@ int ILoad()
 	return rv;
 }
 
-BOOL OLoad()
+bool OLoad()
 {
 	if (*tbuff++ == TRUE)
 		return TRUE;
@@ -289,12 +289,12 @@ void LoadPlayer(int i)
 	CopyInt(tbuff, &pPlayer->destParam3);
 	CopyInt(tbuff, &pPlayer->destParam4);
 	CopyInt(tbuff, &pPlayer->plrlevel);
-	CopyInt(tbuff, &pPlayer->_p.x);
-	CopyInt(tbuff, &pPlayer->_p.y);
-	CopyInt(tbuff, &pPlayer->_pfut.x);
-	CopyInt(tbuff, &pPlayer->_pfut.y);
-	CopyInt(tbuff, &pPlayer->_ptarg.x);
-	CopyInt(tbuff, &pPlayer->_ptarg.y);
+	CopyInt(tbuff, &pPlayer->_pos.x);
+	CopyInt(tbuff, &pPlayer->_pos.y);
+	CopyInt(tbuff, &pPlayer->_posfut.x);
+	CopyInt(tbuff, &pPlayer->_posfut.y);
+	CopyInt(tbuff, &pPlayer->_pathtarg.x);
+	CopyInt(tbuff, &pPlayer->_pathtarg.y);
 	CopyInt(tbuff, &pPlayer->_powner.x);
 	CopyInt(tbuff, &pPlayer->_powner.y);
 	CopyInt(tbuff, &pPlayer->_pold.x);
@@ -916,17 +916,17 @@ void SaveGame()
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(grid[i][j].getPlayerNumUnsafe());
+			BSave(grid[i][j].getPlayerUnsafe());
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(grid[i][j].dItem);
+			BSave(grid[i][j].getItem());
 	}
 
 	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				WSave(grid[i][j].dMonster);
+				WSave(grid[i][j].getMonster());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -934,7 +934,7 @@ void SaveGame()
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(grid[i][j].dObject);
+				BSave(grid[i][j].isObject());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -950,7 +950,7 @@ void SaveGame()
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(grid[i][j].dMissile);
+				BSave(grid[i][j].getMissile());
 		}
 	}
 
@@ -992,7 +992,7 @@ void ISave(int v)
 	*tbuff++ = v;
 }
 
-void OSave(BOOL v)
+void OSave(bool v)
 {
 	if (v != FALSE)
 		*tbuff++ = TRUE;
@@ -1014,12 +1014,12 @@ void SavePlayer(int i)
 	CopyInt(&pPlayer->destParam3, tbuff);
 	CopyInt(&pPlayer->destParam4, tbuff);
 	CopyInt(&pPlayer->plrlevel, tbuff);
-	CopyInt(&pPlayer->_p.x, tbuff);
-	CopyInt(&pPlayer->_p.y, tbuff);
-	CopyInt(&pPlayer->_pfut.x, tbuff);
-	CopyInt(&pPlayer->_pfut.y, tbuff);
-	CopyInt(&pPlayer->_ptarg.x, tbuff);
-	CopyInt(&pPlayer->_ptarg.y, tbuff);
+	CopyInt(&pPlayer->_pos.x, tbuff);
+	CopyInt(&pPlayer->_pos.y, tbuff);
+	CopyInt(&pPlayer->_posfut.x, tbuff);
+	CopyInt(&pPlayer->_posfut.y, tbuff);
+	CopyInt(&pPlayer->_pathtarg.x, tbuff);
+	CopyInt(&pPlayer->_pathtarg.y, tbuff);
 	CopyInt(&pPlayer->_powner.x, tbuff);
 	CopyInt(&pPlayer->_powner.y, tbuff);
 	CopyInt(&pPlayer->_pold.x, tbuff);
@@ -1597,17 +1597,17 @@ void SaveLevel()
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			BSave(grid[i][j].dItem);
+			BSave(grid[i][j].getItem());
 	}
 
 	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				WSave(grid[i][j].dMonster);
+				WSave(grid[i][j].getMonster());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(grid[i][j].dObject);
+				BSave(grid[i][j].getObject());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -1623,7 +1623,7 @@ void SaveLevel()
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				BSave(grid[i][j].dMissile);
+				BSave(grid[i][j].getMissile());
 		}
 	}
 
@@ -1689,17 +1689,17 @@ void LoadLevel()
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
-			grid[i][j].dItem = BLoad();
+			grid[i][j].setItem(BLoad());
 	}
 
 	if (level.leveltype != DTYPE_TOWN) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].dMonster = WLoad();
+				grid[i][j].setMonster(WLoad());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].dObject = BLoad();
+				grid[i][j].setObject(BLoad());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -1713,10 +1713,10 @@ void LoadLevel()
 			for (i = 0; i < DMAXX; i++)
 				automap.getView()[i][j] = OLoad();
 		}
-		for (j = 0; j < MAXDUNY; j++) {
-			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].dMissile = 0; /// BUGFIX: supposed to load saved missiles with "BLoad()"?
-		}
+		//for (j = 0; j < MAXDUNY; j++) {
+		//	for (i = 0; i < MAXDUNX; i++)
+		//		grid[i][j].getMissile() = 0; /// BUGFIX: supposed to load saved missiles with "BLoad()"?
+		//}
 	}
 
 	automap.zoomReset();

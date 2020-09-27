@@ -8,14 +8,14 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 int itemactive[MAXITEMS];
-BOOL uitemflag;
+bool uitemflag;
 int itemavail[MAXITEMS];
 ItemStruct curruitem;
 ItemGetRecordStruct itemrecord[MAXITEMS];
 ItemStruct item[MAXITEMS + 1];
-BOOL itemhold[3][3];
+bool itemhold[3][3];
 BYTE *itemanims[ITEMTYPES];
-BOOL UniqueItemFlag[128];
+bool UniqueItemFlag[128];
 int numitems;
 int gnNumGetRecords;
 
@@ -213,14 +213,14 @@ void InitItemGFX()
 	memset(UniqueItemFlag, 0, sizeof(UniqueItemFlag));
 }
 
-BOOL ItemPlace(V2Di pos)
+bool ItemPlace(V2Di pos)
 {
-	if (grid.at(pos).dMonster != 0) return FALSE;
+	if (grid.at(pos).isMonster()) return FALSE;
 	if (grid.at(pos).isPlayer()) return FALSE;
-	if (grid.at(pos).dItem != 0) return FALSE;
-	if (grid.at(pos).dObject != 0) return FALSE;
+	if (grid.at(pos).isItem()) return FALSE;
+	if (grid.at(pos).isObject()) return FALSE;
 	if (grid.at(pos).dFlags & BFLAG_POPULATED) return FALSE;
-	if (pieces[grid.at(pos).dPiece].nSolidTable) return FALSE;
+	if (grid.at(pos).isSolid()) return FALSE;
 	return TRUE;
 }
 
@@ -241,7 +241,7 @@ void AddInitItems()
 			pos.y = random_(12, 80) + 16;
 		}
 		item[i]._i = pos;
-		grid.at(pos).dItem = i + 1;
+		grid.at(pos).setItem(i);
 		item[i]._iSeed = GetRndSeed();
 		SetRndSeed(item[i]._iSeed);
 		if (random_(12, 2))
@@ -295,7 +295,7 @@ void InitItems()
 	uitemflag = FALSE;
 }
 
-void CalcPlrItemVals(int p, BOOL Loadgfx)
+void CalcPlrItemVals(int p, bool Loadgfx)
 {
 	int pvid;
 	Dir d;
@@ -646,7 +646,7 @@ void CalcSelfItems(int pnum)
 {
 	int i;
 	PlayerStruct *p;
-	BOOL sf, changeflag;
+	bool sf, changeflag;
 	int sa, ma, da;
 
 	p = &plr[pnum].data;
@@ -713,7 +713,7 @@ void CalcPlrItemMin(int pnum)
 	}
 }
 
-BOOL ItemMinStats(PlayerStruct *p, ItemStruct *x)
+bool ItemMinStats(PlayerStruct *p, ItemStruct *x)
 {
 	if (p->_pMagic < x->_iMinMag)
 		return FALSE;
@@ -756,7 +756,7 @@ void CalcPlrBookVals(int p)
 	}
 }
 
-void CalcPlrInv(int p, BOOL Loadgfx)
+void CalcPlrInv(int p, bool Loadgfx)
 {
 	CalcPlrItemMin(p);
 	CalcSelfItems(p);
@@ -818,7 +818,7 @@ void GetPlrHandSeed(ItemStruct *h)
 void GetGoldSeed(int pnum, ItemStruct *h)
 {
 	int i, ii, s;
-	BOOL doneflag;
+	bool doneflag;
 
 	do {
 		doneflag = TRUE;
@@ -955,50 +955,49 @@ void CreatePlrItems(int p)
 	CalcPlrItemVals(p, FALSE);
 }
 
-BOOL ItemSpaceOk(int i, int j)
+bool ItemSpaceOk(int i, int j)
 {
 	int oi;
 
-	// BUGFIX: Check `i + 1 >= MAXDUNX` and `j + 1 >= MAXDUNY` (applied)
-	if (i < 0 || i + 1 >= MAXDUNX || j < 0 || j + 1 >= MAXDUNY)
+	if (!grid.isValid({ i, j }))
 		return FALSE;
 
-	if (grid[i][j].dMonster != 0)
+	if (grid[i][j].isMonster())
 		return FALSE;
 
-	if (grid[i][j].isPlayer() != 0)
+	if (grid[i][j].isPlayer())
 		return FALSE;
 
-	if (grid[i][j].dItem != 0)
+	if (grid[i][j].isItem())
 		return FALSE;
 
-	if (grid[i][j].dObject != 0) {
-		oi = grid[i][j].dObject > 0 ? grid[i][j].dObject - 1 : -(grid[i][j].dObject + 1);
+	if (grid[i][j].isObject()) {
+		oi = grid[i][j].getObject();
 		if (object[oi]._oSolidFlag)
 			return FALSE;
 	}
 
-	if (grid[i + 1][j + 1].dObject > 0 && object[grid[i + 1][j + 1].dObject - 1]._oSelFlag != 0)
+	if (grid[i + 1][j + 1].isObject() && object[grid[i + 1][j + 1].getObject()]._oSelFlag != 0)
 		return FALSE;
 
-	if (grid[i + 1][j + 1].dObject < 0 && object[-(grid[i + 1][j + 1].dObject + 1)]._oSelFlag != 0)
+	if (grid[i + 1][j + 1].isObject() && object[-(grid[i + 1][j + 1].getObject())]._oSelFlag != 0)
 		return FALSE;
 
-	if (grid[i + 1][j].dObject > 0
-	    && grid[i][j + 1].dObject > 0
-	    && object[grid[i + 1][j].dObject - 1]._oSelFlag != 0
-	    && object[grid[i][j + 1].dObject - 1]._oSelFlag != 0) {
+	if (grid[i + 1][j].isObject()
+	    && grid[i][j + 1].isObject()
+	    && object[grid[i + 1][j].getObject()]._oSelFlag != 0
+	    && object[grid[i][j + 1].getObject()]._oSelFlag != 0) {
 		return FALSE;
 	}
 
-	return !pieces[grid[i][j].dPiece].nSolidTable;
+	return !grid[i][j].isSolid();
 }
 
-BOOL GetItemSpace(V2Di pos, char inum)
+bool GetItemSpace(V2Di pos, char inum)
 {
 	int i, j, rs;
 	V2Di n;
-	BOOL savail;
+	bool savail;
 
 	n.y = 0;
 	for (j = pos.y - 1; j <= pos.y + 1; j++) {
@@ -1036,7 +1035,7 @@ BOOL GetItemSpace(V2Di pos, char inum)
 	}
 	n += { pos.x - 1, pos.y - 1 };
 	item[inum]._i = n;
-	grid.at(n).dItem = inum + 1;
+	grid.at(n).setItem(inum);
 
 	return TRUE;
 }
@@ -1054,7 +1053,7 @@ void GetSuperItemSpace(V2Di pos, char inum)
 					xx = i + pos.x;
 					if (ItemSpaceOk(xx, yy)) {
 						item[inum]._i = { xx, yy };
-						grid[xx][yy].dItem = inum + 1;
+						grid[xx][yy].setItem(inum);
 						return;
 					}
 				}
@@ -1110,11 +1109,11 @@ void GetBookSpell(int i, int lvl)
 			bs = s;
 		}
 		s++;
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			if (s == SPL_RESURRECT)
 				s = SPL_TELEKINESIS;
 		}
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			if (s == SPL_HEALOTHER)
 				s = SPL_FLARE;
 		}
@@ -1135,12 +1134,12 @@ void GetBookSpell(int i, int lvl)
 		item[i]._iCurs = ICURS_BOOK_GREY;
 }
 
-void GetStaffPower(int i, int lvl, int bs, BOOL onlygood)
+void GetStaffPower(int i, int lvl, int bs, bool onlygood)
 {
 	int l[256];
 	char istr[128];
 	int nl, j, preidx;
-	BOOL addok;
+	bool addok;
 	int tmp;
 
 	tmp = random_(15, 10);
@@ -1192,7 +1191,7 @@ void GetStaffPower(int i, int lvl, int bs, BOOL onlygood)
 	CalcItemValue(i);
 }
 
-void GetStaffSpell(int i, int lvl, BOOL onlygood)
+void GetStaffSpell(int i, int lvl, bool onlygood)
 {
 	int l, rv, s, minc, maxc, v, bs;
 	char istr[64];
@@ -1211,9 +1210,9 @@ void GetStaffSpell(int i, int lvl, BOOL onlygood)
 				bs = s;
 			}
 			s++;
-			if (gbMaxPlayers == 1 && s == SPL_RESURRECT)
+			if (plr.isSingleplayer() && s == SPL_RESURRECT)
 				s = SPL_TELEKINESIS;
-			if (gbMaxPlayers == 1 && s == SPL_HEALOTHER)
+			if (plr.isSingleplayer() && s == SPL_HEALOTHER)
 				s = SPL_FLARE;
 			if (s == MAX_SPELLS)
 				s = SPL_FIREBOLT;
@@ -1641,7 +1640,7 @@ void SaveItemPower(int i, int power, int param1, int param2, int minval, int max
 	}
 }
 
-void GetItemPower(int i, int minlvl, int maxlvl, int flgs, BOOL onlygood)
+void GetItemPower(int i, int minlvl, int maxlvl, int flgs, bool onlygood)
 {
 	int pre, post, nt, nl, j, preidx, sufidx;
 	int l[256];
@@ -1734,7 +1733,7 @@ void GetItemPower(int i, int minlvl, int maxlvl, int flgs, BOOL onlygood)
 		CalcItemValue(i);
 }
 
-void GetItemBonus(int i, int idata, int minlvl, int maxlvl, BOOL onlygood)
+void GetItemBonus(int i, int idata, int minlvl, int maxlvl, bool onlygood)
 {
 	if (item[i]._iClass != ICLASS_GOLD) {
 		if (minlvl > 25)
@@ -1819,9 +1818,9 @@ int RndItem(int m)
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iSpell == SPL_RESURRECT && gbMaxPlayers == 1)
+		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
 			ri--;
-		if (AllItemsList[i].iSpell == SPL_HEALOTHER && gbMaxPlayers == 1)
+		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
 			ri--;
 	}
 
@@ -1832,9 +1831,9 @@ int RndUItem(int m)
 {
 	int i, ri;
 	int ril[512];
-	BOOL okflag;
+	bool okflag;
 
-	if (m != -1 && (monsters[m].data.MData->mTreasure & 0x8000) != 0 && gbMaxPlayers == 1)
+	if (m != -1 && (monsters[m].data.MData->mTreasure & 0x8000) != 0 && plr.isSingleplayer())
 		return -1 - (monsters[m].data.MData->mTreasure & 0xFFF);
 
 	ri = 0;
@@ -1857,9 +1856,9 @@ int RndUItem(int m)
 			okflag = FALSE;
 		if (AllItemsList[i].iMiscId == IMISC_BOOK)
 			okflag = TRUE;
-		if (AllItemsList[i].iSpell == SPL_RESURRECT && gbMaxPlayers == 1)
+		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
 			okflag = FALSE;
-		if (AllItemsList[i].iSpell == SPL_HEALOTHER && gbMaxPlayers == 1)
+		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
 			okflag = FALSE;
 		if (okflag) {
 			ril[ri] = i;
@@ -1884,9 +1883,9 @@ int RndAllItems()
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iSpell == SPL_RESURRECT && gbMaxPlayers == 1)
+		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
 			ri--;
-		if (AllItemsList[i].iSpell == SPL_HEALOTHER && gbMaxPlayers == 1)
+		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
 			ri--;
 	}
 
@@ -1896,7 +1895,7 @@ int RndAllItems()
 int RndTypeItems(int itype, int imid)
 {
 	int i, ri;
-	BOOL okflag;
+	bool okflag;
 	int ril[512];
 
 	ri = 0;
@@ -1919,7 +1918,7 @@ int RndTypeItems(int itype, int imid)
 	return ril[random_(27, ri)];
 }
 
-int CheckUnique(int i, int lvl, int uper, BOOL recreate)
+int CheckUnique(int i, int lvl, int uper, bool recreate)
 {
 	int j, idata, numu;
 	BOOLEAN uok[128];
@@ -1932,7 +1931,7 @@ int CheckUnique(int i, int lvl, int uper, BOOL recreate)
 	for (j = 0; UniqueItemList[j].UIItemId != UITYPE_INVALID; j++) {
 		if (UniqueItemList[j].UIItemId == AllItemsList[item[i].IDidx].iItemId
 		    && lvl >= UniqueItemList[j].UIMinLvl
-		    && (recreate || !UniqueItemFlag[j] || gbMaxPlayers != 1)) {
+		    && (recreate || !UniqueItemFlag[j] || plr.isMultiplayer())) {
 			uok[j] = TRUE;
 			numu++;
 		}
@@ -2009,7 +2008,7 @@ void ItemRndDur(int ii)
 		item[ii]._iDurability = random_(0, item[ii]._iMaxDur >> 1) + (item[ii]._iMaxDur >> 2) + 1;
 }
 
-void SetupAllItems(int ii, int idx, int iseed, int lvl, int uper, int onlygood, BOOL recreate, BOOL pregen)
+void SetupAllItems(int ii, int idx, int iseed, int lvl, int uper, int onlygood, bool recreate, bool pregen)
 {
 	int iblvl, uid;
 
@@ -2069,11 +2068,11 @@ void SetupAllItems(int ii, int idx, int iseed, int lvl, int uper, int onlygood, 
 	SetupItem(ii);
 }
 
-void SpawnItem(int m, V2Di pos, BOOL sendmsg)
+void SpawnItem(int m, V2Di pos, bool sendmsg)
 {
 	int ii, onlygood, idx;
 
-	if (monsters[m].data._uniqtype || ((monsters[m].data.MData->mTreasure & 0x8000) && gbMaxPlayers != 1)) {
+	if (monsters[m].data._uniqtype || ((monsters[m].data.MData->mTreasure & 0x8000) && plr.isMultiplayer())) {
 		idx = RndUItem(m);
 		if (idx < 0) {
 			SpawnUnique(-(idx + 1), pos);
@@ -2135,7 +2134,7 @@ void CreateItem(int uid, V2Di pos)
 	}
 }
 
-void CreateRndItem(V2Di pos, BOOL onlygood, BOOL sendmsg, BOOL delta)
+void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta)
 {
 	int idx, ii;
 
@@ -2178,7 +2177,7 @@ void SetupAllUseful(int ii, int iseed, int lvl)
 	SetupItem(ii);
 }
 
-void CreateRndUseful(int pnum, V2Di pos, BOOL sendmsg)
+void CreateRndUseful(int pnum, V2Di pos, bool sendmsg)
 {
 	int ii;
 
@@ -2195,7 +2194,7 @@ void CreateRndUseful(int pnum, V2Di pos, BOOL sendmsg)
 	}
 }
 
-void CreateTypeItem(V2Di pos, BOOL onlygood, int itype, int imisc, BOOL sendmsg, BOOL delta)
+void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg, bool delta)
 {
 	int idx, ii;
 
@@ -2219,7 +2218,7 @@ void CreateTypeItem(V2Di pos, BOOL onlygood, int itype, int imisc, BOOL sendmsg,
 void RecreateItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue)
 {
 	int uper, onlygood, recreate;
-	BOOL pregen;
+	bool pregen;
 
 	if (!idx) {
 		SetPlrHandItem(&item[ii], IDI_GOLD);
@@ -2291,7 +2290,7 @@ void RecreateEar(int ii, WORD ic, int iseed, int Id, int dur, int mdur, int ch, 
 
 void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag)
 {
-	BOOL failed;
+	bool failed;
 	int i, j, tries;
 
 	if (randarea) {
@@ -2318,7 +2317,7 @@ void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag)
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = i;
 		item[i]._i = pos;
-		grid.at(pos).dItem = i + 1;
+		grid.at(pos).setItem(i);
 		GetItemAttrs(i, itemid, level.currlevel);
 		SetupItem(i);
 		item[i]._iPostDraw = TRUE;
@@ -2335,9 +2334,7 @@ void SpawnRock()
 {
 	int i, ii;
 	V2Di n;
-	int ostand;
-
-	ostand = FALSE;
+	int ostand = FALSE;
 	for (i = 0; i < nobjects && !ostand; i++) {
 		ii = objectactive[i];
 		ostand = object[ii]._otype == OBJ_STAND;
@@ -2348,7 +2345,7 @@ void SpawnRock()
 		itemactive[numitems] = i;
 		n = object[ii]._o;
 		item[i]._i = n;
-		grid[n.x][item[i]._i.y].dItem = i + 1;
+		grid[n.x][item[i]._i.y].setItem(i);
 		GetItemAttrs(i, IDI_ROCK, level.currlevel);
 		SetupItem(i);
 		item[i]._iSelFlag = 2;
@@ -2358,11 +2355,9 @@ void SpawnRock()
 	}
 }
 
-void RespawnItem(int i, BOOL FlipFlag)
+void RespawnItem(int i, bool FlipFlag)
 {
-	int it;
-
-	it = ItemCAnimTbl[item[i]._iCurs];
+	int it = ItemCAnimTbl[item[i]._iCurs];
 	item[i]._iAnimData = itemanims[it];
 	item[i]._iAnimLen = ItemAnimLs[it];
 	item[i]._iAnimWidth = 96;
@@ -2402,12 +2397,12 @@ void ItemDoppel()
 	int idoppelx;
 	ItemStruct *i;
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		for (idoppelx = 16; idoppelx < 96; idoppelx++) {
-			if (grid[idoppelx][idoppely].dItem) {
-				i = &item[grid[idoppelx][idoppely].dItem - 1];
+			if (grid[idoppelx][idoppely].isItem()) {
+				i = &item[grid[idoppelx][idoppely].getItem()];
 				if (i->_i.x != idoppelx || i->_i.y != idoppely)
-					grid[idoppelx][idoppely].dItem = 0;
+					grid[idoppelx][idoppely].clearItem();
 			}
 		}
 		idoppely++;
@@ -2501,16 +2496,15 @@ void DoRepair(int pnum, int cii)
 	PlaySfxLoc(IS_REPAIR, p.pos());
 
 	if (cii >= NUM_INVLOC) {
-		pi = p.data.InvList[cii - NUM_INVLOC];
+		pi = &p.data.InvList[cii - NUM_INVLOC];
 	} else {
-		pi = p.data.InvBody[cii];
+		pi = &p.data.InvBody[cii];
 	}
 
 	RepairItem(pi, p.data._pLevel);
 	CalcPlrInv(pnum, TRUE);
 
-	if (pnum == myplr())
-		SetCursor_(CURSOR_HAND);
+	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
 }
 
 void RepairItem(ItemStruct *i, int lvl)
@@ -2892,7 +2886,7 @@ void DrawUTextBack()
 	trans_rect(RIGHT_PANEL - SPANEL_WIDTH + 27, 28, 265, 297);
 }
 
-void PrintUString(V2Di pos, BOOL cjustflag, char *str, int col)
+void PrintUString(V2Di pos, bool cjustflag, char *str, int col)
 {
 	int len, width, i, k;
 	BYTE c;
@@ -3253,9 +3247,9 @@ void UseItem(int p, int Mid, int spl)
 	}
 }
 
-BOOL StoreStatOk(ItemStruct *h)
+bool StoreStatOk(ItemStruct *h)
 {
-	BOOL sf;
+	bool sf;
 
 	sf = TRUE;
 	if (myplr().data._pStrength < h->_iMinStr)
@@ -3268,9 +3262,9 @@ BOOL StoreStatOk(ItemStruct *h)
 	return sf;
 }
 
-BOOL SmithItemOk(int i)
+bool SmithItemOk(int i)
 {
-	BOOL rv;
+	bool rv;
 
 	rv = TRUE;
 	if (AllItemsList[i].itype == ITYPE_MISC)
@@ -3321,7 +3315,7 @@ void BubbleSwapItem(ItemStruct *a, ItemStruct *b)
 void SortSmith()
 {
 	int j, k;
-	BOOL sorted;
+	bool sorted;
 
 	j = 0;
 	while (smithitem[j + 1]._itype != ITYPE_NONE) {
@@ -3364,9 +3358,9 @@ void SpawnSmith(int lvl)
 	SortSmith();
 }
 
-BOOL PremiumItemOk(int i)
+bool PremiumItemOk(int i)
 {
-	BOOL rv;
+	bool rv;
 
 	rv = TRUE;
 	if (AllItemsList[i].itype == ITYPE_MISC)
@@ -3378,7 +3372,7 @@ BOOL PremiumItemOk(int i)
 	if (AllItemsList[i].itype == ITYPE_STAFF)
 		rv = FALSE;
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		if (AllItemsList[i].itype == ITYPE_RING)
 			rv = FALSE;
 		if (AllItemsList[i].itype == ITYPE_AMULET)
@@ -3454,9 +3448,9 @@ void SpawnPremium(int lvl)
 	}
 }
 
-BOOL WitchItemOk(int i)
+bool WitchItemOk(int i)
 {
-	BOOL rv;
+	bool rv;
 
 	rv = FALSE;
 	if (AllItemsList[i].itype == ITYPE_MISC)
@@ -3473,9 +3467,9 @@ BOOL WitchItemOk(int i)
 		rv = FALSE;
 	if (AllItemsList[i].iMiscId == IMISC_HEAL)
 		rv = FALSE;
-	if (AllItemsList[i].iSpell == SPL_RESURRECT && gbMaxPlayers == 1)
+	if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
 		rv = FALSE;
-	if (AllItemsList[i].iSpell == SPL_HEALOTHER && gbMaxPlayers == 1)
+	if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
 		rv = FALSE;
 
 	return rv;
@@ -3500,7 +3494,7 @@ int RndWitchItem(int lvl)
 void SortWitch()
 {
 	int j, k;
-	BOOL sorted;
+	bool sorted;
 
 	j = 3;
 	while (witchitem[j + 1]._itype != ITYPE_NONE) {
@@ -3620,9 +3614,9 @@ void SpawnBoy(int lvl)
 	}
 }
 
-BOOL HealerItemOk(int i)
+bool HealerItemOk(int i)
 {
-	BOOL result;
+	bool result;
 
 	result = FALSE;
 	if (AllItemsList[i].itype != ITYPE_MISC)
@@ -3630,12 +3624,12 @@ BOOL HealerItemOk(int i)
 
 	if (AllItemsList[i].iMiscId == IMISC_SCROLL && AllItemsList[i].iSpell == SPL_HEAL)
 		result = TRUE;
-	if (AllItemsList[i].iMiscId == IMISC_SCROLLT && AllItemsList[i].iSpell == SPL_RESURRECT && gbMaxPlayers != 1)
+	if (AllItemsList[i].iMiscId == IMISC_SCROLLT && AllItemsList[i].iSpell == SPL_RESURRECT && plr.isMultiplayer())
 		result = FALSE;
-	if (AllItemsList[i].iMiscId == IMISC_SCROLLT && AllItemsList[i].iSpell == SPL_HEALOTHER && gbMaxPlayers != 1)
+	if (AllItemsList[i].iMiscId == IMISC_SCROLLT && AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isMultiplayer())
 		result = TRUE;
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		if (AllItemsList[i].iMiscId == IMISC_ELIXSTR)
 			result = TRUE;
 		if (AllItemsList[i].iMiscId == IMISC_ELIXMAG)
@@ -3684,7 +3678,7 @@ int RndHealerItem(int lvl)
 void SortHealer()
 {
 	int j, k;
-	BOOL sorted;
+	bool sorted;
 
 	j = 2;
 	while (healitem[j + 1]._itype != ITYPE_NONE) {
@@ -3718,7 +3712,7 @@ void SpawnHealer(int lvl)
 	healitem[1]._iCreateInfo = lvl;
 	healitem[1]._iStatFlag = TRUE;
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		GetItemAttrs(0, IDI_RESURRECT, 1);
 		healitem[2] = item[0];
 		healitem[2]._iCreateInfo = lvl;
@@ -3886,10 +3880,10 @@ int ItemNoFlippy()
 	return r;
 }
 
-void CreateSpellBook(V2Di pos, int ispell, BOOL sendmsg, BOOL delta)
+void CreateSpellBook(V2Di pos, int ispell, bool sendmsg, bool delta)
 {
 	int ii, idx;
-	BOOL done;
+	bool done;
 
 	done = FALSE;
 	idx = RndTypeItems(ITYPE_MISC, IMISC_BOOK);
@@ -3911,10 +3905,10 @@ void CreateSpellBook(V2Di pos, int ispell, BOOL sendmsg, BOOL delta)
 	}
 }
 
-void CreateMagicArmor(V2Di pos, int imisc, int icurs, BOOL sendmsg, BOOL delta)
+void CreateMagicArmor(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 {
 	int ii, idx;
-	BOOL done;
+	bool done;
 
 	done = FALSE;
 	if (numitems < MAXITEMS) {
@@ -3938,10 +3932,10 @@ void CreateMagicArmor(V2Di pos, int imisc, int icurs, BOOL sendmsg, BOOL delta)
 	}
 }
 
-void CreateMagicWeapon(V2Di pos, int imisc, int icurs, BOOL sendmsg, BOOL delta)
+void CreateMagicWeapon(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 {
 	int ii, idx;
-	BOOL done;
+	bool done;
 
 	done = FALSE;
 	if (numitems < MAXITEMS) {
@@ -3965,7 +3959,7 @@ void CreateMagicWeapon(V2Di pos, int imisc, int icurs, BOOL sendmsg, BOOL delta)
 	}
 }
 
-BOOL GetItemRecord(int nSeed, WORD wCI, int nIndex)
+bool GetItemRecord(int nSeed, WORD wCI, int nIndex)
 {
 	int i;
 	DWORD dwTicks;

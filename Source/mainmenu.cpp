@@ -32,7 +32,7 @@ void mainmenu_change_name(int arg1, int arg2, int arg3, int arg4, char *name_1, 
 		pfile_rename_hero(name_1, name_2);
 }
 
-BOOL mainmenu_select_hero_dialog(
+bool mainmenu_select_hero_dialog(
     const _SNETPROGRAMDATA *client_info,
     const _SNETPLAYERDATA *user_info,
     const _SNETUIDATA *ui_info,
@@ -40,11 +40,11 @@ BOOL mainmenu_select_hero_dialog(
     DWORD mode,
     char *cname, DWORD clen,
     char *cdesc, DWORD cdlen,
-    BOOL *multi)
+    bool *multi)
 {
-	BOOL hero_is_created = TRUE;
+	bool hero_is_created = TRUE;
 	int dlgresult = 0;
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		if (!UiSelHeroSingDialog(
 		        pfile_ui_set_hero_infos,
 		        pfile_ui_save_create,
@@ -90,7 +90,7 @@ BOOL mainmenu_select_hero_dialog(
 
 void mainmenu_loop()
 {
-	BOOL done;
+	bool done;
 	int menu;
 
 	done = FALSE;
@@ -127,15 +127,15 @@ void mainmenu_loop()
 	music_stop();
 }
 
-BOOL mainmenu_single_player()
+bool mainmenu_single_player()
 {
-	gbMaxPlayers = 1;
+	plr.setMaxPlayers(1);
 	return mainmenu_init_menu(SELHERO_NEW_DUNGEON);
 }
 
-BOOL mainmenu_init_menu(int type)
+bool mainmenu_init_menu(int type)
 {
-	BOOL success;
+	bool success;
 
 	if (type == SELHERO_PREVIOUS)
 		return TRUE;
@@ -149,9 +149,9 @@ BOOL mainmenu_init_menu(int type)
 	return success;
 }
 
-BOOL mainmenu_multi_player()
+bool mainmenu_multi_player()
 {
-	gbMaxPlayers = MAX_PLRS;
+	plr.setMaxPlayers(MAX_PLRS);
 	return mainmenu_init_menu(SELHERO_CONNECT);
 }
 

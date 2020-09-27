@@ -8,7 +8,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-void MonsterType::InitMonsterTRN(BOOL special)
+void MonsterType::InitMonsterTRN(bool special)
 {
 	BYTE *f;
 	int i, n, j;

@@ -18,7 +18,7 @@ LONG WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName)
 	return ret;
 }
 
-BOOL WOpenFile(const char *FileName, HANDLE *phsFile, BOOL mayNotExist)
+bool WOpenFile(const char *FileName, HANDLE *phsFile, bool mayNotExist)
 {
 	if (!SFileOpenFile(FileName, phsFile))
 		FileErrDlg(FileName);

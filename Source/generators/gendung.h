@@ -54,7 +54,7 @@ extern DGrid dgrid;
 extern RECT32 setpc;
 
 extern BYTE *pSetPiece;
-extern BOOL setloadflag;
+extern bool setloadflag;
 extern BYTE *pSpecialCels;
 extern BYTE *pMegaTiles;
 extern BYTE *pLevelPieces;
@@ -67,38 +67,6 @@ extern int tile_defs[MAXTILES];
 extern WORD level_frame_types[MAXTILES];
 extern int level_frame_sizes[MAXTILES];
 extern int nlevel_frames;
-
-class PieceProperties {
-public:
-	BOOLEAN nBlockTable;   // List of light blocking dPieces
-	BOOLEAN nSolidTable;   // List of path blocking dPieces
-	BOOLEAN nTransTable;   // List of transparent dPieces
-	BOOLEAN nMissileTable; // List of missile blocking dPieces
-	BOOLEAN nTrapTable;
-};
-
-class PieceInventory {
-public:
-	auto &operator[](const size_t n)
-	{
-		return list[n];
-	}
-	void clear()
-	{
-		for (int i = 0; i != MAXTILES + 1; ++i) {
-			PieceProperties & piece = list[i];
-			piece.nBlockTable = 0;
-			piece.nSolidTable = 0;
-			piece.nTransTable = 0;
-			piece.nMissileTable = 0;
-			piece.nTrapTable = 0;
-		}
-	}
-private:
-	PieceProperties list[MAXTILES + 1];
-};
-
-extern PieceInventory pieces;
 
 extern V2Di dmin;
 extern V2Di dmax;
@@ -134,7 +102,6 @@ extern MICROS dpiece_defs_map_1[MAXDUNX * MAXDUNY];
 extern int themeCount;
 extern THEME_LOC themeLoc[MAXTHEMES];
 
-void FillSolidBlockTbls();
 void SetDungeonMicros();
 void DRLG_InitTrans();
 void DRLG_MRectTrans(int x1, int y1, int x2, int y2);
@@ -145,11 +112,11 @@ void DRLG_AreaTrans(int num, BYTE *List);
 void DRLG_InitSetPC();
 void DRLG_SetPC();
 void Make_SetPC(int x, int y, int w, int h);
-BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, int *width, int *height);
+bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, int *width, int *height);
 void DRLG_CreateThemeRoom(int themeIndex);
 void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rndSize);
 void DRLG_HoldThemeRooms();
-BOOL SkipThemeRoom(int x, int y);
+bool SkipThemeRoom(int x, int y);
 void InitLevels();
 
 //#ifdef __cplusplus

@@ -179,56 +179,78 @@ void CheckRportal()
 	}
 }
 
+//void _CheckCursMoveMonster(V2Di pos, bool flipflag, int flipflaglogic = 0)
+//{
+//	Tile &tile = grid.at(pos);
+//	if (flipflaglogic == 0) {
+//		flipflag = true;
+//	} else if (flipflaglogic < 0) {
+//		flipflag = !flipflag;
+//	}
+//	if (flipflag && grid.isValid(pos) && tile.isMonster() && tile.dFlags & BFLAG_LIT) {
+//		int mi = tile.getMonster();
+//		if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
+//			cursm = pos;
+//			pcursmonst = mi;
+//		}
+//	}
+//}
+
+
+
 void CheckCursMove()
 {
-	V2Di s, f, m, t, p, n, o, flip; // sx, sy, fx, fy, mx, my, tx, ty, px, py, xx, yy, xo, yo, flipx, flipy
+
 	int i, mi, columns, rows;
 	char bv;
-	BOOL flipflag;
 
-	s = Mouse;
+	V2Di & mouse = Mouse;
 
 	if (PANELS_COVER) {
 		if (chrflag || questlog) {
-			if (s.x >= SCREEN_WIDTH / 2) { /// BUGFIX: (sx >= SCREEN_WIDTH / 2) (fixed)
-				s.x -= SCREEN_WIDTH / 4;
+			if (mouse.x >= SCREEN_WIDTH / 2) { /// BUGFIX: (sx >= SCREEN_WIDTH / 2) (fixed)
+				mouse.x -= SCREEN_WIDTH / 4;
 			} else {
-				s.x = 0;
+				mouse.x = 0;
 			}
 		} else if (invflag || sbookflag) {
-			if (s.x <= SCREEN_WIDTH / 2) {
-				s.x += SCREEN_WIDTH / 4;
+			if (mouse.x <= SCREEN_WIDTH / 2) {
+				mouse.x += SCREEN_WIDTH / 4;
 			} else {
-				s.x = 0;
+				mouse.x = 0;
 			}
 		}
 	}
-	if (s.y > PANEL_TOP - 1 && Mouse.x >= PANEL_LEFT && Mouse.x < PANEL_LEFT + PANEL_WIDTH && track_isscrolling()) {
-		s.y = PANEL_TOP - 1;
+	if (mouse.y > PANEL_TOP - 1 && Mouse.x >= PANEL_LEFT && Mouse.x < PANEL_LEFT + PANEL_WIDTH && track_isscrolling()) {
+		mouse.y = PANEL_TOP - 1;
 	}
 
 	if (!zoomflag) {
-		s.x >>= 1;
-		s.y >>= 1;
+		mouse.x >>= 1;
+		mouse.y >>= 1;
 	}
 
 	// Adjust by player offset and tile grid alignment
-	CalcTileOffset(&o.x, &o.y);
-	s -= ScrollInfo._soff - o;
+	V2Di offset;
+	CalcTileOffset(&offset.x, &offset.y);
+	mouse -= ScrollInfo._soff - offset;
+
+	return;
+
 
 	// Predict the next frame when walking to avoid input jitter
+	V2Di f;
 	f.x = myplr().data._pVar6 / 256;
 	f.y = myplr().data._pVar7 / 256;
 	f.x -= (myplr().data._pVar6 + myplr().data._pvel.x) / 256;
 	f.y -= (myplr().data._pVar7 + myplr().data._pvel.y) / 256;
 	if (ScrollInfo._sdir != ScrollDir::NONE) {
-		s -= f;
+		mouse -= f;
 	}
 
 	// Convert to tile grid
-	m = View;
-	t.x = s.x / TILE_WIDTH;
-	t.y = s.y / TILE_HEIGHT;
+	V2Di t = { mouse.x / TILE_WIDTH, mouse.y / TILE_HEIGHT };
+	V2Di m = View;
 	ShiftGrid(&m.x, &m.y, t.x, t.y);
 
 	// Center player tile on screen
@@ -239,10 +261,10 @@ void CheckCursMove()
 	}
 
 	// Shift position to match diamond grid aligment
-	p.x = s.x % TILE_WIDTH;
-	p.y = s.y % TILE_HEIGHT;
+	V2Di p = { mouse.x % TILE_WIDTH, mouse.y % TILE_HEIGHT };
 
 	// Shift position to match diamond grid aligment
+	V2Di flip;
 	flip.y = p.y < (p.x >> 1);
 	if (flip.y) m.y--;
 	flip.x = p.y >= TILE_HEIGHT - (p.x >> 1);
@@ -253,7 +275,7 @@ void CheckCursMove()
 	if (m.y < 0) m.y = 0;
 	if (m.y >= MAXDUNY) m.y = MAXDUNY - 1;
 
-	flipflag = flip.y && flip.x || (flip.y || flip.x) && p.x < TILE_WIDTH / 2;
+	bool flipflag = flip.y && flip.x || (flip.y || flip.x) && p.x < TILE_WIDTH / 2;
 
 	pcurstemp = pcursmonst;
 	pcursmonst = -1;
@@ -292,57 +314,32 @@ void CheckCursMove()
 		return;
 	}
 
-	if (level.leveltype != DTYPE_TOWN) {
-		if (pcurstemp != -1) {
-			if (!flipflag && m.x + 2 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 2][m.y + 1].dMonster != 0 && grid[m.x + 2][m.y + 1].dFlags & BFLAG_LIT) {
-				mi = grid[m.x + 2][m.y + 1].dMonster > 0 ? grid[m.x + 2][m.y + 1].dMonster - 1 : -(grid[m.x + 2][m.y + 1].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
-					cursm = { m.x + 2, m.y + 1 };
-					pcursmonst = mi;
-				}
+	auto _monst1 = [=](V2Di pos, bool flipflag, int flipflaglogic = 0) {
+		Tile &tile = grid.at(pos);
+		if (flipflaglogic == 0) {
+			flipflag = true;
+		} else if (flipflaglogic < 0) {
+			flipflag = !flipflag;
+		}
+		if (flipflag && grid.isValid(pos) && tile.isMonster() && tile.dFlags & BFLAG_LIT) {
+			int mi = tile.getMonster();
+			if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
+				cursm = pos;
+				pcursmonst = mi;
 			}
-			if (flipflag && m.x + 1 < MAXDUNX && m.y + 2 < MAXDUNY && grid[m.x + 1][m.y + 2].dMonster != 0 && grid[m.x + 1][m.y + 2].dFlags & BFLAG_LIT) {
-				mi = grid[m.x + 1][m.y + 2].dMonster > 0 ? grid[m.x + 1][m.y + 2].dMonster - 1 : -(grid[m.x + 1][m.y + 2].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
-					cursm = { m.x + 1, m.y + 2 };
-					pcursmonst = mi;
-				}
-			}
-			if (m.x + 2 < MAXDUNX && m.y + 2 < MAXDUNY && grid[m.x + 2][m.y + 2].dMonster != 0 && grid[m.x + 2][m.y + 2].dFlags & BFLAG_LIT) {
-				mi = grid[m.x + 2][m.y + 2].dMonster > 0 ? grid[m.x + 2][m.y + 2].dMonster - 1 : -(grid[m.x + 2][m.y + 2].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
-					cursm = { m.x + 2, m.y + 2 };
-					pcursmonst = mi;
-				}
-			}
-			if (m.x + 1 < MAXDUNX && !flipflag && grid[m.x + 1][m.y].dMonster != 0 && grid[m.x + 1][m.y].dFlags & BFLAG_LIT) {
-				mi = grid[m.x + 1][m.y].dMonster > 0 ? grid[m.x + 1][m.y].dMonster - 1 : -(grid[m.x + 1][m.y].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 2) {
-					cursm = { m.x + 1, m.y };
-					pcursmonst = mi;
-				}
-			}
-			if (m.y + 1 < MAXDUNY && flipflag && grid[m.x][m.y + 1].dMonster != 0 && grid[m.x][m.y + 1].dFlags & BFLAG_LIT) {
-				mi = grid[m.x][m.y + 1].dMonster > 0 ? grid[m.x][m.y + 1].dMonster - 1 : -(grid[m.x][m.y + 1].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 2) {
-					cursm = { m.x, m.y + 1 };
-					pcursmonst = mi;
-				}
-			}
-			if (grid[m.x][m.y].dMonster != 0 && grid[m.x][m.y].dFlags & BFLAG_LIT) {
-				mi = grid[m.x][m.y].dMonster > 0 ? grid[m.x][m.y].dMonster - 1 : -(grid[m.x][m.y].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 1) {
-					cursm = m;
-					pcursmonst = mi;
-				}
-			}
-			if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].dMonster != 0 && grid[m.x + 1][m.y + 1].dFlags & BFLAG_LIT) {
-				mi = grid[m.x + 1][m.y + 1].dMonster > 0 ? grid[m.x + 1][m.y + 1].dMonster - 1 : -(grid[m.x + 1][m.y + 1].dMonster + 1);
-				if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 2) {
-					cursm = { m.x + 1, m.y + 1 };
-					pcursmonst = mi;
-				}
-			}
+		}
+	};
+
+	if (level.leveltype != DTYPE_TOWN) { // Not in town, aggressive monster selection
+		if (pcurstemp != -1) { // was monster last time
+			_monst1(m + V2Di(2, 1), flipflag, -1); // if flipped, false
+			_monst1(m + V2Di(1, 2), flipflag, +1); // if not flipped, false
+			_monst1(m + V2Di(2, 2), flipflag, 0);
+			_monst1(m + V2Di(1, 0), flipflag, -1); // if flipped, false
+			_monst1(m + V2Di(0, 1), flipflag, +1);
+			_monst1(m + V2Di(0, 0), flipflag, 0);
+			_monst1(m + V2Di(1, 1), flipflag, 0);
+
 			if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_HIDDEN) {
 				pcursmonst = -1;
 				cursm = m;
@@ -351,58 +348,18 @@ void CheckCursMove()
 				pcursmonst = -1;
 			}
 			if (pcursmonst != -1) {
-				return;
+				return; // Do not override previous monster selection if it was a monster last time
 			}
 		}
-		if (!flipflag && m.x + 2 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 2][m.y + 1].dMonster != 0 && grid[m.x + 2][m.y + 1].dFlags & BFLAG_LIT) {
-			mi = grid[m.x + 2][m.y + 1].dMonster > 0 ? grid[m.x + 2][m.y + 1].dMonster - 1 : -(grid[m.x + 2][m.y + 1].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
-				cursm = { m.x + 2, m.y + 1 };
-				pcursmonst = mi;
-			}
-		}
-		if (flipflag && m.x + 1 < MAXDUNX && m.y + 2 < MAXDUNY && grid[m.x + 1][m.y + 2].dMonster != 0 && grid[m.x + 1][m.y + 2].dFlags & BFLAG_LIT) {
-			mi = grid[m.x + 1][m.y + 2].dMonster > 0 ? grid[m.x + 1][m.y + 2].dMonster - 1 : -(grid[m.x + 1][m.y + 2].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
-				cursm = { m.x + 1, m.y + 2 };
-				pcursmonst = mi;
-			}
-		}
-		if (m.x + 2 < MAXDUNX && m.y + 2 < MAXDUNY && grid[m.x + 2][m.y + 2].dMonster != 0 && grid[m.x + 2][m.y + 2].dFlags & BFLAG_LIT) {
-			mi = grid[m.x + 2][m.y + 2].dMonster > 0 ? grid[m.x + 2][m.y + 2].dMonster - 1 : -(grid[m.x + 2][m.y + 2].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
-				cursm = { m.x + 2, m.y + 2 };
-				pcursmonst = mi;
-			}
-		}
-		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].dMonster != 0 && grid[m.x + 1][m.y].dFlags & BFLAG_LIT) {
-			mi = grid[m.x + 1][m.y].dMonster > 0 ? grid[m.x + 1][m.y].dMonster - 1 : -(grid[m.x + 1][m.y].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 2) {
-				cursm = { m.x + 1, m.y };
-				pcursmonst = mi;
-			}
-		}
-		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].dMonster != 0 && grid[m.x][m.y + 1].dFlags & BFLAG_LIT) {
-			mi = grid[m.x][m.y + 1].dMonster > 0 ? grid[m.x][m.y + 1].dMonster - 1 : -(grid[m.x][m.y + 1].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 2) {
-				cursm = { m.x, m.y + 1 };
-				pcursmonst = mi;
-			}
-		}
-		if (grid[m.x][m.y].dMonster != 0 && grid[m.x][m.y].dFlags & BFLAG_LIT) {
-			mi = grid[m.x][m.y].dMonster > 0 ? grid[m.x][m.y].dMonster - 1 : -(grid[m.x][m.y].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 1) {
-				cursm = { m.x, m.y };
-				pcursmonst = mi;
-			}
-		}
-		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].dMonster != 0 && grid[m.x + 1][m.y + 1].dFlags & BFLAG_LIT) {
-			mi = grid[m.x + 1][m.y + 1].dMonster > 0 ? grid[m.x + 1][m.y + 1].dMonster - 1 : -(grid[m.x + 1][m.y + 1].dMonster + 1);
-			if (monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 2) {
-				cursm = { m.x + 1, m.y + 1 };
-				pcursmonst = mi;
-			}
-		}
+
+		_monst1(m + V2Di(2, 1), flipflag, -1);
+		_monst1(m + V2Di(1, 2), flipflag, +1);
+		_monst1(m + V2Di(2, 2), flipflag, 0);
+		_monst1(m + V2Di(1, 0), flipflag, -1);
+		_monst1(m + V2Di(0, 1), flipflag, +1);
+		_monst1(m + V2Di(0, 0), flipflag, 0);
+		_monst1(m + V2Di(1, 1), flipflag, 0);
+
 		if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_HIDDEN) {
 			pcursmonst = -1;
 			cursm = m;
@@ -410,45 +367,47 @@ void CheckCursMove()
 		if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_GOLEM) {
 			pcursmonst = -1;
 		}
-	} else {
-		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].dMonster > 0) {
-			pcursmonst = grid[m.x + 1][m.y].dMonster - 1;
-			cursm = { m.x + 1, m.y };
-		}
-		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].dMonster > 0) {
-			pcursmonst = grid[m.x][m.y + 1].dMonster - 1;
-			cursm = { m.x, m.y + 1 };
-		}
-		if (grid[m.x][m.y].dMonster > 0) {
-			pcursmonst = grid[m.x][m.y].dMonster - 1;
-			cursm = m;
-		}
-		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].dMonster > 0) {
-			pcursmonst = grid[m.x + 1][m.y + 1].dMonster - 1;
-			cursm = { m.x + 1, m.y + 1 };
-		}
+	} else { // In town... less aggresive monster selection?
+
+		auto _monst2 = [=](V2Di pos, bool flipflag, int flipflaglogic = 0) {
+			if (flipflaglogic == 0) {
+				flipflag = true;
+			} else if (flipflaglogic < 0) {
+				flipflag = !flipflag;
+			}
+			if (flipflag && grid.isValid(pos) && grid.at(pos).isMonster()) {
+				pcursmonst = grid.at(pos).getMonster();
+				cursm = { m.x + 1, m.y };
+			}
+		};
+
+		_monst2(m + V2Di(1, 0), flipflag, -1);
+		_monst2(m + V2Di(0, 1), flipflag, +1);
+		_monst2(m + V2Di(0, 0), flipflag,  0);
+		_monst2(m + V2Di(1, 1), flipflag,  0);
+
 		if (pcursmonst != -1 && !towner[pcursmonst]._tSelFlag) {
 			pcursmonst = -1;
 		}
 	}
 
-	if (pcursmonst == -1) {
+	if (pcursmonst == -1) { // Not a monster, determine if a player
 		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].isPlayer()) {
-			bv = grid[m.x + 1][m.y].getPlayerNum();
+			bv = grid[m.x + 1][m.y].getPlayer();
 			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursm = { m.x + 1, m.y };
 				pcursplr = bv;
 			}
 		}
 		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].isPlayer()) {
-			bv = grid[m.x][m.y + 1].getPlayerNum();
+			bv = grid[m.x][m.y + 1].getPlayer();
 			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursm = { m.x, m.y + 1 };
 				pcursplr = bv;
 			}
 		}
 		if (grid.at(m).isPlayer()) {
-			bv = grid.at(m).getPlayerNum(); 
+			bv = grid.at(m).getPlayer(); 
 			if (bv != myplr()) {
 				cursm = m;
 				pcursplr = bv;
@@ -463,6 +422,7 @@ void CheckCursMove()
 			}
 		}
 		if (pcurs == CURSOR_RESURRECT) {
+			V2Di n;
 			for (n.x = -1; n.x < 2; n.x++) {
 				for (n.y = -1; n.y < 2; n.y++) {
 					if (m.x + n.x < MAXDUNX && m.y + n.y < MAXDUNY && grid.at(m + n).dFlags & BFLAG_DEAD_PLAYER) {
@@ -477,73 +437,54 @@ void CheckCursMove()
 			}
 		}
 		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].isPlayer()) {
-			bv = grid[m.x + 1][m.y + 1].getPlayerNum();
+			bv = grid[m.x + 1][m.y + 1].getPlayer();
 			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
 				cursm = { m.x + 1, m.y + 1 };
 				pcursplr = bv;
 			}
 		}
 	}
-	if (pcursmonst == -1 && pcursplr == -1) {
-		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].dObject != 0) {
-			bv = grid[m.x + 1][m.y].dObject > 0 ? grid[m.x + 1][m.y].dObject - 1 : -(grid[m.x + 1][m.y].dObject + 1);
-			if (object[bv]._oSelFlag >= 2) {
-				cursm = { m.x + 1, m.y };
-				pcursobj = bv;
+
+	if (pcursmonst == -1 && pcursplr == -1) { // Not a monster or a player... determine if an object
+
+		auto _obj1 = [=](V2Di pos, bool flipflag, int flipflaglogic = 0) {
+			if (flipflaglogic == 0) {
+				flipflag = true;
+			} else if (flipflaglogic < 0) {
+				flipflag = !flipflag;
 			}
-		}
-		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].dObject != 0) {
-			bv = grid[m.x][m.y + 1].dObject > 0 ? grid[m.x][m.y + 1].dObject - 1 : -(grid[m.x][m.y + 1].dObject + 1);
-			if (object[bv]._oSelFlag >= 2) {
-				cursm = { m.x, m.y + 1 };
-				pcursobj = bv;
+			if (flipflag && grid.isValid(pos) && grid.at(pos).isObject()) {
+				pcursobj = grid.at(pos).getObject();
+				cursm = pos;
 			}
-		}
-		if (grid[m.x][m.y].dObject != 0) {
-			bv = grid[m.x][m.y].dObject > 0 ? grid[m.x][m.y].dObject - 1 : -(grid[m.x][m.y].dObject + 1);
-			if (object[bv]._oSelFlag == 1 || object[bv]._oSelFlag == 3) {
-				cursm = m;
-				pcursobj = bv;
-			}
-		}
-		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].dObject != 0) {
-			bv = grid[m.x + 1][m.y + 1].dObject > 0 ? grid[m.x + 1][m.y + 1].dObject - 1 : -(grid[m.x + 1][m.y + 1].dObject + 1);
-			if (object[bv]._oSelFlag >= 2) {
-				cursm = { m.x + 1, m.y + 1 };
-				pcursobj = bv;
-			}
-		}
+		};
+
+		_obj1(m + V2Di(1, 0), flipflag, -1);
+		_obj1(m + V2Di(0, 1), flipflag, +1);
+		_obj1(m + V2Di(0, 0), flipflag,  0);
+		_obj1(m + V2Di(1, 1), flipflag,  0);
 	}
-	if (pcursplr == -1 && pcursobj == -1 && pcursmonst == -1) {
-		if (!flipflag && m.x + 1 < MAXDUNX && grid[m.x + 1][m.y].dItem > 0) {
-			bv = grid[m.x + 1][m.y].dItem - 1;
-			if (item[bv]._iSelFlag >= 2) {
-				cursm = { m.x + 1, m.y };
-				pcursitem = bv;
+
+	if (pcursplr == -1 && pcursobj == -1 && pcursmonst == -1) { // Not a monster or an object or a player... determine if item
+
+		auto _itm1 = [=](V2Di pos, bool flipflag, int flipflaglogic = 0) {
+			if (flipflaglogic == 0) {
+				flipflag = true;
+			} else if (flipflaglogic < 0) {
+				flipflag = !flipflag;
 			}
-		}
-		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].dItem > 0) {
-			bv = grid[m.x][m.y + 1].dItem - 1;
-			if (item[bv]._iSelFlag >= 2) {
-				cursm = { m.x, m.y + 1 };
-				pcursitem = bv;
+			if (!flipflag && grid.isValid(pos) && grid.at(pos).isItem()) {
+				pcursitem = grid.at(pos).getItem();
+				cursm = pos;
 			}
-		}
-		if (grid[m.x][m.y].dItem > 0) {
-			bv = grid[m.x][m.y].dItem - 1;
-			if (item[bv]._iSelFlag == 1 || item[bv]._iSelFlag == 3) {
-				cursm = m;
-				pcursitem = bv;
-			}
-		}
-		if (m.x + 1 < MAXDUNX && m.y + 1 < MAXDUNY && grid[m.x + 1][m.y + 1].dItem > 0) {
-			bv = grid[m.x + 1][m.y + 1].dItem - 1;
-			if (item[bv]._iSelFlag >= 2) {
-				cursm = { m.x + 1, m.y + 1 };
-				pcursitem = bv;
-			}
-		}
-		if (pcursitem == -1) {
+		};
+
+		_itm1(m + V2Di(1, 0), flipflag, -1);
+		_itm1(m + V2Di(0, 1), flipflag, +1);
+		_itm1(m + V2Di(0, 0), flipflag,  0);
+		_itm1(m + V2Di(1, 1), flipflag, 0);
+
+		if (pcursitem == -1) { // Process a few special items
 			cursm = m;
 			CheckTrigForce();
 			CheckTown();

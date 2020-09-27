@@ -16,7 +16,7 @@ extern char gszHero[16];
 
 void mainmenu_refresh_music();
 void mainmenu_change_name(int arg1, int arg2, int arg3, int arg4, char *name_1, char *name_2);
-BOOL mainmenu_select_hero_dialog(
+bool mainmenu_select_hero_dialog(
     const _SNETPROGRAMDATA *client_info,
     const _SNETPLAYERDATA *user_info,
     const _SNETUIDATA *ui_info,
@@ -24,11 +24,11 @@ BOOL mainmenu_select_hero_dialog(
     DWORD mode,               // 4 chars, e.g. 'IPXN', 'BNET' etc. */
     char *cname, DWORD clen,  // character name will be copied here
     char *cdesc, DWORD cdlen, // character "description" will be copied here (used to advertise games)
-    BOOL *multi);             // new character? - unsure about this
+    bool *multi);             // new character? - unsure about this
 void mainmenu_loop();
-BOOL mainmenu_single_player();
-BOOL mainmenu_init_menu(int type);
-BOOL mainmenu_multi_player();
+bool mainmenu_single_player();
+bool mainmenu_init_menu(int type);
+bool mainmenu_multi_player();
 void mainmenu_play_intro();
 
 /* rdata */

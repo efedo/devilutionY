@@ -11,9 +11,9 @@ public:
 	V2Di(int nx, int ny);
 	int x = 0;
 	int y = 0;
-	V2Di abs();
-	int maxdim();
-	int maxabs();
+	V2Di abs() const;
+	int maxdim() const;
+	int maxabs() const;
 	friend V2Di operator+(const V2Di &lhs, const V2Di &rhs);
 	friend V2Di operator-(const V2Di &lhs, const V2Di &rhs);
 	friend V2Di operator-(const V2Di &lhs);
@@ -29,6 +29,23 @@ public:
 	friend bool operator==(const V2Di &lhs, const V2Di &rhs);
 	friend bool operator!=(const V2Di &lhs, const V2Di &rhs);
 };
+
+
+// Trouble with this approach is that it is a PITA to implement break,
+// and impossible to implement return without additional boilerplate code in calling function,
+// defeating the goal of simplification
+template <typename T>
+void foreach2D(V2Di start, V2Di stop, T &&lambda)
+{
+	V2Di p = start;
+	for (; p.y < stop.y; p.y++) {
+		for (; p.x < stop.x; p.x++) {
+			lambda(p);
+		}
+	}
+}
+// foreach2D({0,0}, {MAXDUNX, MAXDUNY}, lambda);
+
 
 //class Dir {
 //public:

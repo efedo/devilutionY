@@ -13,9 +13,9 @@ DEVILUTION_BEGIN_NAMESPACE
 //#endif
 
 extern BYTE movie_playing;
-extern BOOL loop_movie;
+extern bool loop_movie;
 
-void play_movie(char *pszMovie, BOOL user_can_close);
+void play_movie(char *pszMovie, bool user_can_close);
 LRESULT MovieWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 /* rdata */

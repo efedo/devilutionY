@@ -43,7 +43,7 @@ int cel_foliage_active = false;
 /**
  * Specifies the current dungeon piece ID of the level, as used during rendering of the level tiles.
  */
-int level_piece_id;
+//int level_piece_id;
 DWORD sgdwCursWdt;
 void (*DrawPlrProc)(int, int, int, int, int, BYTE *, int, int, int, int);
 BYTE sgSaveBack[8192];
@@ -219,7 +219,7 @@ static void scrollrt_draw_cursor_item()
  * @param sy Back buffer coordinate
  * @param pre Is the sprite in the background
  */
-void DrawMissilePrivate(MissileStruct *m, V2Di s, BOOL pre)
+void DrawMissilePrivate(MissileStruct *m, V2Di s, bool pre)
 {
 	int nCel, frames;
 	V2Di mv;
@@ -257,7 +257,7 @@ void DrawMissilePrivate(MissileStruct *m, V2Di s, BOOL pre)
  * @param sy Back buffer coordinate
  * @param pre Is the sprite in the background
  */
-void DrawMissile(V2Di p, V2Di s, BOOL pre)
+void DrawMissile(V2Di p, V2Di s, bool pre)
 {
 	int i;
 	MissileStruct *m;
@@ -265,8 +265,8 @@ void DrawMissile(V2Di p, V2Di s, BOOL pre)
 	if (!(grid.at(p).dFlags & BFLAG_MISSILE))
 		return;
 
-	if (grid.at(p).dMissile != -1) {
-		m = &missile[grid.at(p).dMissile - 1];
+	if (grid.at(p).getMissile() != -1) {
+		m = &missile[grid.at(p).getMissile() - 1];
 		DrawMissilePrivate(m, s, pre);
 		return;
 	}
@@ -419,19 +419,18 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, BYTE *pCelBuff, int nCel, int n
  * @param sx Back buffer coordinate
  * @param sy Back buffer coordinate
  */
-void DrawDeadPlayer(V2Di pv, V2Di s)
+void DrawDeadPlayer(V2Di pn, V2Di s)
 {
-	int x = pv.x;
-	int y = pv.y;
-	int i, px, py, nCel, frames;
+	int i, nCel, frames;
+	V2Di pv;
 	PlayerStruct *p;
 	BYTE *pCelBuff;
 
-	grid[x][y].dFlags &= ~BFLAG_DEAD_PLAYER;
+	grid.at(pn).dFlags &= ~BFLAG_DEAD_PLAYER;
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i].data;
-		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && p->_p.x == x && p->_p.y == y) {
+		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && plr[i].pos() == pn) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
 				// app_fatal("Drawing dead player %d \"%s\": NULL Cel Buffer", i, p->_pName);
@@ -443,10 +442,10 @@ void DrawDeadPlayer(V2Di pv, V2Di s)
 				// app_fatal("Drawing dead player %d \"%s\": facing %d, frame %d of %d", i, p->_pName, p->_pdir, nCel, frame);
 				break;
 			}
-			grid[x][y].dFlags |= BFLAG_DEAD_PLAYER;
-			px = s.x + p->_poff.x - p->_pAnimWidth2;
-			py = s.y + p->_poff.y;
-			DrawPlayer(i, { x, y }, { px, py }, p->_pAnimData, p->_pAnimFrame, p->_pAnimWidth);
+			grid.at(pn).dFlags |= BFLAG_DEAD_PLAYER;
+			pv.x = s.x + p->_poff.x - p->_pAnimWidth2;
+			pv.y = s.y + p->_poff.y;
+			DrawPlayer(i, pn, pv, p->_pAnimData, p->_pAnimFrame, p->_pAnimWidth);
 		}
 	}
 }
@@ -459,22 +458,21 @@ void DrawDeadPlayer(V2Di pv, V2Di s)
  * @param oy Back buffer coordinate
  * @param pre Is the sprite in the background
  */
-static void DrawObject(int x, int y, int ox, int oy, BOOL pre)
+static void DrawObject(int x, int y, int ox, int oy, bool pre)
 {
 	int sx, sy, xx, yy, nCel, frames;
 	char bv;
 	BYTE *pCelBuff;
 
-	if (grid[x][y].dObject == 0 || light_table_index >= lightmax)
-		return;
+	if (!grid[x][y].isObject() || light_table_index >= lightmax) return;
 
-	if (grid[x][y].dObject > 0) {
-		bv = grid[x][y].dObject - 1;
+	//if (grid[x][y].dObject > 0) {
+		bv = grid[x][y].getObject();
 		if (object[bv]._oPreFlag != pre)
 			return;
 		sx = ox - object[bv]._oAnimWidth2;
 		sy = oy;
-	} else {
+	/* } else { // Not sure what hte significance of negative objects is yet
 		bv = -(grid[x][y].dObject + 1);
 		if (object[bv]._oPreFlag != pre)
 			return;
@@ -482,7 +480,7 @@ static void DrawObject(int x, int y, int ox, int oy, BOOL pre)
 		yy = object[bv]._o.y - y;
 		sx = (xx << 5) + ox - object[bv]._oAnimWidth2 - (yy << 5);
 		sy = oy + (yy << 4) + (xx << 4);
-	}
+	}*/
 
 	assert((unsigned char)bv < MAXOBJECTS);
 
@@ -524,19 +522,19 @@ static void drawCell(int x, int y, int sx, int sy)
 
 	dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
 	pMap = &grid[x][y].dpiece_defs_map_2;
-	level_piece_id = grid[x][y].dPiece;
-	cel_transparency_active = (BYTE)(pieces[level_piece_id].nTransTable & TransList[grid[x][y].dTransVal]);
-	cel_foliage_active = !pieces[level_piece_id].nSolidTable;
+	int level_piece_id = grid[x][y].getPiece();
+	cel_transparency_active = (BYTE)(pieces[level_piece_id].trans & TransList[grid[x][y].dTransVal]);
+	cel_foliage_active = !pieces[level_piece_id].solid;
 	for (int i = 0; i<MicroTileLen>> 1; i++) {
 		level_cel_block = pMap->mt[2 * i];
 		if (level_cel_block != 0) {
 			arch_draw_type = i == 0 ? 1 : 0;
-			RenderTile(dst);
+			RenderTile(dst, level_piece_id);
 		}
 		level_cel_block = pMap->mt[2 * i + 1];
 		if (level_cel_block != 0) {
 			arch_draw_type = i == 0 ? 2 : 0;
-			RenderTile(dst + TILE_WIDTH / 2);
+			RenderTile(dst + TILE_WIDTH / 2, level_piece_id);
 		}
 		dst -= BUFFER_WIDTH * TILE_HEIGHT;
 	}
@@ -557,14 +555,15 @@ static void drawFloor(int x, int y, int sx, int sy)
 
 	BYTE *dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
 	arch_draw_type = 1; // Left
+	int level_piece_id = grid[x][y].getPieceUnsafe();
 	level_cel_block = grid[x][y].dpiece_defs_map_2.mt[0];
 	if (level_cel_block != 0) {
-		RenderTile(dst);
+		RenderTile(dst, level_piece_id);
 	}
 	arch_draw_type = 2; // Right
 	level_cel_block = grid[x][y].dpiece_defs_map_2.mt[1];
 	if (level_cel_block != 0) {
-		RenderTile(dst + TILE_WIDTH / 2);
+		RenderTile(dst + TILE_WIDTH / 2, level_piece_id);
 	}
 }
 
@@ -576,17 +575,12 @@ static void drawFloor(int x, int y, int sx, int sy)
  * @param sy Back buffer coordinate
  * @param pre Is the sprite in the background
  */
-static void DrawItem(int x, int y, int sx, int sy, BOOL pre)
+static void DrawItem(int x, int y, int sx, int sy, bool pre)
 {
-	char bItem = grid[x][y].dItem;
-	ItemStruct *pItem;
-
-	if (bItem == 0)
-		return;
-
-	pItem = &item[bItem - 1];
-	if (pItem->_iPostDraw == pre)
-		return;
+	if (!grid[x][y].isItem()) return;
+	char bItem = grid[x][y].getItem();
+	ItemStruct *pItem = &item[bItem];
+	if (pItem->_iPostDraw == pre) return;
 
 	assert((unsigned char)bItem <= MAXITEMS);
 	int px = sx - pItem->_iAnimWidth2;
@@ -606,12 +600,10 @@ static void DrawItem(int x, int y, int sx, int sy, BOOL pre)
  */
 static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 {
-	int mi, px, py;
+	int px, py;
 	MonsterStruct *pMonster;
 
-	mi = grid[x][y + oy].dMonster;
-	mi = mi > 0 ? mi - 1 : -(mi + 1);
-
+	int mi = grid[x][y + oy].getMonster();
 	if (level.leveltype == DTYPE_TOWN) {
 		px = sx - towner[mi]._tAnimWidth2;
 		if (mi == pcursmonst) {
@@ -656,13 +648,11 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
  */
 static void DrawPlayerHelper(int x, int y, int oy, int sx, int sy)
 {
-	int p = grid[x][y + oy].dPlayer;
-	p = p > 0 ? p - 1 : -(p + 1);
-	PlayerStruct *pPlayer = &plr[p].data;
-	int px = sx + pPlayer->_poff.x - pPlayer->_pAnimWidth2;
-	int py = sy + pPlayer->_poff.y;
-
-	DrawPlayer(p, { x, y + oy }, { px, py }, pPlayer->_pAnimData, pPlayer->_pAnimFrame, pPlayer->_pAnimWidth);
+	const int p = grid[x][y + oy].getPlayerDraw();
+	Player & player = plr[p];
+	int px = sx + player.data._poff.x - player.data._pAnimWidth2;
+	int py = sy + player.data._poff.y;
+	DrawPlayer(p, { x, y + oy }, { px, py }, player.data._pAnimData, player.data._pAnimFrame, player.data._pAnimWidth);
 }
 
 /**
@@ -674,7 +664,7 @@ static void DrawPlayerHelper(int x, int y, int oy, int sx, int sy)
  */
 static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 {
-	int mi, px, py, nCel, nMon, negMon, frames;
+	int mi, px, py, nCel, frames;
 	char bFlag, bDead, bObj, bItem, bPlr, bArch, bMap, negPlr, dd;
 	DeadStruct *pDeadGuy;
 	BYTE *pCelBuff;
@@ -694,9 +684,8 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	bDead = grid[sx][sy].dDead;
 	bMap = grid[sx][sy].dTransVal;
 
-	negMon = 0;
-	if (sy > 0) // check for OOB
-		negMon = grid[sx][sy - 1].dMonster;
+	bool negMon = false;
+	if (sy > 0) negMon = grid[sx][sy - 1].isMonster();
 
 	if (visiondebug && bFlag & BFLAG_LIT) {
 		CelClippedDraw({ dx, dy }, pSquareCel, 1, 64);
@@ -722,20 +711,20 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	}
 	DrawObject(sx, sy, dx, dy, 1);
 	DrawItem(sx, sy, dx, dy, 1);
-	if (bFlag & BFLAG_PLAYERLR) {
-		assert((DWORD)(sy - 1) < MAXDUNY);
-		DrawPlayerHelper(sx, sy, -1, dx, dy);
-	}
-	if (bFlag & BFLAG_MONSTLR && negMon < 0) {
-		DrawMonsterHelper(sx, sy, -1, dx, dy);
-	}
+	//if (bFlag & BFLAG_PLAYERLR) {
+	//	assert((DWORD)(sy - 1) < MAXDUNY);
+	//	DrawPlayerHelper(sx, sy, -1, dx, dy);
+	//}
+	//if (bFlag & BFLAG_MONSTLR && negMon < 0) {
+	//	DrawMonsterHelper(sx, sy, -1, dx, dy);
+	//}
 	if (bFlag & BFLAG_DEAD_PLAYER) {
 		DrawDeadPlayer({ sx, sy }, { dx, dy });
 	}
-	if (grid[sx][sy].dPlayer > 0) {
+	if (grid[sx][sy].isPlayerDraw()) {
 		DrawPlayerHelper(sx, sy, 0, dx, dy);
 	}
-	if (grid[sx][sy].dMonster > 0) {
+	if (grid[sx][sy].isMonster()) {
 		DrawMonsterHelper(sx, sy, 0, dx, dy);
 	}
 	DrawMissile({ sx, sy }, { dx, dy }, FALSE);
@@ -777,12 +766,19 @@ static void scrollrt_drawFloor(int x, int y, int sx, int sy, int rows, int colum
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY) {
-				level_piece_id = grid[x][y].dPiece;
-				if (level_piece_id != 0) {
-					if (!pieces[level_piece_id].nSolidTable)
+				if (grid[x][y].isPiece()) {
+					int level_piece_id = grid[x][y].getPieceUnsafe();
+					if (!pieces[level_piece_id].solid)
 						drawFloor(x, y, sx, sy);
 				} else {
 					world_draw_black_tile(sx, sy);
+				}
+				if (grid[x][y].isPlayer()) {
+					//world_draw_red_tile(sx, sy);
+					world_draw_color_tile(sx, sy, 20);
+				}
+				if (grid[x][y].isPlayerDraw()) {
+					world_draw_color_tile(sx, sy, 50);
 				}
 			} else {
 				world_draw_black_tile(sx, sy);
@@ -808,8 +804,8 @@ static void scrollrt_drawFloor(int x, int y, int sx, int sy, int rows, int colum
 	}
 }
 
-#define IsWall(x, y) (grid[x][y].dPiece == 0 || pieces[grid[x][y].dPiece].nSolidTable || grid[x][y].dSpecial != 0)
-#define IsWalkable(x, y) (grid[x][y].dPiece != 0 && !pieces[grid[x][y].dPiece].nSolidTable)
+#define IsWall(x, y) (!grid[x][y].isPiece() || grid[x][y].isSolid() || grid[x][y].dSpecial != 0)
+#define IsWalkable(x, y) (grid[x][y].isPiece() && !grid[x][y].isSolid())
 
 /**
  * @brief Render a row of tile
@@ -842,7 +838,7 @@ static void scrollrt_draw(int x, int y, int sx, int sy, int rows, int columns)
 						}
 					}
 				}
-				if (grid[x][y].dPiece != 0) {
+				if (grid[x][y].isPiece()) {
 					scrollrt_draw_dungeon(x, y, sx, sy);
 				}
 			}
@@ -1192,7 +1188,7 @@ void ClearScreenBuffer()
  */
 void ScrollView()
 {
-	BOOL scroll;
+	bool scroll;
 
 	if (pcurs >= CURSOR_FIRSTITEM)
 		return;
@@ -1333,11 +1329,11 @@ static void DoBlitScreen(DWORD dwX, DWORD dwY, DWORD dwWdt, DWORD dwHgt)
  * @param draw_sbar Render belt
  * @param draw_btn Render panel buttons
  */
-static void DrawMain(int dwHgt, BOOL draw_desc, BOOL draw_hp, BOOL draw_mana, BOOL draw_sbar, BOOL draw_btn)
+static void DrawMain(int dwHgt, bool draw_desc, bool draw_hp, bool draw_mana, bool draw_sbar, bool draw_btn)
 {
 	int ysize;
 	DWORD dwTicks;
-	BOOL retry;
+	bool retry;
 
 	ysize = dwHgt;
 
@@ -1367,7 +1363,7 @@ static void DrawMain(int dwHgt, BOOL draw_desc, BOOL draw_hp, BOOL draw_mana, BO
 		if (draw_btn) {
 			DoBlitScreen(PANEL_LEFT + 8, PANEL_TOP + 5, 72, 119);
 			DoBlitScreen(PANEL_LEFT + 556, PANEL_TOP + 5, 72, 48);
-			if (gbMaxPlayers > 1) {
+			if (plr.isMultiplayer()) {
 				DoBlitScreen(PANEL_LEFT + 84, PANEL_TOP + 91, 36, 32);
 				DoBlitScreen(PANEL_LEFT + 524, PANEL_TOP + 91, 36, 32);
 			}
@@ -1385,7 +1381,7 @@ static void DrawMain(int dwHgt, BOOL draw_desc, BOOL draw_hp, BOOL draw_mana, BO
  * @brief Redraw screen
  * @param draw_cursor
  */
-void scrollrt_draw_game_screen(BOOL draw_cursor)
+void scrollrt_draw_game_screen(bool draw_cursor)
 {
 	int hgt;
 
@@ -1418,7 +1414,7 @@ void scrollrt_draw_game_screen(BOOL draw_cursor)
 void DrawAndBlit()
 {
 	int hgt;
-	BOOL ddsdesc, ctrlPan;
+	bool ddsdesc, ctrlPan;
 
 	if (!gbRunGame) {
 		return;

@@ -3,7 +3,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 int qtopline;
-BOOL questlog;
+bool questlog;
 BYTE *pQLogCel;
 QuestStruct quests[MAXQUESTS];
 int qline;
@@ -63,7 +63,7 @@ void InitQuests()
 	int i, initiatedQuests;
 	DWORD z;
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		for (i = 0; i < MAXQUESTS; i++) {
 			quests[i]._qactive = QUEST_NOTAVAIL;
 		}
@@ -81,9 +81,9 @@ void InitQuests()
 	initiatedQuests = 0;
 
 	for (z = 0; z < MAXQUESTS; z++) {
-		if (gbMaxPlayers <= 1 || questlist[z]._qflags & 1) {
+		if (plr.isSingleplayer() || questlist[z]._qflags & 1) {
 			quests[z]._qtype = questlist[z]._qdtype;
-			if (gbMaxPlayers > 1) {
+			if (plr.isMultiplayer()) {
 				quests[z]._qlevel = questlist[z]._qdmultlvl;
 				if (!delta_quest_inited(initiatedQuests)) {
 					quests[z]._qactive = QUEST_INIT;
@@ -107,7 +107,7 @@ void InitQuests()
 		}
 	}
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		SetRndSeed(glSeedTbl[15]);
 		if (random_(0, 2))
 			quests[Q_PWATER]._qactive = QUEST_NOTAVAIL;
@@ -128,7 +128,7 @@ void InitQuests()
 	if (!quests[Q_ROCK]._qactive)
 		quests[Q_ROCK]._qvar2 = 2;
 	quests[Q_LTBANNER]._qvar1 = 1;
-	if (gbMaxPlayers != 1)
+	if (plr.isMultiplayer())
 		quests[Q_BETRAYER]._qvar1 = 2;
 }
 
@@ -137,13 +137,13 @@ void CheckQuests()
 	int i;
 	V2Di rport;
 
-	if (QuestStatus(Q_BETRAYER) && gbMaxPlayers != 1 && quests[Q_BETRAYER]._qvar1 == 2) {
+	if (QuestStatus(Q_BETRAYER) && plr.isMultiplayer() && quests[Q_BETRAYER]._qvar1 == 2) {
 		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
 		quests[Q_BETRAYER]._qvar1 = 3;
 		NetSendCmdQuest(TRUE, Q_BETRAYER);
 	}
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		return;
 	}
 
@@ -190,7 +190,7 @@ void CheckQuests()
 			if (level.currlevel == quests[i]._qlevel
 			    && quests[i]._qslvl != 0
 			    && quests[i]._qactive != QUEST_NOTAVAIL
-			    && myplr().data._p == quests[i]._qt) {
+			    && myplr().pos() == quests[i]._qt) {
 				if (quests[i]._qlvltype != DTYPE_NONE) {
 					level.setlvltype = quests[i]._qlvltype;
 				}
@@ -200,12 +200,12 @@ void CheckQuests()
 	}
 }
 
-BOOL ForceQuests()
+bool ForceQuests()
 {
 	int i, j, ql;
 	V2Di q;
 
-	if (gbMaxPlayers != 1) {
+	if (plr.isMultiplayer()) {
 		return FALSE;
 	}
 
@@ -228,20 +228,20 @@ BOOL ForceQuests()
 	return FALSE;
 }
 
-BOOL QuestStatus(int i)
+bool QuestStatus(int i)
 {
-	BOOL result;
+	bool result;
 
 	if (level.setlevel
 	    || level.currlevel != quests[i]._qlevel
 	    || !quests[i]._qactive
-	    || (result = 1, gbMaxPlayers != 1) && !(questlist[i]._qflags & 1)) {
+	    || (result = 1, plr.isMultiplayer()) && !(questlist[i]._qflags & 1)) {
 		result = FALSE;
 	}
 	return result;
 }
 
-void CheckQuestKill(int m, BOOL sendmsg)
+void CheckQuestKill(int m, bool sendmsg)
 {
 	int i, j;
 
@@ -290,7 +290,7 @@ void CheckQuestKill(int m, BOOL sendmsg)
 		} else if (myplr().data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE62;
 		}
-	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers != 1) { //"Arch-Bishop Lazarus"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && plr.isMultiplayer()) { //"Arch-Bishop Lazarus"
 		quests[Q_BETRAYER]._qactive = QUEST_DONE;
 		quests[Q_BETRAYER]._qvar1 = 7;
 		sfxdelay = 30;
@@ -298,7 +298,7 @@ void CheckQuestKill(int m, BOOL sendmsg)
 
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
-				if (grid[i][j].dPiece == 370) {
+				if (grid[i][j].getPiece() == 370) {
 					trigs[numtrigs]._t.x = i;
 					trigs[numtrigs]._t.y = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
@@ -317,7 +317,7 @@ void CheckQuestKill(int m, BOOL sendmsg)
 			NetSendCmdQuest(TRUE, Q_BETRAYER);
 			NetSendCmdQuest(TRUE, Q_DIABLO);
 		}
-	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers == 1) { //"Arch-Bishop Lazarus"
+	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && plr.isSingleplayer()) { //"Arch-Bishop Lazarus"
 		quests[Q_BETRAYER]._qactive = QUEST_DONE;
 		sfxdelay = 30;
 		InitVPTriggers();
@@ -683,7 +683,7 @@ void ResyncQuests()
 	}
 }
 
-void PrintQLString(int x, int y, BOOL cjustflag, char *str, int col)
+void PrintQLString(int x, int y, bool cjustflag, char *str, int col)
 {
 	int len, width, i, k, sx, sy;
 	BYTE c;

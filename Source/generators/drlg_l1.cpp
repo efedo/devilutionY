@@ -9,7 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 BYTE L5dungeon[80][80];
 BYTE L5dflags[DMAXX][DMAXY];
-BOOL L5setloadflag;
+bool L5setloadflag;
 int HR1;
 int HR2;
 int HR3;
@@ -183,7 +183,7 @@ static void DRLG_L1Shadows()
 	int x, y, i;
 	BYTE sd[2][2];
 	BYTE tnv3;
-	BOOL patflag;
+	bool patflag;
 
 	for (y = 1; y < DMAXY; y++) {
 		for (x = 1; x < DMAXX; x++) {
@@ -268,10 +268,10 @@ static void DRLG_L1Shadows()
 	}
 }
 
-static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int noquad, int ldir)
+static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int noquad, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, found, t;
-	BOOL abort;
+	bool abort;
 
 	sw = miniset[0];
 	sh = miniset[1];
@@ -417,10 +417,10 @@ static void DRLG_L1Pass3()
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
 		for (i = 0; i < MAXDUNX; i += 2) {
-			grid[i][j].dPiece = v1;
-			grid[i + 1][j].dPiece = v2;
-			grid[i][j + 1].dPiece = v3;
-			grid[i + 1][j + 1].dPiece = v4;
+			grid[i][j].setPiece(v1);
+			grid[i + 1][j].setPiece(v2);
+			grid[i][j + 1].setPiece(v3);
+			grid[i + 1][j + 1].setPiece(v4);
 		}
 	}
 
@@ -435,10 +435,10 @@ static void DRLG_L1Pass3()
 			v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
 			v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
 			v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
-			grid[xx][yy].dPiece = v1;
-			grid[xx + 1][yy].dPiece = v2;
-			grid[xx][yy + 1].dPiece = v3;
-			grid[xx + 1][yy + 1].dPiece = v4;
+			grid[xx][yy].setPiece(v1);
+			grid[xx + 1][yy].setPiece(v2);
+			grid[xx][yy + 1].setPiece(v3);
+			grid[xx + 1][yy + 1].setPiece(v4);
 			xx += 2;
 		}
 		yy += 2;
@@ -452,7 +452,7 @@ static void DRLG_LoadL1SP()
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\rnd6.DUN", NULL);
 		L5setloadflag = TRUE;
 	}
-	if (QuestStatus(Q_SKELKING) && gbMaxPlayers == 1) {
+	if (QuestStatus(Q_SKELKING) && plr.isSingleplayer()) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\SKngDO.DUN", NULL);
 		L5setloadflag = TRUE;
 	}
@@ -487,37 +487,37 @@ static void DRLG_InitL1Vals()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (grid[i][j].dPiece == 12) {
+			if (grid[i][j].getPiece() == 12) {
 				pc = 1;
-			} else if (grid[i][j].dPiece == 11) {
+			} else if (grid[i][j].getPiece() == 11) {
 				pc = 2;
-			} else if (grid[i][j].dPiece == 71) {
+			} else if (grid[i][j].getPiece() == 71) {
 				pc = 1;
-			} else if (grid[i][j].dPiece == 253) {
+			} else if (grid[i][j].getPiece() == 253) {
 				pc = 3;
-			} else if (grid[i][j].dPiece == 267) {
+			} else if (grid[i][j].getPiece() == 267) {
 				pc = 6;
-			} else if (grid[i][j].dPiece == 259) {
+			} else if (grid[i][j].getPiece() == 259) {
 				pc = 5;
-			} else if (grid[i][j].dPiece == 249) {
+			} else if (grid[i][j].getPiece() == 249) {
 				pc = 2;
-			} else if (grid[i][j].dPiece == 325) {
+			} else if (grid[i][j].getPiece() == 325) {
 				pc = 2;
-			} else if (grid[i][j].dPiece == 321) {
+			} else if (grid[i][j].getPiece() == 321) {
 				pc = 1;
-			} else if (grid[i][j].dPiece == 255) {
+			} else if (grid[i][j].getPiece() == 255) {
 				pc = 4;
-			} else if (grid[i][j].dPiece == 211) {
+			} else if (grid[i][j].getPiece() == 211) {
 				pc = 1;
-			} else if (grid[i][j].dPiece == 344) {
+			} else if (grid[i][j].getPiece() == 344) {
 				pc = 2;
-			} else if (grid[i][j].dPiece == 341) {
+			} else if (grid[i][j].getPiece() == 341) {
 				pc = 1;
-			} else if (grid[i][j].dPiece == 331) {
+			} else if (grid[i][j].getPiece() == 331) {
 				pc = 2;
-			} else if (grid[i][j].dPiece == 418) {
+			} else if (grid[i][j].getPiece() == 418) {
 				pc = 1;
-			} else if (grid[i][j].dPiece == 421) {
+			} else if (grid[i][j].getPiece() == 421) {
 				pc = 2;
 			} else {
 				continue;
@@ -654,7 +654,7 @@ static void L5drawRoom(int x, int y, int w, int h)
 	}
 }
 
-static BOOL L5checkRoom(int x, int y, int width, int height)
+static bool L5checkRoom(int x, int y, int width, int height)
 {
 	int i, j;
 
@@ -673,7 +673,7 @@ static BOOL L5checkRoom(int x, int y, int width, int height)
 static void L5roomGen(int x, int y, int w, int h, int dir)
 {
 	int num, dirProb;
-	BOOL ran, ran2;
+	bool ran, ran2;
 	int width, height, rx, ry, ry2;
 	int cw, ch, cx1, cy1, cx2;
 
@@ -876,7 +876,7 @@ static void L5makeDmt()
 static int L5HWallOk(int i, int j)
 {
 	int x;
-	BOOL wallok;
+	bool wallok;
 
 	for (x = 1; dgrid[i + x][j].dungeon == 13; x++) {
 		if (dgrid[i + x][j - 1].dungeon != 13 || dgrid[i + x][j + 1].dungeon != 13 || L5dflags[i + x][j])
@@ -902,7 +902,7 @@ static int L5HWallOk(int i, int j)
 static int L5VWallOk(int i, int j)
 {
 	int y;
-	BOOL wallok;
+	bool wallok;
 
 	for (y = 1; dgrid[i][j + y].dungeon == 13; y++) {
 		if (dgrid[i - 1][j + y].dungeon != 13 || dgrid[i + 1][j + y].dungeon != 13 || L5dflags[i][j + y])
@@ -1065,7 +1065,7 @@ static void L5AddWall()
 	}
 }
 
-static void DRLG_L5GChamber(int sx, int sy, BOOL topflag, BOOL bottomflag, BOOL leftflag, BOOL rightflag)
+static void DRLG_L5GChamber(int sx, int sy, bool topflag, bool bottomflag, bool leftflag, bool rightflag)
 {
 	int i, j;
 
@@ -1583,7 +1583,7 @@ static void DRLG_L5(int entry)
 {
 	int i, j;
 	LONG minarea;
-	BOOL doneflag;
+	bool doneflag;
 
 	switch (level.currlevel) {
 	case 1:

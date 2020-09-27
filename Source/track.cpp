@@ -4,7 +4,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 static BYTE sgbIsScrolling;
 static DWORD sgdwLastWalk;
-static BOOL sgbIsWalking;
+static bool sgbIsWalking;
 
 void track_process()
 {
@@ -17,7 +17,7 @@ void track_process()
 	if (myplr().data._pVar8 <= 6 && myplr().data._pmode != PM_STAND)
 		return;
 
-	if (cursm != myplr().data._ptarg) {
+	if (cursm != myplr().data._pathtarg) {
 		DWORD tick = SDL_GetTicks();
 		if ((int)(tick - sgdwLastWalk) >= 300) {
 			sgdwLastWalk = tick;
@@ -28,7 +28,7 @@ void track_process()
 	}
 }
 
-void track_repeat_walk(BOOL rep)
+void track_repeat_walk(bool rep)
 {
 	if (sgbIsWalking == rep)
 		return;
@@ -43,7 +43,7 @@ void track_repeat_walk(BOOL rep)
 	}
 }
 
-BOOL track_isscrolling()
+bool track_isscrolling()
 {
 	return sgbIsScrolling;
 }

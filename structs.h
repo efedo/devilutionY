@@ -35,8 +35,8 @@ typedef struct PLStruct {
 	char PLMinLvl;
 	int PLIType;
 	BYTE PLGOE;
-	BOOL PLDouble;
-	BOOL PLOk;
+	bool PLDouble;
+	bool PLOk;
 	int PLMinVal;
 	int PLMaxVal;
 	int PLMultVal;
@@ -92,7 +92,7 @@ typedef struct ItemDataStruct {
 	int iMiscId;
 	// spell_id
 	int iSpell;
-	BOOL iUsable;
+	bool iUsable;
 	int iValue;
 	int iMaxValue;
 } ItemDataStruct;
@@ -109,16 +109,16 @@ typedef struct ItemStruct {
 	WORD _iCreateInfo;
 	int _itype;
 	V2Di _i;
-	BOOL _iAnimFlag;
+	bool _iAnimFlag;
 	unsigned char *_iAnimData; // PSX name -> ItemFrame
 	int _iAnimLen;
 	int _iAnimFrame;
 	int _iAnimWidth;
 	int _iAnimWidth2; // width 2?
-	BOOL _iDelFlag;   // set when item is flagged for deletion, deprecated in 1.02
+	bool _iDelFlag;   // set when item is flagged for deletion, deprecated in 1.02
 	char _iSelFlag;
-	BOOL _iPostDraw;
-	BOOL _iIdentified;
+	bool _iPostDraw;
+	bool _iIdentified;
 	char _iMagical;
 	char _iName[64];
 	char _iIName[64];
@@ -173,7 +173,7 @@ typedef struct ItemStruct {
 	char _iMinStr;
 	unsigned char _iMinMag;
 	char _iMinDex;
-	BOOL _iStatFlag;
+	bool _iStatFlag;
 	int IDidx;
 	int offs016C; // _oldlight or _iInvalid
 } ItemStruct;
@@ -194,8 +194,9 @@ typedef struct PlayerStruct {
 	int destParam4;
 	int plrlevel;
 	V2Di _pos;
-	V2Di _pfut;
-	V2Di _ptarg;
+	V2Di _posfut;
+	V2Di _posdraw;
+	V2Di _pathtarg;
 	V2Di _powner;
 	V2Di _pold;
 	V2Di _poff;
@@ -274,7 +275,7 @@ typedef struct PlayerStruct {
 	char _pFireResist;
 	char _pLghtResist;
 	int _pGold;
-	BOOL _pInfraFlag;
+	bool _pInfraFlag;
 	int _pVar1;
 	int _pVar2;
 	int _pVar3;
@@ -379,7 +380,7 @@ typedef struct MissileData {
 	unsigned char mName;
 	void (*mAddProc)(int, V2Di, V2Di, Dir, char, int, int);
 	void (*mProc)(int);
-	BOOL mDraw;
+	bool mDraw;
 	unsigned char mType;
 	unsigned char mResist;
 	unsigned char mFileNum;
@@ -414,7 +415,7 @@ typedef struct MissileStruct {
 	V2Di _mitoff;
 	Dir _mimfnum; // Imf Num??? Imformation???
 	int _mispllvl;
-	BOOL _miDelFlag;
+	bool _miDelFlag;
 	BYTE _miAnimType;
 	int _miAnimFlags;
 	unsigned char *_miAnimData;
@@ -425,15 +426,15 @@ typedef struct MissileStruct {
 	int _miAnimCnt;
 	int _miAnimAdd;
 	int _miAnimFrame;
-	BOOL _miDrawFlag;
-	BOOL _miLightFlag;
-	BOOL _miPreFlag;
+	bool _miDrawFlag;
+	bool _miLightFlag;
+	bool _miPreFlag;
 	int _miUniqTrans;
 	int _mirange;
 	int _misource;
 	int _micaster;
 	int _midam;
-	BOOL _miHitFlag;
+	bool _miHitFlag;
 	int _midist;
 	int _mlid;
 	int _mirnd;
@@ -478,10 +479,10 @@ typedef struct MonsterData {
 	int width;
 	int mImage;
 	char *GraphicType;
-	BOOL has_special;
+	bool has_special;
 	char *sndfile;
-	BOOL snd_special;
-	BOOL has_trans;
+	bool snd_special;
+	bool has_trans;
 	char *TransFile;
 	int Frames[6];
 	int Rate[6];
@@ -521,7 +522,7 @@ typedef struct CMonster {
 	int width2;
 	unsigned char mMinHP;
 	unsigned char mMaxHP;
-	BOOL has_special;
+	bool has_special;
 	unsigned char mAFNum;
 	char mdeadval;
 	MonsterData *MData;
@@ -553,8 +554,8 @@ typedef struct MonsterStruct { // note: missing field _mAFNum
 	int _mAnimCnt;
 	int _mAnimLen;
 	int _mAnimFrame;
-	BOOL _meflag;
-	BOOL _mDelFlag;
+	bool _meflag;
+	bool _mDelFlag;
 	int _mVar1;
 	int _mVar2;
 	int _mVar3;
@@ -633,19 +634,17 @@ typedef struct ObjDataStruct {
 	int oAnimDelay;
 	int oAnimLen;
 	int oAnimWidth;
-	BOOL oSolidFlag;
-	BOOL oMissFlag;
-	BOOL oLightFlag;
+	bool oSolidFlag;
+	bool oMissFlag;
+	bool oLightFlag;
 	char oBreak;
 	char oSelFlag;
-	BOOL oTrapFlag;
+	bool oTrapFlag;
 } ObjDataStruct;
 
 typedef struct ObjectStruct {
 	int _otype;
 	V2Di _o;
-	//int _ox;
-	//int _oy;
 	int _oLight;
 	int _oAnimFlag;
 	unsigned char *_oAnimData;
@@ -655,14 +654,14 @@ typedef struct ObjectStruct {
 	int _oAnimFrame;
 	int _oAnimWidth;
 	int _oAnimWidth2;
-	BOOL _oDelFlag;
+	bool _oDelFlag;
 	char _oBreak; // check
-	BOOL _oSolidFlag;
-	BOOL _oMissFlag;
+	bool _oSolidFlag;
+	bool _oMissFlag;
 	char _oSelFlag; // check
-	BOOL _oPreFlag;
-	BOOL _oTrapFlag;
-	BOOL _oDoorFlag;
+	bool _oPreFlag;
+	bool _oTrapFlag;
+	bool _oDoorFlag;
 	int _olid;
 	int _oRndSeed;
 	int _oVar1;
@@ -680,13 +679,11 @@ typedef struct ObjectStruct {
 //////////////////////////////////////////////////
 
 typedef struct PortalStruct {
-	BOOL open;
+	bool open;
 	V2Di pos;
-	//int x;
-	//int y;
 	int level;
 	int ltype;
-	BOOL setlvl;
+	bool setlvl;
 } PortalStruct;
 
 //////////////////////////////////////////////////
@@ -993,7 +990,7 @@ typedef struct QuestData {
 typedef struct TMenuItem {
 	DWORD dwFlags;
 	char *pszStr;
-	void (*fnMenu)(BOOL); /* fix, should have one arg */
+	void (*fnMenu)(bool); /* fix, should have one arg */
 } TMenuItem;
 
 // TPDEF PTR FCN VOID TMenuUpdateFcn
@@ -1010,8 +1007,8 @@ typedef struct SpellData {
 	char *sSkillText;
 	int sBookLvl;
 	int sStaffLvl;
-	BOOL sTargeted;
-	BOOL sTownSpell;
+	bool sTargeted;
+	bool sTownSpell;
 	int sMinInt;
 	unsigned char sSFX;
 	unsigned char sMissiles[3];
@@ -1037,14 +1034,8 @@ typedef struct TownerStruct {
 	int _tmode;
 	int _ttype;
 	V2Di _t;
-	//int _tx;
-	//int _ty;
 	V2Di _toff;
-	//int _txoff;
-	//int _tyoff;
 	V2Di _tvel;
-	//int _txvel;
-	//int _tyvel;
 	int _tdir;
 	unsigned char *_tAnimData;
 	int _tAnimDelay;
@@ -1059,7 +1050,7 @@ typedef struct TownerStruct {
 	int _teflag;
 	int _tbtcnt;
 	int _tSelFlag;
-	BOOL _tMsgSaid;
+	bool _tMsgSaid;
 	TNQ qsts[MAXQUESTS];
 	int _tSeed;
 	int _tVar1;
@@ -1222,7 +1213,7 @@ typedef struct _uiheroinfo {
 	WORD vitality;
 	int gold;
 	int hassaved;
-	BOOL spawned;
+	bool spawned;
 } _uiheroinfo;
 
 // TPDEF PTR FCN UCHAR ENUMHEROPROC
@@ -1327,7 +1318,7 @@ typedef struct _SNETUIDATA {
 	void (*profilecallback)();
 	const char **profilefields;
 	void (*profilebitmapcallback)();
-	int (*selectnamecallback)(
+	bool (*selectnamecallback)(
 	    const struct _SNETPROGRAMDATA *,
 	    const struct _SNETPLAYERDATA *,
 	    const struct _SNETUIDATA *,
@@ -1335,7 +1326,7 @@ typedef struct _SNETUIDATA {
 	    DWORD provider, /* e.g. 'BNET', 'IPXN', 'MODM', 'SCBL' */
 	    char *, DWORD,  /* character name will be copied here */
 	    char *, DWORD,  /* character "description" will be copied here (used to advertise games) */
-	    BOOL *          /* new character? - unsure about this */
+	    bool *          /* new character? - unsure about this */
 	);
 	void (*changenamecallback)();
 } _SNETUIDATA;
@@ -1491,10 +1482,10 @@ typedef struct STextStruct {
 	int _sx;
 	int _syoff;
 	char _sstr[128];
-	BOOL _sjust;
+	bool _sjust;
 	char _sclr;
 	int _sline;
-	BOOL _ssel;
+	bool _ssel;
 	int _sval;
 } STextStruct;
 

@@ -12,14 +12,14 @@ BYTE lightactive[MAXLIGHTS];
 LightListStruct LightList[MAXLIGHTS];
 int numlights;
 BYTE lightradius[16][128];
-BOOL dovision;
+bool dovision;
 int numvision;
 char lightmax;
-BOOL dolighting;
+bool dolighting;
 BYTE lightblock[64][16][16];
 int visionid;
 BYTE *pLightTbl;
-BOOL lightflag;
+bool lightflag;
 
 /**
  * CrawlTable specifies X- and Y-coordinate deltas from a missile target coordinate.
@@ -661,9 +661,9 @@ void DoUnVision(V2Di pos, int nRadius)
 	}
 }
 
-void DoVision(V2Di pos, int nRadius, BOOL doautomap, BOOL visible)
+void DoVision(V2Di pos, int nRadius, bool doautomap, bool visible)
 {
-	BOOL nBlockerFlag;
+	bool nBlockerFlag;
 	int nCrawlX, nCrawlY, nLineLen, nTrans;
 	int j, k, v, x1adj, x2adj, y1adj, y2adj;
 
@@ -724,11 +724,11 @@ void DoVision(V2Di pos, int nRadius, BOOL doautomap, BOOL visible)
 					break;
 				}
 				if (nCrawlX >= 0 && nCrawlX < MAXDUNX && nCrawlY >= 0 && nCrawlY < MAXDUNY) {
-					nBlockerFlag = pieces[grid[nCrawlX][nCrawlY].dPiece].nBlockTable;
+					nBlockerFlag = grid[nCrawlX][nCrawlY].blocksLight();
 					if ((x1adj + nCrawlX >= 0 && x1adj + nCrawlX < MAXDUNX && y1adj + nCrawlY >= 0 && y1adj + nCrawlY < MAXDUNY
-					        && !pieces[grid[x1adj + nCrawlX][y1adj + nCrawlY].dPiece].nBlockTable)
+					        && !grid[x1adj + nCrawlX][y1adj + nCrawlY].blocksLight())
 					    || (x2adj + nCrawlX >= 0 && x2adj + nCrawlX < MAXDUNX && y2adj + nCrawlY >= 0 && y2adj + nCrawlY < MAXDUNY
-					        && !pieces[grid[x2adj + nCrawlX][y2adj + nCrawlY].dPiece].nBlockTable)) {
+					        && !grid[x2adj + nCrawlX][y2adj + nCrawlY].blocksLight())) {
 						if (doautomap) {
 							if (grid[nCrawlX][nCrawlY].dFlags >= 0) {
 								automap.SetAutomapView({ nCrawlX, nCrawlY });
@@ -1117,7 +1117,7 @@ void InitVision()
 	}
 }
 
-int AddVision(V2Di pos, int r, BOOL mine)
+int AddVision(V2Di pos, int r, bool mine)
 {
 	int vid; // BUGFIX: if numvision >= MAXVISION behavior is undefined
 	if (numvision < MAXVISION) {
@@ -1166,7 +1166,7 @@ void ChangeVisionXY(int id, V2Di pos)
 void ProcessVisionList()
 {
 	int i;
-	BOOL delflag;
+	bool delflag;
 
 	if (dovision) {
 		for (i = 0; i < numvision; i++) {

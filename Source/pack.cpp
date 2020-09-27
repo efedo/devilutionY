@@ -32,7 +32,7 @@ static void PackItem(PkItemStruct *id, ItemStruct *is)
 	}
 }
 
-void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield)
+void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield)
 {
 	PlayerStruct *pPlayer;
 	int i;
@@ -45,8 +45,8 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield)
 	pPack->destParam1 = pPlayer->destParam1;
 	pPack->destParam2 = pPlayer->destParam2;
 	pPack->plrlevel = pPlayer->plrlevel;
-	pPack->p = pPlayer->_p;
-	pPack->targ = pPlayer->_ptarg;
+	pPack->p = pPlayer->_pos;
+	pPack->targ = pPlayer->_pathtarg;
 	strcpy(pPack->pName, pPlayer->_pName);
 	pPack->pClass = pPlayer->_pClass;
 	pPack->pBaseStr = pPlayer->_pBaseStr;
@@ -99,7 +99,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield)
 
 	pPack->pDiabloKillLevel = SwapLE32(pPlayer->pDiabloKillLevel);
 
-	if (gbMaxPlayers == 1 || manashield)
+	if (plr.isSingleplayer() || manashield)
 		pPack->pManaShield = SwapLE32(pPlayer->pManaShield);
 	else
 		pPack->pManaShield = FALSE;
@@ -163,18 +163,19 @@ void VerifyGoldSeeds(PlayerStruct *pPlayer)
 	}
 }
 
-void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok)
+void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 {
 	PlayerStruct *pPlayer;
 	int i;
 	ItemStruct *pi;
 	PkItemStruct *pki;
 
+	if (!plr.isValidPlayer(pnum)) plr.addPlayer(pnum);
 	pPlayer = &plr[pnum].data;
 	plr[pnum].ClearPlrRVars();
-	pPlayer->_p = pPack->p;
-	pPlayer->_pfut = pPack->p;
-	pPlayer->_ptarg = pPack->targ;
+	pPlayer->_pos = pPack->p;
+	pPlayer->_posfut = pPack->p;
+	pPlayer->_pathtarg = pPack->targ;
 	pPlayer->plrlevel = pPack->plrlevel;
 	plr[pnum].ClrPlrPath();
 	pPlayer->destAction = ACTION_NONE;

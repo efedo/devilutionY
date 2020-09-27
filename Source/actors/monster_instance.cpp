@@ -34,7 +34,7 @@ MonsterInstance::MonsterInstance(int new_i, Dir rd, int mtype, V2Di pos)
 		data._mmaxhp = (monst->mMinHP + random_(88, monst->mMaxHP - monst->mMinHP + 1)) << 6;
 	}
 
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		data._mmaxhp >>= 1;
 		if (data._mmaxhp < 64) {
 			data._mmaxhp = 64;
@@ -147,13 +147,13 @@ void MonsterInstance::GetTargetLoc(V2Di &pos, int &dist, Dir &dir)
 {
 }
 
-BOOL MonsterInstance::M_Ranged()
+bool MonsterInstance::M_Ranged()
 {
 	char ai = data._mAi;
 	return ai == AI_SKELBOW || ai == AI_GOATBOW || ai == AI_SUCC || ai == AI_LAZHELP;
 }
 
-BOOL MonsterInstance::M_Talker()
+bool MonsterInstance::M_Talker()
 {
 	char ai = data._mAi;
 	return ai == AI_LAZURUS
@@ -171,7 +171,7 @@ void MonsterInstance::M_Enemy()
 	int mi, pnum;
 	int dist, best_dist;
 	int _menemy;
-	BOOL sameroom, bestsameroom;
+	bool sameroom, bestsameroom;
 	//MonsterStruct *Monst;
 	BYTE enemyx, enemyy;
 
@@ -181,7 +181,7 @@ void MonsterInstance::M_Enemy()
 	//Monst = monster + i;
 	if (!(data._mFlags & MFLAG_GOLEM)) {
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
-			if (!plr[pnum].data.plractive || level.currlevel != plr[pnum].data.plrlevel || plr[pnum].data._pLvlChanging || (plr[pnum].data._pHitPoints == 0 && gbMaxPlayers != 1))
+			if (!plr[pnum].data.plractive || level.currlevel != plr[pnum].data.plrlevel || plr[pnum].data._pLvlChanging || (plr[pnum].data._pHitPoints == 0 && plr.isMultiplayer()))
 				continue;
 			if (grid.at(data._m).dTransVal == grid.at(plr[pnum].pos()).dTransVal)
 				sameroom = TRUE;
@@ -193,8 +193,8 @@ void MonsterInstance::M_Enemy()
 			    || (_menemy == -1)) {
 				data._mFlags &= ~MFLAG_TARGETS_MONSTER;
 				_menemy = pnum;
-				enemyx = plr[pnum].data._pfut.x;
-				enemyy = plr[pnum].data._pfut.y;
+				enemyx = plr[pnum].futpos().x;
+				enemyy = plr[pnum].futpos().y;
 				best_dist = dist;
 				bestsameroom = sameroom;
 			}
@@ -278,7 +278,7 @@ void MonsterInstance::M_StartSpStand(Dir md)
 void MonsterInstance::M_StartWalk(V2Di vel, V2Di add, Dir EndDir)
 {
 	V2Di f = add + data._m;
-	grid[f.x][f.y].dMonster = -(i + 1);
+	grid.at(f).setMonster(i);
 	data._mmode = MM_WALK;
 	data._mold = data._m;
 	data._mfut = f;
@@ -296,15 +296,14 @@ void MonsterInstance::M_StartWalk(V2Di vel, V2Di add, Dir EndDir)
 void MonsterInstance::M_StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir)
 {
 	V2Di f = add + data._m;
-	grid.at(data._m).dMonster = -(i + 1);
+	grid.at(data._m).setMonster(i);
 	data._mVar1 = data._m.x;
 	data._mVar2 = data._m.y;
 	data._mold = data._m;
 	data._m = f;
 	data._mfut = f;
-	grid[f.x][f.y].dMonster = i + 1;
-	if (data._uniqtype != 0)
-		ChangeLightXY(data.mlid, data._m);
+	grid.at(f).setMonster(i);
+	if (data._uniqtype != 0) ChangeLightXY(data.mlid, data._m);
 	data._moff = off;
 	data._mmode = MM_WALK2;
 	data._mvel = vel;
@@ -320,12 +319,9 @@ void MonsterInstance::M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir E
 {
 	V2Di f = add + data._m;
 	V2Di n = map + data._m;
-
-	if (data._uniqtype != 0)
-		ChangeLightXY(data.mlid, n);
-
-	grid[data._m.x][data._m.y].dMonster = -(i + 1);
-	grid[f.x][f.y].dMonster = -(i + 1);
+	if (data._uniqtype != 0) ChangeLightXY(data.mlid, n);
+	grid.at(data._m).setMonster(i);
+	grid.at(f).setMonster(i);
 	data._mVar4 = n.x;
 	data._mVar5 = n.y;
 	grid[n.x][n.y].dFlags |= BFLAG_MONSTLR;
@@ -399,16 +395,14 @@ void MonsterInstance::M_ClearSquares()
 	for (y = my - 1; y <= my + 1; y++) {
 		if (y >= 0 && y < MAXDUNY) {
 			for (x = mx - 1; x <= mx + 1; x++) {
-				if (x >= 0 && x < MAXDUNX && (grid[x][y].dMonster == m1 || grid[x][y].dMonster == m2))
-					grid[x][y].dMonster = 0;
+				if (x >= 0 && x < MAXDUNX && (grid[x][y].getMonster() == m1 || grid[x][y].getMonster() == m2))
+					grid[x][y].clearMonster();
 			}
 		}
 	}
 
-	if (mx + 1 < MAXDUNX)
-		grid[mx + 1][my].dFlags &= ~BFLAG_MONSTLR;
-	if (my + 1 < MAXDUNY)
-		grid[mx][my + 1].dFlags &= ~BFLAG_MONSTLR;
+	if (mx + 1 < MAXDUNX) grid[mx + 1][my].dFlags &= ~BFLAG_MONSTLR;
+	if (my + 1 < MAXDUNY) grid[mx][my + 1].dFlags &= ~BFLAG_MONSTLR;
 }
 
 void MonsterInstance::M_GetKnockback()
@@ -425,7 +419,7 @@ void MonsterInstance::M_GetKnockback()
 		// BUGFIX useless assignment
 		data._mold = data._m;
 		M_ClearSquares();
-		grid.at(data._m).dMonster = i + 1;
+		grid.at(data._m).setMonster(i);
 	}
 }
 
@@ -442,7 +436,7 @@ void MonsterInstance::M_StartHit(int pnum, int dam)
 		if (pnum >= 0) {
 			data._mFlags &= ~MFLAG_TARGETS_MONSTER;
 			data._menemy = pnum;
-			data._menemypos = plr[pnum].data._pfut;
+			data._menemypos = plr[pnum].futpos();
 			data._mdir = M_GetDir();
 		}
 		if (data.MType->mtype == MT_BLINK) {
@@ -455,12 +449,12 @@ void MonsterInstance::M_StartHit(int pnum, int dam)
 			data._mmode = MM_GOTHIT;
 			PlantInPosition(data._mdir, &data._mold);
 			M_ClearSquares();
-			grid.at(data._m).dMonster = i + 1;
+			grid.at(data._m).setMonster(i);
 		}
 	}
 }
 
-void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
+void MonsterInstance::M_DiabloDeath(bool sendmsg)
 {
 	int j, k;
 	V2Di _mold;
@@ -481,7 +475,7 @@ void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
 		_mold = monsters[k].data._mold;
 		monsters[k].PlantInPosition(monsters[k].data._mdir, &_mold);
 		monsters[k].M_ClearSquares();
-		grid.at(monsters[k].data._m).dMonster = k + 1;
+		grid.at(monsters[k].data._m).setMonster(k);
 	}
 	AddLight(monsters[k].data._m, 8);
 	DoVision(monsters[k].data._m, 8, FALSE, TRUE);
@@ -496,15 +490,13 @@ void MonsterInstance::M_DiabloDeath(BOOL sendmsg)
 	monsters[k].data._mVar6 = (int)((k - (monsters[k].data._m.y << 16)) / (double)dist);
 }
 
-void MonsterInstance::MonstStartKill(int pnum, BOOL sendmsg)
+void MonsterInstance::MonstStartKill(int pnum, bool sendmsg)
 {
 	Dir md;
 
 	//MonsterStruct *Monst;
-	if (pnum >= 0)
-		data.mWhoHit |= 1 << pnum;
-	if (pnum < MAX_PLRS && i > MAX_PLRS)
-		AddPlrMonstExper(data.mLevel, data.mExp, data.mWhoHit);
+	if (pnum >= 0) data.mWhoHit |= 1 << pnum;
+	if (pnum < MAX_PLRS && i > MAX_PLRS) AddPlrMonstExper(data.mLevel, data.mExp, data.mWhoHit);
 	monstkills[data.MType->mtype]++;
 	data._mhitpoints = 0;
 	SetRndSeed(data._mRndSeed);
@@ -529,7 +521,7 @@ void MonsterInstance::MonstStartKill(int pnum, BOOL sendmsg)
 	data._mVar1 = 0;
 
 	M_ClearSquares();
-	grid.at(data._m).dMonster = i + 1;
+	grid.at(data._m).setMonster(i);
 	CheckQuestKill(i, sendmsg);
 	M_FallenFear(data._m);
 	if (data.MType->mtype >= MT_NACID && data.MType->mtype <= MT_XACID)
@@ -575,7 +567,7 @@ void MonsterInstance::M2MStartKill(int mid)
 	monsters[mid].data._mmode = MM_DEATH;
 	monsters[mid].PlantInPosition(md, &monsters[mid].data._mold);
 	monsters[mid].M_ClearSquares();
-	grid.at(monsters[mid].data._m).dMonster = mid + 1;
+	grid.at(monsters[mid].data._m).setMonster(mid);
 	CheckQuestKill(mid, TRUE);
 	M_FallenFear(monsters[mid].data._m);
 	if (monsters[mid].data.MType->mtype >= MT_NACID && monsters[mid].data.MType->mtype <= MT_XACID)
@@ -601,7 +593,7 @@ void MonsterInstance::M_SyncStartKill(V2Di pos, int pnum)
 		return;
 	}
 
-	if (grid[pos.x][pos.y].dMonster == 0) {
+	if (grid[pos.x][pos.y].getMonster() == 0) {
 		M_ClearSquares();
 		data._m = pos;
 		data._mold = pos;
@@ -615,7 +607,7 @@ void MonsterInstance::M_SyncStartKill(V2Di pos, int pnum)
 	}
 }
 
-void MonsterInstance::M_StartFadein(Dir md, BOOL backwards)
+void MonsterInstance::M_StartFadein(Dir md, bool backwards)
 {
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_FADEIN;
@@ -627,7 +619,7 @@ void MonsterInstance::M_StartFadein(Dir md, BOOL backwards)
 	}
 }
 
-void MonsterInstance::M_StartFadeout(Dir md, BOOL backwards)
+void MonsterInstance::M_StartFadeout(Dir md, bool backwards)
 {
 	NewMonsterAnim(&data.MType->Anims[MA_SPECIAL], md);
 	data._mmode = MM_FADEOUT;
@@ -673,7 +665,7 @@ void MonsterInstance::M_ChangeLightOffset()
 	ChangeLightOff(monsters[i].data.mlid, { _mxoff, _myoff });
 }
 
-BOOL MonsterInstance::M_DoStand()
+bool MonsterInstance::M_DoStand()
 {
 	if (data.MType->mtype == MT_GOLEM)
 		data._mAnimData = data.MType->Anims[MA_WALK].Data[int(data._mdir)];
@@ -687,16 +679,15 @@ BOOL MonsterInstance::M_DoStand()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoWalk()
+bool MonsterInstance::M_DoWalk()
 {
-	BOOL rv = FALSE;
+	bool rv = FALSE;
 	if (data._mVar8 == data.MType->Anims[MA_WALK].Frames) {
-		grid.at(data._m).dMonster = 0;
+		grid.at(data._m).clearMonster();
 		data._m.x += data._mVar1;
 		data._m.y += data._mVar2;
-		grid.at(data._m).dMonster = i + 1;
-		if (data._uniqtype != 0)
-			ChangeLightXY(data.mlid, data._m);
+		grid.at(data._m).setMonster(i);
+		if (data._uniqtype != 0) ChangeLightXY(data.mlid, data._m);
 		M_StartStand(data._mdir);
 		rv = TRUE;
 	} else if (!data._mAnimCnt) {
@@ -707,19 +698,16 @@ BOOL MonsterInstance::M_DoWalk()
 		data._moff.y = data._mVar7 >> 4;
 	}
 
-	if (data._uniqtype != 0)
-		M_ChangeLightOffset();
-
+	if (data._uniqtype != 0) M_ChangeLightOffset();
 	return rv;
 }
 
-BOOL MonsterInstance::M_DoWalk2()
+bool MonsterInstance::M_DoWalk2()
 {
-	BOOL rv;
+	bool rv;
 	if (data._mVar8 == data.MType->Anims[MA_WALK].Frames) {
-		grid[data._mVar1][data._mVar2].dMonster = 0;
-		if (data._uniqtype != 0)
-			ChangeLightXY(data.mlid, data._m);
+		grid[data._mVar1][data._mVar2].clearMonster();
+		if (data._uniqtype != 0) ChangeLightXY(data.mlid, data._m);
 		M_StartStand(data._mdir);
 		rv = TRUE;
 	} else {
@@ -732,22 +720,19 @@ BOOL MonsterInstance::M_DoWalk2()
 		}
 		rv = FALSE;
 	}
-	if (data._uniqtype != 0)
-		M_ChangeLightOffset();
-
+	if (data._uniqtype != 0) M_ChangeLightOffset();
 	return rv;
 }
 
-BOOL MonsterInstance::M_DoWalk3()
+bool MonsterInstance::M_DoWalk3()
 {
-	BOOL rv;
+	bool rv;
 	if (data._mVar8 == data.MType->Anims[MA_WALK].Frames) {
-		grid.at(data._m).dMonster = 0;
+		grid.at(data._m).clearMonster();
 		data._m = { data._mVar1, data._mVar2 };
 		grid[data._mVar4][data._mVar5].dFlags &= ~BFLAG_MONSTLR;
-		grid.at(data._m).dMonster = i + 1;
-		if (data._uniqtype)
-			ChangeLightXY(data.mlid, data._m);
+		grid.at(data._m).setMonster(i);
+		if (data._uniqtype) ChangeLightXY(data.mlid, data._m);
 		M_StartStand(data._mdir);
 		rv = TRUE;
 	} else {
@@ -760,15 +745,13 @@ BOOL MonsterInstance::M_DoWalk3()
 		}
 		rv = FALSE;
 	}
-	if (data._uniqtype != 0)
-		M_ChangeLightOffset();
-
+	if (data._uniqtype != 0) M_ChangeLightOffset();
 	return rv;
 }
 
 void MonsterInstance::M_TryM2MHit(int mid, int hper, int mind, int maxd)
 {
-	BOOL ret;
+	bool ret;
 
 	if ((DWORD)mid >= MAXMONSTERS) {
 		app_fatal("M_TryM2MHit: Invalid monster %d", mid);
@@ -905,7 +888,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 		else
 			M_StartHit(pnum, mdam);
 	}
-	if (!(data._mFlags & MFLAG_NOLIFESTEAL) && data.MType->mtype == MT_SKING && gbMaxPlayers != 1)
+	if (!(data._mFlags & MFLAG_NOLIFESTEAL) && data.MType->mtype == MT_SKING && plr.isMultiplayer())
 		data._mhitpoints += dam;
 	if (plr[pnum].data._pHitPoints > plr[pnum].data._pMaxHP) {
 		plr[pnum].data._pHitPoints = plr[pnum].data._pMaxHP;
@@ -919,18 +902,17 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	if (data._mFlags & MFLAG_KNOCKBACK) {
 		if (plr[pnum].data._pmode != PM_GOTHIT)
 			plr[pnum].StartPlrHit(0, TRUE);
-		newpos = plr[pnum].data._p + offset(data._mdir);
+		newpos = plr[pnum].pos() + offset(data._mdir);
 		if (PosOkPlayer(pnum, newpos)) {
-			plr[pnum].data._p = newpos;
-			plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
+			plr[pnum].changePos(newpos);
+			plr[pnum].PlantInPlace(plr[pnum].data._pdir);
 			plr[pnum].FixPlrWalkTags();
-			grid.at(newpos).dPlayer = pnum + 1;
 			plr[pnum].SetPlayerOld();
 		}
 	}
 }
 
-BOOL MonsterInstance::M_DoAttack()
+bool MonsterInstance::M_DoAttack()
 {
 	if (data.MType == NULL)
 		app_fatal("M_DoAttack: Monster %d \"%s\" MType NULL", i, data.mName);
@@ -960,7 +942,7 @@ BOOL MonsterInstance::M_DoAttack()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoRAttack()
+bool MonsterInstance::M_DoRAttack()
 {
 	int multimissiles, mi;
 	if (data._mAnimFrame == data.MData->mAFNum) {
@@ -1009,7 +991,7 @@ int MonsterInstance::M_DoRSpAttack()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoSAttack()
+bool MonsterInstance::M_DoSAttack()
 {
 	if (data._mAnimFrame == data.MData->mAFNum2)
 		M_TryH2HHit(data._menemy, data.mHit2, data.mMinDamage2, data.mMaxDamage2);
@@ -1021,7 +1003,7 @@ BOOL MonsterInstance::M_DoSAttack()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoFadein()
+bool MonsterInstance::M_DoFadein()
 {
 	if ((!(data._mFlags & MFLAG_LOCK_ANIMATION) || data._mAnimFrame != 1)
 	    && (data._mFlags & MFLAG_LOCK_ANIMATION || data._mAnimFrame != data._mAnimLen)) {
@@ -1034,7 +1016,7 @@ BOOL MonsterInstance::M_DoFadein()
 	return TRUE;
 }
 
-BOOL MonsterInstance::M_DoFadeout()
+bool MonsterInstance::M_DoFadeout()
 {
 	if ((!(data._mFlags & MFLAG_LOCK_ANIMATION) || data._mAnimFrame != 1)
 	    && (data._mFlags & MFLAG_LOCK_ANIMATION || data._mAnimFrame != data._mAnimLen)) {
@@ -1130,7 +1112,7 @@ int MonsterInstance::M_DoTalk()
 	}
 	if (data.mName == UniqMonst[UMT_WARLORD].mName)
 		quests[Q_WARLORD]._qvar1 = 2;
-	if (data.mName == UniqMonst[UMT_LAZURUS].mName && gbMaxPlayers != 1) {
+	if (data.mName == UniqMonst[UMT_LAZURUS].mName && plr.isMultiplayer()) {
 		data._msquelch = UCHAR_MAX;
 		data.mtalkmsg = 0;
 		quests[Q_BETRAYER]._qvar1 = 6;
@@ -1141,7 +1123,7 @@ int MonsterInstance::M_DoTalk()
 
 void MonsterInstance::M_Teleport()
 {
-	BOOL tren = FALSE;
+	bool tren = FALSE;
 	int k, j, x, y, _mx, _my, rx, ry;
 
 	if (data._mmode != MM_STONE) {
@@ -1166,14 +1148,14 @@ void MonsterInstance::M_Teleport()
 
 	if (tren) {
 		M_ClearSquares();
-		grid.at(data._m).dMonster = 0;
-		grid[x][y].dMonster = i + 1;
+		grid.at(data._m).clearMonster();
+		grid[x][y].setMonster(i);
 		data._mold = { x, y };
 		data._mdir = M_GetDir();
 	}
 }
 
-BOOL MonsterInstance::M_DoGotHit()
+bool MonsterInstance::M_DoGotHit()
 {
 	if (data._mAnimFrame == data._mAnimLen) {
 		M_StartStand(data._mdir);
@@ -1182,7 +1164,7 @@ BOOL MonsterInstance::M_DoGotHit()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoDeath()
+bool MonsterInstance::M_DoDeath()
 {
 	int var1;
 	int x, y;
@@ -1207,12 +1189,10 @@ BOOL MonsterInstance::M_DoDeath()
 		if (var1 == 140)
 			PrepDoEnding();
 	} else if (data._mAnimFrame == data._mAnimLen) {
-		if (data._uniqtype == 0)
-			AddDead(data._m, data.MType->mdeadval, data._mdir);
-		else
-			AddDead(data._m, data._udeadval, data._mdir);
+		if (data._uniqtype == 0) AddDead(data._m, data.MType->mdeadval, data._mdir);
+		else AddDead(data._m, data._udeadval, data._mdir);
 
-		grid.at(data._m).dMonster = 0;
+		grid.at(data._m).clearMonster();
 		data._mDelFlag = TRUE;
 
 		M_UpdateLeader();
@@ -1220,7 +1200,7 @@ BOOL MonsterInstance::M_DoDeath()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoSpStand()
+bool MonsterInstance::M_DoSpStand()
 {
 	if (data._mAnimFrame == data.MData->mAFNum2)
 		PlayEffect(i, 3);
@@ -1232,7 +1212,7 @@ BOOL MonsterInstance::M_DoSpStand()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoDelay()
+bool MonsterInstance::M_DoDelay()
 {
 	int mVar2;
 	int oFrame;
@@ -1254,10 +1234,10 @@ BOOL MonsterInstance::M_DoDelay()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_DoStone()
+bool MonsterInstance::M_DoStone()
 {
 	if (!data._mhitpoints) {
-		grid.at(data._m).dMonster = 0;
+		grid.at(data._m).clearMonster();
 		data._mDelFlag = TRUE;
 	}
 	return FALSE;
@@ -1297,7 +1277,7 @@ void MonsterInstance::M_WalkDir(Dir md)
 void MonsterInstance::GroupUnity()
 {
 	int leader, m, j;
-	BOOL clear;
+	bool clear;
 	if (data.leaderflag) {
 		leader = data.leader;
 		clear = LineClearF(CheckNoSolid, data._m, monsters[leader].data._mfut);
@@ -1349,10 +1329,10 @@ void MonsterInstance::GroupUnity()
 	}
 }
 
-BOOL MonsterInstance::M_CallWalk(Dir md)
+bool MonsterInstance::M_CallWalk(Dir md)
 {
 	const Dir mdtemp = md;
-	BOOL ok = DirOK(Dir(md));
+	bool ok = DirOK(Dir(md));
 
 	bool test = (md = left(mdtemp), DirOK(md));
 
@@ -1373,12 +1353,12 @@ BOOL MonsterInstance::M_CallWalk(Dir md)
 	return ok;
 }
 
-BOOL MonsterInstance::M_PathWalk()
+bool MonsterInstance::M_PathWalk()
 {
 	//char path[25];
 	std::queue<PathNode> path;
 
-	BOOL (*Check)
+	bool (*Check)
 	(int, V2Di) = PosOkMonst3;
 	if (!(data._mFlags & MFLAG_CAN_OPEN_DOOR))
 		Check = PosOkMonst;
@@ -1392,9 +1372,9 @@ BOOL MonsterInstance::M_PathWalk()
 	return FALSE;
 }
 
-BOOL MonsterInstance::M_CallWalk2(Dir md)
+bool MonsterInstance::M_CallWalk2(Dir md)
 {
-	BOOL ok = DirOK(md); // Can we continue in the same direction
+	bool ok = DirOK(md); // Can we continue in the same direction
 	Dir mdtemp = md;
 	if (random_(101, 2)) { // Randomly go left or right
 		ok = ok || (mdtemp = left(md), DirOK(left(md))) || (mdtemp = right(md), DirOK(right(md)));
@@ -1406,17 +1386,17 @@ BOOL MonsterInstance::M_CallWalk2(Dir md)
 	return ok;
 }
 
-BOOL MonsterInstance::M_DumbWalk(Dir md)
+bool MonsterInstance::M_DumbWalk(Dir md)
 {
-	BOOL ok = DirOK(md);
+	bool ok = DirOK(md);
 	if (ok) M_WalkDir(md);
 	return ok;
 }
 
-BOOL MonsterInstance::M_RoundWalk(Dir md, int *dir)
+bool MonsterInstance::M_RoundWalk(Dir md, int *dir)
 {
 	Dir mdtemp = md;
-	BOOL ok = DirOK(md);
+	bool ok = DirOK(md);
 	if (*dir)
 		md = left(left(md));
 	else
@@ -1499,7 +1479,7 @@ void MonsterInstance::MAI_SkelSd()
 		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
-BOOL MonsterInstance::MAI_Path()
+bool MonsterInstance::MAI_Path()
 {
 	if (data.MType->mtype != MT_GOLEM) {
 		if (data._msquelch == 0)
@@ -1512,15 +1492,12 @@ BOOL MonsterInstance::MAI_Path()
 			return FALSE;
 	}
 
-	BOOL clear = LineClearF1(PosOkMonst2, i, data._m, data._menemypos);
+	bool clear = LineClearF1(PosOkMonst2, i, data._m, data._menemypos);
 	if (!clear || data._pathcount >= 5 && data._pathcount < 8) {
-		if (data._mFlags & MFLAG_CAN_OPEN_DOOR)
-			MonstCheckDoors(i);
+		if (data._mFlags & MFLAG_CAN_OPEN_DOOR) MonstCheckDoors(i);
 		data._pathcount++;
-		if (data._pathcount < 5)
-			return FALSE;
-		if (M_PathWalk())
-			return TRUE;
+		if (data._pathcount < 5) return FALSE;
+		if (M_PathWalk()) return TRUE;
 	}
 
 	if (data.MType->mtype != MT_GOLEM)
@@ -1546,7 +1523,7 @@ void MonsterInstance::MAI_Snake()
 		if (dist < 3 && LineClearF1(PosOkMonst, i, data._m, f) && data._mVar1 != MM_CHARGE) {
 			if (AddMissile(data._m, f, md, MIS_RHINO, pnum, i, 0, 0) != -1) {
 				PlayEffect(i, 0);
-				grid.at(data._m).dMonster = -(i + 1);
+				grid.at(data._m).setMonster(i);
 				data._mmode = MM_CHARGE;
 			}
 		// This is all just code to choose a direction
@@ -1599,10 +1576,8 @@ void MonsterInstance::MAI_Bat()
 			M_CallWalk(opposite(md));
 			data._mgoalvar1++;
 		} else {
-			if (random_(108, 2))
-				M_CallWalk(left(md));
-			else
-				M_CallWalk(right(md));
+			if (random_(108, 2)) M_CallWalk(left(md));
+			else M_CallWalk(right(md));
 			data._mgoal = MGOAL_NORMAL;
 		}
 		return;
@@ -1613,7 +1588,7 @@ void MonsterInstance::MAI_Bat()
 	    && v < 4 * data._mint + 33
 	    && LineClearF1(PosOkMonst, i, data._m, f)) {
 		if (AddMissile(data._m, f, md, MIS_RHINO, pnum, i, 0, 0) != -1) {
-			grid.at(data._m).dMonster = -(i + 1);
+			grid.at(data._m).setMonster(i);
 			data._mmode = MM_CHARGE;
 		}
 	} else if (dist >= 2) {
@@ -1640,7 +1615,7 @@ void MonsterInstance::MAI_SkelBow()
 {
 	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
-	BOOL walking = FALSE;
+	bool walking = FALSE;
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
@@ -1833,7 +1808,7 @@ void MonsterInstance::MAI_Fallen()
 		for (int y = -rad; y <= rad; y++) {
 			for (int x = -rad; x <= rad; x++) {
 				if (y >= 0 && y < MAXDUNY && x >= 0 && x < MAXDUNX) {
-					m = grid[x + data._m.x][y + data._m.y].dMonster;
+					m = grid[x + data._m.x][y + data._m.y].getMonster();
 					if (m > 0) {
 						m--;
 						if (monsters[m].data._mAi == AI_FALLEN) {
@@ -1876,7 +1851,7 @@ void MonsterInstance::MAI_Cleaver()
 		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(md)];
 }
 
-void MonsterInstance::MAI_Round(BOOL special)
+void MonsterInstance::MAI_Round(bool special)
 {
 	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
@@ -1926,7 +1901,7 @@ void MonsterInstance::MAI_GoatMc()
 	MAI_Round(TRUE);
 }
 
-void MonsterInstance::MAI_Ranged(int missile_type, BOOL special)
+void MonsterInstance::MAI_Ranged(int missile_type, bool special)
 {
 	if (data._mmode != MM_STAND) return;
 
@@ -1978,7 +1953,7 @@ void MonsterInstance::MAI_Scav()
 {
 	int x, y;
 	V2Di _m = data._m;
-	BOOL done = FALSE;
+	bool done = FALSE;
 	if (data._mmode != MM_STAND)
 		return;
 	if (data._mhitpoints < (data._mmaxhp >> 1) && data._mgoal != MGOAL_HEALING) {
@@ -2080,7 +2055,7 @@ void MonsterInstance::MAI_Garg()
 	MAI_Round(FALSE);
 }
 
-void MonsterInstance::MAI_RoundRanged(int missile_type, BOOL checkdoors, int dam, int lessmissiles)
+void MonsterInstance::MAI_RoundRanged(int missile_type, bool checkdoors, int dam, int lessmissiles)
 {
 	if (data._mmode != MM_STAND || data._msquelch == 0)
 		return;
@@ -2218,7 +2193,7 @@ void MonsterInstance::MAI_Golum()
 {
 	int j, k, _menemy;
 	Dir md;
-	BOOL have_enemy, ok;
+	bool have_enemy, ok;
 	if (data._m.x == 1 && data._m.y == 0) {
 		return;
 	}
@@ -2250,7 +2225,7 @@ void MonsterInstance::MAI_Golum()
 			monsters[data._menemy].data._last = data._m;
 			for (j = 0; j < 5; j++) {
 				for (k = 0; k < 5; k++) {
-					_menemy = grid[data._m.x + k - 2][data._m.y + j - 2].dMonster;
+					_menemy = grid[data._m.x + k - 2][data._m.y + j - 2].getMonster();
 					if (_menemy > 0)
 						monsters[_menemy].data._msquelch = UCHAR_MAX;
 				}
@@ -2302,7 +2277,7 @@ void MonsterInstance::MAI_SkelKing()
 	} else
 		data._mgoal = MGOAL_NORMAL;
 	if (data._mgoal == MGOAL_NORMAL) {
-		if (gbMaxPlayers == 1
+		if (plr.isSingleplayer()
 		    && ((dist >= 3) && v < 4 * data._mint + 35 || v < 6)
 		    && LineClear(data._m, f)) {
 			V2Di n = data._m + offset(md);
@@ -2361,7 +2336,7 @@ void MonsterInstance::MAI_Rhino()
 				if (data.MData->snd_special)
 					PlayEffect(i, 3);
 				data._mmode = MM_CHARGE;
-				grid.at(data._m).dMonster = -1 - i;
+				grid.at(data._m).setMonster(i);
 			}
 		} else {
 			if (dist >= 2) {
@@ -2559,8 +2534,8 @@ void MonsterInstance::MAI_Lazurus()
 	V2Di m = data._m;
 	Dir md = M_GetDir();
 	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
-		if (gbMaxPlayers == 1) {
-			if (data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && myplr().data._p.x == TEXT_VILE13 && myplr().data._p.y == 46) {
+		if (plr.isSingleplayer()) {
+			if (data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && myplr().pos().x == TEXT_VILE13 && myplr().pos().y == 46) {
 				PlayInGameMovie("gendata\\fprst3.smk");
 				data._mmode = MM_TALK;
 				quests[Q_BETRAYER]._qvar1 = 5;
@@ -2576,7 +2551,7 @@ void MonsterInstance::MAI_Lazurus()
 			}
 		}
 
-		if (gbMaxPlayers != 1 && data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && quests[Q_BETRAYER]._qvar1 <= 3) {
+		if (plr.isMultiplayer() && data.mtalkmsg == TEXT_VILE13 && data._mgoal == MGOAL_INQUIRING && quests[Q_BETRAYER]._qvar1 <= 3) {
 			data._mmode = MM_TALK;
 		}
 	}
@@ -2600,7 +2575,7 @@ void MonsterInstance::MAI_Lazhelp()
 	Dir md = M_GetDir();
 
 	if (grid.at(_m).dFlags & BFLAG_VISIBLE) {
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			if (quests[Q_BETRAYER]._qvar1 <= 5) {
 				data._mgoal = MGOAL_INQUIRING;
 			} else {

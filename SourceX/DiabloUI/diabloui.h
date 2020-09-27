@@ -39,7 +39,7 @@ constexpr size_t size(T (&)[N])
 }
 
 extern void (*gfnSoundFunction)(char *file);
-extern BOOL (*gfnHeroInfo)(BOOL (*fninfofunc)(_uiheroinfo *));
+extern bool (*gfnHeroInfo)(bool (*fninfofunc)(_uiheroinfo *));
 
 bool IsInsideRect(const SDL_Event &event, const SDL_Rect &rect);
 void UiFadeIn();

@@ -58,7 +58,7 @@
 // * check that each step is a valid position. Store the step directions (see
 // * path_directions) in path, which must have room for 24 steps
 // */
-//int FindPath(BOOL (*PosOk)(int, V2Di), int PosOkArg, V2Di s, V2Di d, char *path)
+//int FindPath(bool (*PosOk)(int, V2Di), int PosOkArg, V2Di s, V2Di d, char *path)
 //{
 //	PATHNODE *path_start, *next_node, *current;
 //	int path_length, i;
@@ -150,23 +150,23 @@
 // *
 // *  @return true if step is allowed
 // */
-//BOOL path_solid_pieces(PATHNODE *pPath, V2Di d)
+//bool path_solid_pieces(PATHNODE *pPath, V2Di d)
 //{
 //	int dx = d.x;
 //	int dy = d.y;
-//	BOOL rv = TRUE;
+//	bool rv = TRUE;
 //	switch (path_directions[3 * (dy - pPath->pos.y) + 3 - pPath->pos.x + 1 + dx]) {
 //	case 5:
-//		rv = !pieces[grid[dx][dy + 1].dPiece].nSolidTable && !pieces[grid[dx + 1][dy].dPiece].nSolidTable;
+//		rv = !pieces[grid[dx][dy + 1].getPiece()].nSolidTable && !pieces[grid[dx + 1][dy].getPiece()].nSolidTable;
 //		break;
 //	case 6:
-//		rv = !pieces[grid[dx][dy + 1].dPiece].nSolidTable && !pieces[grid[dx - 1][dy].dPiece].nSolidTable;
+//		rv = !pieces[grid[dx][dy + 1].getPiece()].nSolidTable && !pieces[grid[dx - 1][dy].getPiece()].nSolidTable;
 //		break;
 //	case 7:
-//		rv = !pieces[grid[dx][dy - 1].dPiece].nSolidTable && !pieces[grid[dx - 1][dy].dPiece].nSolidTable;
+//		rv = !pieces[grid[dx][dy - 1].getPiece()].nSolidTable && !pieces[grid[dx - 1][dy].getPiece()].nSolidTable;
 //		break;
 //	case 8:
-//		rv = !pieces[grid[dx + 1][dy].dPiece].nSolidTable && !pieces[grid[dx][dy - 1].dPiece].nSolidTable;
+//		rv = !pieces[grid[dx + 1][dy].getPiece()].nSolidTable && !pieces[grid[dx][dy - 1].getPiece()].nSolidTable;
 //		break;
 //	}
 //	return rv;
@@ -177,11 +177,11 @@
 // *
 // * @return FALSE if we ran out of preallocated nodes to use, else TRUE
 // */
-//BOOL path_get_path(BOOL (*PosOk)(int, V2Di), int PosOkArg, PATHNODE *pPath, V2Di pos)
+//bool path_get_path(bool (*PosOk)(int, V2Di), int PosOkArg, PATHNODE *pPath, V2Di pos)
 //{
 //	V2Di d;
 //	int i;
-//	BOOL ok;
+//	bool ok;
 //
 //	for (i = 0; i < 8; i++) {
 //		d = pPath->pos + pathdir[i];
@@ -199,7 +199,7 @@
 // *
 // * @return TRUE if step successfully added, FALSE if we ran out of nodes to use
 // */
-//BOOL path_parent_path(PATHNODE *pPath, V2Di d, V2Di s)
+//bool path_parent_path(PATHNODE *pPath, V2Di d, V2Di s)
 //{
 //	int next_g;
 //	PATHNODE *dxdy;

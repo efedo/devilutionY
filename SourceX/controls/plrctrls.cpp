@@ -24,7 +24,8 @@ bool InGameMenu()
 	    || qtextflag
 	    || gmenu_is_active()
 	    || PauseMode == 2
-	    || myplr().data._pInvincible;
+//	    || myplr().data._pInvincible
+		;
 }
 
 namespace {
@@ -42,9 +43,9 @@ int spbslot = 0;
  */
 int GetRotaryDistance(V2Di p)
 {
-	if (myplr().data._pfut == p) return -1;
+	if (myplr().futpos() == p) return -1;
 	Dir d1 = myplr().data._pdir;
-	Dir d2 = GetDirection(myplr().data._pfut, p);
+	Dir d2 = GetDirection(myplr().futpos(), p);
 	int d = abs(int(d1) - int(d2));
 	if (d > 4) return 4 - (d % 4);
 	return d;
@@ -57,7 +58,7 @@ int GetRotaryDistance(V2Di p)
  */
 int GetMinDistance(V2Di p)
 {
-	return (myplr().data._pfut - p).maxabs();
+	return (myplr().futpos() - p).maxabs();
 }
 
 /**
@@ -72,7 +73,7 @@ int GetDistance(V2Di d, int maxDistance)
 	if (GetMinDistance(d) > maxDistance) return 0;
 	//char walkpath[MAX_PATH_LENGTH];
 	std::queue<PathNode> walkpath;
-	int steps = pathfinder.FindPath(PosOkPlayer, myplr(), myplr().data._pfut, d, walkpath);
+	int steps = pathfinder.FindPath(PosOkPlayer, myplr(), myplr().futpos(), d, walkpath);
 	if (steps > maxDistance) return 0;
 	return steps;
 }
@@ -84,56 +85,57 @@ int GetDistance(V2Di d, int maxDistance)
  */
 int GetDistanceRanged(V2Di d)
 {
-	V2Di off = myplr().data._pfut - d;
+	V2Di off = myplr().futpos() - d;
 	return sqrt(off.x * off.x + off.y * off.y);
 }
 
 void FindItemOrObject()
 {
-	V2Di m = myplr().data._pfut;
+	V2Di m = myplr().futpos();
 	int rotations = 5;
 
 	// As the player can not stand on the edge fo the map this is safe from OOB
-	V2Di a;
-	for (a.x = -1; a.x < 2; a.x++) {
-		for (a.y = -1; a.y < 2; a.y++) {
-			if (grid.at(m + a).dItem <= 0)
-				continue;
-			int i = grid.at(m + a).dItem - 1;
+	for (int x = -1; x < 2; x++) {
+		for (int y = -1; y < 2; y++) {
+			V2Di tp = m + V2Di( x, y );
+
+			if (!grid.at(tp).isItem()) continue;
+			int i = grid.at(tp).getItem();
 			if (item[i]._itype == ITYPE_NONE
 			    || item[i]._iSelFlag == 0)
 				continue;
-			int newRotations = GetRotaryDistance(m + a);
+			int newRotations = GetRotaryDistance(tp);
 			if (rotations < newRotations)
 				continue;
-			if (a != V2Di(0, 0) && GetDistance(m + a, 1) == 0)
+			if (x != 0 && y != 0 && GetDistance(tp, 1) == 0)
 				continue;
 			rotations = newRotations;
 			pcursitem = i;
-			cursm = m + a;
+			cursm = tp;
 		}
 	}
 
 	if (level.leveltype == DTYPE_TOWN || pcursitem != -1)
 		return; // Don't look for objects in town
 
-	for (a.x = -1; a.x < 2; a.x++) {
-		for (a.y = -1; a.y < 2; a.y++) {
-			if (grid.at(m + a).dObject == 0)
-				continue;
-			int o = grid.at(m + a).dObject > 0 ? grid.at(m + a).dObject - 1 : -(grid.at(m + a).dObject + 1);
+	for (int x = -1; x < 2; x++) {
+		for (int y = -1; y < 2; y++) {
+			V2Di tp = m + V2Di(x, y);
+
+			if (!grid.at(tp).isObject()) continue;
+			int o = grid.at(tp).getObject();
 			if (object[o]._oSelFlag == 0)
 				continue;
-			if (a == V2Di(0, 0) && object[o]._oDoorFlag)
+			if (x == 0 && y == 0 && object[o]._oDoorFlag)
 				continue; // Ignore doorway so we don't get stuck behind barrels
-			int newRotations = GetRotaryDistance(m + a);
+			int newRotations = GetRotaryDistance(tp);
 			if (rotations < newRotations)
 				continue;
-			if (a != V2Di(0, 0) && GetDistance(m + a, 1) == 0)
+			if (x != 0 && y != 0 && GetDistance(tp, 1) == 0)
 				continue;
 			rotations = newRotations;
 			pcursobj = o;
-			cursm = m + a;
+			cursm = tp;
 		}
 	}
 }
@@ -171,7 +173,7 @@ bool CanTargetMonster(int mi)
 	const V2Di m = monst._m;
 	if (!(grid.at(m).dFlags & BFLAG_LIT)) // not visable
 		return false;
-	if (grid.at(m).dMonster == 0)
+	if (grid.at(m).getMonster() == 0)
 		return false;
 
 	return true;
@@ -218,7 +220,7 @@ void FindMeleeTarget()
 	std::list<SearchNode> queue;
 
 	{
-		const V2Di start = myplr().data._pfut;
+		const V2Di start = myplr().futpos();
 		visited[start.x][start.y] = true;
 		queue.push_back({ start, 0 });
 	}
@@ -241,7 +243,7 @@ void FindMeleeTarget()
 			if (!PosOkPlayer(myplr(), d)) {
 				visited[d.x][d.y] = true;
 
-				const int m = grid.at(d).dMonster;
+				const int m = grid.at(d).getMonster();
 				if (m != 0) {
 					const int mi = m > 0 ? m - 1 : -(m + 1);
 					if (CanTargetMonster(mi)) {
@@ -295,8 +297,8 @@ void CheckPlayerNearby()
 
 	for (int i = 0; i < MAX_PLRS; i++) {
 		if (i == myplr()) continue;
-		const V2Di m = plr[i].data._pfut;
-		if (grid.at(m).dPlayer == 0
+		const V2Di m = plr[i].futpos();
+		if (grid.at(m).isPlayer()
 		    || !(grid.at(m).dFlags & BFLAG_LIT)
 		    || (plr[i].data._pHitPoints == 0 && spl != SPL_RESURRECT))
 			continue;
@@ -327,7 +329,7 @@ void FindActor()
 		CheckTownersNearby();
 	}
 
-	if (gbMaxPlayers != 1) CheckPlayerNearby();
+	if (plr.isMultiplayer()) CheckPlayerNearby();
 }
 
 int pcursmissile;
@@ -760,7 +762,7 @@ bool IsPathBlocked(V2Di pos, Dir dir)
 	V2Di d1v = kOffsets[int(d1)];
 	V2Di d2v = kOffsets[int(d2)];
 
-	if (!pieces[grid.at(d1v).dPiece].nSolidTable && !pieces[grid.at(d1v).dPiece].nSolidTable)
+	if (!grid.at(d1v).isSolid() && !grid.at(d2v).isSolid())
 		return false;
 
 	return !PosOkPlayer(myplr(), d1v) && !PosOkPlayer(myplr(), d2v);
@@ -768,7 +770,7 @@ bool IsPathBlocked(V2Di pos, Dir dir)
 
 void WalkInDir(MoveDirection dir)
 {
-	V2Di pos = myplr().data._pfut;
+	V2Di pos = myplr().futpos();
 
 	if (dir.x == MoveDirectionX_NONE && dir.y == MoveDirectionY_NONE) {
 		if (sgbControllerActive && !myplr().data.wkpath.empty() && myplr().data.destAction == ACTION_NONE)
@@ -982,19 +984,12 @@ bool SpellHasActorTarget()
 
 void UpdateSpellTarget()
 {
-	if (SpellHasActorTarget())
-		return;
-
+	if (SpellHasActorTarget()) return;
 	pcursplr = -1;
 	pcursmonst = -1;
-
-	const PlayerStruct &player = myplr().data;
-
 	int range = 1;
-	if (myplr().data._pRSpell == SPL_TELEPORT)
-		range = 4;
-
-	cursm = player._pfut + kOffsets[int(player._pdir)] * range;
+	if (myplr().data._pRSpell == SPL_TELEPORT) range = 4;
+	cursm = myplr().futpos() + kOffsets[int(myplr().data._pdir)] * range;
 }
 
 /**
@@ -1002,12 +997,12 @@ void UpdateSpellTarget()
  */
 bool TryDropItem()
 {
-	cursm.x = myplr().data._pfut.x + 1;
-	cursm.y = myplr().data._pfut.y;
+	cursm.x = myplr().futpos().x + 1;
+	cursm.y = myplr().futpos().y;
 	if (!DropItemBeforeTrig()) {
 		// Try to drop on the other side
-		cursm.x = myplr().data._pfut.x;
-		cursm.y = myplr().data._pfut.y + 1;
+		cursm.x = myplr().futpos().x;
+		cursm.y = myplr().futpos().y + 1;
 		DropItemBeforeTrig();
 	}
 	return pcurs == CURSOR_HAND;

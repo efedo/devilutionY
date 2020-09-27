@@ -74,7 +74,7 @@ DWORD nthread_send_and_recv_turn(DWORD cur_turn, int turn_delta)
 	return new_cur_turn;
 }
 
-BOOL nthread_recv_turns(BOOL *pfSendAsync)
+bool nthread_recv_turns(bool *pfSendAsync)
 {
 	*pfSendAsync = FALSE;
 	sgbPacketCountdown--;
@@ -115,7 +115,7 @@ void nthread_set_turn_upper_bit()
 	turn_upper_bit = 0x80000000;
 }
 
-void nthread_start(BOOL set_turn_upper_bit)
+void nthread_start(bool set_turn_upper_bit)
 {
 	const char *err, *err2;
 	DWORD largestMsgSize;
@@ -158,7 +158,7 @@ void nthread_start(BOOL set_turn_upper_bit)
 	}
 	if (gdwNormalMsgSize > largestMsgSize)
 		gdwNormalMsgSize = largestMsgSize;
-	if (gbMaxPlayers > 1) {
+	if (plr.isMultiplayer()) {
 		sgbThreadIsRunning = FALSE;
 		sgMemCrit.Enter();
 		nthread_should_run = TRUE;
@@ -173,7 +173,7 @@ void nthread_start(BOOL set_turn_upper_bit)
 unsigned int nthread_handler(void *data)
 {
 	int delta;
-	BOOL received;
+	bool received;
 
 	if (nthread_should_run) {
 		while (1) {
@@ -210,7 +210,7 @@ void nthread_cleanup()
 	}
 }
 
-void nthread_ignore_mutex(BOOL bStart)
+void nthread_ignore_mutex(bool bStart)
 {
 	if (sghThread != NULL) {
 		if (bStart)
@@ -221,14 +221,14 @@ void nthread_ignore_mutex(BOOL bStart)
 	}
 }
 
-BOOL nthread_has_500ms_passed(BOOL unused)
+bool nthread_has_500ms_passed(bool unused)
 {
 	DWORD currentTickCount;
 	int ticksElapsed;
 
 	currentTickCount = SDL_GetTicks();
 	ticksElapsed = currentTickCount - last_tick;
-	if (gbMaxPlayers == 1 && ticksElapsed > 500) {
+	if (plr.isSingleplayer() && ticksElapsed > 500) {
 		last_tick = currentTickCount;
 		ticksElapsed = 0;
 	}

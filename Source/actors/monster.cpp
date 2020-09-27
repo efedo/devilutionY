@@ -100,11 +100,11 @@ void (MonsterInstance:: *AiProc[])() = {
 
 
 
-BOOL MonstPlace(V2Di p)
+bool MonstPlace(V2Di p)
 {
 	if (p.x < 0 || p.x >= MAXDUNX
 	    || p.y < 0 || p.y >= MAXDUNY
-	    || grid.at(p).dMonster
+	    || grid.at(p).getMonster()
 	    || grid.at(p).isPlayer()) {
 		return FALSE;
 	}
@@ -112,7 +112,7 @@ BOOL MonstPlace(V2Di p)
 	char f = grid.at(p).dFlags;
 	if (f & BFLAG_VISIBLE) return FALSE;
 	if (f & BFLAG_POPULATED) return FALSE;
-	return !SolidLoc(p);
+	return !grid.at(p).isSolid();
 }
 
 void LoadDiabMonsts()
@@ -143,7 +143,7 @@ void InitMonsters()
 	int scattertypes[NUM_MTYPES];
 
 	numscattypes = 0;
-	if (gbMaxPlayers != 1)
+	if (plr.isMultiplayer())
 		CheckDungeonClear();
 	if (!level.setlevel) {
 		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
@@ -168,10 +168,10 @@ void InitMonsters()
 		na = 0;
 		for (s = 16; s < 96; s++)
 			for (t = 16; t < 96; t++)
-				if (!SolidLoc({ s, t }))
+				if (!grid.at({ s, t }).isSolid())
 					na++;
 		numplacemonsters = na / 30;
-		if (gbMaxPlayers != 1)
+		if (plr.isMultiplayer())
 			numplacemonsters += numplacemonsters >> 1;
 		if (nummonsters + numplacemonsters > 190)
 			numplacemonsters = 190 - nummonsters;
@@ -204,7 +204,7 @@ void InitMonsters()
 void PlaceUniques()
 {
 	int u, mt;
-	BOOL done;
+	bool done;
 
 	for (u = 0; UniqMonst[u].mtype != -1; u++) {
 		if (UniqMonst[u].mlevel != level.currlevel)
@@ -271,15 +271,14 @@ void SetMapMonsters(BYTE *pMap, V2Di start)
 	}
 }
 
-int AddMonster(V2Di pos, Dir dir, int mtype, BOOL InMap)
+int AddMonster(V2Di pos, Dir dir, int mtype, bool InMap)
 {
 	if (nummonsters < MAXMONSTERS) {
 		int i = monstactive[nummonsters++];
-		if (InMap) grid.at(pos).dMonster = i + 1;
+		if (InMap) grid.at(pos).setMonster(i);
 		monsters[i] = MonsterInstance(i, dir, mtype, pos);
 		return i;
 	}
-
 	return -1;
 }
 
@@ -287,16 +286,9 @@ int AddMonster(V2Di pos, Dir dir, int mtype, BOOL InMap)
 
 void M2MStartHit(int mid, int i, int dam)
 {
-	if ((DWORD)mid >= MAXMONSTERS) {
-		app_fatal("Invalid monster %d getting hit by monster", mid);
-	}
-
-	if (monsters[mid].data.MType == NULL) {
-		app_fatal("Monster %d \"%s\" getting hit by monster: MType NULL", mid, monsters[mid].data.mName);
-	}
-
-	if (i >= 0)
-		monsters[i].data.mWhoHit |= 1 << i;
+	if ((DWORD)mid >= MAXMONSTERS) app_fatal("Invalid monster %d getting hit by monster", mid);
+	if (monsters[mid].data.MType == NULL) app_fatal("Monster %d \"%s\" getting hit by monster: MType NULL", mid, monsters[mid].data.mName);
+	if (i >= 0) monsters[i].data.mWhoHit |= 1 << i;
 
 	delta_monster_hp(mid, monsters[mid].data._mhitpoints, level.currlevel);
 	NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, mid, dam);
@@ -320,7 +312,7 @@ void M2MStartHit(int mid, int i, int dam)
 
 			monsters[mid].PlantInPosition(monsters[mid].data._mdir, &monsters[mid].data._mold);
 			monsters[mid].M_ClearSquares();
-			grid.at(monsters[mid].data._m).dMonster = mid + 1;
+			grid.at(monsters[mid].data._m).setMonster(mid);
 		}
 	}
 }
@@ -343,11 +335,11 @@ void MonsterInstance::M_UpdateLeader()
 
 void DoEnding()
 {
-	if (gbMaxPlayers > 1) SNetLeaveGame(0x40000004);
+	if (plr.isMultiplayer()) SNetLeaveGame(0x40000004);
 
 	music_stop();
 
-	if (gbMaxPlayers > 1) SDL_Delay(1000);
+	if (plr.isMultiplayer()) SDL_Delay(1000);
 
 	if (myplr().data._pClass == PC_WARRIOR) {
 		play_movie("gendata\\DiabVic2.smk", FALSE);
@@ -358,7 +350,7 @@ void DoEnding()
 	}
 	play_movie("gendata\\Diabend.smk", FALSE);
 
-	BOOL bMusicOn = gbMusicOn;
+	bool bMusicOn = gbMusicOn;
 	gbMusicOn = TRUE;
 
 	int musicVolume = sound_get_or_set_music_volume(1);
@@ -393,7 +385,7 @@ void PrepDoEnding()
 	for (i = 0; i < MAX_PLRS; i++) {
 		plr[i].data._pmode = PM_QUIT;
 		plr[i].data._pInvincible = TRUE;
-		if (gbMaxPlayers > 1) {
+		if (plr.isMultiplayer()) {
 			if (plr[i].data._pHitPoints >> 6 == 0)
 				plr[i].data._pHitPoints = 64;
 			if (plr[i].data._pMana >> 6 == 0)
@@ -431,7 +423,7 @@ void ProcessMonsters()
 {
 	int i, mi, _menemy;
 	V2Di m;
-	BOOL raflag;
+	bool raflag;
 	MonsterStruct *Monst;
 
 	DeleteMonsterList();
@@ -441,7 +433,7 @@ void ProcessMonsters()
 		mi = monstactive[i];
 		Monst = &monsters[mi].data;
 		raflag = FALSE;
-		if (gbMaxPlayers > 1) {
+		if (plr.isMultiplayer()) {
 			SetRndSeed(Monst->_mAISeed);
 			Monst->_mAISeed = GetRndSeed();
 		}
@@ -470,10 +462,10 @@ void ProcessMonsters()
 			if ((DWORD)_menemy >= MAX_PLRS) {
 				app_fatal("Illegal enemy player %d for monster \"%s\"", _menemy, Monst->mName);
 			}
-			Monst->_menemypos = plr[Monst->_menemy].data._pfut;
+			Monst->_menemypos = plr[Monst->_menemy].futpos();
 			if (grid.at(m).dFlags & BFLAG_VISIBLE) {
 				Monst->_msquelch = 255;
-				Monst->_last = plr[Monst->_menemy].data._pfut;
+				Monst->_last = plr[Monst->_menemy].futpos();
 			} else if (Monst->_msquelch != 0 && Monst->_mAi != MT_DIABLO) { /// BUGFIX: change '_mAi' to 'MType->mtype'
 				Monst->_msquelch--;
 			}
@@ -585,7 +577,7 @@ void FreeMonsters()
 	FreeMissiles2();
 }
 
-BOOL MonsterInstance::DirOK(Dir mdir)
+bool MonsterInstance::DirOK(Dir mdir)
 {
 	V2Di p;
 	int mcount, mi;
@@ -593,19 +585,19 @@ BOOL MonsterInstance::DirOK(Dir mdir)
 	if (f.y < 0 || f.y >= MAXDUNY || f.x < 0 || f.x >= MAXDUNX || !PosOkMonst(i, f))
 		return FALSE;
 	if (mdir == Dir::E) {
-		if (SolidLoc({ f.x, f.y + 1 }) || grid[f.x][f.y + 1].dFlags & BFLAG_MONSTLR)
+		if (grid.at({ f.x, f.y + 1 }).isSolid() || grid[f.x][f.y + 1].dFlags & BFLAG_MONSTLR)
 			return FALSE;
 	}
 	if (mdir == Dir::W) {
-		if (SolidLoc({ f.x + 1, f.y }) || grid[f.x + 1][f.y].dFlags & BFLAG_MONSTLR)
+		if (grid.at({ f.x + 1, f.y }).isSolid() || grid[f.x + 1][f.y].dFlags & BFLAG_MONSTLR)
 			return FALSE;
 	}
 	if (mdir == Dir::N) {
-		if (SolidLoc({ f.x + 1, f.y }) || SolidLoc({ f.x, f.y + 1 }))
+		if (grid.at({ f.x + 1, f.y }).isSolid() || grid.at({ f.x, f.y + 1 }).isSolid())
 			return FALSE;
 	}
 	if (mdir == Dir::S)
-		if (SolidLoc({ f.x - 1, f.y }) || SolidLoc({ f.x, f.y - 1 }))
+		if (grid.at({ f.x - 1, f.y }).isSolid() || grid.at({ f.x, f.y - 1 }).isSolid())
 			return FALSE;
 	if (data.leaderflag == 1) {
 		int dist = (f - monsters[data.leader].data._mfut).maxabs();
@@ -621,7 +613,7 @@ BOOL MonsterInstance::DirOK(Dir mdir)
 		for (int y = f.y - 3; y <= f.y + 3; y++) {
 			if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
 				continue;
-			mi = grid[x][y].dMonster;
+			mi = grid[x][y].getMonster();
 			if (mi < 0)
 				mi = -mi;
 			if (mi != 0)
@@ -637,17 +629,17 @@ BOOL MonsterInstance::DirOK(Dir mdir)
 	return mcount == data.packsize;
 }
 
-BOOL PosOkMissile(V2Di pos)
+bool PosOkMissile(V2Di pos)
 {
-	return !pieces[grid.at(pos).dPiece].nMissileTable && !(grid.at(pos).dFlags & BFLAG_MONSTLR);
+	return !grid.at(pos).blocksMissile() && !(grid.at(pos).dFlags & BFLAG_MONSTLR);
 }
 
-BOOL CheckNoSolid(V2Di pos)
+bool CheckNoSolid(V2Di pos)
 {
-	return pieces[grid.at(pos).dPiece].nSolidTable == FALSE;
+	return pieces[grid.at(pos).getPiece()].solid == FALSE;
 }
 
-BOOL LineClearF(BOOL (*Clear)(V2Di), V2Di p1, V2Di p2)
+bool LineClearF(bool (*Clear)(V2Di), V2Di p1, V2Di p2)
 {
 	int d;
 	int xincD, yincD, dincD, dincH;
@@ -726,12 +718,12 @@ BOOL LineClearF(BOOL (*Clear)(V2Di), V2Di p1, V2Di p2)
 	return p1.x == p2.x && p1.y == p2.y;
 }
 
-BOOL LineClear(V2Di p1, V2Di p2)
+bool LineClear(V2Di p1, V2Di p2)
 {
 	return LineClearF(PosOkMissile, p1, p2);
 }
 
-BOOL LineClearF1(BOOL (*Clear)(int, V2Di), int monst, V2Di p1, V2Di p2)
+bool LineClearF1(bool (*Clear)(int, V2Di), int monst, V2Di p1, V2Di p2)
 {
 	V2Di org = p1;
 	V2Di dd = p2 - p1;
@@ -922,7 +914,7 @@ void PrintMonstHistory(int mt)
 	if (monstkills[mt] >= 30) {
 		minHP = monsterdata[mt].mMinHP;
 		maxHP = monsterdata[mt].mMaxHP;
-		if (gbMaxPlayers == 1) {
+		if (plr.isSingleplayer()) {
 			minHP = monsterdata[mt].mMinHP >> 1;
 			maxHP = monsterdata[mt].mMaxHP >> 1;
 		}
@@ -1019,7 +1011,7 @@ void MissToMonst(int i, V2Di pos)
 
 	Monst = &monsters[m].data;
 	old = Miss->_mi;
-	grid[pos.x][pos.y].dMonster = m + 1;
+	grid.at(pos).setMonster(m);
 	Monst->_mdir = Dir(Miss->_mimfnum);
 	Monst->_m = pos;
 	monsters[m].M_StartStand(Monst->_mdir);
@@ -1033,7 +1025,7 @@ void MissToMonst(int i, V2Di pos)
 	}
 
 	if (!(Monst->_mFlags & MFLAG_TARGETS_MONSTER)) {
-		pnum = grid.at(old).getPlayerNum();
+		pnum = grid.at(old).getPlayer();
 		if (pnum > 0) {
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
 				monsters[m].M_TryH2HHit(pnum, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
@@ -1042,26 +1034,24 @@ void MissToMonst(int i, V2Di pos)
 						plr[pnum].StartPlrHit(0, TRUE);
 					n = old + offset(Monst->_mdir);
 					if (PosOkPlayer(pnum, n)) {
-						const V2Di oldpos = plr[pnum].data._p;
-						plr[pnum].data._p = n;
-						plr[pnum].FixPlayerLocation(plr[pnum].data._pdir);
+						plr[pnum].PlantInPlace(plr[pnum].data._pdir);
 						plr[pnum].FixPlrWalkTags();
-						grid.movePlayer(pnum);
+						plr[pnum].changePos(n);
 						plr[pnum].SetPlayerOld();
 					}
 				}
 			}
 		}
 	} else {
-		if (grid.at(old).dMonster > 0) {
+		if (grid.at(old).getMonster() > 0) {
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
-				monsters[m].M_TryM2MHit(grid.at(old).dMonster - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
+				monsters[m].M_TryM2MHit(grid.at(old).getMonster() - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
 				if (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE) {
 					n = old + offset(Monst->_mdir);
-					if (PosOkMonst(grid.at(old).dMonster - 1, n)) {
-						m = grid.at(old).dMonster;
-						grid.at(n).dMonster = m;
-						grid.at(old).dMonster = 0;
+					if (PosOkMonst(grid.at(old).getMonster() - 1, n)) {
+						m = grid.at(old).getMonster();
+						grid.at(n).setMonster(m);
+						grid.at(old).clearMonster();
 						m--;
 						monsters[m].data._m = n;
 						monsters[m].data._mfut = n;
@@ -1072,21 +1062,21 @@ void MissToMonst(int i, V2Di pos)
 	}
 }
 
-BOOL PosOkMonst(int i, V2Di pos)
+bool PosOkMonst(int i, V2Di pos)
 {
 	int oi, mi, j;
-	BOOL ret, fire;
+	bool ret, fire;
 
 	fire = FALSE;
-	ret = !SolidLoc(pos) && !grid.at(pos).dPlayer && !grid.at(pos).dMonster;
-	if (ret && grid.at(pos).dObject) {
-		oi = grid.at(pos).dObject > 0 ? grid.at(pos).dObject - 1 : -(grid.at(pos).dObject + 1);
+	ret = !grid.at(pos).isSolid() && !grid.at(pos).isPlayer() && !grid.at(pos).isMonster();
+	if (ret && grid.at(pos).isObject()) {
+		oi = grid.at(pos).getObject();
 		if (object[oi]._oSolidFlag)
 			ret = FALSE;
 	}
 
-	if (ret && grid.at(pos).dMissile && i >= 0) {
-		mi = grid.at(pos).dMissile;
+	if (ret && grid.at(pos).getMissile() && i >= 0) {
+		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = TRUE;
@@ -1103,21 +1093,21 @@ BOOL PosOkMonst(int i, V2Di pos)
 	return ret;
 }
 
-BOOL PosOkMonst2(int i, V2Di pos)
+bool PosOkMonst2(int i, V2Di pos)
 {
 	int oi, mi, j;
-	BOOL ret, fire;
+	bool ret, fire;
 
 	fire = FALSE;
-	ret = !SolidLoc(pos);
-	if (ret && grid.at(pos).dObject) {
-		oi = grid.at(pos).dObject > 0 ? grid.at(pos).dObject - 1 : -(grid.at(pos).dObject + 1);
+	ret = !grid.at(pos).isSolid();
+	if (ret && grid.at(pos).isObject()) {
+		oi = grid.at(pos).getObject();
 		if (object[oi]._oSolidFlag)
 			ret = FALSE;
 	}
 
-	if (ret && grid.at(pos).dMissile && i >= 0) {
-		mi = grid.at(pos).dMissile;
+	if (ret && grid.at(pos).getMissile() && i >= 0) {
+		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = TRUE;
@@ -1135,17 +1125,17 @@ BOOL PosOkMonst2(int i, V2Di pos)
 	return ret;
 }
 
-BOOL PosOkMonst3(int i, V2Di pos)
+bool PosOkMonst3(int i, V2Di pos)
 {
 	int j, oi, objtype, mi;
-	BOOL ret, fire, isdoor;
+	bool ret, fire, isdoor;
 
 	fire = FALSE;
 	ret = TRUE;
 	isdoor = FALSE;
 
-	if (ret && grid.at(pos).dObject != 0) {
-		oi = grid.at(pos).dObject > 0 ? grid.at(pos).dObject - 1 : -(grid.at(pos).dObject + 1);
+	if (ret && grid.at(pos).isObject()) {
+		oi = grid.at(pos).getObject();
 		objtype = object[oi]._otype;
 		isdoor = objtype == OBJ_L1LDOOR || objtype == OBJ_L1RDOOR
 		    || objtype == OBJ_L2LDOOR || objtype == OBJ_L2RDOOR
@@ -1155,10 +1145,10 @@ BOOL PosOkMonst3(int i, V2Di pos)
 		}
 	}
 	if (ret) {
-		ret = (!SolidLoc(pos) || isdoor) && grid.at(pos).dPlayer == 0 && grid.at(pos).dMonster == 0;
+		ret = (!grid.at(pos).isSolid() || isdoor) && !grid.at(pos).isPlayer() && grid.at(pos).getMonster() == 0;
 	}
-	if (ret && grid.at(pos).dMissile != 0 && i >= 0) {
-		mi = grid.at(pos).dMissile;
+	if (ret && grid.at(pos).getMissile() != 0 && i >= 0) {
+		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = TRUE;
@@ -1179,14 +1169,14 @@ BOOL PosOkMonst3(int i, V2Di pos)
 	return ret;
 }
 
-BOOL IsSkel(int mt)
+bool IsSkel(int mt)
 {
 	return mt >= MT_WSKELAX && mt <= MT_XSKELAX
 	    || mt >= MT_WSKELBW && mt <= MT_XSKELBW
 	    || mt >= MT_WSKELSD && mt <= MT_XSKELSD;
 }
 
-BOOL IsGoat(int mt)
+bool IsGoat(int mt)
 {
 	return mt >= MT_NGOATMC && mt <= MT_GGOATMC
 	    || mt >= MT_NGOATBW && mt <= MT_GGOATBW;
@@ -1214,19 +1204,19 @@ int M_SpawnSkel(V2Di pos, Dir dir)
 
 void MonsterInstance::ActivateSpawn(V2Di pos, Dir dir)
 {
-	grid[pos.x][pos.y].dMonster = i + 1;
+	grid.at(pos).setMonster(i);
 	data._m = pos;
 	data._mfut = pos;
 	data._mold = pos;
 	M_StartSpStand(dir);
 }
 
-BOOL SpawnSkeleton(int ii, V2Di pos)
+bool SpawnSkeleton(int ii, V2Di pos)
 {
 	V2Di d, n;
 	Dir dir;
 	int j, k, rs;
-	BOOL savail;
+	bool savail;
 	int monstok[3][3];
 
 	if (ii == -1) return FALSE;
@@ -1323,7 +1313,7 @@ void MonsterInstance::TalktoMonster()
 
 void MonsterInstance::SpawnGolum(V2Di pos, int mi)
 {
-	grid[pos.x][pos.y].dMonster = i + 1;
+	grid.at(pos).setMonster(i);
 	data._m = pos;
 	data._mfut = pos;
 	data._mold = pos;
@@ -1347,7 +1337,7 @@ void MonsterInstance::SpawnGolum(V2Di pos, int mi)
 	}
 }
 
-BOOL CanTalkToMonst(int m)
+bool CanTalkToMonst(int m)
 {
 	if ((DWORD)m >= MAXMONSTERS) {
 		app_fatal("CanTalkToMonst: Invalid monster %d", m);
@@ -1360,7 +1350,7 @@ BOOL CanTalkToMonst(int m)
 	return monsters[m].data._mgoal == MGOAL_TALKING;
 }
 
-BOOL CheckMonsterHit(int m, BOOL *ret)
+bool CheckMonsterHit(int m, bool *ret)
 {
 	if ((DWORD)m >= MAXMONSTERS) {
 		app_fatal("CheckMonsterHit: Invalid monster %d", m);
@@ -1396,7 +1386,7 @@ void decode_enemy(int m, int enemy)
 	if (enemy < MAX_PLRS) {
 		monsters[m].data._mFlags &= ~MFLAG_TARGETS_MONSTER;
 		monsters[m].data._menemy = enemy;
-		monsters[m].data._menemypos = plr[enemy].data._pfut;
+		monsters[m].data._menemypos = plr[enemy].futpos();
 	} else {
 		monsters[m].data._mFlags |= MFLAG_TARGETS_MONSTER;
 		enemy -= MAX_PLRS;

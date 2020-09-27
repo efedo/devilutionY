@@ -56,7 +56,7 @@ char *color_cycling_toggle_names[] = { "Color Cycling Off", "Color Cycling On" }
 
 void gamemenu_on()
 {
-	if (gbMaxPlayers == 1) {
+	if (plr.isSingleplayer()) {
 		gmenu_set_items(sgSingleMenu, gamemenu_update_single);
 	} else {
 		gmenu_set_items(sgMultiMenu, gamemenu_update_multi);
@@ -66,7 +66,7 @@ void gamemenu_on()
 
 void gamemenu_update_single(TMenuItem *pMenuItems)
 {
-	BOOL enable;
+	bool enable;
 
 	gmenu_enable(&sgSingleMenu[3], gbValidSaveFile);
 
@@ -95,18 +95,20 @@ void gamemenu_handle_previous()
 		gamemenu_on();
 }
 
-void gamemenu_previous(BOOL bActivate)
+void gamemenu_previous(bool bActivate)
 {
 	gamemenu_on();
 }
 
-void gamemenu_new_game(BOOL bActivate)
+void gamemenu_new_game(bool bActivate)
 {
 	int i;
 
-	for (i = 0; i < MAX_PLRS; i++) {
-		plr[i].data._pmode = PM_QUIT;
-		plr[i].data._pInvincible = TRUE;
+	for (i = 0; i < plr.maxPlayers(); i++) {
+		if (plr.isValidPlayer(i)) {
+			plr[i].data._pmode = PM_QUIT;
+			plr[i].data._pInvincible = TRUE;
+		}
 	}
 
 	deathflag = FALSE;
@@ -116,13 +118,13 @@ void gamemenu_new_game(BOOL bActivate)
 	gamemenu_off();
 }
 
-void gamemenu_quit_game(BOOL bActivate)
+void gamemenu_quit_game(bool bActivate)
 {
 	gamemenu_new_game(bActivate);
 	gbRunGameResult = FALSE;
 }
 
-void gamemenu_load_game(BOOL bActivate)
+void gamemenu_load_game(bool bActivate)
 {
 	WNDPROC saveProc = SetWindowProc(DisableInputWndProc);
 	gamemenu_off();
@@ -142,7 +144,7 @@ void gamemenu_load_game(BOOL bActivate)
 	SetWindowProc(saveProc);
 }
 
-void gamemenu_save_game(BOOL bActivate)
+void gamemenu_save_game(bool bActivate)
 {
 	if (pcurs != CURSOR_HAND) {
 		return;
@@ -167,12 +169,12 @@ void gamemenu_save_game(BOOL bActivate)
 	SetWindowProc(saveProc);
 }
 
-void gamemenu_restart_town(BOOL bActivate)
+void gamemenu_restart_town(bool bActivate)
 {
 	NetSendCmd(TRUE, CMD_RETOWN);
 }
 
-void gamemenu_options(BOOL bActivate)
+void gamemenu_options(bool bActivate)
 {
 	gamemenu_get_music();
 	gamemenu_get_sound();
@@ -216,7 +218,7 @@ void gamemenu_get_gamma()
 	gmenu_slider_set(&sgOptionsMenu[2], 30, 100, UpdateGamma(0));
 }
 
-void gamemenu_music_volume(BOOL bActivate)
+void gamemenu_music_volume(bool bActivate)
 {
 	int volume;
 
@@ -252,7 +254,7 @@ int gamemenu_slider_music_sound(TMenuItem *menu_item)
 	return gmenu_slider_get(menu_item, VOLUME_MIN, VOLUME_MAX);
 }
 
-void gamemenu_sound_volume(BOOL bActivate)
+void gamemenu_sound_volume(bool bActivate)
 {
 	int volume;
 	if (bActivate) {
@@ -280,7 +282,7 @@ void gamemenu_sound_volume(BOOL bActivate)
 	gamemenu_get_sound();
 }
 
-void gamemenu_gamma(BOOL bActivate)
+void gamemenu_gamma(bool bActivate)
 {
 	int gamma;
 	if (bActivate) {
@@ -302,9 +304,9 @@ int gamemenu_slider_gamma()
 	return gmenu_slider_get(&sgOptionsMenu[2], 30, 100);
 }
 
-void gamemenu_color_cycling(BOOL bActivate)
+void gamemenu_color_cycling(bool bActivate)
 {
-	BOOL color_cycling;
+	bool color_cycling;
 
 	color_cycling = palette_set_color_cycling(palette_get_color_cycling() == 0);
 	sgOptionsMenu[3].pszStr = color_cycling_toggle_names[color_cycling & 1];

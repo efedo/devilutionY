@@ -18,7 +18,7 @@ DEVILUTION_BEGIN_NAMESPACE
  * @param out File stream to write to
  * @return True on success
  */
-static BOOL CaptureHdr(short width, short height, std::ofstream *out)
+static bool CaptureHdr(short width, short height, std::ofstream *out)
 {
 	PCXHEADER Buffer;
 
@@ -38,7 +38,7 @@ static BOOL CaptureHdr(short width, short height, std::ofstream *out)
 	return !out->fail();
 }
 
-static BOOL CapturePal(SDL_Color *palette, std::ofstream *out)
+static bool CapturePal(SDL_Color *palette, std::ofstream *out)
 {
 	BYTE pcx_palette[1 + 256 * 3];
 	int i;
@@ -147,7 +147,7 @@ void CaptureScreen()
 {
 	SDL_Color palette[256];
 	char FileName[MAX_PATH];
-	BOOL success;
+	bool success;
 
 	std::ofstream *out = CaptureFile(FileName);
 	if (out == NULL) return;
