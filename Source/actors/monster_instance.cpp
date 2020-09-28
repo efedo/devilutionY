@@ -173,7 +173,7 @@ void MonsterInstance::M_Enemy()
 	int _menemy;
 	bool sameroom, bestsameroom;
 	//MonsterStruct *Monst;
-	BYTE enemyx, enemyy;
+	uint8_t enemyx, enemyy;
 
 	_menemy = -1;
 	best_dist = -1;
@@ -1113,7 +1113,7 @@ int MonsterInstance::M_DoTalk()
 	if (data.mName == UniqMonst[UMT_WARLORD].mName)
 		quests[Q_WARLORD]._qvar1 = 2;
 	if (data.mName == UniqMonst[UMT_LAZURUS].mName && plr.isMultiplayer()) {
-		data._msquelch = UCHAR_MAX;
+		data._msquelch = UINT8_MAX;
 		data.mtalkmsg = 0;
 		quests[Q_BETRAYER]._qvar1 = 6;
 		data._mgoal = MGOAL_NORMAL;
@@ -1858,10 +1858,10 @@ void MonsterInstance::MAI_Round(bool special)
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
-	if (data._msquelch < UCHAR_MAX)
+	if (data._msquelch < UINT8_MAX)
 		MonstCheckDoors(i);
 	int v = random_(114, 100);
-	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+	if ((dist >= 2) && data._msquelch == UINT8_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
 		if (data._mgoal == MGOAL_MOVE || (dist >= 4) && random_(115, 4) == 0) {
 			if (data._mgoal != MGOAL_MOVE) {
 				data._mgoalvar1 = 0;
@@ -1905,11 +1905,11 @@ void MonsterInstance::MAI_Ranged(int missile_type, bool special)
 {
 	if (data._mmode != MM_STAND) return;
 
-	if (data._msquelch == UCHAR_MAX || data._mFlags & MFLAG_TARGETS_MONSTER) {
+	if (data._msquelch == UINT8_MAX || data._mFlags & MFLAG_TARGETS_MONSTER) {
 		V2Di f = data._menemypos;
 		int dist = (data._m - f).maxabs();
 		Dir md = M_GetDir();
-		if (data._msquelch < UCHAR_MAX)
+		if (data._msquelch < UINT8_MAX)
 			MonstCheckDoors(i);
 		data._mdir = md;
 		if (data._mVar1 == MM_RATTACK) {
@@ -2063,10 +2063,10 @@ void MonsterInstance::MAI_RoundRanged(int missile_type, bool checkdoors, int dam
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
-	if (checkdoors && data._msquelch < UCHAR_MAX)
+	if (checkdoors && data._msquelch < UINT8_MAX)
 		MonstCheckDoors(i);
 	int v = random_(121, 10000);
-	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+	if ((dist >= 2) && data._msquelch == UINT8_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
 		if (data._mgoal == MGOAL_MOVE || ((dist >= 3) && random_(122, 4 << lessmissiles) == 0)) {
 			if (data._mgoal != MGOAL_MOVE) {
 				data._mgoalvar1 = 0;
@@ -2138,10 +2138,10 @@ void MonsterInstance::MAI_RR2(int mistype, int dam)
 	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
 	Dir md = GetDirection(data._m, data._last);
-	if (data._msquelch < UCHAR_MAX)
+	if (data._msquelch < UINT8_MAX)
 		MonstCheckDoors(i);
 	int v = random_(121, 100);
-	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+	if ((dist >= 2) && data._msquelch == UINT8_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
 		if (data._mgoal == MGOAL_MOVE || (dist >= 3)) {
 			if (data._mgoal != MGOAL_MOVE) {
 				data._mgoalvar1 = 0;
@@ -2221,13 +2221,13 @@ void MonsterInstance::MAI_Golum()
 		_menemy = data._menemy;
 		data._menemypos = monsters[_menemy].data._m;
 		if (monsters[_menemy].data._msquelch == 0) {
-			monsters[_menemy].data._msquelch = UCHAR_MAX;
+			monsters[_menemy].data._msquelch = UINT8_MAX;
 			monsters[data._menemy].data._last = data._m;
 			for (j = 0; j < 5; j++) {
 				for (k = 0; k < 5; k++) {
 					_menemy = grid[data._m.x + k - 2][data._m.y + j - 2].getMonster();
 					if (_menemy > 0)
-						monsters[_menemy].data._msquelch = UCHAR_MAX;
+						monsters[_menemy].data._msquelch = UINT8_MAX;
 				}
 			}
 		}
@@ -2259,9 +2259,9 @@ void MonsterInstance::MAI_SkelKing()
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
-	if (data._msquelch < UCHAR_MAX) MonstCheckDoors(i);
+	if (data._msquelch < UINT8_MAX) MonstCheckDoors(i);
 	int v = random_(126, 100);
-	if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+	if ((dist >= 2) && data._msquelch == UINT8_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
 		if (data._mgoal == MGOAL_MOVE || (dist >= 3) && random_(127, 4) == 0) {
 			if (data._mgoal != MGOAL_MOVE) {
 				data._mgoalvar1 = 0;
@@ -2310,7 +2310,7 @@ void MonsterInstance::MAI_Rhino()
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
-	if (data._msquelch < UCHAR_MAX)
+	if (data._msquelch < UINT8_MAX)
 		MonstCheckDoors(i);
 	int v = random_(131, 100);
 	if (dist >= 2) {
@@ -2366,7 +2366,7 @@ void MonsterInstance::MAI_Counselor()
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
-	if (data._msquelch < UCHAR_MAX)
+	if (data._msquelch < UINT8_MAX)
 		MonstCheckDoors(i);
 	int v = random_(121, 100);
 	if (data._mgoal == MGOAL_RETREAT) {
@@ -2377,7 +2377,7 @@ void MonsterInstance::MAI_Counselor()
 			M_StartFadein(md, TRUE);
 		}
 	} else if (data._mgoal == MGOAL_MOVE) {
-		if ((dist >= 2) && data._msquelch == UCHAR_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
+		if ((dist >= 2) && data._msquelch == UINT8_MAX && grid.at(data._m).dTransVal == grid.at(f).dTransVal) {
 			if (data._mgoalvar1++ < 2 * dist || !DirOK(md)) {
 				M_RoundWalk(md, &data._mgoalvar2);
 			} else {
@@ -2438,7 +2438,7 @@ void MonsterInstance::MAI_Garbud()
 		if (data.mtalkmsg == TEXT_GARBUD4) {
 			if (!effect_is_playing(USFX_GARBUD4) && data._mgoal == MGOAL_TALKING) {
 				data._mgoal = MGOAL_NORMAL;
-				data._msquelch = UCHAR_MAX;
+				data._msquelch = UINT8_MAX;
 				data.mtalkmsg = 0;
 			}
 		}
@@ -2470,7 +2470,7 @@ void MonsterInstance::MAI_Zhar()
 		V2Di _m = data._m - data._menemypos;
 		if (data.mtalkmsg == TEXT_ZHAR2) {
 			if (!effect_is_playing(USFX_ZHAR2) && data._mgoal == MGOAL_TALKING) {
-				data._msquelch = UCHAR_MAX;
+				data._msquelch = UINT8_MAX;
 				data.mtalkmsg = 0;
 				data._mgoal = MGOAL_NORMAL;
 			}
@@ -2509,7 +2509,7 @@ void MonsterInstance::MAI_SnotSpil()
 				ObjChangeMap({ lvl.getpc().x, lvl.getpc().y }, { lvl.getpc().x + lvl.getpc().w + 1, lvl.getpc().y + lvl.getpc().h + 1 });
 				quests[Q_LTBANNER]._qvar1 = 3;
 				RedoPlayerVision();
-				data._msquelch = UCHAR_MAX;
+				data._msquelch = UINT8_MAX;
 				data.mtalkmsg = 0;
 				data._mgoal = MGOAL_NORMAL;
 			}
@@ -2544,7 +2544,7 @@ void MonsterInstance::MAI_Lazurus()
 			if (data.mtalkmsg == TEXT_VILE13 && !effect_is_playing(USFX_LAZ1) && data._mgoal == MGOAL_TALKING) {
 				ObjChangeMapResync({ 1, 18 }, { 20, 24 });
 				RedoPlayerVision();
-				data._msquelch = UCHAR_MAX;
+				data._msquelch = UINT8_MAX;
 				data.mtalkmsg = 0;
 				quests[Q_BETRAYER]._qvar1 = 6;
 				data._mgoal = MGOAL_NORMAL;
@@ -2630,7 +2630,7 @@ void MonsterInstance::MAI_Warlord()
 		if (data.mtalkmsg == TEXT_WARLRD9 && data._mgoal == MGOAL_INQUIRING)
 			data._mmode = MM_TALK;
 		if (data.mtalkmsg == TEXT_WARLRD9 && !effect_is_playing(USFX_WARLRD1) && data._mgoal == MGOAL_TALKING) {
-			data._msquelch = UCHAR_MAX;
+			data._msquelch = UINT8_MAX;
 			data.mtalkmsg = 0;
 			data._mgoal = MGOAL_NORMAL;
 		}

@@ -24,7 +24,7 @@ void InitCutscene(unsigned int uMsg);
 
 /* rdata */
 
-extern const BYTE BarColor[3];
+extern const uint8_t BarColor[3];
 extern const int BarPos[3][2];
 
 //#ifdef __cplusplus

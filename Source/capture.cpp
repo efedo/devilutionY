@@ -40,7 +40,7 @@ static bool CaptureHdr(short width, short height, std::ofstream *out)
 
 static bool CapturePal(SDL_Color *palette, std::ofstream *out)
 {
-	BYTE pcx_palette[1 + 256 * 3];
+	uint8_t pcx_palette[1 + 256 * 3];
 	int i;
 
 	pcx_palette[0] = 12;
@@ -54,12 +54,12 @@ static bool CapturePal(SDL_Color *palette, std::ofstream *out)
 	return !out->fail();
 }
 
-static BYTE *CaptureEnc(BYTE *src, BYTE *dst, int width)
+static uint8_t *CaptureEnc(uint8_t *src, uint8_t *dst, int width)
 {
 	int rleLength;
 
 	do {
-		BYTE rlePixel = *src;
+		uint8_t rlePixel = *src;
 		*src++;
 		rleLength = 1;
 
@@ -88,12 +88,12 @@ static BYTE *CaptureEnc(BYTE *src, BYTE *dst, int width)
 	return dst;
 }
 
-static bool CapturePix(WORD width, WORD height, WORD stride, BYTE *pixels, std::ofstream *out)
+static bool CapturePix(WORD width, WORD height, WORD stride, uint8_t *pixels, std::ofstream *out)
 {
 	int writeSize;
-	BYTE *pBuffer, *pBufferEnd;
+	uint8_t *pBuffer, *pBufferEnd;
 
-	pBuffer = (BYTE *)DiabloAllocPtr(2 * width);
+	pBuffer = (uint8_t *)DiabloAllocPtr(2 * width);
 	while (height--) {
 		pBufferEnd = CaptureEnc(pixels, pBuffer, width);
 		pixels += stride;

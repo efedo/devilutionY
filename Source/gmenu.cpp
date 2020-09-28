@@ -7,21 +7,21 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE *optbar_cel;
-BOOLEAN mouseNavigation;
-BYTE *PentSpin_cel;
+uint8_t *optbar_cel;
+bool mouseNavigation;
+uint8_t *PentSpin_cel;
 TMenuItem *sgpCurrItem;
-BYTE *BigTGold_cel;
+uint8_t *BigTGold_cel;
 int PentSpin_tick;
-BYTE PentSpin_frame;
+uint8_t PentSpin_frame;
 void (*dword_63447C)(TMenuItem *);
 TMenuItem *sgpCurrentMenu;
-BYTE *option_cel;
-BYTE *sgpLogo;
+uint8_t *option_cel;
+uint8_t *sgpLogo;
 int sgCurrentMenuIdx;
 
 /** Maps from font index to bigtgold.cel frame number. */
-const BYTE lfontframe[] = {
+const uint8_t lfontframe[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -38,7 +38,7 @@ const BYTE lfontframe[] = {
 };
 
 /** Maps from bigtgold.cel frame number to character width. */
-const BYTE lfontkern[] = {
+const uint8_t lfontkern[] = {
 	18, 33, 21, 26, 28, 19, 19, 26, 25, 11,
 	12, 25, 19, 34, 28, 32, 20, 32, 28, 20,
 	28, 36, 35, 46, 33, 33, 24, 11, 23, 22,
@@ -59,10 +59,10 @@ void gmenu_draw_pause()
 
 void gmenu_print_text(int x, int y, char *pszStr)
 {
-	BYTE c;
+	uint8_t c;
 
 	while (*pszStr) {
-		c = gbFontTransTbl[(BYTE)*pszStr++];
+		c = gbFontTransTbl[(uint8_t)*pszStr++];
 		c = lfontframe[c];
 		if (c != 0)
 			CelDrawLight({ x, y }, BigTGold_cel, c, 46, NULL);
@@ -209,7 +209,7 @@ void gmenu_draw_menu_item(TMenuItem *pItem, int y)
 
 void gmenu_clear_buffer(int x, int y, int width, int height)
 {
-	BYTE *i;
+	uint8_t *i;
 
 	i = gpBuffer + BUFFER_WIDTH * y + x;
 	while (height--) {
@@ -222,14 +222,14 @@ int gmenu_get_lfont(TMenuItem *pItem)
 {
 	char *text;
 	int i;
-	BYTE c;
+	uint8_t c;
 
 	if (pItem->dwFlags & GMENU_SLIDER)
 		return 490;
 	text = pItem->pszStr;
 	i = 0;
 	while (*text) {
-		c = gbFontTransTbl[(BYTE)*text++];
+		c = gbFontTransTbl[(uint8_t)*text++];
 		i += lfontkern[lfontframe[c]] + 2;
 	}
 	return i - 2;
@@ -306,7 +306,7 @@ bool gmenu_on_mouse_move()
 	return TRUE;
 }
 
-BOOLEAN gmenu_get_mouse_slider(int *plOffset)
+bool gmenu_get_mouse_slider(int *plOffset)
 {
 	*plOffset = 282;
 	if (Mouse.x < 282 + PANEL_LEFT) {

@@ -46,10 +46,10 @@ void Automap::initOnce()
  */
 void Automap::init()
 {
-	BYTE b1, b2;
+	uint8_t b1, b2;
 	DWORD dwTiles;
 	int x, y;
-	BYTE *pAFile, *pTmp;
+	uint8_t *pAFile, *pTmp;
 	int i;
 
 	memset(automaptype, 0, sizeof(automaptype));
@@ -259,7 +259,7 @@ void Automap::drawTile(V2Di s, WORD automap_type)
 	//int t1.x, t1.y, t2.x, t2.y;
 	V2Di t1, t2;
 
-	BYTE flags = automap_type >> 8;
+	uint8_t flags = automap_type >> 8;
 
 	if (flags & MAPFLAG_DIRT) {
 		ENG_set_pixel(s.x, s.y, COLOR_DIM);
@@ -549,7 +549,7 @@ WORD Automap::GetAutomapType(V2Di pos, bool view)
 		return 0;
 	}
 
-	rv = automaptype[(BYTE)dgrid[x][y].dungeon];
+	rv = automaptype[(uint8_t)dgrid[x][y].dungeon];
 	if (rv == 7) {
 		if ((GetAutomapType({ x - 1, y }, FALSE) >> 8) & MAPFLAG_HORZARCH) {
 			if ((GetAutomapType({ x, y - 1 }, FALSE) >> 8) & MAPFLAG_VERTARCH) {
@@ -579,7 +579,7 @@ void Automap::drawText()
 		}
 	}
 	if (lvl.setlevel) {
-		PrintGameStr({ 8, nextline }, quest_level_names[(BYTE)lvl.setlvlnum], COL_GOLD);
+		PrintGameStr({ 8, nextline }, quest_level_names[(uint8_t)lvl.setlvlnum], COL_GOLD);
 	} else if (lvl.currlevel) {
 		sprintf(desc, "Level: %i", lvl.currlevel);
 		PrintGameStr({ 8, nextline }, desc, COL_GOLD);

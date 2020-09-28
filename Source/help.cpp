@@ -119,7 +119,7 @@ void DrawHelp()
 				s++;
 			}
 			tempstr[c] = *s;
-			w += fontkern[fontframe[gbFontTransTbl[(BYTE)tempstr[c]]]] + 1;
+			w += fontkern[fontframe[gbFontTransTbl[(uint8_t)tempstr[c]]]] + 1;
 			c++;
 			s++;
 		}
@@ -155,7 +155,7 @@ void DrawHelp()
 				s++;
 			}
 			tempstr[c] = *s;
-			w += fontkern[fontframe[gbFontTransTbl[(BYTE)tempstr[c]]]] + 1;
+			w += fontkern[fontframe[gbFontTransTbl[(uint8_t)tempstr[c]]]] + 1;
 			c++;
 			s++;
 		}
@@ -180,12 +180,12 @@ void DrawHelp()
 
 void DrawHelpLine(int always_0, int help_line_nr, char *text, char color)
 {
-	BYTE c;
+	uint8_t c;
 
 	int width = 0;
 	V2Di s = { always_0 + 96 + PANEL_LEFT, help_line_nr * 12 + 204 };
 	while (*text) {
-		c = gbFontTransTbl[(BYTE)*text];
+		c = gbFontTransTbl[(uint8_t)*text];
 		text++;
 		c = fontframe[c];
 		width += fontkern[c] + 1;

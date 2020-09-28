@@ -7,8 +7,8 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE L5dungeon[80][80];
-BYTE L5dflags[DMAXX][DMAXY];
+uint8_t L5dungeon[80][80];
+uint8_t L5dflags[DMAXX][DMAXY];
 bool L5setloadflag;
 int HR1;
 int HR2;
@@ -16,7 +16,7 @@ int HR3;
 int VR1;
 int VR2;
 int VR3;
-BYTE *L5pSetPiece;
+uint8_t *L5pSetPiece;
 
 const ShadowStruct SPATS[37] = {
 	// clang-format off
@@ -62,7 +62,7 @@ const ShadowStruct SPATS[37] = {
 };
 
 // BUGFIX: This array should contain an additional 0 (207 elements).
-const BYTE BSTYPES[] = {
+const uint8_t BSTYPES[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 14, 15, 16, 17, 0, 0,
 	0, 0, 0, 0, 0, 1, 2, 10, 4, 5,
@@ -87,7 +87,7 @@ const BYTE BSTYPES[] = {
 };
 
 // BUGFIX: This array should contain an additional 0 (207 elements).
-const BYTE L5BTYPES[] = {
+const uint8_t L5BTYPES[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 14, 15, 16, 17, 0, 0,
 	0, 0, 0, 0, 0, 25, 26, 0, 28, 0,
@@ -110,14 +110,14 @@ const BYTE L5BTYPES[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0
 };
-const BYTE STAIRSUP[] = { 4, 4, 13, 13, 13, 13, 2, 2, 2, 2, 13, 13, 13, 13, 13, 13, 13, 13, 0, 66, 6, 0, 63, 64, 65, 0, 0, 67, 68, 0, 0, 0, 0, 0 };
-const BYTE L5STAIRSUP[] = { 4, 4, 22, 22, 22, 22, 2, 2, 2, 2, 13, 13, 13, 13, 13, 13, 13, 13, 0, 66, 23, 0, 63, 64, 65, 0, 0, 67, 68, 0, 0, 0, 0, 0 };
-const BYTE STAIRSDOWN[] = { 4, 3, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 62, 57, 58, 0, 61, 59, 60, 0, 0, 0, 0, 0 };
-const BYTE LAMPS[] = { 2, 2, 13, 0, 13, 13, 129, 0, 130, 128 };
-const BYTE PWATERIN[] = { 6, 6, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 202, 200, 200, 84, 0, 0, 199, 203, 203, 83, 0, 0, 85, 206, 80, 81, 0, 0, 0, 134, 135, 0, 0, 0, 0, 0, 0, 0, 0 };
+const uint8_t STAIRSUP[] = { 4, 4, 13, 13, 13, 13, 2, 2, 2, 2, 13, 13, 13, 13, 13, 13, 13, 13, 0, 66, 6, 0, 63, 64, 65, 0, 0, 67, 68, 0, 0, 0, 0, 0 };
+const uint8_t L5STAIRSUP[] = { 4, 4, 22, 22, 22, 22, 2, 2, 2, 2, 13, 13, 13, 13, 13, 13, 13, 13, 0, 66, 23, 0, 63, 64, 65, 0, 0, 67, 68, 0, 0, 0, 0, 0 };
+const uint8_t STAIRSDOWN[] = { 4, 3, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 62, 57, 58, 0, 61, 59, 60, 0, 0, 0, 0, 0 };
+const uint8_t LAMPS[] = { 2, 2, 13, 0, 13, 13, 129, 0, 130, 128 };
+const uint8_t PWATERIN[] = { 6, 6, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 202, 200, 200, 84, 0, 0, 199, 203, 203, 83, 0, 0, 85, 206, 80, 81, 0, 0, 0, 134, 135, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 /* data */
-BYTE L5ConvTbl[16] = { 22, 13, 1, 13, 2, 13, 13, 13, 4, 13, 1, 13, 2, 13, 16, 13 };
+uint8_t L5ConvTbl[16] = { 22, 13, 1, 13, 2, 13, 13, 13, 4, 13, 1, 13, 2, 13, 16, 13 };
 
 LvlCathedral::LvlCathedral()
     : Level(DunType::cathedral)
@@ -130,7 +130,7 @@ void LvlCathedral::create(int lvldir)
 	CreateL5Dungeon(glSeedTbl[lvl.currlevel], lvldir);
 	InitL1Triggers();
 	Freeupstairs();
-	LoadRndLvlPal(1);
+	LoadRndLvlPal(DunType::cathedral);
 };
 
 void LvlCathedral::loadGFX()
@@ -142,6 +142,49 @@ void LvlCathedral::loadGFX()
 	pSpecialCels = LoadFileInMem("Levels\\L1Data\\L1S.CEL", NULL);
 }
 
+void LvlCathedral::LoadSetMap()
+{
+	switch (lvl.setlvlnum) {
+	case SetLvl::SkelKing:
+		if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
+			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
+			quests[Q_SKELKING]._qvar1 = 1;
+		}
+		LoadPreL1Dungeon("Levels\\L1Data\\SklKng1.DUN", 83, 45);
+		LoadL1Dungeon("Levels\\L1Data\\SklKng2.DUN", 83, 45);
+		LoadPalette("Levels\\L1Data\\L1_2.pal");
+		DRLG_AreaTrans(sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
+		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
+		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
+		DRLG_ListTrans(sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
+		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
+		AddSKingObjs();
+		InitSKingTriggers();
+		break;
+	case SetLvl::Maze:
+		LoadPreL1Dungeon("Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
+		LoadL1Dungeon("Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
+		LoadPalette("Levels\\L1Data\\L1_5.pal");
+		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
+		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
+		break;
+	case SetLvl::VileBetrayer:
+		if (quests[Q_BETRAYER]._qactive == QUEST_DONE) {
+			quests[Q_BETRAYER]._qvar2 = 4;
+		} else if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
+			quests[Q_BETRAYER]._qvar2 = 3;
+		}
+		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
+		LoadL1Dungeon("Levels\\L1Data\\Vile2.DUN", 35, 36);
+		LoadPalette("Levels\\L1Data\\L1_2.pal");
+		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
+		AddVileObjs();
+		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");
+		InitNoTriggers();
+		break;
+	}
+}
+
 void LvlCathedral::DRLG_CreateThemeRoom(int themeIndex)
 {
 	return; // Cathedral has separate theme room function
@@ -150,8 +193,8 @@ void LvlCathedral::DRLG_CreateThemeRoom(int themeIndex)
 static void DRLG_PlaceDoor(int x, int y)
 {
 	if ((L5dflags[x][y] & DLRG_PROTECTED) == 0) {
-		BYTE df = L5dflags[x][y] & 0x7F;
-		BYTE c = dgrid[x][y].dungeon;
+		uint8_t df = L5dflags[x][y] & 0x7F;
+		uint8_t c = dgrid[x][y].dungeon;
 
 		if (df == 1) {
 			if (y != 1 && c == 2)
@@ -209,8 +252,8 @@ static void DRLG_PlaceDoor(int x, int y)
 static void DRLG_L1Shadows()
 {
 	int x, y, i;
-	BYTE sd[2][2];
-	BYTE tnv3;
+	uint8_t sd[2][2];
+	uint8_t tnv3;
 	bool patflag;
 
 	for (y = 1; y < DMAXY; y++) {
@@ -296,7 +339,7 @@ static void DRLG_L1Shadows()
 	}
 }
 
-static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int noquad, int ldir)
+static int DRLG_PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx, int cy, bool setview, int noquad, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, found, t;
 	bool abort;
@@ -412,7 +455,7 @@ static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, in
 static void DRLG_L1Floor()
 {
 	int i, j;
-	LONG rv;
+	int32_t rv;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -558,7 +601,7 @@ static void DRLG_InitL1Vals()
 void LvlCathedral::LoadL1Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	uint8_t *pLevelMap, *lm;
 
 	lvl.dmin = { 16, 16 };
 	lvl.dmax = { 96, 96 };
@@ -605,7 +648,7 @@ void LvlCathedral::LoadL1Dungeon(char *sFileName, int vx, int vy)
 void LoadPreL1Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	uint8_t *pLevelMap, *lm;
 
 	lvl.dmin = { 16, 16 };
 	lvl.dmax = { 96, 96 };
@@ -1298,7 +1341,7 @@ static void DRLG_L5Subs()
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
 			if (!random_(0, 4)) {
-				BYTE c = L5BTYPES[dgrid[x][y].dungeon];
+				uint8_t c = L5BTYPES[dgrid[x][y].dungeon];
 
 				if (c && !L5dflags[x][y]) {
 					rv = random_(0, 16);
@@ -1335,7 +1378,7 @@ static void DRLG_L5Subs()
 static void DRLG_L5SetRoom(int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	uint8_t *sp;
 
 	rw = *L5pSetPiece;
 	rh = *(L5pSetPiece + 2);
@@ -1610,7 +1653,7 @@ static void DRLG_L5CornerFix()
 static void DRLG_L5(int entry)
 {
 	int i, j;
-	LONG minarea;
+	int32_t minarea;
 	bool doneflag;
 
 	switch (lvl.currlevel) {

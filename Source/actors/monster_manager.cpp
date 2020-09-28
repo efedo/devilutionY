@@ -251,7 +251,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 void MonsterManager::PlaceQuestMonsters()
 {
 	int skeltype;
-	BYTE *setp;
+	uint8_t *setp;
 
 	if (!lvl.setlevel) {
 		if (QuestStatus(Q_BUTCHER)) {
@@ -313,7 +313,7 @@ void MonsterManager::PlaceQuestMonsters()
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
-	} else if (lvl.setlvlnum == SL_SKELKING) {
+	} else if (lvl.setlvlnum == SetLvl::SkelKing) {
 		PlaceUniqueMonster(UMT_SKELKING, 0, 0);
 	}
 }

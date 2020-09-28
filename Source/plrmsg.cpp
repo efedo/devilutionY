@@ -2,7 +2,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-static BYTE plr_msg_slot;
+static uint8_t plr_msg_slot;
 _plrmsg plr_msgs[PMSG_COUNT];
 
 /** Maps from player_num to text colour, as used in chat messages. */
@@ -111,12 +111,12 @@ void DrawPlrMsg()
 	}
 }
 
-void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, BYTE col)
+void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, uint8_t col)
 {
 	int line = 0;
 
 	while (*str) {
-		BYTE c;
+		uint8_t c;
 		int sx = x;
 		DWORD len = 0;
 		const char *sstr = str;
@@ -124,7 +124,7 @@ void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, BYTE col)
 
 		while (1) {
 			if (*sstr) {
-				c = gbFontTransTbl[(BYTE)*sstr++];
+				c = gbFontTransTbl[(uint8_t)*sstr++];
 				c = fontframe[c];
 				len += fontkern[c] + 1;
 				if (!c) // allow wordwrap on blank glyph
@@ -138,7 +138,7 @@ void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, BYTE col)
 		}
 
 		while (str < endstr) {
-			c = gbFontTransTbl[(BYTE)*str++];
+			c = gbFontTransTbl[(uint8_t)*str++];
 			c = fontframe[c];
 			if (c)
 				PrintChar({ sx, int(y) }, c, col);

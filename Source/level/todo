@@ -1,0 +1,10 @@
+
+Move gnLevelTypeTbl etc to world
+
+
+Universe
+	World
+		D1World
+		D2World
+		UoWorld
+		etc.

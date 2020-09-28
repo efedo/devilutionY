@@ -4,14 +4,14 @@ DEVILUTION_BEGIN_NAMESPACE
 
 int plr_lframe_size;
 int plr_wframe_size;
-BYTE plr_gfx_flag = 0;
+uint8_t plr_gfx_flag = 0;
 int plr_aframe_size;
 int plr_fframe_size;
 int plr_qframe_size;
 bool deathflag;
 int plr_hframe_size;
 int plr_bframe_size;
-BYTE plr_gfx_bflag = 0;
+uint8_t plr_gfx_bflag = 0;
 int plr_sframe_size;
 int deathdelay;
 int plr_dframe_size;
@@ -112,9 +112,9 @@ int ExpLvlsTbl[MAXCHARLEVEL] = {
 	1583495809
 };
 
-BYTE fix[9] = { 0, 0, 3, 3, 3, 6, 6, 6, 8 }; /* PM_ChangeLightOff local type */
+uint8_t fix[9] = { 0, 0, 3, 3, 3, 6, 6, 6, 8 }; /* PM_ChangeLightOff local type */
 
-void SetPlayerGPtrs(BYTE *pData, BYTE **pAnim)
+void SetPlayerGPtrs(uint8_t *pData, uint8_t **pAnim)
 {
 	for (int i = 0; i < 8; i++) {
 		pAnim[i] = CelGetFrameStart(pData, i);
@@ -231,7 +231,7 @@ void Player::LoadPlrGFX(player_graphic gfxflag)
 	char prefix[16];
 	char pszName[256];
 	char *szCel;
-	BYTE *pData, *pAnim;
+	uint8_t *pData, *pAnim;
 	DWORD i;
 
 	sprintf(prefix, "%c%c%c", CharChar[data._pClass], ArmourChar[data._pgfxnum >> 4], WepChar[data._pgfxnum & 0xF]);
@@ -245,59 +245,59 @@ void Player::LoadPlrGFX(player_graphic gfxflag)
 		switch (i) {
 		case PFILE_STAND:
 			szCel = "AS";
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				szCel = "ST";
 			}
 			pData = data._pNData;
-			pAnim = (BYTE *)data._pNAnim;
+			pAnim = (uint8_t *)data._pNAnim;
 			break;
 		case PFILE_WALK:
 			szCel = "AW";
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				szCel = "WL";
 			}
 			pData = data._pWData;
-			pAnim = (BYTE *)data._pWAnim;
+			pAnim = (uint8_t *)data._pWAnim;
 			break;
 		case PFILE_ATTACK:
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				continue;
 			}
 			szCel = "AT";
 			pData = data._pAData;
-			pAnim = (BYTE *)data._pAAnim;
+			pAnim = (uint8_t *)data._pAAnim;
 			break;
 		case PFILE_HIT:
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				continue;
 			}
 			szCel = "HT";
 			pData = data._pHData;
-			pAnim = (BYTE *)data._pHAnim;
+			pAnim = (uint8_t *)data._pHAnim;
 			break;
 		case PFILE_LIGHTNING:
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				continue;
 			}
 			szCel = "LM";
 			pData = data._pLData;
-			pAnim = (BYTE *)data._pLAnim;
+			pAnim = (uint8_t *)data._pLAnim;
 			break;
 		case PFILE_FIRE:
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				continue;
 			}
 			szCel = "FM";
 			pData = data._pFData;
-			pAnim = (BYTE *)data._pFAnim;
+			pAnim = (uint8_t *)data._pFAnim;
 			break;
 		case PFILE_MAGIC:
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				continue;
 			}
 			szCel = "QM";
 			pData = data._pTData;
-			pAnim = (BYTE *)data._pTAnim;
+			pAnim = (uint8_t *)data._pTAnim;
 			break;
 		case PFILE_DEATH:
 			if (data._pgfxnum & 0xF) {
@@ -305,10 +305,10 @@ void Player::LoadPlrGFX(player_graphic gfxflag)
 			}
 			szCel = "DT";
 			pData = data._pDData;
-			pAnim = (BYTE *)data._pDAnim;
+			pAnim = (uint8_t *)data._pDAnim;
 			break;
 		case PFILE_BLOCK:
-			if (lvl.leveltype == DTYPE_TOWN) {
+			if (lvl.type() == DunType::town) {
 				continue;
 			}
 			if (!data._pBlockFlag) {
@@ -317,7 +317,7 @@ void Player::LoadPlrGFX(player_graphic gfxflag)
 
 			szCel = "BL";
 			pData = data._pBData;
-			pAnim = (BYTE *)data._pBAnim;
+			pAnim = (uint8_t *)data._pBAnim;
 			break;
 		default:
 			app_fatal("PLR:2");
@@ -326,7 +326,7 @@ void Player::LoadPlrGFX(player_graphic gfxflag)
 
 		sprintf(pszName, "PlrGFX\\%s\\%s\\%s%s.CL2", cs.c_str(), prefix, prefix, szCel);
 		LoadFileWithMem(pszName, pData);
-		SetPlayerGPtrs((BYTE *)pData, (BYTE **)pAnim);
+		SetPlayerGPtrs((uint8_t *)pData, (uint8_t **)pAnim);
 		data._pGFXLoad |= i;
 	}
 }
@@ -461,7 +461,7 @@ void Player::FreePlayerGFX()
 	data._pGFXLoad = 0;
 }
 
-void Player::NewPlrAnim(BYTE *Peq, int numFrames, int Delay, int width)
+void Player::NewPlrAnim(uint8_t *Peq, int numFrames, int Delay, int width)
 {
 	data._pAnimData = Peq;
 	data._pAnimLen = numFrames;
@@ -498,7 +498,7 @@ void Player::SetPlrAnims()
 
 	pc = data._pClass;
 
-	if (lvl.leveltype == DTYPE_TOWN) {
+	if (lvl.type() == DunType::town) {
 		data._pNFrames = classes[pc].PlrGFXAnimLens[7];
 		data._pWFrames = classes[pc].PlrGFXAnimLens[8];
 		data._pDFrames = classes[pc].PlrGFXAnimLens[4];
@@ -518,7 +518,7 @@ void Player::SetPlrAnims()
 	gn = data._pgfxnum & 0xF;
 	if (pc == PC_WARRIOR) {
 		if (gn == ANIM_ID_BOW) {
-			if (lvl.leveltype != DTYPE_TOWN) {
+			if (lvl.type() != DunType::town) {
 				data._pNFrames = 8;
 			}
 			data._pAWidth = 96;
@@ -717,7 +717,7 @@ void Player::CreatePlayer(char c)
 	}
 
 	for (i = 0; i < 10; i++) {
-		data._pSLvlVisited[i] = FALSE;
+		data._pSetLvlVisited[i] = FALSE;
 	}
 
 	data._pLvlChanging = FALSE;
@@ -1014,7 +1014,7 @@ void PlrClrTrans(V2Di pos)
 
 void PlrDoTrans(V2Di pos)
 {
-	if (lvl.leveltype != DTYPE_CATHEDRAL && lvl.leveltype != DTYPE_CATACOMBS) {
+	if (lvl.type() != DunType::cathedral && lvl.type() != DunType::catacombs) {
 		lvl.TransList[1] = TRUE;
 	} else {
 		for (int i = pos.y - 1; i <= pos.y + 1; i++) {
@@ -1267,7 +1267,7 @@ Player::StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir, ScrollDir
 	grid.at(n).dFlags |= BFLAG_PLAYERLR;
 	data._poff = off;
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		ChangeLightXY(data._plid, n);
 		PM_ChangeLightOff();
 	}
@@ -1369,7 +1369,7 @@ void Player::StartSpell(Dir d, V2Di c)
 		return;
 	}
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		switch (spelldata[data._pSpell].sType) {
 		case STYPE_FIRE:
 			if (!(data._pGFXLoad & PFILE_FIRE)) {
@@ -1861,7 +1861,7 @@ void Player::StartNewLvl(int fom, int curlvl)
 		lvl.setlvlnum = curlvl;
 		break;
 	case WM_DIABTWARPUP:
-		data.pTownWarps |= 1 << (lvl.leveltype - 2);
+		data.pTownWarps |= 1 << (int(lvl.type()) - 2);
 		data.plrlevel = curlvl;
 		break;
 	case WM_DIABRETOWN:
@@ -1984,7 +1984,7 @@ bool Player::PM_DoWalk()
 	if (data._pVar8 == anim_len) { // end of anim
 		advancePos();
 
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightXY(data._plid, pos());
 			ChangeVisionXY(data._pvid, pos());
 		}
@@ -2001,7 +2001,7 @@ bool Player::PM_DoWalk()
 
 		ClearPlrPVars();
 
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightOff(data._plid, { 0, 0 });
 		}
 		return true;
@@ -2027,7 +2027,7 @@ bool Player::PM_DoWalk2()
 	if (data._pVar8 == anim_len) { // end of anim
 		advancePos();
 
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightXY(data._plid, pos());
 			ChangeVisionXY(data._pvid, pos());
 		}
@@ -2043,7 +2043,7 @@ bool Player::PM_DoWalk2()
 		}
 
 		ClearPlrPVars();
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightOff(data._plid, { 0, 0 });
 		}
 		return true;
@@ -2070,7 +2070,7 @@ bool Player::PM_DoWalk3()
 		grid[data._pVar4][data._pVar5].dFlags &= ~BFLAG_PLAYERLR; // makes old pos have lr flag
 		advancePos();
 
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightXY(data._plid, pos());
 			ChangeVisionXY(data._pvid, pos());
 		}
@@ -2087,7 +2087,7 @@ bool Player::PM_DoWalk3()
 
 		ClearPlrPVars();
 
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightOff(data._plid, { 0, 0 });
 		}
 		return true;
@@ -2504,7 +2504,7 @@ bool Player::PM_DoAttack()
 			}
 			didhit = PlrHitMonst(m);
 		} else if (grid.at(d).isPlayer() && !FriendlyMode) {
-			BYTE p = grid.at(d).getPlayer();
+			uint8_t p = grid.at(d).getPlayer();
 			didhit = PlrHitPlr(p);
 		} else if (grid.at(d).isObject()) {
 			didhit = PlrHitObj(d);
@@ -2662,7 +2662,7 @@ bool Player::PM_DoSpell()
 
 	data._pVar8++;
 
-	if (lvl.leveltype == DTYPE_TOWN) {
+	if (lvl.type() == DunType::town) {
 		if (data._pVar8 > data._pSFrames) {
 			StartWalkStand();
 			ClearPlrPVars();
@@ -3327,7 +3327,7 @@ void CheckPlrSpell()
 		return;
 	}
 
-	if (lvl.leveltype == DTYPE_TOWN && !spelldata[rspell].sTownSpell) {
+	if (lvl.type() == DunType::town && !spelldata[rspell].sTownSpell) {
 		if (myplr().data._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
 		} else if (myplr().data._pClass == PC_ROGUE) {

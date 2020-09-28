@@ -1165,7 +1165,7 @@ void effects_cleanup_sfx()
 
 void sound_init()
 {
-	BYTE mask = 0;
+	uint8_t mask = 0;
 	if (plr.isMultiplayer()) {
 		mask = PLRSFXS;
 	} else if (!plr.maxPlayers() ||	myplr().data._pClass == PC_WARRIOR) {
@@ -1181,9 +1181,9 @@ void sound_init()
 	priv_sound_init(mask);
 }
 
-void priv_sound_init(BYTE bLoadMask)
+void priv_sound_init(uint8_t bLoadMask)
 {
-	BYTE pc;
+	uint8_t pc;
 	DWORD i;
 
 	if (!gbSndInited) {

@@ -12,7 +12,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BYTE movie_playing;
+extern uint8_t movie_playing;
 extern bool loop_movie;
 
 void play_movie(char *pszMovie, bool user_can_close);

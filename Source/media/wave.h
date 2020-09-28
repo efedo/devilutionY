@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 void WCloseFile(HANDLE file);
-LONG WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName);
+int32_t WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName);
 void WGetFileArchive(HANDLE hsFile, DWORD *retry, const char *FileName);
 bool WOpenFile(const char *FileName, HANDLE *phsFile, bool mayNotExist);
 void WReadFile(HANDLE hsFile, LPVOID buf, DWORD to_read, const char *FileName);

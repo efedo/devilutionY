@@ -222,7 +222,7 @@ int FindClosest(V2Di s, int rad)
 
 	for (i = 1; i < rad; i++) {
 		cr = CrawlNum[i] + 2;
-		for (j = (BYTE)CrawlTable[CrawlNum[i]]; j > 0; j--) {
+		for (j = (uint8_t)CrawlTable[CrawlNum[i]]; j > 0; j--) {
 			t.x = s.x + CrawlTable[cr - 1];
 			t.y = s.y + CrawlTable[cr];
 			if (t.x > 0 && t.x < MAXDUNX && t.y > 0 && t.y < MAXDUNY) {
@@ -253,7 +253,7 @@ int GetSpellLevel(int id, int sn)
 
 Dir GetDirection8(V2Di t1, V2Di t2)
 {
-	static BYTE Dirs[16][16] = {
+	static uint8_t Dirs[16][16] = {
 		{ 99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 2, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -272,7 +272,7 @@ Dir GetDirection8(V2Di t1, V2Di t2)
 		{ 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 	};
 	int mx, my, md;
-	ALIGN_BY_1 BYTE urtoll[] = { 3, 4, 5 },
+	ALIGN_BY_1 uint8_t urtoll[] = { 3, 4, 5 },
 	                ultolr[] = { 3, 2, 1 },
 	                lrtoul[] = { 7, 6, 5 },
 	                lltour[] = { 7, 0, 1 };
@@ -298,7 +298,7 @@ Dir GetDirection8(V2Di t1, V2Di t2)
 
 Dir16 GetDirection16(V2Di t1, V2Di t2)
 {
-	static BYTE Dirs[16][16] = {
+	static uint8_t Dirs[16][16] = {
 		{ 99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 4, 3, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -316,10 +316,10 @@ Dir16 GetDirection16(V2Di t1, V2Di t2)
 		{ 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2 },
 		{ 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2 }
 	};
-	BYTE urtoll[5] = { 6, 7, 8, 9, 10 };
-	BYTE ultolr[5] = { 6, 5, 4, 3, 2 };
-	BYTE lltour[5] = { 14, 13, 12, 11, 10 };
-	BYTE lrtoul[5] = { 14, 15, 0, 1, 2 };
+	uint8_t urtoll[5] = { 6, 7, 8, 9, 10 };
+	uint8_t ultolr[5] = { 6, 5, 4, 3, 2 };
+	uint8_t lltour[5] = { 14, 13, 12, 11, 10 };
+	uint8_t lrtoul[5] = { 14, 15, 0, 1, 2 };
 	int mx, my, md;
 
 	mx = abs(t2.x - t1.x);
@@ -435,7 +435,7 @@ void MoveMissilePos(int i)
 	}
 }
 
-bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, BOOLEAN shift)
+bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, bool shift)
 {
 	int hit, hper, dam, mor, mir;
 	bool resist, ret;
@@ -467,7 +467,7 @@ bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, BOOLEAN shif
 	}
 
 	hit = random_(68, 100);
-	hper = 90 - (BYTE)monsters[m].data.mArmorClass - dist;
+	hper = 90 - (uint8_t)monsters[m].data.mArmorClass - dist;
 	if (hper < 5)
 		hper = 5;
 	if (hper > 95)
@@ -516,7 +516,7 @@ bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, BOOLEAN shif
 	}
 }
 
-bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLEAN shift)
+bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool shift)
 {
 	int hit, hper, dam, mor, mir;
 	bool resist, ret;
@@ -624,13 +624,13 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, BOOLE
 	}
 
 	if (!monsters[m].data._msquelch) {
-		monsters[m].data._msquelch = UCHAR_MAX;
+		monsters[m].data._msquelch = UINT8_MAX;
 		monsters[m].data._last = plr[pnum].pos();
 	}
 	return TRUE;
 }
 
-bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEAN shift, int earflag)
+bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, bool shift, int earflag)
 {
 	int tac, hit, hper, dam, blk, blkper, resper;
 
@@ -790,7 +790,7 @@ bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, BOOLEA
 	return FALSE;
 }
 
-bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, BOOLEAN shift)
+bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, bool shift)
 {
 	int tac, resper, dam, blk, blkper, hper, hit;
 
@@ -901,7 +901,7 @@ bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, B
 	return FALSE;
 }
 
-void CheckMissileCol(int i, int mindam, int maxdam, bool shift, V2Di m, BOOLEAN nodel)
+void CheckMissileCol(int i, int mindam, int maxdam, bool shift, V2Di m, bool nodel)
 {
 	int oi;
 
@@ -1043,11 +1043,11 @@ void SetMissDir(int mi, Dir dir)
 	SetMissDir(mi, dir);
 }
 
-void LoadMissileGFX(BYTE mi)
+void LoadMissileGFX(uint8_t mi)
 {
 	char pszName[256];
 	int i;
-	BYTE *file;
+	uint8_t *file;
 	MisFileData *mfd;
 
 	mfd = &misfiledata[mi];
@@ -1239,7 +1239,7 @@ void AddRndTeleport(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int
 
 	missile[mi]._mirange = 2;
 	missile[mi]._miVar1 = 0;
-	if (!lvl.setlevel || lvl.setlvlnum != SL_VILEBETRAYER) {
+	if (!lvl.setlevel || lvl.setlvlnum != SetLvl::VileBetrayer) {
 		missile[mi]._mi = { s.x + r1, s.y + r2 };
 		if (!mienemy)
 			UseMana(id, SPL_RNDTELEPORT);
@@ -1317,7 +1317,7 @@ void AddTeleport(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 	for (i = 0; i < 6; i++) {
 		k = CrawlNum[i];
 		pn = k + 2;
-		for (j = (BYTE)CrawlTable[k]; j > 0; j--) {
+		for (j = (uint8_t)CrawlTable[k]; j > 0; j--) {
 			t.x = d.x + CrawlTable[pn - 1];
 			t.y = d.y + CrawlTable[pn];
 			if (0 < t.x && t.x < MAXDUNX && 0 < t.y && t.y < MAXDUNY) {
@@ -1490,7 +1490,7 @@ void AddTown(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 		missile[mi]._miDelFlag = TRUE;
 		for (j = 0; j < 6; j++) {
 			k = CrawlNum[j] + 2;
-			for (i = (BYTE)CrawlTable[CrawlNum[j]]; i > 0; i--) {
+			for (i = (uint8_t)CrawlTable[CrawlNum[j]]; i > 0; i--) {
 				t.x = d.x + CrawlTable[k - 1];
 				t.y = d.y + CrawlTable[k];
 				if (t.x > 0 && t.x < MAXDUNX && t.y > 0 && t.y < MAXDUNY) {
@@ -1525,9 +1525,9 @@ void AddTown(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	PutMissile(mi);
 	if (id == myplr() && !missile[mi]._miDelFlag && lvl.currlevel) {
 		if (!lvl.setlevel) {
-			NetSendCmdLocParam3(TRUE, CMD_ACTIVATEPORTAL, t, lvl.currlevel, lvl.leveltype, 0);
+			NetSendCmdLocParam3(TRUE, CMD_ACTIVATEPORTAL, t, lvl.currlevel, int(lvl.type()), 0);
 		} else {
-			NetSendCmdLocParam3(TRUE, CMD_ACTIVATEPORTAL, t, lvl.setlvlnum, lvl.leveltype, 1);
+			NetSendCmdLocParam3(TRUE, CMD_ACTIVATEPORTAL, t, int(lvl.setlvlnum), int(lvl.type()), 1);
 		}
 	}
 }
@@ -1618,7 +1618,7 @@ void AddGuardian(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 	for (i = 0; i < 6; i++) {
 		pn = CrawlNum[i];
 		k = pn + 2;
-		for (j = (BYTE)CrawlTable[pn]; j > 0; j--) {
+		for (j = (uint8_t)CrawlTable[pn]; j > 0; j--) {
 			t = { d.x + CrawlTable[k - 1], d.y + CrawlTable[k] };
 			if (t.x > 0 && t.x < MAXDUNX && t.y > 0 && t.y < MAXDUNY) {
 				if (LineClear(s, t)) {
@@ -1822,7 +1822,7 @@ void AddStone(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	for (i = 0; i < 6; i++) {
 		k = CrawlNum[i];
 		l = k + 2;
-		for (j = (BYTE)CrawlTable[k]; j > 0; j--) {
+		for (j = (uint8_t)CrawlTable[k]; j > 0; j--) {
 			tx = d.x + CrawlTable[l - 1];
 			ty = d.y + CrawlTable[l];
 			if (tx > 0 && tx < MAXDUNX && ty > 0 && ty < MAXDUNY) {
@@ -2018,7 +2018,7 @@ void AddFirewallC(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int d
 	for (i = 0; i < 6; i++) {
 		k = CrawlNum[i];
 		pn = k + 2;
-		for (j = (BYTE)CrawlTable[k]; j > 0; j--) {
+		for (j = (uint8_t)CrawlTable[k]; j > 0; j--) {
 			t.x = d.x + CrawlTable[pn - 1];
 			t.y = d.y + CrawlTable[pn];
 			if (0 < t.x && t.x < MAXDUNX && 0 < t.y && t.y < MAXDUNY) {
@@ -2416,7 +2416,7 @@ void MI_Golem(int i)
 		for (l = 0; l < 6; l++) {
 			k = CrawlNum[l];
 			tid = k + 2;
-			for (m = (BYTE)CrawlTable[k]; m > 0; m--) {
+			for (m = (uint8_t)CrawlTable[k]; m > 0; m--) {
 				ct = &CrawlTable[tid];
 				t.x = missile[i]._miVar4 + *(ct - 1);
 				t.y = missile[i]._miVar5 + *ct;
@@ -3188,7 +3188,7 @@ void MI_Chain(int i)
 	for (m = 1; m < rad; m++) {
 		k = CrawlNum[m];
 		l = k + 2;
-		for (n = (BYTE)CrawlTable[k]; n > 0; n--) {
+		for (n = (uint8_t)CrawlTable[k]; n > 0; n--) {
 			t.x = s.x + CrawlTable[l - 1];
 			t.y = s.y + CrawlTable[l];
 			if (t.x > 0 && t.x < MAXDUNX && t.y > 0 && t.y < MAXDUNY && grid.at(t).getMonster() > 0) {
@@ -3300,7 +3300,7 @@ void MI_Teleport(int i)
 		PlrDoTrans(plr[id].pos());
 		missile[i]._miVar1 = 1;
 		//grid.at(plr[id].pos()).dPlayer = id + 1;
-		if (lvl.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			ChangeLightXY(plr[id].data._plid, plr[id].pos());
 			ChangeVisionXY(plr[id].data._pvid, plr[id].pos());
 		}

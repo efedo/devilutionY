@@ -10,8 +10,8 @@ DEVILUTION_BEGIN_NAMESPACE
 
 class DTile {
 public:
-	BYTE dungeon;
-	BYTE pdungeon;
+	uint8_t dungeon;
+	uint8_t pdungeon;
 	char dflags;
 };
 

@@ -39,7 +39,7 @@ DWORD pfile_get_save_num_from_name(const char *name)
 
 void pfile_encode_hero(const PkPlayerStruct *pPack)
 {
-	BYTE *packed;
+	uint8_t *packed;
 	DWORD packed_len;
 	char password[16] = PASSWORD_SINGLE;
 
@@ -47,7 +47,7 @@ void pfile_encode_hero(const PkPlayerStruct *pPack)
 		strcpy(password, PASSWORD_MULTI);
 
 	packed_len = codec_get_encoded_len(sizeof(*pPack));
-	packed = (BYTE *)DiabloAllocPtr(packed_len);
+	packed = (uint8_t *)DiabloAllocPtr(packed_len);
 	memcpy(packed, pPack, sizeof(*pPack));
 	codec_encode(packed, sizeof(*pPack), packed_len, password);
 	mpqapi_write_file("hero", packed, packed_len);
@@ -156,9 +156,9 @@ void game_2_ui_player(const PlayerStruct *p, _uiheroinfo *heroinfo, bool bHasSav
 	heroinfo->spawned = FALSE;
 }
 
-BYTE game_2_ui_class(const PlayerStruct *p)
+uint8_t game_2_ui_class(const PlayerStruct *p)
 {
-	BYTE uiclass;
+	uint8_t uiclass;
 	if (p->_pClass == PC_WARRIOR)
 		uiclass = UI_WARRIOR;
 	else if (p->_pClass == PC_ROGUE)
@@ -199,7 +199,7 @@ bool pfile_read_hero(HANDLE archive, PkPlayerStruct *pPack)
 {
 	HANDLE file;
 	DWORD dwlen, nSize;
-	BYTE *buf;
+	uint8_t *buf;
 
 	if (!SFileOpenFileEx(archive, "hero", 0, &file)) {
 		return FALSE;
@@ -485,7 +485,7 @@ bool GetPermSaveNames(DWORD dwIndex, char *szPerm)
 	return TRUE;
 }
 
-void pfile_write_save_file(const char *pszName, BYTE *pbData, DWORD dwLen, DWORD qwLen)
+void pfile_write_save_file(const char *pszName, uint8_t *pbData, DWORD dwLen, DWORD qwLen)
 {
 	DWORD save_num;
 	char FileName[MAX_PATH];
@@ -510,12 +510,12 @@ void pfile_strcpy(char *dst, const char *src)
 	strcpy(dst, src);
 }
 
-BYTE *pfile_read(const char *pszName, DWORD *pdwLen)
+uint8_t *pfile_read(const char *pszName, DWORD *pdwLen)
 {
 	DWORD save_num, nread;
 	char FileName[MAX_PATH];
 	HANDLE archive, save;
-	BYTE *buf;
+	uint8_t *buf;
 
 	pfile_strcpy(FileName, pszName);
 	save_num = pfile_get_save_num_from_name(myplr().data._pName);
@@ -530,7 +530,7 @@ BYTE *pfile_read(const char *pszName, DWORD *pdwLen)
 	if (*pdwLen == 0)
 		app_fatal("Invalid save file");
 
-	buf = (BYTE *)DiabloAllocPtr(*pdwLen);
+	buf = (uint8_t *)DiabloAllocPtr(*pdwLen);
 	if (!SFileReadFile(save, buf, *pdwLen, &nread, NULL))
 		app_fatal("Unable to read save file");
 	SFileCloseFile(save);

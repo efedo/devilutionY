@@ -12,7 +12,7 @@ int cursH;
 int pcursmonst = -1;
 int icursW28;
 int icursH28;
-BYTE *pCursCels; // Cursor cel image
+uint8_t *pCursCels; // Cursor cel image
 
 /** inv_item value */
 char pcursinvitem;

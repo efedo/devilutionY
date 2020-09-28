@@ -19,17 +19,17 @@ MonsterManager monsters;
 int monstkills[MAXMONSTERS];
 int monstactive[MAXMONSTERS];
 int nummonsters;
-BOOLEAN sgbSaveSoundOn;
+bool sgbSaveSoundOn;
 //MonsterStruct monster[MAXMONSTERS];
 int totalmonsters;
 //CMonster monstTypes[MAX_LVLMTYPES];
-//BYTE GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
+//uint8_t GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
 int monstimgtot;
 int uniquetrans;
 int nummtypes;
 
 const char plr2monst[9] = { 0, 5, 3, 7, 1, 4, 6, 0, 2 };
-const BYTE counsmiss[4] = { MIS_FIREBOLT, MIS_CBOLT, MIS_LIGHTCTRL, MIS_FIREBALL };
+const uint8_t counsmiss[4] = { MIS_FIREBOLT, MIS_CBOLT, MIS_LIGHTCTRL, MIS_FIREBALL };
 
 /* data */
 
@@ -117,7 +117,7 @@ bool MonstPlace(V2Di p)
 
 void LoadDiabMonsts()
 {
-	BYTE *lpSetPiece;
+	uint8_t *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
 	SetMapMonsters(lpSetPiece, { 2 * diabquad1x, 2 * diabquad1y });
@@ -231,7 +231,7 @@ void PlaceUniques()
 	}
 }
 
-void SetMapMonsters(BYTE *pMap, V2Di start)
+void SetMapMonsters(uint8_t *pMap, V2Di start)
 {
 	WORD rw, rh;
 	WORD *lm;
@@ -243,7 +243,7 @@ void SetMapMonsters(BYTE *pMap, V2Di start)
 	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 		beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
 		beastiary.AddMonsterType(UniqMonst[UMT_BLACKJADE].mtype, 4);

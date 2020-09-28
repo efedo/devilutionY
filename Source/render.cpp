@@ -127,7 +127,7 @@ static DWORD LeftFoliageMask[TILE_HEIGHT] = {
 	0xFFFFFFF0, 0xFFFFFFFC,
 };
 
-inline static void RenderLine(BYTE **dst, BYTE **src, int n, BYTE *tbl, DWORD mask)
+inline static void RenderLine(uint8_t **dst, uint8_t **src, int n, uint8_t *tbl, DWORD mask)
 {
 	int i;
 
@@ -184,17 +184,17 @@ __attribute__((no_sanitize("shift-base")))
  * @brief Blit current world CEL to the given buffer
  * @param pBuff Output buffer
  */
-void RenderTile(BYTE *pBuff, int level_piece_id, int trans, int foliage)
+void RenderTile(uint8_t *pBuff, int level_piece_id, int trans, int foliage)
 {
 	int i, j;
 	char c, v, tile;
-	BYTE *src, *dst, *tbl;
+	uint8_t *src, *dst, *tbl;
 	DWORD m, *mask, *pFrameTable;
 
 	dst = pBuff;
-	pFrameTable = (DWORD *)pDungeonCels;
+	pFrameTable = (DWORD *)lvl.pDungeonCels;
 
-	src = &pDungeonCels[SDL_SwapLE32(pFrameTable[level_cel_block & 0xFFF])];
+	src = &lvl.pDungeonCels[SDL_SwapLE32(pFrameTable[level_cel_block & 0xFFF])];
 	tile = (level_cel_block & 0x7000) >> 12;
 	tbl = &pLightTbl[256 * light_table_index];
 
@@ -205,13 +205,13 @@ void RenderTile(BYTE *pBuff, int level_piece_id, int trans, int foliage)
 			mask = &WallMask[TILE_HEIGHT - 1];
 		}
 		if (arch_draw_type == 1 && tile != RT_LTRIANGLE) {
-			c = block_lvid[level_piece_id];
+			c = pieces[level_piece_id].block_lvid;
 			if (c == 1 || c == 3) {
 				mask = &LeftMask[TILE_HEIGHT - 1];
 			}
 		}
 		if (arch_draw_type == 2 && tile != RT_RTRIANGLE) {
-			c = block_lvid[level_piece_id];
+			c = pieces[level_piece_id].block_lvid;
 			if (c == 2 || c == 3) {
 				mask = &RightMask[TILE_HEIGHT - 1];
 			}
@@ -324,7 +324,7 @@ void world_draw_gray_tile(int sx, int sy)
 void world_draw_color_tile(int sx, int sy, const uint8_t color)
 {
 	int i, j, k;
-	BYTE *dst;
+	uint8_t *dst;
 
 	if (sx >= SCREEN_X + SCREEN_WIDTH || sy >= SCREEN_Y + VIEWPORT_HEIGHT + TILE_WIDTH / 2)
 		return;
@@ -358,7 +358,7 @@ void world_draw_color_tile(int sx, int sy, const uint8_t color)
 void trans_rect(int sx, int sy, int width, int height)
 {
 	int row, col;
-	BYTE *pix = &gpBuffer[SCREENXY(sx, sy)];
+	uint8_t *pix = &gpBuffer[SCREENXY(sx, sy)];
 	for (row = 0; row < height; row++) {
 		for (col = 0; col < width; col++) {
 			if ((row & 1 && col & 1) || (!(row & 1) && !(col & 1)))

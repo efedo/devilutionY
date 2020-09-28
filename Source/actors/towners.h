@@ -11,8 +11,8 @@ DEVILUTION_BEGIN_NAMESPACE
 extern TownerStruct towner[NUM_TOWNERS];
 
 int GetActiveTowner(int t);
-void SetTownerGPtrs(BYTE *pData, BYTE **pAnim);
-void NewTownerAnim(int tnum, BYTE *pAnim, int numFrames, int Delay);
+void SetTownerGPtrs(uint8_t *pData, uint8_t **pAnim);
+void NewTownerAnim(int tnum, uint8_t *pAnim, int numFrames, int Delay);
 void InitTownerInfo(int i, int w, int sel, int t, int x, int y, int ao, int tp);
 void InitQstSnds(int i);
 void InitSmith();

@@ -21,7 +21,7 @@ void InitPortals()
 	}
 }
 
-void SetPortalStats(int i, bool o, V2Di p, int lvl, int lvltype)
+void SetPortalStats(int i, bool o, V2Di p, int lvl, DunType lvltype)
 {
 	portal[i].open = o;
 	portal[i].pos.x = p.x;
@@ -61,7 +61,7 @@ void SyncPortals()
 		else {
 			int curlvl = lvl.currlevel;
 			if (lvl.setlevel)
-				curlvl = lvl.setlvlnum;
+				curlvl = int(lvl.setlvlnum);
 			if (portal[i].level == curlvl)
 				AddWarpMissile(i, portal[i].pos);
 		}
@@ -73,7 +73,7 @@ void AddInTownPortal(int i)
 	AddWarpMissile(i, { WarpDropX[i], WarpDropY[i] });
 }
 
-void ActivatePortal(int i, V2Di p, int lvl, int lvltype, bool sp)
+void ActivatePortal(int i, V2Di p, int lvl, DunType lvltype, bool sp)
 {
 	portal[i].open = TRUE;
 
@@ -125,19 +125,19 @@ void GetPortalLevel()
 		lvl.setlevel = FALSE;
 		lvl.currlevel = 0;
 		myplr().data.plrlevel = 0;
-		lvl.leveltype = DTYPE_TOWN;
+		lvl.setType(DunType::town);
 	} else {
 		if (portal[portalindex].setlvl) {
 			lvl.setlevel = TRUE;
-			lvl.setlvlnum = portal[portalindex].level;
+			lvl.setlvlnum = SetLvl(portal[portalindex].level);
 			lvl.currlevel = portal[portalindex].level;
-			myplr().data.plrlevel = lvl.setlvlnum;
-			lvl.leveltype = portal[portalindex].ltype;
+			myplr().data.plrlevel = int(lvl.setlvlnum);
+			lvl.setType(portal[portalindex].ltype);
 		} else {
 			lvl.setlevel = FALSE;
 			lvl.currlevel = portal[portalindex].level;
 			myplr().data.plrlevel = lvl.currlevel;
-			lvl.leveltype = portal[portalindex].ltype;
+			lvl.setType(portal[portalindex].ltype);
 		}
 		if (portalindex == myplr()) {
 			NetSendCmd(TRUE, CMD_DEACTIVATEPORTAL);

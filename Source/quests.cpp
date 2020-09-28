@@ -4,7 +4,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 int qtopline;
 bool questlog;
-BYTE *pQLogCel;
+uint8_t *pQLogCel;
 QuestStruct quests[MAXQUESTS];
 int qline;
 int qlist[MAXQUESTS];
@@ -12,28 +12,28 @@ int numqlines;
 int WaterDone;
 int ReturnLvlX;
 int ReturnLvlY;
-int ReturnLvlT;
+DunType ReturnLvlT;
 int ReturnLvl;
 
 QuestData questlist[MAXQUESTS] = {
 	// clang-format off
 	// _qdlvl, _qdmultlvl, _qlvlt,          _qdtype,   _qdrnd, _qslvl, _qflags, _qdmsg,         _qlstr
-	{       5,         -1, DTYPE_NONE,      Q_ROCK,  100,      0,       0, TEXT_INFRA5,   "The Magic Rock"           },
-	{       9,         -1, DTYPE_NONE,      Q_MUSHROOM,   100,      0,       0, TEXT_MUSH8,    "Black Mushroom"           },
-	{       4,         -1, DTYPE_NONE,      Q_GARBUD,   100,      0,       0, TEXT_GARBUD1,  "Gharbad The Weak"         },
-	{       8,         -1, DTYPE_NONE,      Q_ZHAR,   100,      0,       0, TEXT_ZHAR1,    "Zhar the Mad"             },
-	{      14,         -1, DTYPE_NONE,      Q_VEIL,   100,      0,       0, TEXT_VEIL9,    "Lachdanan"                },
-	{      15,         -1, DTYPE_NONE,      Q_DIABLO,    100,      0,       1, TEXT_VILE3,    "Diablo"                   },
-	{       2,          2, DTYPE_NONE,      Q_BUTCHER,  100,      0,       1, TEXT_BUTCH9,   "The Butcher"              },
-	{       4,         -1, DTYPE_NONE,      Q_LTBANNER,    100,      0,       0, TEXT_BANNER2,  "Ogden's Sign"             },
-	{       7,         -1, DTYPE_NONE,      Q_BLIND,  100,      0,       0, TEXT_BLINDING, "Halls of the Blind"       },
-	{       5,         -1, DTYPE_NONE,      Q_BLOOD,  100,      0,       0, TEXT_BLOODY,   "Valor"                    },
-	{      10,         -1, DTYPE_NONE,      Q_ANVIL,  100,      0,       0, TEXT_ANVIL5,   "Anvil of Fury"            },
-	{      13,         -1, DTYPE_NONE,      Q_WARLORD, 100,      0,       0, TEXT_BLOODWAR, "Warlord of Blood"         },
-	{       3,          3, DTYPE_CATHEDRAL, Q_SKELKING,   100,      1,       1, TEXT_KING2,    "The Curse of King Leoric" },
-	{       2,         -1, DTYPE_CAVES,     Q_PWATER,     100,      4,       0, TEXT_POISON3,  "Poisoned Water Supply"    },
-	{       6,         -1, DTYPE_CATACOMBS, Q_SCHAMB,   100,      2,       0, TEXT_BONER,    "The Chamber of Bone"      },
-	{      15,         15, DTYPE_CATHEDRAL, Q_BETRAYER,     100,      5,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
+	{       5,         -1, DunType::none,      Q_ROCK,  100,      0,       0, TEXT_INFRA5,   "The Magic Rock"           },
+	{       9,         -1, DunType::none,      Q_MUSHROOM,   100,      0,       0, TEXT_MUSH8,    "Black Mushroom"           },
+	{       4,         -1, DunType::none,      Q_GARBUD,   100,      0,       0, TEXT_GARBUD1,  "Gharbad The Weak"         },
+	{       8,         -1, DunType::none,      Q_ZHAR,   100,      0,       0, TEXT_ZHAR1,    "Zhar the Mad"             },
+	{      14,         -1, DunType::none,      Q_VEIL,   100,      0,       0, TEXT_VEIL9,    "Lachdanan"                },
+	{      15,         -1, DunType::none,      Q_DIABLO,    100,      0,       1, TEXT_VILE3,    "Diablo"                   },
+	{       2,          2, DunType::none,      Q_BUTCHER,  100,      0,       1, TEXT_BUTCH9,   "The Butcher"              },
+	{       4,         -1, DunType::none,      Q_LTBANNER,    100,      0,       0, TEXT_BANNER2,  "Ogden's Sign"             },
+	{       7,         -1, DunType::none,      Q_BLIND,  100,      0,       0, TEXT_BLINDING, "Halls of the Blind"       },
+	{       5,         -1, DunType::none,      Q_BLOOD,  100,      0,       0, TEXT_BLOODY,   "Valor"                    },
+	{      10,         -1, DunType::none,      Q_ANVIL,  100,      0,       0, TEXT_ANVIL5,   "Anvil of Fury"            },
+	{      13,         -1, DunType::none,      Q_WARLORD, 100,      0,       0, TEXT_BLOODWAR, "Warlord of Blood"         },
+	{       3,          3, DunType::cathedral, Q_SKELKING,   100,      1,       1, TEXT_KING2,    "The Curse of King Leoric" },
+	{       2,         -1, DunType::caves,     Q_PWATER,     100,      4,       0, TEXT_POISON3,  "Poisoned Water Supply"    },
+	{       6,         -1, DunType::catacombs, Q_SCHAMB,   100,      2,       0, TEXT_BONER,    "The Chamber of Bone"      },
+	{      15,         15, DunType::cathedral, Q_BETRAYER,     100,      5,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
 	// clang-format on
 };
 V2Di questoff[7] = {
@@ -163,7 +163,7 @@ void CheckQuests()
 
 	if (quests[Q_BETRAYER]._qactive == QUEST_DONE
 	    && lvl.setlevel
-	    && lvl.setlvlnum == SL_VILEBETRAYER
+	    && lvl.setlvlnum == SetLvl::VileBetrayer
 	    && quests[Q_BETRAYER]._qvar2 == 4) {
 		rport = { 35, 32 };
 		AddMissile(rport, rport, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
@@ -173,7 +173,7 @@ void CheckQuests()
 	if (lvl.setlevel) {
 		if (lvl.setlvlnum == quests[Q_PWATER]._qslvl
 		    && quests[Q_PWATER]._qactive != QUEST_INIT
-		    && lvl.leveltype == quests[Q_PWATER]._qlvltype
+		    && lvl.type() == quests[Q_PWATER]._qlvltype
 		    && nummonsters == 4
 		    && quests[Q_PWATER]._qactive != QUEST_DONE) {
 			quests[Q_PWATER]._qactive = QUEST_DONE;
@@ -191,7 +191,7 @@ void CheckQuests()
 			    && quests[i]._qslvl != 0
 			    && quests[i]._qactive != QUEST_NOTAVAIL
 			    && myplr().pos() == quests[i]._qt) {
-				if (quests[i]._qlvltype != DTYPE_NONE) {
+				if (quests[i]._qlvltype != DunType::none) {
 					lvl.setlvltype = quests[i]._qlvltype;
 				}
 				myplr().StartNewLvl(WM_DIABSETLVL, quests[i]._qslvl);
@@ -364,7 +364,7 @@ void DrawWarLord(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	uint8_t *sp, *setp;
 	int v;
 
 	setp = LoadFileInMem("Levels\\L4Data\\Warlord2.DUN", NULL);
@@ -393,7 +393,7 @@ void DrawSChamber(int q, int x, int y)
 	int i, j;
 	int rw, rh;
 	int xx, yy;
-	BYTE *sp, *setp;
+	uint8_t *sp, *setp;
 	int v;
 
 	setp = LoadFileInMem("Levels\\L2Data\\Bonestr1.DUN", NULL);
@@ -425,7 +425,7 @@ void DrawLTBanner(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	uint8_t *sp, *setp;
 
 	setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
 	rw = *setp;
@@ -449,7 +449,7 @@ void DrawBlind(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	uint8_t *sp, *setp;
 
 	setp = LoadFileInMem("Levels\\L2Data\\Blind1.DUN", NULL);
 	rw = *setp;
@@ -473,7 +473,7 @@ void DrawBlood(int x, int y)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *sp, *setp;
+	uint8_t *sp, *setp;
 
 	setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
 	rw = *setp;
@@ -529,29 +529,29 @@ void DRLG_CheckQuests(int x, int y)
 void SetReturnLvlPos()
 {
 	switch (lvl.setlvlnum) {
-	case SL_SKELKING:
+	case SetLvl::SkelKing:
 		ReturnLvlX = quests[Q_SKELKING]._qt.x + 1;
 		ReturnLvlY = quests[Q_SKELKING]._qt.y;
 		ReturnLvl = quests[Q_SKELKING]._qlevel;
-		ReturnLvlT = DTYPE_CATHEDRAL;
+		ReturnLvlT = DunType::cathedral;
 		break;
-	case SL_BONECHAMB:
+	case SetLvl::BoneChamb:
 		ReturnLvlX = quests[Q_SCHAMB]._qt.x + 1;
 		ReturnLvlY = quests[Q_SCHAMB]._qt.y;
 		ReturnLvl = quests[Q_SCHAMB]._qlevel;
-		ReturnLvlT = DTYPE_CATACOMBS;
+		ReturnLvlT = DunType::catacombs;
 		break;
-	case SL_POISONWATER:
+	case SetLvl::PoisonWater:
 		ReturnLvlX = quests[Q_PWATER]._qt.x;
 		ReturnLvlY = quests[Q_PWATER]._qt.y + 1;
 		ReturnLvl = quests[Q_PWATER]._qlevel;
-		ReturnLvlT = DTYPE_CATHEDRAL;
+		ReturnLvlT = DunType::cathedral;
 		break;
-	case SL_VILEBETRAYER:
+	case SetLvl::VileBetrayer:
 		ReturnLvlX = quests[Q_BETRAYER]._qt.x + 1;
 		ReturnLvlY = quests[Q_BETRAYER]._qt.y - 1;
 		ReturnLvl = quests[Q_BETRAYER]._qlevel;
-		ReturnLvlT = DTYPE_HELL;
+		ReturnLvlT = DunType::hell;
 		break;
 	}
 }
@@ -563,7 +563,7 @@ void GetReturnLvlPos()
 	View.x = ReturnLvlX;
 	View.y = ReturnLvlY;
 	lvl.currlevel = ReturnLvl;
-	lvl.leveltype = ReturnLvlT;
+	lvl.type() = ReturnLvlT;
 }
 
 void ResyncMPQuests()
@@ -592,7 +592,7 @@ void ResyncQuests()
 {
 	int i, tren, x, y;
 
-	if (lvl.setlevel && lvl.setlvlnum == quests[Q_PWATER]._qslvl && quests[Q_PWATER]._qactive != QUEST_INIT && lvl.leveltype == quests[Q_PWATER]._qlvltype) {
+	if (lvl.setlevel && lvl.setlvlnum == quests[Q_PWATER]._qslvl && quests[Q_PWATER]._qactive != QUEST_INIT && lvl.type() == quests[Q_PWATER]._qlvltype) {
 
 		if (quests[Q_PWATER]._qactive == QUEST_DONE)
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
@@ -655,7 +655,7 @@ void ResyncQuests()
 		quests[Q_VEIL]._qvar1 = 1;
 		SpawnQuestItem(IDI_GLDNELIX, { 0, 0 }, 5, 1);
 	}
-	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		if (quests[Q_BETRAYER]._qvar1 >= 4)
 			ObjChangeMapResync({ 1, 11 }, { 20, 18 });
 		if (quests[Q_BETRAYER]._qvar1 >= 6)
@@ -676,7 +676,7 @@ void ResyncQuests()
 void PrintQLString(int x, int y, bool cjustflag, char *str, int col)
 {
 	int len, width, i, k, sx, sy;
-	BYTE c;
+	uint8_t c;
 
 	sx = x + 96;
 	sy = y * 12 + 204;
@@ -685,7 +685,7 @@ void PrintQLString(int x, int y, bool cjustflag, char *str, int col)
 	if (cjustflag) {
 		width = 0;
 		for (i = 0; i < len; i++)
-			width += fontkern[fontframe[gbFontTransTbl[(BYTE)str[i]]]] + 1;
+			width += fontkern[fontframe[gbFontTransTbl[(uint8_t)str[i]]]] + 1;
 		if (width < 257)
 			k = (257 - width) >> 1;
 		sx += k;
@@ -694,7 +694,7 @@ void PrintQLString(int x, int y, bool cjustflag, char *str, int col)
 		CelDraw(cjustflag ? x + k + 76 : x + 76, sy + 1, pSPentSpn2Cels, PentSpn2Frame, 12);
 	}
 	for (i = 0; i < len; i++) {
-		c = fontframe[gbFontTransTbl[(BYTE)str[i]]];
+		c = fontframe[gbFontTransTbl[(uint8_t)str[i]]];
 		k += fontkern[c] + 1;
 		if (c && k <= 257) {
 			PrintChar({ sx, sy }, c, col);

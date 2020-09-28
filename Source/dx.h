@@ -12,11 +12,11 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BYTE *gpBuffer;
+extern uint8_t *gpBuffer;
 
 void dx_init(HWND hWnd);
-void lock_buf(BYTE idx);
-void unlock_buf(BYTE idx);
+void lock_buf(uint8_t idx);
+void unlock_buf(uint8_t idx);
 void dx_cleanup();
 void dx_reinit();
 

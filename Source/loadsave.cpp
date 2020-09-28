@@ -7,14 +7,14 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE *tbuff;
+uint8_t *tbuff;
 
 void LoadGame(bool firstflag)
 {
 	int i, j;
 	DWORD dwLen;
 	char szName[MAX_PATH];
-	BYTE *LoadBuff;
+	uint8_t *LoadBuff;
 	int _ViewX, _ViewY, _nummonsters, _numitems, _nummissiles, _nobjects;
 
 	FreeGameMem();
@@ -27,9 +27,9 @@ void LoadGame(bool firstflag)
 		app_fatal("Invalid save file");
 
 	lvl.setlevel = OLoad();
-	lvl.setlvlnum = WLoad();
+	lvl.setlvlnum = SetLvl(WLoad());
 	lvl.currlevel = WLoad();
-	lvl.leveltype = WLoad();
+	lvl.setType(DunType(WLoad()));
 	_ViewX = WLoad();
 	_ViewY = WLoad();
 	invflag = OLoad();
@@ -65,7 +65,7 @@ void LoadGame(bool firstflag)
 	for (i = 0; i < MAXMONSTERS; i++)
 		monstkills[i] = ILoad();
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			monstactive[i] = WLoad();
 		for (i = 0; i < nummonsters; i++)
@@ -125,7 +125,7 @@ void LoadGame(bool firstflag)
 			grid[i][j].setItem(BLoad());
 	}
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				grid[i][j].setMonster(WLoad());
@@ -168,7 +168,7 @@ void LoadGame(bool firstflag)
 	automap.zoomReset();
 	ResyncQuests();
 
-	if (lvl.leveltype != DTYPE_TOWN)
+	if (lvl.type() != DunType::town)
 		ProcessLightList();
 
 	RedoPlayerVision();
@@ -391,7 +391,7 @@ void LoadPlayer(int i)
 	CopyInt(tbuff, &pPlayer->_pVar7);
 	CopyInt(tbuff, &pPlayer->_pVar8);
 	CopyBytes(tbuff, NUMLEVELS, &pPlayer->_pLvlVisited);
-	CopyBytes(tbuff, NUMLEVELS, &pPlayer->_pSLvlVisited);
+	CopyBytes(tbuff, NUMLEVELS, &pPlayer->_pSetLvlVisited);
 	tbuff += 2; // Alignment
 
 	CopyInt(tbuff, &pPlayer->_pGFXLoad);
@@ -774,7 +774,7 @@ void LoadQuest(int i)
 	ReturnLvlX = WLoad();
 	ReturnLvlY = WLoad();
 	ReturnLvl = WLoad();
-	ReturnLvlT = WLoad();
+	ReturnLvlT = DunType(WLoad());
 	DoomQuestState = WLoad();
 }
 
@@ -834,14 +834,14 @@ void SaveGame()
 	char szName[MAX_PATH];
 
 	DWORD dwLen = codec_get_encoded_len(FILEBUFF);
-	BYTE *SaveBuff = DiabloAllocPtr(dwLen);
+	uint8_t *SaveBuff = DiabloAllocPtr(dwLen);
 	tbuff = SaveBuff;
 
 	ISave('RETL');
 	OSave(lvl.setlevel);
-	WSave(lvl.setlvlnum);
+	WSave(int(lvl.setlvlnum));
 	WSave(lvl.currlevel);
-	WSave(lvl.leveltype);
+	WSave(int(lvl.type()));
 	WSave(View.x);
 	WSave(View.y);
 	OSave(invflag);
@@ -865,7 +865,7 @@ void SaveGame()
 	for (i = 0; i < MAXMONSTERS; i++)
 		ISave(monstkills[i]);
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			WSave(monstactive[i]);
 		for (i = 0; i < nummonsters; i++)
@@ -923,7 +923,7 @@ void SaveGame()
 			BSave(grid[i][j].getItem());
 	}
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				WSave(grid[i][j].getMonster());
@@ -1116,7 +1116,7 @@ void SavePlayer(int i)
 	CopyInt(&pPlayer->_pVar7, tbuff);
 	CopyInt(&pPlayer->_pVar8, tbuff);
 	CopyBytes(&pPlayer->_pLvlVisited, NUMLEVELS, tbuff);
-	CopyBytes(&pPlayer->_pSLvlVisited, NUMLEVELS, tbuff); // only 10 used
+	CopyBytes(&pPlayer->_pSetLvlVisited, NUMLEVELS, tbuff); // only 10 used
 	tbuff += 2;                                           // Alignment
 
 	CopyInt(&pPlayer->_pGFXLoad, tbuff);
@@ -1492,7 +1492,7 @@ void SaveQuest(int i)
 	WSave(ReturnLvlX);
 	WSave(ReturnLvlY);
 	WSave(ReturnLvl);
-	WSave(ReturnLvlT);
+	WSave(int(ReturnLvlT));
 	WSave(DoomQuestState);
 }
 
@@ -1551,7 +1551,7 @@ void SaveLevel()
 	int i, j;
 	char szName[MAX_PATH];
 	int dwLen;
-	BYTE *SaveBuff;
+	uint8_t *SaveBuff;
 
 	if (lvl.currlevel == 0)
 		glSeedTbl[0] = GetRndSeed();
@@ -1560,7 +1560,7 @@ void SaveLevel()
 	SaveBuff = DiabloAllocPtr(dwLen);
 	tbuff = SaveBuff;
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				BSave(grid[i][j].dDead);
@@ -1571,7 +1571,7 @@ void SaveLevel()
 	WSave(numitems);
 	WSave(nobjects);
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			WSave(monstactive[i]);
 		for (i = 0; i < nummonsters; i++)
@@ -1600,7 +1600,7 @@ void SaveLevel()
 			BSave(grid[i][j].getItem());
 	}
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				WSave(grid[i][j].getMonster());
@@ -1635,7 +1635,7 @@ void SaveLevel()
 	if (!lvl.setlevel)
 		myplr().data._pLvlVisited[lvl.currlevel] = TRUE;
 	else
-		myplr().data._pSLvlVisited[lvl.setlvlnum] = TRUE;
+		myplr().data._pSetLvlVisited[int(lvl.setlvlnum)] = TRUE;
 }
 
 void LoadLevel()
@@ -1643,13 +1643,13 @@ void LoadLevel()
 	int i, j;
 	DWORD dwLen;
 	char szName[MAX_PATH];
-	BYTE *LoadBuff;
+	uint8_t *LoadBuff;
 
 	GetPermLevelNames(szName);
 	LoadBuff = pfile_read(szName, &dwLen);
 	tbuff = LoadBuff;
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				grid[i][j].dDead = BLoad();
@@ -1661,7 +1661,7 @@ void LoadLevel()
 	numitems = WLoad();
 	nobjects = WLoad();
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (i = 0; i < MAXMONSTERS; i++)
 			monstactive[i] = WLoad();
 		for (i = 0; i < nummonsters; i++)
@@ -1692,7 +1692,7 @@ void LoadLevel()
 			grid[i][j].setItem(BLoad());
 	}
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
 				grid[i][j].setMonster(WLoad());

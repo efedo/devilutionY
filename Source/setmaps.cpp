@@ -3,17 +3,17 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 // BUGFIX: constant data should be const
-BYTE SkelKingTrans1[] = {
+uint8_t SkelKingTrans1[] = {
 	19, 47, 26, 55,
 	26, 49, 30, 53
 };
 
-BYTE SkelKingTrans2[] = {
+uint8_t SkelKingTrans2[] = {
 	33, 19, 47, 29,
 	37, 29, 43, 39
 };
 
-BYTE SkelKingTrans3[] = {
+uint8_t SkelKingTrans3[] = {
 	27, 53, 35, 61,
 	27, 35, 34, 42,
 	45, 35, 53, 43,
@@ -21,7 +21,7 @@ BYTE SkelKingTrans3[] = {
 	31, 39, 49, 57
 };
 
-BYTE SkelKingTrans4[] = {
+uint8_t SkelKingTrans4[] = {
 	49, 45, 58, 51,
 	57, 31, 62, 37,
 	63, 31, 69, 40,
@@ -31,7 +31,7 @@ BYTE SkelKingTrans4[] = {
 	79, 43, 89, 53
 };
 
-BYTE SkelChamTrans1[] = {
+uint8_t SkelChamTrans1[] = {
 	43, 19, 50, 26,
 	51, 19, 59, 26,
 	35, 27, 42, 34,
@@ -39,12 +39,12 @@ BYTE SkelChamTrans1[] = {
 	50, 27, 59, 34
 };
 
-BYTE SkelChamTrans2[] = {
+uint8_t SkelChamTrans2[] = {
 	19, 31, 34, 47,
 	34, 35, 42, 42
 };
 
-BYTE SkelChamTrans3[] = {
+uint8_t SkelChamTrans3[] = {
 	43, 35, 50, 42,
 	51, 35, 62, 42,
 	63, 31, 66, 46,
@@ -107,8 +107,8 @@ void DRLG_SetMapTrans(char *sFileName)
 {
 	int x, y;
 	int i, j;
-	BYTE *pLevelMap;
-	BYTE *d;
+	uint8_t *pLevelMap;
+	uint8_t *d;
 	DWORD dwOffset;
 
 	pLevelMap = LoadFileInMem(sFileName, NULL);
@@ -132,64 +132,7 @@ void DRLG_SetMapTrans(char *sFileName)
 
 void LoadSetMap()
 {
-	switch (lvl.setlvlnum) {
-	case SL_SKELKING:
-		if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
-			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
-			quests[Q_SKELKING]._qvar1 = 1;
-		}
-		LoadPreL1Dungeon("Levels\\L1Data\\SklKng1.DUN", 83, 45);
-		LoadL1Dungeon("Levels\\L1Data\\SklKng2.DUN", 83, 45);
-		LoadPalette("Levels\\L1Data\\L1_2.pal");
-		DRLG_AreaTrans(sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
-		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
-		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
-		DRLG_ListTrans(sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
-		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
-		AddSKingObjs();
-		InitSKingTriggers();
-		break;
-	case SL_BONECHAMB:
-		LoadPreL2Dungeon("Levels\\L2Data\\Bonecha2.DUN", 69, 39);
-		LoadL2Dungeon("Levels\\L2Data\\Bonecha1.DUN", 69, 39);
-		LoadPalette("Levels\\L2Data\\L2_2.pal");
-		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
-		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
-		DRLG_ListTrans(sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
-		AddL2Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
-		AddSChamObjs();
-		InitSChambTriggers();
-		break;
-	case SL_MAZE:
-		LoadPreL1Dungeon("Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
-		LoadL1Dungeon("Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
-		LoadPalette("Levels\\L1Data\\L1_5.pal");
-		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
-		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
-		break;
-	case SL_POISONWATER:
-		if (quests[Q_PWATER]._qactive == QUEST_INIT)
-			quests[Q_PWATER]._qactive = QUEST_ACTIVE;
-		LoadPreL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 19, 50);
-		LoadL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 31, 83);
-		LoadPalette("Levels\\L3Data\\L3pfoul.pal");
-		InitPWaterTriggers();
-		break;
-	case SL_VILEBETRAYER:
-		if (quests[Q_BETRAYER]._qactive == QUEST_DONE) {
-			quests[Q_BETRAYER]._qvar2 = 4;
-		} else if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
-			quests[Q_BETRAYER]._qvar2 = 3;
-		}
-		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
-		LoadL1Dungeon("Levels\\L1Data\\Vile2.DUN", 35, 36);
-		LoadPalette("Levels\\L1Data\\L1_2.pal");
-		AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
-		AddVileObjs();
-		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");
-		InitNoTriggers();
-		break;
-	}
+	lvl.LoadSetMap();
 }
 
 DEVILUTION_END_NAMESPACE

@@ -18,10 +18,10 @@ void Decrypt(DWORD *castBlock, DWORD size, DWORD key);
 void Encrypt(DWORD *castBlock, DWORD size, DWORD key);
 DWORD Hash(const char *s, int type);
 void InitHash();
-int PkwareCompress(BYTE *srcData, int size);
+int PkwareCompress(uint8_t *srcData, int size);
 unsigned int PkwareBufferRead(char *buf, unsigned int *size, void *param);
 void PkwareBufferWrite(char *buf, unsigned int *size, void *param);
-void PkwareDecompress(BYTE *pbInBuff, int recv_size, int dwMaxBytes);
+void PkwareDecompress(uint8_t *pbInBuff, int recv_size, int dwMaxBytes);
 
 //#ifdef __cplusplus
 //}

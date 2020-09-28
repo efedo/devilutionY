@@ -25,7 +25,7 @@ bool zoomflag;
 bool gbProcessPlayers;
 bool gbLoadGame;
 int DebugMonsters[10];
-BOOLEAN cineflag;
+bool cineflag;
 int force_redraw;
 bool visiondebug;
 /** unused */
@@ -421,7 +421,7 @@ void diablo_parse_flags(int argc, char **argv)
 		} else if (strcasecmp("-t", argv[i]) == 0) {
 			leveldebug = TRUE;
 			lvl.setlevel = TRUE;
-			lvl.setlvlnum = SDL_atoi(argv[++i]);
+			lvl.setlvlnum = SetLvl(SDL_atoi(argv[++i]));
 		} else if (strcasecmp("-v", argv[i]) == 0) {
 			visiondebug = TRUE;
 		} else if (strcasecmp("-w", argv[i]) == 0) {
@@ -1419,7 +1419,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 	if (!lvl.setlevel) {
 		CreateLevel(lvldir);
 		IncProgress();
-		pieces.FillSolidBlockTbls();
+		pieces.FillSolidBlockTbls(lvl.type());
 		SetRndSeed(glSeedTbl[lvl.currlevel]);
 
 		if (lvl.type() != DunType::town) {
@@ -1527,7 +1527,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		IncProgress();
 		InitDead();
 		IncProgress();
-		pieces.FillSolidBlockTbls();
+		pieces.FillSolidBlockTbls(lvl.type());
 		IncProgress();
 
 		if (lvldir == 5)
@@ -1546,7 +1546,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		InitMultiView();
 		IncProgress();
 
-		if (firstflag || lvldir == 4 || !myplr().data._pSLvlVisited[lvl.setlvlnum]) {
+		if (firstflag || lvldir == 4 || !myplr().data._pSetLvlVisited[int(lvl.setlvlnum)]) {
 			InitItems();
 			SavePreLighting();
 		} else {
@@ -1593,7 +1593,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 	while (!IncProgress())
 		;
 
-	if (lvl.setlevel && lvl.setlvlnum == SL_SKELKING && quests[Q_SKELKING]._qactive == QUEST_ACTIVE)
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::SkelKing && quests[Q_SKELKING]._qactive == QUEST_ACTIVE)
 		PlaySFX(USFX_SKING1);
 }
 

@@ -4,6 +4,9 @@
  * Various global enumerators.
  */
 
+#ifndef __ENUMS_H__
+#define __ENUMS_H__
+
 DEVILUTION_BEGIN_NAMESPACE
 
 typedef enum item_quality {
@@ -14,8 +17,8 @@ typedef enum item_quality {
 
 typedef enum unique_base_item {
 	UITYPE_NONE        = 0x0,
-	UITYPE_SHORTBOW    = 0x1,
-	UITYPE_LONGBOW     = 0x2,
+	UITYPE_uint16_tBOW    = 0x1,
+	UITYPE_int32_tBOW     = 0x2,
 	UITYPE_HUNTBOW     = 0x3,
 	UITYPE_COMPBOW     = 0x4,
 	UITYPE_WARBOW      = 0x5,
@@ -26,7 +29,7 @@ typedef enum unique_base_item {
 	UITYPE_BROADSWR    = 0xA,
 	UITYPE_SABRE       = 0xB,
 	UITYPE_SCIMITAR    = 0xC,
-	UITYPE_LONGSWR     = 0xD,
+	UITYPE_int32_tSWR     = 0xD,
 	UITYPE_BASTARDSWR  = 0xE,
 	UITYPE_TWOHANDSWR  = 0xF,
 	UITYPE_GREATSWR    = 0x10,
@@ -42,8 +45,8 @@ typedef enum unique_base_item {
 	UITYPE_MAUL        = 0x1A,
 	UITYPE_WARHAMMER   = 0x1B,
 	UITYPE_FLAIL       = 0x1C,
-	UITYPE_LONGSTAFF   = 0x1D,
-	UITYPE_SHORTSTAFF  = 0x1E,
+	UITYPE_int32_tSTAFF   = 0x1D,
+	UITYPE_uint16_tSTAFF  = 0x1E,
 	UITYPE_COMPSTAFF   = 0x1F,
 	UITYPE_QUARSTAFF   = 0x20,
 	UITYPE_WARSTAFF    = 0x21,
@@ -204,11 +207,11 @@ typedef enum item_cursor_graphic {
 	ICURS_BLADE                       = 56,
 	ICURS_BASTARD_SWORD               = 57,
 	ICURS_MACE                        = 59,
-	ICURS_LONG_SWORD                  = 60,
+	ICURS_int32_t_SWORD                  = 60,
 	ICURS_BROAD_SWORD                 = 61,
 	ICURS_FALCHION                    = 62,
 	ICURS_MORNING_STAR                = 63,
-	ICURS_SHORT_SWORD                 = 64,
+	ICURS_uint16_t_SWORD                 = 64,
 	ICURS_CLAYMORE                    = 65,
 	ICURS_CLUB                        = 66,
 	ICURS_SABRE                       = 67,
@@ -237,17 +240,17 @@ typedef enum item_cursor_graphic {
 	ICURS_SMALL_SHIELD                = 105,
 	ICURS_CLEAVER                     = 106,
 	ICURS_STUDDED_LEATHER_ARMOR       = 107,
-	ICURS_SHORT_STAFF                 = 109,
+	ICURS_uint16_t_STAFF                 = 109,
 	ICURS_TWO_HANDED_SWORD            = 110,
 	ICURS_CHAIN_MAIL                  = 111,
 	ICURS_SMALL_AXE                   = 112,
 	ICURS_KITE_SHIELD                 = 113,
 	ICURS_SCALE_MAIL                  = 114,
-	ICURS_SHORT_BOW                   = 118,
-	ICURS_LONG_WAR_BOW                = 119,
+	ICURS_uint16_t_BOW                   = 118,
+	ICURS_int32_t_WAR_BOW                = 119,
 	ICURS_WAR_HAMMER                  = 121,
 	ICURS_MAUL                        = 122,
-	ICURS_LONG_STAFF                  = 123,
+	ICURS_int32_t_STAFF                  = 123,
 	ICURS_WAR_STAFF                   = 124,
 	ICURS_TAVERN_SIGN                 = 126,
 	ICURS_HARD_LEATHER_ARMOR          = 127,
@@ -275,9 +278,9 @@ typedef enum item_cursor_graphic {
 	ICURS_RING_MAIL                   = 154,
 	ICURS_STAFF_OF_LAZARUS            = 155,
 	ICURS_ARKAINES_VALOR              = 157,
-	ICURS_SHORT_WAR_BOW               = 165,
+	ICURS_uint16_t_WAR_BOW               = 165,
 	ICURS_COMPOSITE_STAFF             = 166,
-	ICURS_SHORT_BATTLE_BOW            = 167,
+	ICURS_uint16_t_BATTLE_BOW            = 167,
 	ICURS_GOLD                        = 168,
 } item_cursor_graphic;
 
@@ -1860,6 +1863,15 @@ typedef enum dungeon_message {
 	DMSG_DIABLO    = 1 << 4,
 } dungeon_message;
 
+enum class DunType {
+	town = 0x0,
+	cathedral = 0x1,
+	catacombs = 0x2,
+	caves = 0x3,
+	hell = 0x4,
+	none = 0xFF,
+};
+
 typedef enum diablo_message {
 	EMSG_NONE                   = 0,
 	EMSG_NO_AUTOMAP_IN_TOWN     = 1,
@@ -2479,14 +2491,14 @@ typedef enum _item_indexes {
 	IDI_RESURRECT,
 } _item_indexes;
 
-typedef enum setlevels {
+enum class SetLvl {
 	//SL_BUTCHCHAMB = 0x0,
-	SL_SKELKING     = 0x1,
-	SL_BONECHAMB    = 0x2,
-	SL_MAZE         = 0x3,
-	SL_POISONWATER  = 0x4,
-	SL_VILEBETRAYER = 0x5,
-} setlevels;
+	SkelKing     = 0x1,
+	BoneChamb    = 0x2,
+	Maze         = 0x3,
+	PoisonWater  = 0x4,
+	VileBetrayer = 0x5,
+};
 
 typedef enum quest_id {
 	Q_ROCK     = 0x0,
@@ -2883,3 +2895,5 @@ typedef enum conn_type {
 } conn_type;
 
 DEVILUTION_END_NAMESPACE
+
+#endif /* __ENUMS_H__ */

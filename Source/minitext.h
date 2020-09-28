@@ -14,21 +14,21 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern int qtexty;
 extern char *qtextptr;
-extern BOOLEAN qtextflag;
-extern BYTE *pMedTextCels;
-extern BYTE *pTextBoxCels;
+extern bool qtextflag;
+extern uint8_t *pMedTextCels;
+extern uint8_t *pTextBoxCels;
 
 void FreeQuestText();
 void InitQuestText();
 void InitQTextMsg(int m);
 void DrawQTextBack();
-void PrintQTextChr(int sx, int sy, BYTE *pCelBuff, int nCel);
+void PrintQTextChr(int sx, int sy, uint8_t *pCelBuff, int nCel);
 void DrawQText();
 
 /* rdata */
 
-extern const BYTE mfontframe[127];
-extern const BYTE mfontkern[56];
+extern const uint8_t mfontframe[127];
+extern const uint8_t mfontkern[56];
 
 /* data */
 

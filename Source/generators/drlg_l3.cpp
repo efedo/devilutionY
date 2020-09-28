@@ -10,48 +10,48 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BOOLEAN lavapool;
+bool lavapool;
 int abyssx;
 int lockoutcnt;
-BOOLEAN lockout[DMAXX][DMAXY];
+bool lockout[DMAXX][DMAXY];
 
-const BYTE L3ConvTbl[16] = { 8, 11, 3, 10, 1, 9, 12, 12, 6, 13, 4, 13, 2, 14, 5, 7 };
-const BYTE L3UP[20] = { 3, 3, 8, 8, 0, 10, 10, 0, 7, 7, 0, 51, 50, 0, 48, 49, 0, 0, 0, 0 };
-const BYTE L3DOWN[20] = { 3, 3, 8, 9, 7, 8, 9, 7, 0, 0, 0, 0, 47, 0, 0, 46, 0, 0, 0, 0 };
-const BYTE L3HOLDWARP[20] = { 3, 3, 8, 8, 0, 10, 10, 0, 7, 7, 0, 125, 125, 0, 125, 125, 0, 0, 0, 0 };
-const BYTE L3TITE1[34] = { 4, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 57, 58, 0, 0, 56, 55, 0, 0, 0, 0, 0 };
-const BYTE L3TITE2[34] = { 4, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 61, 62, 0, 0, 60, 59, 0, 0, 0, 0, 0 };
-const BYTE L3TITE3[34] = { 4, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 65, 66, 0, 0, 64, 63, 0, 0, 0, 0, 0 };
-const BYTE L3TITE6[42] = { 5, 4, 7, 7, 7, 7, 7, 7, 7, 7, 0, 7, 7, 7, 7, 0, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 77, 78, 0, 0, 0, 76, 74, 75, 0, 0, 0, 0, 0, 0 };
-const BYTE L3TITE7[42] = { 4, 5, 7, 7, 7, 7, 7, 7, 0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 83, 0, 0, 0, 82, 80, 0, 0, 81, 79, 0, 0, 0, 0, 0 };
-const BYTE L3TITE8[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 52, 0, 0, 0, 0 };
-const BYTE L3TITE9[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 53, 0, 0, 0, 0 };
-const BYTE L3TITE10[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 54, 0, 0, 0, 0 };
-const BYTE L3TITE11[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 67, 0, 0, 0, 0 };
-const BYTE L3TITE12[6] = { 2, 1, 9, 7, 68, 0 };
-const BYTE L3TITE13[6] = { 1, 2, 10, 7, 69, 0 };
-const BYTE L3CREV1[6] = { 2, 1, 8, 7, 84, 85 };
-const BYTE L3CREV2[6] = { 2, 1, 8, 11, 86, 87 };
-const BYTE L3CREV3[6] = { 1, 2, 8, 10, 89, 88 };
-const BYTE L3CREV4[6] = { 2, 1, 8, 7, 90, 91 };
-const BYTE L3CREV5[6] = { 1, 2, 8, 11, 92, 93 };
-const BYTE L3CREV6[6] = { 1, 2, 8, 10, 95, 94 };
-const BYTE L3CREV7[6] = { 2, 1, 8, 7, 96, 101 };
-const BYTE L3CREV8[6] = { 1, 2, 2, 8, 102, 97 };
-const BYTE L3CREV9[6] = { 2, 1, 3, 8, 103, 98 };
-const BYTE L3CREV10[6] = { 2, 1, 4, 8, 104, 99 };
-const BYTE L3CREV11[6] = { 1, 2, 6, 8, 105, 100 };
-const BYTE L3ISLE1[14] = { 2, 3, 5, 14, 4, 9, 13, 12, 7, 7, 7, 7, 7, 7 };
-const BYTE L3ISLE2[14] = { 3, 2, 5, 2, 14, 13, 10, 12, 7, 7, 7, 7, 7, 7 };
-const BYTE L3ISLE3[14] = { 2, 3, 5, 14, 4, 9, 13, 12, 29, 30, 25, 28, 31, 32 };
-const BYTE L3ISLE4[14] = { 3, 2, 5, 2, 14, 13, 10, 12, 29, 26, 30, 31, 27, 32 };
-const BYTE L3ISLE5[10] = { 2, 2, 5, 14, 13, 12, 7, 7, 7, 7 };
-const BYTE L3XTRA1[4] = { 1, 1, 7, 106 };
-const BYTE L3XTRA2[4] = { 1, 1, 7, 107 };
-const BYTE L3XTRA3[4] = { 1, 1, 7, 108 };
-const BYTE L3XTRA4[4] = { 1, 1, 9, 109 };
-const BYTE L3XTRA5[4] = { 1, 1, 10, 110 };
-const BYTE L3ANVIL[244] = {
+const uint8_t L3ConvTbl[16] = { 8, 11, 3, 10, 1, 9, 12, 12, 6, 13, 4, 13, 2, 14, 5, 7 };
+const uint8_t L3UP[20] = { 3, 3, 8, 8, 0, 10, 10, 0, 7, 7, 0, 51, 50, 0, 48, 49, 0, 0, 0, 0 };
+const uint8_t L3DOWN[20] = { 3, 3, 8, 9, 7, 8, 9, 7, 0, 0, 0, 0, 47, 0, 0, 46, 0, 0, 0, 0 };
+const uint8_t L3HOLDWARP[20] = { 3, 3, 8, 8, 0, 10, 10, 0, 7, 7, 0, 125, 125, 0, 125, 125, 0, 0, 0, 0 };
+const uint8_t L3TITE1[34] = { 4, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 57, 58, 0, 0, 56, 55, 0, 0, 0, 0, 0 };
+const uint8_t L3TITE2[34] = { 4, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 61, 62, 0, 0, 60, 59, 0, 0, 0, 0, 0 };
+const uint8_t L3TITE3[34] = { 4, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 65, 66, 0, 0, 64, 63, 0, 0, 0, 0, 0 };
+const uint8_t L3TITE6[42] = { 5, 4, 7, 7, 7, 7, 7, 7, 7, 7, 0, 7, 7, 7, 7, 0, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 77, 78, 0, 0, 0, 76, 74, 75, 0, 0, 0, 0, 0, 0 };
+const uint8_t L3TITE7[42] = { 4, 5, 7, 7, 7, 7, 7, 7, 0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 83, 0, 0, 0, 82, 80, 0, 0, 81, 79, 0, 0, 0, 0, 0 };
+const uint8_t L3TITE8[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 52, 0, 0, 0, 0 };
+const uint8_t L3TITE9[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 53, 0, 0, 0, 0 };
+const uint8_t L3TITE10[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 54, 0, 0, 0, 0 };
+const uint8_t L3TITE11[20] = { 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 67, 0, 0, 0, 0 };
+const uint8_t L3TITE12[6] = { 2, 1, 9, 7, 68, 0 };
+const uint8_t L3TITE13[6] = { 1, 2, 10, 7, 69, 0 };
+const uint8_t L3CREV1[6] = { 2, 1, 8, 7, 84, 85 };
+const uint8_t L3CREV2[6] = { 2, 1, 8, 11, 86, 87 };
+const uint8_t L3CREV3[6] = { 1, 2, 8, 10, 89, 88 };
+const uint8_t L3CREV4[6] = { 2, 1, 8, 7, 90, 91 };
+const uint8_t L3CREV5[6] = { 1, 2, 8, 11, 92, 93 };
+const uint8_t L3CREV6[6] = { 1, 2, 8, 10, 95, 94 };
+const uint8_t L3CREV7[6] = { 2, 1, 8, 7, 96, 101 };
+const uint8_t L3CREV8[6] = { 1, 2, 2, 8, 102, 97 };
+const uint8_t L3CREV9[6] = { 2, 1, 3, 8, 103, 98 };
+const uint8_t L3CREV10[6] = { 2, 1, 4, 8, 104, 99 };
+const uint8_t L3CREV11[6] = { 1, 2, 6, 8, 105, 100 };
+const uint8_t L3ISLE1[14] = { 2, 3, 5, 14, 4, 9, 13, 12, 7, 7, 7, 7, 7, 7 };
+const uint8_t L3ISLE2[14] = { 3, 2, 5, 2, 14, 13, 10, 12, 7, 7, 7, 7, 7, 7 };
+const uint8_t L3ISLE3[14] = { 2, 3, 5, 14, 4, 9, 13, 12, 29, 30, 25, 28, 31, 32 };
+const uint8_t L3ISLE4[14] = { 3, 2, 5, 2, 14, 13, 10, 12, 29, 26, 30, 31, 27, 32 };
+const uint8_t L3ISLE5[10] = { 2, 2, 5, 14, 13, 12, 7, 7, 7, 7 };
+const uint8_t L3XTRA1[4] = { 1, 1, 7, 106 };
+const uint8_t L3XTRA2[4] = { 1, 1, 7, 107 };
+const uint8_t L3XTRA3[4] = { 1, 1, 7, 108 };
+const uint8_t L3XTRA4[4] = { 1, 1, 9, 109 };
+const uint8_t L3XTRA5[4] = { 1, 1, 10, 110 };
+const uint8_t L3ANVIL[244] = {
 	11, 11, 7, 7, 7, 7, 7, 7, 7, 7,
 	7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
 	7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
@@ -90,7 +90,7 @@ void LvlCaves::create(int lvldir)
 	CreateL3Dungeon(glSeedTbl[lvl.currlevel], lvldir);
 	InitL3Triggers();
 	Freeupstairs();
-	LoadRndLvlPal(3);
+	LoadRndLvlPal(DunType::caves);
 };
 
 void LvlCaves::loadGFX()
@@ -573,10 +573,10 @@ static void DRLG_L3River()
 				if (dgrid[rx][ry].dungeon == 7) {
 					dircheck = 0;
 					if (dir < 2) {
-						river[2][riveramt] = (BYTE)random_(0, 2) + 17;
+						river[2][riveramt] = (uint8_t)random_(0, 2) + 17;
 					}
 					if (dir > 1) {
-						river[2][riveramt] = (BYTE)random_(0, 2) + 15;
+						river[2][riveramt] = (uint8_t)random_(0, 2) + 15;
 					}
 					river[0][riveramt] = rx;
 					river[1][riveramt] = ry;
@@ -733,8 +733,8 @@ static bool DRLG_L3Spawn(int x, int y, int *totarea);
 
 static bool DRLG_L3SpawnEdge(int x, int y, int *totarea)
 {
-	BYTE i;
-	static BYTE spawntable[15] = { 0, 0x0A, 0x43, 0x05, 0x2C, 0x06, 0x09, 0, 0, 0x1C, 0x83, 0x06, 0x09, 0x0A, 0x05 };
+	uint8_t i;
+	static uint8_t spawntable[15] = { 0, 0x0A, 0x43, 0x05, 0x2C, 0x06, 0x09, 0, 0, 0x1C, 0x83, 0x06, 0x09, 0x0A, 0x05 };
 
 	if (*totarea > 40) {
 		return TRUE;
@@ -783,8 +783,8 @@ static bool DRLG_L3SpawnEdge(int x, int y, int *totarea)
 
 static bool DRLG_L3Spawn(int x, int y, int *totarea)
 {
-	BYTE i;
-	static BYTE spawntable[15] = { 0, 0x0A, 0x03, 0x05, 0x0C, 0x06, 0x09, 0, 0, 0x012, 0x03, 0x06, 0x09, 0x0A, 0x05 };
+	uint8_t i;
+	static uint8_t spawntable[15] = { 0, 0x0A, 0x03, 0x05, 0x0C, 0x06, 0x09, 0, 0, 0x012, 0x03, 0x06, 0x09, 0x0A, 0x05 };
 
 	if (*totarea > 40) {
 		return TRUE;
@@ -843,8 +843,8 @@ static void DRLG_L3Pool()
 {
 	int i, j, dunx, duny, totarea, poolchance;
 	bool found;
-	BYTE k;
-	static BYTE poolsub[15] = { 0, 35, 26, 36, 25, 29, 34, 7, 33, 28, 27, 37, 32, 31, 30 };
+	uint8_t k;
+	static uint8_t poolsub[15] = { 0, 35, 26, 36, 25, 29, 34, 7, 33, 28, 27, 37, 32, 31, 30 };
 
 	for (duny = 0; duny < DMAXY; duny++) {
 		for (dunx = 0; dunx < DMAXY; dunx++) {
@@ -916,7 +916,7 @@ static void DRLG_L3PoolFix()
 	}
 }
 
-static bool DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
+static bool DRLG_L3PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, trys;
 	bool found;
@@ -997,7 +997,7 @@ static bool DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 	return FALSE;
 }
 
-static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
+static void DRLG_L3PlaceRndSet(const uint8_t *miniset, int rndper)
 {
 	int sx, sy, sw, sh, xx, yy, ii, kk;
 	bool found;
@@ -1772,7 +1772,7 @@ void LvlCaves::CreateL3Dungeon(DWORD rseed, int entry)
 void LvlCaves::LoadL3Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	uint8_t *pLevelMap, *lm;
 
 	InitL3Dungeon();
 	lvl.dmin = { 16, 16 };
@@ -1832,7 +1832,7 @@ void LvlCaves::LoadL3Dungeon(char *sFileName, int vx, int vy)
 void LoadPreL3Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	uint8_t *pLevelMap, *lm;
 
 	InitL3Dungeon();
 	DRLG_InitTrans();

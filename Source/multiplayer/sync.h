@@ -13,13 +13,13 @@ extern int sgnMonsters;
 extern WORD sgwLRU[MAXMONSTERS];
 extern int sgnSyncItem;
 
-DWORD sync_all_monsters(const BYTE *pbBuf, DWORD dwMaxLen);
+DWORD sync_all_monsters(const uint8_t *pbBuf, DWORD dwMaxLen);
 void sync_one_monster();
 bool sync_monster_active(TSyncMonster *p);
 void sync_monster_pos(TSyncMonster *p, int ndx);
 bool sync_monster_active2(TSyncMonster *p);
 void SyncPlrInv(TSyncHeader *pHdr);
-DWORD sync_update(int pnum, const BYTE *pbBuf);
+DWORD sync_update(int pnum, const uint8_t *pbBuf);
 void sync_monster(int pnum, const TSyncMonster *p);
 void sync_init();
 

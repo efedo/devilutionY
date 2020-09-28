@@ -8,19 +8,19 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE sgbNetUpdateRate;
+uint8_t sgbNetUpdateRate;
 DWORD gdwMsgLenTbl[MAX_PLRS];
 static CCritSect sgMemCrit;
 DWORD gdwDeltaBytesSec;
-BOOLEAN nthread_should_run;
+bool nthread_should_run;
 DWORD gdwTurnsInTransit;
 uintptr_t glpMsgTbl[MAX_PLRS];
 SDL_threadID glpNThreadId;
 char sgbSyncCountdown;
 int turn_upper_bit;
-BOOLEAN sgbTicsOutOfSync;
+bool sgbTicsOutOfSync;
 char sgbPacketCountdown;
-BOOLEAN sgbThreadIsRunning;
+bool sgbThreadIsRunning;
 DWORD gdwLargestMsgSize;
 DWORD gdwNormalMsgSize;
 int last_tick;

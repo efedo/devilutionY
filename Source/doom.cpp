@@ -9,7 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 int doom_quest_time;
 int doom_stars_drawn;
-BYTE *pDoomCel;
+uint8_t *pDoomCel;
 bool doomflag;
 int DoomQuestState;
 

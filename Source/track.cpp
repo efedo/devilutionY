@@ -2,7 +2,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-static BYTE sgbIsScrolling;
+static uint8_t sgbIsScrolling;
 static DWORD sgdwLastWalk;
 static bool sgbIsWalking;
 

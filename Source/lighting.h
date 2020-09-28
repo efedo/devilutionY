@@ -9,17 +9,17 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 extern LightListStruct VisionList[MAXVISION];
-extern BYTE lightactive[MAXLIGHTS];
+extern uint8_t lightactive[MAXLIGHTS];
 extern LightListStruct LightList[MAXLIGHTS];
 extern int numlights;
-extern BYTE lightradius[16][128];
+extern uint8_t lightradius[16][128];
 extern bool dovision;
 extern int numvision;
 extern char lightmax;
 extern bool dolighting;
-extern BYTE lightblock[64][16][16];
+extern uint8_t lightblock[64][16][16];
 extern int visionid;
-extern BYTE *pLightTbl;
+extern uint8_t *pLightTbl;
 extern bool lightflag;
 
 void RotateRadius(V2Di &pos, V2Di &d, V2Di &l, V2Di &b);
@@ -54,9 +54,9 @@ void lighting_color_cycling();
 
 extern char CrawlTable[2749];
 extern char *pCrawlTable[19];
-extern BYTE vCrawlTable[23][30];
-extern BYTE byte_49463C[18][18];
-extern BYTE RadiusAdj[23];
+extern uint8_t vCrawlTable[23][30];
+extern uint8_t byte_49463C[18][18];
+extern uint8_t RadiusAdj[23];
 
 DEVILUTION_END_NAMESPACE
 

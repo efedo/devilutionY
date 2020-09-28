@@ -29,7 +29,7 @@ enum _artFontColors {
 };
 
 extern TTF_Font *font;
-extern BYTE *FontTables[4];
+extern uint8_t *FontTables[4];
 extern Art ArtFonts[4][2];
 
 void LoadArtFonts();

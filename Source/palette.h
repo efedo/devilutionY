@@ -16,7 +16,7 @@ void palette_update();
 void SaveGamma();
 void palette_init();
 void LoadPalette(char *pszFileName);
-void LoadRndLvlPal(int l);
+void LoadRndLvlPal(DunType l);
 void ResetPal();
 void IncreaseGamma();
 void ApplyGamma(SDL_Color *dst, const SDL_Color *src, int n);

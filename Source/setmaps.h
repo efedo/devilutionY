@@ -16,13 +16,13 @@ void DRLG_SetMapTrans(char *sFileName);
 void LoadSetMap();
 
 /* rdata */
-extern BYTE SkelKingTrans1[8];
-extern BYTE SkelKingTrans2[8];
-extern BYTE SkelKingTrans3[20];
-extern BYTE SkelKingTrans4[28];
-extern BYTE SkelChamTrans1[20];
-extern BYTE SkelChamTrans2[8];
-extern BYTE SkelChamTrans3[36];
+extern uint8_t SkelKingTrans1[8];
+extern uint8_t SkelKingTrans2[8];
+extern uint8_t SkelKingTrans3[20];
+extern uint8_t SkelKingTrans4[28];
+extern uint8_t SkelChamTrans1[20];
+extern uint8_t SkelChamTrans2[8];
+extern uint8_t SkelChamTrans3[36];
 extern char *quest_level_names[];
 
 //#ifdef __cplusplus

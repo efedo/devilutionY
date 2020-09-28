@@ -58,7 +58,7 @@ public:
 	void SetPlrAnims();
 
 	// Animation
-	void NewPlrAnim(BYTE *Peq, int numFrames, int Delay, int width); // Plays an animation
+	void NewPlrAnim(uint8_t *Peq, int numFrames, int Delay, int width); // Plays an animation
 	void ClearPlrPVars();
 	void ClearPlrRVars();
 
@@ -150,19 +150,19 @@ bool PlrDeathModeOK(int p);
 
 extern int plr_lframe_size;
 extern int plr_wframe_size;
-extern BYTE plr_gfx_flag;
+extern uint8_t plr_gfx_flag;
 extern int plr_aframe_size;
 extern int plr_fframe_size;
 extern int plr_qframe_size;
 extern bool deathflag;
 extern int plr_hframe_size;
 extern int plr_bframe_size;
-extern BYTE plr_gfx_bflag;
+extern uint8_t plr_gfx_bflag;
 extern int plr_sframe_size;
 extern int deathdelay;
 extern int plr_dframe_size;
 
-void SetPlayerGPtrs(BYTE *pData, BYTE **pAnim);
+void SetPlayerGPtrs(uint8_t *pData, uint8_t **pAnim);
 DWORD GetPlrGFXSize(char *szCel);
 void AddPlrMonstExper(int lvl, int exp, char pmask);
 void InitMultiView();
@@ -186,7 +186,7 @@ extern V2Di plroff[9];
 extern V2Di plroff2[9];
 
 extern int ExpLvlsTbl[MAXCHARLEVEL];
-extern BYTE fix[9];
+extern uint8_t fix[9];
 
 DEVILUTION_END_NAMESPACE
 

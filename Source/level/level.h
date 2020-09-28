@@ -6,26 +6,21 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+//#include "../enums.h"
+//#include "../structs.h"
 
-enum class DunType {
-	town = 0x0,
-	cathedral = 0x1,
-	catacombs = 0x2,
-	caves = 0x3,
-	hell = 0x4,
-	none = 0xFF,
-};
+DEVILUTION_BEGIN_NAMESPACE
 
 class Level {
 public:
+	Level();
 	Level(DunType duntype);
 	~Level();
 
 	virtual void create(int lvldir);
 	virtual void loadGFX();
 	virtual void DRLG_CreateThemeRoom(int themeIndex);
-
+	virtual void LoadSetMap();
 
 	void setType(DunType duntype);
 	void setpc(RECT32 newsetpc);
@@ -35,28 +30,28 @@ public:
 	V2Di dmin; // min dungeon walkable position
 	V2Di dmax; // max dungeon walkable position
 
-	BYTE currlevel;
-	BOOLEAN setlevel;
-	BYTE setlvlnum;
-	char setlvltype;
+	uint8_t currlevel;
+	bool setlevel;
+	SetLvl setlvlnum;
+	DunType setlvltype;
 
 	char TransVal; // Transfer???
-	BOOLEAN TransList[256];
+	bool TransList[256];
 
 	int themeCount;
 	THEME_LOC themeLoc[MAXTHEMES];
 
 	// Loaded with level
-	BYTE *pDungeonCels = 0;
-	BYTE *pMegaTiles = 0;
-	BYTE *pLevelPieces = 0;
-	BYTE *pSpecialCels = 0;
+	uint8_t *pDungeonCels = 0;
+	uint8_t *pMegaTiles = 0;
+	uint8_t *pLevelPieces = 0;
+	uint8_t *pSpecialCels = 0;
 
 	std::string automapFile();
 	bool hasAutomapFile();
 protected:
-	std::string _automapFile;
-	DunType _leveltype;
+	std::string _automapFile = "";
+	DunType _leveltype = DunType::town;
 	RECT32 _setpc;
 };
 

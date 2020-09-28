@@ -234,7 +234,7 @@ inline void SDLBackport_PixelformatToMask(int pixelformat, Uint32 *flags, Uint32
     Uint32 *amask)
 {
 	if (pixelformat == SDL_PIXELFORMAT_RGBA8888) {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#if SDL_uint8_tORDER == SDL_BIG_ENDIAN
 		*rmask = 0xff000000;
 		*gmask = 0x00ff0000;
 		*bmask = 0x0000ff00;
@@ -246,7 +246,7 @@ inline void SDLBackport_PixelformatToMask(int pixelformat, Uint32 *flags, Uint32
 		*amask = 0xff000000;
 #endif
 	} else if (pixelformat == SDL_PIXELFORMAT_RGB888) {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#if SDL_uint8_tORDER == SDL_BIG_ENDIAN
 		*rmask = 0xff000000;
 		*gmask = 0x00ff0000;
 		*bmask = 0x0000ff00;

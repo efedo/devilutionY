@@ -12,7 +12,7 @@ SDL_Color orig_palette[256];
 
 int gamma_correction = 100;
 bool color_cycling_enabled = TRUE;
-BOOLEAN sgbFadedIn = TRUE;
+bool sgbFadedIn = TRUE;
 
 void palette_update()
 {
@@ -77,7 +77,7 @@ void LoadPalette(char *pszFileName)
 {
 	int i;
 	void *pBuf;
-	BYTE PalData[256][3];
+	uint8_t PalData[256][3];
 
 	assert(pszFileName);
 
@@ -95,12 +95,12 @@ void LoadPalette(char *pszFileName)
 	}
 }
 
-void LoadRndLvlPal(int l)
+void LoadRndLvlPal(DunType l)
 {
 	int rv;
 	char szFileName[MAX_PATH];
 
-	if (l == DTYPE_TOWN) {
+	if (l == DunType::town) {
 		LoadPalette("Levels\\TownData\\Town.pal");
 	} else {
 		rv = random_(0, 4) + 1;

@@ -10,14 +10,14 @@ DEVILUTION_BEGIN_NAMESPACE
 int qtexty;
 char *qtextptr;
 int qtextSpd;
-BOOLEAN qtextflag;
+bool qtextflag;
 int scrolltexty;
 int sgLastScroll;
-BYTE *pMedTextCels;
-BYTE *pTextBoxCels;
+uint8_t *pMedTextCels;
+uint8_t *pTextBoxCels;
 
 /** Maps from font index to medtexts.cel frame number. */
-const BYTE mfontframe[127] = {
+const uint8_t mfontframe[127] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -37,7 +37,7 @@ const BYTE mfontframe[127] = {
  * character width may be distinct from the frame width, which is 22 for every
  * medtexts.cel frame.
  */
-const BYTE mfontkern[56] = {
+const uint8_t mfontkern[56] = {
 	5, 15, 10, 13, 14, 10, 9, 13, 11, 5,
 	5, 11, 10, 16, 13, 16, 10, 15, 12, 10,
 	14, 17, 17, 22, 17, 16, 11, 5, 11, 11,
@@ -90,9 +90,9 @@ void DrawQTextBack()
 	trans_rect(PANEL_LEFT + 27, 28, 585, 297);
 }
 
-void PrintQTextChr(int sx, int sy, BYTE *pCelBuff, int nCel)
+void PrintQTextChr(int sx, int sy, uint8_t *pCelBuff, int nCel)
 {
-	BYTE *pStart, *pEnd;
+	uint8_t *pStart, *pEnd;
 
 	/// ASSERT: assert(gpBuffer);
 	pStart = gpBufStart;
@@ -108,7 +108,7 @@ void PrintQTextChr(int sx, int sy, BYTE *pCelBuff, int nCel)
 void DrawQText()
 {
 	int i, l, w, tx, ty;
-	BYTE c;
+	uint8_t c;
 	char *p, *pnl, *s;
 	char tempstr[128];
 	bool doneflag;
@@ -127,7 +127,7 @@ void DrawQText()
 		s = p;
 		l = 0;
 		while (*s != '\n' && *s != '|' && w < 543) {
-			c = gbFontTransTbl[(BYTE)*s];
+			c = gbFontTransTbl[(uint8_t)*s];
 			s++;
 			if (c != '\0') {
 				tempstr[l] = c;
@@ -149,7 +149,7 @@ void DrawQText()
 		}
 		for (i = 0; tempstr[i]; i++) {
 			p++;
-			c = mfontframe[gbFontTransTbl[(BYTE)tempstr[i]]];
+			c = mfontframe[gbFontTransTbl[(uint8_t)tempstr[i]]];
 			if (*p == '\n') {
 				p++;
 			}

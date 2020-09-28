@@ -12,15 +12,15 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BYTE *optbar_cel;
-extern BOOLEAN mouseNavigation;
-extern BYTE *PentSpin_cel;
-extern BYTE *BigTGold_cel;
+extern uint8_t *optbar_cel;
+extern bool mouseNavigation;
+extern uint8_t *PentSpin_cel;
+extern uint8_t *BigTGold_cel;
 extern int dword_634474;
 extern char byte_634478;
 extern void (*dword_63447C)(TMenuItem *);
 extern TMenuItem *sgpCurrentMenu;
-extern BYTE *option_cel;
+extern uint8_t *option_cel;
 extern int sgCurrentMenuIdx;
 
 void gmenu_draw_pause();
@@ -37,7 +37,7 @@ int gmenu_get_lfont(TMenuItem *pItem);
 bool gmenu_presskeys(int vkey);
 void gmenu_left_right(bool isRight);
 bool gmenu_on_mouse_move();
-BOOLEAN gmenu_get_mouse_slider(int *plOffset);
+bool gmenu_get_mouse_slider(int *plOffset);
 bool gmenu_left_mouse(bool isDown);
 void gmenu_enable(TMenuItem *pMenuItem, bool enable);
 void gmenu_slider_set(TMenuItem *pItem, int min, int max, int gamma);
@@ -46,8 +46,8 @@ void gmenu_slider_steps(TMenuItem *pItem, int dwTicks);
 
 /* rdata */
 
-extern const BYTE lfontframe[];
-extern const BYTE lfontkern[];
+extern const uint8_t lfontframe[];
+extern const uint8_t lfontkern[];
 
 //#ifdef __cplusplus
 //}

@@ -7,62 +7,62 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE sgbNextTalkSave;
-BYTE sgbTalkSavePos;
-BYTE *pDurIcons;
-BYTE *pChrButtons;
+uint8_t sgbNextTalkSave;
+uint8_t sgbTalkSavePos;
+uint8_t *pDurIcons;
+uint8_t *pChrButtons;
 bool drawhpflag;
 bool dropGoldFlag;
 bool panbtn[8];
 bool chrbtn[4];
-BYTE *pMultiBtns;
-BYTE *pPanelButtons;
-BYTE *pChrPanel;
+uint8_t *pMultiBtns;
+uint8_t *pPanelButtons;
+uint8_t *pChrPanel;
 bool lvlbtndown;
 char sgszTalkSave[8][80];
 int dropGoldValue;
 bool drawmanaflag;
 bool chrbtnactive;
 char sgszTalkMsg[MAX_SEND_STR_LEN];
-BYTE *pPanelText;
-BYTE *pLifeBuff;
-BYTE *pBtmBuff;
-BYTE *pTalkBtns;
+uint8_t *pPanelText;
+uint8_t *pLifeBuff;
+uint8_t *pBtmBuff;
+uint8_t *pTalkBtns;
 bool pstrjust[4];
 int pnumlines;
 bool pinfoflag;
 bool talkbtndown[3];
 int pSpell;
-BYTE *pManaBuff;
+uint8_t *pManaBuff;
 char infoclr;
 int sgbPlrTalkTbl;
-BYTE *pGBoxBuff;
-BYTE *pSBkBtnCel;
+uint8_t *pGBoxBuff;
+uint8_t *pSBkBtnCel;
 char tempstr[256];
-BOOLEAN whisper[MAX_PLRS];
+bool whisper[MAX_PLRS];
 int sbooktab;
 int pSplType;
 int initialDropGoldIndex;
 bool talkflag;
-BYTE *pSBkIconCels;
+uint8_t *pSBkIconCels;
 bool sbookflag;
 bool chrflag;
 bool drawbtnflag;
-BYTE *pSpellBkCel;
+uint8_t *pSpellBkCel;
 char infostr[256];
 int numpanbtns;
-BYTE *pStatusPanel;
+uint8_t *pStatusPanel;
 char panelstr[4][64];
 bool panelflag;
-BYTE SplTransTbl[256];
+uint8_t SplTransTbl[256];
 int initialDropGoldValue;
-BYTE *pSpellCels;
+uint8_t *pSpellCels;
 bool panbtndown;
-BYTE *pTalkPanel;
+uint8_t *pTalkPanel;
 bool spselflag;
 
 /** Maps from font index to smaltext.cel frame number. */
-const BYTE fontframe[128] = {
+const uint8_t fontframe[128] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 54, 44, 57, 58, 56, 55, 47, 40, 41, 59, 39, 50, 37, 51, 52,
@@ -78,7 +78,7 @@ const BYTE fontframe[128] = {
  * character width may be distinct from the frame width, which is 13 for every
  * smaltext.cel frame.
  */
-const BYTE fontkern[68] = {
+const uint8_t fontkern[68] = {
 	8, 10, 7, 9, 8, 7, 6, 8, 8, 3,
 	3, 8, 6, 11, 9, 10, 6, 9, 9, 6,
 	9, 11, 10, 13, 10, 11, 7, 5, 7, 7,
@@ -103,7 +103,7 @@ const int lineOffsets[5][5] = {
  * small, medium and large sized fonts; which corresponds to smaltext.cel,
  * medtexts.cel and bigtgold.cel respectively.
  */
-const BYTE gbFontTransTbl[256] = {
+const uint8_t gbFontTransTbl[256] = {
 	// clang-format off
 	'\0', 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
@@ -214,7 +214,7 @@ int SpellPages[6][7] = {
 #define SPLROWICONLS 10
 #define SPLICONLAST 43
 
-void DrawSpellCel(int px, int py, BYTE *Trans, int nCel, int w)
+void DrawSpellCel(int px, int py, uint8_t *Trans, int nCel, int w)
 {
 	DrawSpellCel({ px, py }, Trans, nCel, w);
 }
@@ -227,7 +227,7 @@ void DrawSpellCel(int px, int py, BYTE *Trans, int nCel, int w)
  * @param nCel Index of the cel frame to draw. 0 based.
  * @param w Width of the frame.
  */
-void DrawSpellCel(V2Di p, BYTE *Trans, int nCel, int w)
+void DrawSpellCel(V2Di p, uint8_t *Trans, int nCel, int w)
 {
 	CelDrawLight(p, Trans, nCel, w, SplTransTbl);
 }
@@ -511,8 +511,8 @@ void PrintChar(V2Di s, int nCel, char col)
 	assert(gpBuffer);
 
 	int i;
-	BYTE pix;
-	BYTE tbl[256];
+	uint8_t pix;
+	uint8_t tbl[256];
 
 	switch (col) {
 	case COL_WHITE:
@@ -577,7 +577,7 @@ void DrawPanelBox(RECT32 r, V2Di s)
 	nDstOff = s.x + BUFFER_WIDTH * s.y;
 
 	int hgt;
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	src = &pBtmBuff[nSrcOff];
 	dst = &gpBuffer[nDstOff];
@@ -597,7 +597,7 @@ void DrawPanelBox(RECT32 r, V2Di s)
  * @param sx Back buffer coordinate
  * @param sy Back buffer coordinate
  */
-void SetFlaskHeight(BYTE *pCelBuff, int min, int max, V2Di s)
+void SetFlaskHeight(uint8_t *pCelBuff, int min, int max, V2Di s)
 {
 	int nSrcOff, nDstOff, w;
 
@@ -607,7 +607,7 @@ void SetFlaskHeight(BYTE *pCelBuff, int min, int max, V2Di s)
 	nDstOff = s.x + BUFFER_WIDTH * s.y;
 	w = max - min;
 
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	src = &pCelBuff[nSrcOff];
 	dst = &gpBuffer[nDstOff];
@@ -627,10 +627,10 @@ void SetFlaskHeight(BYTE *pCelBuff, int min, int max, V2Di s)
  * @param nDstOff Offset of the target buffer where the bytes will start to be copied to.
  * @param h How many lines of the source buffer that will be copied.
  */
-void DrawFlask(BYTE *pCelBuff, int w, int nSrcOff, BYTE *pBuff, int nDstOff, int h)
+void DrawFlask(uint8_t *pCelBuff, int w, int nSrcOff, uint8_t *pBuff, int nDstOff, int h)
 {
 	int wdt, hgt;
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	src = &pCelBuff[nSrcOff];
 	dst = &pBuff[nDstOff];
@@ -1084,7 +1084,7 @@ void CheckPanelInfo()
 void CheckBtnUp()
 {
 	int i;
-	BOOLEAN gamemenuOff;
+	bool gamemenuOff;
 
 	gamemenuOff = TRUE;
 	drawbtnflag = TRUE;
@@ -1176,10 +1176,10 @@ void FreeControlPan()
 	MemFreeDbg(pGBoxBuff);
 }
 
-bool control_WriteStringToBuffer(BYTE *str)
+bool control_WriteStringToBuffer(uint8_t *str)
 {
 	int k;
-	BYTE ichar;
+	uint8_t ichar;
 
 	k = 0;
 	while (*str) {
@@ -1281,7 +1281,7 @@ void PrintInfo()
 
 void CPrintString(int y, char *str, bool center, int lines)
 {
-	BYTE c;
+	uint8_t c;
 	char *tmp;
 	int lineOffset, strWidth;
 	V2Di s;
@@ -1293,7 +1293,7 @@ void CPrintString(int y, char *str, bool center, int lines)
 		strWidth = 0;
 		tmp = str;
 		while (*tmp) {
-			c = gbFontTransTbl[(BYTE)*tmp++];
+			c = gbFontTransTbl[(uint8_t)*tmp++];
 			strWidth += fontkern[fontframe[c]] + 2;
 		}
 		if (strWidth < 288)
@@ -1301,7 +1301,7 @@ void CPrintString(int y, char *str, bool center, int lines)
 		s.x += lineOffset;
 	}
 	while (*str) {
-		c = gbFontTransTbl[(BYTE)*str++];
+		c = gbFontTransTbl[(uint8_t)*str++];
 		c = fontframe[c];
 		lineOffset += fontkern[c] + 2;
 		if (c) {
@@ -1315,12 +1315,12 @@ void CPrintString(int y, char *str, bool center, int lines)
 
 void PrintGameStr(V2Di pos, const char *str, int color)
 {
-	BYTE c;
+	uint8_t c;
 	V2Di s;
 	s.x = pos.x + SCREEN_X;
 	s.y = pos.y + SCREEN_Y;
 	while (*str) {
-		c = gbFontTransTbl[(BYTE)*str++];
+		c = gbFontTransTbl[(uint8_t)*str++];
 		c = fontframe[c];
 		if (c)
 			PrintChar(s, c, color);
@@ -1548,7 +1548,7 @@ void MY_PlrStringXY(int x, int y, int endX, char *pszStr, char col, int base)
  */
 void MY_PlrStringXY(V2Di pos, int endX, char *pszStr, char col, int base)
 {
-	BYTE c;
+	uint8_t c;
 	char *tmp;
 	V2Di s;
 	int screen_x, line, widthOffset;
@@ -1560,14 +1560,14 @@ void MY_PlrStringXY(V2Di pos, int endX, char *pszStr, char col, int base)
 	screen_x = 0;
 	tmp = pszStr;
 	while (*tmp) {
-		c = gbFontTransTbl[(BYTE)*tmp++];
+		c = gbFontTransTbl[(uint8_t)*tmp++];
 		screen_x += fontkern[fontframe[c]] + base;
 	}
 	if (screen_x < widthOffset)
 		line = (widthOffset - screen_x) >> 1;
 	s.x += line;
 	while (*pszStr) {
-		c = gbFontTransTbl[(BYTE)*pszStr++];
+		c = gbFontTransTbl[(uint8_t)*pszStr++];
 		c = fontframe[c];
 		line += fontkern[c] + base;
 		if (c) {
@@ -1736,7 +1736,7 @@ void RedBack()
 	assert(gpBuffer);
 
 	int w, h;
-	BYTE *dst, *tbl;
+	uint8_t *dst, *tbl;
 
 	if (lvl.type() != DunType::hell) {
 		dst = &gpBuffer[SCREENXY(0, 0)];
@@ -1847,7 +1847,7 @@ void DrawSpellBook()
 
 void PrintSBookStr(V2Di pos, bool cjustflag, char *pszStr, char col)
 {
-	BYTE c;
+	uint8_t c;
 	char *tmp;
 	int screen_x, line, sx;
 
@@ -1857,7 +1857,7 @@ void PrintSBookStr(V2Di pos, bool cjustflag, char *pszStr, char col)
 		screen_x = 0;
 		tmp = pszStr;
 		while (*tmp) {
-			c = gbFontTransTbl[(BYTE)*tmp++];
+			c = gbFontTransTbl[(uint8_t)*tmp++];
 			screen_x += fontkern[fontframe[c]] + 1;
 		}
 		if (screen_x < 222)
@@ -1865,7 +1865,7 @@ void PrintSBookStr(V2Di pos, bool cjustflag, char *pszStr, char col)
 		sx += line;
 	}
 	while (*pszStr) {
-		c = gbFontTransTbl[(BYTE)*pszStr++];
+		c = gbFontTransTbl[(uint8_t)*pszStr++];
 		c = fontframe[c];
 		line += fontkern[c] + 1;
 		if (c) {
@@ -1928,7 +1928,7 @@ void DrawGoldSplit(int amount)
 		sprintf(tempstr, "%u", amount);
 		PrintGameStr({ 388, 140 }, tempstr, COL_WHITE);
 		for (i = 0; i < tempstr[i]; i++) {
-			screen_x += fontkern[fontframe[gbFontTransTbl[(BYTE)tempstr[i]]]] + 1;
+			screen_x += fontkern[fontframe[gbFontTransTbl[(uint8_t)tempstr[i]]]] + 1;
 		}
 		screen_x += 452;
 	} else {
@@ -2078,14 +2078,14 @@ void DrawTalkPan()
 
 char *control_print_talk_msg(char *msg, int *x, int y, int color)
 {
-	BYTE c;
+	uint8_t c;
 	int width;
 
 	*x += 264;
 	width = *x;
 	while (*msg) {
 
-		c = fontframe[gbFontTransTbl[(BYTE)*msg]];
+		c = fontframe[gbFontTransTbl[(uint8_t)*msg]];
 		width += fontkern[c] + 1;
 		if (width > 514 + PANEL_LEFT)
 			return msg;
@@ -2238,7 +2238,7 @@ bool control_presskeys(int vkey)
 void control_press_enter()
 {
 	int i;
-	BYTE talk_save;
+	uint8_t talk_save;
 
 	if (sgszTalkMsg[0] != 0) {
 		control_reset_talk_msg(sgszTalkMsg);

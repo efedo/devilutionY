@@ -43,7 +43,7 @@ private:
 	V2Di AutoMap;
 	bool automapflag; // Specifies whether the automap is enabled.
 	char AmShiftTab[31];
-	BOOLEAN automapview[DMAXX][DMAXY]; // Tracks the explored areas of the map.
+	bool automapview[DMAXX][DMAXY]; // Tracks the explored areas of the map.
 	int AutoMapScale; // Specifies the scale of the automap.
 	V2Di AutoMapOfs;
 	//int AutoMapXOfs; // X offset

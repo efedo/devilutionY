@@ -8,17 +8,17 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 LightListStruct VisionList[MAXVISION];
-BYTE lightactive[MAXLIGHTS];
+uint8_t lightactive[MAXLIGHTS];
 LightListStruct LightList[MAXLIGHTS];
 int numlights;
-BYTE lightradius[16][128];
+uint8_t lightradius[16][128];
 bool dovision;
 int numvision;
 char lightmax;
 bool dolighting;
-BYTE lightblock[64][16][16];
+uint8_t lightblock[64][16][16];
 int visionid;
-BYTE *pLightTbl;
+uint8_t *pLightTbl;
 bool lightflag;
 
 /**
@@ -431,7 +431,7 @@ char *pCrawlTable[19] = {
 	CrawlTable + 2460
 };
 /** vCrawlTable specifies the X- Y-coordinate offsets of lighting visions. */
-BYTE vCrawlTable[23][30] = {
+uint8_t vCrawlTable[23][30] = {
 	{ 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 15, 0 },
 	{ 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 1, 9, 1, 10, 1, 11, 1, 12, 1, 13, 1, 14, 1, 15, 1 },
 	{ 1, 0, 2, 0, 3, 0, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9, 1, 10, 1, 11, 1, 12, 2, 13, 2, 14, 2, 15, 2 },
@@ -457,7 +457,7 @@ BYTE vCrawlTable[23][30] = {
 	{ 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 15 }
 };
 /** unused */
-BYTE byte_49463C[18][18] = {
+uint8_t byte_49463C[18][18] = {
 	{ 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 	{ 0, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 	{ 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
@@ -479,7 +479,7 @@ BYTE byte_49463C[18][18] = {
 };
 
 /** RadiusAdj maps from vCrawlTable index to lighting vision radius adjustment. */
-BYTE RadiusAdj[23] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0 };
+uint8_t RadiusAdj[23] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0 };
 
 void RotateRadius(V2Di &pos, V2Di &d, V2Di &l, V2Di & b)
 {
@@ -767,9 +767,9 @@ void MakeLightTable()
 {
 	int i, j, k, l, lights, shade, l1, l2, cnt, rem, div;
 	double fs, fa;
-	BYTE col, max;
-	BYTE *tbl, *trn;
-	BYTE blood[16];
+	uint8_t col, max;
+	uint8_t *tbl, *trn;
+	uint8_t blood[16];
 
 	tbl = pLightTbl;
 	shade = 0;
@@ -838,7 +838,7 @@ void MakeLightTable()
 		*tbl++ = 0;
 	}
 
-	if (lvl.leveltype == DTYPE_HELL) {
+	if (lvl.type() == DunType::hell) {
 		tbl = pLightTbl;
 		for (i = 0; i < lights; i++) {
 			l1 = lights - i;
@@ -931,7 +931,7 @@ void MakeLightTable()
 		for (j = 0; j < 8; j++) {
 			for (k = 0; k < 16; k++) {
 				for (l = 0; l < 16; l++) {
-					fs = (BYTE)sqrt((double)(8 * l - j) * (8 * l - j) + (8 * k - i) * (8 * k - i));
+					fs = (uint8_t)sqrt((double)(8 * l - j) * (8 * l - j) + (8 * k - i) * (8 * k - i));
 					if (fs < 0.0) {
 						fa = -0.5;
 					} else {
@@ -1059,7 +1059,7 @@ void ChangeLight(int i, V2Di pos, int r)
 void ProcessLightList()
 {
 	int i, j;
-	BYTE temp;
+	uint8_t temp;
 
 	if (lightflag != 0) {
 		return;
@@ -1210,12 +1210,12 @@ void ProcessVisionList()
 void lighting_color_cycling()
 {
 	int i, j, l;
-	BYTE col;
-	BYTE *tbl;
+	uint8_t col;
+	uint8_t *tbl;
 
 	l = light4flag ? 4 : 16;
 
-	if (lvl.leveltype != DTYPE_HELL) {
+	if (lvl.type() != DunType::hell) {
 		return;
 	}
 

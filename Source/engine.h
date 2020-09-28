@@ -33,7 +33,7 @@ extern int SeedCount;
 /** valid - if x/y are in bounds */
 extern bool gbNotInView;
 
-inline BYTE *CelGetFrameStart(BYTE *pCelBuff, int nCel)
+inline uint8_t *CelGetFrameStart(uint8_t *pCelBuff, int nCel)
 {
 	DWORD *pFrameTable;
 
@@ -43,7 +43,7 @@ inline BYTE *CelGetFrameStart(BYTE *pCelBuff, int nCel)
 }
 
 #define LOAD_LE32(b) (((DWORD)(b)[3] << 24) | ((DWORD)(b)[2] << 16) | ((DWORD)(b)[1] << 8) | (DWORD)(b)[0])
-inline BYTE *CelGetFrame(BYTE *pCelBuff, int nCel, int *nDataSize)
+inline uint8_t *CelGetFrame(uint8_t *pCelBuff, int nCel, int *nDataSize)
 {
 	DWORD nCellStart;
 
@@ -52,10 +52,10 @@ inline BYTE *CelGetFrame(BYTE *pCelBuff, int nCel, int *nDataSize)
 	return pCelBuff + nCellStart;
 }
 
-inline BYTE *CelGetFrameClipped(BYTE *pCelBuff, int nCel, int *nDataSize)
+inline uint8_t *CelGetFrameClipped(uint8_t *pCelBuff, int nCel, int *nDataSize)
 {
 	DWORD nDataStart;
-	BYTE *pRLEBytes = CelGetFrame(pCelBuff, nCel, nDataSize);
+	uint8_t *pRLEBytes = CelGetFrame(pCelBuff, nCel, nDataSize);
 
 	nDataStart = pRLEBytes[1] << 8 | pRLEBytes[0];
 	*nDataSize -= nDataStart;
@@ -63,43 +63,43 @@ inline BYTE *CelGetFrameClipped(BYTE *pCelBuff, int nCel, int *nDataSize)
 	return pRLEBytes + nDataStart;
 }
 
-void CelDraw(int sx, int sy, BYTE *pCelBuff, int nCel, int nWidth);
-void CelDraw(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void CelBlitFrame(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth);
-void CelClippedDraw(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void CelDrawLight(V2Di s, BYTE *pCelBuff, int nCel, int nWidth, BYTE *tbl);
-void CelClippedDrawLight(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void CelClippedBlitLightTrans(BYTE *pBuff, BYTE *pCelBuff, int nCel, int nWidth, int trans);
-void CelDrawLightRed(V2Di s, BYTE *pCelBuff, int nCel, int nWidth, char light);
-void CelBlitSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth);
-void CelClippedDrawSafe(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void CelBlitLightSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth, BYTE *tbl);
-void CelBlitLightTransSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth);
-void CelDrawLightRedSafe(V2Di s, BYTE *pCelBuff, int nCel, int nWidth, char light);
-void CelBlitWidth(BYTE *pBuff, V2Di s, int wdt, BYTE *pCelBuff, int nCel, int nWidth);
-void CelBlitOutline(char col, V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void ENG_set_pixel(int sx, int sy, BYTE col);
-void ENG_set_pixel(V2Di s, BYTE col);
+void CelDraw(int sx, int sy, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelDraw(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelBlitFrame(uint8_t *pBuff, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelClippedDraw(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelDrawLight(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth, uint8_t *tbl);
+void CelClippedDrawLight(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelClippedBlitLightTrans(uint8_t *pBuff, uint8_t *pCelBuff, int nCel, int nWidth, int trans);
+void CelDrawLightRed(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth, char light);
+void CelBlitSafe(uint8_t *pDecodeTo, uint8_t *pRLEBytes, int nDataSize, int nWidth);
+void CelClippedDrawSafe(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelBlitLightSafe(uint8_t *pDecodeTo, uint8_t *pRLEBytes, int nDataSize, int nWidth, uint8_t *tbl);
+void CelBlitLightTransSafe(uint8_t *pDecodeTo, uint8_t *pRLEBytes, int nDataSize, int nWidth);
+void CelDrawLightRedSafe(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth, char light);
+void CelBlitWidth(uint8_t *pBuff, V2Di s, int wdt, uint8_t *pCelBuff, int nCel, int nWidth);
+void CelBlitOutline(char col, V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void ENG_set_pixel(int sx, int sy, uint8_t col);
+void ENG_set_pixel(V2Di s, uint8_t col);
 void engine_draw_pixel(V2Di s);
-void DrawLine(int x0, int y0, int x1, int y1, BYTE col);
-void DrawLine(V2Di p0, V2Di p1, BYTE col);
+void DrawLine(int x0, int y0, int x1, int y1, uint8_t col);
+void DrawLine(V2Di p0, V2Di p1, uint8_t col);
 Dir GetDirection(V2Di t1, V2Di t2);
 void SetRndSeed(int s);
 int GetRndSeed();
-int random_(BYTE idx, int v);
+int random_(uint8_t idx, int v);
 void engine_debug_trap(bool show_cursor);
-BYTE *DiabloAllocPtr(DWORD dwBytes);
+uint8_t *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
-BYTE *LoadFileInMem(const char *pszName, DWORD *pdwFileLen);
-DWORD LoadFileWithMem(const char *pszName, BYTE *p);
-void Cl2ApplyTrans(BYTE *p, BYTE *ttbl, int nCel);
-void Cl2Draw(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void Cl2DrawOutline(char col, V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void Cl2DrawLightTbl(V2Di s, BYTE *pCelBuff, int nCel, int nWidth, char light);
-void Cl2DrawLight(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);
-void Cl2BlitSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth);
-void Cl2BlitOutlineSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth, char col);
-void Cl2BlitLightSafe(BYTE *pDecodeTo, BYTE *pRLEBytes, int nDataSize, int nWidth, BYTE *pTable);
+uint8_t *LoadFileInMem(const char *pszName, DWORD *pdwFileLen);
+DWORD LoadFileWithMem(const char *pszName, uint8_t *p);
+void Cl2ApplyTrans(uint8_t *p, uint8_t *ttbl, int nCel);
+void Cl2Draw(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void Cl2DrawOutline(char col, V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void Cl2DrawLightTbl(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth, char light);
+void Cl2DrawLight(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
+void Cl2BlitSafe(uint8_t *pDecodeTo, uint8_t *pRLEBytes, int nDataSize, int nWidth);
+void Cl2BlitOutlineSafe(uint8_t *pDecodeTo, uint8_t *pRLEBytes, int nDataSize, int nWidth, char col);
+void Cl2BlitLightSafe(uint8_t *pDecodeTo, uint8_t *pRLEBytes, int nDataSize, int nWidth, uint8_t *pTable);
 void PlayInGameMovie(char *pszMovie);
 
 /* rdata */

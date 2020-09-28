@@ -4,13 +4,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 extern int qtopline;
 extern bool questlog;
-extern BYTE *pQLogCel;
+extern uint8_t *pQLogCel;
 extern QuestStruct quests[MAXQUESTS];
 extern int qline;
 extern int qlist[MAXQUESTS];
@@ -18,7 +14,7 @@ extern int numqlines;
 extern int WaterDone;
 extern int ReturnLvlX;
 extern int ReturnLvlY;
-extern int ReturnLvlT;
+extern DunType ReturnLvlT;
 extern int ReturnLvl;
 
 void InitQuests();
@@ -56,10 +52,6 @@ extern int QuestGroup1[3];
 extern int QuestGroup2[3];
 extern int QuestGroup3[3];
 extern int QuestGroup4[2];
-
-//#ifdef __cplusplus
-//}
-//#endif
 
 DEVILUTION_END_NAMESPACE
 

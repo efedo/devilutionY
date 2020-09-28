@@ -12,7 +12,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BYTE *tbuff;
+extern uint8_t *tbuff;
 
 void LoadGame(bool firstflag);
 char BLoad();

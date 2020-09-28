@@ -12,15 +12,15 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BYTE sgbNetUpdateRate;
+extern uint8_t sgbNetUpdateRate;
 extern DWORD gdwMsgLenTbl[MAX_PLRS];
 extern DWORD gdwDeltaBytesSec;
-extern BOOLEAN nthread_should_run;
+extern bool nthread_should_run;
 extern DWORD gdwTurnsInTransit;
 extern uintptr_t glpMsgTbl[MAX_PLRS];
 extern SDL_threadID glpNThreadId;
 extern int turn_upper_bit;
-extern BOOLEAN sgbThreadIsRunning;
+extern bool sgbThreadIsRunning;
 extern DWORD gdwLargestMsgSize;
 extern DWORD gdwNormalMsgSize;
 extern int last_tick;

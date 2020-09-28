@@ -46,7 +46,7 @@ void SoundSample::Stop()
 	}
 };
 
-int SoundSample::SetChunk(BYTE *fileData, DWORD dwBytes)
+int SoundSample::SetChunk(uint8_t *fileData, DWORD dwBytes)
 {
 	SDL_RWops *buf1 = SDL_RWFromConstMem(fileData, dwBytes);
 	if (buf1 == NULL) {

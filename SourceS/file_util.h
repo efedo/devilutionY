@@ -67,7 +67,7 @@ inline bool ResizeFile(const char *path, std::uintmax_t size)
 {
 #if defined(_WIN64) || defined(_WIN32)
 	LARGE_INTEGER lisize;
-	lisize.QuadPart = static_cast<LONGLONG>(size);
+	lisize.QuadPart = static_cast<int64_t>(size);
 	if (lisize.QuadPart < 0) {
 		return false;
 	}

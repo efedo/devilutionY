@@ -6,7 +6,7 @@
 
 namespace dvl {
 
-BOOLEAN gbSndInited;
+bool gbSndInited;
 int sglMusicVolume;
 int sglSoundVolume;
 HANDLE sghMusic;
@@ -17,8 +17,8 @@ char *musicBuffer;
 
 /* data */
 
-BOOLEAN gbMusicOn = true;
-BOOLEAN gbSoundOn = true;
+bool gbMusicOn = true;
+bool gbSoundOn = true;
 int sgnMusicTrack = NUM_MUSIC;
 
 char *sgszMusicTracks[NUM_MUSIC] = {
@@ -70,7 +70,7 @@ void snd_play_snd(TSnd *pSnd, int lVolume, int lPan)
 TSnd *sound_file_load(char *path)
 {
 	HANDLE file;
-	BYTE *wave_file;
+	uint8_t *wave_file;
 	TSnd *pSnd;
 	DWORD dwBytes;
 	int error;

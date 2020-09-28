@@ -9,20 +9,20 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BOOLEAN gbSomebodyWonGameKludge;
+bool gbSomebodyWonGameKludge;
 TBuffer sgHiPriBuf;
 char szPlayerDescript[128];
 WORD sgwPackPlrOffsetTbl[MAX_PLRS];
 PkPlayerStruct netplr[MAX_PLRS];
-BOOLEAN sgbPlayerTurnBitTbl[MAX_PLRS];
-BOOLEAN sgbPlayerLeftGameTbl[MAX_PLRS];
+bool sgbPlayerTurnBitTbl[MAX_PLRS];
+bool sgbPlayerLeftGameTbl[MAX_PLRS];
 int sgbSentThisCycle;
 bool gbShouldValidatePackage;
-BYTE gbActivePlayers;
-BOOLEAN gbGameDestroyed;
-BOOLEAN sgbSendDeltaTbl[MAX_PLRS];
+uint8_t gbActivePlayers;
+bool gbGameDestroyed;
+bool sgbSendDeltaTbl[MAX_PLRS];
 _gamedata sgGameInitInfo;
-BOOLEAN gbSelectProvider;
+bool gbSelectProvider;
 int sglTimeoutStart;
 int sgdwPlayerLeftReasonTbl[MAX_PLRS];
 TBuffer sgLoPriBuf;
@@ -31,10 +31,10 @@ DWORD sgdwGameLoops;
  * Specifies the maximum number of players in a game, where 1
  * represents a single player game and 4 represents a multi player game.
  */
-//BYTE gbMaxPlayers = 0;
-BOOLEAN sgbTimeout;
+//uint8_t gbMaxPlayers = 0;
+bool sgbTimeout;
 char szPlayerName[128];
-BYTE gbDeltaSender;
+uint8_t gbDeltaSender;
 bool sgbNetInited;
 int player_state[MAX_PLRS];
 
@@ -48,14 +48,14 @@ const int event_types[3] = {
 	EVENT_TYPE_PLAYER_MESSAGE
 };
 
-void multi_msg_add(BYTE *pbMsg, BYTE bLen)
+void multi_msg_add(uint8_t *pbMsg, uint8_t bLen)
 {
 	if (pbMsg && bLen) {
 		tmsg_add(pbMsg, bLen);
 	}
 }
 
-void NetSendLoPri(BYTE *pbMsg, BYTE bLen)
+void NetSendLoPri(uint8_t *pbMsg, uint8_t bLen)
 {
 	if (pbMsg && bLen) {
 		multi_copy_packet(&sgLoPriBuf, pbMsg, bLen);
@@ -63,9 +63,9 @@ void NetSendLoPri(BYTE *pbMsg, BYTE bLen)
 	}
 }
 
-void multi_copy_packet(TBuffer *buf, void *packet, BYTE size)
+void multi_copy_packet(TBuffer *buf, void *packet, uint8_t size)
 {
-	BYTE *p;
+	uint8_t *p;
 
 	if (buf->dwNextWriteOffset + size + 2 > 0x1000) {
 		return;
@@ -79,7 +79,7 @@ void multi_copy_packet(TBuffer *buf, void *packet, BYTE size)
 	p[size] = 0;
 }
 
-void multi_send_packet(void *packet, BYTE dwSize)
+void multi_send_packet(void *packet, uint8_t dwSize)
 {
 	TPkt pkt;
 
@@ -104,10 +104,10 @@ void NetRecvPlrData(TPkt *pkt)
 	pkt->hdr.bdex = myplr().data._pBaseDex;
 }
 
-void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
+void NetSendHiPri(uint8_t *pbMsg, uint8_t bLen)
 {
-	BYTE *hipri_body;
-	BYTE *lowpri_body;
+	uint8_t *hipri_body;
+	uint8_t *lowpri_body;
 	DWORD len;
 	TPkt pkt;
 	int size;
@@ -130,9 +130,9 @@ void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
 	}
 }
 
-BYTE *multi_recv_packet(TBuffer *pBuf, BYTE *body, int *size)
+uint8_t *multi_recv_packet(TBuffer *pBuf, uint8_t *body, int *size)
 {
-	BYTE *src_ptr;
+	uint8_t *src_ptr;
 	size_t chunk_size;
 
 	if (pBuf->dwNextWriteOffset != 0) {
@@ -156,7 +156,7 @@ BYTE *multi_recv_packet(TBuffer *pBuf, BYTE *body, int *size)
 	return body;
 }
 
-void multi_send_msg_packet(int pmask, BYTE *src, BYTE len)
+void multi_send_msg_packet(int pmask, uint8_t *src, uint8_t len)
 {
 	DWORD v, p, t;
 	TPkt pkt;
@@ -336,7 +336,7 @@ void multi_mon_seeds()
 void multi_begin_timeout()
 {
 	int i, nTicks, nState, nLowestActive, nLowestPlayer;
-	BYTE bGroupPlayers, bGroupCount;
+	uint8_t bGroupPlayers, bGroupCount;
 
 	if (!sgbTimeout) {
 		return;
@@ -463,13 +463,13 @@ void multi_process_network_packets()
 				}
 			}
 		}
-		multi_handle_all_packets(dwID, (BYTE *)(pkt + 1), dwMsgSize - sizeof(TPktHdr));
+		multi_handle_all_packets(dwID, (uint8_t *)(pkt + 1), dwMsgSize - sizeof(TPktHdr));
 	}
 	if (SErrGetLastError() != STORM_ERROR_NO_MESSAGES_WAITING)
 		nthread_terminate_game("SNetReceiveMsg");
 }
 
-void multi_handle_all_packets(int pnum, BYTE *pData, int nSize)
+void multi_handle_all_packets(int pnum, uint8_t *pData, int nSize)
 {
 	int nLen;
 
@@ -488,12 +488,12 @@ void multi_process_tmsgs()
 	int cnt;
 	TPkt pkt;
 
-	while (cnt = tmsg_get((BYTE *)&pkt, 512)) {
-		multi_handle_all_packets(myplr(), (BYTE *)&pkt, cnt);
+	while (cnt = tmsg_get((uint8_t *)&pkt, 512)) {
+		multi_handle_all_packets(myplr(), (uint8_t *)&pkt, cnt);
 	}
 }
 
-void multi_send_zero_packet(int pnum, BYTE bCmd, BYTE *pbSrc, DWORD dwLen)
+void multi_send_zero_packet(int pnum, uint8_t bCmd, uint8_t *pbSrc, DWORD dwLen)
 {
 	DWORD dwOffset, dwBody, dwMsg;
 	TPkt pkt;
@@ -753,7 +753,7 @@ void SetupLocalCoords()
 {
 	if (!leveldebug || plr.isMultiplayer()) {
 		lvl.currlevel = 0;
-		lvl.leveltype = DTYPE_TOWN;
+		lvl.setType(DunType::town);
 		lvl.setlevel = FALSE;
 	}
 	V2Di pos = { 75, 68 };

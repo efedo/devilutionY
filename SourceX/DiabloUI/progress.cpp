@@ -64,7 +64,7 @@ void progress_Free()
 	UnloadTtfFont();
 }
 
-void progress_Render(BYTE progress)
+void progress_Render(uint8_t progress)
 {
 	SDL_FillRect(GetOutputSurface(), NULL, 0x000000);
 	DrawArt(0, 0, &ArtBackground);

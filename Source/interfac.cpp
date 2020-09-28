@@ -7,12 +7,12 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE *sgpBackCel;
+uint8_t *sgpBackCel;
 int sgdwProgress;
 int progress_id;
 
 /** The colour used for the progress bar as an index into the palette. */
-const BYTE BarColor[3] = { 138, 43, 254 };
+const uint8_t BarColor[3] = { 138, 43, 254 };
 /** The screen position of the top left corner of the progress bar. */
 const int BarPos[3][2] = { { 53, 37 }, { 53, 421 }, { 53, 37 } };
 
@@ -60,7 +60,7 @@ void DrawCutscene()
 
 void DrawProgress(int screen_x, int screen_y, int progress_id)
 {
-	BYTE *dst;
+	uint8_t *dst;
 	int i;
 
 	dst = &gpBuffer[screen_x + BUFFER_WIDTH * screen_y];
@@ -118,7 +118,7 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		FreeGameMem();
 		lvl.currlevel++;
-		lvl.leveltype = gnLevelTypeTbl[lvl.currlevel];
+		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 0);
@@ -134,7 +134,7 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		FreeGameMem();
 		lvl.currlevel--;
-		lvl.leveltype = gnLevelTypeTbl[lvl.currlevel];
+		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 1);
@@ -150,7 +150,7 @@ void ShowProgress(unsigned int uMsg)
 		}
 		IncProgress();
 		lvl.setlevel = TRUE;
-		lvl.leveltype = lvl.setlvltype;
+		lvl.setType(lvl.setlvltype);
 		FreeGameMem();
 		IncProgress();
 		LoadGameLevel(FALSE, 2);
@@ -195,7 +195,7 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		FreeGameMem();
 		lvl.currlevel = myplr().data.plrlevel;
-		lvl.leveltype = gnLevelTypeTbl[lvl.currlevel];
+		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 6);
@@ -211,7 +211,7 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		FreeGameMem();
 		lvl.currlevel = myplr().data.plrlevel;
-		lvl.leveltype = gnLevelTypeTbl[lvl.currlevel];
+		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 7);
@@ -227,7 +227,7 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		FreeGameMem();
 		lvl.currlevel = myplr().data.plrlevel;
-		lvl.leveltype = gnLevelTypeTbl[lvl.currlevel];
+		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
 		LoadGameLevel(FALSE, 0);
@@ -345,11 +345,11 @@ void InitCutscene(unsigned int uMsg)
 		}
 		break;
 	case WM_DIABSETLVL:
-		if (lvl.setlvlnum == SL_BONECHAMB) {
+		if (lvl.setlvlnum == SetLvl::BoneChamb) {
 			sgpBackCel = LoadFileInMem("Gendata\\Cut2.CEL", NULL);
 			LoadPalette("Gendata\\Cut2.pal");
 			progress_id = 2;
-		} else if (lvl.setlvlnum == SL_VILEBETRAYER) {
+		} else if (lvl.setlvlnum == SetLvl::VileBetrayer) {
 			sgpBackCel = LoadFileInMem("Gendata\\Cutportr.CEL", NULL);
 			LoadPalette("Gendata\\Cutportr.pal");
 			progress_id = 1;
@@ -360,11 +360,11 @@ void InitCutscene(unsigned int uMsg)
 		}
 		break;
 	case WM_DIABRTNLVL:
-		if (lvl.setlvlnum == SL_BONECHAMB) {
+		if (lvl.setlvlnum == SetLvl::BoneChamb) {
 			sgpBackCel = LoadFileInMem("Gendata\\Cut2.CEL", NULL);
 			LoadPalette("Gendata\\Cut2.pal");
 			progress_id = 2;
-		} else if (lvl.setlvlnum == SL_VILEBETRAYER) {
+		} else if (lvl.setlvlnum == SetLvl::VileBetrayer) {
 			sgpBackCel = LoadFileInMem("Gendata\\Cutportr.CEL", NULL);
 			LoadPalette("Gendata\\Cutportr.pal");
 			progress_id = 1;

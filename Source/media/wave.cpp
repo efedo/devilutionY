@@ -8,9 +8,9 @@ void WCloseFile(HANDLE file)
 	SFileCloseFile(file);
 }
 
-LONG WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName)
+int32_t WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName)
 {
-	LONG ret;
+	int32_t ret;
 
 	if ((ret = SFileGetFileSize(hsFile, lpFileSizeHigh)) == 0)
 		FileErrDlg(FileName);

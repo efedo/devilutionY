@@ -7,14 +7,13 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-BYTE *pSetPiece;
+uint8_t *pSetPiece;
 bool setloadflag;
-BYTE *pSpeedCels;
+uint8_t *pSpeedCels;
 int SpeedFrameTbl[128][16];
 /**
  * List of transparancy masks to use for dPieces
  */
-char block_lvid[MAXTILES + 1];
 int level_frame_count[MAXTILES];
 int tile_defs[MAXTILES];
 WORD level_frame_types[MAXTILES];
@@ -37,10 +36,10 @@ void SetDungeonMicros()
 	WORD *pPiece;
 	MICROS *pMap;
 
-	if (lvl.leveltype == DTYPE_TOWN) {
+	if (lvl.type() == DunType::town) {
 		MicroTileLen = 16;
 		blocks = 16;
-	} else if (lvl.leveltype != DTYPE_HELL) {
+	} else if (lvl.type() != DunType::hell) {
 		MicroTileLen = 10;
 		blocks = 10;
 	} else {
@@ -53,10 +52,10 @@ void SetDungeonMicros()
 			pMap = &grid[x][y].dpiece_defs_map_2;
 			if (grid[x][y].isPiece()) {
 				lv = grid[x][y].getPiece();
-				if (lvl.leveltype != DTYPE_HELL && lvl.leveltype != DTYPE_TOWN)
-					pPiece = (WORD *)&pLevelPieces[20 * lv];
+				if (lvl.type() != DunType::hell && lvl.type() != DunType::town)
+					pPiece = (WORD *)&lvl.pLevelPieces[20 * lv];
 				else
-					pPiece = (WORD *)&pLevelPieces[32 * lv];
+					pPiece = (WORD *)&lvl.pLevelPieces[32 * lv];
 				for (i = 0; i < blocks; i++)
 					pMap->mt[i] = SDL_SwapLE16(pPiece[(i & 1) + blocks - 2 - (i & 0xE)]);
 			} else {
@@ -74,7 +73,7 @@ void SetDungeonMicros()
 	//		pMap = &grid[x][y].dpiece_defs_map_2;
 	//		if (lv != 0) {
 	//			lv--;
-	//			if (lvl.leveltype != DTYPE_HELL && lvl.leveltype != DTYPE_TOWN)
+	//			if (lvl.type() != DunType::hell && lvl.type() != DunType::town)
 	//				pPiece = (WORD *)&pLevelPieces[20 * lv];
 	//			else
 	//				pPiece = (WORD *)&pLevelPieces[32 * lv];
@@ -130,10 +129,10 @@ void DRLG_CopyTrans(int sx, int sy, int dx, int dy)
 	grid[dx][dy].dTransVal = grid[sx][sy].dTransVal;
 }
 
-void DRLG_ListTrans(int num, BYTE *List)
+void DRLG_ListTrans(int num, uint8_t *List)
 {
 	int i;
-	BYTE x1, y1, x2, y2;
+	uint8_t x1, y1, x2, y2;
 
 	for (i = 0; i < num; i++) {
 		x1 = *List++;
@@ -144,10 +143,10 @@ void DRLG_ListTrans(int num, BYTE *List)
 	}
 }
 
-void DRLG_AreaTrans(int num, BYTE *List)
+void DRLG_AreaTrans(int num, uint8_t *List)
 {
 	int i;
-	BYTE x1, y1, x2, y2;
+	uint8_t x1, y1, x2, y2;
 
 	for (i = 0; i < num; i++) {
 		x1 = *List++;
@@ -316,7 +315,7 @@ void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rnd
 				lvl.themeLoc[lvl.themeCount].y = j + 1;
 				lvl.themeLoc[lvl.themeCount].width = themeW;
 				lvl.themeLoc[lvl.themeCount].height = themeH;
-				if (lvl.leveltype == DTYPE_CAVES)
+				if (lvl.type() == DunType::caves)
 					DRLG_RectTrans(2 * i + 20, 2 * j + 20, 2 * (i + themeW) + 15, 2 * (j + themeH) + 15);
 				else
 					DRLG_MRectTrans(i + 1, j + 1, i + themeW, j + themeH);
@@ -363,7 +362,7 @@ void InitLevels()
 {
 	if (!leveldebug) {
 		lvl.currlevel = 0;
-		lvl.leveltype = DTYPE_TOWN;
+		lvl.setType(DunType::town);
 		lvl.setlevel = FALSE;
 	}
 }

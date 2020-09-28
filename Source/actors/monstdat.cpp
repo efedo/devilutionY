@@ -128,7 +128,7 @@ MonsterData monsterdata[] = {
 /**
  * Map between .DUN file value and monster type enum
  */
-BYTE MonstConvTbl[] = {
+uint8_t MonstConvTbl[] = {
 	MT_NZOMBIE,
 	MT_BZOMBIE,
 	MT_GZOMBIE,
@@ -295,7 +295,7 @@ BYTE MonstConvTbl[] = {
 /**
  * Define what version a monster type is available in
  */
-BYTE MonstAvailTbl[] = {
+uint8_t MonstAvailTbl[] = {
 	MAT_ALWAYS, // Zombie
 	MAT_ALWAYS, // Ghoul
 	MAT_ALWAYS, // Rotting Carcass

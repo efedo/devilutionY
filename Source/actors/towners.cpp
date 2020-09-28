@@ -9,7 +9,7 @@ DWORD sgdwCowClicks;
 /** unused 0x6AAC28 */
 bool bannerflag;
 bool boyloadflag;
-BYTE *pCowCels;
+uint8_t *pCowCels;
 TownerStruct towner[NUM_TOWNERS];
 
 const int snSFX[3][NUM_CLASSES] = {
@@ -121,7 +121,7 @@ int GetActiveTowner(int t)
 	return -1;
 }
 
-void SetTownerGPtrs(BYTE *pData, BYTE **pAnim)
+void SetTownerGPtrs(uint8_t *pData, uint8_t **pAnim)
 {
 	int i;
 	DWORD *pFrameTable;
@@ -133,7 +133,7 @@ void SetTownerGPtrs(BYTE *pData, BYTE **pAnim)
 	}
 }
 
-void NewTownerAnim(int tnum, BYTE *pAnim, int numFrames, int Delay)
+void NewTownerAnim(int tnum, uint8_t *pAnim, int numFrames, int Delay)
 {
 	towner[tnum]._tAnimData = pAnim;
 	towner[tnum]._tAnimLen = numFrames;

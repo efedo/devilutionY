@@ -8,7 +8,7 @@ WORD sgwLRU[MAXMONSTERS];
 int sgnSyncItem;
 int sgnSyncPInv;
 
-DWORD sync_all_monsters(const BYTE *pbBuf, DWORD dwMaxLen)
+DWORD sync_all_monsters(const uint8_t *pbBuf, DWORD dwMaxLen)
 {
 	TSyncHeader *pHdr;
 	int i;
@@ -188,7 +188,7 @@ void SyncPlrInv(TSyncHeader *pHdr)
 	}
 }
 
-DWORD sync_update(int pnum, const BYTE *pbBuf)
+DWORD sync_update(int pnum, const uint8_t *pbBuf)
 {
 	TSyncHeader *pHdr;
 	WORD wLen;
@@ -264,7 +264,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 				monsters[ndx].M_ClearSquares();
 				grid.at(monsters[ndx].data._m).setMonster(ndx);
 				monsters[ndx].M_WalkDir(md);
-				monsters[ndx].data._msquelch = UCHAR_MAX;
+				monsters[ndx].data._msquelch = UINT8_MAX;
 			}
 		}
 	} else if (grid[p->_mx][p->_my].getMonster() == 0) {
@@ -274,7 +274,7 @@ void sync_monster(int pnum, const TSyncMonster *p)
 		decode_enemy(ndx, p->_menemy);
 		md = GetDirection({ p->_mx, p->_my }, monsters[ndx].data._menemypos);
 		monsters[ndx].M_StartStand(md);
-		monsters[ndx].data._msquelch = UCHAR_MAX;
+		monsters[ndx].data._msquelch = UINT8_MAX;
 	}
 
 	decode_enemy(ndx, p->_menemy);

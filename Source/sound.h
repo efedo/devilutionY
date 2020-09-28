@@ -9,7 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //#endif
 
 extern SoundSample *DSBs[8];
-extern BOOLEAN gbSndInited;
+extern bool gbSndInited;
 extern HMODULE hDsound_dll;
 
 void snd_update(bool bStopAll);
@@ -36,9 +36,9 @@ int sound_get_or_set_sound_volume(int volume);
 
 /* data */
 
-extern BOOLEAN gbMusicOn;
-extern BOOLEAN gbSoundOn;
-extern BOOLEAN gbDupSounds;
+extern bool gbMusicOn;
+extern bool gbSoundOn;
+extern bool gbDupSounds;
 extern char unk_volume[4][2];
 
 //#ifdef __cplusplus

@@ -8,7 +8,7 @@ int stextlhold;
 ItemStruct boyitem;
 int stextshold;
 ItemStruct premiumitem[SMITH_PREMIUM_ITEMS];
-BYTE *pSTextBoxCels;
+uint8_t *pSTextBoxCels;
 int premiumlevel;
 int talker;
 STextStruct stext[24];
@@ -23,13 +23,13 @@ int numpremium;
 ItemStruct healitem[20];
 ItemStruct golditem;
 char storehidx[48];
-BYTE *pSTextSlidCels;
+uint8_t *pSTextSlidCels;
 int stextvhold;
 int stextsel;
 char stextscrldbtn;
 int gossipend;
-BYTE *pSPentSpn2Cels;
-BYTE PentSpn2Frame;
+uint8_t *pSPentSpn2Cels;
+uint8_t PentSpn2Frame;
 DWORD PentSpn2Tick;
 int stextsval;
 int boylevel;
@@ -126,7 +126,7 @@ void PrintSString(int x, int y, bool cjustflag, char *str, char col, int val)
 {
 	int xx, yy;
 	int len, width, sx, sy, i, k, s;
-	BYTE c;
+	uint8_t c;
 	char valstr[32];
 
 	s = y * 12 + stext[y]._syoff;
@@ -145,7 +145,7 @@ void PrintSString(int x, int y, bool cjustflag, char *str, char col, int val)
 	if (cjustflag) {
 		width = 0;
 		for (i = 0; i < len; i++)
-			width += fontkern[fontframe[gbFontTransTbl[(BYTE)str[i]]]] + 1;
+			width += fontkern[fontframe[gbFontTransTbl[(uint8_t)str[i]]]] + 1;
 		if (width < yy)
 			k = (yy - width) >> 1;
 		sx += k;
@@ -154,7 +154,7 @@ void PrintSString(int x, int y, bool cjustflag, char *str, char col, int val)
 		CelDraw(cjustflag ? xx + x + k - 20 : xx + x - 20, s + 205, pSPentSpn2Cels, PentSpn2Frame, 12);
 	}
 	for (i = 0; i < len; i++) {
-		c = fontframe[gbFontTransTbl[(BYTE)str[i]]];
+		c = fontframe[gbFontTransTbl[(uint8_t)str[i]]];
 		k += fontkern[c] + 1;
 		if (c && k <= yy) {
 			PrintChar({ sx, sy }, c, col);
@@ -165,7 +165,7 @@ void PrintSString(int x, int y, bool cjustflag, char *str, char col, int val)
 		sprintf(valstr, "%i", val);
 		sx = PANEL_X + 592 - x;
 		for (i = strlen(valstr) - 1; i >= 0; i--) {
-			c = fontframe[gbFontTransTbl[(BYTE)valstr[i]]];
+			c = fontframe[gbFontTransTbl[(uint8_t)valstr[i]]];
 			sx -= fontkern[c] + 1;
 			if (c) {
 				PrintChar({ sx, sy }, c, col);
@@ -197,7 +197,7 @@ void DrawSLine(int y)
 	/// ASSERT: assert(gpBuffer);
 
 	int i;
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	src = &gpBuffer[xy];
 	dst = &gpBuffer[yy];
@@ -415,7 +415,7 @@ void PrintStoreItem(ItemStruct *x, int l, char iclr)
 {
 	char sstr[128];
 	char str, dex;
-	BYTE mag;
+	uint8_t mag;
 
 	sstr[0] = '\0';
 	if (x->_iIdentified) {
@@ -1547,7 +1547,7 @@ void STextESC()
 {
 	if (qtextflag) {
 		qtextflag = FALSE;
-		if (lvl.leveltype == DTYPE_TOWN)
+		if (lvl.type() == DunType::town)
 			stream_stop();
 	} else {
 		switch (stextflag) {
@@ -2631,7 +2631,7 @@ void STextEnter()
 {
 	if (qtextflag) {
 		qtextflag = FALSE;
-		if (lvl.leveltype == DTYPE_TOWN)
+		if (lvl.type() == DunType::town)
 			stream_stop();
 	} else {
 		PlaySFX(IS_TITLSLCT);
@@ -2715,7 +2715,7 @@ void CheckStoreBtn()
 
 	if (qtextflag) {
 		qtextflag = FALSE;
-		if (lvl.leveltype == DTYPE_TOWN)
+		if (lvl.type() == DunType::town)
 			stream_stop();
 	} else if (stextsel != -1 && Mouse.y >= 32 && Mouse.y <= 320) {
 		if (!stextsize) {

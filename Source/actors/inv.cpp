@@ -8,7 +8,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 bool invflag;
-BYTE *pInvCels;
+uint8_t *pInvCels;
 bool drawsbarflag;
 int sgdwLastTime; // check name
 
@@ -132,11 +132,11 @@ void InitInv()
 
 void InvDrawSlotBack(RECT32 r)
 {
-	BYTE *dst;
+	uint8_t *dst;
 	assert(gpBuffer);
 	dst = &gpBuffer[r.x + BUFFER_WIDTH * r.y];
 	int wdt, hgt;
-	BYTE pix;
+	uint8_t pix;
 
 	for (hgt = r.h; hgt; hgt--, dst -= BUFFER_WIDTH + r.w) {
 		for (wdt = r.w; wdt; wdt--) {
@@ -157,7 +157,7 @@ void DrawInv()
 	bool invtest[NUM_INV_GRID_ELEM];
 	int frame, frame_width, color, i, j, ii;
 	V2Di screen;
-	BYTE *pBuff;
+	uint8_t *pBuff;
 
 	CelDraw(RIGHT_PANEL_X, 351 + SCREEN_Y, pInvCels, 1, SPANEL_WIDTH);
 
@@ -397,7 +397,7 @@ void DrawInv()
 void DrawInvBelt()
 {
 	int i, frame, frame_width, color;
-	BYTE fi, ff;
+	uint8_t fi, ff;
 
 	if (talkflag) {
 		return;
@@ -1081,7 +1081,7 @@ void PlayerInventory::CheckInvPaste(V2Di pos)
 	}
 }
 
-void PlayerInventory::CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, bool bId)
+void PlayerInventory::CheckInvSwap(uint8_t bLoc, int idx, WORD wCI, int seed, bool bId)
 {
 	PlayerStruct *p;
 
@@ -1267,7 +1267,7 @@ void PlayerInventory::CheckInvCut(V2Di pos)
 	}
 }
 
-void PlayerInventory::inv_update_rem_item(BYTE iv)
+void PlayerInventory::inv_update_rem_item(uint8_t iv)
 {
 	if (iv < NUM_INVLOC) {
 		owner.data.InvBody[iv]._itype = ITYPE_NONE;
@@ -1962,7 +1962,7 @@ bool UseScroll()
 
 	if (pcurs != CURSOR_HAND)
 		return FALSE;
-	if (lvl.leveltype == DTYPE_TOWN && !spelldata[myplr().data._pRSpell].sTownSpell)
+	if (lvl.type() == DunType::town && !spelldata[myplr().data._pRSpell].sTownSpell)
 		return FALSE;
 
 	for (i = 0; i < myplr().data._pNumInv; i++) {

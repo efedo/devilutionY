@@ -11,13 +11,12 @@ DEVILUTION_BEGIN_NAMESPACE
 
 
 
-extern BYTE *pSetPiece;
+extern uint8_t *pSetPiece;
 extern bool setloadflag;
-extern BYTE *pSpeedCels;
+extern uint8_t *pSpeedCels;
 extern int SpeedFrameTbl[128][16];
 
 extern int tile_defs[MAXTILES];
-extern char block_lvid[MAXTILES + 1];
 extern int level_frame_count[MAXTILES];
 extern WORD level_frame_types[MAXTILES];
 extern int level_frame_sizes[MAXTILES];
@@ -38,8 +37,8 @@ void DRLG_InitTrans();
 void DRLG_MRectTrans(int x1, int y1, int x2, int y2);
 void DRLG_RectTrans(int x1, int y1, int x2, int y2);
 void DRLG_CopyTrans(int sx, int sy, int dx, int dy);
-void DRLG_ListTrans(int num, BYTE *List);
-void DRLG_AreaTrans(int num, BYTE *List);
+void DRLG_ListTrans(int num, uint8_t *List);
+void DRLG_AreaTrans(int num, uint8_t *List);
 void DRLG_InitSetPC();
 void DRLG_SetPC();
 void Make_SetPC(int x, int y, int w, int h);

@@ -150,19 +150,19 @@ void packet_in::decrypt()
 		return;
 #ifndef NONET
 	if (!disable_encryption) {
-		if (encrypted_buffer.size() < crypto_secretbox_NONCEBYTES
-				+ crypto_secretbox_MACBYTES
+		if (encrypted_buffer.size() < crypto_secretbox_NONCEuint8_tS
+				+ crypto_secretbox_MACuint8_tS
 				+ sizeof(packet_type) + 2 * sizeof(plr_t))
 			throw packet_exception();
 		auto pktlen = (encrypted_buffer.size()
-			- crypto_secretbox_NONCEBYTES
-			- crypto_secretbox_MACBYTES);
+			- crypto_secretbox_NONCEuint8_tS
+			- crypto_secretbox_MACuint8_tS);
 		decrypted_buffer.resize(pktlen);
 		if (crypto_secretbox_open_easy(decrypted_buffer.data(),
 				encrypted_buffer.data()
-					+ crypto_secretbox_NONCEBYTES,
+					+ crypto_secretbox_NONCEuint8_tS,
 				encrypted_buffer.size()
-					- crypto_secretbox_NONCEBYTES,
+					- crypto_secretbox_NONCEuint8_tS,
 				encrypted_buffer.data(),
 				key.data()))
 			throw packet_exception();
@@ -192,14 +192,14 @@ void packet_out::encrypt()
 	if (!disable_encryption) {
 		auto len_cleartext = encrypted_buffer.size();
 		encrypted_buffer.insert(encrypted_buffer.begin(),
-			crypto_secretbox_NONCEBYTES, 0);
+			crypto_secretbox_NONCEuint8_tS, 0);
 		encrypted_buffer.insert(encrypted_buffer.end(),
-			crypto_secretbox_MACBYTES, 0);
-		randombytes_buf(encrypted_buffer.data(), crypto_secretbox_NONCEBYTES);
+			crypto_secretbox_MACuint8_tS, 0);
+		randombytes_buf(encrypted_buffer.data(), crypto_secretbox_NONCEuint8_tS);
 		if (crypto_secretbox_easy(encrypted_buffer.data()
-					+ crypto_secretbox_NONCEBYTES,
+					+ crypto_secretbox_NONCEuint8_tS,
 				encrypted_buffer.data()
-					+ crypto_secretbox_NONCEBYTES,
+					+ crypto_secretbox_NONCEuint8_tS,
 				len_cleartext,
 				encrypted_buffer.data(),
 				key.data()))
@@ -217,8 +217,8 @@ packet_factory::packet_factory(std::string pw)
 	pw.resize(std::min<std::size_t>(pw.size(), crypto_pwhash_argon2id_PASSWD_MAX));
 	pw.resize(std::max<std::size_t>(pw.size(), crypto_pwhash_argon2id_PASSWD_MIN), 0);
 	std::string salt("devilution-salt 0.2.0");
-	salt.resize(crypto_pwhash_argon2id_SALTBYTES, 0);
-	if (crypto_pwhash(key.data(), crypto_secretbox_KEYBYTES,
+	salt.resize(crypto_pwhash_argon2id_SALTuint8_tS, 0);
+	if (crypto_pwhash(key.data(), crypto_secretbox_KEYuint8_tS,
 			pw.data(), pw.size(),
 			reinterpret_cast<const unsigned char *>(salt.data()),
 			crypto_pwhash_argon2id_OPSLIMIT_INTERACTIVE,

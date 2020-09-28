@@ -26,9 +26,9 @@ public:
 	bool GoldAutoPlace();
 	bool WeaponAutoPlace();
 	void CheckInvPaste(V2Di pos);
-	void CheckInvSwap(BYTE bLoc, int idx, WORD wCI, int seed, bool bId);
+	void CheckInvSwap(uint8_t bLoc, int idx, WORD wCI, int seed, bool bId);
 	void CheckInvCut(V2Di pos);
-	void inv_update_rem_item(BYTE iv);
+	void inv_update_rem_item(uint8_t iv);
 	void RemoveInvItem(int iv);
 	void RemoveSpdBarItem(int iv);
 	void CheckItemStats();

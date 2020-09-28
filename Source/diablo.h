@@ -26,7 +26,7 @@ extern bool gbProcessPlayers;
 extern bool gbLoadGame;
 extern HINSTANCE ghInst;
 extern int DebugMonsters[10];
-extern BOOLEAN cineflag;
+extern bool cineflag;
 extern int force_redraw;
 extern bool visiondebug;
 /* These are defined in fonts.h */

@@ -4,7 +4,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 int trapid;
 int trapdir;
-BYTE *pObjCels[40];
+uint8_t *pObjCels[40];
 char ObjFileList[40];
 int objectactive[MAXOBJECTS];
 int nobjects;
@@ -55,7 +55,7 @@ char shrinemax[NUM_SHRINETYPE] = {
 	16, 16, 16, 16, 16, 16
 };
 /** 0 - sp+mp, 1 - sp only, 2 - mp only */
-BYTE shrineavail[NUM_SHRINETYPE] = {
+uint8_t shrineavail[NUM_SHRINETYPE] = {
 	0, 0, 1, 1, 0, 0, 0, 0, 1, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
 	0, 0, 0, 0, 0, 2
@@ -79,7 +79,7 @@ int StoryText[3][3] = {
 
 void InitObjectGFX()
 {
-	BOOLEAN fileload[56];
+	bool fileload[56];
 	char filestr[32];
 	int i, j;
 
@@ -139,7 +139,7 @@ bool RndLocOk(V2Di p)
 		return FALSE;
 	if (grid.at(p).isSolid())
 		return FALSE;
-	if (lvl.leveltype != DTYPE_CATHEDRAL || grid.at(p).getPiece() <= 126 || grid.at(p).getPiece() >= 144)
+	if (lvl.type() != DunType::cathedral || grid.at(p).getPiece() <= 126 || grid.at(p).getPiece() >= 144)
 		return TRUE;
 	return FALSE;
 }
@@ -510,7 +510,7 @@ void AddChestTraps()
 				if (object[oi]._otype >= OBJ_CHEST1 && object[oi]._otype <= OBJ_CHEST3 && !object[oi]._oTrapFlag && random_(0, 100) < 10) {
 					object[oi]._otype += OBJ_BOOKCASER;
 					object[oi]._oTrapFlag = TRUE;
-					if (lvl.leveltype == DTYPE_CATACOMBS) {
+					if (lvl.type() == DunType::catacombs) {
 						object[oi]._oVar4 = random_(0, 2);
 					} else {
 						object[oi]._oVar4 = random_(0, 3);
@@ -521,10 +521,10 @@ void AddChestTraps()
 	}
 }
 
-void LoadMapObjects(BYTE *pMap, V2Di start, V2Di p1, int w, int h, int leveridx)
+void LoadMapObjects(uint8_t *pMap, V2Di start, V2Di p1, int w, int h, int leveridx)
 {
 	int rw, rh, i, j, oi;
-	BYTE *lm;
+	uint8_t *lm;
 	long mapoff;
 
 	InitObjFlag = TRUE;
@@ -551,11 +551,11 @@ void LoadMapObjects(BYTE *pMap, V2Di start, V2Di p1, int w, int h, int leveridx)
 	InitObjFlag = FALSE;
 }
 
-void LoadMapObjs(BYTE *pMap, V2Di start)
+void LoadMapObjs(uint8_t *pMap, V2Di start)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *lm;
+	uint8_t *lm;
 	long mapoff;
 
 	InitObjFlag = TRUE;
@@ -582,7 +582,7 @@ void LoadMapObjs(BYTE *pMap, V2Di start)
 
 void AddDiabObjs()
 {
-	BYTE *lpSetPiece;
+	uint8_t *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
 	LoadMapObjects(lpSetPiece, { 2 * diabquad1x, 2 * diabquad1y }, { diabquad2x, diabquad2y }, 11, 12, 1);
@@ -725,7 +725,7 @@ void AddLazStand()
 void InitObjects()
 {
 	int sp_id;
-	BYTE *mem;
+	uint8_t *mem;
 
 	ClrAllObjects();
 	if (lvl.currlevel == 16) {
@@ -743,7 +743,7 @@ void InitObjects()
 			AddStoryBooks();
 		if (lvl.currlevel == 12)
 			AddStoryBooks();
-		if (lvl.leveltype == DTYPE_CATHEDRAL) {
+		if (lvl.type() == DunType::cathedral) {
 			if (QuestStatus(Q_BUTCHER))
 				AddTortures();
 			if (QuestStatus(Q_PWATER))
@@ -754,7 +754,7 @@ void InitObjects()
 			AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			InitRndBarrels();
 		}
-		if (lvl.leveltype == DTYPE_CATACOMBS) {
+		if (lvl.type() == DunType::catacombs) {
 			if (QuestStatus(Q_ROCK))
 				InitRndLocObj5x5(1, 1, OBJ_STAND);
 			if (QuestStatus(Q_SCHAMB))
@@ -789,11 +789,11 @@ void InitObjects()
 			}
 			InitRndBarrels();
 		}
-		if (lvl.leveltype == DTYPE_CAVES) {
+		if (lvl.type() == DunType::caves) {
 			AddL3Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			InitRndBarrels();
 		}
-		if (lvl.leveltype == DTYPE_HELL) {
+		if (lvl.type() == DunType::hell) {
 			if (QuestStatus(Q_WARLORD)) {
 				if (myplr().data._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLOODWAR;
@@ -816,19 +816,19 @@ void InitObjects()
 		InitRndLocObj(5, 10, OBJ_CHEST1);
 		InitRndLocObj(3, 6, OBJ_CHEST2);
 		InitRndLocObj(1, 5, OBJ_CHEST3);
-		if (lvl.leveltype != DTYPE_HELL)
+		if (lvl.type() != DunType::hell)
 			AddObjTraps();
-		if (lvl.leveltype > DTYPE_CATHEDRAL)
+		if (lvl.type() > DunType::cathedral)
 			AddChestTraps();
 		InitObjFlag = FALSE;
 	}
 }
 
-void SetMapObjects(BYTE *pMap, V2Di start)
+void SetMapObjects(uint8_t *pMap, V2Di start)
 {
 	int rw, rh;
 	int i, j;
-	BYTE *lm, *h;
+	uint8_t *lm, *h;
 	long mapoff;
 	int fileload[56];
 	char filestr[32];
@@ -839,7 +839,7 @@ void SetMapObjects(BYTE *pMap, V2Di start)
 	InitObjFlag = TRUE;
 
 	for (i = 0; AllObjects[i].oload != -1; i++) {
-		if (AllObjects[i].oload == 1 && lvl.leveltype == AllObjects[i].olvltype)
+		if (AllObjects[i].oload == 1 && lvl.type() == AllObjects[i].olvltype)
 			fileload[AllObjects[i].ofindex] = TRUE;
 	}
 
@@ -1169,7 +1169,7 @@ void AddDecap(int i)
 
 void AddVilebook(int i)
 {
-	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		object[i]._oAnimFrame = 4;
 	}
 }
@@ -1576,7 +1576,7 @@ void Obj_Trap(int i)
 	V2Di s, d;
 	Dir dir;
 
-	BOOLEAN otrig = FALSE;
+	bool otrig = FALSE;
 	if (!object[i]._oVar4) {
 		oti = grid[object[i]._oVar1][object[i]._oVar2].getObject();
 		switch (object[oti]._otype) {
@@ -1630,13 +1630,13 @@ void Obj_BCrossDamage(int i)
 
 	fire_resist = myplr().data._pFireResist;
 	if (fire_resist > 0)
-		damage[lvl.leveltype - 1] -= fire_resist * damage[lvl.leveltype - 1] / 100;
+		damage[int(lvl.type()) - 1] -= fire_resist * damage[int(lvl.type()) - 1] / 100;
 
 	if (myplr().pos().x != object[i]._o.x || myplr().pos().y != object[i]._o.y - 1)
 		return;
 
-	myplr().data._pHitPoints -= damage[lvl.leveltype - 1];
-	myplr().data._pHPBase -= damage[lvl.leveltype - 1];
+	myplr().data._pHitPoints -= damage[int(lvl.type()) - 1];
+	myplr().data._pHPBase -= damage[int(lvl.type()) - 1];
 	if (myplr().data._pHitPoints >> 6 <= 0) {
 		myplr().SyncPlrKill(0);
 	} else {
@@ -1747,13 +1747,13 @@ void ObjSetMicro(V2Di d, int pn)
 	grid.at(d).setPiece(pn);
 	pn--;
 	defs = &grid.at(d).dpiece_defs_map_2;
-	if (lvl.leveltype != DTYPE_HELL) {
-		v = (WORD *)pLevelPieces + 10 * pn;
+	if (lvl.type() != DunType::hell) {
+		v = (WORD *)lvl.pLevelPieces + 10 * pn;
 		for (i = 0; i < 10; i++) {
 			defs->mt[i] = SDL_SwapLE16(v[(i & 1) - (i & 0xE) + 8]);
 		}
 	} else {
-		v = (WORD *)pLevelPieces + 16 * pn;
+		v = (WORD *)lvl.pLevelPieces + 16 * pn;
 		for (i = 0; i < 16; i++) {
 			defs->mt[i] = SDL_SwapLE16(v[(i & 1) - (i & 0xE) + 14]);
 		}
@@ -1763,8 +1763,8 @@ void ObjSetMicro(V2Di d, int pn)
 void objects_set_door_piece(V2Di p)
 {
 	int pn = grid.at(p).getPiece() - 1;
-	int v1 = *((WORD *)pLevelPieces + 10 * pn + 8);
-	int v2 = *((WORD *)pLevelPieces + 10 * pn + 9);
+	int v1 = *((WORD *)lvl.pLevelPieces + 10 * pn + 8);
+	int v2 = *((WORD *)lvl.pLevelPieces + 10 * pn + 9);
 	grid.at(p).dpiece_defs_map_2.mt[0] = SDL_SwapLE16(v1);
 	grid.at(p).dpiece_defs_map_2.mt[1] = SDL_SwapLE16(v2);
 }
@@ -1775,11 +1775,11 @@ void ObjSetMini(V2Di p, int v)
 	long v1, v2, v3, v4;
 	WORD *MegaTiles;
 
-	MegaTiles = (WORD *)&pMegaTiles[((WORD)v - 1) * 8];
-	v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-	v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-	v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-	v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+	MegaTiles = (WORD *)&lvl.pMegaTiles[((WORD)v - 1) * 8];
+	v1 = SDL_SwapLE16(*(MegaTiles + 0)); //+1;
+	v2 = SDL_SwapLE16(*(MegaTiles + 1)); //+1;
+	v3 = SDL_SwapLE16(*(MegaTiles + 2)); //+1;
+	v4 = SDL_SwapLE16(*(MegaTiles + 3)); //+1;
 
 	xx = 2 * p.x + 16;
 	yy = 2 * p.y + 16;
@@ -2156,11 +2156,11 @@ void ObjChangeMap(V2Di p1, V2Di p2)
 			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
-	if (lvl.leveltype == DTYPE_CATHEDRAL) {
+	if (lvl.type() == DunType::cathedral) {
 		ObjL1Special({2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 		AddL1Objs({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
-	if (lvl.leveltype == DTYPE_CATACOMBS) {
+	if (lvl.type() == DunType::catacombs) {
 		ObjL2Special({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 		AddL2Objs({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
@@ -2174,10 +2174,10 @@ void ObjChangeMapResync(V2Di p1, V2Di p2)
 			dgrid[i][j].dungeon = dgrid[i][j].pdungeon;
 		}
 	}
-	if (lvl.leveltype == DTYPE_CATHEDRAL) {
+	if (lvl.type() == DunType::cathedral) {
 		ObjL1Special({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
-	if (lvl.leveltype == DTYPE_CATACOMBS) {
+	if (lvl.type() == DunType::catacombs) {
 		ObjL2Special({ 2 * p1.x + 16, 2 * p1.y + 16 }, { 2 * p2.x + 17, 2 * p2.y + 17 });
 	}
 }
@@ -2227,7 +2227,7 @@ void OperateBook(int pnum, int i)
 
 	if (object[i]._oSelFlag == 0)
 		return;
-	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		do_add_missile = FALSE;
 		missile_added = FALSE;
 		for (j = 0; j < nobjects; j++) {
@@ -2258,7 +2258,7 @@ void OperateBook(int pnum, int i)
 	if (!lvl.setlevel)
 		return;
 
-	if (lvl.setlvlnum == SL_BONECHAMB) {
+	if (lvl.setlvlnum == SetLvl::BoneChamb) {
 		myplr().data._pMemSpells |= ((__int64)1 << (SPL_GUARDIAN - 1));
 		if (plr[pnum].data._pSplLvl[SPL_GUARDIAN] < 15)
 			myplr().data._pSplLvl[SPL_GUARDIAN]++;
@@ -2269,7 +2269,7 @@ void OperateBook(int pnum, int i)
 		AddMissile(myplr().pos(), { object[i]._o.x - 2, object[i]._o.y - 4 }, myplr().data._pdir,
 		    MIS_GUARDIAN, 0, myplr(), 0, 0);
 	}
-	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		ObjChangeMapResync( { object[i]._oVar1, object[i]._oVar2 },
 		    { object[i]._oVar3, object[i]._oVar4 });
 		for (j = 0; j < nobjects; j++)
@@ -2458,7 +2458,7 @@ void OperateSlainHero(int pnum, int i, bool sendmsg)
 				CreateMagicArmor(object[i]._o, ITYPE_HARMOR, ICURS_BREAST_PLATE, FALSE, TRUE);
 				PlaySfxLoc(PS_WARR9, myplr().pos());
 			} else if (plr[pnum].data._pClass == PC_ROGUE) {
-				CreateMagicWeapon(object[i]._o, ITYPE_BOW, ICURS_LONG_WAR_BOW, FALSE, TRUE);
+				CreateMagicWeapon(object[i]._o, ITYPE_BOW, ICURS_int32_t_WAR_BOW, FALSE, TRUE);
 				PlaySfxLoc(PS_ROGUE9, myplr().pos());
 			} else if (plr[pnum].data._pClass == PC_SORCERER) {
 				CreateSpellBook(object[i]._o, SPL_LIGHTNING, FALSE, TRUE);
@@ -2542,7 +2542,7 @@ void OperateL3Door(int pnum, int i, bool sendflag)
 
 void OperatePedistal(int pnum, int i)
 {
-	BYTE *mem;
+	uint8_t *mem;
 	int iv;
 
 	if (object[i]._oVar6 != 3) {
@@ -2800,7 +2800,7 @@ void OperateShrine(int pnum, int i, int sType)
 		    -1,
 		    pnum,
 		    0,
-		    2 * lvl.leveltype);
+		    2 * int(lvl.type()));
 		if (pnum != myplr())
 			return;
 		InitDiabloMsg(EMSG_SHRINE_MAGICAL);
@@ -2928,7 +2928,7 @@ void OperateShrine(int pnum, int i, int sType)
 		    -1,
 		    pnum,
 		    0,
-		    2 * lvl.leveltype);
+		    2 * int(lvl.type()));
 		if (pnum != myplr())
 			return;
 		plr[pnum].data._pMana = plr[pnum].data._pMaxMana;
@@ -3017,7 +3017,7 @@ void OperateShrine(int pnum, int i, int sType)
 				break;
 			lv = grid.at(p).getPiece();
 		} while (pieces[lv].solid || grid.at(p).isObject() || grid.at(p).getMonster());
-		AddMissile(plr[pnum].pos(), p, plr[pnum].data._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * lvl.leveltype);
+		AddMissile(plr[pnum].pos(), p, plr[pnum].data._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * int(lvl.type()));
 		if (pnum != myplr())
 			return;
 		InitDiabloMsg(EMSG_SHRINE_HOLY);
@@ -3054,7 +3054,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		for (j = 0; j < NUM_INV_GRID_ELEM; j++) {
 			if (!plr[pnum].data.InvGrid[j]) {
-				r = 5 * lvl.leveltype + random_(160, 10 * lvl.leveltype);
+				r = 5 * int(lvl.type()) + random_(160, 10 * int(lvl.type()));
 				t = plr[pnum].data._pNumInv; // check
 				plr[pnum].data.InvList[t] = golditem;
 				plr[pnum].data.InvList[t]._iSeed = GetRndSeed();
@@ -3242,7 +3242,7 @@ void OperateBookCase(int pnum, int i, bool sendmsg)
 			CreateTypeItem(object[i]._o, FALSE, ITYPE_MISC, IMISC_BOOK, sendmsg, FALSE);
 			if (QuestStatus(Q_ZHAR)
 			    && monsters[MAX_PLRS].data.mName == UniqMonst[UMT_ZHAR].mName
-			    && monsters[MAX_PLRS].data._msquelch == UCHAR_MAX
+			    && monsters[MAX_PLRS].data._msquelch == UINT8_MAX
 			    && monsters[MAX_PLRS].data._mhitpoints) {
 				monsters[MAX_PLRS].data.mtalkmsg = TEXT_ZHAR2;
 				monsters[0].M_StartStand(monsters[MAX_PLRS].data._mdir);
@@ -3402,7 +3402,7 @@ bool OperateFountains(int pnum, int i)
 		    -1,
 		    pnum,
 		    0,
-		    2 * lvl.leveltype);
+		    2 * int(lvl.type()));
 		applied = TRUE;
 		if (pnum == myplr())
 			NetSendCmdParam1(FALSE, CMD_OPERATEOBJ, i);
@@ -3485,7 +3485,7 @@ void OperateWeaponRack(int pnum, int i, bool sendmsg)
 	if (deltaload)
 		return;
 
-	if (lvl.leveltype > 1)
+	if (int(lvl.type()) > 1)
 		CreateTypeItem(object[i]._o, TRUE, weaponType, IMISC_NONE, sendmsg, FALSE);
 	else
 		CreateTypeItem(object[i]._o, FALSE, weaponType, IMISC_NONE, sendmsg, FALSE);
@@ -3984,7 +3984,7 @@ void SyncQSTLever(int i)
 
 void SyncPedistal(int i)
 {
-	BYTE *setp;
+	uint8_t *setp;
 
 	if (object[i]._oVar6 == 1)
 		ObjChangeMapResync({ lvl.getpc().x, lvl.getpc().y + 3 }, { lvl.getpc().x + 2, lvl.getpc().y + 7 });
@@ -4111,9 +4111,9 @@ void GetObjectStr(int i)
 		break;
 	case OBJ_BOOK2L:
 		if (lvl.setlevel) {
-			if (lvl.setlvlnum == SL_BONECHAMB) {
+			if (lvl.setlvlnum == SetLvl::BoneChamb) {
 				strcpy(infostr, "Ancient Tome");
-			} else if (lvl.setlvlnum == SL_VILEBETRAYER) {
+			} else if (lvl.setlvlnum == SetLvl::VileBetrayer) {
 				strcpy(infostr, "Book of Vileness");
 			}
 		}

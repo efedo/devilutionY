@@ -16,7 +16,7 @@ extern int monstkills[MAXMONSTERS];
 extern int monstactive[MAXMONSTERS];
 extern int MissileFileFlag;
 extern int nummonsters;
-extern BOOLEAN sgbSaveSoundOn;
+extern bool sgbSaveSoundOn;
 extern int totalmonsters;
 extern int monstimgtot;
 extern int uniquetrans;
@@ -27,7 +27,7 @@ bool MonstPlace(V2Di p);
 void LoadDiabMonsts();
 void InitMonsters();
 void PlaceUniques();
-void SetMapMonsters(BYTE *pMap, V2Di start);
+void SetMapMonsters(uint8_t *pMap, V2Di start);
 int AddMonster(V2Di pos, Dir dir, int mtype, bool InMap);
 
 void DeleteMonsterList();
@@ -64,7 +64,7 @@ void PrepDoEnding();
 /* rdata */
 
 extern const char plr2monst[9];
-extern const BYTE counsmiss[4];
+extern const uint8_t counsmiss[4];
 
 /* data */
 

@@ -4,7 +4,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 static TMsg *sgpTimedMsgHead;
 
-int tmsg_get(BYTE *pbMsg, DWORD dwMaxLen)
+int tmsg_get(uint8_t *pbMsg, DWORD dwMaxLen)
 {
 	int len;
 	TMsg *head;
@@ -23,7 +23,7 @@ int tmsg_get(BYTE *pbMsg, DWORD dwMaxLen)
 	return len;
 }
 
-void tmsg_add(BYTE *pbMsg, BYTE bLen)
+void tmsg_add(uint8_t *pbMsg, uint8_t bLen)
 {
 	TMsg **tail;
 

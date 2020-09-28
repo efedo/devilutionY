@@ -28,7 +28,7 @@ extern ItemStruct curruitem;
 extern ItemStruct item[MAXITEMS + 1];
 
 extern bool itemhold[3][3];
-extern BYTE *itemanims[ITEMTYPES];
+extern uint8_t *itemanims[ITEMTYPES];
 extern bool UniqueItemFlag[128];
 extern int numitems;
 extern int gnNumGetRecords;
@@ -147,9 +147,9 @@ void PutItemRecord(int nSeed, WORD wCI, int nIndex);
 
 /* data */
 
-extern BYTE ItemCAnimTbl[];
+extern uint8_t ItemCAnimTbl[];
 extern char *ItemDropNames[];
-extern BYTE ItemAnimLs[];
+extern uint8_t ItemAnimLs[];
 extern int ItemDropSnds[];
 extern int ItemInvSnds[];
 extern int idoppely;

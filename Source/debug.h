@@ -12,7 +12,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BYTE *pSquareCel;
+extern uint8_t *pSquareCel;
 extern char dMonsDbg[NUMLEVELS][MAXDUNX][MAXDUNY];
 extern char dFlagDbg[NUMLEVELS][MAXDUNX][MAXDUNY];
 

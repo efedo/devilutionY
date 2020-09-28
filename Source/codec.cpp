@@ -12,14 +12,14 @@ DEVILUTION_BEGIN_NAMESPACE
 
 typedef struct CodecSignature {
 	DWORD checksum;
-	BYTE error;
-	BYTE last_chunk_size;
+	uint8_t error;
+	uint8_t last_chunk_size;
 	WORD unused;
 } CodecSignature;
 
 #define BLOCKSIZE 64
 
-int codec_decode(BYTE *pbSrcDst, DWORD size, char *pszPassword)
+int codec_decode(uint8_t *pbSrcDst, DWORD size, char *pszPassword)
 {
 	char buf[128];
 	char dst[SHA1HashSize];
@@ -102,7 +102,7 @@ DWORD codec_get_encoded_len(DWORD dwSrcBytes)
 	return dwSrcBytes + sizeof(CodecSignature);
 }
 
-void codec_encode(BYTE *pbSrcDst, DWORD size, int size_64, char *pszPassword)
+void codec_encode(uint8_t *pbSrcDst, DWORD size, int size_64, char *pszPassword)
 {
 	char buf[128];
 	char tmp[SHA1HashSize];

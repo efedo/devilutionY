@@ -4,8 +4,8 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-int tmsg_get(BYTE *pbMsg, DWORD dwMaxLen);
-void tmsg_add(BYTE *pbMsg, BYTE bLen);
+int tmsg_get(uint8_t *pbMsg, DWORD dwMaxLen);
+void tmsg_add(uint8_t *pbMsg, uint8_t bLen);
 void tmsg_start();
 void tmsg_cleanup();
 

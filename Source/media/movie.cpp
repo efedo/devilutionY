@@ -10,7 +10,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 /** Should the movie continue playing. */
-BYTE movie_playing;
+uint8_t movie_playing;
 /** Should the movie play in a loop. */
 bool loop_movie;
 

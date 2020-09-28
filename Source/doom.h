@@ -14,7 +14,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern int doom_quest_time;
 extern int doom_stars_drawn;
-extern BYTE *pDoomCel;
+extern uint8_t *pDoomCel;
 extern bool doomflag;
 extern int DoomQuestState;
 

@@ -10,7 +10,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 void MonsterType::InitMonsterTRN(bool special)
 {
-	BYTE *f;
+	uint8_t *f;
 	int i, n, j;
 
 	f = data.trans_file;
@@ -38,7 +38,7 @@ void MonsterType::InitMonsterGFX()
 {
 	int mtype, anim, i;
 	char strBuff[256];
-	BYTE *celBuf;
+	uint8_t *celBuf;
 
 	mtype = data.mtype;
 

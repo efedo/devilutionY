@@ -12,20 +12,23 @@ DEVILUTION_BEGIN_NAMESPACE
 
 class Piece {
 public:
-	bool block;   // Light blocking
-	bool solid;   // Path blocking dPieces
-	bool trans;   // Transparent
-	bool missile; // List of missile blocking dPieces
-	bool trap;
+	bool block = 0;   // Light blocking
+	bool solid = 0;   // Path blocking dPieces
+	bool trans = 0;   // Transparent
+	bool missile = 0; // List of missile blocking dPieces
+	bool trap = 0;
+	char block_lvid = 0; // char block_lvid[MAXTILES + 1];
 };
 
 class PieceInventory {
 public:
 	Piece &operator[](const size_t n); // eventually, only allow access via grid/tile
-	void FillSolidBlockTbls();
+	void FillSolidBlockTbls(DunType duntype);
 	void clear();
 private:
-	Piece list[MAXTILES + 1];
+	DunType _currentDunType;
+	//Piece list[MAXTILES + 1];
+	std::array<std::unique_ptr<Piece>, 5> lvllists; // list of pieces for each level
 };
 
 extern PieceInventory pieces;

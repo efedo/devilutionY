@@ -24,7 +24,7 @@ bool UiSoundCallback(int a1, int type, int a3);
 void UiMessageBoxCallback(HWND hWnd, char *lpText, const char *lpCaption, UINT uType);
 bool UiDrawDescCallback(int game_type, DWORD color, const char *lpString, char *a4, int a5, UINT align, time_t a7, HDC *a8);
 bool UiCreateGameCallback(int a1, int a2, int a3, int a4, int a5, int a6);
-bool UiArtCallback(int game_type, unsigned int art_code, SDL_Color *pPalette, BYTE *pBuffer, DWORD dwBuffersize, DWORD *pdwWidth, DWORD *pdwHeight, DWORD *pdwBpp);
+bool UiArtCallback(int game_type, unsigned int art_code, SDL_Color *pPalette, uint8_t *pBuffer, DWORD dwBuffersize, DWORD *pdwWidth, DWORD *pdwHeight, DWORD *pdwBpp);
 int UiSelectGame(int a1, _SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, _SNETVERSIONDATA *file_info, int *a6);
 int UiSelectProvider(int a1, _SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, _SNETVERSIONDATA *file_info, int *type);
 bool UiCreatePlayerDescription(_uiheroinfo *info, DWORD mode, char *desc);

@@ -12,11 +12,11 @@ DWORD sgdwCursY;
 /**
  * Upper bound of back buffer.
  */
-BYTE *gpBufStart;
+uint8_t *gpBufStart;
 /**
  * Lower bound of back buffer.
  */
-BYTE *gpBufEnd;
+uint8_t *gpBufEnd;
 DWORD sgdwCursHgt;
 
 /**
@@ -38,8 +38,8 @@ char arch_draw_type;
  */
 //int level_piece_id;
 DWORD sgdwCursWdt;
-void (*DrawPlrProc)(int, int, int, int, int, BYTE *, int, int, int, int);
-BYTE sgSaveBack[8192];
+void (*DrawPlrProc)(int, int, int, int, int, uint8_t *, int, int, int, int);
+uint8_t sgSaveBack[8192];
 DWORD sgdwCursHgtOld;
 
 bool dRendered[MAXDUNX][MAXDUNY];
@@ -98,7 +98,7 @@ void ClearCursor() // CODE_FIX: this was supposed to be in cursor.cpp
 static void scrollrt_draw_cursor_back_buffer()
 {
 	int i;
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	if (sgdwCursWdt == 0) {
 		return;
@@ -130,7 +130,7 @@ static void scrollrt_draw_cursor_back_buffer()
 static void scrollrt_draw_cursor_item()
 {
 	int i, mx, my, col;
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	assert(!sgdwCursWdt);
 
@@ -216,7 +216,7 @@ void DrawMissilePrivate(MissileStruct *m, V2Di s, bool pre)
 {
 	int nCel, frames;
 	V2Di mv;
-	BYTE *pCelBuff;
+	uint8_t *pCelBuff;
 
 	if (m->_miPreFlag != pre || !m->_miDrawFlag)
 		return;
@@ -285,7 +285,7 @@ static void DrawMonster(V2Di p, V2Di mv, int m)
 {
 	int nCel, frames;
 	char trans;
-	BYTE *pCelBuff;
+	uint8_t *pCelBuff;
 
 	if ((DWORD)m >= MAXMONSTERS) {
 		// app_fatal("Draw Monster: tried to draw illegal monster %d", m);
@@ -344,7 +344,7 @@ static void DrawMonster(V2Di p, V2Di mv, int m)
  * @param nCel frame
  * @param nWidth width
  */
-static void DrawPlayer(int pnum, V2Di n, V2Di p, BYTE *pCelBuff, int nCel, int nWidth)
+static void DrawPlayer(int pnum, V2Di n, V2Di p, uint8_t *pCelBuff, int nCel, int nWidth)
 {
 	int x = n.x;
 	int y = n.y;
@@ -417,13 +417,13 @@ void DrawDeadPlayer(V2Di pn, V2Di s)
 	int i, nCel, frames;
 	V2Di pv;
 	PlayerStruct *p;
-	BYTE *pCelBuff;
+	uint8_t *pCelBuff;
 
 	grid.at(pn).dFlags &= ~BFLAG_DEAD_PLAYER;
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i].data;
-		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)lvl.currlevel && plr[i].pos() == pn) {
+		if (p->plractive && !p->_pHitPoints && p->plrlevel == (uint8_t)lvl.currlevel && plr[i].pos() == pn) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
 				// app_fatal("Drawing dead player %d \"%s\": NULL Cel Buffer", i, p->_pName);
@@ -455,7 +455,7 @@ static void DrawObject(int x, int y, int ox, int oy, bool pre)
 {
 	int sx, sy, xx, yy, nCel, frames;
 	char bv;
-	BYTE *pCelBuff;
+	uint8_t *pCelBuff;
 
 	if (!grid[x][y].isObject() || light_table_index >= lightmax) return;
 
@@ -510,7 +510,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy);
  */
 static void drawCell(int x, int y, int sx, int sy)
 {
-	BYTE *dst;
+	uint8_t *dst;
 	MICROS *pMap;
 
 	dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
@@ -518,7 +518,7 @@ static void drawCell(int x, int y, int sx, int sy)
 	int level_piece_id = grid[x][y].getPiece();
 
 	// Specifies whether transparency is active for the current CEL file being decoded.
-	int cel_transparency_active = (BYTE)(pieces[level_piece_id].trans & lvl.TransList[grid[x][y].dTransVal]);
+	int cel_transparency_active = (uint8_t)(pieces[level_piece_id].trans & lvl.TransList[grid[x][y].dTransVal]);
 
 	// Specifies whether foliage(tile has extra content that overlaps previous tile) being rendered.
 	int cel_foliage_active = !pieces[level_piece_id].solid;
@@ -551,7 +551,7 @@ static void drawFloor(int x, int y, int sx, int sy)
 	int cel_transparency_active = 0;
 	light_table_index = grid[x][y].dLight;
 
-	BYTE *dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
+	uint8_t *dst = &gpBuffer[sx + sy * BUFFER_WIDTH];
 	arch_draw_type = 1; // Left
 	int level_piece_id = grid[x][y].getPieceUnsafe();
 	level_cel_block = grid[x][y].dpiece_defs_map_2.mt[0];
@@ -615,7 +615,7 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 	//	y_last = y;
 	//}
 
-	if (lvl.leveltype == DTYPE_TOWN) {
+	if (lvl.type() == DunType::town) {
 		px = sx - towner[mi]._tAnimWidth2;
 		if (mi == pcursmonst) {
 			CelBlitOutline(166, { px, sy }, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
@@ -678,7 +678,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	int mi, nCel, frames;
 	char bObj, bItem, bPlr, bArch, negPlr, dd;
 	DeadStruct *pDeadGuy;
-	BYTE *pCelBuff;
+	uint8_t *pCelBuff;
 
 	assert((DWORD)sx < MAXDUNX);
 	assert((DWORD)sy < MAXDUNY);
@@ -742,11 +742,11 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	DrawObject(sx, sy, dx, dy, 0);
 	DrawItem(sx, sy, dx, dy, 0);
 
-	if (lvl.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		bArch = grid[sx][sy].dSpecial;
 		if (bArch != 0) {
 			int cel_transparency_active = lvl.TransList[bMap];
-			CelClippedBlitLightTrans(&gpBuffer[dx + BUFFER_WIDTH * dy], pSpecialCels, bArch, 64, cel_transparency_active);
+			CelClippedBlitLightTrans(&gpBuffer[dx + BUFFER_WIDTH * dy], lvl.pSpecialCels, bArch, 64, cel_transparency_active);
 		}
 	} else {
 		// Tree leafs should always cover player when entering or leaving the tile,
@@ -755,7 +755,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 		if (sx > 0 && sy > 0 && dy > TILE_HEIGHT + SCREEN_Y) {
 			bArch = grid[sx - 1][sy - 1].dSpecial;
 			if (bArch != 0) {
-				CelBlitFrame(&gpBuffer[dx + BUFFER_WIDTH * (dy - TILE_HEIGHT)], pSpecialCels, bArch, 64);
+				CelBlitFrame(&gpBuffer[dx + BUFFER_WIDTH * (dy - TILE_HEIGHT)], lvl.pSpecialCels, bArch, 64);
 			}
 		}
 	}
@@ -893,8 +893,8 @@ static void Zoom()
 		}
 	}
 
-	BYTE *src = &gpBuffer[nSrcOff];
-	BYTE *dst = &gpBuffer[nDstOff];
+	uint8_t *src = &gpBuffer[nSrcOff];
+	uint8_t *dst = &gpBuffer[nDstOff];
 
 	for (int hgt = 0; hgt < VIEWPORT_HEIGHT / 2; hgt++) {
 		for (int i = 0; i < wdt; i++) {

@@ -4,8 +4,12 @@
  * Various global structures.
  */
 
+#ifndef __STRUCTS_H__
+#define __STRUCTS_H__
+
 #include <vector>
 #include <queue>
+#include "enums.h"
 #include "vectordvl.h"
 #include "pathfinding/directions.h"
 #include "pathfinding/pathfinder.h"
@@ -34,7 +38,7 @@ typedef struct PLStruct {
 	int PLParam2;
 	char PLMinLvl;
 	int PLIType;
-	BYTE PLGOE;
+	uint8_t PLGOE;
 	bool PLDouble;
 	bool PLOk;
 	int PLMinVal;
@@ -186,13 +190,13 @@ typedef struct PlayerStruct {
 	int _pmode;
 	//char walkpath = -1;
 	std::queue<PathNode> wkpath;
-	BOOLEAN plractive;
+	bool plractive;
 	int destAction;
 	int destParam1;
 	int destParam2;
 	int destParam3;
 	int destParam4;
-	int plrlevel;
+	int plrlevel; // Holds either standard or 'set' level 
 	V2Di _pos;
 	V2Di _posfut;
 	V2Di _posdraw;
@@ -228,14 +232,14 @@ typedef struct PlayerStruct {
 	uint64_t _pMemSpells;
 	uint64_t _pAblSpells;
 	uint64_t _pScrlSpells;
-	UCHAR _pSpellFlags;
+	uint8_t _pSpellFlags;
 	int _pSplHotKey[4];
 	char _pSplTHotKey[4];
 	int _pwtype;
-	BOOLEAN _pBlockFlag;
-	BOOLEAN _pInvincible;
+	bool _pBlockFlag;
+	bool _pInvincible;
 	char _pLightRad;
-	BOOLEAN _pLvlChanging;
+	bool _pLvlChanging;
 	char _pName[PLR_NAME_LEN];
 	// plr_class enum value.
 	// TODO: this could very well be `enum plr_class _pClass`
@@ -284,8 +288,8 @@ typedef struct PlayerStruct {
 	int _pVar6;
 	int _pVar7;
 	int _pVar8;
-	BOOLEAN _pLvlVisited[NUMLEVELS];
-	BOOLEAN _pSLvlVisited[NUMLEVELS]; // only 10 used
+	bool _pLvlVisited[NUMLEVELS];
+	bool _pSetLvlVisited[NUMLEVELS]; // only 10 used
 	int _pGFXLoad;
 	unsigned char *_pNAnim[8];
 	int _pNFrames;
@@ -341,10 +345,10 @@ typedef struct PlayerStruct {
 	unsigned char pDungMsgs;
 	unsigned char pLvlLoad;
 	unsigned char pBattleNet;
-	BOOLEAN pManaShield;
+	bool pManaShield;
 	char bReserved[3];
 	short wReserved[8];
-	DWORD pDiabloKillLevel;
+	uint32_t pDiabloKillLevel;
 	int dwReserved[7];
 	unsigned char *_pNData;
 	unsigned char *_pWData;
@@ -416,7 +420,7 @@ typedef struct MissileStruct {
 	Dir _mimfnum; // Imf Num??? Imformation???
 	int _mispllvl;
 	bool _miDelFlag;
-	BYTE _miAnimType;
+	uint8_t _miAnimType;
 	int _miAnimFlags;
 	unsigned char *_miAnimData;
 	int _miAnimDelay;
@@ -469,8 +473,8 @@ typedef struct TSFX {
 //////////////////////////////////////////////////
 
 typedef struct AnimStruct {
-	BYTE *CMem;
-	BYTE *Data[8];
+	uint8_t *CMem;
+	uint8_t *Data[8];
 	int Frames;
 	int Rate;
 } AnimStruct;
@@ -528,7 +532,7 @@ typedef struct CMonster {
 	MonsterData *MData;
 	// A TRN file contains a sequence of colour transitions, represented
 	// as indexes into a palette. (a 256 byte array of palette indices)
-	BYTE *trans_file;
+	uint8_t *trans_file;
 } CMonster;
 
 typedef struct MonsterStruct { // note: missing field _mAFNum
@@ -570,7 +574,7 @@ typedef struct MonsterStruct { // note: missing field _mAFNum
 	unsigned char _mint;
 	short falign_9A;
 	int _mFlags;
-	BYTE _msquelch;
+	uint8_t _msquelch;
 	int falign_A4;
 	V2Di _last;
 	int _mRndSeed;
@@ -627,7 +631,7 @@ typedef struct ObjDataStruct {
 	char ofindex;
 	char ominlvl;
 	char omaxlvl;
-	char olvltype;
+	DunType olvltype;
 	char otheme;
 	char oquest;
 	int oAnimFlag;
@@ -682,7 +686,7 @@ typedef struct PortalStruct {
 	bool open;
 	V2Di pos;
 	int level;
-	int ltype;
+	DunType ltype;
 	bool setlvl;
 } PortalStruct;
 
@@ -692,218 +696,218 @@ typedef struct PortalStruct {
 
 #pragma pack(push, 1)
 typedef struct TCmd {
-	BYTE bCmd;
+	uint8_t bCmd;
 } TCmd;
 
 typedef struct TCmdLoc {
-	BYTE bCmd;
-	BYTE x;
-	BYTE y;
+	uint8_t bCmd;
+	uint8_t x;
+	uint8_t y;
 } TCmdLoc;
 
 typedef struct TCmdLocParam1 {
-	BYTE bCmd;
-	BYTE x;
-	BYTE y;
+	uint8_t bCmd;
+	uint8_t x;
+	uint8_t y;
 	WORD wParam1;
 } TCmdLocParam1;
 
 typedef struct TCmdLocParam2 {
-	BYTE bCmd;
-	BYTE x;
-	BYTE y;
+	uint8_t bCmd;
+	uint8_t x;
+	uint8_t y;
 	WORD wParam1;
 	WORD wParam2;
 } TCmdLocParam2;
 
 typedef struct TCmdLocParam3 {
-	BYTE bCmd;
-	BYTE x;
-	BYTE y;
+	uint8_t bCmd;
+	uint8_t x;
+	uint8_t y;
 	WORD wParam1;
 	WORD wParam2;
 	WORD wParam3;
 } TCmdLocParam3;
 
 typedef struct TCmdParam1 {
-	BYTE bCmd;
+	uint8_t bCmd;
 	WORD wParam1;
 } TCmdParam1;
 
 typedef struct TCmdParam2 {
-	BYTE bCmd;
+	uint8_t bCmd;
 	WORD wParam1;
 	WORD wParam2;
 } TCmdParam2;
 
 typedef struct TCmdParam3 {
-	BYTE bCmd;
+	uint8_t bCmd;
 	WORD wParam1;
 	WORD wParam2;
 	WORD wParam3;
 } TCmdParam3;
 
 typedef struct TCmdGolem {
-	BYTE bCmd;
-	BYTE _mx;
-	BYTE _my;
-	BYTE _mdir;
+	uint8_t bCmd;
+	uint8_t _mx;
+	uint8_t _my;
+	uint8_t _mdir;
 	char _menemy;
 	int _mhitpoints;
-	BYTE currlevel;
+	uint8_t currlevel;
 } TCmdGolem;
 
 typedef struct TCmdQuest {
-	BYTE bCmd;
-	BYTE q;
-	BYTE qstate;
-	BYTE qlog;
-	BYTE qvar1;
+	uint8_t bCmd;
+	uint8_t q;
+	uint8_t qstate;
+	uint8_t qlog;
+	uint8_t qvar1;
 } TCmdQuest;
 
 typedef struct TCmdGItem {
-	BYTE bCmd;
-	BYTE bMaster;
-	BYTE bPnum;
-	BYTE bCursitem;
-	BYTE bLevel;
-	BYTE x;
-	BYTE y;
+	uint8_t bCmd;
+	uint8_t bMaster;
+	uint8_t bPnum;
+	uint8_t bCursitem;
+	uint8_t bLevel;
+	uint8_t x;
+	uint8_t y;
 	WORD wIndx;
 	WORD wCI;
 	int dwSeed;
-	BYTE bId;
-	BYTE bDur;
-	BYTE bMDur;
-	BYTE bCh;
-	BYTE bMCh;
+	uint8_t bId;
+	uint8_t bDur;
+	uint8_t bMDur;
+	uint8_t bCh;
+	uint8_t bMCh;
 	WORD wValue;
-	DWORD dwBuff;
+	uint32_t dwBuff;
 	int dwTime;
 } TCmdGItem;
 
 typedef struct TCmdPItem {
-	BYTE bCmd;
-	BYTE x;
-	BYTE y;
+	uint8_t bCmd;
+	uint8_t x;
+	uint8_t y;
 	WORD wIndx;
 	WORD wCI;
 	int dwSeed;
-	BYTE bId;
-	BYTE bDur;
-	BYTE bMDur;
-	BYTE bCh;
-	BYTE bMCh;
+	uint8_t bId;
+	uint8_t bDur;
+	uint8_t bMDur;
+	uint8_t bCh;
+	uint8_t bMCh;
 	WORD wValue;
-	DWORD dwBuff;
+	uint32_t dwBuff;
 } TCmdPItem;
 
 typedef struct TCmdChItem {
-	BYTE bCmd;
-	BYTE bLoc;
+	uint8_t bCmd;
+	uint8_t bLoc;
 	WORD wIndx;
 	WORD wCI;
 	int dwSeed;
-	BOOLEAN bId;
+	bool bId;
 } TCmdChItem;
 
 typedef struct TCmdDelItem {
-	BYTE bCmd;
-	BYTE bLoc;
+	uint8_t bCmd;
+	uint8_t bLoc;
 } TCmdDelItem;
 
 typedef struct TCmdDamage {
-	BYTE bCmd;
-	BYTE bPlr;
-	DWORD dwDam;
+	uint8_t bCmd;
+	uint8_t bPlr;
+	uint32_t dwDam;
 } TCmdDamage;
 
 typedef struct TCmdPlrInfoHdr {
-	BYTE bCmd;
+	uint8_t bCmd;
 	WORD wOffset;
 	WORD wBytes;
 } TCmdPlrInfoHdr;
 
 typedef struct TCmdString {
-	BYTE bCmd;
+	uint8_t bCmd;
 	char str[MAX_SEND_STR_LEN];
 } TCmdString;
 
 typedef struct TFakeCmdPlr {
-	BYTE bCmd;
-	BYTE bPlr;
+	uint8_t bCmd;
+	uint8_t bPlr;
 } TFakeCmdPlr;
 
 typedef struct TFakeDropPlr {
-	BYTE bCmd;
-	BYTE bPlr;
-	DWORD dwReason;
+	uint8_t bCmd;
+	uint8_t bPlr;
+	uint32_t dwReason;
 } TFakeDropPlr;
 
 typedef struct TSyncHeader {
-	BYTE bCmd;
-	BYTE bLevel;
+	uint8_t bCmd;
+	uint8_t bLevel;
 	WORD wLen;
-	BYTE bObjId;
-	BYTE bObjCmd;
-	BYTE bItemI;
-	BYTE bItemX;
-	BYTE bItemY;
+	uint8_t bObjId;
+	uint8_t bObjCmd;
+	uint8_t bItemI;
+	uint8_t bItemX;
+	uint8_t bItemY;
 	WORD wItemIndx;
 	WORD wItemCI;
-	DWORD dwItemSeed;
-	BYTE bItemId;
-	BYTE bItemDur;
-	BYTE bItemMDur;
-	BYTE bItemCh;
-	BYTE bItemMCh;
+	uint32_t dwItemSeed;
+	uint8_t bItemId;
+	uint8_t bItemDur;
+	uint8_t bItemMDur;
+	uint8_t bItemCh;
+	uint8_t bItemMCh;
 	WORD wItemVal;
-	DWORD dwItemBuff;
-	BYTE bPInvLoc;
+	uint32_t dwItemBuff;
+	uint8_t bPInvLoc;
 	WORD wPInvIndx;
 	WORD wPInvCI;
-	DWORD dwPInvSeed;
-	BYTE bPInvId;
+	uint32_t dwPInvSeed;
+	uint8_t bPInvId;
 } TSyncHeader;
 
 typedef struct TSyncMonster {
-	BYTE _mndx;
-	BYTE _mx;
-	BYTE _my;
-	BYTE _menemy;
-	BYTE _mdelta;
+	uint8_t _mndx;
+	uint8_t _mx;
+	uint8_t _my;
+	uint8_t _menemy;
+	uint8_t _mdelta;
 } TSyncMonster;
 
 typedef struct TPktHdr {
-	BYTE px;
-	BYTE py;
-	BYTE targx;
-	BYTE targy;
+	uint8_t px;
+	uint8_t py;
+	uint8_t targx;
+	uint8_t targy;
 	int php;
 	int pmhp;
-	BYTE bstr;
-	BYTE bmag;
-	BYTE bdex;
+	uint8_t bstr;
+	uint8_t bmag;
+	uint8_t bdex;
 	WORD wCheck;
 	WORD wLen;
 } TPktHdr;
 
 typedef struct TPkt {
 	TPktHdr hdr;
-	BYTE body[493];
+	uint8_t body[493];
 } TPkt;
 
 typedef struct DMonsterStr {
-	BYTE _mx;
-	BYTE _my;
-	BYTE _mdir;
-	BYTE _menemy;
-	BYTE _mactive;
+	uint8_t _mx;
+	uint8_t _my;
+	uint8_t _mdir;
+	uint8_t _menemy;
+	uint8_t _mactive;
 	int _mhitpoints;
 } DMonsterStr;
 
 typedef struct DObjectStr {
-	BYTE bCmd;
+	uint8_t bCmd;
 } DObjectStr;
 
 typedef struct DLevel {
@@ -913,21 +917,21 @@ typedef struct DLevel {
 } DLevel;
 
 typedef struct LocalLevel {
-	BYTE automapsv[DMAXX][DMAXY];
+	uint8_t automapsv[DMAXX][DMAXY];
 } LocalLevel;
 
 typedef struct DPortal {
-	BYTE x;
-	BYTE y;
-	BYTE level;
-	BYTE ltype;
-	BYTE setlvl;
+	uint8_t x;
+	uint8_t y;
+	uint8_t level;
+	DunType ltype;
+	uint8_t setlvl;
 } DPortal;
 
 typedef struct MultiQuests {
-	BYTE qstate;
-	BYTE qlog;
-	BYTE qvar1;
+	uint8_t qstate;
+	uint8_t qlog;
+	uint8_t qvar1;
 } MultiQuests;
 
 typedef struct DJunk {
@@ -939,14 +943,14 @@ typedef struct DJunk {
 #pragma pack(push, 1)
 typedef struct TMegaPkt {
 	struct TMegaPkt *pNext;
-	DWORD dwSpaceLeft;
-	BYTE data[32000];
+	uint32_t dwSpaceLeft;
+	uint8_t data[32000];
 } TMegaPkt;
 #pragma pack(pop)
 
 typedef struct TBuffer {
-	DWORD dwNextWriteOffset;
-	BYTE bData[4096];
+	uint32_t dwNextWriteOffset;
+	uint8_t bData[4096];
 } TBuffer;
 
 //////////////////////////////////////////////////
@@ -957,7 +961,7 @@ typedef struct QuestStruct {
 	unsigned char _qlevel;
 	unsigned char _qtype;
 	unsigned char _qactive;
-	unsigned char _qlvltype;
+	DunType _qlvltype;
 	V2Di _qt;
 	//int _qtx;
 	//int _qty;
@@ -972,7 +976,7 @@ typedef struct QuestStruct {
 typedef struct QuestData {
 	unsigned char _qdlvl;
 	char _qdmultlvl;
-	unsigned char _qlvlt;
+	DunType _qlvlt;
 	unsigned char _qdtype;
 	unsigned char _qdrnd;
 	unsigned char _qslvl;
@@ -988,7 +992,7 @@ typedef struct QuestData {
 // TPDEF PTR FCN VOID TMenuFcn
 
 typedef struct TMenuItem {
-	DWORD dwFlags;
+	uint32_t dwFlags;
 	char *pszStr;
 	void (*fnMenu)(bool); /* fix, should have one arg */
 } TMenuItem;
@@ -1027,7 +1031,7 @@ typedef struct SpellData {
 typedef struct TNQ {
 	unsigned char _qsttype;
 	unsigned char _qstmsg;
-	BOOLEAN _qstmsgact;
+	bool _qstmsgact;
 } TNQ;
 
 typedef struct TownerStruct {
@@ -1191,7 +1195,7 @@ typedef struct DeadStruct {
 
 typedef struct _gamedata {
 	int dwSeed;
-	BYTE bDiff;
+	uint8_t bDiff;
 } _gamedata;
 
 typedef struct _uidefaultstats {
@@ -1205,8 +1209,8 @@ typedef struct _uiheroinfo {
 	struct _uiheroinfo *next;
 	char name[16];
 	WORD level;
-	BYTE heroclass;
-	BYTE herorank;
+	uint8_t heroclass;
+	uint8_t herorank;
 	WORD strength;
 	WORD magic;
 	WORD dexterity;
@@ -1216,11 +1220,11 @@ typedef struct _uiheroinfo {
 	bool spawned;
 } _uiheroinfo;
 
-// TPDEF PTR FCN UCHAR ENUMHEROPROC
-// TPDEF PTR FCN UCHAR ENUMHEROS
-// TPDEF PTR FCN UCHAR CREATEHERO
-// TPDEF PTR FCN UCHAR DELETEHERO
-// TPDEF PTR FCN UCHAR GETDEFHERO
+// TPDEF PTR FCN uint8_t ENUMHEROPROC
+// TPDEF PTR FCN uint8_t ENUMHEROS
+// TPDEF PTR FCN uint8_t CREATEHERO
+// TPDEF PTR FCN uint8_t DELETEHERO
+// TPDEF PTR FCN uint8_t GETDEFHERO
 
 // TPDEF PTR FCN INT PROGRESSFCN
 
@@ -1228,43 +1232,43 @@ typedef struct _uiheroinfo {
 // storm
 //////////////////////////////////////////////////
 
-// TPDEF PTR FCN UCHAR SMSGIDLEPROC
+// TPDEF PTR FCN uint8_t SMSGIDLEPROC
 // TPDEF PTR FCN VOID SMSGHANDLER
 
 typedef struct _SNETCAPS {
-	DWORD size;
-	DWORD flags;
-	DWORD maxmessagesize;
-	DWORD maxqueuesize;
-	DWORD maxplayers;
-	DWORD bytessec;
-	DWORD latencyms;
-	DWORD defaultturnssec;
-	DWORD defaultturnsintransit;
+	uint32_t size;
+	uint32_t flags;
+	uint32_t maxmessagesize;
+	uint32_t maxqueuesize;
+	uint32_t maxplayers;
+	uint32_t bytessec;
+	uint32_t latencyms;
+	uint32_t defaultturnssec;
+	uint32_t defaultturnsintransit;
 } _SNETCAPS;
 
 typedef struct _SNETEVENT {
-	DWORD eventid;
-	DWORD playerid;
+	uint32_t eventid;
+	uint32_t playerid;
 	void *data;
-	DWORD databytes;
+	uint32_t databytes;
 } _SNETEVENT;
 
-// TPDEF PTR FCN UCHAR SNETABORTPROC
-// TPDEF PTR FCN UCHAR SNETCATEGORYPROC
-// TPDEF PTR FCN UCHAR SNETCHECKAUTHPROC
-// TPDEF PTR FCN UCHAR SNETCREATEPROC
-// TPDEF PTR FCN UCHAR SNETDRAWDESCPROC
-// TPDEF PTR FCN UCHAR SNETENUMDEVICESPROC
-// TPDEF PTR FCN UCHAR SNETENUMGAMESPROC
-// TPDEF PTR FCN UCHAR SNETENUMPROVIDERSPROC
+// TPDEF PTR FCN uint8_t SNETABORTPROC
+// TPDEF PTR FCN uint8_t SNETCATEGORYPROC
+// TPDEF PTR FCN uint8_t SNETCHECKAUTHPROC
+// TPDEF PTR FCN uint8_t SNETCREATEPROC
+// TPDEF PTR FCN uint8_t SNETDRAWDESCPROC
+// TPDEF PTR FCN uint8_t SNETENUMDEVICESPROC
+// TPDEF PTR FCN uint8_t SNETENUMGAMESPROC
+// TPDEF PTR FCN uint8_t SNETENUMPROVIDERSPROC
 // TPDEF PTR FCN VOID SNETEVENTPROC
-// TPDEF PTR FCN UCHAR SNETGETARTPROC
-// TPDEF PTR FCN UCHAR SNETGETDATAPROC
+// TPDEF PTR FCN uint8_t SNETGETARTPROC
+// TPDEF PTR FCN uint8_t SNETGETDATAPROC
 // TPDEF PTR FCN INT SNETMESSAGEBOXPROC
-// TPDEF PTR FCN UCHAR SNETPLAYSOUNDPROC
-// TPDEF PTR FCN UCHAR SNETSELECTEDPROC
-// TPDEF PTR FCN UCHAR SNETSTATUSPROC
+// TPDEF PTR FCN uint8_t SNETPLAYSOUNDPROC
+// TPDEF PTR FCN uint8_t SNETSELECTEDPROC
+// TPDEF PTR FCN uint8_t SNETSTATUSPROC
 
 typedef struct _SNETPLAYERDATA {
 	int size;
@@ -1323,16 +1327,16 @@ typedef struct _SNETUIDATA {
 	    const struct _SNETPLAYERDATA *,
 	    const struct _SNETUIDATA *,
 	    const struct _SNETVERSIONDATA *,
-	    DWORD provider, /* e.g. 'BNET', 'IPXN', 'MODM', 'SCBL' */
-	    char *, DWORD,  /* character name will be copied here */
-	    char *, DWORD,  /* character "description" will be copied here (used to advertise games) */
+	    uint32_t provider, /* e.g. 'BNET', 'IPXN', 'MODM', 'SCBL' */
+	    char *, uint32_t,  /* character name will be copied here */
+	    char *, uint32_t,  /* character "description" will be copied here (used to advertise games) */
 	    bool *          /* new character? - unsure about this */
 	);
 	void (*changenamecallback)();
 } _SNETUIDATA;
 
-// TPDEF PTR FCN UCHAR SNETSPIBIND
-// TPDEF PTR FCN UCHAR SNETSPIQUERY
+// TPDEF PTR FCN uint8_t SNETSPIBIND
+// TPDEF PTR FCN uint8_t SNETSPIQUERY
 
 //////////////////////////////////////////////////
 // pack
@@ -1340,16 +1344,16 @@ typedef struct _SNETUIDATA {
 
 #pragma pack(push, 1)
 typedef struct PkItemStruct {
-	DWORD iSeed;
+	uint32_t iSeed;
 	WORD iCreateInfo;
 	WORD idx;
-	BYTE bId;
-	BYTE bDur;
-	BYTE bMDur;
-	BYTE bCh;
-	BYTE bMCh;
+	uint8_t bId;
+	uint8_t bDur;
+	uint8_t bMDur;
+	uint8_t bCh;
+	uint8_t bMCh;
 	WORD wValue;
-	DWORD dwBuff;
+	uint32_t dwBuff;
 } PkItemStruct;
 
 typedef struct PkPlayerStruct {
@@ -1357,17 +1361,17 @@ typedef struct PkPlayerStruct {
 	char destAction;
 	char destParam1;
 	char destParam2;
-	BYTE plrlevel;
+	uint8_t plrlevel;
 	V2Di p;
 	V2Di targ;
 	char pName[PLR_NAME_LEN];
 	char pClass;
-	BYTE pBaseStr;
-	BYTE pBaseMag;
-	BYTE pBaseDex;
-	BYTE pBaseVit;
+	uint8_t pBaseStr;
+	uint8_t pBaseMag;
+	uint8_t pBaseDex;
+	uint8_t pBaseVit;
 	char pLevel;
-	BYTE pStatPts;
+	uint8_t pStatPts;
 	int pExperience;
 	int pGold;
 	int pHPBase;
@@ -1379,13 +1383,13 @@ typedef struct PkPlayerStruct {
 	PkItemStruct InvBody[NUM_INVLOC];
 	PkItemStruct InvList[NUM_INV_GRID_ELEM];
 	char InvGrid[NUM_INV_GRID_ELEM];
-	BYTE _pNumInv;
+	uint8_t _pNumInv;
 	PkItemStruct SpdList[MAXBELTITEMS];
 	char pTownWarps;
 	char pDungMsgs;
 	char pLvlLoad;
 	char pBattleNet;
-	BOOLEAN pManaShield;
+	bool pManaShield;
 	char bReserved[3];
 	short wReserved[8];
 	int pDiabloKillLevel;
@@ -1393,17 +1397,17 @@ typedef struct PkPlayerStruct {
 } PkPlayerStruct;
 #pragma pack(pop)
 
-// TPDEF PTR FCN UCHAR CHECKFUNC1
+// TPDEF PTR FCN uint8_t CHECKFUNC1
 
-// TPDEF PTR FCN UCHAR CHECKFUNC
+// TPDEF PTR FCN uint8_t CHECKFUNC
 
 //////////////////////////////////////////////////
 // sha
 //////////////////////////////////////////////////
 
 typedef struct SHA1Context {
-	DWORD state[5];
-	DWORD count[2];
+	uint32_t state[5];
+	uint32_t count[2];
 	char buffer[64];
 } SHA1Context;
 
@@ -1417,7 +1421,7 @@ typedef struct TMsg TMsg;
 typedef struct TMsgHdr {
 	TMsg *pNext;
 	int dwTime;
-	BYTE bLen;
+	uint8_t bLen;
 } TMsgHdr;
 
 typedef struct TMsg {
@@ -1458,7 +1462,7 @@ typedef struct _BLOCKENTRY {
 	uint32_t flags;
 } _BLOCKENTRY;
 
-// TPDEF PTR FCN UCHAR TGetNameFcn
+// TPDEF PTR FCN uint8_t TGetNameFcn
 
 // TPDEF PTR FCN VOID TCrypt
 
@@ -1494,12 +1498,12 @@ typedef struct STextStruct {
 //////////////////////////////////////////////////
 
 typedef struct MEMFILE {
-	DWORD end;
-	LONG offset;
-	DWORD buf_len;
-	DWORD dist;
-	DWORD bytes_to_read;
-	BYTE *buf;
+	uint32_t end;
+	int32_t offset;
+	uint32_t buf_len;
+	uint32_t dist;
+	uint32_t bytes_to_read;
+	uint8_t *buf;
 	HANDLE file;
 } MEMFILE;
 
@@ -1508,7 +1512,7 @@ typedef struct MEMFILE {
 //////////////////////////////////////////////////
 
 typedef struct _plrmsg {
-	DWORD time;
+	uint32_t time;
 	unsigned char player;
 	char str[144];
 } _plrmsg;
@@ -1518,24 +1522,24 @@ typedef struct _plrmsg {
 //////////////////////////////////////////////////
 
 typedef struct _PcxHeader {
-	BYTE Manufacturer;
-	BYTE Version;
-	BYTE Encoding;
-	BYTE BitsPerPixel;
+	uint8_t Manufacturer;
+	uint8_t Version;
+	uint8_t Encoding;
+	uint8_t BitsPerPixel;
 	WORD Xmin;
 	WORD Ymin;
 	WORD Xmax;
 	WORD Ymax;
 	WORD HDpi;
 	WORD VDpi;
-	BYTE Colormap[48];
-	BYTE Reserved;
-	BYTE NPlanes;
+	uint8_t Colormap[48];
+	uint8_t Reserved;
+	uint8_t NPlanes;
 	WORD BytesPerLine;
 	WORD PaletteInfo;
 	WORD HscreenSize;
 	WORD VscreenSize;
-	BYTE Filler[54];
+	uint8_t Filler[54];
 } PCXHEADER;
 
 //////////////////////////////////////////////////
@@ -1543,11 +1547,13 @@ typedef struct _PcxHeader {
 //////////////////////////////////////////////////
 
 typedef struct TDataInfo {
-	BYTE *srcData;
-	DWORD srcOffset;
-	BYTE *destData;
-	DWORD destOffset;
-	DWORD size;
+	uint8_t *srcData;
+	uint32_t srcOffset;
+	uint8_t *destData;
+	uint32_t destOffset;
+	uint32_t size;
 } TDataInfo;
 
 DEVILUTION_END_NAMESPACE
+
+#endif /* __STRUCTS_H__ */

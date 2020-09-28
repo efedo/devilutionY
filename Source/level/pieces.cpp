@@ -9,32 +9,34 @@ DEVILUTION_BEGIN_NAMESPACE
 
 Piece &PieceInventory::operator[](const size_t n)
 {
-	return list[n];
+	return lvllists[int(_currentDunType)].get()[n];
 }
 
-void PieceInventory::FillSolidBlockTbls()
+void PieceInventory::FillSolidBlockTbls(DunType duntype)
 {
-	BYTE bv;
+	uint8_t bv;
 	DWORD dwTiles;
-	BYTE *pSBFile, *pTmp;
+	uint8_t *pSBFile, *pTmp;
 	int i;
 
-	pieces.clear();
+	this->clear();
+	this->lvllists[int(duntype)].reset(new Piece[MAXTILES + 1]);
+	this->_currentDunType = duntype;
 
-	switch (lvl.leveltype) {
-	case DTYPE_TOWN:
+	switch (duntype) {
+	case DunType::town:
 		pSBFile = LoadFileInMem("Levels\\TownData\\Town.SOL", &dwTiles);
 		break;
-	case DTYPE_CATHEDRAL:
+	case DunType::cathedral:
 		pSBFile = LoadFileInMem("Levels\\L1Data\\L1.SOL", &dwTiles);
 		break;
-	case DTYPE_CATACOMBS:
+	case DunType::catacombs:
 		pSBFile = LoadFileInMem("Levels\\L2Data\\L2.SOL", &dwTiles);
 		break;
-	case DTYPE_CAVES:
+	case DunType::caves:
 		pSBFile = LoadFileInMem("Levels\\L3Data\\L3.SOL", &dwTiles);
 		break;
-	case DTYPE_HELL:
+	case DunType::hell:
 		pSBFile = LoadFileInMem("Levels\\L4Data\\L4.SOL", &dwTiles);
 		break;
 	default:
@@ -47,16 +49,16 @@ void PieceInventory::FillSolidBlockTbls()
 	//for (i = 1; i <= dwTiles; i++) {
 		bv = *pTmp++;
 		if (bv & 1)
-			pieces[i].solid = true;
+			this->operator[](i).solid = true;
 		if (bv & 2)
-			pieces[i].block = true;
+			this->operator[](i).block = true;
 		if (bv & 4)
-			pieces[i].missile = true;
+			this->operator[](i).missile = true;
 		if (bv & 8)
-			pieces[i].trans = true;
+			this->operator[](i).trans = true;
 		if (bv & 0x80)
-			pieces[i].trap = true;
-		block_lvid[i] = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
+			this->operator[](i).trap = true;
+		this->operator[](i).block_lvid = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
 	}
 
 	mem_free_dbg(pSBFile);
@@ -64,14 +66,18 @@ void PieceInventory::FillSolidBlockTbls()
 
 void PieceInventory::clear()
 {
-	for (int i = 0; i != MAXTILES + 1; ++i) {
-		Piece &piece = list[i];
-		piece.block = 0;
-		piece.solid = 0;
-		piece.trans = 0;
-		piece.missile = 0;
-		piece.trap = 0;
+	for (auto it = lvllists.begin(); it != lvllists.end(); ++it) {
+		it->reset();
 	}
+
+	//for (int i = 0; i != MAXTILES + 1; ++i) {
+	//	Piece &piece = list[i];
+	//	piece.block = 0;
+	//	piece.solid = 0;
+	//	piece.trans = 0;
+	//	piece.missile = 0;
+	//	piece.trap = 0;
+	//}
 }
 
 PieceInventory pieces;

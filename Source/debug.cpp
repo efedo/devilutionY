@@ -16,7 +16,7 @@ int seed_index;
 int level_seeds[NUMLEVELS + 1];
 int seed_table[DEBUGSEEDS];
 
-BYTE *pSquareCel;
+uint8_t *pSquareCel;
 char dMonsDbg[NUMLEVELS][MAXDUNX][MAXDUNY];
 char dFlagDbg[NUMLEVELS][MAXDUNX][MAXDUNY];
 
@@ -150,7 +150,7 @@ void PrintDebugPlayer(bool bNextPlayer)
 	char dstr[128];
 
 	if (bNextPlayer)
-		dbgplr = ((BYTE)dbgplr + 1) & 3;
+		dbgplr = ((uint8_t)dbgplr + 1) & 3;
 
 	sprintf(dstr, "Plr %i : Active = %i", dbgplr, plr[dbgplr].data.plractive);
 	NetSendCmdString(1 << myplr(), dstr);

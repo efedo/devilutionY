@@ -27,7 +27,7 @@ int GetManaAmount(int id, int sn)
 	if (sn == SPL_HEAL || sn == SPL_HEALOTHER) {
 		ma = (spelldata[SPL_HEAL].sManaCost + 2 * plr[id].data._pLevel - adj);
 	} else if (spelldata[sn].sManaCost == 255) {
-		ma = ((BYTE)plr[id].data._pMaxManaBase - adj);
+		ma = ((uint8_t)plr[id].data._pMaxManaBase - adj);
 	} else {
 		ma = (spelldata[sn].sManaCost - adj);
 	}

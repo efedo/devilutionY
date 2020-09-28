@@ -13,7 +13,7 @@ void LvlTown::create(int lvldir)
 {
 	CreateTown(lvldir);
 	InitTownTriggers();
-	LoadRndLvlPal(0);
+	LoadRndLvlPal(DunType::town);
 };
 
 void LvlTown::loadGFX()
@@ -34,7 +34,7 @@ void LvlTown::loadGFX()
  * @param w width of sector
  * @param h height of sector
  */
-void T_FillSector(BYTE *P3Tiles, BYTE *pSector, int xi, int yi, int w, int h)
+void T_FillSector(uint8_t *P3Tiles, uint8_t *pSector, int xi, int yi, int w, int h)
 {
 	int i, j, xx, yy, nMap;
 	long v1, v2, v3, v4, ii;
@@ -81,7 +81,7 @@ void T_FillSector(BYTE *P3Tiles, BYTE *pSector, int xi, int yi, int w, int h)
  * @param yy upper left destination
  * @param t tile id
  */
-void T_FillTile(BYTE *P3Tiles, int xx, int yy, int t)
+void T_FillTile(uint8_t *P3Tiles, int xx, int yy, int t)
 {
 	long v1, v2, v3, v4;
 	WORD *Tiles;
@@ -104,7 +104,7 @@ void T_FillTile(BYTE *P3Tiles, int xx, int yy, int t)
 void T_Pass3()
 {
 	int xx, yy, x;
-	BYTE *P3Tiles, *pSector;
+	uint8_t *P3Tiles, *pSector;
 
 	for (yy = 0; yy < MAXDUNY; yy += 2) {
 		for (xx = 0; xx < MAXDUNX; xx += 2) {

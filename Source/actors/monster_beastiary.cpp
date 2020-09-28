@@ -156,7 +156,7 @@ void Beastiary::GetLevelMTypes()
 		}
 
 	} else {
-		if (lvl.setlvlnum == SL_SKELKING) {
+		if (lvl.setlvlnum == SetLvl::SkelKing) {
 			AddMonsterType(MT_SKING, 4);
 		}
 	}

@@ -75,9 +75,9 @@ void InitHash()
 	}
 }
 
-int PkwareCompress(BYTE *srcData, int size)
+int PkwareCompress(uint8_t *srcData, int size)
 {
-	BYTE *destData;
+	uint8_t *destData;
 	char *ptr;
 	unsigned int destSize, type, dsize;
 	TDataInfo param;
@@ -88,7 +88,7 @@ int PkwareCompress(BYTE *srcData, int size)
 	if (destSize < 2 * 4096)
 		destSize = 2 * 4096;
 
-	destData = (BYTE *)DiabloAllocPtr(destSize);
+	destData = (uint8_t *)DiabloAllocPtr(destSize);
 
 	param.srcData = srcData;
 	param.srcOffset = 0;
@@ -140,10 +140,10 @@ void PkwareBufferWrite(char *buf, unsigned int *size, void *param)
 	pInfo->destOffset += *size;
 }
 
-void PkwareDecompress(BYTE *pbInBuff, int recv_size, int dwMaxBytes)
+void PkwareDecompress(uint8_t *pbInBuff, int recv_size, int dwMaxBytes)
 {
 	char *ptr;
-	BYTE *pbOutBuff;
+	uint8_t *pbOutBuff;
 	TDataInfo info;
 
 	ptr = (char *)DiabloAllocPtr(CMP_BUFFER_SIZE);

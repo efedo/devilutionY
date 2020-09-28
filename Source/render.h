@@ -7,7 +7,7 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-void RenderTile(BYTE *pBuff, int level_piece_id, int trans, int foliage);
+void RenderTile(uint8_t *pBuff, int level_piece_id, int trans, int foliage);
 void world_draw_black_tile(int sx, int sy);
 void world_draw_red_tile(int sx, int sy);
 void world_draw_gray_tile(int sx, int sy);

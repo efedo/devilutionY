@@ -10,7 +10,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern int trapid;
 extern int trapdir;
-extern BYTE *pObjCels[40];
+extern uint8_t *pObjCels[40];
 extern char ObjFileList[40];
 extern int objectactive[MAXOBJECTS];
 extern int nobjects;
@@ -40,15 +40,15 @@ void AddL2Torches();
 bool TorchLocOK(V2Di p);
 void AddObjTraps();
 void AddChestTraps();
-void LoadMapObjects(BYTE *pMap, V2Di start, V2Di p1, int w, int h, int leveridx);
-void LoadMapObjs(BYTE *pMap, V2Di start);
+void LoadMapObjects(uint8_t *pMap, V2Di start, V2Di p1, int w, int h, int leveridx);
+void LoadMapObjs(uint8_t *pMap, V2Di start);
 void AddDiabObjs();
 void AddStoryBooks();
 void AddHookedBodies(int freq);
 void AddL4Goodies();
 void AddLazStand();
 void InitObjects();
-void SetMapObjects(BYTE *pMap, V2Di start);
+void SetMapObjects(uint8_t *pMap, V2Di start);
 void DeleteObject_(int oi, int i);
 void SetupObject(int i, V2Di pos, int ot);
 void SetObjMapRange(int i, V2Di p1, V2Di p2, int v);
@@ -167,7 +167,7 @@ extern int byadd[8];
 extern char *shrinestrs[NUM_SHRINETYPE];
 extern char shrinemin[NUM_SHRINETYPE];
 extern char shrinemax[NUM_SHRINETYPE];
-extern BYTE shrineavail[NUM_SHRINETYPE];
+extern uint8_t shrineavail[NUM_SHRINETYPE];
 extern char *StoryBookName[9];
 extern int StoryText[3][3];
 

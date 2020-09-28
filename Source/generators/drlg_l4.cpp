@@ -22,12 +22,12 @@ int SP4x1;
 int SP4y1;
 int SP4x2;
 int SP4y2;
-BYTE L4dungeon[80][80];
-BYTE dung[20][20];
+uint8_t L4dungeon[80][80];
+uint8_t dung[20][20];
 //int dword_52A4DC;
 
-const BYTE L4ConvTbl[16] = { 30, 6, 1, 6, 2, 6, 6, 6, 9, 6, 1, 6, 2, 6, 3, 6 };
-const BYTE L4USTAIRS[42] = {
+const uint8_t L4ConvTbl[16] = { 30, 6, 1, 6, 2, 6, 6, 6, 9, 6, 1, 6, 2, 6, 3, 6 };
+const uint8_t L4USTAIRS[42] = {
 	4,
 	5,
 	6,
@@ -71,7 +71,7 @@ const BYTE L4USTAIRS[42] = {
 	0,
 	0
 };
-const BYTE L4TWARP[42] = {
+const uint8_t L4TWARP[42] = {
 	4,
 	5,
 	6,
@@ -115,7 +115,7 @@ const BYTE L4TWARP[42] = {
 	0,
 	0
 };
-const BYTE L4DSTAIRS[52] = {
+const uint8_t L4DSTAIRS[52] = {
 	5,
 	5,
 	6,
@@ -169,7 +169,7 @@ const BYTE L4DSTAIRS[52] = {
 	0,
 	0
 };
-const BYTE L4PENTA[52] = {
+const uint8_t L4PENTA[52] = {
 	5,
 	5,
 	6,
@@ -223,7 +223,7 @@ const BYTE L4PENTA[52] = {
 	0,
 	0
 };
-const BYTE L4PENTA2[52] = {
+const uint8_t L4PENTA2[52] = {
 	5,
 	5,
 	6,
@@ -277,7 +277,7 @@ const BYTE L4PENTA2[52] = {
 	0,
 	0
 };
-const BYTE L4BTYPES[140] = {
+const uint8_t L4BTYPES[140] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 14, 15, 16, 17, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -305,7 +305,7 @@ void LvlHell::create(int lvldir)
 	CreateL4Dungeon(glSeedTbl[lvl.currlevel], lvldir);
 	InitL4Triggers();
 	Freeupstairs();
-	LoadRndLvlPal(4);
+	LoadRndLvlPal(DunType::hell);
 };
 
 void LvlHell::loadGFX()
@@ -433,7 +433,7 @@ void DRLG_FreeL4SP()
 void DRLG_L4SetSPRoom(int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	uint8_t *sp;
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
 	lvl.setpc({ rx1, ry1, rw, rh });
@@ -1117,7 +1117,7 @@ static void L4tileFix()
 static void DRLG_L4Subs()
 {
 	int x, y, i, rv;
-	BYTE c;
+	uint8_t c;
 
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
@@ -1463,10 +1463,10 @@ void L4SaveQuads()
 	}
 }
 
-void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
+void DRLG_L4SetRoom(uint8_t *pSetPiece, int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	uint8_t *sp;
 
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
@@ -1487,7 +1487,7 @@ void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
 
 void DRLG_LoadDiabQuads(bool preflag)
 {
-	BYTE *lpSetPiece;
+	uint8_t *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
 	diabquad1x = 4 + l4holdx;
@@ -1526,7 +1526,7 @@ void DRLG_LoadDiabQuads(bool preflag)
 	mem_free_dbg(lpSetPiece);
 }
 
-static bool DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
+static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, bailcnt;
 	bool found;
@@ -2020,7 +2020,7 @@ void LvlHell::CreateL4Dungeon(DWORD rseed, int entry)
 void LvlHell::LoadL4Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	uint8_t *pLevelMap, *lm;
 
 	lvl.dmin = { 16, 16 };
 	lvl.dmax = { 96, 96 };
@@ -2061,7 +2061,7 @@ void LvlHell::LoadL4Dungeon(char *sFileName, int vx, int vy)
 void LoadPreL4Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
-	BYTE *pLevelMap, *lm;
+	uint8_t *pLevelMap, *lm;
 	lvl.dmin = { 16, 16 };
 	lvl.dmax = { 96, 96 };
 

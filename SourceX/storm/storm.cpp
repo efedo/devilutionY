@@ -216,14 +216,14 @@ BOOL SFileOpenFile(const char *filename, HANDLE *phFile)
 	return result;
 }
 
-BOOL SBmpLoadImage(const char *pszFileName, SDL_Color *pPalette, BYTE *pBuffer, DWORD dwBuffersize, DWORD *pdwWidth, DWORD *dwHeight, DWORD *pdwBpp)
+BOOL SBmpLoadImage(const char *pszFileName, SDL_Color *pPalette, uint8_t *pBuffer, DWORD dwBuffersize, DWORD *pdwWidth, DWORD *dwHeight, DWORD *pdwBpp)
 {
 	HANDLE hFile;
 	size_t size;
 	PCXHEADER pcxhdr;
-	BYTE paldata[256][3];
-	BYTE *dataPtr, *fileBuffer;
-	BYTE byte;
+	uint8_t paldata[256][3];
+	uint8_t *dataPtr, *fileBuffer;
+	uint8_t byte;
 
 	if (pdwWidth)
 		*pdwWidth = 0;
@@ -286,7 +286,7 @@ BOOL SBmpLoadImage(const char *pszFileName, SDL_Color *pPalette, BYTE *pBuffer, 
 		fileBuffer = NULL;
 	} else {
 		size = SFileGetFileSize(hFile, 0) - SFileSetFilePointer(hFile, 0, 0, 1);
-		fileBuffer = (BYTE *)malloc(size);
+		fileBuffer = (uint8_t *)malloc(size);
 	}
 
 	if (fileBuffer) {
@@ -400,7 +400,7 @@ void setIniValue(const char *sectionName, const char *keyName, char *value, int 
 	ini.saveToFile();
 }
 
-BOOL SRegLoadValue(const char *keyname, const char *valuename, BYTE flags, int *value)
+BOOL SRegLoadValue(const char *keyname, const char *valuename, uint8_t flags, int *value)
 {
 	char string[10];
 	if (getIniValue(keyname, valuename, string, 10)) {
@@ -411,7 +411,7 @@ BOOL SRegLoadValue(const char *keyname, const char *valuename, BYTE flags, int *
 	return false;
 }
 
-BOOL SRegSaveValue(const char *keyname, const char *valuename, BYTE flags, DWORD result)
+BOOL SRegSaveValue(const char *keyname, const char *valuename, uint8_t flags, DWORD result)
 {
 	char str[10];
 	sprintf(str, "%d", result);
@@ -422,12 +422,12 @@ BOOL SRegSaveValue(const char *keyname, const char *valuename, BYTE flags, DWORD
 
 double SVidFrameEnd;
 double SVidFrameLength;
-BYTE SVidLoop;
+uint8_t SVidLoop;
 smk SVidSMK;
 SDL_Color SVidPreviousPalette[256];
 SDL_Palette *SVidPalette;
 SDL_Surface *SVidSurface;
-BYTE *SVidBuffer;
+uint8_t *SVidBuffer;
 unsigned long SVidWidth, SVidHeight;
 
 #if SDL_VERSION_ATLEAST(2, 0, 4)

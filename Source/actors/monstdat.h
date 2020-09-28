@@ -13,8 +13,8 @@ DEVILUTION_BEGIN_NAMESPACE
 //#endif
 
 extern MonsterData monsterdata[];
-extern BYTE MonstConvTbl[];
-extern BYTE MonstAvailTbl[];
+extern uint8_t MonstConvTbl[];
+extern uint8_t MonstAvailTbl[];
 extern UniqMonstStruct UniqMonst[];
 
 //#ifdef __cplusplus

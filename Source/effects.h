@@ -34,7 +34,7 @@ void sound_update();
 void stream_update();
 void effects_cleanup_sfx();
 void sound_init();
-void priv_sound_init(BYTE bLoadMask);
+void priv_sound_init(uint8_t bLoadMask);
 void ui_sound_init();
 void effects_play_sound(char *snd_file);
 

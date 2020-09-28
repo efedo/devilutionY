@@ -12,27 +12,27 @@ DEVILUTION_BEGIN_NAMESPACE
 //extern "C" {
 //#endif
 
-extern BOOLEAN gbSomebodyWonGameKludge;
+extern bool gbSomebodyWonGameKludge;
 extern char szPlayerDescript[128];
 extern WORD sgwPackPlrOffsetTbl[MAX_PLRS];
 extern PkPlayerStruct netplr[MAX_PLRS];
 extern bool gbShouldValidatePackage;
-extern BYTE gbActivePlayers;
-extern BOOLEAN gbGameDestroyed;
-extern BOOLEAN gbSelectProvider;
-//extern BYTE gbMaxPlayers;
+extern uint8_t gbActivePlayers;
+extern bool gbGameDestroyed;
+extern bool gbSelectProvider;
+//extern uint8_t gbMaxPlayers;
 extern char szPlayerName[128];
-extern BYTE gbDeltaSender;
+extern uint8_t gbDeltaSender;
 extern int player_state[MAX_PLRS];
 
-void multi_msg_add(BYTE *pbMsg, BYTE bLen);
-void NetSendLoPri(BYTE *pbMsg, BYTE bLen);
-void multi_copy_packet(TBuffer *pBuf, void *packet, BYTE size);
-void multi_send_packet(void *packet, BYTE dwSize);
+void multi_msg_add(uint8_t *pbMsg, uint8_t bLen);
+void NetSendLoPri(uint8_t *pbMsg, uint8_t bLen);
+void multi_copy_packet(TBuffer *pBuf, void *packet, uint8_t size);
+void multi_send_packet(void *packet, uint8_t dwSize);
 void NetRecvPlrData(TPkt *pkt);
-void NetSendHiPri(BYTE *pbMsg, BYTE bLen);
-BYTE *multi_recv_packet(TBuffer *pBuf, BYTE *body, int *size);
-void multi_send_msg_packet(int pmask, BYTE *src, BYTE len);
+void NetSendHiPri(uint8_t *pbMsg, uint8_t bLen);
+uint8_t *multi_recv_packet(TBuffer *pBuf, uint8_t *body, int *size);
+void multi_send_msg_packet(int pmask, uint8_t *src, uint8_t len);
 void multi_msg_countdown();
 void multi_parse_turn(int pnum, int turn);
 void multi_handle_turn_upper_bit(int pnum);
@@ -46,9 +46,9 @@ void multi_mon_seeds();
 void multi_begin_timeout();
 void multi_check_drop_player();
 void multi_process_network_packets();
-void multi_handle_all_packets(int pnum, BYTE *pData, int nSize);
+void multi_handle_all_packets(int pnum, uint8_t *pData, int nSize);
 void multi_process_tmsgs();
-void multi_send_zero_packet(int pnum, BYTE bCmd, BYTE *pbSrc, DWORD dwLen);
+void multi_send_zero_packet(int pnum, uint8_t bCmd, uint8_t *pbSrc, DWORD dwLen);
 void NetClose();
 void multi_event_handler(bool add);
 void multi_handle_events(_SNETEVENT *pEvt);

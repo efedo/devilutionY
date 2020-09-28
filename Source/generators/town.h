@@ -13,8 +13,8 @@ class LvlTown : public Level {
 };
 
 void SetTownMicros();
-void T_FillSector(BYTE *P3Tiles, BYTE *pSector, int xi, int yi, int w, int h);
-void T_FillTile(BYTE *P3Tiles, int xx, int yy, int t);
+void T_FillSector(uint8_t *P3Tiles, uint8_t *pSector, int xi, int yi, int w, int h);
+void T_FillTile(uint8_t *P3Tiles, int xx, int yy, int t);
 void T_Pass3();
 void CreateTown(int entry);
 

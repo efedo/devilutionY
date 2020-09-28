@@ -31,7 +31,7 @@ void LoadArt(const char *pszFile, Art *art, int frames, SDL_Color *pPalette)
 	}
 	SDL_Surface *art_surface = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, width, height, bpp, format);
 
-	if (!SBmpLoadImage(pszFile, pPalette, static_cast<BYTE *>(art_surface->pixels),
+	if (!SBmpLoadImage(pszFile, pPalette, static_cast<uint8_t *>(art_surface->pixels),
 	        art_surface->pitch * art_surface->format->BytesPerPixel * height, 0, 0, 0)) {
 		SDL_Log("Failed to load image");
 		SDL_FreeSurface(art_surface);
@@ -53,11 +53,11 @@ void LoadMaskedArt(const char *pszFile, Art *art, int frames, int mask)
 		SDLC_SetColorKey(art->surface, mask);
 }
 
-void LoadArt(Art *art, const BYTE *artData, int w, int h, int frames)
+void LoadArt(Art *art, const uint8_t *artData, int w, int h, int frames)
 {
 	art->frames = frames;
 	art->surface = SDL_CreateRGBSurfaceWithFormatFrom(
-		const_cast<BYTE *>(artData), w, h, 8, w, SDL_PIXELFORMAT_INDEX8);
+		const_cast<uint8_t *>(artData), w, h, 8, w, SDL_PIXELFORMAT_INDEX8);
 	art->logical_width = w;
 	art->frame_height = h / frames;
 	ScaleSurfaceToOutput(&art->surface);

@@ -460,7 +460,7 @@ void mpqapi_remove_hash_entries(bool (*fnGetName)(DWORD, char *))
 	}
 }
 
-bool mpqapi_write_file(const char *pszName, const BYTE *pbData, DWORD dwLen)
+bool mpqapi_write_file(const char *pszName, const uint8_t *pbData, DWORD dwLen)
 {
 	_BLOCKENTRY *blockEntry;
 
@@ -504,7 +504,7 @@ _BLOCKENTRY *mpqapi_add_file(const char *pszName, _BLOCKENTRY *pBlk, int block_i
 	return pBlk;
 }
 
-bool mpqapi_write_file_contents(const char *pszName, const BYTE *pbData, DWORD dwLen, _BLOCKENTRY *pBlk)
+bool mpqapi_write_file_contents(const char *pszName, const uint8_t *pbData, DWORD dwLen, _BLOCKENTRY *pBlk)
 {
 	const char *str_ptr = pszName;
 	const char *tmp;
@@ -549,9 +549,9 @@ bool mpqapi_write_file_contents(const char *pszName, const BYTE *pbData, DWORD d
 	}
 #endif
 
-	const BYTE *src = pbData;
+	const uint8_t *src = pbData;
 	uint32_t destsize = offset_table_bytesize;
-	BYTE mpq_buf[kSectorSize];
+	uint8_t mpq_buf[kSectorSize];
 	std::size_t cur_sector = 0;
 	while (true) {
 		uint32_t len = std::min(dwLen, kSectorSize);

@@ -14,14 +14,14 @@ ItemStruct curruitem;
 ItemGetRecordStruct itemrecord[MAXITEMS];
 ItemStruct item[MAXITEMS + 1];
 bool itemhold[3][3];
-BYTE *itemanims[ITEMTYPES];
+uint8_t *itemanims[ITEMTYPES];
 bool UniqueItemFlag[128];
 int numitems;
 int gnNumGetRecords;
 
 /* data */
 
-BYTE ItemCAnimTbl[] = {
+uint8_t ItemCAnimTbl[] = {
 	20, 16, 16, 16, 4, 4, 4, 12, 12, 12,
 	12, 12, 12, 12, 12, 21, 21, 25, 12, 28,
 	28, 28, 0, 0, 0, 32, 0, 0, 0, 24,
@@ -77,7 +77,7 @@ char *ItemDropNames[] = {
 	"Fanvil",
 	"FLazStaf",
 };
-BYTE ItemAnimLs[] = {
+uint8_t ItemAnimLs[] = {
 	15,
 	13,
 	16,
@@ -1177,7 +1177,7 @@ void GetStaffPower(int i, int lvl, int bs, bool onlygood)
 			item[i]._iPrePower = PL_Prefix[preidx].PLPower;
 		}
 	}
-	if (!control_WriteStringToBuffer((BYTE *)item[i]._iIName)) {
+	if (!control_WriteStringToBuffer((uint8_t *)item[i]._iIName)) {
 		strcpy(item[i]._iIName, AllItemsList[item[i].IDidx].iSName);
 		if (preidx != -1) {
 			sprintf(istr, "%s %s", PL_Prefix[preidx].PLName, item[i]._iIName);
@@ -1218,7 +1218,7 @@ void GetStaffSpell(int i, int lvl, bool onlygood)
 				s = SPL_FIREBOLT;
 		}
 		sprintf(istr, "%s of %s", item[i]._iName, spelldata[bs].sNameText);
-		if (!control_WriteStringToBuffer((BYTE *)istr))
+		if (!control_WriteStringToBuffer((uint8_t *)istr))
 			sprintf(istr, "Staff of %s", spelldata[bs].sNameText);
 		strcpy(item[i]._iName, istr);
 		strcpy(item[i]._iIName, istr);
@@ -1303,7 +1303,7 @@ void GetItemAttrs(int i, int idata, int curlvl)
 			rndv = 5 * (lvl.currlevel + 16) + random_(21, 10 * (lvl.currlevel + 16));
 		if (gnDifficulty == DIFF_HELL)
 			rndv = 5 * (lvl.currlevel + 32) + random_(21, 10 * (lvl.currlevel + 32));
-		if (lvl.leveltype == DTYPE_HELL)
+		if (lvl.type() == DunType::hell)
 			rndv += rndv >> 3;
 		if (rndv > GOLD_MAX_LIMIT)
 			rndv = GOLD_MAX_LIMIT;
@@ -1645,7 +1645,7 @@ void GetItemPower(int i, int minlvl, int maxlvl, int flgs, bool onlygood)
 	int pre, post, nt, nl, j, preidx, sufidx;
 	int l[256];
 	char istr[128];
-	BYTE goe;
+	uint8_t goe;
 
 	pre = random_(23, 4);
 	post = random_(23, 3);
@@ -1718,7 +1718,7 @@ void GetItemPower(int i, int minlvl, int maxlvl, int flgs, bool onlygood)
 			item[i]._iSufPower = PL_Suffix[sufidx].PLPower;
 		}
 	}
-	if (!control_WriteStringToBuffer((BYTE *)item[i]._iIName)) {
+	if (!control_WriteStringToBuffer((uint8_t *)item[i]._iIName)) {
 		strcpy(item[i]._iIName, AllItemsList[item[i].IDidx].iSName);
 		if (preidx != -1) {
 			sprintf(istr, "%s %s", PL_Prefix[preidx].PLName, item[i]._iIName);
@@ -1921,7 +1921,7 @@ int RndTypeItems(int itype, int imid)
 int CheckUnique(int i, int lvl, int uper, bool recreate)
 {
 	int j, idata, numu;
-	BOOLEAN uok[128];
+	bool uok[128];
 
 	if (random_(28, 100) > uper)
 		return -1;
@@ -2889,7 +2889,7 @@ void DrawUTextBack()
 void PrintUString(V2Di pos, bool cjustflag, char *str, int col)
 {
 	int len, width, i, k;
-	BYTE c;
+	uint8_t c;
 	V2Di s;
 	s = { pos.x + 96, pos.y * 12 + 204 };
 	len = strlen(str);
@@ -2897,14 +2897,14 @@ void PrintUString(V2Di pos, bool cjustflag, char *str, int col)
 	if (cjustflag) {
 		width = 0;
 		for (i = 0; i < len; i++)
-			width += fontkern[fontframe[gbFontTransTbl[(BYTE)str[i]]]] + 1;
+			width += fontkern[fontframe[gbFontTransTbl[(uint8_t)str[i]]]] + 1;
 		if (width < 257)
 			k = (257 - width) >> 1;
 		s.x += k;
 	}
 
 	for (i = 0; i < len; i++) {
-		c = fontframe[gbFontTransTbl[(BYTE)str[i]]];
+		c = fontframe[gbFontTransTbl[(uint8_t)str[i]]];
 		k += fontkern[c] + 1;
 		if (c && k <= 257) {
 			PrintChar(s, c, col);
@@ -2918,7 +2918,7 @@ void DrawULine(int y)
 	assert(gpBuffer);
 
 	int i;
-	BYTE *src, *dst;
+	uint8_t *src, *dst;
 
 	src = &gpBuffer[SCREENXY(26 + RIGHT_PANEL - SPANEL_WIDTH, 25)];
 	dst = &gpBuffer[BUFFER_WIDTH * (y * 12 + 198) + 26 + RIGHT_PANEL_X - SPANEL_WIDTH];

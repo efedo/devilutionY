@@ -11,7 +11,7 @@
 namespace dvl {
 
 int sgdwLockCount;
-BYTE *gpBuffer;
+uint8_t *gpBuffer;
 #ifdef _DEBUG
 int locktbl[256];
 #endif
@@ -42,7 +42,7 @@ static void dx_create_back_buffer()
 		ErrSdl();
 	}
 
-	gpBuffer = (BYTE *)pal_surface->pixels;
+	gpBuffer = (uint8_t *)pal_surface->pixels;
 
 #ifndef USE_SDL1
 	// In SDL2, `pal_surface` points to the global `palette`.
@@ -91,12 +91,12 @@ static void lock_buf_priv()
 		return;
 	}
 
-	gpBufEnd += (uintptr_t)(BYTE *)pal_surface->pixels;
-	gpBuffer = (BYTE *)pal_surface->pixels;
+	gpBufEnd += (uintptr_t)(uint8_t *)pal_surface->pixels;
+	gpBuffer = (uint8_t *)pal_surface->pixels;
 	sgdwLockCount++;
 }
 
-void lock_buf(BYTE idx)
+void lock_buf(uint8_t idx)
 {
 #ifdef _DEBUG
 	++locktbl[idx];
@@ -118,7 +118,7 @@ static void unlock_buf_priv()
 	sgMemCrit.Leave();
 }
 
-void unlock_buf(BYTE idx)
+void unlock_buf(uint8_t idx)
 {
 #ifdef _DEBUG
 	if (!locktbl[idx])

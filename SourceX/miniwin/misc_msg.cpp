@@ -729,7 +729,7 @@ bool TranslateMessage(const MSG *lpMsg)
 	return true;
 }
 
-SHORT GetAsyncKeyState(int vKey)
+uint16_t GetAsyncKeyState(int vKey)
 {
 	if (vKey == DVL_MK_LBUTTON)
 		return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT);

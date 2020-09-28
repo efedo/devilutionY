@@ -451,7 +451,7 @@ bool UiValidPlayerName(char *name)
 	if (strpbrk(name, ",<>%&\\\"?*#/:") || strpbrk(name, " "))
 		return false;
 
-	for (BYTE *letter = (BYTE *)name; *letter; letter++)
+	for (uint8_t *letter = (uint8_t *)name; *letter; letter++)
 		if (*letter < 0x20 || (*letter > 0x7E && *letter < 0xC0))
 			return false;
 
@@ -525,7 +525,7 @@ bool UiCreateGameCallback(int a1, int a2, int a3, int a4, int a5, int a6)
 	UNIMPLEMENTED();
 }
 
-bool UiArtCallback(int game_type, unsigned int art_code, SDL_Color *pPalette, BYTE *pBuffer,
+bool UiArtCallback(int game_type, unsigned int art_code, SDL_Color *pPalette, uint8_t *pBuffer,
     DWORD dwBuffersize, DWORD *pdwWidth, DWORD *pdwHeight, DWORD *pdwBpp)
 {
 	UNIMPLEMENTED();

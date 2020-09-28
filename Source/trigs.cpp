@@ -549,35 +549,35 @@ void CheckTrigForce()
 	}
 
 	if (!lvl.setlevel) {
-		switch (lvl.leveltype) {
-		case DTYPE_TOWN:
+		switch (lvl.type()) {
+		case DunType::town:
 			trigflag = ForceTownTrig();
 			break;
-		case DTYPE_CATHEDRAL:
+		case DunType::cathedral:
 			trigflag = ForceL1Trig();
 			break;
-		case DTYPE_CATACOMBS:
+		case DunType::catacombs:
 			trigflag = ForceL2Trig();
 			break;
-		case DTYPE_CAVES:
+		case DunType::caves:
 			trigflag = ForceL3Trig();
 			break;
-		case DTYPE_HELL:
+		case DunType::hell:
 			trigflag = ForceL4Trig();
 			break;
 		}
-		if (lvl.leveltype != DTYPE_TOWN && !trigflag) {
+		if (lvl.type() != DunType::town && !trigflag) {
 			trigflag = ForceQuests();
 		}
 	} else {
 		switch (lvl.setlvlnum) {
-		case SL_SKELKING:
+		case SetLvl::SkelKing:
 			trigflag = ForceSKingTrig();
 			break;
-		case SL_BONECHAMB:
+		case SetLvl::BoneChamb:
 			trigflag = ForceSChambTrig();
 			break;
-		case SL_POISONWATER:
+		case SetLvl::PoisonWater:
 			trigflag = ForcePWaterTrig();
 			break;
 		}

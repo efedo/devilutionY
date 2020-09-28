@@ -94,7 +94,7 @@ void DrawDiabloMsg()
 {
 	int i, len, width;
 	V2Di s;
-	BYTE c;
+	uint8_t c;
 
 	CelDraw(PANEL_X + 101, DIALOG_Y, pSTextSlidCels, 1, 12);
 	CelDraw(PANEL_X + 527, DIALOG_Y, pSTextSlidCels, 4, 12);
@@ -125,7 +125,7 @@ void DrawDiabloMsg()
 	width = 0;
 
 	for (i = 0; i < len; i++) {
-		width += fontkern[fontframe[gbFontTransTbl[(BYTE)tempstr[i]]]] + 1;
+		width += fontkern[fontframe[gbFontTransTbl[(uint8_t)tempstr[i]]]] + 1;
 	}
 
 	if (width < 442) {
@@ -133,7 +133,7 @@ void DrawDiabloMsg()
 	}
 
 	for (i = 0; i < len; i++) {
-		c = fontframe[gbFontTransTbl[(BYTE)tempstr[i]]];
+		c = fontframe[gbFontTransTbl[(uint8_t)tempstr[i]]];
 		if (c != '\0') {
 			PrintChar(s, c, COL_GOLD);
 		}

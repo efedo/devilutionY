@@ -10,8 +10,8 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern bool sgbControllerActive;
 extern int light_table_index;
-extern BYTE *gpBufStart;
-extern BYTE *gpBufEnd;
+extern uint8_t *gpBufStart;
+extern uint8_t *gpBufEnd;
 extern DWORD level_cel_block;
 
 extern char arch_draw_type;
@@ -21,7 +21,7 @@ extern char arch_draw_type;
 //extern int cel_foliage_active;
 
 //extern int level_piece_id;
-extern void (*DrawPlrProc)(int, int, int, int, int, BYTE *, int, int, int, int);
+extern void (*DrawPlrProc)(int, int, int, int, int, uint8_t *, int, int, int, int);
 
 void ClearCursor();
 void DrawMissile(V2Di p, V2Di s, bool pre);

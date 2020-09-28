@@ -17,7 +17,7 @@ void SendPlrMsg(int pnum, const char *pszStr);
 void ClearPlrMsg();
 void InitPlrMsg();
 void DrawPlrMsg();
-void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, BYTE col);
+void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, uint8_t col);
 
 /* rdata */
 
