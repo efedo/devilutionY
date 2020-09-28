@@ -6,11 +6,21 @@
 #ifndef __DRLG_L1_H__
 #define __DRLG_L1_H__
 
+#include "level/level.h"
+
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+class LvlCathedral : public Level {
+	LvlCathedral();
+	void create(int lvldir) override;
+	void loadGFX() override;
+
+	void CreateL5Dungeon(DWORD rseed, int entry);
+	void LoadL1Dungeon(char *sFileName, int vx, int vy);
+	void DRLG_L1Pass3();
+
+	void DRLG_CreateThemeRoom(int themeIndex) override;
+};
 
 extern BYTE L5dungeon[80][80];
 extern BYTE L5dflags[DMAXX][DMAXY];
@@ -24,9 +34,7 @@ extern int VR3;
 extern BYTE *L5pSetPiece;
 
 void DRLG_Init_Globals();
-void LoadL1Dungeon(char *sFileName, int vx, int vy);
 void LoadPreL1Dungeon(char *sFileName, int vx, int vy);
-void CreateL5Dungeon(DWORD rseed, int entry);
 
 /* rdata */
 extern const ShadowStruct SPATS[37];

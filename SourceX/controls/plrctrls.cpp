@@ -115,7 +115,7 @@ void FindItemOrObject()
 		}
 	}
 
-	if (level.leveltype == DTYPE_TOWN || pcursitem != -1)
+	if (lvl.leveltype == DTYPE_TOWN || pcursitem != -1)
 		return; // Don't look for objects in town
 
 	for (int x = -1; x < 2; x++) {
@@ -323,7 +323,7 @@ void CheckPlayerNearby()
 
 void FindActor()
 {
-	if (level.leveltype != DTYPE_TOWN) {
+	if (lvl.leveltype != DTYPE_TOWN) {
 		CheckMonstersNearby();
 	} else {
 		CheckTownersNearby();
@@ -377,7 +377,7 @@ void FindTrigger()
 
 		if (pcurstrig == -1) {
 			for (int i = 0; i < MAXQUESTS; i++) {
-				if (i == Q_BETRAYER || level.currlevel != quests[i]._qlevel || quests[i]._qslvl == 0)
+				if (i == Q_BETRAYER || lvl.currlevel != quests[i]._qlevel || quests[i]._qslvl == 0)
 					continue;
 				const int newDdistance = GetDistance(quests[i]._qt, 2);
 				if (newDdistance == 0)
@@ -398,7 +398,7 @@ void FindTrigger()
 
 void Interact()
 {
-	if (level.leveltype == DTYPE_TOWN && pcursmonst != -1) {
+	if (lvl.leveltype == DTYPE_TOWN && pcursmonst != -1) {
 		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._t, pcursmonst);
 	} else if (pcursmonst != -1) {
 		if (myplr().data._pwtype != WT_RANGED || CanTalkToMonst(pcursmonst)) {
@@ -406,7 +406,7 @@ void Interact()
 		} else {
 			NetSendCmdParam1(true, CMD_RATTACKID, pcursmonst);
 		}
-	} else if (level.leveltype != DTYPE_TOWN && pcursplr != -1 && !FriendlyMode) {
+	} else if (lvl.leveltype != DTYPE_TOWN && pcursplr != -1 && !FriendlyMode) {
 		NetSendCmdParam1(true, myplr().data._pwtype == WT_RANGED ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
 	}
 }
@@ -849,7 +849,7 @@ struct RightStickAccumulator {
 
 bool IsAutomapActive()
 {
-	return automap.enabled() && level.leveltype != DTYPE_TOWN;
+	return automap.enabled() && lvl.leveltype != DTYPE_TOWN;
 }
 
 void HandleRightStickMotion()

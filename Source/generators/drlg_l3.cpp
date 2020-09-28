@@ -79,6 +79,70 @@ const BYTE L3ANVIL[244] = {
 	0, 0, 0, 0
 };
 
+LvlCaves::LvlCaves()
+    : Level(DunType::caves)
+{
+	_automapFile = "Levels\\L3Data\\L3.AMP";
+}
+
+void LvlCaves::create(int lvldir)
+{
+	CreateL3Dungeon(glSeedTbl[lvl.currlevel], lvldir);
+	InitL3Triggers();
+	Freeupstairs();
+	LoadRndLvlPal(3);
+};
+
+void LvlCaves::loadGFX()
+{
+	assert(!pDungeonCels);
+	pDungeonCels = LoadFileInMem("Levels\\L3Data\\L3.CEL", NULL);
+	pMegaTiles = LoadFileInMem("Levels\\L3Data\\L3.TIL", NULL);
+	pLevelPieces = LoadFileInMem("Levels\\L3Data\\L3.MIN", NULL);
+	pSpecialCels = LoadFileInMem("Levels\\L1Data\\L1S.CEL", NULL);
+}
+
+void LvlCaves::DRLG_CreateThemeRoom(int themeIndex)
+{
+	int xx, yy;
+
+	for (yy = lvl.themeLoc[themeIndex].y; yy < lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height; yy++) {
+		for (xx = lvl.themeLoc[themeIndex].x; xx < lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width; xx++) {
+			if (yy == lvl.themeLoc[themeIndex].y
+				    && xx >= lvl.themeLoc[themeIndex].x
+				    && xx <= lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width
+				|| yy == lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1
+				    && xx >= lvl.themeLoc[themeIndex].x
+				    && xx <= lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width) {
+				dgrid[xx][yy].dungeon = 134;
+			} else if (xx == lvl.themeLoc[themeIndex].x
+				    && yy >= lvl.themeLoc[themeIndex].y
+				    && yy <= lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height
+				|| xx == lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1
+				    && yy >= lvl.themeLoc[themeIndex].y
+				    && yy <= lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height) {
+				dgrid[xx][yy].dungeon = 137;
+			} else {
+				dgrid[xx][yy].dungeon = 7;
+			}
+		}
+	}
+
+	dgrid[lvl.themeLoc[themeIndex].x][lvl.themeLoc[themeIndex].y].dungeon = 150;
+	dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y].dungeon = 151;
+	dgrid[lvl.themeLoc[themeIndex].x][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 152;
+	dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 138;
+
+	switch (random_(0, 2)) {
+	case 0:
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height / 2].dungeon = 147;
+		break;
+	case 1:
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 146;
+		break;
+	}
+}
+
 static void InitL3Dungeon()
 {
 	dgrid.init();
@@ -1403,8 +1467,7 @@ bool DRLG_L3Anvil()
 		}
 	}
 
-	setpc = { sx, sy, sw, sh };
-
+	lvl.setpc({ sx, sy, sw, sh });
 	return FALSE;
 }
 
@@ -1536,7 +1599,7 @@ static void DRLG_L3(int entry)
 				genok = DRLG_L3PlaceMiniSet(L3UP, 1, 1, -1, -1, 1, 0);
 				if (!genok) {
 					genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, 0, 1);
-					if (!genok && level.currlevel == 9) {
+					if (!genok && lvl.currlevel == 9) {
 						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, 0, 6);
 					}
 				}
@@ -1546,7 +1609,7 @@ static void DRLG_L3(int entry)
 					genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, 1, 1);
 					View.x += 2;
 					View.y -= 2;
-					if (!genok && level.currlevel == 9) {
+					if (!genok && lvl.currlevel == 9) {
 						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, 0, 6);
 					}
 				}
@@ -1554,7 +1617,7 @@ static void DRLG_L3(int entry)
 				genok = DRLG_L3PlaceMiniSet(L3UP, 1, 1, -1, -1, 0, 0);
 				if (!genok) {
 					genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, 0, 1);
-					if (!genok && level.currlevel == 9) {
+					if (!genok && lvl.currlevel == 9) {
 						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, 1, 6);
 					}
 				}
@@ -1579,11 +1642,11 @@ static void DRLG_L3(int entry)
 	DRLG_L3River();
 
 	if (QuestStatus(Q_ANVIL)) {
-		dgrid[setpc.x + 7][setpc.y + 5].dungeon = 7;
-		dgrid[setpc.x + 8][setpc.y + 5].dungeon = 7;
-		dgrid[setpc.x + 9][setpc.y + 5].dungeon = 7;
-		if (dgrid[setpc.x + 10][setpc.y + 5].dungeon == 17 || dgrid[setpc.x + 10][setpc.y + 5].dungeon == 18) {
-			dgrid[setpc.x + 10][setpc.y + 5].dungeon = 45;
+		dgrid[lvl.getpc().x + 7][lvl.getpc().y + 5].dungeon = 7;
+		dgrid[lvl.getpc().x + 8][lvl.getpc().y + 5].dungeon = 7;
+		dgrid[lvl.getpc().x + 9][lvl.getpc().y + 5].dungeon = 7;
+		if (dgrid[lvl.getpc().x + 10][lvl.getpc().y + 5].dungeon == 17 || dgrid[lvl.getpc().x + 10][lvl.getpc().y + 5].dungeon == 18) {
+			dgrid[lvl.getpc().x + 10][lvl.getpc().y + 5].dungeon = 45;
 		}
 	}
 
@@ -1626,7 +1689,7 @@ static void DRLG_L3(int entry)
 	DRLG_Init_Globals();
 }
 
-static void DRLG_L3Pass3()
+void LvlCaves::DRLG_L3Pass3()
 {
 	int i, j, xx, yy;
 	long v1, v2, v3, v4, lv;
@@ -1635,10 +1698,10 @@ static void DRLG_L3Pass3()
 	lv = 8 - 1;
 
 	MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-	v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-	v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-	v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-	v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+	v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+	v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+	v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+	v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
@@ -1657,10 +1720,10 @@ static void DRLG_L3Pass3()
 			lv = dgrid[i][j].dungeon - 1;
 			if (lv >= 0) {
 				MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-				v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-				v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-				v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-				v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+				v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+				v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+				v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+				v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 			} else {
 				v1 = 0;
 				v2 = 0;
@@ -1677,13 +1740,13 @@ static void DRLG_L3Pass3()
 	}
 }
 
-void CreateL3Dungeon(DWORD rseed, int entry)
+void LvlCaves::CreateL3Dungeon(DWORD rseed, int entry)
 {
 	int i, j;
 
 	SetRndSeed(rseed);
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 	DRLG_InitTrans();
 	DRLG_InitSetPC();
 	DRLG_L3(entry);
@@ -1706,14 +1769,14 @@ void CreateL3Dungeon(DWORD rseed, int entry)
 	DRLG_SetPC();
 }
 
-void LoadL3Dungeon(char *sFileName, int vx, int vy)
+void LvlCaves::LoadL3Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
 	InitL3Dungeon();
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 	DRLG_InitTrans();
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 

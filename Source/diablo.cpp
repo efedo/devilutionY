@@ -89,11 +89,6 @@ void FreeGameMem()
 {
 	music_stop();
 
-	MemFreeDbg(pDungeonCels);
-	MemFreeDbg(pMegaTiles);
-	MemFreeDbg(pLevelPieces);
-	MemFreeDbg(pSpecialCels);
-
 	FreeMissiles();
 	FreeMonsters();
 	FreeObjectGFX();
@@ -409,11 +404,11 @@ void diablo_parse_flags(int argc, char **argv)
 			debug_mode_key_J_trigger = argv[++i];
 		*/
 		} else if (strcasecmp("-l", argv[i]) == 0) {
-			level.setlevel = FALSE;
+			lvl.setlevel = FALSE;
 			leveldebug = TRUE;
-			level.leveltype = SDL_atoi(argv[++i]);
-			level.currlevel = SDL_atoi(argv[++i]);
-			plr[0].data.plrlevel = level.currlevel;
+			lvl.setType(DunType(SDL_atoi(argv[++i])));
+			lvl.currlevel = SDL_atoi(argv[++i]);
+			plr[0].data.plrlevel = lvl.currlevel;
 		} else if (strcasecmp("-m", argv[i]) == 0) {
 			monstdebug = TRUE;
 			DebugMonsters[debugmonsttypes++] = SDL_atoi(argv[++i]);
@@ -425,8 +420,8 @@ void diablo_parse_flags(int argc, char **argv)
 			debug_mode_key_s = TRUE;
 		} else if (strcasecmp("-t", argv[i]) == 0) {
 			leveldebug = TRUE;
-			level.setlevel = TRUE;
-			level.setlvlnum = SDL_atoi(argv[++i]);
+			lvl.setlevel = TRUE;
+			lvl.setlvlnum = SDL_atoi(argv[++i]);
 		} else if (strcasecmp("-v", argv[i]) == 0) {
 			visiondebug = TRUE;
 		} else if (strcasecmp("-w", argv[i]) == 0) {
@@ -690,7 +685,7 @@ bool LeftMouseCmd(bool bShift)
 
 	assert(Mouse.y < PANEL_TOP || Mouse.x < PANEL_LEFT || Mouse.x >= PANEL_LEFT + PANEL_WIDTH);
 
-	if (level.leveltype == DTYPE_TOWN) {
+	if (lvl.type() == DunType::town) {
 		if (pcursitem != -1 && pcurs == CURSOR_HAND)
 			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
 		if (pcursmonst != -1)
@@ -933,7 +928,7 @@ void PressKey(int vkey)
 			chrflag = FALSE;
 			sbookflag = FALSE;
 			spselflag = FALSE;
-			if (qtextflag && level.leveltype == DTYPE_TOWN) {
+			if (qtextflag && lvl.type() == DunType::town) {
 				qtextflag = FALSE;
 				stream_stop();
 			}
@@ -1063,7 +1058,7 @@ void PressKey(int vkey)
 		chrflag = FALSE;
 		sbookflag = FALSE;
 		spselflag = FALSE;
-		if (qtextflag && level.leveltype == DTYPE_TOWN) {
+		if (qtextflag && lvl.type() == DunType::town) {
 			qtextflag = FALSE;
 			stream_stop();
 		}
@@ -1281,17 +1276,17 @@ void PressChar(int vkey)
 		}
 		return;
 	case ':':
-		if (level.currlevel == 0 && debug_mode_key_w) {
+		if (lvl.currlevel == 0 && debug_mode_key_w) {
 			SetAllSpellsCheat();
 		}
 		return;
 	case '[':
-		if (level.currlevel == 0 && debug_mode_key_w) {
+		if (lvl.currlevel == 0 && debug_mode_key_w) {
 			TakeGoldCheat();
 		}
 		return;
 	case ']':
-		if (level.currlevel == 0 && debug_mode_key_w) {
+		if (lvl.currlevel == 0 && debug_mode_key_w) {
 			MaxSpellsCheat();
 		}
 		return;
@@ -1321,11 +1316,11 @@ void PressChar(int vkey)
 		return;
 	case 'R':
 	case 'r':
-		sprintf(tempstr, "seed = %i", glSeedTbl[level.currlevel]);
+		sprintf(tempstr, "seed = %i", glSeedTbl[lvl.currlevel]);
 		NetSendCmdString(1 << myplr(), tempstr);
-		sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[level.currlevel], glMid2Seed[level.currlevel], glMid3Seed[level.currlevel]);
+		sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[lvl.currlevel], glMid2Seed[lvl.currlevel], glMid3Seed[lvl.currlevel]);
 		NetSendCmdString(1 << myplr(), tempstr);
-		sprintf(tempstr, "End = %i", glEndSeed[level.currlevel]);
+		sprintf(tempstr, "End = %i", glEndSeed[lvl.currlevel]);
 		NetSendCmdString(1 << myplr(), tempstr);
 		return;
 	case 'T':
@@ -1338,12 +1333,12 @@ void PressChar(int vkey)
 		}
 		return;
 	case '|':
-		if (level.currlevel == 0 && debug_mode_key_w) {
+		if (lvl.currlevel == 0 && debug_mode_key_w) {
 			GiveGoldCheat();
 		}
 		return;
 	case '~':
-		if (level.currlevel == 0 && debug_mode_key_w) {
+		if (lvl.currlevel == 0 && debug_mode_key_w) {
 			StoresCheat();
 		}
 		return;
@@ -1353,43 +1348,7 @@ void PressChar(int vkey)
 
 void LoadLvlGFX()
 {
-	assert(!pDungeonCels);
-
-	switch (level.leveltype) {
-	case DTYPE_TOWN:
-		pDungeonCels = LoadFileInMem("Levels\\TownData\\Town.CEL", NULL);
-		pMegaTiles = LoadFileInMem("Levels\\TownData\\Town.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\TownData\\Town.MIN", NULL);
-		pSpecialCels = LoadFileInMem("Levels\\TownData\\TownS.CEL", NULL);
-		break;
-	case DTYPE_CATHEDRAL:
-		pDungeonCels = LoadFileInMem("Levels\\L1Data\\L1.CEL", NULL);
-		pMegaTiles = LoadFileInMem("Levels\\L1Data\\L1.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L1Data\\L1.MIN", NULL);
-		pSpecialCels = LoadFileInMem("Levels\\L1Data\\L1S.CEL", NULL);
-		break;
-	case DTYPE_CATACOMBS:
-		pDungeonCels = LoadFileInMem("Levels\\L2Data\\L2.CEL", NULL);
-		pMegaTiles = LoadFileInMem("Levels\\L2Data\\L2.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L2Data\\L2.MIN", NULL);
-		pSpecialCels = LoadFileInMem("Levels\\L2Data\\L2S.CEL", NULL);
-		break;
-	case DTYPE_CAVES:
-		pDungeonCels = LoadFileInMem("Levels\\L3Data\\L3.CEL", NULL);
-		pMegaTiles = LoadFileInMem("Levels\\L3Data\\L3.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L3Data\\L3.MIN", NULL);
-		pSpecialCels = LoadFileInMem("Levels\\L1Data\\L1S.CEL", NULL);
-		break;
-	case DTYPE_HELL:
-		pDungeonCels = LoadFileInMem("Levels\\L4Data\\L4.CEL", NULL);
-		pMegaTiles = LoadFileInMem("Levels\\L4Data\\L4.TIL", NULL);
-		pLevelPieces = LoadFileInMem("Levels\\L4Data\\L4.MIN", NULL);
-		pSpecialCels = LoadFileInMem("Levels\\L2Data\\L2S.CEL", NULL);
-		break;
-	default:
-		app_fatal("LoadLvlGFX");
-		break;
-	}
+	lvl.loadGFX();
 }
 
 void LoadAllGFX()
@@ -1407,40 +1366,7 @@ void LoadAllGFX()
  */
 void CreateLevel(int lvldir)
 {
-	switch (level.leveltype) {
-	case DTYPE_TOWN:
-		CreateTown(lvldir);
-		InitTownTriggers();
-		LoadRndLvlPal(0);
-		break;
-	case DTYPE_CATHEDRAL:
-		CreateL5Dungeon(glSeedTbl[level.currlevel], lvldir);
-		InitL1Triggers();
-		Freeupstairs();
-		LoadRndLvlPal(1);
-		break;
-	case DTYPE_CATACOMBS:
-		CreateL2Dungeon(glSeedTbl[level.currlevel], lvldir);
-		InitL2Triggers();
-		Freeupstairs();
-		LoadRndLvlPal(2);
-		break;
-	case DTYPE_CAVES:
-		CreateL3Dungeon(glSeedTbl[level.currlevel], lvldir);
-		InitL3Triggers();
-		Freeupstairs();
-		LoadRndLvlPal(3);
-		break;
-	case DTYPE_HELL:
-		CreateL4Dungeon(glSeedTbl[level.currlevel], lvldir);
-		InitL4Triggers();
-		Freeupstairs();
-		LoadRndLvlPal(4);
-		break;
-	default:
-		app_fatal("CreateLevel");
-		break;
-	}
+	lvl.create(lvldir);
 }
 
 void LoadGameLevel(bool firstflag, int lvldir)
@@ -1449,11 +1375,11 @@ void LoadGameLevel(bool firstflag, int lvldir)
 	bool visited;
 
 	if (setseed)
-		glSeedTbl[level.currlevel] = setseed;
+		glSeedTbl[lvl.currlevel] = setseed;
 
 	music_stop();
 	NewCursor(CURSOR_HAND);
-	SetRndSeed(glSeedTbl[level.currlevel]);
+	SetRndSeed(glSeedTbl[lvl.currlevel]);
 	IncProgress();
 	MakeLightTable();
 	LoadLvlGFX();
@@ -1474,15 +1400,15 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		InitHelp();
 	}
 
-	SetRndSeed(glSeedTbl[level.currlevel]);
+	SetRndSeed(glSeedTbl[lvl.currlevel]);
 
-	if (level.leveltype == DTYPE_TOWN)
+	if (lvl.type() == DunType::town)
 		SetupTownStores();
 
 	IncProgress();
 	automap.init();
 
-	if (level.leveltype != DTYPE_TOWN && lvldir != 4) {
+	if (lvl.type() != DunType::town && lvldir != 4) {
 		InitLighting();
 		InitVision();
 	}
@@ -1490,13 +1416,13 @@ void LoadGameLevel(bool firstflag, int lvldir)
 	beastiary.InitLevelMonsters();
 	IncProgress();
 
-	if (!level.setlevel) {
+	if (!lvl.setlevel) {
 		CreateLevel(lvldir);
 		IncProgress();
 		pieces.FillSolidBlockTbls();
-		SetRndSeed(glSeedTbl[level.currlevel]);
+		SetRndSeed(glSeedTbl[lvl.currlevel]);
 
-		if (level.leveltype != DTYPE_TOWN) {
+		if (lvl.type() != DunType::town) {
 			beastiary.GetLevelMTypes();
 			InitThemes();
 			LoadAllGFX();
@@ -1519,7 +1445,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (!plr.isValidPlayer(i)) continue;
-			if (plr[i].data.plractive && level.currlevel == plr[i].data.plrlevel) {
+			if (plr[i].data.plractive && lvl.currlevel == plr[i].data.plrlevel) {
 				plr[i].InitPlayerGFX();
 				if (lvldir != 4)
 					plr[i].InitPlayer(firstflag);
@@ -1534,26 +1460,26 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		for (i = 0; i < plr.maxPlayers(); i++) {
 			if (!plr.isValidPlayer(i)) continue;
 			if (plr[i].data.plractive)
-				visited = visited || plr[i].data._pLvlVisited[level.currlevel];
+				visited = visited || plr[i].data._pLvlVisited[lvl.currlevel];
 		}
 
-		SetRndSeed(glSeedTbl[level.currlevel]);
+		SetRndSeed(glSeedTbl[lvl.currlevel]);
 
-		if (level.leveltype != DTYPE_TOWN) {
-			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[level.currlevel] || plr.isMultiplayer()) {
+		if (lvl.type() != DunType::town) {
+			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[lvl.currlevel] || plr.isMultiplayer()) {
 				HoldThemeRooms();
-				glMid1Seed[level.currlevel] = GetRndSeed();
+				glMid1Seed[lvl.currlevel] = GetRndSeed();
 				InitMonsters();
-				glMid2Seed[level.currlevel] = GetRndSeed();
+				glMid2Seed[lvl.currlevel] = GetRndSeed();
 				IncProgress();
 				InitObjects();
 				InitItems();
 				CreateThemeRooms();
 				IncProgress();
-				glMid3Seed[level.currlevel] = GetRndSeed();
+				glMid3Seed[lvl.currlevel] = GetRndSeed();
 				InitMissiles();
 				InitDead();
-				glEndSeed[level.currlevel] = GetRndSeed();
+				glEndSeed[lvl.currlevel] = GetRndSeed();
 
 				if (plr.isMultiplayer())
 					DeltaLoadLevel();
@@ -1579,7 +1505,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 			InitMissiles();
 			IncProgress();
 
-			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[level.currlevel] && plr.isSingleplayer())
+			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[lvl.currlevel] && plr.isSingleplayer())
 				LoadLevel();
 			if (plr.isMultiplayer())
 				DeltaLoadLevel();
@@ -1609,7 +1535,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		IncProgress();
 
 		for (i = 0; i < MAX_PLRS; i++) {
-			if (plr[i].data.plractive && level.currlevel == plr[i].data.plrlevel) {
+			if (plr[i].data.plractive && lvl.currlevel == plr[i].data.plrlevel) {
 				plr[i].InitPlayerGFX();
 				if (lvldir != 4)
 					plr[i].InitPlayer(firstflag);
@@ -1620,7 +1546,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		InitMultiView();
 		IncProgress();
 
-		if (firstflag || lvldir == 4 || !myplr().data._pSLvlVisited[level.setlvlnum]) {
+		if (firstflag || lvldir == 4 || !myplr().data._pSLvlVisited[lvl.setlvlnum]) {
 			InitItems();
 			SavePreLighting();
 		} else {
@@ -1635,7 +1561,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		if (!plr.isValidPlayer(i)) continue;
-		if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
+		if (plr[i].data.plractive && plr[i].data.plrlevel == lvl.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
 			if (plr[i].data._pHitPoints > 0) {
 				if (plr.isSingleplayer())
 					plr[i].addToMap();
@@ -1657,17 +1583,17 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		InitControlPan();
 	}
 	IncProgress();
-	if (level.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		ProcessLightList();
 		ProcessVisionList();
 	}
 
-	music_start(level.leveltype);
+	music_start(int(lvl.type()));
 
 	while (!IncProgress())
 		;
 
-	if (level.setlevel && level.setlvlnum == SL_SKELKING && quests[Q_SKELKING]._qactive == QUEST_ACTIVE)
+	if (lvl.setlevel && lvl.setlvlnum == SL_SKELKING && quests[Q_SKELKING]._qactive == QUEST_ACTIVE)
 		PlaySFX(USFX_SKING1);
 }
 
@@ -1702,7 +1628,7 @@ void game_logic()
 	if (gbProcessPlayers) {
 		ProcessPlayers();
 	}
-	if (level.leveltype != DTYPE_TOWN) {
+	if (lvl.type() != DunType::town) {
 		ProcessMonsters();
 		ProcessObjects();
 		ProcessMissiles();
@@ -1757,9 +1683,9 @@ void diablo_color_cyc_logic()
 	if (!palette_get_color_cycling())
 		return;
 
-	if (level.leveltype == DTYPE_HELL) {
+	if (lvl.type() == DunType::hell) {
 		lighting_color_cycling();
-	} else if (level.leveltype == DTYPE_CAVES) {
+	} else if (lvl.type() == DunType::caves) {
 		palette_update_caves();
 	}
 }

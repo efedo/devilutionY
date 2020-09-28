@@ -8,9 +8,16 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+class LvlCatacombs : public Level {
+	LvlCatacombs();
+	void create(int lvldir) override;
+	void loadGFX() override;
+	void CreateL2Dungeon(DWORD rseed, int entry);
+	void LoadL2Dungeon(char *sFileName, int vx, int vy);
+	void DRLG_L2Pass3();
+
+	void DRLG_CreateThemeRoom(int themeIndex) override;
+};
 
 extern int nSx1;
 extern int nSy1;

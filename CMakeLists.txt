@@ -188,8 +188,9 @@ add_library(devilution STATIC
   Source/cursor.cpp
   Source/dead.cpp
   Source/debug.cpp
+  Source/level/dgrid.cpp
   Source/diablo.cpp
-  Source/directions.cpp
+  Source/pathfinding/directions.cpp
   Source/doom.cpp
   Source/generators/drlg_l1.cpp
   Source/generators/drlg_l2.cpp
@@ -203,14 +204,15 @@ add_library(devilution STATIC
   Source/gamemenu.cpp
   Source/generators/gendung.cpp
   Source/gmenu.cpp
-  Source/grid/grid.cpp
-  Source/grid/tile.cpp
+  Source/level/grid.cpp
+  Source/level/tile.cpp
   Source/help.cpp
   Source/init.cpp
   Source/interfac.cpp
   Source/actors/inv.cpp
   Source/itemdat.cpp
   Source/items.cpp
+  Source/level/level.cpp
   Source/lighting.cpp
   Source/loadsave.cpp
   Source/mainmenu.cpp
@@ -225,7 +227,7 @@ add_library(devilution STATIC
   Source/actors/monster_type.cpp
   Source/media/movie.cpp
   Source/media/mpqapi.cpp
-  Source/micropather/micropather.cpp
+  Source/pathfinding/micropather.cpp
   Source/multiplayer/msg.cpp
   Source/multiplayer/multi.cpp
   Source/nthread.cpp
@@ -233,10 +235,10 @@ add_library(devilution STATIC
   Source/objects.cpp
   Source/pack.cpp
   Source/palette.cpp
-  Source/path.cpp
-  Source/micropather/pathfinder.cpp
+  Source/pathfinding/path.cpp
+  Source/pathfinding/pathfinder.cpp
   Source/pfile.cpp
-  Source/grid/pieces.cpp
+  Source/level/pieces.cpp
   Source/actors/player_instance.cpp
   Source/actors/player_manager.cpp
   Source/plrmsg.cpp
@@ -252,10 +254,10 @@ add_library(devilution STATIC
   Source/stores.cpp
   Source/multiplayer/sync.cpp
   Source/textdat.cpp
-  Source/themes.cpp
-  Source/grid/tile.cpp
+  Source/generators/themes.cpp
+  Source/level/tile.cpp
   Source/tmsg.cpp
-  Source/town.cpp
+  Source/generators/town.cpp
   Source/actors/towners.cpp
   Source/track.cpp
   Source/trigs.cpp

@@ -8,9 +8,17 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+class LvlCaves : public Level {
+	LvlCaves();
+	void create(int lvldir) override;
+	void loadGFX() override;
+	void CreateL3Dungeon(DWORD rseed, int entry);
+	void LoadL3Dungeon(char *sFileName, int vx, int vy);
+	void DRLG_L3Pass3();
+
+	void DRLG_CreateThemeRoom(int themeIndex) override;
+};
+
 
 extern BOOLEAN lavapool;
 extern int abyssx;

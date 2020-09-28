@@ -1715,8 +1715,8 @@ bool CanPut(V2Di p)
 		if (object[oi]._oSelFlag != 0) return FALSE;
 	}
 
-	if (level.currlevel == 0 && !grid.at(p).isMonster()) return FALSE;
-	if (level.currlevel == 0 && !grid.at(f).isMonster()) return FALSE;
+	if (lvl.currlevel == 0 && !grid.at(p).isMonster()) return FALSE;
+	if (lvl.currlevel == 0 && !grid.at(f).isMonster()) return FALSE;
 
 	return TRUE;
 }
@@ -1962,7 +1962,7 @@ bool UseScroll()
 
 	if (pcurs != CURSOR_HAND)
 		return FALSE;
-	if (level.leveltype == DTYPE_TOWN && !spelldata[myplr().data._pRSpell].sTownSpell)
+	if (lvl.leveltype == DTYPE_TOWN && !spelldata[myplr().data._pRSpell].sTownSpell)
 		return FALSE;
 
 	for (i = 0; i < myplr().data._pNumInv; i++) {
@@ -2096,11 +2096,11 @@ bool PlayerInventory::UseInvItem(int cii)
 		dropGoldValue = 0;
 	}
 
-	if (Item->_iMiscId == IMISC_SCROLL && level.currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
+	if (Item->_iMiscId == IMISC_SCROLL && lvl.currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
 		return TRUE;
 	}
 
-	if (Item->_iMiscId == IMISC_SCROLLT && level.currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
+	if (Item->_iMiscId == IMISC_SCROLLT && lvl.currlevel == 0 && !spelldata[Item->_iSpell].sTownSpell) {
 		return TRUE;
 	}
 

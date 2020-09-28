@@ -242,6 +242,70 @@ int Patterns[100][10] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+LvlCatacombs::LvlCatacombs()
+    : Level(DunType::catacombs)
+{
+	_automapFile = "Levels\\L2Data\\L2.AMP";
+}
+
+void LvlCatacombs::create(int lvldir)
+{
+	CreateL2Dungeon(glSeedTbl[lvl.currlevel], lvldir);
+	InitL2Triggers();
+	Freeupstairs();
+	LoadRndLvlPal(2);
+};
+
+void LvlCatacombs::loadGFX()
+{
+	assert(!pDungeonCels);
+	pDungeonCels = LoadFileInMem("Levels\\L2Data\\L2.CEL", NULL);
+	pMegaTiles = LoadFileInMem("Levels\\L2Data\\L2.TIL", NULL);
+	pLevelPieces = LoadFileInMem("Levels\\L2Data\\L2.MIN", NULL);
+	pSpecialCels = LoadFileInMem("Levels\\L2Data\\L2S.CEL", NULL);
+}
+
+void LvlCatacombs::DRLG_CreateThemeRoom(int themeIndex)
+{
+	int xx, yy;
+
+	for (yy = lvl.themeLoc[themeIndex].y; yy < lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height; yy++) {
+		for (xx = lvl.themeLoc[themeIndex].x; xx < lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width; xx++) {
+			if (yy == lvl.themeLoc[themeIndex].y
+				    && xx >= lvl.themeLoc[themeIndex].x
+				    && xx <= lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width
+				|| yy == lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1
+				    && xx >= lvl.themeLoc[themeIndex].x
+				    && xx <= lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width) {
+				dgrid[xx][yy].dungeon = 2;
+			} else if (xx == lvl.themeLoc[themeIndex].x
+				    && yy >= lvl.themeLoc[themeIndex].y
+				    && yy <= lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height
+				|| xx == lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1
+				    && yy >= lvl.themeLoc[themeIndex].y
+				    && yy <= lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height) {
+				dgrid[xx][yy].dungeon = 1;
+			} else {
+				dgrid[xx][yy].dungeon = 3;
+			}
+		}
+	}
+
+	dgrid[lvl.themeLoc[themeIndex].x][lvl.themeLoc[themeIndex].y].dungeon = 8;
+	dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y].dungeon = 7;
+	dgrid[lvl.themeLoc[themeIndex].x][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 9;
+	dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 6;
+
+	switch (random_(0, 2)) {
+	case 0:
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height / 2].dungeon = 4;
+		break;
+	case 1:
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 5;
+		break;
+	}
+}
+
 static bool DRLG_L2PlaceMiniSet(BYTE *miniset, int tmin, int tmax, int cx, int cy, bool setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, bailcnt;
@@ -499,10 +563,7 @@ static void DRLG_L2SetRoom(int rx1, int ry1)
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
 
-	setpc.x = rx1;
-	setpc.y = ry1;
-	setpc.w = rw;
-	setpc.h = rh;
+	lvl.setpc({ rx1, ry1, rw, rh });
 
 	sp = &pSetPiece[4];
 
@@ -1385,7 +1446,7 @@ static bool CreateDungeon()
 	ForceH = 0;
 	ForceHW = FALSE;
 
-	switch (level.currlevel) {
+	switch (lvl.currlevel) {
 	case 5:
 		if (quests[Q_BLOOD]._qactive) {
 			ForceHW = TRUE;
@@ -1475,7 +1536,7 @@ static bool CreateDungeon()
 	return TRUE;
 }
 
-static void DRLG_L2Pass3()
+void LvlCatacombs::DRLG_L2Pass3()
 {
 	int i, j, xx, yy;
 	long v1, v2, v3, v4, lv;
@@ -1484,10 +1545,10 @@ static void DRLG_L2Pass3()
 	lv = 12 - 1;
 
 	MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-	v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-	v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-	v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-	v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+	v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+	v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+	v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+	v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 
 	for (j = 0; j < MAXDUNY; j += 2) {
 		for (i = 0; i < MAXDUNX; i += 2) {
@@ -1504,10 +1565,10 @@ static void DRLG_L2Pass3()
 		for (i = 0; i < DMAXX; i++) {
 			lv = dgrid[i][j].dungeon - 1;
 			MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-			v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-			v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-			v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-			v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+			v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+			v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+			v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+			v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 			grid[xx][yy].setPiece(v1);
 			grid[xx + 1][yy].setPiece(v2);
 			grid[xx][yy + 1].setPiece(v3);
@@ -1522,38 +1583,38 @@ static void DRLG_L2FTVR(int i, int j, int x, int y, int d)
 {
 	if (grid[x][y].dTransVal != 0 || dgrid[i][j].dungeon != 3) {
 		if (d == 1) {
-			grid[x][y].dTransVal = TransVal;
-			grid[x][y + 1].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 2) {
-			grid[x + 1][y].dTransVal = TransVal;
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 3) {
-			grid[x][y].dTransVal = TransVal;
-			grid[x + 1][y].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
 		}
 		if (d == 4) {
-			grid[x][y + 1].dTransVal = TransVal;
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 5) {
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 6) {
-			grid[x][y + 1].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 7) {
-			grid[x + 1][y].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
 		}
 		if (d == 8) {
-			grid[x][y].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
 		}
 	} else {
-		grid[x][y].dTransVal = TransVal;
-		grid[x + 1][y].dTransVal = TransVal;
-		grid[x][y + 1].dTransVal = TransVal;
-		grid[x + 1][y + 1].dTransVal = TransVal;
+		grid[x][y].dTransVal = lvl.TransVal;
+		grid[x + 1][y].dTransVal = lvl.TransVal;
+		grid[x][y + 1].dTransVal = lvl.TransVal;
+		grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		DRLG_L2FTVR(i + 1, j, x + 2, y, 1);
 		DRLG_L2FTVR(i - 1, j, x - 2, y, 2);
 		DRLG_L2FTVR(i, j + 1, x, y + 2, 3);
@@ -1575,7 +1636,7 @@ static void DRLG_L2FloodTVal()
 		for (i = 0; i < DMAXX; i++) {
 			if (dgrid[i][j].dungeon == 3 && grid[xx][yy].dTransVal == 0) {
 				DRLG_L2FTVR(i, j, xx, yy, 0);
-				TransVal++;
+				lvl.TransVal++;
 			}
 			xx += 2;
 		}
@@ -1752,7 +1813,7 @@ static void DRLG_L2(int entry)
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 1, 0);
 			if (doneflag) {
 				doneflag = DRLG_L2PlaceMiniSet(DSTAIRS, 1, 1, -1, -1, 0, 1);
-				if (doneflag && level.currlevel == 5) {
+				if (doneflag && lvl.currlevel == 5) {
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 0, 6);
 				}
 			}
@@ -1761,7 +1822,7 @@ static void DRLG_L2(int entry)
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 0, 0);
 			if (doneflag) {
 				doneflag = DRLG_L2PlaceMiniSet(DSTAIRS, 1, 1, -1, -1, 1, 1);
-				if (doneflag && level.currlevel == 5) {
+				if (doneflag && lvl.currlevel == 5) {
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 0, 6);
 				}
 			}
@@ -1770,7 +1831,7 @@ static void DRLG_L2(int entry)
 			doneflag = DRLG_L2PlaceMiniSet(USTAIRS, 1, 1, -1, -1, 0, 0);
 			if (doneflag) {
 				doneflag = DRLG_L2PlaceMiniSet(DSTAIRS, 1, 1, -1, -1, 0, 1);
-				if (doneflag && level.currlevel == 5) {
+				if (doneflag && lvl.currlevel == 5) {
 					doneflag = DRLG_L2PlaceMiniSet(WARPSTAIRS, 1, 1, -1, -1, 1, 6);
 				}
 			}
@@ -1943,7 +2004,7 @@ static void DRLG_InitL2Vals()
 	}
 }
 
-void LoadL2Dungeon(char *sFileName, int vx, int vy)
+void LvlCatacombs::LoadL2Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh, pc;
 	BYTE *pLevelMap, *lm;
@@ -2082,31 +2143,31 @@ void LoadPreL2Dungeon(char *sFileName, int vx, int vy)
 	mem_free_dbg(pLevelMap);
 }
 
-void CreateL2Dungeon(DWORD rseed, int entry)
+void LvlCatacombs::CreateL2Dungeon(DWORD rseed, int entry)
 {
 	if (plr.isSingleplayer()) {
-		if (level.currlevel == 7 && !quests[Q_BLIND]._qactive) {
-			level.currlevel = 6;
+		if (lvl.currlevel == 7 && !quests[Q_BLIND]._qactive) {
+			lvl.currlevel = 6;
 			CreateL2Dungeon(glSeedTbl[6], 4);
-			level.currlevel = 7;
+			lvl.currlevel = 7;
 		}
-		if (level.currlevel == 8) {
+		if (lvl.currlevel == 8) {
 			if (!quests[Q_BLIND]._qactive) {
-				level.currlevel = 6;
+				lvl.currlevel = 6;
 				CreateL2Dungeon(glSeedTbl[6], 4);
-				level.currlevel = 8;
+				lvl.currlevel = 8;
 			} else {
-				level.currlevel = 7;
+				lvl.currlevel = 7;
 				CreateL2Dungeon(glSeedTbl[7], 4);
-				level.currlevel = 8;
+				lvl.currlevel = 8;
 			}
 		}
 	}
 
 	SetRndSeed(rseed);
 
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	DRLG_InitSetPC();

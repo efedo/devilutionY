@@ -245,10 +245,10 @@ void AddInitItems()
 		item[i]._iSeed = GetRndSeed();
 		SetRndSeed(item[i]._iSeed);
 		if (random_(12, 2))
-			GetItemAttrs(i, IDI_HEAL, level.currlevel);
+			GetItemAttrs(i, IDI_HEAL, lvl.currlevel);
 		else
-			GetItemAttrs(i, IDI_MANA, level.currlevel);
-		item[i]._iCreateInfo = level.currlevel - 0x8000;
+			GetItemAttrs(i, IDI_MANA, lvl.currlevel);
+		item[i]._iCreateInfo = lvl.currlevel - 0x8000;
 		SetupItem(i);
 		item[i]._iAnimFrame = item[i]._iAnimLen;
 		item[i]._iAnimFlag = FALSE;
@@ -282,13 +282,13 @@ void InitItems()
 		itemactive[i] = 0;
 	}
 
-	if (!level.setlevel) {
+	if (!lvl.setlevel) {
 		s = GetRndSeed(); /* unused */
 		if (QuestStatus(Q_ROCK))
 			SpawnRock();
 		if (QuestStatus(Q_ANVIL))
-			SpawnQuestItem(IDI_ANVIL, { 2 * setpc.x + 27, 2 * setpc.y + 27 }, 0, 1);
-		if (level.currlevel > 0 && level.currlevel < 16)
+			SpawnQuestItem(IDI_ANVIL, { 2 * lvl.getpc().x + 27, 2 * lvl.getpc().y + 27 }, 0, 1);
+		if (lvl.currlevel > 0 && lvl.currlevel < 16)
 			AddInitItems();
 	}
 
@@ -731,7 +731,7 @@ void CalcPlrBookVals(int p)
 {
 	int i, slvl;
 
-	if (level.currlevel == 0) {
+	if (lvl.currlevel == 0) {
 		for (i = 1; witchitem[i]._itype != ITYPE_NONE; i++) {
 			WitchBookLevel(i);
 			witchitem[i]._iStatFlag = StoreStatOk(&witchitem[i]);
@@ -766,7 +766,7 @@ void CalcPlrInv(int p, bool Loadgfx)
 		CalcPlrBookVals(p);
 		CalcPlrScrolls(p);
 		CalcPlrStaff(p);
-		if (p == myplr() && level.currlevel == 0)
+		if (p == myplr() && lvl.currlevel == 0)
 			RecalcStoreStats();
 	}
 }
@@ -1237,7 +1237,7 @@ void GetStaffSpell(int i, int lvl, bool onlygood)
 	}
 }
 
-void GetItemAttrs(int i, int idata, int lvl)
+void GetItemAttrs(int i, int idata, int curlvl)
 {
 	int rndv;
 
@@ -1294,16 +1294,16 @@ void GetItemAttrs(int i, int idata, int lvl)
 	item[i]._iSufPower = -1;
 
 	if (item[i]._iMiscId == IMISC_BOOK)
-		GetBookSpell(i, lvl);
+		GetBookSpell(i, curlvl);
 
 	if (item[i]._itype == ITYPE_GOLD) {
 		if (gnDifficulty == DIFF_NORMAL)
-			rndv = 5 * level.currlevel + random_(21, 10 * level.currlevel);
+			rndv = 5 * lvl.currlevel + random_(21, 10 * lvl.currlevel);
 		if (gnDifficulty == DIFF_NIGHTMARE)
-			rndv = 5 * (level.currlevel + 16) + random_(21, 10 * (level.currlevel + 16));
+			rndv = 5 * (lvl.currlevel + 16) + random_(21, 10 * (lvl.currlevel + 16));
 		if (gnDifficulty == DIFF_HELL)
-			rndv = 5 * (level.currlevel + 32) + random_(21, 10 * (level.currlevel + 32));
-		if (level.leveltype == DTYPE_HELL)
+			rndv = 5 * (lvl.currlevel + 32) + random_(21, 10 * (lvl.currlevel + 32));
+		if (lvl.leveltype == DTYPE_HELL)
 			rndv += rndv >> 3;
 		if (rndv > GOLD_MAX_LIMIT)
 			rndv = GOLD_MAX_LIMIT;
@@ -1845,7 +1845,7 @@ int RndUItem(int m)
 			if (monsters[m].data.mLevel < AllItemsList[i].iMinMLvl)
 				okflag = FALSE;
 		} else {
-			if (2 * level.currlevel < AllItemsList[i].iMinMLvl)
+			if (2 * lvl.currlevel < AllItemsList[i].iMinMLvl)
 				okflag = FALSE;
 		}
 		if (AllItemsList[i].itype == ITYPE_MISC)
@@ -1879,7 +1879,7 @@ int RndAllItems()
 
 	ri = 0;
 	for (i = 0; AllItemsList[i].iLoc != ILOC_INVALID; i++) {
-		if (AllItemsList[i].iRnd && 2 * level.currlevel >= AllItemsList[i].iMinMLvl) {
+		if (AllItemsList[i].iRnd && 2 * lvl.currlevel >= AllItemsList[i].iMinMLvl) {
 			ril[ri] = i;
 			ri++;
 		}
@@ -1903,7 +1903,7 @@ int RndTypeItems(int itype, int imid)
 		okflag = TRUE;
 		if (!AllItemsList[i].iRnd)
 			okflag = FALSE;
-		if (level.currlevel << 1 < AllItemsList[i].iMinMLvl)
+		if (lvl.currlevel << 1 < AllItemsList[i].iMinMLvl)
 			okflag = FALSE;
 		if (AllItemsList[i].itype != itype)
 			okflag = FALSE;
@@ -1996,7 +1996,7 @@ void SpawnUnique(int uid, V2Di pos)
 		itype++;
 	}
 
-	GetItemAttrs(ii, itype, level.currlevel);
+	GetItemAttrs(ii, itype, lvl.currlevel);
 	GetUniqueItem(ii, uid);
 	SetupItem(ii);
 	numitems++;
@@ -2126,7 +2126,7 @@ void CreateItem(int uid, V2Di pos)
 			idx++;
 		}
 
-		GetItemAttrs(ii, idx, level.currlevel);
+		GetItemAttrs(ii, idx, lvl.currlevel);
 		GetUniqueItem(ii, uid);
 		SetupItem(ii);
 		item[ii]._iMagical = ITEM_QUALITY_UNIQUE;
@@ -2148,7 +2148,7 @@ void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta)
 		GetSuperItemSpace(pos, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
-		SetupAllItems(ii, idx, GetRndSeed(), 2 * level.currlevel, 1, onlygood, FALSE, delta);
+		SetupAllItems(ii, idx, GetRndSeed(), 2 * lvl.currlevel, 1, onlygood, FALSE, delta);
 		if (sendmsg)
 			NetSendCmdDItem(FALSE, ii);
 		if (delta)
@@ -2186,7 +2186,7 @@ void CreateRndUseful(int pnum, V2Di pos, bool sendmsg)
 		GetSuperItemSpace(pos, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
-		SetupAllUseful(ii, GetRndSeed(), level.currlevel);
+		SetupAllUseful(ii, GetRndSeed(), lvl.currlevel);
 		if (sendmsg) {
 			NetSendCmdDItem(FALSE, ii);
 		}
@@ -2208,7 +2208,7 @@ void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg,
 		GetSuperItemSpace(pos, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
-		SetupAllItems(ii, idx, GetRndSeed(), 2 * level.currlevel, 1, onlygood, FALSE, delta);
+		SetupAllItems(ii, idx, GetRndSeed(), 2 * lvl.currlevel, 1, onlygood, FALSE, delta);
 		if (sendmsg) NetSendCmdDItem(FALSE, ii);
 		if (delta) DeltaAddItem(ii);
 		numitems++;
@@ -2318,7 +2318,7 @@ void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag)
 		itemactive[numitems] = i;
 		item[i]._i = pos;
 		grid.at(pos).setItem(i);
-		GetItemAttrs(i, itemid, level.currlevel);
+		GetItemAttrs(i, itemid, lvl.currlevel);
 		SetupItem(i);
 		item[i]._iPostDraw = TRUE;
 		if (selflag) {
@@ -2346,7 +2346,7 @@ void SpawnRock()
 		n = object[ii]._o;
 		item[i]._i = n;
 		grid[n.x][item[i]._i.y].setItem(i);
-		GetItemAttrs(i, IDI_ROCK, level.currlevel);
+		GetItemAttrs(i, IDI_ROCK, lvl.currlevel);
 		SetupItem(i);
 		item[i]._iSelFlag = 2;
 		item[i]._iPostDraw = TRUE;
@@ -3893,7 +3893,7 @@ void CreateSpellBook(V2Di pos, int ispell, bool sendmsg, bool delta)
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 		while (!done) {
-			SetupAllItems(ii, idx, GetRndSeed(), 2 * level.currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(ii, idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, FALSE, delta);
 			if (item[ii]._iMiscId == IMISC_BOOK && item[ii]._iSpell == ispell)
 				done = TRUE;
 		}
@@ -3918,7 +3918,7 @@ void CreateMagicArmor(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 		itemactive[numitems] = ii;
 		idx = RndTypeItems(imisc, IMISC_NONE);
 		while (!done) {
-			SetupAllItems(ii, idx, GetRndSeed(), 2 * level.currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(ii, idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, FALSE, delta);
 			if (item[ii]._iCurs == icurs)
 				done = TRUE;
 			else
@@ -3945,7 +3945,7 @@ void CreateMagicWeapon(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 		itemactive[numitems] = ii;
 		idx = RndTypeItems(imisc, IMISC_NONE);
 		while (!done) {
-			SetupAllItems(ii, idx, GetRndSeed(), 2 * level.currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(ii, idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, FALSE, delta);
 			if (item[ii]._iCurs == icurs)
 				done = TRUE;
 			else

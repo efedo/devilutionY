@@ -168,7 +168,7 @@ void CheckRportal()
 				trigflag = TRUE;
 				ClearPanel();
 				strcpy(infostr, "Portal to");
-				if (!level.setlevel)
+				if (!lvl.setlevel)
 					strcpy(tempstr, "The Unholy Altar");
 				else
 					strcpy(tempstr, "level 15");
@@ -330,7 +330,7 @@ void CheckCursMove()
 		}
 	};
 
-	if (level.leveltype != DTYPE_TOWN) { // Not in town, aggressive monster selection
+	if (lvl.type() != DunType::town) { // Not in town, aggressive monster selection
 		if (pcurstemp != -1) { // was monster last time
 			_monst1(m + V2Di(2, 1), flipflag, -1); // if flipped, false
 			_monst1(m + V2Di(1, 2), flipflag, +1); // if not flipped, false

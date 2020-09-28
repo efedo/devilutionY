@@ -147,7 +147,7 @@ static void PlacePlayer(int pnum)
 	DWORD i;
 	bool done;
 
-	if (plr[pnum].data.plrlevel == level.currlevel) {
+	if (plr[pnum].data.plrlevel == lvl.currlevel) {
 		for (i = 0; i < 8; i++) {
 			n = plr[pnum].pos() + plroff2[i];
 
@@ -218,7 +218,7 @@ void DoResurrect(int pnum, int rid)
 
 		CalcPlrInv(rid, TRUE);
 
-		if (plr[rid].data.plrlevel == level.currlevel) {
+		if (plr[rid].data.plrlevel == lvl.currlevel) {
 			plr[rid].StartStand(plr[rid].data._pdir);
 		} else {
 			plr[rid].data._pmode = PM_STAND;

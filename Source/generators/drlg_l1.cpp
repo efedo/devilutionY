@@ -119,6 +119,34 @@ const BYTE PWATERIN[] = { 6, 6, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 
 /* data */
 BYTE L5ConvTbl[16] = { 22, 13, 1, 13, 2, 13, 13, 13, 4, 13, 1, 13, 2, 13, 16, 13 };
 
+LvlCathedral::LvlCathedral()
+    : Level(DunType::cathedral)
+{
+	_automapFile = "Levels\\L1Data\\L1.AMP";
+}
+
+void LvlCathedral::create(int lvldir)
+{
+	CreateL5Dungeon(glSeedTbl[lvl.currlevel], lvldir);
+	InitL1Triggers();
+	Freeupstairs();
+	LoadRndLvlPal(1);
+};
+
+void LvlCathedral::loadGFX()
+{
+	assert(!pDungeonCels);
+	pDungeonCels = LoadFileInMem("Levels\\L1Data\\L1.CEL", NULL);
+	pMegaTiles = LoadFileInMem("Levels\\L1Data\\L1.TIL", NULL);
+	pLevelPieces = LoadFileInMem("Levels\\L1Data\\L1.MIN", NULL);
+	pSpecialCels = LoadFileInMem("Levels\\L1Data\\L1S.CEL", NULL);
+}
+
+void LvlCathedral::DRLG_CreateThemeRoom(int themeIndex)
+{
+	return; // Cathedral has separate theme room function
+}
+
 static void DRLG_PlaceDoor(int x, int y)
 {
 	if ((L5dflags[x][y] & DLRG_PROTECTED) == 0) {
@@ -352,10 +380,10 @@ static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, in
 	}
 
 	if (miniset == PWATERIN) {
-		t = TransVal;
-		TransVal = 0;
+		t = lvl.TransVal;
+		lvl.TransVal = 0;
 		DRLG_MRectTrans(sx, sy + 2, sx + 5, sy + 4);
-		TransVal = t;
+		lvl.TransVal = t;
 
 		quests[Q_PWATER]._qt.x = 2 * sx + 21;
 		quests[Q_PWATER]._qt.y = 2 * sy + 22;
@@ -400,7 +428,7 @@ static void DRLG_L1Floor()
 	}
 }
 
-static void DRLG_L1Pass3()
+void LvlCathedral::DRLG_L1Pass3()
 {
 	int i, j, xx, yy;
 	long v1, v2, v3, v4, lv;
@@ -409,10 +437,10 @@ static void DRLG_L1Pass3()
 	lv = 22 - 1;
 
 	MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-	v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-	v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-	v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-	v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+	v1 = SDL_SwapLE16(*(MegaTiles + 0));// +1;
+	v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+	v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+	v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
@@ -431,10 +459,10 @@ static void DRLG_L1Pass3()
 			lv = dgrid[i][j].dungeon - 1;
 			/// ASSERT: assert(lv >= 0);
 			MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-			v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-			v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-			v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-			v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+			v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+			v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+			v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+			v4 = SDL_SwapLE16(*(MegaTiles + 3));// +1;
 			grid[xx][yy].setPiece(v1);
 			grid[xx + 1][yy].setPiece(v2);
 			grid[xx][yy + 1].setPiece(v3);
@@ -527,13 +555,13 @@ static void DRLG_InitL1Vals()
 	}
 }
 
-void LoadL1Dungeon(char *sFileName, int vx, int vy)
+void LvlCathedral::LoadL1Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	pLevelMap = LoadFileInMem(sFileName, NULL);
@@ -579,8 +607,8 @@ void LoadPreL1Dungeon(char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 
@@ -1311,7 +1339,7 @@ static void DRLG_L5SetRoom(int rx1, int ry1)
 
 	rw = *L5pSetPiece;
 	rh = *(L5pSetPiece + 2);
-	setpc = { rx1, ry1, rw, rh };
+	lvl.setpc({ rx1, ry1, rw, rh });
 
 	sp = L5pSetPiece + 4;
 
@@ -1442,34 +1470,34 @@ static void DRLG_L5FTVR(int i, int j, int x, int y, int d)
 {
 	if (grid[x][y].dTransVal || dgrid[i][j].dungeon != 13) {
 		if (d == 1) {
-			grid[x][y].dTransVal = TransVal;
-			grid[x][y + 1].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 2) {
-			grid[x + 1][y].dTransVal = TransVal;
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 3) {
-			grid[x][y].dTransVal = TransVal;
-			grid[x + 1][y].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
 		}
 		if (d == 4) {
-			grid[x][y + 1].dTransVal = TransVal;
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 5)
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		if (d == 6)
-			grid[x][y + 1].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
 		if (d == 7)
-			grid[x + 1][y].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
 		if (d == 8)
-			grid[x][y].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
 	} else {
-		grid[x][y].dTransVal = TransVal;
-		grid[x + 1][y].dTransVal = TransVal;
-		grid[x][y + 1].dTransVal = TransVal;
-		grid[x + 1][y + 1].dTransVal = TransVal;
+		grid[x][y].dTransVal = lvl.TransVal;
+		grid[x + 1][y].dTransVal = lvl.TransVal;
+		grid[x][y + 1].dTransVal = lvl.TransVal;
+		grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		DRLG_L5FTVR(i + 1, j, x + 2, y, 1);
 		DRLG_L5FTVR(i - 1, j, x - 2, y, 2);
 		DRLG_L5FTVR(i, j + 1, x, y + 2, 3);
@@ -1493,7 +1521,7 @@ static void DRLG_L5FloodTVal()
 		for (i = 0; i < DMAXX; i++) {
 			if (dgrid[i][j].dungeon == 13 && !grid[xx][yy].dTransVal) {
 				DRLG_L5FTVR(i, j, xx, yy, 0);
-				TransVal++;
+				lvl.TransVal++;
 			}
 			xx += 2;
 		}
@@ -1585,7 +1613,7 @@ static void DRLG_L5(int entry)
 	LONG minarea;
 	bool doneflag;
 
-	switch (level.currlevel) {
+	switch (lvl.currlevel) {
 	case 1:
 		minarea = 533;
 		break;
@@ -1634,8 +1662,8 @@ static void DRLG_L5(int entry)
 				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, 0, -1, 0) < 0)
 					doneflag = FALSE;
 				if (entry == 1) {
-					View.x = 2 * setpc.x + 20;
-					View.y = 2 * setpc.y + 28;
+					View.x = 2 * lvl.getpc().x + 20;
+					View.y = 2 * lvl.getpc().y + 28;
 				} else {
 					View.y--;
 				}
@@ -1688,15 +1716,15 @@ static void DRLG_L5(int entry)
 	}
 
 	DRLG_Init_Globals();
-	DRLG_CheckQuests(setpc.x, setpc.y);
+	DRLG_CheckQuests(lvl.getpc().x, lvl.getpc().y);
 }
 
-void CreateL5Dungeon(DWORD rseed, int entry)
+void LvlCathedral::CreateL5Dungeon(DWORD rseed, int entry)
 {
 	SetRndSeed(rseed);
 
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	DRLG_InitSetPC();

@@ -350,7 +350,7 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, BYTE *pCelBuff, int nCel, int n
 	int y = n.y;
 	int l, frames;
 
-	if (grid[x][y].dFlags & BFLAG_LIT || myplr().data._pInfraFlag || !level.setlevel && !level.currlevel) {
+	if (grid[x][y].dFlags & BFLAG_LIT || myplr().data._pInfraFlag || !lvl.setlevel && !lvl.currlevel) {
 		if (!pCelBuff) {
 			// app_fatal("Drawing player %d \"%s\": NULL Cel Buffer", pnum, plr[pnum].data._pName);
 			return;
@@ -423,7 +423,7 @@ void DrawDeadPlayer(V2Di pn, V2Di s)
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i].data;
-		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)level.currlevel && plr[i].pos() == pn) {
+		if (p->plractive && !p->_pHitPoints && p->plrlevel == (BYTE)lvl.currlevel && plr[i].pos() == pn) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
 				// app_fatal("Drawing dead player %d \"%s\": NULL Cel Buffer", i, p->_pName);
@@ -518,32 +518,10 @@ static void drawCell(int x, int y, int sx, int sy)
 	int level_piece_id = grid[x][y].getPiece();
 
 	// Specifies whether transparency is active for the current CEL file being decoded.
-	int cel_transparency_active = (BYTE)(pieces[level_piece_id].trans & TransList[grid[x][y].dTransVal]);
+	int cel_transparency_active = (BYTE)(pieces[level_piece_id].trans & lvl.TransList[grid[x][y].dTransVal]);
 
 	// Specifies whether foliage(tile has extra content that overlaps previous tile) being rendered.
 	int cel_foliage_active = !pieces[level_piece_id].solid;
-
-	if (x == 63 && y == 75) {
-		static BYTE *last_dst;
-		static MICROS *last_pMap;
-		static int last_level_piece_id;
-
-		if (dst != last_dst) {
-			std::cout << "mismatch!";
-		}
-
-		if (pMap != last_pMap) {
-			std::cout << "mismatch!";
-		}
-
-		if (level_piece_id != last_level_piece_id) {
-			std::cout << "mismatch!";
-		}
-
-		last_dst = dst;
-		last_pMap = pMap;
-		last_level_piece_id = level_piece_id;
-	}
 
 	for (int i = 0; i < MicroTileLen >> 1; i++) {
 		level_cel_block = pMap->mt[2 * i];
@@ -624,7 +602,20 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 	MonsterStruct *pMonster;
 
 	int mi = grid[x][y + oy].getMonster();
-	if (level.leveltype == DTYPE_TOWN) {
+
+	//if (mi == 3) {
+	//	static int x_last;
+	//	static int y_last;
+
+	//	if (x_last != x || y_last != y) {
+	//		std::cout << "???";
+	//	}
+
+	//	x_last = x;
+	//	y_last = y;
+	//}
+
+	if (lvl.leveltype == DTYPE_TOWN) {
 		px = sx - towner[mi]._tAnimWidth2;
 		if (mi == pcursmonst) {
 			CelBlitOutline(166, { px, sy }, towner[mi]._tAnimData, towner[mi]._tAnimFrame, towner[mi]._tAnimWidth);
@@ -684,8 +675,8 @@ static void DrawPlayerHelper(int x, int y, int oy, int sx, int sy)
  */
 static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 {
-	int mi, px, py, nCel, frames;
-	char bFlag, bDead, bObj, bItem, bPlr, bArch, bMap, negPlr, dd;
+	int mi, nCel, frames;
+	char bObj, bItem, bPlr, bArch, negPlr, dd;
 	DeadStruct *pDeadGuy;
 	BYTE *pCelBuff;
 
@@ -697,11 +688,11 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 
 	light_table_index = grid[sx][sy].dLight;
 
-	//drawCell(sx, sy, dx, dy);
+	drawCell(sx, sy, dx, dy);
 
-	bFlag = grid[sx][sy].dFlags;
-	bDead = grid[sx][sy].dDead;
-	bMap = grid[sx][sy].dTransVal;
+	char bFlag = grid[sx][sy].dFlags;
+	char bDead = grid[sx][sy].dDead;
+	char bMap = grid[sx][sy].dTransVal;
 
 	bool negMon = false;
 	if (sy > 0) negMon = grid[sx][sy - 1].isMonster();
@@ -714,6 +705,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 		DrawMissile({ sx, sy }, { dx, dy }, TRUE);
 	}
 
+	int px, py;
 	if (light_table_index < lightmax && bDead != 0) {
 		pDeadGuy = &dead[(bDead & 0x1F) - 1];
 		dd = (bDead >> 5) & 7;
@@ -750,10 +742,10 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	DrawObject(sx, sy, dx, dy, 0);
 	DrawItem(sx, sy, dx, dy, 0);
 
-	if (level.leveltype != DTYPE_TOWN) {
+	if (lvl.leveltype != DTYPE_TOWN) {
 		bArch = grid[sx][sy].dSpecial;
 		if (bArch != 0) {
-			int cel_transparency_active = TransList[bMap];
+			int cel_transparency_active = lvl.TransList[bMap];
 			CelClippedBlitLightTrans(&gpBuffer[dx + BUFFER_WIDTH * dy], pSpecialCels, bArch, 64, cel_transparency_active);
 		}
 	} else {
@@ -844,20 +836,21 @@ static void scrollrt_draw(int x, int y, int sx, int sy, int rows, int columns)
 		for (int j = 0; j < columns ; j++) {
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY) {
 				bool ispiece = grid[x][y].isPiece();
-				if (!ispiece) continue;
-				if (x + 1 < MAXDUNX && y - 1 >= 0 && sx + TILE_WIDTH <= SCREEN_X + SCREEN_WIDTH) {
-					// Render objects behind walls first to prevent sprites, that are moving
-					// between tiles, from poking through the walls as they exceed the tile bounds.
-					// A proper fix for this would probably be to layout the sceen and render by
-					// sprite screen position rather than tile position.
+				if (ispiece) {
+					if (x + 1 < MAXDUNX && y - 1 >= 0 && sx + TILE_WIDTH <= SCREEN_X + SCREEN_WIDTH) {
+						// Render objects behind walls first to prevent sprites, that are moving
+						// between tiles, from poking through the walls as they exceed the tile bounds.
+						// A proper fix for this would probably be to layout the sceen and render by
+						// sprite screen position rather than tile position.
 
-					if (grid[x][y].isWall() && (grid[x + 1][y].isWall() || (x > 0 && grid[x - 1][y].isWall()))) { // Part of a wall aligned on the x-axis
-						if (grid[x + 1][y - 1].isWalkable() && grid[x][y - 1].isWalkable()) { // Has walkable area behind it
-							//scrollrt_draw_dungeon(x + 1, y - 1, sx + TILE_WIDTH, sy);
+						if (grid[x][y].isWall() && (grid[x + 1][y].isWall() || (x > 0 && grid[x - 1][y].isWall()))) { // Part of a wall aligned on the x-axis
+							if (grid[x + 1][y - 1].isWalkable() && grid[x][y - 1].isWalkable()) {                     // Has walkable area behind it
+								scrollrt_draw_dungeon(x + 1, y - 1, sx + TILE_WIDTH, sy);
+							}
 						}
 					}
+					scrollrt_draw_dungeon(x, y, sx, sy);
 				}
-				scrollrt_draw_dungeon(x, y, sx, sy);
 			}
 			ShiftGrid(&x, &y, 1, 0);
 			sx += TILE_WIDTH;
@@ -1213,12 +1206,12 @@ void ScrollView()
 	scroll = FALSE;
 
 	if (Mouse.x < 20) {
-		if (dmax.y - 1 <= View.y || dmin.x >= View.x) {
-			if (dmax.y - 1 > View.y) {
+		if (lvl.dmax.y - 1 <= View.y || lvl.dmin.x >= View.x) {
+			if (lvl.dmax.y - 1 > View.y) {
 				View.y++;
 				scroll = TRUE;
 			}
-			if (dmin.x < View.x) {
+			if (lvl.dmin.x < View.x) {
 				View.x--;
 				scroll = TRUE;
 			}
@@ -1229,12 +1222,12 @@ void ScrollView()
 		}
 	}
 	if (Mouse.x > SCREEN_WIDTH - 20) {
-		if (dmax.x - 1 <= View.x || dmin.y >= View.y) {
-			if (dmax.x - 1 > View.x) {
+		if (lvl.dmax.x - 1 <= View.x || lvl.dmin.y >= View.y) {
+			if (lvl.dmax.x - 1 > View.x) {
 				View.x++;
 				scroll = TRUE;
 			}
-			if (dmin.y < View.y) {
+			if (lvl.dmin.y < View.y) {
 				View.y--;
 				scroll = TRUE;
 			}
@@ -1245,12 +1238,12 @@ void ScrollView()
 		}
 	}
 	if (Mouse.y < 20) {
-		if (dmin.y >= View.y || dmin.x >= View.x) {
-			if (dmin.y < View.y) {
+		if (lvl.dmin.y >= View.y || lvl.dmin.x >= View.x) {
+			if (lvl.dmin.y < View.y) {
 				View.y--;
 				scroll = TRUE;
 			}
-			if (dmin.x < View.x) {
+			if (lvl.dmin.x < View.x) {
 				View.x--;
 				scroll = TRUE;
 			}
@@ -1261,12 +1254,12 @@ void ScrollView()
 		}
 	}
 	if (Mouse.y > SCREEN_HEIGHT - 20) {
-		if (dmax.y - 1 <= View.y || dmax.x - 1 <= View.x) {
-			if (dmax.y - 1 > View.y) {
+		if (lvl.dmax.y - 1 <= View.y || lvl.dmax.x - 1 <= View.x) {
+			if (lvl.dmax.y - 1 > View.y) {
 				View.y++;
 				scroll = TRUE;
 			}
-			if (dmax.x - 1 > View.x) {
+			if (lvl.dmax.x - 1 > View.x) {
 				View.x++;
 				scroll = TRUE;
 			}

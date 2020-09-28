@@ -54,21 +54,8 @@ void Automap::init()
 
 	memset(automaptype, 0, sizeof(automaptype));
 
-	switch (level.leveltype) {
-	case DTYPE_CATHEDRAL:
-		pAFile = LoadFileInMem("Levels\\L1Data\\L1.AMP", &dwTiles);
-		break;
-	case DTYPE_CATACOMBS:
-		pAFile = LoadFileInMem("Levels\\L2Data\\L2.AMP", &dwTiles);
-		break;
-	case DTYPE_CAVES:
-		pAFile = LoadFileInMem("Levels\\L3Data\\L3.AMP", &dwTiles);
-		break;
-	case DTYPE_HELL:
-		pAFile = LoadFileInMem("Levels\\L4Data\\L4.AMP", &dwTiles);
-		break;
-	default:
-		return;
+	if (lvl.hasAutomapFile()) {
+		pAFile = LoadFileInMem(lvl.automapFile().c_str(), &dwTiles);
 	}
 
 	dwTiles /= 2;
@@ -173,7 +160,7 @@ void Automap::draw()
 	V2Di s, map;
 	int i, j, d;
 
-	if (level.leveltype == DTYPE_TOWN) {
+	if (lvl.type() == DunType::town) {
 		drawText();
 		return;
 	}
@@ -591,10 +578,10 @@ void Automap::drawText()
 			nextline = 50;
 		}
 	}
-	if (level.setlevel) {
-		PrintGameStr({ 8, nextline }, quest_level_names[(BYTE)level.setlvlnum], COL_GOLD);
-	} else if (level.currlevel) {
-		sprintf(desc, "Level: %i", level.currlevel);
+	if (lvl.setlevel) {
+		PrintGameStr({ 8, nextline }, quest_level_names[(BYTE)lvl.setlvlnum], COL_GOLD);
+	} else if (lvl.currlevel) {
+		sprintf(desc, "Level: %i", lvl.currlevel);
 		PrintGameStr({ 8, nextline }, desc, COL_GOLD);
 	}
 }

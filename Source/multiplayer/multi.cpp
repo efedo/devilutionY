@@ -439,7 +439,7 @@ void multi_process_network_packets()
 			plr[dwID].data._pBaseMag = pkt->bmag;
 			plr[dwID].data._pBaseDex = pkt->bdex;
 			if (!cond && plr[dwID].data.plractive && plr[dwID].data._pHitPoints) {
-				if (level.currlevel == plr[dwID].data.plrlevel && !plr[dwID].data._pLvlChanging) {
+				if (lvl.currlevel == plr[dwID].data.plrlevel && !plr[dwID].data._pLvlChanging) {
 					dx = abs(plr[dwID].pos().x - pkt->px);
 					dy = abs(plr[dwID].pos().y - pkt->py);
 					if ((dx > 3 || dy > 3) && !grid[pkt->px][pkt->py].isPlayer()) {
@@ -752,9 +752,9 @@ int InitLevelType(int l)
 void SetupLocalCoords()
 {
 	if (!leveldebug || plr.isMultiplayer()) {
-		level.currlevel = 0;
-		level.leveltype = DTYPE_TOWN;
-		level.setlevel = FALSE;
+		lvl.currlevel = 0;
+		lvl.leveltype = DTYPE_TOWN;
+		lvl.setlevel = FALSE;
 	}
 	V2Di pos = { 75, 68 };
 	#ifdef _DEBUG
@@ -766,7 +766,7 @@ void SetupLocalCoords()
 	myplr()._changePosOffMap(pos);
 	myplr()._changeFutPosOffMap(pos);
 	myplr().data._pathtarg = pos;
-	myplr().data.plrlevel = level.currlevel;
+	myplr().data.plrlevel = lvl.currlevel;
 	myplr().data._pLvlChanging = TRUE;
 	myplr().data.pLvlLoad = 0;
 	myplr().data._pmode = PM_NEWLVL;
@@ -901,7 +901,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv)
 	plr[pnum].LoadPlrGFX(PFILE_STAND);
 	plr[pnum].SyncInitPlr();
 
-	if (plr[pnum].data.plrlevel == level.currlevel) {
+	if (plr[pnum].data.plrlevel == lvl.currlevel) {
 		if (plr[pnum].data._pHitPoints >> 6 > 0) {
 			plr[pnum].StartStand(Dir(0));
 		} else {

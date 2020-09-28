@@ -41,8 +41,8 @@ void CheckDungeonClear()
 			if (grid.at(n).isPlayer())
 				app_fatal("Players not cleared");
 
-			dMonsDbg[level.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_VISIBLE;
-			dFlagDbg[level.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_POPULATED;
+			dMonsDbg[lvl.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_VISIBLE;
+			dFlagDbg[lvl.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_POPULATED;
 		}
 	}
 }

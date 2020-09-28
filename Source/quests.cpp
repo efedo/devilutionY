@@ -138,7 +138,7 @@ void CheckQuests()
 	V2Di rport;
 
 	if (QuestStatus(Q_BETRAYER) && plr.isMultiplayer() && quests[Q_BETRAYER]._qvar1 == 2) {
-		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
+		AddObject(OBJ_ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
 		quests[Q_BETRAYER]._qvar1 = 3;
 		NetSendCmdQuest(TRUE, Q_BETRAYER);
 	}
@@ -147,8 +147,8 @@ void CheckQuests()
 		return;
 	}
 
-	if (level.currlevel == quests[Q_BETRAYER]._qlevel
-	    && !level.setlevel
+	if (lvl.currlevel == quests[Q_BETRAYER]._qlevel
+	    && !lvl.setlevel
 	    && quests[Q_BETRAYER]._qvar1 >= 2
 	    && (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE || quests[Q_BETRAYER]._qactive == QUEST_DONE)
 	    && (quests[Q_BETRAYER]._qvar2 == 0 || quests[Q_BETRAYER]._qvar2 == 2)) {
@@ -162,18 +162,18 @@ void CheckQuests()
 	}
 
 	if (quests[Q_BETRAYER]._qactive == QUEST_DONE
-	    && level.setlevel
-	    && level.setlvlnum == SL_VILEBETRAYER
+	    && lvl.setlevel
+	    && lvl.setlvlnum == SL_VILEBETRAYER
 	    && quests[Q_BETRAYER]._qvar2 == 4) {
 		rport = { 35, 32 };
 		AddMissile(rport, rport, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 3;
 	}
 
-	if (level.setlevel) {
-		if (level.setlvlnum == quests[Q_PWATER]._qslvl
+	if (lvl.setlevel) {
+		if (lvl.setlvlnum == quests[Q_PWATER]._qslvl
 		    && quests[Q_PWATER]._qactive != QUEST_INIT
-		    && level.leveltype == quests[Q_PWATER]._qlvltype
+		    && lvl.leveltype == quests[Q_PWATER]._qlvltype
 		    && nummonsters == 4
 		    && quests[Q_PWATER]._qactive != QUEST_DONE) {
 			quests[Q_PWATER]._qactive = QUEST_DONE;
@@ -187,12 +187,12 @@ void CheckQuests()
 		}
 	} else if (myplr().data._pmode == PM_STAND) {
 		for (i = 0; i < MAXQUESTS; i++) {
-			if (level.currlevel == quests[i]._qlevel
+			if (lvl.currlevel == quests[i]._qlevel
 			    && quests[i]._qslvl != 0
 			    && quests[i]._qactive != QUEST_NOTAVAIL
 			    && myplr().pos() == quests[i]._qt) {
 				if (quests[i]._qlvltype != DTYPE_NONE) {
-					level.setlvltype = quests[i]._qlvltype;
+					lvl.setlvltype = quests[i]._qlvltype;
 				}
 				myplr().StartNewLvl(WM_DIABSETLVL, quests[i]._qslvl);
 			}
@@ -211,7 +211,7 @@ bool ForceQuests()
 
 	for (i = 0; i < MAXQUESTS; i++) {
 
-		if (i != Q_BETRAYER && level.currlevel == quests[i]._qlevel && quests[i]._qslvl != 0) {
+		if (i != Q_BETRAYER && lvl.currlevel == quests[i]._qlevel && quests[i]._qslvl != 0) {
 			ql = quests[quests[i]._qidx]._qslvl - 1;
 			q = quests[i]._qt;
 
@@ -232,8 +232,8 @@ bool QuestStatus(int i)
 {
 	bool result;
 
-	if (level.setlevel
-	    || level.currlevel != quests[i]._qlevel
+	if (lvl.setlevel
+	    || lvl.currlevel != quests[i]._qlevel
 	    || !quests[i]._qactive
 	    || (result = 1, plr.isMultiplayer()) && !(questlist[i]._qflags & 1)) {
 		result = FALSE;
@@ -349,8 +349,8 @@ void DrawButcher()
 {
 	int x, y;
 
-	x = 2 * setpc.x + 16;
-	y = 2 * setpc.y + 16;
+	x = 2 * lvl.getpc().x + 16;
+	y = 2 * lvl.getpc().y + 16;
 	DRLG_RectTrans(x + 3, y + 3, x + 10, y + 10);
 }
 
@@ -372,10 +372,8 @@ void DrawWarLord(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc.w = rw;
-	setpc.h = rh;
-	setpc.x = x;
-	setpc.y = y;
+	lvl.setpc({ x, y, rw, rh });
+
 	for (j = y; j < y + rh; j++) {
 		for (i = x; i < x + rw; i++) {
 			if (*sp != 0) {
@@ -403,10 +401,8 @@ void DrawSChamber(int q, int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc.w = rw;
-	setpc.h = rh;
-	setpc.x = x;
-	setpc.y = y;
+	lvl.setpc({ x, y, rw, rh });
+
 	for (j = y; j < y + rh; j++) {
 		for (i = x; i < x + rw; i++) {
 			if (*sp != 0) {
@@ -436,10 +432,8 @@ void DrawLTBanner(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc.w = rw;
-	setpc.h = rh;
-	setpc.x = x;
-	setpc.y = y;
+	lvl.setpc({ x, y, rw, rh });
+
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -462,10 +456,8 @@ void DrawBlind(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc.x = x;
-	setpc.y = y;
-	setpc.w = rw;
-	setpc.h = rh;
+	lvl.setpc({ x, y, rw, rh });
+
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -488,10 +480,8 @@ void DrawBlood(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc.x = x;
-	setpc.y = y;
-	setpc.w = rw;
-	setpc.h = rh;
+	lvl.setpc({x, y, rw, rh});
+
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -538,7 +528,7 @@ void DRLG_CheckQuests(int x, int y)
 
 void SetReturnLvlPos()
 {
-	switch (level.setlvlnum) {
+	switch (lvl.setlvlnum) {
 	case SL_SKELKING:
 		ReturnLvlX = quests[Q_SKELKING]._qt.x + 1;
 		ReturnLvlY = quests[Q_SKELKING]._qt.y;
@@ -572,37 +562,37 @@ void GetReturnLvlPos()
 		quests[Q_BETRAYER]._qvar2 = 2;
 	View.x = ReturnLvlX;
 	View.y = ReturnLvlY;
-	level.currlevel = ReturnLvl;
-	level.leveltype = ReturnLvlT;
+	lvl.currlevel = ReturnLvl;
+	lvl.leveltype = ReturnLvlT;
 }
 
 void ResyncMPQuests()
 {
 	if (quests[Q_SKELKING]._qactive == QUEST_INIT
-	    && level.currlevel >= quests[Q_SKELKING]._qlevel - 1
-	    && level.currlevel <= quests[Q_SKELKING]._qlevel + 1) {
+	    && lvl.currlevel >= quests[Q_SKELKING]._qlevel - 1
+	    && lvl.currlevel <= quests[Q_SKELKING]._qlevel + 1) {
 		quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
 		NetSendCmdQuest(TRUE, Q_SKELKING);
 	}
 	if (quests[Q_BUTCHER]._qactive == QUEST_INIT
-	    && level.currlevel >= quests[Q_BUTCHER]._qlevel - 1
-	    && level.currlevel <= quests[Q_BUTCHER]._qlevel + 1) {
+	    && lvl.currlevel >= quests[Q_BUTCHER]._qlevel - 1
+	    && lvl.currlevel <= quests[Q_BUTCHER]._qlevel + 1) {
 		quests[Q_BUTCHER]._qactive = QUEST_ACTIVE;
 		NetSendCmdQuest(TRUE, Q_BUTCHER);
 	}
-	if (quests[Q_BETRAYER]._qactive == QUEST_INIT && level.currlevel == quests[Q_BETRAYER]._qlevel - 1) {
+	if (quests[Q_BETRAYER]._qactive == QUEST_INIT && lvl.currlevel == quests[Q_BETRAYER]._qlevel - 1) {
 		quests[Q_BETRAYER]._qactive = QUEST_ACTIVE;
 		NetSendCmdQuest(TRUE, Q_BETRAYER);
 	}
 	if (QuestStatus(Q_BETRAYER))
-		AddObject(OBJ_ALTBOY, 2 * setpc.x + 20, 2 * setpc.y + 22);
+		AddObject(OBJ_ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
 }
 
 void ResyncQuests()
 {
 	int i, tren, x, y;
 
-	if (level.setlevel && level.setlvlnum == quests[Q_PWATER]._qslvl && quests[Q_PWATER]._qactive != QUEST_INIT && level.leveltype == quests[Q_PWATER]._qlvltype) {
+	if (lvl.setlevel && lvl.setlvlnum == quests[Q_PWATER]._qslvl && quests[Q_PWATER]._qactive != QUEST_INIT && lvl.leveltype == quests[Q_PWATER]._qlvltype) {
 
 		if (quests[Q_PWATER]._qactive == QUEST_DONE)
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
@@ -616,37 +606,37 @@ void ResyncQuests()
 	if (QuestStatus(Q_LTBANNER)) {
 		if (quests[Q_LTBANNER]._qvar1 == 1)
 			ObjChangeMapResync(
-			    { setpc.w + setpc.x - 2,
-			        setpc.h + setpc.y - 2 },
-			    { setpc.w + setpc.x + 1,
-			        setpc.h + setpc.y + 1 });
+			    { lvl.getpc().w + lvl.getpc().x - 2,
+			        lvl.getpc().h + lvl.getpc().y - 2 },
+			    { lvl.getpc().w + lvl.getpc().x + 1,
+			        lvl.getpc().h + lvl.getpc().y + 1 });
 		if (quests[Q_LTBANNER]._qvar1 == 2) {
 			ObjChangeMapResync(
-			    { setpc.w + setpc.x - 2,
-			        setpc.h + setpc.y - 2 },
-			    { setpc.w + setpc.x + 1,
-			        setpc.h + setpc.y + 1 });
-			ObjChangeMapResync({ setpc.x, setpc.y }, { (setpc.w >> 1) + setpc.x + 2, (setpc.h >> 1) + setpc.y - 2 });
+			    { lvl.getpc().w + lvl.getpc().x - 2,
+			        lvl.getpc().h + lvl.getpc().y - 2 },
+			    { lvl.getpc().w + lvl.getpc().x + 1,
+			        lvl.getpc().h + lvl.getpc().y + 1 });
+			ObjChangeMapResync({ lvl.getpc().x, lvl.getpc().y }, { (lvl.getpc().w >> 1) + lvl.getpc().x + 2, (lvl.getpc().h >> 1) + lvl.getpc().y - 2 });
 			for (i = 0; i < nobjects; i++)
 				SyncObjectAnim(objectactive[i]);
-			tren = TransVal;
-			TransVal = 9;
-			DRLG_MRectTrans(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 4, setpc.y + (setpc.h >> 1));
-			TransVal = tren;
+			tren = lvl.TransVal;
+			lvl.TransVal = 9;
+			DRLG_MRectTrans(lvl.getpc().x, lvl.getpc().y, (lvl.getpc().w >> 1) + lvl.getpc().x + 4, lvl.getpc().y + (lvl.getpc().h >> 1));
+			lvl.TransVal = tren;
 		}
 		if (quests[Q_LTBANNER]._qvar1 == 3) {
-			x = setpc.x;
-			y = setpc.y;
-			ObjChangeMapResync({ x, y }, { x + setpc.w + 1, y + setpc.h + 1 });
+			x = lvl.getpc().x;
+			y = lvl.getpc().y;
+			ObjChangeMapResync({ x, y }, { x + lvl.getpc().w + 1, y + lvl.getpc().h + 1 });
 			for (i = 0; i < nobjects; i++)
 				SyncObjectAnim(objectactive[i]);
-			tren = TransVal;
-			TransVal = 9;
-			DRLG_MRectTrans(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 4, setpc.y + (setpc.h >> 1));
-			TransVal = tren;
+			tren = lvl.TransVal;
+			lvl.TransVal = 9;
+			DRLG_MRectTrans(lvl.getpc().x, lvl.getpc().y, (lvl.getpc().w >> 1) + lvl.getpc().x + 4, lvl.getpc().y + (lvl.getpc().h >> 1));
+			lvl.TransVal = tren;
 		}
 	}
-	if (level.currlevel == quests[Q_MUSHROOM]._qlevel) {
+	if (lvl.currlevel == quests[Q_MUSHROOM]._qlevel) {
 		if (quests[Q_MUSHROOM]._qactive == QUEST_INIT && !quests[Q_MUSHROOM]._qvar1) {
 			SpawnQuestItem(IDI_FUNGALTM, { 0, 0 }, 5, 1);
 			quests[Q_MUSHROOM]._qvar1 = QS_TOMESPAWNED;
@@ -661,11 +651,11 @@ void ResyncQuests()
 			}
 		}
 	}
-	if (level.currlevel == quests[Q_VEIL]._qlevel + 1 && quests[Q_VEIL]._qactive == QUEST_ACTIVE && !quests[Q_VEIL]._qvar1) {
+	if (lvl.currlevel == quests[Q_VEIL]._qlevel + 1 && quests[Q_VEIL]._qactive == QUEST_ACTIVE && !quests[Q_VEIL]._qvar1) {
 		quests[Q_VEIL]._qvar1 = 1;
 		SpawnQuestItem(IDI_GLDNELIX, { 0, 0 }, 5, 1);
 	}
-	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
 		if (quests[Q_BETRAYER]._qvar1 >= 4)
 			ObjChangeMapResync({ 1, 11 }, { 20, 18 });
 		if (quests[Q_BETRAYER]._qvar1 >= 6)
@@ -675,8 +665,8 @@ void ResyncQuests()
 		for (i = 0; i < nobjects; i++)
 			SyncObjectAnim(objectactive[i]);
 	}
-	if (level.currlevel == quests[Q_BETRAYER]._qlevel
-	    && !level.setlevel
+	if (lvl.currlevel == quests[Q_BETRAYER]._qlevel
+	    && !lvl.setlevel
 	    && (quests[Q_BETRAYER]._qvar2 == 1 || quests[Q_BETRAYER]._qvar2 >= 3)
 	    && (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE || quests[Q_BETRAYER]._qactive == QUEST_DONE)) {
 		quests[Q_BETRAYER]._qvar2 = 2;

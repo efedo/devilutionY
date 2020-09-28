@@ -21,7 +21,7 @@ void PieceInventory::FillSolidBlockTbls()
 
 	pieces.clear();
 
-	switch (level.leveltype) {
+	switch (lvl.leveltype) {
 	case DTYPE_TOWN:
 		pSBFile = LoadFileInMem("Levels\\TownData\\Town.SOL", &dwTiles);
 		break;
@@ -43,7 +43,8 @@ void PieceInventory::FillSolidBlockTbls()
 
 	pTmp = pSBFile;
 
-	for (i = 1; i <= dwTiles; i++) {
+	for (i = 0; i < dwTiles; i++) {
+	//for (i = 1; i <= dwTiles; i++) {
 		bv = *pTmp++;
 		if (bv & 1)
 			pieces[i].solid = true;

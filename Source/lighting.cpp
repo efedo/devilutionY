@@ -742,7 +742,7 @@ void DoVision(V2Di pos, int nRadius, bool doautomap, bool visible)
 						if (!nBlockerFlag) {
 							nTrans = grid[nCrawlX][nCrawlY].dTransVal;
 							if (nTrans != 0) {
-								TransList[nTrans] = TRUE;
+								lvl.TransList[nTrans] = TRUE;
 							}
 						}
 					}
@@ -838,7 +838,7 @@ void MakeLightTable()
 		*tbl++ = 0;
 	}
 
-	if (level.leveltype == DTYPE_HELL) {
+	if (lvl.leveltype == DTYPE_HELL) {
 		tbl = pLightTbl;
 		for (i = 0; i < lights; i++) {
 			l1 = lights - i;
@@ -958,7 +958,7 @@ void ToggleLighting()
 		//memcpy(dLight, dPreLight, sizeof(dLight));
 		grid.prelightToLight();
 		for (i = 0; i < MAX_PLRS; i++) {
-			if (plr[i].data.plractive && plr[i].data.plrlevel == level.currlevel) {
+			if (plr[i].data.plractive && plr[i].data.plrlevel == lvl.currlevel) {
 				DoLighting(plr[i].pos(), plr[i].data._pLightRad, -1);
 			}
 		}
@@ -1112,8 +1112,8 @@ void InitVision()
 	dovision = FALSE;
 	visionid = 1;
 
-	for (i = 0; i < TransVal; i++) {
-		TransList[i] = FALSE;
+	for (i = 0; i < lvl.TransVal; i++) {
+		lvl.TransList[i] = FALSE;
 	}
 }
 
@@ -1178,8 +1178,8 @@ void ProcessVisionList()
 				VisionList[i]._lunflag = FALSE;
 			}
 		}
-		for (i = 0; i < TransVal; i++) {
-			TransList[i] = FALSE;
+		for (i = 0; i < lvl.TransVal; i++) {
+			lvl.TransList[i] = FALSE;
 		}
 		for (i = 0; i < numvision; i++) {
 			if (!VisionList[i]._ldel) {
@@ -1215,7 +1215,7 @@ void lighting_color_cycling()
 
 	l = light4flag ? 4 : 16;
 
-	if (level.leveltype != DTYPE_HELL) {
+	if (lvl.leveltype != DTYPE_HELL) {
 		return;
 	}
 

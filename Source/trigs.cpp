@@ -298,8 +298,8 @@ bool ForceL1Trig()
 
 	for (i = 0; L1UpList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L1UpList[i]) {
-			if (level.currlevel > 1)
-				sprintf(infostr, "Up to level %i", level.currlevel - 1);
+			if (lvl.currlevel > 1)
+				sprintf(infostr, "Up to level %i", lvl.currlevel - 1);
 			else
 				strcpy(infostr, "Up to town");
 			for (j = 0; j < numtrigs; j++) {
@@ -313,7 +313,7 @@ bool ForceL1Trig()
 
 	for (i = 0; L1DownList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L1DownList[i]) {
-			sprintf(infostr, "Down to level %i", level.currlevel + 1);
+			sprintf(infostr, "Down to level %i", lvl.currlevel + 1);
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
@@ -335,7 +335,7 @@ bool ForceL2Trig()
 				if (trigs[j]._tmsg == WM_DIABPREVLVL) {
 					int dist = (trigs[j]._t - cursm).maxabs();
 					if (dist < 4) {
-						sprintf(infostr, "Up to level %i", level.currlevel - 1);
+						sprintf(infostr, "Up to level %i", lvl.currlevel - 1);
 						cursm = trigs[j]._t;
 						return TRUE;
 					}
@@ -346,7 +346,7 @@ bool ForceL2Trig()
 
 	for (i = 0; L2DownList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L2DownList[i]) {
-			sprintf(infostr, "Down to level %i", level.currlevel + 1);
+			sprintf(infostr, "Down to level %i", lvl.currlevel + 1);
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
@@ -356,7 +356,7 @@ bool ForceL2Trig()
 		}
 	}
 
-	if (level.currlevel == 5) {
+	if (lvl.currlevel == 5) {
 		for (i = 0; L2TWarpUpList[i] != -1; i++) {
 			if (grid.at(cursm).getPiece() == L2TWarpUpList[i]) {
 				for (j = 0; j < numtrigs; j++) {
@@ -381,7 +381,7 @@ bool ForceL3Trig()
 	int i, j, dx, dy;
 	for (i = 0; L3UpList[i] != -1; ++i) {
 		if (grid.at(cursm).getPiece() == L3UpList[i]) {
-			sprintf(infostr, "Up to level %i", level.currlevel - 1);
+			sprintf(infostr, "Up to level %i", lvl.currlevel - 1);
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABPREVLVL) {
 					cursm = trigs[j]._t;
@@ -395,7 +395,7 @@ bool ForceL3Trig()
 		if (grid.at(cursm).getPiece() == L3DownList[i]
 		    || grid[cursm.x + 1][cursm.y].getPiece() == L3DownList[i]
 		    || grid[cursm.x + 2][cursm.y].getPiece() == L3DownList[i]) {
-			sprintf(infostr, "Down to level %i", level.currlevel + 1);
+			sprintf(infostr, "Down to level %i", lvl.currlevel + 1);
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
@@ -405,7 +405,7 @@ bool ForceL3Trig()
 		}
 	}
 
-	if (level.currlevel == 9) {
+	if (lvl.currlevel == 9) {
 		for (i = 0; L3TWarpUpList[i] != -1; i++) {
 			if (grid.at(cursm).getPiece() == L3TWarpUpList[i]) {
 				for (j = 0; j < numtrigs; j++) {
@@ -431,7 +431,7 @@ bool ForceL4Trig()
 
 	for (i = 0; L4UpList[i] != -1; ++i) {
 		if (grid.at(cursm).getPiece() == L4UpList[i]) {
-			sprintf(infostr, "Up to level %i", level.currlevel - 1);
+			sprintf(infostr, "Up to level %i", lvl.currlevel - 1);
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABPREVLVL) {
 					cursm = trigs[j]._t;
@@ -443,7 +443,7 @@ bool ForceL4Trig()
 
 	for (i = 0; L4DownList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L4DownList[i]) {
-			sprintf(infostr, "Down to level %i", level.currlevel + 1);
+			sprintf(infostr, "Down to level %i", lvl.currlevel + 1);
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
@@ -453,7 +453,7 @@ bool ForceL4Trig()
 		}
 	}
 
-	if (level.currlevel == 13) {
+	if (lvl.currlevel == 13) {
 		for (i = 0; L4TWarpUpList[i] != -1; i++) {
 			if (grid.at(cursm).getPiece() == L4TWarpUpList[i]) {
 				for (j = 0; j < numtrigs; j++) {
@@ -470,7 +470,7 @@ bool ForceL4Trig()
 		}
 	}
 
-	if (level.currlevel == 15) {
+	if (lvl.currlevel == 15) {
 		for (i = 0; L4PentaList[i] != -1; i++) {
 			if (grid.at(cursm).getPiece() == L4PentaList[i]) {
 				strcpy(infostr, "Down to Diablo");
@@ -548,8 +548,8 @@ void CheckTrigForce()
 		return;
 	}
 
-	if (!level.setlevel) {
-		switch (level.leveltype) {
+	if (!lvl.setlevel) {
+		switch (lvl.leveltype) {
 		case DTYPE_TOWN:
 			trigflag = ForceTownTrig();
 			break;
@@ -566,11 +566,11 @@ void CheckTrigForce()
 			trigflag = ForceL4Trig();
 			break;
 		}
-		if (level.leveltype != DTYPE_TOWN && !trigflag) {
+		if (lvl.leveltype != DTYPE_TOWN && !trigflag) {
 			trigflag = ForceQuests();
 		}
 	} else {
-		switch (level.setlvlnum) {
+		switch (lvl.setlvlnum) {
 		case SL_SKELKING:
 			trigflag = ForceSKingTrig();
 			break;
@@ -606,12 +606,12 @@ void CheckTriggers()
 		case WM_DIABNEXTLVL:
 				if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
 					return;
-				myplr().StartNewLvl(trigs[i]._tmsg, level.currlevel + 1);
+				myplr().StartNewLvl(trigs[i]._tmsg, lvl.currlevel + 1);
 			break;
 		case WM_DIABPREVLVL:
 			if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
 				return;
-			myplr().StartNewLvl(trigs[i]._tmsg, level.currlevel - 1);
+			myplr().StartNewLvl(trigs[i]._tmsg, lvl.currlevel - 1);
 			break;
 		case WM_DIABRTNLVL:
 			myplr().StartNewLvl(trigs[i]._tmsg, ReturnLvl);
@@ -655,7 +655,7 @@ void CheckTriggers()
 			myplr().StartNewLvl(trigs[i]._tmsg, trigs[i]._tlvl);
 			break;
 		case WM_DIABTWARPUP:
-			TWarpFrom = level.currlevel;
+			TWarpFrom = lvl.currlevel;
 			myplr().StartNewLvl(trigs[i]._tmsg, 0);
 			break;
 		default:

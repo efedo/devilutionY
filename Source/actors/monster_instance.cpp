@@ -181,7 +181,7 @@ void MonsterInstance::M_Enemy()
 	//Monst = monster + i;
 	if (!(data._mFlags & MFLAG_GOLEM)) {
 		for (pnum = 0; pnum < MAX_PLRS; pnum++) {
-			if (!plr[pnum].data.plractive || level.currlevel != plr[pnum].data.plrlevel || plr[pnum].data._pLvlChanging || (plr[pnum].data._pHitPoints == 0 && plr.isMultiplayer()))
+			if (!plr[pnum].data.plractive || lvl.currlevel != plr[pnum].data.plrlevel || plr[pnum].data._pLvlChanging || (plr[pnum].data._pHitPoints == 0 && plr.isMultiplayer()))
 				continue;
 			if (grid.at(data._m).dTransVal == grid.at(plr[pnum].pos()).dTransVal)
 				sameroom = TRUE;
@@ -428,7 +428,7 @@ void MonsterInstance::M_StartHit(int pnum, int dam)
 	if (pnum >= 0)
 		data.mWhoHit |= 1 << pnum;
 	if (pnum == myplr()) {
-		delta_monster_hp(i, data._mhitpoints, level.currlevel);
+		delta_monster_hp(i, data._mhitpoints, lvl.currlevel);
 		NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, i, dam);
 	}
 	PlayEffect(i, 1);
@@ -538,7 +538,7 @@ void MonsterInstance::M2MStartKill(int mid)
 	if (!data.MType)
 		app_fatal("M2MStartKill: Monster %d \"%s\" MType NULL", mid, monsters[mid].data.mName);
 
-	delta_kill_monster(mid, monsters[mid].data._m, level.currlevel);
+	delta_kill_monster(mid, monsters[mid].data._m, lvl.currlevel);
 	NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, monsters[mid].data._m, mid);
 
 	monsters[mid].data.mWhoHit |= 1 << i;
@@ -577,11 +577,11 @@ void MonsterInstance::M2MStartKill(int mid)
 void MonsterInstance::M_StartKill(int pnum)
 {
 	if (myplr() == pnum) {
-		delta_kill_monster(i, data._m, level.currlevel);
+		delta_kill_monster(i, data._m, lvl.currlevel);
 		if (i != pnum) {
 			NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, data._m, i);
 		} else {
-			NetSendCmdLocParam1(FALSE, CMD_KILLGOLEM, data._m, level.currlevel);
+			NetSendCmdLocParam1(FALSE, CMD_KILLGOLEM, data._m, lvl.currlevel);
 		}
 	}
 	MonstStartKill(pnum, TRUE);
@@ -816,11 +816,11 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 	    - plr[pnum].data._pDexterity / 5;
 	if (hit < 15)
 		hit = 15;
-	if (level.currlevel == 14 && hit < 20)
+	if (lvl.currlevel == 14 && hit < 20)
 		hit = 20;
-	if (level.currlevel == 15 && hit < 25)
+	if (lvl.currlevel == 15 && hit < 25)
 		hit = 25;
-	if (level.currlevel == 16 && hit < 30)
+	if (lvl.currlevel == 16 && hit < 30)
 		hit = 30;
 	if ((plr[pnum].data._pmode == PM_STAND || plr[pnum].data._pmode == PM_ATTACK) && plr[pnum].data._pBlockFlag) {
 		blkper = random_(98, 100);
@@ -1085,11 +1085,11 @@ int MonsterInstance::M_DoTalk()
 	}
 	if (data.mName == UniqMonst[UMT_SNOTSPIL].mName) {
 		if (data.mtalkmsg == TEXT_BANNER10 && !(data._mFlags & MFLAG_QUEST_COMPLETE)) {
-			ObjChangeMap({ setpc.x, setpc.y }, { (setpc.w >> 1) + setpc.x + 2, (setpc.h >> 1) + setpc.y - 2 });
-			tren = TransVal;
-			TransVal = 9;
-			DRLG_MRectTrans(setpc.x, setpc.y, (setpc.w >> 1) + setpc.x + 4, setpc.y + (setpc.h >> 1));
-			TransVal = tren;
+			ObjChangeMap({ lvl.getpc().x, lvl.getpc().y }, { (lvl.getpc().w >> 1) + lvl.getpc().x + 2, (lvl.getpc().h >> 1) + lvl.getpc().y - 2 });
+			tren = lvl.TransVal;
+			lvl.TransVal = 9;
+			DRLG_MRectTrans(lvl.getpc().x, lvl.getpc().y, (lvl.getpc().w >> 1) + lvl.getpc().x + 4, lvl.getpc().y + (lvl.getpc().h >> 1));
+			lvl.TransVal = tren;
 			quests[Q_LTBANNER]._qvar1 = 2;
 			if (quests[Q_LTBANNER]._qactive == QUEST_INIT)
 				quests[Q_LTBANNER]._qactive = QUEST_ACTIVE;
@@ -2506,7 +2506,7 @@ void MonsterInstance::MAI_SnotSpil()
 	if (grid.at(m).dFlags & BFLAG_VISIBLE) {
 		if (data.mtalkmsg == TEXT_BANNER12) {
 			if (!effect_is_playing(USFX_SNOT3) && data._mgoal == MGOAL_TALKING) {
-				ObjChangeMap({ setpc.x, setpc.y }, { setpc.x + setpc.w + 1, setpc.y + setpc.h + 1 });
+				ObjChangeMap({ lvl.getpc().x, lvl.getpc().y }, { lvl.getpc().x + lvl.getpc().w + 1, lvl.getpc().y + lvl.getpc().h + 1 });
 				quests[Q_LTBANNER]._qvar1 = 3;
 				RedoPlayerVision();
 				data._msquelch = UCHAR_MAX;

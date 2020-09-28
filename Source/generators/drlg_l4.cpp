@@ -294,6 +294,76 @@ const BYTE L4BTYPES[140] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+LvlHell::LvlHell()
+    : Level(DunType::hell)
+{
+	_automapFile = "Levels\\L4Data\\L4.AMP";
+}
+
+void LvlHell::create(int lvldir)
+{
+	CreateL4Dungeon(glSeedTbl[lvl.currlevel], lvldir);
+	InitL4Triggers();
+	Freeupstairs();
+	LoadRndLvlPal(4);
+};
+
+void LvlHell::loadGFX()
+{
+	assert(!pDungeonCels);
+	pDungeonCels = LoadFileInMem("Levels\\L4Data\\L4.CEL", NULL);
+	pMegaTiles = LoadFileInMem("Levels\\L4Data\\L4.TIL", NULL);
+	pLevelPieces = LoadFileInMem("Levels\\L4Data\\L4.MIN", NULL);
+	pSpecialCels = LoadFileInMem("Levels\\L2Data\\L2S.CEL", NULL);
+}
+
+void LvlHell::DRLG_CreateThemeRoom(int themeIndex)
+{
+	int xx, yy;
+	for (yy = lvl.themeLoc[themeIndex].y; yy < lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height; yy++) {
+		for (xx = lvl.themeLoc[themeIndex].x; xx < lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width; xx++) {
+			if (yy == lvl.themeLoc[themeIndex].y
+				    && xx >= lvl.themeLoc[themeIndex].x
+				    && xx <= lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width
+				|| yy == lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1
+				    && xx >= lvl.themeLoc[themeIndex].x
+				    && xx <= lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width) {
+				dgrid[xx][yy].dungeon = 2;
+			} else if (xx == lvl.themeLoc[themeIndex].x
+				    && yy >= lvl.themeLoc[themeIndex].y
+				    && yy <= lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height
+				|| xx == lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1
+				    && yy >= lvl.themeLoc[themeIndex].y
+				    && yy <= lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height) {
+				dgrid[xx][yy].dungeon = 1;
+			} else {
+				dgrid[xx][yy].dungeon = 6;
+			}
+		}
+	}
+
+	dgrid[lvl.themeLoc[themeIndex].x][lvl.themeLoc[themeIndex].y].dungeon = 9;
+	dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y].dungeon = 16;
+	dgrid[lvl.themeLoc[themeIndex].x][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 15;
+	dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 12;
+
+	switch (random_(0, 2)) {
+	case 0:
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height / 2 - 1].dungeon = 53;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height / 2].dungeon = 6;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height / 2 + 1].dungeon = 52;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width - 2][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height / 2 - 1].dungeon = 54;
+		break;
+	case 1:
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2 - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 57;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 6;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2 + 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 1].dungeon = 56;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 2].dungeon = 59;
+		dgrid[lvl.themeLoc[themeIndex].x + lvl.themeLoc[themeIndex].width / 2 - 1][lvl.themeLoc[themeIndex].y + lvl.themeLoc[themeIndex].height - 2].dungeon = 58;
+		break;
+	}
+}
+
 static void DRLG_L4Shadows()
 {
 	int x, y;
@@ -349,7 +419,7 @@ void DRLG_LoadL4SP()
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 		setloadflag = TRUE;
 	}
-	if (level.currlevel == 15 && plr.isMultiplayer()) {
+	if (lvl.currlevel == 15 && plr.isMultiplayer()) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
 		setloadflag = TRUE;
 	}
@@ -366,7 +436,7 @@ void DRLG_L4SetSPRoom(int rx1, int ry1)
 	BYTE *sp;
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
-	setpc = { rx1, ry1, rw, rh };
+	lvl.setpc({ rx1, ry1, rw, rh });
 
 	sp = &pSetPiece[4];
 
@@ -1320,12 +1390,12 @@ static void L4firstRoom()
 {
 	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax, tx, ty;
 
-	if (level.currlevel != 16) {
-		if (level.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive) {
+	if (lvl.currlevel != 16) {
+		if (lvl.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive) {
 			/// ASSERT: assert(plr.isSingleplayer());
 			w = 11;
 			h = 11;
-		} else if (level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+		} else if (lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 			w = 11;
 			h = 11;
 		} else {
@@ -1356,11 +1426,11 @@ static void L4firstRoom()
 		y = rndy;
 	}
 
-	if (level.currlevel == 16) {
+	if (lvl.currlevel == 16) {
 		l4holdx = x;
 		l4holdy = y;
 	}
-	if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+	if (QuestStatus(Q_WARLORD) || lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 		SP4x1 = x + 1;
 		SP4y1 = y + 1;
 		SP4x2 = SP4x1 + w;
@@ -1527,7 +1597,7 @@ static bool DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 		}
 	}
 
-	if (level.currlevel == 15) {
+	if (lvl.currlevel == 15) {
 		quests[Q_BETRAYER]._qt.x = sx + 1;
 		quests[Q_BETRAYER]._qt.y = sy + 1;
 	}
@@ -1547,38 +1617,38 @@ static void DRLG_L4FTVR(int i, int j, int x, int y, int d)
 {
 	if (grid[x][y].dTransVal != 0 || dgrid[i][j].dungeon != 6) {
 		if (d == 1) {
-			grid[x][y].dTransVal = TransVal;
-			grid[x][y + 1].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 2) {
-			grid[x + 1][y].dTransVal = TransVal;
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 3) {
-			grid[x][y].dTransVal = TransVal;
-			grid[x + 1][y].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
 		}
 		if (d == 4) {
-			grid[x][y + 1].dTransVal = TransVal;
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 5) {
-			grid[x + 1][y + 1].dTransVal = TransVal;
+			grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 6) {
-			grid[x][y + 1].dTransVal = TransVal;
+			grid[x][y + 1].dTransVal = lvl.TransVal;
 		}
 		if (d == 7) {
-			grid[x + 1][y].dTransVal = TransVal;
+			grid[x + 1][y].dTransVal = lvl.TransVal;
 		}
 		if (d == 8) {
-			grid[x][y].dTransVal = TransVal;
+			grid[x][y].dTransVal = lvl.TransVal;
 		}
 	} else {
-		grid[x][y].dTransVal = TransVal;
-		grid[x + 1][y].dTransVal = TransVal;
-		grid[x][y + 1].dTransVal = TransVal;
-		grid[x + 1][y + 1].dTransVal = TransVal;
+		grid[x][y].dTransVal = lvl.TransVal;
+		grid[x + 1][y].dTransVal = lvl.TransVal;
+		grid[x][y + 1].dTransVal = lvl.TransVal;
+		grid[x + 1][y + 1].dTransVal = lvl.TransVal;
 		DRLG_L4FTVR(i + 1, j, x + 2, y, 1);
 		DRLG_L4FTVR(i - 1, j, x - 2, y, 2);
 		DRLG_L4FTVR(i, j + 1, x, y + 2, 3);
@@ -1600,7 +1670,7 @@ static void DRLG_L4FloodTVal()
 		for (i = 0; i < DMAXX; i++) {
 			if (dgrid[i][j].dungeon == 6 && grid[xx][yy].dTransVal == 0) {
 				DRLG_L4FTVR(i, j, xx, yy, 0);
-				TransVal++;
+				lvl.TransVal++;
 			}
 			xx += 2;
 		}
@@ -1742,10 +1812,10 @@ static void DRLG_L4(int entry)
 		L4makeDungeon();
 		L4makeDmt();
 		L4tileFix();
-		if (level.currlevel == 16) {
+		if (lvl.currlevel == 16) {
 			L4SaveQuads();
 		}
-		if (QuestStatus(Q_WARLORD) || level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+		if (QuestStatus(Q_WARLORD) || lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 			for (spi = SP4x1; spi < SP4x2; spi++) {
 				for (spj = SP4y1; spj < SP4y2; spj++) {
 					dgrid[spi][spj].dflags = 1;
@@ -1758,55 +1828,55 @@ static void DRLG_L4(int entry)
 		if (setloadflag) {
 			DRLG_L4SetSPRoom(SP4x1, SP4y1);
 		}
-		if (level.currlevel == 16) {
+		if (lvl.currlevel == 16) {
 			DRLG_LoadDiabQuads(TRUE);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
-				if (doneflag && level.currlevel == 13) {
+				if (doneflag && lvl.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				View.x++;
 			} else if (entry == 1) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && level.currlevel == 13) {
+				if (doneflag && lvl.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
-				View.x = 2 * setpc.x + 22;
-				View.y = 2 * setpc.y + 22;
+				View.x = 2 * lvl.getpc().x + 22;
+				View.y = 2 * lvl.getpc().y + 22;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && level.currlevel == 13) {
+				if (doneflag && lvl.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 1, 6);
 				}
 				View.x++;
 			}
-		} else if (level.currlevel != 15) {
+		} else if (lvl.currlevel != 15) {
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
-				if (doneflag && level.currlevel != 16) {
+				if (doneflag && lvl.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, 0, 1);
 				}
-				if (doneflag && level.currlevel == 13) {
+				if (doneflag && lvl.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				View.x++;
 			} else if (entry == 1) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && level.currlevel != 16) {
+				if (doneflag && lvl.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, 1, 1);
 				}
-				if (doneflag && level.currlevel == 13) {
+				if (doneflag && lvl.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 0, 6);
 				}
 				View.y++;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
-				if (doneflag && level.currlevel != 16) {
+				if (doneflag && lvl.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, 0, 1);
 				}
-				if (doneflag && level.currlevel == 13) {
+				if (doneflag && lvl.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, 1, 6);
 				}
 				View.x++;
@@ -1838,7 +1908,7 @@ static void DRLG_L4(int entry)
 
 	DRLG_L4GeneralFix();
 
-	if (level.currlevel != 16) {
+	if (lvl.currlevel != 16) {
 		DRLG_PlaceThemeRooms(7, 10, 6, 8, 1);
 	}
 
@@ -1857,7 +1927,7 @@ static void DRLG_L4(int entry)
 
 	DRLG_CheckQuests(SP4x1, SP4y1);
 
-	if (level.currlevel == 15) {
+	if (lvl.currlevel == 15) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
 				if (dgrid[i][j].dungeon == 98) {
@@ -1869,7 +1939,7 @@ static void DRLG_L4(int entry)
 			}
 		}
 	}
-	if (level.currlevel == 16) {
+	if (lvl.currlevel == 16) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
 				dgrid[i][j].pdungeon = dgrid[i][j].dungeon;
@@ -1879,7 +1949,7 @@ static void DRLG_L4(int entry)
 	}
 }
 
-static void DRLG_L4Pass3()
+void LvlHell::DRLG_L4Pass3()
 {
 	int i, j, xx, yy;
 	long v1, v2, v3, v4, lv;
@@ -1888,10 +1958,10 @@ static void DRLG_L4Pass3()
 	lv = 30 - 1;
 
 	MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-	v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-	v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-	v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-	v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+	v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+	v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+	v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+	v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 
 	for (j = 0; j < MAXDUNY; j += 2) {
 		for (i = 0; i < MAXDUNX; i += 2) {
@@ -1909,10 +1979,10 @@ static void DRLG_L4Pass3()
 			lv = dgrid[i][j].dungeon - 1;
 			if (lv >= 0) {
 				MegaTiles = (WORD *)&pMegaTiles[lv * 8];
-				v1 = SDL_SwapLE16(*(MegaTiles + 0)) + 1;
-				v2 = SDL_SwapLE16(*(MegaTiles + 1)) + 1;
-				v3 = SDL_SwapLE16(*(MegaTiles + 2)) + 1;
-				v4 = SDL_SwapLE16(*(MegaTiles + 3)) + 1;
+				v1 = SDL_SwapLE16(*(MegaTiles + 0)); // +1;
+				v2 = SDL_SwapLE16(*(MegaTiles + 1)); // +1;
+				v3 = SDL_SwapLE16(*(MegaTiles + 2)); // +1;
+				v4 = SDL_SwapLE16(*(MegaTiles + 3)); // +1;
 			} else {
 				v1 = 0;
 				v2 = 0;
@@ -1929,12 +1999,12 @@ static void DRLG_L4Pass3()
 	}
 }
 
-void CreateL4Dungeon(DWORD rseed, int entry)
+void LvlHell::CreateL4Dungeon(DWORD rseed, int entry)
 {
 	SetRndSeed(rseed);
 
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	View.x = 40;
 	View.y = 40;
@@ -1947,13 +2017,13 @@ void CreateL4Dungeon(DWORD rseed, int entry)
 	DRLG_SetPC();
 }
 
-void LoadL4Dungeon(char *sFileName, int vx, int vy)
+void LvlHell::LoadL4Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	DRLG_InitTrans();
 	InitL4Dungeon();
@@ -1992,8 +2062,8 @@ void LoadPreL4Dungeon(char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
-	dmin = { 16, 16 };
-	dmax = { 96, 96 };
+	lvl.dmin = { 16, 16 };
+	lvl.dmax = { 96, 96 };
 
 	InitL4Dungeon();
 

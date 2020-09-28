@@ -132,7 +132,7 @@ void DRLG_SetMapTrans(char *sFileName)
 
 void LoadSetMap()
 {
-	switch (level.setlvlnum) {
+	switch (lvl.setlvlnum) {
 	case SL_SKELKING:
 		if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
 			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;

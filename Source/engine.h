@@ -90,7 +90,7 @@ int random_(BYTE idx, int v);
 void engine_debug_trap(bool show_cursor);
 BYTE *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
-BYTE *LoadFileInMem(char *pszName, DWORD *pdwFileLen);
+BYTE *LoadFileInMem(const char *pszName, DWORD *pdwFileLen);
 DWORD LoadFileWithMem(const char *pszName, BYTE *p);
 void Cl2ApplyTrans(BYTE *p, BYTE *ttbl, int nCel);
 void Cl2Draw(V2Di s, BYTE *pCelBuff, int nCel, int nWidth);

@@ -102,20 +102,20 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	}
 
 	if (uniqindex == UMT_SNOTSPIL) {
-		p.x = 2 * setpc.x + 24;
-		p.y = 2 * setpc.y + 28;
+		p.x = 2 * lvl.getpc().x + 24;
+		p.y = 2 * lvl.getpc().y + 28;
 	}
 	if (uniqindex == UMT_WARLORD) {
-		p.x = 2 * setpc.x + 22;
-		p.y = 2 * setpc.y + 23;
+		p.x = 2 * lvl.getpc().x + 22;
+		p.y = 2 * lvl.getpc().y + 23;
 	}
 	if (uniqindex == UMT_ZHAR) {
 		zharflag = TRUE;
-		for (i = 0; i < themeCount; i++) {
+		for (i = 0; i < lvl.themeCount; i++) {
 			if (i == zharlib && zharflag == TRUE) {
 				zharflag = FALSE;
-				p.x = 2 * themeLoc[i].x + 20;
-				p.y = 2 * themeLoc[i].y + 20;
+				p.x = 2 * lvl.themeLoc[i].x + 20;
+				p.y = 2 * lvl.themeLoc[i].y + 20;
 			}
 		}
 	}
@@ -134,16 +134,16 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		}
 	} else {
 		if (uniqindex == UMT_LAZURUS) {
-			p.x = 2 * setpc.x + 19;
-			p.y = 2 * setpc.y + 22;
+			p.x = 2 * lvl.getpc().x + 19;
+			p.y = 2 * lvl.getpc().y + 22;
 		}
 		if (uniqindex == UMT_RED_VEX) {
-			p.x = 2 * setpc.x + 21;
-			p.y = 2 * setpc.y + 19;
+			p.x = 2 * lvl.getpc().x + 21;
+			p.y = 2 * lvl.getpc().y + 19;
 		}
 		if (uniqindex == UMT_BLACKJADE) {
-			p.x = 2 * setpc.x + 21;
-			p.y = 2 * setpc.y + 25;
+			p.x = 2 * lvl.getpc().x + 21;
+			p.y = 2 * lvl.getpc().y + 25;
 		}
 	}
 	if (uniqindex == UMT_BUTCHER) {
@@ -253,12 +253,12 @@ void MonsterManager::PlaceQuestMonsters()
 	int skeltype;
 	BYTE *setp;
 
-	if (!level.setlevel) {
+	if (!lvl.setlevel) {
 		if (QuestStatus(Q_BUTCHER)) {
 			PlaceUniqueMonster(UMT_BUTCHER, 0, 0);
 		}
 
-		if (level.currlevel == quests[Q_SKELKING]._qlevel && plr.isMultiplayer()) {
+		if (lvl.currlevel == quests[Q_SKELKING]._qlevel && plr.isMultiplayer()) {
 			skeltype = 0;
 
 			for (skeltype = 0; skeltype < nummtypes; skeltype++) {
@@ -272,27 +272,27 @@ void MonsterManager::PlaceQuestMonsters()
 
 		if (QuestStatus(Q_LTBANNER)) {
 			setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
-			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
+			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLOOD)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
+			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLIND)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
+			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_ANVIL)) {
 			setp = LoadFileInMem("Levels\\L3Data\\Anvil.DUN", NULL);
-			SetMapMonsters(setp, { 2 * setpc.x + 2, 2 * setpc.y + 2 });
+			SetMapMonsters(setp, { 2 * lvl.getpc().x + 2, 2 * lvl.getpc().y + 2 });
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
+			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 			beastiary.AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 1);
 		}
@@ -303,17 +303,17 @@ void MonsterManager::PlaceQuestMonsters()
 			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
-		if (level.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+		if (lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
 			beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 			beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
 			PlaceUniqueMonster(UMT_LAZURUS, 0, 0);
 			PlaceUniqueMonster(UMT_RED_VEX, 0, 0);
 			PlaceUniqueMonster(UMT_BLACKJADE, 0, 0);
 			setp = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
-			SetMapMonsters(setp, { 2 * setpc.x, 2 * setpc.y });
+			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
-	} else if (level.setlvlnum == SL_SKELKING) {
+	} else if (lvl.setlvlnum == SL_SKELKING) {
 		PlaceUniqueMonster(UMT_SKELKING, 0, 0);
 	}
 }

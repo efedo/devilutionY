@@ -145,16 +145,16 @@ void InitMonsters()
 	numscattypes = 0;
 	if (plr.isMultiplayer())
 		CheckDungeonClear();
-	if (!level.setlevel) {
+	if (!lvl.setlevel) {
 		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	}
-	if (!level.setlevel && level.currlevel == 16)
+	if (!lvl.setlevel && lvl.currlevel == 16)
 		LoadDiabMonsts();
 	nt = numtrigs;
-	if (level.currlevel == 15)
+	if (lvl.currlevel == 15)
 		nt = 1;
 	for (i = 0; i < nt; i++) {
 		for (s = -2; s < 2; s++) {
@@ -163,7 +163,7 @@ void InitMonsters()
 		}
 	}
 	monsters.PlaceQuestMonsters();
-	if (!level.setlevel) {
+	if (!lvl.setlevel) {
 		PlaceUniques();
 		na = 0;
 		for (s = 16; s < 96; s++)
@@ -184,9 +184,9 @@ void InitMonsters()
 		}
 		while (nummonsters < totalmonsters) {
 			mtype = scattertypes[random_(95, numscattypes)];
-			if (level.currlevel == 1 || random_(95, 2) == 0)
+			if (lvl.currlevel == 1 || random_(95, 2) == 0)
 				na = 1;
-			else if (level.currlevel == 2)
+			else if (lvl.currlevel == 2)
 				na = random_(95, 2) + 2;
 			else
 				na = random_(95, 3) + 3;
@@ -207,7 +207,7 @@ void PlaceUniques()
 	bool done;
 
 	for (u = 0; UniqMonst[u].mtype != -1; u++) {
-		if (UniqMonst[u].mlevel != level.currlevel)
+		if (UniqMonst[u].mlevel != lvl.currlevel)
 			continue;
 		done = FALSE;
 		for (mt = 0; mt < nummtypes; mt++) {
@@ -243,7 +243,7 @@ void SetMapMonsters(BYTE *pMap, V2Di start)
 	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
 	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-	if (level.setlevel && level.setlvlnum == SL_VILEBETRAYER) {
+	if (lvl.setlevel && lvl.setlvlnum == SL_VILEBETRAYER) {
 		beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 		beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
 		beastiary.AddMonsterType(UniqMonst[UMT_BLACKJADE].mtype, 4);
@@ -290,7 +290,7 @@ void M2MStartHit(int mid, int i, int dam)
 	if (monsters[mid].data.MType == NULL) app_fatal("Monster %d \"%s\" getting hit by monster: MType NULL", mid, monsters[mid].data.mName);
 	if (i >= 0) monsters[i].data.mWhoHit |= 1 << i;
 
-	delta_monster_hp(mid, monsters[mid].data._mhitpoints, level.currlevel);
+	delta_monster_hp(mid, monsters[mid].data._mhitpoints, lvl.currlevel);
 	NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, mid, dam);
 	PlayEffect(mid, 1);
 
@@ -1333,7 +1333,7 @@ void MonsterInstance::SpawnGolum(V2Di pos, int mi)
 		    int(data._mdir),
 		    data._menemy,
 		    data._mhitpoints,
-		    level.currlevel);
+		    lvl.currlevel);
 	}
 }
 

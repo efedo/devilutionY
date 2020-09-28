@@ -1841,15 +1841,6 @@ typedef enum object_graphic_id {
 	OFILE_LZSTAND  = 0x37,
 } object_graphic_id;
 
-typedef enum dungeon_type {
-	DTYPE_TOWN      = 0x0,
-	DTYPE_CATHEDRAL = 0x1,
-	DTYPE_CATACOMBS = 0x2,
-	DTYPE_CAVES     = 0x3,
-	DTYPE_HELL      = 0x4,
-	DTYPE_NONE      = 0xFF,
-} dungeon_type;
-
 typedef enum dflag {
 	BFLAG_MISSILE     = 0x01,
 	BFLAG_VISIBLE     = 0x02,

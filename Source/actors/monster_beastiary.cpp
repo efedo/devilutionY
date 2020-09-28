@@ -79,14 +79,14 @@ void Beastiary::GetLevelMTypes()
 	char mamask = 3; // monster availability mask
 
 	AddMonsterType(MT_GOLEM, 2);
-	if (level.currlevel == 16) {
+	if (lvl.currlevel == 16) {
 		AddMonsterType(MT_ADVOCATE, 1);
 		AddMonsterType(MT_RBLACK, 1);
 		AddMonsterType(MT_DIABLO, 2);
 		return;
 	}
 
-	if (!level.setlevel) {
+	if (!lvl.setlevel) {
 		if (QuestStatus(Q_BUTCHER))
 			AddMonsterType(MT_CLEAVER, 2);
 		if (QuestStatus(Q_GARBUD))
@@ -100,7 +100,7 @@ void Beastiary::GetLevelMTypes()
 		if (QuestStatus(Q_WARLORD))
 			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 4);
 
-		if (plr.isMultiplayer() && level.currlevel == quests[Q_SKELKING]._qlevel) {
+		if (plr.isMultiplayer() && lvl.currlevel == quests[Q_SKELKING]._qlevel) {
 
 			AddMonsterType(MT_SKING, 4);
 
@@ -110,7 +110,7 @@ void Beastiary::GetLevelMTypes()
 					minl = 15 * monsterdata[i].mMinDLvl / 30 + 1;
 					maxl = 15 * monsterdata[i].mMaxDLvl / 30 + 1;
 
-					if (level.currlevel >= minl && level.currlevel <= maxl) {
+					if (lvl.currlevel >= minl && lvl.currlevel <= maxl) {
 						if (MonstAvailTbl[i] & mamask) {
 							skeltypes[nt++] = i;
 						}
@@ -125,7 +125,7 @@ void Beastiary::GetLevelMTypes()
 			minl = 15 * monsterdata[i].mMinDLvl / 30 + 1;
 			maxl = 15 * monsterdata[i].mMaxDLvl / 30 + 1;
 
-			if (level.currlevel >= minl && level.currlevel <= maxl) {
+			if (lvl.currlevel >= minl && lvl.currlevel <= maxl) {
 				if (MonstAvailTbl[i] & mamask) {
 					typelist[nt++] = i;
 				}
@@ -156,7 +156,7 @@ void Beastiary::GetLevelMTypes()
 		}
 
 	} else {
-		if (level.setlvlnum == SL_SKELKING) {
+		if (lvl.setlvlnum == SL_SKELKING) {
 			AddMonsterType(MT_SKING, 4);
 		}
 	}

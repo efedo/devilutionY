@@ -7,8 +7,8 @@
 #include <vector>
 #include <queue>
 #include "vectordvl.h"
-#include "directions.h"
-#include "micropather/pathfinder.h"
+#include "pathfinding/directions.h"
+#include "pathfinding/pathfinder.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
