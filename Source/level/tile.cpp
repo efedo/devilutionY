@@ -70,9 +70,9 @@ void Tile::clearObject()
 	object = UINT8_MAX;
 }
 
-void Tile::clearItem()
+void Tile::destroyItem()
 {
-	item = UINT8_MAX;
+	item.reset();
 }
 
 void Tile::clearMissile()
@@ -108,7 +108,7 @@ void Tile::clearMissile()
 
 [[nodiscard]] bool Tile::isItem() const
 {
-	return (item != UINT8_MAX);
+	return (item.get());
 }
 
 // Rename this to isPieceSolid and make a new
@@ -158,10 +158,9 @@ void Tile::setObject(int objectNum)
 	object = objectNum;
 }
 
-void Tile::setItem(int itemNum)
+void Tile::swapItem(std::unique_ptr<Item> & nitem)
 {
-	assert(itemNum >= 0 && itemNum < UINT8_MAX);
-	item = itemNum;
+	item.swap(nitem);
 }
 
 void Tile::setMissile(int missileNum)
@@ -206,6 +205,20 @@ void Tile::setMissile(int missileNum)
 }
 
 
+[[nodiscard]] bool Tile::canPutItem() const
+{
+	if (isItem()) return false;
+	if (isSolid()) return false;
+	if (isMonster()) return false;
+	if (isObject()) {
+		int oi = getObject();
+		ObjectStruct & obj = ::dvl::object[oi];
+		if (obj._oSolidFlag) return false;
+		if (obj._oSelFlag) return false;
+	}
+	return true;
+}
+
 [[nodiscard]] uint8_t Tile::getPiece() const
 {
 	assert(piece != UINT16_MAX);
@@ -242,7 +255,7 @@ void Tile::setMissile(int missileNum)
 	return object;
 }
 
-[[nodiscard]] uint8_t Tile::getItem() const
+[[nodiscard]] uint64_t Tile::getItem() const
 {
 	assert(item != UINT8_MAX);
 	return item;

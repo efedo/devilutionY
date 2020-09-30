@@ -151,7 +151,7 @@ BOOL SNetGetTurnsInTransit(int *turns)
 /**
  * @brief engine calls this only once with argument 1
  */
-bool SNetSetBasePlayer(int)
+BOOLEAN SNetSetBasePlayer(int)
 {
 	return true;
 }

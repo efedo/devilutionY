@@ -153,13 +153,15 @@ endif()
 add_library(smacker STATIC
   3rdParty/libsmacker/smk_bitstream.c
   3rdParty/libsmacker/smk_hufftree.c
-  3rdParty/libsmacker/smacker.c)
+  3rdParty/libsmacker/smacker.c
+  )
 
 add_library(Radon STATIC
   3rdParty/Radon/Radon/source/File.cpp
   3rdParty/Radon/Radon/source/Key.cpp
   3rdParty/Radon/Radon/source/Named.cpp
-  3rdParty/Radon/Radon/source/Section.cpp)
+  3rdParty/Radon/Radon/source/Section.cpp
+  )
 
 add_library(StormLib STATIC
   3rdParty/StormLib/src/FileStream.cpp
@@ -172,98 +174,105 @@ add_library(StormLib STATIC
   3rdParty/StormLib/src/SFileGetFileInfo.cpp
   3rdParty/StormLib/src/SFileOpenArchive.cpp
   3rdParty/StormLib/src/SFileOpenFileEx.cpp
-  3rdParty/StormLib/src/SFileReadFile.cpp)
+  3rdParty/StormLib/src/SFileReadFile.cpp
+  )
 
 add_library(PKWare STATIC
   3rdParty/PKWare/explode.cpp
-  3rdParty/PKWare/implode.cpp)
+  3rdParty/PKWare/implode.cpp
+ )
 
 add_library(devilution STATIC
+  Source/actors/monsters/monstdat.cpp
+  Source/actors/monsters/monster.cpp
+  Source/actors/monsters/monster_beastiary.cpp
+  Source/actors/monsters/monster_instance.cpp
+  Source/actors/monsters/monster_manager.cpp
+  Source/actors/monsters/monster_type.cpp
+  Source/actors/npcs/towners.cpp
+  Source/actors/player/character.cpp
+  Source/actors/player/inv.cpp
+  Source/actors/player/inv_draw.cpp
+  Source/actors/player/player_instance.cpp
+  Source/actors/player/player_items.cpp
+  Source/actors/player/player_manager.cpp
+  Source/actors/actor.cpp
+  Source/controls/control.cpp
+  Source/controls/cursor.cpp
+  Source/graphics/capture.cpp
+  Source/graphics/codec.cpp
+  Source/graphics/effects.cpp
+  Source/graphics/lighting.cpp
+  Source/graphics/minitext.cpp
+  Source/graphics/palette.cpp
+  Source/graphics/render.cpp
+  Source/graphics/scrollrt.cpp
+  Source/gui/gamemenu.cpp
+  Source/gui/gmenu.cpp
+  Source/gui/help.cpp
+  Source/gui/interfac.cpp
+  Source/gui/mainmenu.cpp
+  Source/items/itemdat.cpp
+  Source/items/item_id.cpp
+  Source/items/item_instance.cpp
+  Source/items/item_manager.cpp
+  Source/items/items.cpp
+  Source/items/stores.cpp
+  Source/level/generators/drlg_l1.cpp
+  Source/level/generators/drlg_l2.cpp
+  Source/level/generators/drlg_l3.cpp
+  Source/level/generators/drlg_l4.cpp
+  Source/level/generators/gendung.cpp
+  Source/level/generators/town.cpp
+  Source/level/generators/themes.cpp
+  Source/level/automap.cpp
+  Source/level/dgrid.cpp
+  Source/level/grid.cpp
+  Source/level/level.cpp
+  Source/level/pieces.cpp
+  Source/level/portal.cpp
+  Source/level/setmaps.cpp
+  Source/level/tile.cpp
+  Source/level/track.cpp
+  Source/level/trigs.cpp
+  Source/media/movie.cpp
+  Source/media/mpqapi.cpp
+  Source/media/wave.cpp
+  Source/multiplayer/msg.cpp
+  Source/multiplayer/multi.cpp
+  Source/multiplayer/sync.cpp
+  Source/objects/misdat.cpp
+  Source/objects/missiles.cpp
+  Source/objects/objdat.cpp
+  Source/objects/objects.cpp
+  Source/pathfinding/directions.cpp
+  Source/pathfinding/micropather.cpp
+  Source/pathfinding/path.cpp
+  Source/pathfinding/pathfinder.cpp
+  Source/skills/spelldat.cpp
+  Source/skills/spells.cpp
   Source/appfat.cpp
-  Source/automap.cpp
-  Source/capture.cpp
-  Source/actors/character.cpp
-  Source/codec.cpp
-  Source/control.cpp
-  Source/cursor.cpp
   Source/dead.cpp
   Source/debug.cpp
-  Source/level/dgrid.cpp
   Source/diablo.cpp
-  Source/pathfinding/directions.cpp
   Source/doom.cpp
-  Source/generators/drlg_l1.cpp
-  Source/generators/drlg_l2.cpp
-  Source/generators/drlg_l3.cpp
-  Source/generators/drlg_l4.cpp
   Source/dthread.cpp
-  Source/effects.cpp
   Source/encrypt.cpp
   Source/engine.cpp
   Source/error.cpp
-  Source/gamemenu.cpp
-  Source/generators/gendung.cpp
-  Source/gmenu.cpp
-  Source/level/grid.cpp
-  Source/level/tile.cpp
-  Source/help.cpp
   Source/init.cpp
-  Source/interfac.cpp
-  Source/actors/inv.cpp
-  Source/itemdat.cpp
-  Source/items.cpp
-  Source/level/level.cpp
-  Source/lighting.cpp
   Source/loadsave.cpp
-  Source/mainmenu.cpp
-  Source/minitext.cpp
-  Source/misdat.cpp
-  Source/missiles.cpp
-  Source/actors/monstdat.cpp
-  Source/actors/monster.cpp
-  Source/actors/monster_beastiary.cpp
-  Source/actors/monster_instance.cpp
-  Source/actors/monster_manager.cpp
-  Source/actors/monster_type.cpp
-  Source/media/movie.cpp
-  Source/media/mpqapi.cpp
-  Source/pathfinding/micropather.cpp
-  Source/multiplayer/msg.cpp
-  Source/multiplayer/multi.cpp
   Source/nthread.cpp
-  Source/objdat.cpp
-  Source/objects.cpp
   Source/pack.cpp
-  Source/palette.cpp
-  Source/pathfinding/path.cpp
-  Source/pathfinding/pathfinder.cpp
   Source/pfile.cpp
-  Source/level/pieces.cpp
-  Source/actors/player_instance.cpp
-  Source/actors/player_manager.cpp
   Source/plrmsg.cpp
-  Source/portal.cpp
   Source/quests.cpp
-  Source/render.cpp
   Source/restrict.cpp
-  Source/scrollrt.cpp
-  Source/setmaps.cpp
   Source/sha.cpp
-  Source/spelldat.cpp
-  Source/spells.cpp
-  Source/stores.cpp
-  Source/multiplayer/sync.cpp
   Source/textdat.cpp
-  Source/generators/themes.cpp
-  Source/level/tile.cpp
   Source/tmsg.cpp
-  Source/generators/town.cpp
-  Source/actors/towners.cpp
-  Source/track.cpp
-  Source/trigs.cpp
-  Source/media/wave.cpp
   Source/vector.cpp
-  )
+ )
 
 set(devilutionx_SRCS
   SourceX/dx.cpp

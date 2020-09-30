@@ -58,7 +58,7 @@ void LoadGame(bool firstflag)
 	View.x = _ViewX;
 	View.y = _ViewY;
 	nummonsters = _nummonsters;
-	numitems = _numitems;
+	item.num = _numitems;
 	nummissiles = _nummissiles;
 	nobjects = _nobjects;
 
@@ -99,12 +99,12 @@ void LoadGame(bool firstflag)
 			LoadVision(i);
 	}
 
-	for (i = 0; i < MAXITEMS; i++)
-		itemactive[i] = BLoad();
-	for (i = 0; i < MAXITEMS; i++)
-		itemavail[i] = BLoad();
-	for (i = 0; i < numitems; i++)
-		LoadItem(itemactive[i]);
+	//for (i = 0; i < MAXITEMS; i++)
+	//	item[i].active = BLoad();
+	//for (i = 0; i < MAXITEMS; i++)
+	//	item[i].avail = BLoad();
+	for (i = 0; i < item.num; i++)
+		LoadItem(item[i].active);
 	for (i = 0; i < 128; i++)
 		UniqueItemFlag[i] = OLoad();
 
@@ -847,7 +847,7 @@ void SaveGame()
 	OSave(invflag);
 	OSave(chrflag);
 	WSave(nummonsters);
-	WSave(numitems);
+	WSave(item.num);
 	WSave(nummissiles);
 	WSave(nobjects);
 
@@ -897,12 +897,12 @@ void SaveGame()
 			SaveVision(i);
 	}
 
-	for (i = 0; i < MAXITEMS; i++)
-		BSave(itemactive[i]);
-	for (i = 0; i < MAXITEMS; i++)
-		BSave(itemavail[i]);
-	for (i = 0; i < numitems; i++)
-		SaveItem(&item[itemactive[i]]);
+	//for (i = 0; i < MAXITEMS; i++)
+	//	BSave(item[i].active);
+	//for (i = 0; i < MAXITEMS; i++)
+	//	BSave(item[i].avail);
+	for (i = 0; i < item.num; i++)
+		SaveItem(&item[item[i].active]);
 	for (i = 0; i < 128; i++)
 		OSave(UniqueItemFlag[i]);
 
@@ -1568,7 +1568,7 @@ void SaveLevel()
 	}
 
 	WSave(nummonsters);
-	WSave(numitems);
+	WSave(item.num);
 	WSave(nobjects);
 
 	if (lvl.type() != DunType::town) {
@@ -1584,12 +1584,12 @@ void SaveLevel()
 			SaveObject(objectactive[i]);
 	}
 
-	for (i = 0; i < MAXITEMS; i++)
-		BSave(itemactive[i]);
-	for (i = 0; i < MAXITEMS; i++)
-		BSave(itemavail[i]);
-	for (i = 0; i < numitems; i++)
-		SaveItem(&item[itemactive[i]]);
+	//for (i = 0; i < MAXITEMS; i++)
+	//	BSave(item[i].active);
+	//for (i = 0; i < MAXITEMS; i++)
+	//	BSave(item[i].avail);
+	for (i = 0; i < item.num; i++)
+		SaveItem(&item[item[i].active]);
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)
@@ -1658,7 +1658,7 @@ void LoadLevel()
 	}
 
 	nummonsters = WLoad();
-	numitems = WLoad();
+	item.num = WLoad();
 	nobjects = WLoad();
 
 	if (lvl.type() != DunType::town) {
@@ -1676,12 +1676,12 @@ void LoadLevel()
 			SyncObjectAnim(objectactive[i]);
 	}
 
-	for (i = 0; i < MAXITEMS; i++)
-		itemactive[i] = BLoad();
-	for (i = 0; i < MAXITEMS; i++)
-		itemavail[i] = BLoad();
-	for (i = 0; i < numitems; i++)
-		LoadItem(itemactive[i]);
+	//for (i = 0; i < MAXITEMS; i++)
+	//	item[i].active = BLoad();
+	//for (i = 0; i < MAXITEMS; i++)
+	//	item[i].avail = BLoad();
+	for (i = 0; i < item.num; i++)
+		LoadItem(item[i].active);
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++)

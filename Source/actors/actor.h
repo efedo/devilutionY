@@ -17,14 +17,14 @@ class Actor {
 // class Player : public actor
 
 // Non-player actor
-class NpaType : public ActorType {
+class NpcType : public ActorType {
 };
 
 // Non-player actor
-class Npa : public Actor {
+class Npc : public Actor {
 };
 
-class Towner : public Npa {
+class Towner : public Npc {
 };
 
 // class Monster : public Npa

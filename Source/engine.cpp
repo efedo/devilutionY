@@ -12,6 +12,7 @@
  */
 #include "all.h"
 #include "../3rdParty/Storm/Source/storm.h"
+#include <random>
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -771,6 +772,15 @@ int random_(uint8_t idx, int v)
 	if (v < 0xFFFF)
 		return (GetRndSeed() >> 16) % v;
 	return GetRndSeed() % v;
+}
+
+// Modern 64-bit number generator
+uint64_t rand64()
+{
+	static std::random_device rnddevice;
+	static std::mt19937 rndgenerator(rnddevice());
+	static std::uniform_int_distribution<uint64_t> rnddistribution(0, UINT64_MAX);
+	return rnddistribution(rndgenerator);
 }
 
 /**

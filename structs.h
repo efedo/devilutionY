@@ -10,11 +10,14 @@
 #include <vector>
 #include <queue>
 #include "enums.h"
+#include "items/item_enums.h"
 #include "vectordvl.h"
 #include "pathfinding/directions.h"
 #include "pathfinding/pathfinder.h"
 
 DEVILUTION_BEGIN_NAMESPACE
+
+class Item;
 
 //////////////////////////////////////////////////
 // control
@@ -126,7 +129,7 @@ typedef struct ItemStruct {
 	char _iMagical;
 	char _iName[64];
 	char _iIName[64];
-	char _iLoc;
+	ItemClass _iLoc = ItemClass::Invalid;
 	// item_class enum
 	char _iClass;
 	int _iCurs;
@@ -178,7 +181,7 @@ typedef struct ItemStruct {
 	unsigned char _iMinMag;
 	char _iMinDex;
 	bool _iStatFlag;
-	int IDidx;
+	int IDidx; // Index of entry in "all items list" (list of global item data)
 	int offs016C; // _oldlight or _iInvalid
 } ItemStruct;
 
@@ -316,12 +319,10 @@ typedef struct PlayerStruct {
 	unsigned char *_pBAnim[8];
 	int _pBFrames;
 	int _pBWidth;
-	ItemStruct InvBody[NUM_INVLOC];
-	ItemStruct InvList[NUM_INV_GRID_ELEM];
-	int _pNumInv;
-	char InvGrid[NUM_INV_GRID_ELEM];
-	ItemStruct SpdList[MAXBELTITEMS];
-	ItemStruct HoldItem;
+
+
+
+
 	int _pIMinDam;
 	int _pIMaxDam;
 	int _pIAC;
@@ -963,9 +964,7 @@ typedef struct QuestStruct {
 	unsigned char _qactive;
 	DunType _qlvltype;
 	V2Di _qt;
-	//int _qtx;
-	//int _qty;
-	unsigned char _qslvl;
+	SetLvl _qslvl;
 	unsigned char _qidx;
 	unsigned char _qmsg;
 	unsigned char _qvar1;
@@ -979,7 +978,7 @@ typedef struct QuestData {
 	DunType _qlvlt;
 	unsigned char _qdtype;
 	unsigned char _qdrnd;
-	unsigned char _qslvl;
+	SetLvl _qslvl;
 	int _qflags; /* unsigned char */
 	int _qdmsg;
 	char *_qlstr;
@@ -1148,15 +1147,6 @@ typedef struct ThemeStruct {
 	char ttype; /* aligned 4 */
 	int ttval;
 } ThemeStruct;
-
-//////////////////////////////////////////////////
-// inv
-//////////////////////////////////////////////////
-
-typedef struct InvXY {
-	int X;
-	int Y;
-} InvXY;
 
 //////////////////////////////////////////////////
 // lighting

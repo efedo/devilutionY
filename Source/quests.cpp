@@ -18,22 +18,22 @@ int ReturnLvl;
 QuestData questlist[MAXQUESTS] = {
 	// clang-format off
 	// _qdlvl, _qdmultlvl, _qlvlt,          _qdtype,   _qdrnd, _qslvl, _qflags, _qdmsg,         _qlstr
-	{       5,         -1, DunType::none,      Q_ROCK,  100,      0,       0, TEXT_INFRA5,   "The Magic Rock"           },
-	{       9,         -1, DunType::none,      Q_MUSHROOM,   100,      0,       0, TEXT_MUSH8,    "Black Mushroom"           },
-	{       4,         -1, DunType::none,      Q_GARBUD,   100,      0,       0, TEXT_GARBUD1,  "Gharbad The Weak"         },
-	{       8,         -1, DunType::none,      Q_ZHAR,   100,      0,       0, TEXT_ZHAR1,    "Zhar the Mad"             },
-	{      14,         -1, DunType::none,      Q_VEIL,   100,      0,       0, TEXT_VEIL9,    "Lachdanan"                },
-	{      15,         -1, DunType::none,      Q_DIABLO,    100,      0,       1, TEXT_VILE3,    "Diablo"                   },
-	{       2,          2, DunType::none,      Q_BUTCHER,  100,      0,       1, TEXT_BUTCH9,   "The Butcher"              },
-	{       4,         -1, DunType::none,      Q_LTBANNER,    100,      0,       0, TEXT_BANNER2,  "Ogden's Sign"             },
-	{       7,         -1, DunType::none,      Q_BLIND,  100,      0,       0, TEXT_BLINDING, "Halls of the Blind"       },
-	{       5,         -1, DunType::none,      Q_BLOOD,  100,      0,       0, TEXT_BLOODY,   "Valor"                    },
-	{      10,         -1, DunType::none,      Q_ANVIL,  100,      0,       0, TEXT_ANVIL5,   "Anvil of Fury"            },
-	{      13,         -1, DunType::none,      Q_WARLORD, 100,      0,       0, TEXT_BLOODWAR, "Warlord of Blood"         },
-	{       3,          3, DunType::cathedral, Q_SKELKING,   100,      1,       1, TEXT_KING2,    "The Curse of King Leoric" },
-	{       2,         -1, DunType::caves,     Q_PWATER,     100,      4,       0, TEXT_POISON3,  "Poisoned Water Supply"    },
-	{       6,         -1, DunType::catacombs, Q_SCHAMB,   100,      2,       0, TEXT_BONER,    "The Chamber of Bone"      },
-	{      15,         15, DunType::cathedral, Q_BETRAYER,     100,      5,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
+	{       5,         -1, DunType::none,      Q_ROCK,  100,      SetLvl::None,       0, TEXT_INFRA5,   "The Magic Rock"           },
+	{       9,         -1, DunType::none,      Q_MUSHROOM,   100,      SetLvl::None,       0, TEXT_MUSH8,    "Black Mushroom"           },
+	{       4,         -1, DunType::none,      Q_GARBUD,   100,      SetLvl::None,       0, TEXT_GARBUD1,  "Gharbad The Weak"         },
+	{       8,         -1, DunType::none,      Q_ZHAR,   100,      SetLvl::None,       0, TEXT_ZHAR1,    "Zhar the Mad"             },
+	{      14,         -1, DunType::none,      Q_VEIL,   100,      SetLvl::None,       0, TEXT_VEIL9,    "Lachdanan"                },
+	{      15,         -1, DunType::none,      Q_DIABLO,    100,      SetLvl::None,       1, TEXT_VILE3,    "Diablo"                   },
+	{       2,          2, DunType::none,      Q_BUTCHER,  100,      SetLvl::None,       1, TEXT_BUTCH9,   "The Butcher"              },
+	{       4,         -1, DunType::none,      Q_LTBANNER,    100,      SetLvl::None,       0, TEXT_BANNER2,  "Ogden's Sign"             },
+	{       7,         -1, DunType::none,      Q_BLIND,  100,      SetLvl::None,       0, TEXT_BLINDING, "Halls of the Blind"       },
+	{       5,         -1, DunType::none,      Q_BLOOD,  100,      SetLvl::None,       0, TEXT_BLOODY,   "Valor"                    },
+	{      10,         -1, DunType::none,      Q_ANVIL,  100,      SetLvl::None,       0, TEXT_ANVIL5,   "Anvil of Fury"            },
+	{      13,         -1, DunType::none,      Q_WARLORD, 100,      SetLvl::None,       0, TEXT_BLOODWAR, "Warlord of Blood"         },
+	{       3,          3, DunType::cathedral, Q_SKELKING,   100,      SetLvl::SkelKing,       1, TEXT_KING2,    "The Curse of King Leoric" },
+	{       2,         -1, DunType::caves,     Q_PWATER,     100,      SetLvl::PoisonWater,       0, TEXT_POISON3,  "Poisoned Water Supply"    },
+	{       6,         -1, DunType::catacombs, Q_SCHAMB,   100,      SetLvl::BoneChamb,       0, TEXT_BONER,    "The Chamber of Bone"      },
+	{      15,         15, DunType::cathedral, Q_BETRAYER,     100,      SetLvl::VileBetrayer,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
 	// clang-format on
 };
 V2Di questoff[7] = {
@@ -188,13 +188,13 @@ void CheckQuests()
 	} else if (myplr().data._pmode == PM_STAND) {
 		for (i = 0; i < MAXQUESTS; i++) {
 			if (lvl.currlevel == quests[i]._qlevel
-			    && quests[i]._qslvl != 0
+			    && quests[i]._qslvl != SetLvl::None
 			    && quests[i]._qactive != QUEST_NOTAVAIL
 			    && myplr().pos() == quests[i]._qt) {
 				if (quests[i]._qlvltype != DunType::none) {
 					lvl.setlvltype = quests[i]._qlvltype;
 				}
-				myplr().StartNewLvl(WM_DIABSETLVL, quests[i]._qslvl);
+				myplr().StartNewLvl(WM_DIABSETLVL, int(quests[i]._qslvl));
 			}
 		}
 	}
@@ -211,8 +211,8 @@ bool ForceQuests()
 
 	for (i = 0; i < MAXQUESTS; i++) {
 
-		if (i != Q_BETRAYER && lvl.currlevel == quests[i]._qlevel && quests[i]._qslvl != 0) {
-			ql = quests[quests[i]._qidx]._qslvl - 1;
+		if (i != Q_BETRAYER && lvl.currlevel == quests[i]._qlevel && quests[i]._qslvl != SetLvl::None) {
+			ql = int(quests[quests[i]._qidx]._qslvl) - 1;
 			q = quests[i]._qt;
 
 			for (j = 0; j < 7; j++) {
@@ -563,7 +563,7 @@ void GetReturnLvlPos()
 	View.x = ReturnLvlX;
 	View.y = ReturnLvlY;
 	lvl.currlevel = ReturnLvl;
-	lvl.type() = ReturnLvlT;
+	lvl.setType(ReturnLvlT);
 }
 
 void ResyncMPQuests()

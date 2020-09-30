@@ -87,6 +87,7 @@ Dir GetDirection(V2Di t1, V2Di t2);
 void SetRndSeed(int s);
 int GetRndSeed();
 int random_(uint8_t idx, int v);
+uint64_t rand64();
 void engine_debug_trap(bool show_cursor);
 uint8_t *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);

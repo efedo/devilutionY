@@ -655,7 +655,7 @@ bool LeftMouseDown(int wParam)
 					} else if (sbookflag && Mouse.x > RIGHT_PANEL && Mouse.y < SPANEL_HEIGHT) {
 						CheckSBook();
 					} else if (pcurs >= CURSOR_FIRSTITEM) {
-						if (TryInvPut()) {
+						if (CanDropAdjacent()) {
 							NetSendCmdPItem(TRUE, CMD_PUTITEM, cursm.x, cursm.y);
 							NewCursor(CURSOR_HAND);
 						}
@@ -955,7 +955,7 @@ void PressKey(int vkey)
 			    item[pcursitem]._iCreateInfo);
 			NetSendCmdString(1 << myplr(), tempstr);
 		}
-		sprintf(tempstr, "Numitems : %i", numitems);
+		sprintf(tempstr, "Numitems : %i", item.num);
 		NetSendCmdString(1 << myplr(), tempstr);
 	}
 #endif

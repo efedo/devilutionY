@@ -1,7 +1,0 @@
-#include "all.h"
-
-DEVILUTION_BEGIN_NAMESPACE
-
-PlayerManager plr;
-
-DEVILUTION_END_NAMESPACE

@@ -408,7 +408,7 @@ bool delta_quest_inited(int i)
 	return sgJunk.quests[i].qstate != 0xFF;
 }
 
-void DeltaAddItem(int ii)
+void DeltaAddItem(Item & item)
 {
 	int i;
 	TCmdPItem *pD;
@@ -419,9 +419,9 @@ void DeltaAddItem(int ii)
 	pD = sgLevels[lvl.currlevel].item;
 	for (i = 0; i < MAXITEMS; i++, pD++) {
 		if (pD->bCmd != 0xFF
-		    && pD->wIndx == item[ii].IDidx
-		    && pD->wCI == item[ii]._iCreateInfo
-		    && pD->dwSeed == item[ii]._iSeed
+		    && pD->wIndx == item.IDidx
+		    && pD->wCI == item._iCreateInfo
+		    && pD->dwSeed == item._iSeed
 		    && (pD->bCmd == CMD_WALKXY || pD->bCmd == CMD_STAND)) {
 			return;
 		}
@@ -432,17 +432,17 @@ void DeltaAddItem(int ii)
 		if (pD->bCmd == 0xFF) {
 			pD->bCmd = CMD_STAND;
 			sgbDeltaChanged = TRUE;
-			pD->x = item[ii]._i.x;
-			pD->y = item[ii]._i.y;
-			pD->wIndx = item[ii].IDidx;
-			pD->wCI = item[ii]._iCreateInfo;
-			pD->dwSeed = item[ii]._iSeed;
-			pD->bId = item[ii]._iIdentified;
-			pD->bDur = item[ii]._iDurability;
-			pD->bMDur = item[ii]._iMaxDur;
-			pD->bCh = item[ii]._iCharges;
-			pD->bMCh = item[ii]._iMaxCharges;
-			pD->wValue = item[ii]._ivalue;
+			pD->x = item._i.x;
+			pD->y = item._i.y;
+			pD->wIndx = item.IDidx;
+			pD->wCI = item._iCreateInfo;
+			pD->dwSeed = item._iSeed;
+			pD->bId = item._iIdentified;
+			pD->bDur = item._iDurability;
+			pD->bMDur = item._iMaxDur;
+			pD->bCh = item._iCharges;
+			pD->bMCh = item._iMaxCharges;
+			pD->wValue = item._ivalue;
 			return;
 		}
 	}
@@ -743,7 +743,7 @@ void NetSendCmdQuest(bool bHiPri, uint8_t q)
 		NetSendLoPri((uint8_t *)&cmd, sizeof(cmd));
 }
 
-void NetSendCmdGItem(bool bHiPri, uint8_t bCmd, uint8_t mast, uint8_t pnum, uint8_t ii)
+void NetSendCmdGItem(bool bHiPri, uint8_t bCmd, uint8_t mast, uint8_t pnum, Item &item)
 {
 	TCmdGItem cmd;
 
@@ -753,29 +753,29 @@ void NetSendCmdGItem(bool bHiPri, uint8_t bCmd, uint8_t mast, uint8_t pnum, uint
 	cmd.bLevel = lvl.currlevel;
 	cmd.bCursitem = ii;
 	cmd.dwTime = 0;
-	cmd.x = item[ii]._i.x;
-	cmd.y = item[ii]._i.y;
-	cmd.wIndx = item[ii].IDidx;
+	cmd.x = item._i.x;
+	cmd.y = item._i.y;
+	cmd.wIndx = item.IDidx;
 
-	if (item[ii].IDidx == IDI_EAR) {
-		cmd.wCI = item[ii]._iName[8] | (item[ii]._iName[7] << 8);
-		cmd.dwSeed = item[ii]._iName[12] | ((item[ii]._iName[11] | ((item[ii]._iName[10] | (item[ii]._iName[9] << 8)) << 8)) << 8);
-		cmd.bId = item[ii]._iName[13];
-		cmd.bDur = item[ii]._iName[14];
-		cmd.bMDur = item[ii]._iName[15];
-		cmd.bCh = item[ii]._iName[16];
-		cmd.bMCh = item[ii]._iName[17];
-		cmd.wValue = item[ii]._ivalue | (item[ii]._iName[18] << 8) | ((item[ii]._iCurs - 19) << 6);
-		cmd.dwBuff = item[ii]._iName[22] | ((item[ii]._iName[21] | ((item[ii]._iName[20] | (item[ii]._iName[19] << 8)) << 8)) << 8);
+	if (item.IDidx == IDI_EAR) {
+		cmd.wCI = item._iName[8] | (item._iName[7] << 8);
+		cmd.dwSeed = item._iName[12] | ((item._iName[11] | ((item._iName[10] | (item._iName[9] << 8)) << 8)) << 8);
+		cmd.bId = item._iName[13];
+		cmd.bDur = item._iName[14];
+		cmd.bMDur = item._iName[15];
+		cmd.bCh = item._iName[16];
+		cmd.bMCh = item._iName[17];
+		cmd.wValue = item._ivalue | (item._iName[18] << 8) | ((item._iCurs - 19) << 6);
+		cmd.dwBuff = item._iName[22] | ((item._iName[21] | ((item._iName[20] | (item._iName[19] << 8)) << 8)) << 8);
 	} else {
-		cmd.wCI = item[ii]._iCreateInfo;
-		cmd.dwSeed = item[ii]._iSeed;
-		cmd.bId = item[ii]._iIdentified;
-		cmd.bDur = item[ii]._iDurability;
-		cmd.bMDur = item[ii]._iMaxDur;
-		cmd.bCh = item[ii]._iCharges;
-		cmd.bMCh = item[ii]._iMaxCharges;
-		cmd.wValue = item[ii]._ivalue;
+		cmd.wCI = item._iCreateInfo;
+		cmd.dwSeed = item._iSeed;
+		cmd.bId = item._iIdentified;
+		cmd.bDur = item._iDurability;
+		cmd.bMDur = item._iMaxDur;
+		cmd.bCh = item._iCharges;
+		cmd.bMCh = item._iMaxCharges;
+		cmd.wValue = item._ivalue;
 	}
 
 	if (bHiPri)
@@ -878,12 +878,12 @@ void NetSendCmdPItem(bool bHiPri, uint8_t bCmd, uint8_t x, uint8_t y)
 		NetSendLoPri((uint8_t *)&cmd, sizeof(cmd));
 }
 
-void NetSendCmdChItem(bool bHiPri, uint8_t bLoc)
+void NetSendCmdChItem(bool bHiPri, BodyLoc bLoc)
 {
 	TCmdChItem cmd;
 
 	cmd.bCmd = CMD_CHANGEPLRITEMS;
-	cmd.bLoc = bLoc;
+	cmd.bLoc = int(bLoc);
 	cmd.wIndx = myplr().data.HoldItem.IDidx;
 	cmd.wCI = myplr().data.HoldItem._iCreateInfo;
 	cmd.dwSeed = myplr().data.HoldItem._iSeed;
@@ -895,11 +895,11 @@ void NetSendCmdChItem(bool bHiPri, uint8_t bLoc)
 		NetSendLoPri((uint8_t *)&cmd, sizeof(cmd));
 }
 
-void NetSendCmdDelItem(bool bHiPri, uint8_t bLoc)
+void NetSendCmdDelItem(bool bHiPri, BodyLoc bLoc)
 {
 	TCmdDelItem cmd;
 
-	cmd.bLoc = bLoc;
+	cmd.bLoc = int(bLoc);
 	cmd.bCmd = CMD_DELPLRITEMS;
 	if (bHiPri)
 		NetSendHiPri((uint8_t *)&cmd, sizeof(cmd));
@@ -907,34 +907,34 @@ void NetSendCmdDelItem(bool bHiPri, uint8_t bLoc)
 		NetSendLoPri((uint8_t *)&cmd, sizeof(cmd));
 }
 
-void NetSendCmdDItem(bool bHiPri, int ii)
+void NetSendCmdDItem(bool bHiPri, Item &item)
 {
 	TCmdPItem cmd;
 
 	cmd.bCmd = CMD_DROPITEM;
-	cmd.x = item[ii]._i.x;
-	cmd.y = item[ii]._i.y;
-	cmd.wIndx = item[ii].IDidx;
+	cmd.x = item._i.x;
+	cmd.y = item._i.y;
+	cmd.wIndx = item.IDidx;
 
-	if (item[ii].IDidx == IDI_EAR) {
-		cmd.wCI = item[ii]._iName[8] | (item[ii]._iName[7] << 8);
-		cmd.dwSeed = item[ii]._iName[12] | ((item[ii]._iName[11] | ((item[ii]._iName[10] | (item[ii]._iName[9] << 8)) << 8)) << 8);
-		cmd.bId = item[ii]._iName[13];
-		cmd.bDur = item[ii]._iName[14];
-		cmd.bMDur = item[ii]._iName[15];
-		cmd.bCh = item[ii]._iName[16];
-		cmd.bMCh = item[ii]._iName[17];
-		cmd.wValue = item[ii]._ivalue | (item[ii]._iName[18] << 8) | ((item[ii]._iCurs - 19) << 6);
-		cmd.dwBuff = item[ii]._iName[22] | ((item[ii]._iName[21] | ((item[ii]._iName[20] | (item[ii]._iName[19] << 8)) << 8)) << 8);
+	if (item.IDidx == IDI_EAR) {
+		cmd.wCI = item._iName[8] | (item._iName[7] << 8);
+		cmd.dwSeed = item._iName[12] | ((item._iName[11] | ((item._iName[10] | (item._iName[9] << 8)) << 8)) << 8);
+		cmd.bId = item._iName[13];
+		cmd.bDur = item._iName[14];
+		cmd.bMDur = item._iName[15];
+		cmd.bCh = item._iName[16];
+		cmd.bMCh = item._iName[17];
+		cmd.wValue = item._ivalue | (item._iName[18] << 8) | ((item._iCurs - 19) << 6);
+		cmd.dwBuff = item._iName[22] | ((item._iName[21] | ((item._iName[20] | (item._iName[19] << 8)) << 8)) << 8);
 	} else {
-		cmd.wCI = item[ii]._iCreateInfo;
-		cmd.dwSeed = item[ii]._iSeed;
-		cmd.bId = item[ii]._iIdentified;
-		cmd.bDur = item[ii]._iDurability;
-		cmd.bMDur = item[ii]._iMaxDur;
-		cmd.bCh = item[ii]._iCharges;
-		cmd.bMCh = item[ii]._iMaxCharges;
-		cmd.wValue = item[ii]._ivalue;
+		cmd.wCI = item._iCreateInfo;
+		cmd.dwSeed = item._iSeed;
+		cmd.bId = item._iIdentified;
+		cmd.bDur = item._iDurability;
+		cmd.bMDur = item._iMaxDur;
+		cmd.bCh = item._iCharges;
+		cmd.bMCh = item._iMaxCharges;
+		cmd.wValue = item._ivalue;
 	}
 
 	if (bHiPri)
@@ -1407,7 +1407,7 @@ DWORD On_REQUESTGITEM(TCmd *pCmd, int pnum)
 				if (p->bPnum != myplr())
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 				else
-					myplr().inventory.InvGetItem(ii);
+					myplr().inventory.PickupItem(ii);
 				SetItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			} else if (!NetSendCmdReq2(CMD_REQUESTGITEM, myplr(), p->bPnum, p))
 				NetSendCmdExtra(p);
@@ -1444,11 +1444,11 @@ DWORD On_GETITEM(TCmd *pCmd, int pnum)
 			if ((lvl.currlevel == p->bLevel || p->bPnum == myplr()) && p->bMaster != myplr()) {
 				if (p->bPnum == myplr()) {
 					if (lvl.currlevel != p->bLevel) {			
-						ii = myplr().inventory.SyncPutItem(myplr().pos(), p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+						ii = myplr().inventory.DropItemSync(myplr().pos(), p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 						if (ii != -1)
-							myplr().inventory.InvGetItem(ii);
+							myplr().inventory.PickupItem(ii);
 					} else
-						myplr().inventory.InvGetItem(ii);
+						myplr().inventory.PickupItem(ii);
 				} else
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 			}
@@ -1544,7 +1544,7 @@ DWORD On_REQUESTAGITEM(TCmd *pCmd, int pnum)
 				if (p->bPnum != myplr())
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 				else
-					myplr().inventory.AutoGetItem(p->bCursitem);
+					myplr().inventory.AutoHoldItem(p->bCursitem);
 				SetItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			} else if (!NetSendCmdReq2(CMD_REQUESTAGITEM, myplr(), p->bPnum, p))
 				NetSendCmdExtra(p);
@@ -1566,11 +1566,11 @@ DWORD On_AGETITEM(TCmd *pCmd, int pnum)
 			if ((lvl.currlevel == p->bLevel || p->bPnum == myplr()) && p->bMaster != myplr()) {
 				if (p->bPnum == myplr()) {
 					if (lvl.currlevel != p->bLevel) {
-						int ii = myplr().inventory.SyncPutItem(myplr().pos(), p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+						int ii = myplr().inventory.DropItemSync(myplr().pos(), p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 						if (ii != -1)
-							myplr().inventory.AutoGetItem(ii);
+							myplr().inventory.AutoHoldItem(ii);
 					} else
-						myplr().inventory.AutoGetItem(p->bCursitem);
+						myplr().inventory.AutoHoldItem(p->bCursitem);
 				} else
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 			}
@@ -1605,9 +1605,9 @@ DWORD On_PUTITEM(TCmd *pCmd, int pnum)
 	else if (lvl.currlevel == plr[pnum].data.plrlevel) {
 		int ii;
 		if (pnum == myplr())
-			ii = myplr().inventory.InvPutItem({ p->x, p->y });
+			ii = myplr().inventory.DropItem({ p->x, p->y });
 		else
-			ii = myplr().inventory.SyncPutItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+			ii = myplr().inventory.DropItemSync({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 		if (ii != -1) {
 			PutItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			delta_put_item(p, item[ii]._i, plr[pnum].data.plrlevel);
@@ -1670,7 +1670,7 @@ DWORD On_SYNCPUTITEM(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs == 1)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else if (lvl.currlevel == plr[pnum].data.plrlevel) {
-		int ii = myplr().inventory.SyncPutItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+		int ii = myplr().inventory.DropItemSync({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 		if (ii != -1) {
 			PutItemRecord(p->dwSeed, p->wCI, p->wIndx);
 			delta_put_item(p, item[ii]._i, plr[pnum].data.plrlevel);
@@ -1694,7 +1694,7 @@ DWORD On_RESPAWNITEM(TCmd *pCmd, int pnum)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else {
 		if (lvl.currlevel == plr[pnum].data.plrlevel && pnum != myplr()) {
-			myplr().inventory.SyncPutItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
+			myplr().inventory.DropItemSync({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed, p->bId, p->bDur, p->bMDur, p->bCh, p->bMCh, p->wValue, p->dwBuff);
 		}
 		PutItemRecord(p->dwSeed, p->wCI, p->wIndx);
 		delta_put_item(p, { p->x, p->y }, plr[pnum].data.plrlevel);
@@ -2059,7 +2059,7 @@ DWORD On_WARP(TCmd *pCmd, int pnum)
 		plr[pnum].StartWarpLvl(p->wParam1);
 		if (pnum == myplr() && pcurs >= CURSOR_FIRSTITEM) {
 			item[MAXITEMS] = myplr().data.HoldItem;
-			myplr().inventory.AutoGetItem(MAXITEMS);
+			myplr().inventory.AutoHoldItem(MAXITEMS);
 		}
 	}
 

@@ -20,9 +20,9 @@ public:
 	[[nodiscard]] bool blocksLight() const;
 	[[nodiscard]] bool isTransparent() const;
 	[[nodiscard]] bool isTrap() const;
-
 	[[nodiscard]] bool isWall() const;
 	[[nodiscard]] bool isWalkable() const;
+	[[nodiscard]] bool canPutItem() const;
 
 	// Content checks
 	[[nodiscard]] bool isPiece() const;
@@ -39,7 +39,7 @@ public:
 	[[nodiscard]] uint16_t getPlayerDraw() const;
 	[[nodiscard]] uint16_t getMonster() const;
 	[[nodiscard]] uint8_t getObject() const;
-	[[nodiscard]] uint8_t getItem() const;
+	[[nodiscard]] Item * viewItem() const;
 	[[nodiscard]] uint8_t getMissile() const;
 
 	// Unsafe content access
@@ -53,7 +53,7 @@ public:
 	void clearPiece();
 	void clearMonster();
 	void clearObject();
-	void clearItem();
+	void destroyItem();
 	void clearMissile();
 
 	// Change content
@@ -63,7 +63,7 @@ public:
 	void _setPieceNegFormat(int pieceNum); // For loading from files etc.
 	void setMonster(int monsterNum);
 	void setObject(int objectNum);
-	void setItem(int itemNum);
+	void swapItem(std::unique_ptr<Item> &nitem);
 	void setMissile(int missileNum);
 
 	MICROS dpiece_defs_map_2;
@@ -89,7 +89,7 @@ private:
 	uint8_t drawplayer = UINT8_MAX; // temporary, due to original player rendering being offset from actual player position
 	uint16_t monster = UINT16_MAX;
 	uint8_t object = UINT8_MAX;
-	uint8_t item = UINT8_MAX;
+	std::unique_ptr<Item> item;
 	uint8_t missile = UINT8_MAX;
 };
 

@@ -377,7 +377,7 @@ void FindTrigger()
 
 		if (pcurstrig == -1) {
 			for (int i = 0; i < MAXQUESTS; i++) {
-				if (i == Q_BETRAYER || lvl.currlevel != quests[i]._qlevel || quests[i]._qslvl == 0)
+				if (i == Q_BETRAYER || lvl.currlevel != quests[i]._qlevel || quests[i]._qslvl == SetLvl::None)
 					continue;
 				const int newDdistance = GetDistance(quests[i]._qt, 2);
 				if (newDdistance == 0)

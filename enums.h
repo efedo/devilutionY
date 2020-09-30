@@ -1156,18 +1156,7 @@ typedef enum sfx_flag {
 	sfx_LOADED   = 0x80,
 } sfx_flag;
 
-typedef enum item_equip_type {
-	ILOC_NONE        = 0x0,
-	ILOC_ONEHAND     = 0x1,
-	ILOC_TWOHAND     = 0x2,
-	ILOC_ARMOR       = 0x3,
-	ILOC_HELM        = 0x4,
-	ILOC_RING        = 0x5,
-	ILOC_AMULET      = 0x6,
-	ILOC_UNEQUIPABLE = 0x7,
-	ILOC_BELT        = 0x8,
-	ILOC_INVALID     = -1,
-} item_equip_type;
+
 
 typedef enum missile_id {
 	MIS_ARROW         = 0x0,
@@ -2062,7 +2051,7 @@ typedef enum interface_mode {
 	WM_DIABNEXTLVL  = 0x402, // WM_USER+2
 	WM_DIABPREVLVL  = 0x403,
 	WM_DIABRTNLVL   = 0x404,
-	WM_DIABSETLVL   = 0x405,
+	WM_DIABSETLVL   = 0x405, // load a 'set' level
 	WM_DIABWARPLVL  = 0x406,
 	WM_DIABTOWNWARP = 0x407,
 	WM_DIABTWARPUP  = 0x408,
@@ -2492,7 +2481,8 @@ typedef enum _item_indexes {
 } _item_indexes;
 
 enum class SetLvl {
-	//SL_BUTCHCHAMB = 0x0,
+	None		 = 0,
+	//SL_BUTCHCHAMB = 0x0, 
 	SkelKing     = 0x1,
 	BoneChamb    = 0x2,
 	Maze         = 0x3,
@@ -2741,57 +2731,6 @@ typedef enum item_special_effect {
 	ISPL_ALLRESZERO     = 0x80000000,
 } item_special_effect;
 
-// Logical equipment locations
-typedef enum inv_body_loc {
-	INVLOC_HEAD       = 0,
-	INVLOC_RING_LEFT  = 1,
-	INVLOC_RING_RIGHT = 2,
-	INVLOC_AMULET     = 3,
-	INVLOC_HAND_LEFT  = 4,
-	INVLOC_HAND_RIGHT = 5,
-	INVLOC_CHEST      = 6,
-	NUM_INVLOC,
-} inv_body_loc;
-
-typedef enum inv_item {
-	INVITEM_HEAD       = 0,
-	INVITEM_RING_LEFT  = 1,
-	INVITEM_RING_RIGHT = 2,
-	INVITEM_AMULET     = 3,
-	INVITEM_HAND_LEFT  = 4,
-	INVITEM_HAND_RIGHT = 5,
-	INVITEM_CHEST      = 6,
-	INVITEM_INV_FIRST  = 7,
-	INVITEM_INV_LAST   = 46,
-	INVITEM_BELT_FIRST = 47,
-	INVITEM_BELT_LAST  = 54,
-	NUM_INVELEM
-} inv_item;
-
-// identifiers for each of the inventory squares
-// see https://github.com/sanctuary/graphics/blob/master/inventory.png
-typedef enum inv_xy_slot {
-	SLOTXY_HEAD_FIRST       = 0,
-	SLOTXY_HEAD_LAST        = 3,
-	SLOTXY_RING_LEFT        = 4,
-	SLOTXY_RING_RIGHT       = 5,
-	SLOTXY_AMULET           = 6,
-	SLOTXY_HAND_LEFT_FIRST  = 7,
-	SLOTXY_HAND_LEFT_LAST   = 12,
-	SLOTXY_HAND_RIGHT_FIRST = 13,
-	SLOTXY_HAND_RIGHT_LAST  = 18,
-	SLOTXY_CHEST_FIRST      = 19,
-	SLOTXY_CHEST_LAST       = 24,
-
-	// regular inventory
-	SLOTXY_INV_FIRST = 25,
-	SLOTXY_INV_LAST  = 64,
-
-	// belt items
-	SLOTXY_BELT_FIRST = 65,
-	SLOTXY_BELT_LAST  = 72,
-	NUM_XY_SLOTS      = 73
-} inv_xy_slot;
 
 typedef enum player_graphic {
 	PFILE_STAND     = 1 << 0,
