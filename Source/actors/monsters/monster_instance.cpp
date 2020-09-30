@@ -50,7 +50,7 @@ MonsterInstance::MonsterInstance(int new_i, Dir rd, int mtype, V2Di pos)
 	data._mgoalvar3 = 0;
 	data.field_18 = 0;
 	data._pathcount = 0;
-	data._mDelFlag = FALSE;
+	data._mDelFlag = false;
 	data._uniqtype = 0;
 	data._msquelch = 0;
 	data._mRndSeed = GetRndSeed();
@@ -186,7 +186,7 @@ void MonsterInstance::M_Enemy()
 			if (grid.at(data._m).dTransVal == grid.at(plr[pnum].pos()).dTransVal)
 				sameroom = TRUE;
 			else
-				sameroom = FALSE;
+				sameroom = false;
 			int dist = (data._m - plr[pnum].pos()).maxabs();
 			if ((sameroom && !bestsameroom)
 			    || ((sameroom || !bestsameroom) && dist < best_dist)
@@ -429,7 +429,7 @@ void MonsterInstance::M_StartHit(int pnum, int dam)
 		data.mWhoHit |= 1 << pnum;
 	if (pnum == myplr()) {
 		delta_monster_hp(i, data._mhitpoints, lvl.currlevel);
-		NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, i, dam);
+		NetSendCmdParam2(false, CMD_MONSTDAMAGE, i, dam);
 	}
 	PlayEffect(i, 1);
 	if (data.MType->mtype >= MT_SNEAK && data.MType->mtype <= MT_ILLWEAV || dam >> 6 >= data.mLevel + 3) {
@@ -461,7 +461,7 @@ void MonsterInstance::M_DiabloDeath(bool sendmsg)
 	PlaySFX(USFX_DIABLOD);
 	quests[Q_DIABLO]._qactive = QUEST_DONE;
 	if (sendmsg) NetSendCmdQuest(TRUE, Q_DIABLO);
-	gbProcessPlayers = FALSE;
+	gbProcessPlayers = false;
 	sgbSaveSoundOn = gbSoundOn;
 
 	// Kills all monsters?
@@ -478,7 +478,7 @@ void MonsterInstance::M_DiabloDeath(bool sendmsg)
 		grid.at(monsters[k].data._m).setMonster(k);
 	}
 	AddLight(monsters[k].data._m, 8);
-	DoVision(monsters[k].data._m, 8, FALSE, TRUE);
+	DoVision(monsters[k].data._m, 8, false, TRUE);
 
 	int dist = (View - monsters[k].data._m).maxabs();
 	if (dist > 20) dist = 20;
@@ -501,7 +501,7 @@ void MonsterInstance::MonstStartKill(int pnum, bool sendmsg)
 	data._mhitpoints = 0;
 	SetRndSeed(data._mRndSeed);
 	if (QuestStatus(Q_GARBUD) && data.mName == UniqMonst[UMT_GARBUD].mName) {
-		CreateTypeItem({ data._m.x + 1, data._m.y + 1 }, TRUE, ITYPE_MACE, IMISC_NONE, TRUE, FALSE);
+		CreateTypeItem({ data._m.x + 1, data._m.y + 1 }, TRUE, ITYPE_MACE, IMISC_NONE, TRUE, false);
 	} else if (i > MAX_PLRS - 1) { // Golems should not spawn items
 		SpawnItem(i, data._m, sendmsg);
 	}
@@ -539,7 +539,7 @@ void MonsterInstance::M2MStartKill(int mid)
 		app_fatal("M2MStartKill: Monster %d \"%s\" MType NULL", mid, monsters[mid].data.mName);
 
 	delta_kill_monster(mid, monsters[mid].data._m, lvl.currlevel);
-	NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, monsters[mid].data._m, mid);
+	NetSendCmdLocParam1(false, CMD_MONSTDEATH, monsters[mid].data._m, mid);
 
 	monsters[mid].data.mWhoHit |= 1 << i;
 	if (i < MAX_PLRS)
@@ -579,9 +579,9 @@ void MonsterInstance::M_StartKill(int pnum)
 	if (myplr() == pnum) {
 		delta_kill_monster(i, data._m, lvl.currlevel);
 		if (i != pnum) {
-			NetSendCmdLocParam1(FALSE, CMD_MONSTDEATH, data._m, i);
+			NetSendCmdLocParam1(false, CMD_MONSTDEATH, data._m, i);
 		} else {
-			NetSendCmdLocParam1(FALSE, CMD_KILLGOLEM, data._m, lvl.currlevel);
+			NetSendCmdLocParam1(false, CMD_KILLGOLEM, data._m, lvl.currlevel);
 		}
 	}
 	MonstStartKill(pnum, TRUE);
@@ -600,10 +600,10 @@ void MonsterInstance::M_SyncStartKill(V2Di pos, int pnum)
 	}
 
 	if (data._mmode == MM_STONE) {
-		MonstStartKill(pnum, FALSE);
+		MonstStartKill(pnum, false);
 		data._mmode = MM_STONE;
 	} else {
-		MonstStartKill(pnum, FALSE);
+		MonstStartKill(pnum, false);
 	}
 }
 
@@ -676,12 +676,12 @@ bool MonsterInstance::M_DoStand()
 		M_Enemy();
 
 	data._mVar2++;
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoWalk()
 {
-	bool rv = FALSE;
+	bool rv = false;
 	if (data._mVar8 == data.MType->Anims[MA_WALK].Frames) {
 		grid.at(data._m).clearMonster();
 		data._m.x += data._mVar1;
@@ -718,7 +718,7 @@ bool MonsterInstance::M_DoWalk2()
 			data._moff.x = data._mVar6 >> 4;
 			data._moff.y = data._mVar7 >> 4;
 		}
-		rv = FALSE;
+		rv = false;
 	}
 	if (data._uniqtype != 0) M_ChangeLightOffset();
 	return rv;
@@ -743,7 +743,7 @@ bool MonsterInstance::M_DoWalk3()
 			data._moff.x = data._mVar6 >> 4;
 			data._moff.y = data._mVar7 >> 4;
 		}
-		rv = FALSE;
+		rv = false;
 	}
 	if (data._uniqtype != 0) M_ChangeLightOffset();
 	return rv;
@@ -898,7 +898,7 @@ void MonsterInstance::M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam)
 		plr[pnum].SyncPlrKill(0);
 		return;
 	}
-	plr[pnum].StartPlrHit(dam, FALSE);
+	plr[pnum].StartPlrHit(dam, false);
 	if (data._mFlags & MFLAG_KNOCKBACK) {
 		if (plr[pnum].data._pmode != PM_GOTHIT)
 			plr[pnum].StartPlrHit(0, TRUE);
@@ -939,7 +939,7 @@ bool MonsterInstance::M_DoAttack()
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoRAttack()
@@ -963,7 +963,7 @@ bool MonsterInstance::M_DoRAttack()
 		M_StartStand(data._mdir);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 int MonsterInstance::M_DoRSpAttack()
@@ -988,7 +988,7 @@ int MonsterInstance::M_DoRSpAttack()
 		M_StartStand(data._mdir);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoSAttack()
@@ -1000,14 +1000,14 @@ bool MonsterInstance::M_DoSAttack()
 		M_StartStand(data._mdir);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoFadein()
 {
 	if ((!(data._mFlags & MFLAG_LOCK_ANIMATION) || data._mAnimFrame != 1)
 	    && (data._mFlags & MFLAG_LOCK_ANIMATION || data._mAnimFrame != data._mAnimLen)) {
-		return FALSE;
+		return false;
 	}
 
 	M_StartStand(data._mdir);
@@ -1020,7 +1020,7 @@ bool MonsterInstance::M_DoFadeout()
 {
 	if ((!(data._mFlags & MFLAG_LOCK_ANIMATION) || data._mAnimFrame != 1)
 	    && (data._mFlags & MFLAG_LOCK_ANIMATION || data._mAnimFrame != data._mAnimLen)) {
-		return FALSE;
+		return false;
 	}
 
 	int mt = data.MType->mtype;
@@ -1041,7 +1041,7 @@ int MonsterInstance::M_DoHeal()
 	if (data._mFlags & MFLAG_NOHEAL) {
 		data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
 		data._mmode = MM_SATTACK;
-		return FALSE;
+		return false;
 	}
 
 	if (data._mAnimFrame == 1) {
@@ -1055,7 +1055,7 @@ int MonsterInstance::M_DoHeal()
 			data._mmode = MM_SATTACK;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 int MonsterInstance::M_DoTalk()
@@ -1064,7 +1064,7 @@ int MonsterInstance::M_DoTalk()
 	M_StartStand(data._mdir);
 	data._mgoal = MGOAL_TALKING;
 	if (effect_is_playing(alltext[data.mtalkmsg].sfxnr))
-		return FALSE;
+		return false;
 	InitQTextMsg(data.mtalkmsg);
 	if (data.mName == UniqMonst[UMT_GARBUD].mName) {
 		if (data.mtalkmsg == TEXT_GARBUD1)
@@ -1080,7 +1080,7 @@ int MonsterInstance::M_DoTalk()
 	    && !(data._mFlags & MFLAG_QUEST_COMPLETE)) {
 		quests[Q_ZHAR]._qactive = QUEST_ACTIVE;
 		quests[Q_ZHAR]._qlog = TRUE;
-		CreateTypeItem({ data._m.x + 1, data._m.y + 1 }, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
+		CreateTypeItem({ data._m.x + 1, data._m.y + 1 }, false, ITYPE_MISC, IMISC_BOOK, TRUE, false);
 		data._mFlags |= MFLAG_QUEST_COMPLETE;
 	}
 	if (data.mName == UniqMonst[UMT_SNOTSPIL].mName) {
@@ -1118,12 +1118,12 @@ int MonsterInstance::M_DoTalk()
 		quests[Q_BETRAYER]._qvar1 = 6;
 		data._mgoal = MGOAL_NORMAL;
 	}
-	return FALSE;
+	return false;
 }
 
 void MonsterInstance::M_Teleport()
 {
-	bool tren = FALSE;
+	bool tren = false;
 	int k, j, x, y, _mx, _my, rx, ry;
 
 	if (data._mmode != MM_STONE) {
@@ -1161,7 +1161,7 @@ bool MonsterInstance::M_DoGotHit()
 		M_StartStand(data._mdir);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoDeath()
@@ -1197,7 +1197,7 @@ bool MonsterInstance::M_DoDeath()
 
 		M_UpdateLeader();
 	}
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoSpStand()
@@ -1209,7 +1209,7 @@ bool MonsterInstance::M_DoSpStand()
 		M_StartStand(data._mdir);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoDelay()
@@ -1231,7 +1231,7 @@ bool MonsterInstance::M_DoDelay()
 		data._mAnimFrame = oFrame;
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_DoStone()
@@ -1240,7 +1240,7 @@ bool MonsterInstance::M_DoStone()
 		grid.at(data._m).clearMonster();
 		data._mDelFlag = TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 void MonsterInstance::M_WalkDir(Dir md)
@@ -1369,7 +1369,7 @@ bool MonsterInstance::M_PathWalk()
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool MonsterInstance::M_CallWalk2(Dir md)
@@ -1483,27 +1483,27 @@ bool MonsterInstance::MAI_Path()
 {
 	if (data.MType->mtype != MT_GOLEM) {
 		if (data._msquelch == 0)
-			return FALSE;
+			return false;
 		if (data._mmode != MM_STAND)
-			return FALSE;
+			return false;
 		if (data._mgoal != MGOAL_NORMAL && data._mgoal != MGOAL_MOVE && data._mgoal != MGOAL_SHOOT)
-			return FALSE;
+			return false;
 		if (data._m.x == 1 && data._m.y == 0)
-			return FALSE;
+			return false;
 	}
 
 	bool clear = LineClearF1(PosOkMonst2, i, data._m, data._menemypos);
 	if (!clear || data._pathcount >= 5 && data._pathcount < 8) {
 		if (data._mFlags & MFLAG_CAN_OPEN_DOOR) MonstCheckDoors(i);
 		data._pathcount++;
-		if (data._pathcount < 5) return FALSE;
+		if (data._pathcount < 5) return false;
 		if (M_PathWalk()) return TRUE;
 	}
 
 	if (data.MType->mtype != MT_GOLEM)
 		data._pathcount = 0;
 
-	return FALSE;
+	return false;
 }
 
 void MonsterInstance::MAI_Snake()
@@ -1615,7 +1615,7 @@ void MonsterInstance::MAI_SkelBow()
 {
 	if (data._mmode != MM_STAND || data._msquelch == 0) return;
 
-	bool walking = FALSE;
+	bool walking = false;
 	V2Di f = data._menemypos;
 	int dist = (data._m - f).maxabs();
 	Dir md = GetDirection(data._m, data._last);
@@ -1703,7 +1703,7 @@ void MonsterInstance::MAI_Sneak()
 		data._mdir = md;
 		int v = random_(112, 100);
 		if (d.maxdim() < dist && data._mFlags & MFLAG_HIDDEN) {
-			M_StartFadein(md, FALSE);
+			M_StartFadein(md, false);
 		} else {
 			if ((d.maxdim() >= dist + 1) && !(data._mFlags & MFLAG_HIDDEN)) {
 				M_StartFadeout(md, TRUE);
@@ -1751,7 +1751,7 @@ void MonsterInstance::MAI_Fireman()
 			data._mgoalvar1++;
 		}
 	} else if (data._mgoal == MGOAL_RETREAT) {
-		M_StartFadein(md, FALSE);
+		M_StartFadein(md, false);
 		data._mgoal = MGOAL_SHOOT;
 	}
 	data._mdir = md;
@@ -1763,11 +1763,11 @@ void MonsterInstance::MAI_Fireman()
 		M_TryH2HHit(data._menemy, data.mHit, data.mMinDamage, data.mMaxDamage);
 		data._mgoal = MGOAL_RETREAT;
 		if (!M_CallWalk(opposite(md))) {
-			M_StartFadein(md, FALSE);
+			M_StartFadein(md, false);
 			data._mgoal = MGOAL_SHOOT;
 		}
 	} else if (!M_CallWalk(md) && (data._mgoal == MGOAL_NORMAL || data._mgoal == MGOAL_RETREAT)) {
-		M_StartFadein(md, FALSE);
+		M_StartFadein(md, false);
 		data._mgoal = MGOAL_SHOOT;
 	}
 }
@@ -1936,12 +1936,12 @@ void MonsterInstance::MAI_Ranged(int missile_type, bool special)
 
 void MonsterInstance::MAI_GoatBow()
 {
-	MAI_Ranged(MIS_ARROW, FALSE);
+	MAI_Ranged(MIS_ARROW, false);
 }
 
 void MonsterInstance::MAI_Succ()
 {
-	MAI_Ranged(MIS_FLARE, FALSE);
+	MAI_Ranged(MIS_FLARE, false);
 }
 
 void MonsterInstance::MAI_AcidUniq()
@@ -1953,7 +1953,7 @@ void MonsterInstance::MAI_Scav()
 {
 	int x, y;
 	V2Di _m = data._m;
-	bool done = FALSE;
+	bool done = false;
 	if (data._mmode != MM_STAND)
 		return;
 	if (data._mhitpoints < (data._mmaxhp >> 1) && data._mgoal != MGOAL_HEALING) {
@@ -2052,7 +2052,7 @@ void MonsterInstance::MAI_Garg()
 			data._mgoal = MGOAL_NORMAL;
 		}
 	}
-	MAI_Round(FALSE);
+	MAI_Round(false);
 }
 
 void MonsterInstance::MAI_RoundRanged(int missile_type, bool checkdoors, int dam, int lessmissiles)
@@ -2118,12 +2118,12 @@ void MonsterInstance::MAI_Storm()
 
 void MonsterInstance::MAI_Acid()
 {
-	MAI_RoundRanged(MIS_ACID, FALSE, 4, 1);
+	MAI_RoundRanged(MIS_ACID, false, 4, 1);
 }
 
 void MonsterInstance::MAI_Diablo()
 {
-	MAI_RoundRanged(MIS_DIABAPOCA, FALSE, 40, 0);
+	MAI_RoundRanged(MIS_DIABAPOCA, false, 40, 0);
 }
 
 void MonsterInstance::MAI_RR2(int mistype, int dam)
@@ -2395,7 +2395,7 @@ void MonsterInstance::MAI_Counselor()
 			} else if (random_(124, 100) < 30) {
 				data._mgoal = MGOAL_MOVE;
 				data._mgoalvar1 = 0;
-				M_StartFadeout(md, FALSE);
+				M_StartFadeout(md, false);
 			} else
 				M_StartDelay(random_(105, 10) + 2 * (5 - data._mint));
 		} else {
@@ -2403,7 +2403,7 @@ void MonsterInstance::MAI_Counselor()
 			if (data._mhitpoints < (data._mmaxhp >> 1)) {
 				data._mgoal = MGOAL_RETREAT;
 				data._mgoalvar1 = 0;
-				M_StartFadeout(md, FALSE);
+				M_StartFadeout(md, false);
 			} else if (data._mVar1 == MM_DELAY
 			    || random_(105, 100) < 2 * data._mint + 20) {
 				M_StartRAttack(-1, 0);

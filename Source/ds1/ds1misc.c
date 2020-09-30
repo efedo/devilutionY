@@ -338,7 +338,7 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
                };
    UBYTE       * bptr;
    void        * ds1_buff;
-   int         obj_path_warn_wrote = FALSE, last_o, nb;
+   int         obj_path_warn_wrote = false, last_o, nb;
    char        tmp[150], * cptr;
    long        tile_x, tile_y, zoom;
    long        incr;
@@ -1003,7 +1003,7 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
             
          // search of which object are these paths datas
          o = last_o = nb = 0;
-         done = FALSE;
+         done = false;
          while (! done)
          {
             if (o < glb_ds1[ds1_idx].obj_num)

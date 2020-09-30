@@ -84,7 +84,7 @@ const char gszHelpText[] = {
 
 void InitHelp()
 {
-	helpflag = FALSE;
+	helpflag = false;
 	dword_634494 = 0;
 	displayinghelp[0] = 0;
 }

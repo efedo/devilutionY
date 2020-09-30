@@ -8,7 +8,7 @@
 // ==========================================================================
 int wmsg_main(WMSG_S * wmsg)
 {
-   int  mx, my, mb, done = FALSE;
+   int  mx, my, mb, done = false;
    int  wx0, wy0, wx1, wy1; // main message window base
    int  i, n, curr_length = 0, max_length = 0;
    int  curr_width, max_width, curr_height;
@@ -150,12 +150,12 @@ int wmsg_main(WMSG_S * wmsg)
                   if (wmsg->button[i].shortcut[s].key[k])
                   {
                      if ( ! key[ wmsg->button[i].shortcut[s].key[k] ])
-                        all_keys = FALSE;
+                        all_keys = false;
                   }
                }
             }
             else
-               all_keys = FALSE;
+               all_keys = false;
             if (all_keys == TRUE)
             {
                done = TRUE;
@@ -164,7 +164,7 @@ int wmsg_main(WMSG_S * wmsg)
                // wait for all keys of the shortcut to not be pressed
                while (all_keys == TRUE)
                {
-                  all_keys = FALSE;
+                  all_keys = false;
                   for (k=0; k < MW_COMBINATION_KEY_NUM; k++)
                   {
                      if (wmsg->button[i].shortcut[s].key[k])

@@ -286,9 +286,9 @@ void CheckCursMove()
 	}
 	pcursinvitem = -1;
 	pcursplr = -1;
-	uitemflag = FALSE;
-	panelflag = FALSE;
-	trigflag = FALSE;
+	uitemflag = false;
+	panelflag = false;
+	trigflag = false;
 
 	if (myplr().data._pInvincible) return;
 

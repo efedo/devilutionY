@@ -180,7 +180,7 @@ typedef struct BUTTON_S
    int         active;
    int         tab_have_tiles;
    BUT_STATE_E state;
-   int         mouse_over;  // TRUE / FALSE
+   int         mouse_over;  // TRUE / false
    BITMAP      * bmp[2];    // [0]=OFF, [1]=ON
 } BUTTON_S;
 
@@ -432,7 +432,7 @@ typedef struct CMD_LINE_S
    // -force_pal : number is act of palette, 0 to 4, -1 if not used
    int  force_pal_num;
 
-   // -no_check_act option (don't compare .ds1 and .txt acts for safety), TRUE / FALSE
+   // -no_check_act option (don't compare .ds1 and .txt acts for safety), TRUE / false
    int  no_check_act;
 
    // -dt1_list : number of file, 1 to DT1_IN_DS1_MAX, -1 if not used
@@ -855,7 +855,7 @@ typedef struct DS1_S
    long          obj_num;
    long          obj_num_undo;
    int           can_undo_obj;
-   int           draw_edit_obj; // edit Type-Id of objects, FALSE / TRUE
+   int           draw_edit_obj; // edit Type-Id of objects, false / TRUE
    WIN_EDT_OBJ_S win_edt_obj;
 
    // current animated floor frame

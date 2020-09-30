@@ -17,7 +17,7 @@ void InitPortals()
 	int i;
 	for (i = 0; i < MAXPORTAL; i++) {
 		if (delta_portal_inited(i))
-			portal[i].open = FALSE;
+			portal[i].open = false;
 	}
 }
 
@@ -28,7 +28,7 @@ void SetPortalStats(int i, bool o, V2Di p, int lvl, DunType lvltype)
 	portal[i].pos.y = p.y;
 	portal[i].level = lvl;
 	portal[i].ltype = lvltype;
-	portal[i].setlvl = FALSE;
+	portal[i].setlvl = false;
 }
 
 void AddWarpMissile(int i, V2Di p)
@@ -87,7 +87,7 @@ void ActivatePortal(int i, V2Di p, int lvl, DunType lvltype, bool sp)
 
 void DeactivatePortal(int i)
 {
-	portal[i].open = FALSE;
+	portal[i].open = false;
 }
 
 bool PortalOnLevel(int i)
@@ -122,7 +122,7 @@ void SetCurrentPortal(int p)
 void GetPortalLevel()
 {
 	if (lvl.currlevel) {
-		lvl.setlevel = FALSE;
+		lvl.setlevel = false;
 		lvl.currlevel = 0;
 		myplr().data.plrlevel = 0;
 		lvl.setType(DunType::town);
@@ -134,7 +134,7 @@ void GetPortalLevel()
 			myplr().data.plrlevel = int(lvl.setlvlnum);
 			lvl.setType(portal[portalindex].ltype);
 		} else {
-			lvl.setlevel = FALSE;
+			lvl.setlevel = false;
 			lvl.currlevel = portal[portalindex].level;
 			myplr().data.plrlevel = lvl.currlevel;
 			lvl.setType(portal[portalindex].ltype);
@@ -170,7 +170,7 @@ bool PosOkPortal(int lvl, V2Di p)
 			(portal[i].pos.x == p.x - 1 && portal[i].pos.y == p.y - 1)))
 			return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 DEVILUTION_END_NAMESPACE

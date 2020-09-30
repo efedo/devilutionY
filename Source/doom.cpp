@@ -75,7 +75,7 @@ void doom_init()
 void doom_close()
 {
 	if (doomflag) {
-		doomflag = FALSE;
+		doomflag = false;
 		doom_cleanup();
 	}
 }

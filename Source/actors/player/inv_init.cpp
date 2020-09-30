@@ -158,7 +158,7 @@ void PlayerInventory::InitInv()
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_Sor.CEL", NULL);
 	}
 
-	invflag = FALSE;
+	invflag = false;
 }
 
 

@@ -119,7 +119,7 @@ void Tile::clearMissile()
 
 	//			bv = grid.at(pos).getObject();
 	//if (object[bv]._oSolidFlag)
-	//	return FALSE;
+	//	return false;
 }
 
 [[nodiscard]] bool Tile::isMissile() const

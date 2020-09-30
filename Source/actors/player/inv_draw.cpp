@@ -47,7 +47,7 @@ void PlayerInventory::DrawInvSlots()
 	uint8_t *pBuff;
 
 	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		invtest[i] = FALSE;
+		invtest[i] = false;
 		DrawInvSlotBack(getBagSlot(i).rect);
 	}
 

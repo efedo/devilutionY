@@ -90,7 +90,7 @@ int anim_load_dc6(char * name, COF_S * cof, int lay_idx, long user_dir,
    lay = & cof->lay_inf[lay_idx];
 
    // load dc6 file
-   entry = misc_load_mpq_file(name, & buff, & len, FALSE);
+   entry = misc_load_mpq_file(name, & buff, & len, false);
    if (entry == -1)
       return 1;
 

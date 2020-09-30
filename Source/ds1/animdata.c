@@ -26,7 +26,7 @@ UBYTE animdata_hash_value(char * name)
 void animdata_load(void)
 {
    char               * name = "Data\\Global\\AnimData.d2", animdata_name[10];
-   int                entry, done = FALSE, curr_block = 0;
+   int                entry, done = false, curr_block = 0;
    long               * lptr, nb_rec;
    ANIM_DATA_RECORD_S * rec_ptr = NULL;
    UBYTE              hash;
@@ -42,7 +42,7 @@ void animdata_load(void)
       name,
       (char **) & glb_ds1edit.anim_data.buffer,
       & glb_ds1edit.anim_data.buffer_size,
-      FALSE
+      false
    );
    if ((entry == -1) || (glb_ds1edit.anim_data.buffer_size <= 4))
    {

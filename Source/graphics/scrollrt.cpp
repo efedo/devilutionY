@@ -738,7 +738,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	if (grid[sx][sy].isMonster()) {
 		DrawMonsterHelper(sx, sy, 0, dx, dy);
 	}
-	DrawMissile({ sx, sy }, { dx, dy }, FALSE);
+	DrawMissile({ sx, sy }, { dx, dy }, false);
 	DrawObject(sx, sy, dx, dy, 0);
 	DrawItem(sx, sy, dx, dy, 0);
 
@@ -1203,7 +1203,7 @@ void ScrollView()
 	if (pcurs >= CURSOR_FIRSTITEM)
 		return;
 
-	scroll = FALSE;
+	scroll = false;
 
 	if (Mouse.x < 20) {
 		if (lvl.dmax.y - 1 <= View.y || lvl.dmin.x >= View.x) {
@@ -1408,7 +1408,7 @@ void scrollrt_draw_game_screen(bool draw_cursor)
 		unlock_buf(0);
 	}
 
-	DrawMain(hgt, FALSE, FALSE, FALSE, FALSE, FALSE);
+	DrawMain(hgt, false, false, false, false, false);
 
 	if (draw_cursor) {
 		lock_buf(0);
@@ -1435,12 +1435,12 @@ void DrawAndBlit()
 		drawmanaflag = TRUE;
 		drawbtnflag = TRUE;
 		drawsbarflag = TRUE;
-		ddsdesc = FALSE;
+		ddsdesc = false;
 		ctrlPan = TRUE;
 		hgt = SCREEN_HEIGHT;
 	} else {
 		ddsdesc = TRUE;
-		ctrlPan = FALSE;
+		ctrlPan = false;
 		hgt = VIEWPORT_HEIGHT;
 	}
 
@@ -1480,10 +1480,10 @@ void DrawAndBlit()
 	unlock_buf(0);
 	RenderPresent();
 
-	drawhpflag = FALSE;
-	drawmanaflag = FALSE;
-	drawbtnflag = FALSE;
-	drawsbarflag = FALSE;
+	drawhpflag = false;
+	drawmanaflag = false;
+	drawbtnflag = false;
+	drawsbarflag = false;
 }
 
 DEVILUTION_END_NAMESPACE

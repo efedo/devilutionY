@@ -75,7 +75,7 @@ void InitQuests()
 		}
 	}
 
-	questlog = FALSE;
+	questlog = false;
 	PentSpn2Frame = 1;
 	WaterDone = 0;
 	initiatedQuests = 0;
@@ -206,7 +206,7 @@ bool ForceQuests()
 	V2Di q;
 
 	if (plr.isMultiplayer()) {
-		return FALSE;
+		return false;
 	}
 
 	for (i = 0; i < MAXQUESTS; i++) {
@@ -225,7 +225,7 @@ bool ForceQuests()
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool QuestStatus(int i)
@@ -236,7 +236,7 @@ bool QuestStatus(int i)
 	    || lvl.currlevel != quests[i]._qlevel
 	    || !quests[i]._qactive
 	    || (result = 1, plr.isMultiplayer()) && !(questlist[i]._qflags & 1)) {
-		result = FALSE;
+		result = false;
 	}
 	return result;
 }
@@ -777,7 +777,7 @@ void QuestlogEnter()
 	PlaySFX(IS_TITLSLCT);
 	if (numqlines && qline != 22)
 		InitQTextMsg(quests[qlist[(qline - qtopline) >> 1]]._qmsg);
-	questlog = FALSE;
+	questlog = false;
 }
 
 void QuestlogESC()

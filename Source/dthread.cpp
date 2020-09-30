@@ -124,7 +124,7 @@ void dthread_cleanup()
 		return;
 	}
 
-	dthread_running = FALSE;
+	dthread_running = false;
 	SetEvent(sghWorkToDoEvent);
 	if (sghThread != NULL && glpDThreadId != SDL_GetThreadID(NULL)) {
 		SDL_WaitThread(sghThread, NULL);

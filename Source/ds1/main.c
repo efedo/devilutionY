@@ -335,7 +335,7 @@ void ds1edit_init(void)
    for (i=0; i<MAX_MPQ_FILE; i++)
    {
       memset( & glb_mpq_struct[i], 0, sizeof(GLB_MPQ_S));
-      glb_mpq_struct[i].is_open = FALSE;
+      glb_mpq_struct[i].is_open = false;
    }
 
    // mouse cursors
@@ -398,13 +398,13 @@ void ds1edit_init(void)
    glb_ds1edit.cmd_line.resize_width  = -1;
    glb_ds1edit.cmd_line.resize_height = -1;
    glb_ds1edit.cmd_line.force_pal_num = -1;
-   glb_ds1edit.cmd_line.no_check_act  = FALSE;
+   glb_ds1edit.cmd_line.no_check_act  = false;
    glb_ds1edit.cmd_line.dt1_list_num  = -1;
    for (i=0; i < DT1_IN_DS1_MAX; i++)
       glb_ds1edit.cmd_line.dt1_list_filename[i] = NULL;
 
    // 2nd row of infos
-   glb_ds1edit.show_2nd_row = FALSE;
+   glb_ds1edit.show_2nd_row = false;
 
    // video pages
    glb_ds1edit.video_page_num = 0;
@@ -465,7 +465,7 @@ void ds1edit_exit(void)
    // close all mpq
    for (i=0; i<MAX_MPQ_FILE; i++)
    {
-      if (glb_mpq_struct[i].is_open != FALSE)
+      if (glb_mpq_struct[i].is_open != false)
       {
          fprintf(stderr, "closing %s\n", glb_mpq_struct[i].file_name);
          fflush(stderr);
@@ -474,7 +474,7 @@ void ds1edit_exit(void)
          mpq_batch_close();
          
          memset( & glb_mpq_struct[i], 0, sizeof(GLB_MPQ_S));
-         glb_mpq_struct[i].is_open = FALSE;
+         glb_mpq_struct[i].is_open = false;
       }
    }
    
@@ -775,10 +775,10 @@ void ds1edit_load_palettes(void)
    {
       glb_ds1edit.pal_loaded[i] = TRUE;
       // first checking on disk
-      if (misc_load_pal_from_disk(i) == FALSE)
+      if (misc_load_pal_from_disk(i) == false)
       {
          // not already on disk
-         glb_ds1edit.pal_loaded[i] = FALSE;
+         glb_ds1edit.pal_loaded[i] = false;
          
          // make full path
          sprintf(palname, "Data\\Global\\Palette\\Act%i\\Pal.pl2", i+1);
@@ -886,7 +886,7 @@ int main(int argc, char * argv[])
    }
    printf("os_version          = %i\n", os_version);
    printf("os_revision         = %i\n", os_revision);
-   printf("os_multitasking     = %s\n", os_multitasking ? "TRUE" : "FALSE");
+   printf("os_multitasking     = %s\n", os_multitasking ? "TRUE" : "false");
    printf("cpu_vendor          = %s\n", cpu_vendor);
    printf("cpu_family          = ");
    switch(cpu_family)

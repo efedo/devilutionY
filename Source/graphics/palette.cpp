@@ -43,7 +43,7 @@ void ApplyGamma(SDL_Color *dst, const SDL_Color *src, int n)
 void SaveGamma()
 {
 	SRegSaveValue(APP_NAME, "Gamma Correction", 0, gamma_correction);
-	SRegSaveValue(APP_NAME, "Color Cycling", FALSE, color_cycling_enabled);
+	SRegSaveValue(APP_NAME, "Color Cycling", false, color_cycling_enabled);
 }
 
 static void LoadGamma()
@@ -81,7 +81,7 @@ void LoadPalette(char *pszFileName)
 
 	assert(pszFileName);
 
-	WOpenFile(pszFileName, &pBuf, FALSE);
+	WOpenFile(pszFileName, &pBuf, false);
 	WReadFile(pBuf, (char *)PalData, sizeof(PalData), pszFileName);
 	WCloseFile(pBuf);
 
@@ -193,7 +193,7 @@ void PaletteFadeOut(int fr)
 			RenderPresent();
 		}
 		SetFadeLevel(0);
-		sgbFadedIn = FALSE;
+		sgbFadedIn = false;
 	}
 }
 

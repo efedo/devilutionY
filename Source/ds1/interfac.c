@@ -40,18 +40,18 @@ void interfac_user_handler(int start_ds1_idx)
    tmp_sel.x1            = tmp_sel.x2     = tmp_sel.y1 = tmp_sel.y2 = 0;
    tmp_sel.old_x2        = tmp_sel.old_y2 = 0;
    tmp_sel.type          = TMP_NULL;
-   tmp_sel.start         = FALSE;
+   tmp_sel.start         = false;
    paste_pos.old_ds1_idx = 0;
    paste_pos.old_x       = 0;
    paste_pos.old_y       = 0;
    paste_pos.src_ds1_idx = 0;
    paste_pos.start_x     = 0;
    paste_pos.start_y     = 0;
-   paste_pos.start       = FALSE;
-   paste_pos.is_cut      = FALSE;
-   paste_pos.cut_saved   = FALSE;
+   paste_pos.start       = false;
+   paste_pos.is_cut      = false;
+   paste_pos.cut_saved   = false;
    ds1_idx               = start_ds1_idx;
-   done                  = FALSE;
+   done                  = false;
    
 
    // main loop
@@ -61,9 +61,9 @@ void interfac_user_handler(int start_ds1_idx)
       if (glb_ds1edit.mode == MOD_P)
       {
          if (glb_ds1[ds1_idx].path_edit_win.mode != PEM_NONE)
-            can_swich_mode = FALSE;
+            can_swich_mode = false;
          else if (glb_ds1[ds1_idx].path_edit_win.obj_dirty == TRUE)
-            can_swich_mode = FALSE;
+            can_swich_mode = false;
       }
 
       old_mouse_x = mouse_x;
@@ -631,7 +631,7 @@ void interfac_user_handler(int start_ds1_idx)
          if (key[KEY_LCONTROL] || key[KEY_RCONTROL])
          {
             // CTRL + S : save the ds1, in the current state, incremental save
-            ds1_save(ds1_idx, FALSE);
+            ds1_save(ds1_idx, false);
             while (key[KEY_S])
             {
                // wait until the S key is not pressed anymore
@@ -669,7 +669,7 @@ void interfac_user_handler(int start_ds1_idx)
             if (key[KEY_LCONTROL] || key[KEY_RCONTROL])
             {
                // CTRL + C : copy selected layers (copy / paste)
-               if (paste_pos.start == FALSE)
+               if (paste_pos.start == false)
                {
                   for (i=0; i<DS1_MAX; i++)
                   {
@@ -679,8 +679,8 @@ void interfac_user_handler(int start_ds1_idx)
                   paste_pos.src_ds1_idx = ds1_idx;
                   paste_pos.old_ds1_idx = ds1_idx;
                   paste_pos.start       = TRUE;
-                  paste_pos.is_cut      = FALSE; // just a 'COPY'
-                  paste_pos.cut_saved   = FALSE;
+                  paste_pos.is_cut      = false; // just a 'COPY'
+                  paste_pos.cut_saved   = false;
                   paste_pos.old_x       = cx;
                   paste_pos.old_y       = cy;
                   edittile_middle_select(
@@ -762,7 +762,7 @@ void interfac_user_handler(int start_ds1_idx)
          if (glb_ds1edit.mode == MOD_T)
          {
             // TILE mode
-            if (paste_pos.start == FALSE)
+            if (paste_pos.start == false)
             {
                for (i=0; i<DS1_MAX; i++)
                {
@@ -773,7 +773,7 @@ void interfac_user_handler(int start_ds1_idx)
                paste_pos.old_ds1_idx = ds1_idx;
                paste_pos.start       = TRUE;
                paste_pos.is_cut      = TRUE; // copy with 'CUT'
-               paste_pos.cut_saved   = FALSE;
+               paste_pos.cut_saved   = false;
                paste_pos.old_x       = cx;
                paste_pos.old_y       = cy;
                edittile_middle_select(
@@ -799,7 +799,7 @@ void interfac_user_handler(int start_ds1_idx)
       {
          if (glb_ds1edit.mode == MOD_T)
          {
-            if (paste_pos.start == FALSE)
+            if (paste_pos.start == false)
             {
                edittile_delete_selected_tiles(ds1_idx);
                while (key[KEY_DEL] || key[KEY_DEL_PAD])
@@ -815,7 +815,7 @@ void interfac_user_handler(int start_ds1_idx)
       {
          if (glb_ds1edit.mode == MOD_T)
          {
-            if (paste_pos.start == FALSE)
+            if (paste_pos.start == false)
             {
                undo_apply_tile_buffer(ds1_idx);
                while (key[KEY_U])
@@ -844,7 +844,7 @@ void interfac_user_handler(int start_ds1_idx)
       }
 
       // changing current ds1
-      group_changed = FALSE;
+      group_changed = false;
       old_group     = glb_ds1edit.ds1_group_idx;
       if (can_swich_mode)
       {
@@ -945,7 +945,7 @@ void interfac_user_handler(int start_ds1_idx)
          if (group_changed == TRUE)
          {
             // try to swap to 1st ds1 of this group set
-            found = FALSE;
+            found = false;
             for (i=0; i < 10; i++)
             {
                if (strlen(glb_ds1[glb_ds1edit.ds1_group_idx * 10 + i].name))
@@ -957,11 +957,11 @@ void interfac_user_handler(int start_ds1_idx)
                   break;
                }
             }
-            if (found == FALSE)
+            if (found == false)
             {
                // don't change to this group
                glb_ds1edit.ds1_group_idx = old_group;
-               group_changed = FALSE;
+               group_changed = false;
             }
          }
 
@@ -1083,10 +1083,10 @@ void interfac_user_handler(int start_ds1_idx)
          {
             // wait until TILDE is not pressed
          }
-         if (glb_ds1edit.show_2nd_row == FALSE)
+         if (glb_ds1edit.show_2nd_row == false)
             glb_ds1edit.show_2nd_row = TRUE;
          else
-            glb_ds1edit.show_2nd_row = FALSE;
+            glb_ds1edit.show_2nd_row = false;
       }
       
       // TAB : change edit mode
@@ -1168,7 +1168,7 @@ void interfac_user_handler(int start_ds1_idx)
          read_obj_txt();
 
          // load new animations
-         anim_update_gfx(FALSE);
+         anim_update_gfx(false);
 
          // reset the ticks counter
          glb_ds1edit.ticks_elapsed = 0;
@@ -1184,13 +1184,13 @@ void interfac_user_handler(int start_ds1_idx)
             {
                // end a paste
                edittile_paste_final(ds1_idx);
-               paste_pos.start = FALSE;
+               paste_pos.start = false;
                while (mouse_b & 1) // NOT old_mouse_b else infinite loop
                {
                   // wait until the left mouse button is released
                }
             }
-            else if (tmp_sel.start == FALSE)
+            else if (tmp_sel.start == false)
             {
                if ( (key[KEY_I]) &&
                     (cx != old_identical_x) && (cy != old_identical_y)
@@ -1264,7 +1264,7 @@ void interfac_user_handler(int start_ds1_idx)
                   case TMP_NEW :
                      edittile_delete_all_tmpsel(ds1_idx);
                      edittile_change_to_new_permanent_sel(ds1_idx, & tmp_sel);
-                     tmp_sel.start = FALSE;
+                     tmp_sel.start = false;
                      tmp_sel.type = TMP_NULL;
                      tmp_sel.x1 = tmp_sel.x2 = tmp_sel.y1 = tmp_sel.y2 = 0;
                      tmp_sel.old_x2 = tmp_sel.old_y2 = 0;
@@ -1273,7 +1273,7 @@ void interfac_user_handler(int start_ds1_idx)
                   case TMP_ADD :
                      edittile_delete_all_tmpsel(ds1_idx);
                      edittile_change_to_add_permanent_sel(ds1_idx, & tmp_sel);
-                     tmp_sel.start = FALSE;
+                     tmp_sel.start = false;
                      tmp_sel.type = TMP_NULL;
                      tmp_sel.x1 = tmp_sel.x2 = tmp_sel.y1 = tmp_sel.y2 = 0;
                      tmp_sel.old_x2 = tmp_sel.old_y2 = 0;
@@ -1282,7 +1282,7 @@ void interfac_user_handler(int start_ds1_idx)
                   case TMP_HIDE :
                      edittile_delete_all_tmpsel(ds1_idx);
                      edittile_change_to_hide_sel(ds1_idx, & tmp_sel);
-                     tmp_sel.start = FALSE;
+                     tmp_sel.start = false;
                      tmp_sel.type = TMP_NULL;
                      tmp_sel.x1 = tmp_sel.x2 = tmp_sel.y1 = tmp_sel.y2 = 0;
                      tmp_sel.old_x2 = tmp_sel.old_y2 = 0;
@@ -1291,7 +1291,7 @@ void interfac_user_handler(int start_ds1_idx)
                   case TMP_DEL :
                      edittile_delete_all_tmpsel(ds1_idx);
                      edittile_change_to_del_sel(ds1_idx, & tmp_sel);
-                     tmp_sel.start = FALSE;
+                     tmp_sel.start = false;
                      tmp_sel.type = TMP_NULL;
                      tmp_sel.x1 = tmp_sel.x2 = tmp_sel.y1 = tmp_sel.y2 = 0;
                      tmp_sel.old_x2 = tmp_sel.old_y2 = 0;
@@ -1345,7 +1345,7 @@ void interfac_user_handler(int start_ds1_idx)
       }
 
       // quit
-      if (key[KEY_ESC] && (glb_ds1[ds1_idx].draw_edit_obj == FALSE))
+      if (key[KEY_ESC] && (glb_ds1[ds1_idx].draw_edit_obj == false))
       {
          while (key[KEY_ESC])
          {
@@ -1365,7 +1365,7 @@ void interfac_user_handler(int start_ds1_idx)
                for (i=0; i < DS1_MAX; i++)
                {
                   if (strlen(glb_ds1[ds1_idx].name))
-                     ds1_save(i, FALSE);
+                     ds1_save(i, false);
                }
                done = TRUE;
                break;

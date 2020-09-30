@@ -22,7 +22,7 @@ int dt1_already_loaded(char * dt1name, int * idx)
       }
    }
    * idx = -1;
-   return FALSE;
+   return false;
 }
 
 
@@ -297,7 +297,7 @@ void dt1_all_zoom_make(int i)
       }
 
       // if a game's special tile, draw my own info over it
-      if ( (glb_ds1edit.cmd_line.no_vis_debug == FALSE) &&
+      if ( (glb_ds1edit.cmd_line.no_vis_debug == false) &&
            (i != 0) && ((orientation == 10) || (orientation == 11))
          )
       {

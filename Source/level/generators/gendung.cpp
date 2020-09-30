@@ -211,10 +211,10 @@ bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 
 	// BUGFIX: change '&&' to '||' (fixed)
 	if (x > DMAXX - maxSize || y > DMAXY - maxSize) {
-		return FALSE;
+		return false;
 	}
 	if (!SkipThemeRoom(x, y)) {
-		return FALSE;
+		return false;
 	}
 
 	memset(xArray, 0, sizeof(xArray));
@@ -227,7 +227,7 @@ bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 					if (xx >= minSize) {
 						break;
 					}
-					xFlag = FALSE;
+					xFlag = false;
 				} else {
 					xCount++;
 				}
@@ -243,7 +243,7 @@ bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 					if (yy >= minSize) {
 						break;
 					}
-					yFlag = FALSE;
+					yFlag = false;
 				} else {
 					yCount++;
 				}
@@ -257,7 +257,7 @@ bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 
 	for (ii = 0; ii < minSize; ii++) {
 		if (xArray[ii] < minSize || yArray[ii] < minSize) {
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -352,7 +352,7 @@ bool SkipThemeRoom(int x, int y)
 	for (i = 0; i < lvl.themeCount; i++) {
 		if (x >= lvl.themeLoc[i].x - 2 && x <= lvl.themeLoc[i].x + lvl.themeLoc[i].width + 2
 		    && y >= lvl.themeLoc[i].y - 2 && y <= lvl.themeLoc[i].y + lvl.themeLoc[i].height + 2)
-			return FALSE;
+			return false;
 	}
 
 	return TRUE;
@@ -363,7 +363,7 @@ void InitLevels()
 	if (!leveldebug) {
 		lvl.currlevel = 0;
 		lvl.setType(DunType::town);
-		lvl.setlevel = FALSE;
+		lvl.setlevel = false;
 	}
 }
 

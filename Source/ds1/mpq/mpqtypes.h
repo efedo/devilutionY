@@ -18,7 +18,7 @@
 // global datas for reading mpq
 typedef struct GLB_MPQ_S
 {
-   int   is_open;          // FALSE / TRUE
+   int   is_open;          // false / TRUE
 
    DWORD	offset_mpq;			// Offset to MPQ file data
    DWORD	offset_htbl;		// Offset to hash_table of MPQ

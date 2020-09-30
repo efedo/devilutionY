@@ -26,7 +26,7 @@ int L4PentaList[] = { 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364
 void InitNoTriggers()
 {
 	numtrigs = 0;
-	trigflag = FALSE;
+	trigflag = false;
 }
 
 void InitTownTriggers()
@@ -55,7 +55,7 @@ void InitTownTriggers()
 		numtrigs++;
 	} else {
 		for (i = 0; i < MAX_PLRS - 1; i++) {
-			townwarps[i] = FALSE;
+			townwarps[i] = false;
 		}
 		if (myplr().data.pTownWarps & 1) {
 			trigs[numtrigs]._t = { 49, 21 };
@@ -80,7 +80,7 @@ void InitTownTriggers()
 		}
 	}
 
-	trigflag = FALSE;
+	trigflag = false;
 }
 
 void InitL1Triggers()
@@ -104,7 +104,7 @@ void InitL1Triggers()
 			}
 		}
 	}
-	trigflag = FALSE;
+	trigflag = false;
 }
 
 void InitL2Triggers()
@@ -136,7 +136,7 @@ void InitL2Triggers()
 			}
 		}
 	}
-	trigflag = FALSE;
+	trigflag = false;
 }
 
 void InitL3Triggers()
@@ -166,7 +166,7 @@ void InitL3Triggers()
 			}
 		}
 	}
-	trigflag = FALSE;
+	trigflag = false;
 }
 
 void InitL4Triggers()
@@ -208,12 +208,12 @@ void InitL4Triggers()
 			}
 		}
 	}
-	trigflag = FALSE;
+	trigflag = false;
 }
 
 void InitSKingTriggers()
 {
-	trigflag = FALSE;
+	trigflag = false;
 	numtrigs = 1;
 	trigs[0]._t = { 82, 42 };
 	trigs[0]._tmsg = WM_DIABRTNLVL;
@@ -221,7 +221,7 @@ void InitSKingTriggers()
 
 void InitSChambTriggers()
 {
-	trigflag = FALSE;
+	trigflag = false;
 	numtrigs = 1;
 	trigs[0]._t = { 70, 39 };
 	trigs[0]._tmsg = WM_DIABRTNLVL;
@@ -229,7 +229,7 @@ void InitSChambTriggers()
 
 void InitPWaterTriggers()
 {
-	trigflag = FALSE;
+	trigflag = false;
 	numtrigs = 1;
 	trigs[0]._t = { 30, 83 };
 	trigs[0]._tmsg = WM_DIABRTNLVL;
@@ -237,7 +237,7 @@ void InitPWaterTriggers()
 
 void InitVPTriggers()
 {
-	trigflag = FALSE;
+	trigflag = false;
 	numtrigs = 1;
 	trigs[0]._t = { 35, 32 };
 	trigs[0]._tmsg = WM_DIABRTNLVL;
@@ -289,7 +289,7 @@ bool ForceTownTrig()
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool ForceL1Trig()
@@ -322,7 +322,7 @@ bool ForceL1Trig()
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 bool ForceL2Trig()
@@ -373,7 +373,7 @@ bool ForceL2Trig()
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool ForceL3Trig()
@@ -422,7 +422,7 @@ bool ForceL3Trig()
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool ForceL4Trig()
@@ -484,7 +484,7 @@ bool ForceL4Trig()
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void Freeupstairs()
@@ -512,7 +512,7 @@ bool ForceSKingTrig()
 			return TRUE;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 bool ForceSChambTrig()
@@ -524,7 +524,7 @@ bool ForceSChambTrig()
 			return TRUE;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 bool ForcePWaterTrig()
@@ -537,12 +537,12 @@ bool ForcePWaterTrig()
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CheckTrigForce()
 {
-	trigflag = FALSE;
+	trigflag = false;
 
 	if (!sgbControllerActive && Mouse.y > PANEL_TOP - 1) {
 		return;
@@ -618,7 +618,7 @@ void CheckTriggers()
 			break;
 		case WM_DIABTOWNWARP:
 			if (plr.isMultiplayer()) {
-				abort = FALSE;
+				abort = false;
 
 				if (trigs[i]._tlvl == 5 && myplr().data._pLevel < 8) {
 					abort = TRUE;

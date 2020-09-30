@@ -148,7 +148,7 @@ void InitTownerInfo(int i, int w, int sel, int t, int x, int y, int ao, int tp)
 	towner[i]._tSelFlag = sel;
 	towner[i]._tAnimWidth = w;
 	towner[i]._tAnimWidth2 = (w - 64) >> 1;
-	towner[i]._tMsgSaid = FALSE;
+	towner[i]._tMsgSaid = false;
 	towner[i]._ttype = t;
 	towner[i]._t = { x, y };
 	grid[x][y].setMonster(i);
@@ -169,7 +169,7 @@ void InitQstSnds(int i)
 		if (((int *)(Qtalklist + tl))[j] != -1)
 			towner[i].qsts[j]._qstmsgact = TRUE;
 		else
-			towner[i].qsts[j]._qstmsgact = FALSE;
+			towner[i].qsts[j]._qstmsgact = false;
 	}
 }
 
@@ -193,7 +193,7 @@ void InitBarOwner()
 {
 	int i;
 
-	bannerflag = FALSE; // unused
+	bannerflag = false; // unused
 	InitTownerInfo(numtowners, 96, TRUE, TOWN_TAVERN, 55, 62, 3, 10);
 	InitQstSnds(numtowners);
 	towner[numtowners]._tNData = LoadFileInMem("Towners\\TwnF\\TwnFN.CEL", NULL);
@@ -332,7 +332,7 @@ void InitCows()
 		x = TownCowX[i];
 		y = TownCowY[i];
 		dir = TownCowDir[i];
-		InitTownerInfo(numtowners, 128, FALSE, TOWN_COW, x, y, -1, 10);
+		InitTownerInfo(numtowners, 128, false, TOWN_COW, x, y, -1, 10);
 		towner[numtowners]._tNData = pCowCels;
 		SetTownerGPtrs(towner[numtowners]._tNData, towner[numtowners]._tNAnim);
 		towner[numtowners]._tNFrames = 12;
@@ -357,7 +357,7 @@ void InitCows()
 void InitTowners()
 {
 	numtowners = 0;
-	boyloadflag = FALSE;
+	boyloadflag = false;
 	InitSmith();
 	InitHealer();
 	if (quests[Q_BUTCHER]._qactive != QUEST_NOTAVAIL && quests[Q_BUTCHER]._qactive != QUEST_DONE)
@@ -391,7 +391,7 @@ void TownCtrlMsg(int i)
 		if (dist >= 2)
 			towner[i]._tbtcnt = 0;
 		if (!towner[i]._tbtcnt) {
-			qtextflag = FALSE;
+			qtextflag = false;
 			stream_stop();
 		}
 	}
@@ -578,7 +578,7 @@ void TalkToTowner(int p, int t)
 		return;
 	}
 
-	towner[t]._tMsgSaid = FALSE;
+	towner[t]._tMsgSaid = false;
 
 	if (pcurs >= CURSOR_FIRSTITEM && !DropItemBeforeTrig()) {
 		return;

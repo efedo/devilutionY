@@ -103,7 +103,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
    for (i=0; i < glb_ds1[ds1_idx].file_num; i++)
    {
       flen = strlen(cptr) + 1;
-      is_data = FALSE;
+      is_data = false;
       // for all workspace datas
       for(y=0; y < WRKSPC_MAX; y++)
       {
@@ -126,7 +126,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
             break;
          }
       }
-      if (is_data == FALSE)
+      if (is_data == false)
             file_count++;
       // next filename
       cptr += flen;
@@ -140,7 +140,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
    for (i=0; i < glb_ds1[ds1_idx].file_num; i++)
    {
       flen = strlen(cptr) + 1;
-      is_data = FALSE;
+      is_data = false;
       // for all workspace datas
       for(y=0; y < WRKSPC_MAX; y++)
       {
@@ -163,7 +163,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
             break;
          }
       }
-      if (is_data == FALSE)
+      if (is_data == false)
          fwrite(cptr, flen, 1, out);
 
       // next filename
@@ -229,7 +229,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
       // (keep a minimum of 1)
       for (i = save_wall_num - 1; i >= 1; i--)
       {
-         used = FALSE;
+         used = false;
 
          for (y=0; y < glb_ds1[ds1_idx].height; y++)
          {
@@ -257,7 +257,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
       // (keep a minimum of 1)
       for (i = save_floor_num - 1; i >= 1; i--)
       {
-         used = FALSE;
+         used = false;
 
          for (y=0; y < glb_ds1[ds1_idx].height; y++)
          {

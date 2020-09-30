@@ -829,7 +829,7 @@ uint8_t *LoadFileInMem(const char *pszName, DWORD *pdwFileLen)
 	uint8_t *buf;
 	int fileLen;
 
-	WOpenFile(pszName, &file, FALSE);
+	WOpenFile(pszName, &file, false);
 	fileLen = WGetFileSize(file, NULL, pszName);
 
 	if (pdwFileLen)
@@ -862,7 +862,7 @@ DWORD LoadFileWithMem(const char *pszName, uint8_t *p)
 		app_fatal("LoadFileWithMem(NULL):\n%s", pszName);
 	}
 
-	WOpenFile(pszName, &hsFile, FALSE);
+	WOpenFile(pszName, &hsFile, false);
 
 	dwFileLen = WGetFileSize(hsFile, NULL, pszName);
 	if (dwFileLen == 0) {
@@ -1284,7 +1284,7 @@ void Cl2DrawLight(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth)
 void PlayInGameMovie(char *pszMovie)
 {
 	PaletteFadeOut(8);
-	play_movie(pszMovie, FALSE);
+	play_movie(pszMovie, false);
 	ClearScreenBuffer();
 	force_redraw = 255;
 	scrollrt_draw_game_screen(TRUE);

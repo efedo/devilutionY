@@ -210,12 +210,12 @@ void InitItemGFX()
 
 bool ItemPlace(V2Di pos)
 {
-	if (grid.at(pos).isMonster()) return FALSE;
-	if (grid.at(pos).isPlayer()) return FALSE;
-	if (grid.at(pos).isItem()) return FALSE;
-	if (grid.at(pos).isObject()) return FALSE;
-	if (grid.at(pos).dFlags & BFLAG_POPULATED) return FALSE;
-	if (grid.at(pos).isSolid()) return FALSE;
+	if (grid.at(pos).isMonster()) return false;
+	if (grid.at(pos).isPlayer()) return false;
+	if (grid.at(pos).isItem()) return false;
+	if (grid.at(pos).isObject()) return false;
+	if (grid.at(pos).dFlags & BFLAG_POPULATED) return false;
+	if (grid.at(pos).isSolid()) return false;
 	return TRUE;
 }
 
@@ -242,7 +242,7 @@ void AddInitItems()
 		item._iCreateInfo = lvl.currlevel - 0x8000;
 		item.SetupItem();
 		item._iAnimFrame = item._iAnimLen;
-		item._iAnimFlag = FALSE;
+		item._iAnimFlag = false;
 		item._iSelFlag = 1;
 		DeltaAddItem(item);
 	}
@@ -264,19 +264,19 @@ void InitItems()
 			AddInitItems();
 	}
 
-	uitemflag = FALSE;
+	uitemflag = false;
 }
 
 bool ItemMinStats(PlayerStruct *p, ItemStruct *x)
 {
 	if (p->_pMagic < x->_iMinMag)
-		return FALSE;
+		return false;
 
 	if (p->_pStrength < x->_iMinStr)
-		return FALSE;
+		return false;
 
 	if (p->_pDexterity < x->_iMinDex)
-		return FALSE;
+		return false;
 
 	return TRUE;
 }
@@ -347,34 +347,34 @@ bool ItemSpaceOk(int i, int j)
 	int oi;
 
 	if (!grid.isValid({ i, j }))
-		return FALSE;
+		return false;
 
 	if (grid[i][j].isMonster())
-		return FALSE;
+		return false;
 
 	if (grid[i][j].isPlayer())
-		return FALSE;
+		return false;
 
 	if (grid[i][j].isItem())
-		return FALSE;
+		return false;
 
 	if (grid[i][j].isObject()) {
 		oi = grid[i][j].getObject();
 		if (object[oi]._oSolidFlag)
-			return FALSE;
+			return false;
 	}
 
 	if (grid[i + 1][j + 1].isObject() && object[grid[i + 1][j + 1].getObject()]._oSelFlag != 0)
-		return FALSE;
+		return false;
 
 	if (grid[i + 1][j + 1].isObject() && object[-(grid[i + 1][j + 1].getObject())]._oSelFlag != 0)
-		return FALSE;
+		return false;
 
 	if (grid[i + 1][j].isObject()
 	    && grid[i][j + 1].isObject()
 	    && object[grid[i + 1][j].getObject()]._oSelFlag != 0
 	    && object[grid[i][j + 1].getObject()]._oSelFlag != 0) {
-		return FALSE;
+		return false;
 	}
 
 	return !grid[i][j].isSolid();
@@ -458,26 +458,26 @@ int RndUItem(int m)
 	for (i = 0; AllItemsList[i].iLoc != ILOC_INVALID; i++) {
 		okflag = TRUE;
 		if (!AllItemsList[i].iRnd)
-			okflag = FALSE;
+			okflag = false;
 		if (m != -1) {
 			if (monsters[m].data.mLevel < AllItemsList[i].iMinMLvl)
-				okflag = FALSE;
+				okflag = false;
 		} else {
 			if (2 * lvl.currlevel < AllItemsList[i].iMinMLvl)
-				okflag = FALSE;
+				okflag = false;
 		}
 		if (AllItemsList[i].itype == ITYPE_MISC)
-			okflag = FALSE;
+			okflag = false;
 		if (AllItemsList[i].itype == ITYPE_GOLD)
-			okflag = FALSE;
+			okflag = false;
 		if (AllItemsList[i].itype == ITYPE_MEAT)
-			okflag = FALSE;
+			okflag = false;
 		if (AllItemsList[i].iMiscId == IMISC_BOOK)
 			okflag = TRUE;
 		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
-			okflag = FALSE;
+			okflag = false;
 		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
-			okflag = FALSE;
+			okflag = false;
 		if (okflag) {
 			ril[ri] = i;
 			ri++;
@@ -520,13 +520,13 @@ int RndTypeItems(int itype, int imid)
 	for (i = 0; AllItemsList[i].iLoc != ILOC_INVALID; i++) {
 		okflag = TRUE;
 		if (!AllItemsList[i].iRnd)
-			okflag = FALSE;
+			okflag = false;
 		if (lvl.currlevel << 1 < AllItemsList[i].iMinMLvl)
-			okflag = FALSE;
+			okflag = false;
 		if (AllItemsList[i].itype != itype)
-			okflag = FALSE;
+			okflag = false;
 		if (imid != -1 && AllItemsList[i].iMiscId != imid)
-			okflag = FALSE;
+			okflag = false;
 		if (okflag) {
 			ril[ri] = i;
 			ri++;
@@ -581,12 +581,12 @@ void SpawnItem(int m, V2Di pos, bool sendmsg)
 	Item & item = items.createNewItem();
 
 	if (monsters[m].data._uniqtype) {
-		item.SetupAllItems(idx, GetRndSeed(), monsters[m].data.MData->mLevel, 15, onlygood, FALSE, FALSE);
+		item.SetupAllItems(idx, GetRndSeed(), monsters[m].data.MData->mLevel, 15, onlygood, false, false);
 	} else {
-		item.SetupAllItems(idx, GetRndSeed(), monsters[m].data.MData->mLevel, 1, onlygood, FALSE, FALSE);
+		item.SetupAllItems(idx, GetRndSeed(), monsters[m].data.MData->mLevel, 1, onlygood, false, false);
 	}
 	if (sendmsg)
-		NetSendCmdDItem(FALSE, item);
+		NetSendCmdDItem(false, item);
 }
 
 void CreateItem(int uid, V2Di pos)
@@ -616,9 +616,9 @@ void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta)
 
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
-	item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, onlygood, FALSE, delta);
+	item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, onlygood, false, delta);
 	if (sendmsg)
-		NetSendCmdDItem(FALSE, item);
+		NetSendCmdDItem(false, item);
 	if (delta)
 		DeltaAddItem(item);
 }
@@ -629,7 +629,7 @@ void CreateRndUseful(int pnum, V2Di pos, bool sendmsg)
 	item.GetSuperItemSpace(pos);
 	item.SetupAllUseful(GetRndSeed(), lvl.currlevel);
 	if (sendmsg) {
-		NetSendCmdDItem(FALSE, item);
+		NetSendCmdDItem(false, item);
 	}
 }
 
@@ -643,8 +643,8 @@ void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg,
 
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
-	item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, onlygood, FALSE, delta);
-	if (sendmsg) NetSendCmdDItem(FALSE, item);
+	item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, onlygood, false, delta);
+	if (sendmsg) NetSendCmdDItem(false, item);
 	if (delta) DeltaAddItem(item);
 }
 
@@ -661,7 +661,7 @@ void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag)
 				randarea--;
 			pos.x = random_(0, MAXDUNX);
 			pos.y = random_(0, MAXDUNY);
-			failed = FALSE;
+			failed = false;
 			for (i = 0; i < randarea && !failed; i++) {
 				for (j = 0; j < randarea && !failed; j++) {
 					failed = !ItemSpaceOk(i + pos.x, j + pos.y);
@@ -681,14 +681,14 @@ void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag)
 	if (selflag) {
 		item._iSelFlag = selflag;
 		item._iAnimFrame = item._iAnimLen;
-		item._iAnimFlag = FALSE;
+		item._iAnimFlag = false;
 	}
 }
 
 void SpawnRock()
 {
 	int ii;
-	int ostand = FALSE;
+	int ostand = false;
 	for (int i = 0; i < nobjects && !ostand; i++) {
 		ii = objectactive[i];
 		ostand = object[ii]._otype == OBJ_STAND;
@@ -739,7 +739,7 @@ void ProcessItems()
 
 				if (item[ii]._iAnimFrame >= item[ii]._iAnimLen) {
 					item[ii]._iAnimFrame = item[ii]._iAnimLen;
-					item[ii]._iAnimFlag = FALSE;
+					item[ii]._iAnimFlag = false;
 					item[ii]._iSelFlag = 1;
 				}
 			}
@@ -1375,11 +1375,11 @@ bool StoreStatOk(ItemStruct *h)
 
 	sf = TRUE;
 	if (myplr().data._pStrength < h->_iMinStr)
-		sf = FALSE;
+		sf = false;
 	if (myplr().data._pMagic < h->_iMinMag)
-		sf = FALSE;
+		sf = false;
 	if (myplr().data._pDexterity < h->_iMinDex)
-		sf = FALSE;
+		sf = false;
 
 	return sf;
 }
@@ -1390,17 +1390,17 @@ bool SmithItemOk(int i)
 
 	rv = TRUE;
 	if (AllItemsList[i].itype == ITYPE_MISC)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_GOLD)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_MEAT)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_STAFF)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_RING)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_AMULET)
-		rv = FALSE;
+		rv = false;
 
 	return rv;
 }
@@ -1444,13 +1444,13 @@ void SortSmith()
 		j++;
 	}
 
-	sorted = FALSE;
+	sorted = false;
 	while (j > 0 && !sorted) {
 		sorted = TRUE;
 		for (k = 0; k < j; k++) {
 			if (smithitem[k].IDidx > smithitem[k + 1].IDidx) {
 				BubbleSwapItem(&smithitem[k], &smithitem[k + 1]);
-				sorted = FALSE;
+				sorted = false;
 			}
 		}
 		j--;
@@ -1484,19 +1484,19 @@ bool PremiumItemOk(int i)
 {
 	bool rv = TRUE;
 	if (AllItemsList[i].itype == ITYPE_MISC)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_GOLD)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_MEAT)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].itype == ITYPE_STAFF)
-		rv = FALSE;
+		rv = false;
 
 	if (plr.isMultiplayer()) {
 		if (AllItemsList[i].itype == ITYPE_RING)
-			rv = FALSE;
+			rv = false;
 		if (AllItemsList[i].itype == ITYPE_AMULET)
-			rv = FALSE;
+			rv = false;
 	}
 	return rv;
 }
@@ -1568,25 +1568,25 @@ void SpawnPremium(int lvl)
 
 bool WitchItemOk(int i)
 {
-	bool rv = FALSE;
+	bool rv = false;
 	if (AllItemsList[i].itype == ITYPE_MISC)
 		rv = TRUE;
 	if (AllItemsList[i].itype == ITYPE_STAFF)
 		rv = TRUE;
 	if (AllItemsList[i].iMiscId == IMISC_MANA)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].iMiscId == IMISC_FULLMANA)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].iSpell == SPL_TOWN)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].iMiscId == IMISC_FULLHEAL)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].iMiscId == IMISC_HEAL)
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
-		rv = FALSE;
+		rv = false;
 	if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
-		rv = FALSE;
+		rv = false;
 
 	return rv;
 }
@@ -1617,13 +1617,13 @@ void SortWitch()
 		j++;
 	}
 
-	sorted = FALSE;
+	sorted = false;
 	while (j > 3 && !sorted) {
 		sorted = TRUE;
 		for (k = 3; k < j; k++) {
 			if (witchitem[k].IDidx > witchitem[k + 1].IDidx) {
 				BubbleSwapItem(&witchitem[k], &witchitem[k + 1]);
-				sorted = FALSE;
+				sorted = false;
 			}
 		}
 		j--;
@@ -1735,14 +1735,14 @@ bool HealerItemOk(int i)
 {
 	bool result;
 
-	result = FALSE;
+	result = false;
 	if (AllItemsList[i].itype != ITYPE_MISC)
-		return FALSE;
+		return false;
 
 	if (AllItemsList[i].iMiscId == IMISC_SCROLL && AllItemsList[i].iSpell == SPL_HEAL)
 		result = TRUE;
 	if (AllItemsList[i].iMiscId == IMISC_SCROLLT && AllItemsList[i].iSpell == SPL_RESURRECT && plr.isMultiplayer())
-		result = FALSE;
+		result = false;
 	if (AllItemsList[i].iMiscId == IMISC_SCROLLT && AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isMultiplayer())
 		result = TRUE;
 
@@ -1765,13 +1765,13 @@ bool HealerItemOk(int i)
 	if (AllItemsList[i].iMiscId == IMISC_FULLREJUV)
 		result = TRUE;
 	if (AllItemsList[i].iMiscId == IMISC_HEAL)
-		result = FALSE;
+		result = false;
 	if (AllItemsList[i].iMiscId == IMISC_FULLHEAL)
-		result = FALSE;
+		result = false;
 	if (AllItemsList[i].iMiscId == IMISC_MANA)
-		result = FALSE;
+		result = false;
 	if (AllItemsList[i].iMiscId == IMISC_FULLMANA)
-		result = FALSE;
+		result = false;
 
 	return result;
 }
@@ -1802,13 +1802,13 @@ void SortHealer()
 		j++;
 	}
 
-	sorted = FALSE;
+	sorted = false;
 	while (j > 2 && !sorted) {
 		sorted = TRUE;
 		for (k = 2; k < j; k++) {
 			if (healitem[k].IDidx > healitem[k + 1].IDidx) {
 				BubbleSwapItem(&healitem[k], &healitem[k + 1]);
-				sorted = FALSE;
+				sorted = false;
 			}
 		}
 		j--;
@@ -1895,62 +1895,62 @@ int ItemNoFlippy()
 {
 	int r = itemactive[numitems - 1];
 	item[r]._iAnimFrame = item[r]._iAnimLen;
-	item[r]._iAnimFlag = FALSE;
+	item[r]._iAnimFlag = false;
 	item[r]._iSelFlag = 1;
 	return r;
 }
 
 void CreateSpellBook(V2Di pos, int ispell, bool sendmsg, bool delta)
 {
-	bool done = FALSE;
+	bool done = false;
 	int idx = RndTypeItems(ITYPE_MISC, IMISC_BOOK);
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
 	while (!done) {
-		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, FALSE, delta);
+		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, false, delta);
 		if (item._iMiscId == IMISC_BOOK && item._iSpell == ispell)
 			done = TRUE;
 	}
 	if (sendmsg)
-		NetSendCmdDItem(FALSE, item);
+		NetSendCmdDItem(false, item);
 	if (delta)
 		DeltaAddItem(item);
 }
 
 void CreateMagicArmor(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 {
-	bool done = FALSE;
+	bool done = false;
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
 	int idx = RndTypeItems(imisc, IMISC_NONE);
 	while (!done) {
-		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, FALSE, delta);
+		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, false, delta);
 		if (item._iCurs == icurs)
 			done = TRUE;
 		else
 			idx = RndTypeItems(imisc, IMISC_NONE);
 	}
 	if (sendmsg)
-		NetSendCmdDItem(FALSE, item);
+		NetSendCmdDItem(false, item);
 	if (delta)
 		DeltaAddItem(item);
 }
 
 void CreateMagicWeapon(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 {
-	bool done = FALSE;
+	bool done = false;
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
 	int idx = RndTypeItems(imisc, IMISC_NONE);
 	while (!done) {
-		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, FALSE, delta);
+		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, TRUE, false, delta);
 		if (item._iCurs == icurs)
 			done = TRUE;
 		else
 			idx = RndTypeItems(imisc, IMISC_NONE);
 	}
 	if (sendmsg)
-		NetSendCmdDItem(FALSE, item);
+		NetSendCmdDItem(false, item);
 	if (delta)
 		DeltaAddItem(item);
 }
@@ -1967,7 +1967,7 @@ bool GetItemRecord(int nSeed, WORD wCI, int nIndex)
 			NextItemRecord(i);
 			i--;
 		} else if (nSeed == itemrecord[i].nSeed && wCI == itemrecord[i].wCI && nIndex == itemrecord[i].nIndex) {
-			return FALSE;
+			return false;
 		}
 	}
 

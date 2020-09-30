@@ -76,7 +76,7 @@ void ini_read(char * ininame)
             "   error, line not found : <%s>\n",
             datas[i].name
          );
-         is_ok = FALSE;
+         is_ok = false;
       }
       switch (datas[i].type)
       {
@@ -138,14 +138,14 @@ void ini_read(char * ininame)
             }
             break;
 
-         // read a YES/NO string, but store it as TRUE/FALSE
+         // read a YES/NO string, but store it as TRUE/false
          case T_YES :
             if (strlen(str))
             {
                if (stricmp(str, "YES") == 0)
                   * ((int *) datas[i].data_ptr) = TRUE;
                else
-                  * ((int *) datas[i].data_ptr) = FALSE;
+                  * ((int *) datas[i].data_ptr) = false;
             }
             break;
 

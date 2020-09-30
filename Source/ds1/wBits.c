@@ -22,7 +22,7 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
                  c_lightgreen = makecol(0, 255, 0),
                  c_red        = makecol(255, 0, 0),
                  c, c1, c2, c3, mx, my, mb;
-   int           b, i, val[4], x, y, save = FALSE, done = FALSE;
+   int           b, i, val[4], x, y, save = false, done = false;
    UBYTE         props[6][4], dir[4], shad[4];
    UDWORD        tag_dw;
 //   char          tmp[256];
@@ -178,7 +178,7 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
          if (mb & 1)
          {
             // CANCEL button selected
-            save = FALSE;
+            save = false;
             done = TRUE;
             while (mouse_b & 1)
             {
@@ -188,7 +188,7 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
       }
       if (key[KEY_ESC])
       {
-         save = FALSE;
+         save = false;
          done = TRUE;
       }
       rectfill(glb_ds1edit.screen_buff, cancel_x0, ok_y0-3, cancel_x0 + 64, ok_y0 + 20, c1);
@@ -479,7 +479,7 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
       mb = mouse_b;
    }
 
-   if (save == FALSE)
+   if (save == false)
    {
       // restore original props
       for (i=0; i < glb_ds1[ds1_idx].floor_num; i++)
@@ -865,7 +865,7 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
    UDWORD        tag_dw;
 //   char          tmp[256];
    int           w_width = 545, w_height= 270;
-   int           save = FALSE, done = FALSE;
+   int           save = false, done = false;
    int           x, y, i, b, c, n, val[4];
    UBYTE         shad[4];
 
@@ -982,7 +982,7 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          if (mb & 1)
          {
             // CANCEL button selected
-            save = FALSE;
+            save = false;
             done = TRUE;
             while (mouse_b & 1)
             {
@@ -992,7 +992,7 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
       }
       if (key[KEY_ESC])
       {
-         save = FALSE;
+         save = false;
          done = TRUE;
       }
       rectfill(glb_ds1edit.screen_buff, cancel_x0, ok_y0-3, cancel_x0 + 64, ok_y0 + 20, c1);
@@ -1363,7 +1363,7 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
       mb = mouse_b;
    }
 
-   if (save == FALSE)
+   if (save == false)
    {
       // no changes
    }
@@ -1422,7 +1422,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
    // fill ptr_wbitsdata, by analysing all tiles
 
    // first, search if there's a selection
-   has_selection = FALSE;
+   has_selection = false;
    for (y=0; y < glb_ds1[ds1_idx].height; y++)
    {
       for (x=0; x < glb_ds1[ds1_idx].width; x++)
@@ -1465,7 +1465,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
       }
    }
 
-   if (has_selection == FALSE)
+   if (has_selection == false)
    {
       // only the tile under the mouse was 'selected'
       // --> use the normal bitfield edition window

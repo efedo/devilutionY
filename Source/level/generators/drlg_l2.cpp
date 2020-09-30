@@ -340,30 +340,30 @@ static bool DRLG_L2PlaceMiniSet(uint8_t *miniset, int tmin, int tmax, int cx, in
 	for (i = 0; i < numt; i++) {
 		sx = random_(0, DMAXX - sw);
 		sy = random_(0, DMAXY - sh);
-		found = FALSE;
+		found = false;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
 			found = TRUE;
 			if (sx >= nSx1 && sx <= nSx2 && sy >= nSy1 && sy <= nSy2) {
-				found = FALSE;
+				found = false;
 			}
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
 				sx = random_(0, DMAXX - sw);
 				sy = random_(0, DMAXY - sh);
-				found = FALSE;
+				found = false;
 			}
 			if (cy != -1 && sy >= cy - sh && sy <= cy + 12) {
 				sx = random_(0, DMAXX - sw);
 				sy = random_(0, DMAXY - sh);
-				found = FALSE;
+				found = false;
 			}
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
-						found = FALSE;
+						found = false;
 					}
 					if (dgrid[xx + sx][yy + sy].dflags != 0) {
-						found = FALSE;
+						found = false;
 					}
 					ii++;
 				}
@@ -380,7 +380,7 @@ static bool DRLG_L2PlaceMiniSet(uint8_t *miniset, int tmin, int tmax, int cx, in
 			}
 		}
 		if (bailcnt >= 200) {
-			return FALSE;
+			return false;
 		}
 		ii = sw * sh + 2;
 		for (yy = 0; yy < sh; yy++) {
@@ -422,15 +422,15 @@ static void DRLG_L2PlaceRndSet(uint8_t *miniset, int rndper)
 			found = TRUE;
 			ii = 2;
 			if (sx >= nSx1 && sx <= nSx2 && sy >= nSy1 && sy <= nSy2) {
-				found = FALSE;
+				found = false;
 			}
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
-						found = FALSE;
+						found = false;
 					}
 					if (dgrid[xx + sx][yy + sy].dflags != 0) {
-						found = FALSE;
+						found = false;
 					}
 					ii++;
 				}
@@ -441,7 +441,7 @@ static void DRLG_L2PlaceRndSet(uint8_t *miniset, int rndper)
 					for (xx = std::max(sx - sw, 0); xx < std::min(sx + 2 * sw, DMAXX); xx++) {
 						// BUGFIX: yy and xx can go out of bounds (fixed)
 						if (dgrid[xx][yy].dungeon == miniset[kk]) {
-							found = FALSE;
+							found = false;
 						}
 					}
 				}
@@ -514,13 +514,13 @@ static void DRLG_L2Shadows()
 				if (SPATSL2[i].strig == sd[0][0]) {
 					patflag = TRUE;
 					if (SPATSL2[i].s1 != 0 && SPATSL2[i].s1 != sd[1][1]) {
-						patflag = FALSE;
+						patflag = false;
 					}
 					if (SPATSL2[i].s2 != 0 && SPATSL2[i].s2 != sd[0][1]) {
-						patflag = FALSE;
+						patflag = false;
 					}
 					if (SPATSL2[i].s3 != 0 && SPATSL2[i].s3 != sd[1][0]) {
-						patflag = FALSE;
+						patflag = false;
 					}
 					if (patflag == TRUE) {
 						if (SPATSL2[i].nv1 != 0) {
@@ -553,7 +553,7 @@ void InitDungeon()
 
 static void DRLG_LoadL2SP()
 {
-	setloadflag = FALSE;
+	setloadflag = false;
 
 	if (QuestStatus(Q_BLIND)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
@@ -639,7 +639,7 @@ static void CreateDoorType(int nX, int nY)
 {
 	bool fDoneflag;
 
-	fDoneflag = FALSE;
+	fDoneflag = false;
 
 	if (predungeon[nX - 1][nY] == 68) {
 		fDoneflag = TRUE;
@@ -856,7 +856,7 @@ static void ConnectHall(int nX1, int nY1, int nX2, int nY2, int nHd)
 	int nCurrd, nDx, nDy, nRp, nOrigX1, nOrigY1, fMinusFlag, fPlusFlag;
 	bool fDoneflag, fInroom;
 
-	fDoneflag = FALSE;
+	fDoneflag = false;
 	fMinusFlag = random_(0, 100);
 	fPlusFlag = random_(0, 100);
 	nOrigX1 = nX1;
@@ -869,7 +869,7 @@ static void ConnectHall(int nX1, int nY1, int nX2, int nY2, int nHd)
 	nX2 -= Dir_Xadd[nCurrd];
 	nY2 -= Dir_Yadd[nCurrd];
 	predungeon[nX2][nY2] = 44;
-	fInroom = FALSE;
+	fInroom = false;
 
 	while (!fDoneflag) {
 		if (nX1 >= 38 && nCurrd == 2) {
@@ -918,7 +918,7 @@ static void ConnectHall(int nX1, int nY1, int nX2, int nY2, int nHd)
 				}
 			}
 			predungeon[nX1][nY1] = 44;
-			fInroom = FALSE;
+			fInroom = false;
 		} else {
 			if (!fInroom && predungeon[nX1][nY1] == 35) {
 				CreateDoorType(nX1, nY1);
@@ -1101,7 +1101,7 @@ static void L2TileFix()
 static bool DL2_Cont(bool x1f, bool y1f, bool x2f, bool y2f)
 {
 	if (x1f && x2f && y1f && y2f) {
-		return FALSE;
+		return false;
 	}
 	if (x1f && x2f && (y1f || y2f)) {
 		return TRUE;
@@ -1110,7 +1110,7 @@ static bool DL2_Cont(bool x1f, bool y1f, bool x2f, bool y2f)
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 static int DL2_NumNoChar()
@@ -1195,7 +1195,7 @@ static bool DL2_FillVoids()
 		if (predungeon[xx][yy] != 35) {
 			continue;
 		}
-		xf1 = xf2 = yf1 = yf2 = FALSE;
+		xf1 = xf2 = yf1 = yf2 = false;
 		if (predungeon[xx - 1][yy] == 32 && predungeon[xx + 1][yy] == 46) {
 			if (predungeon[xx + 1][yy - 1] == 46
 			    && predungeon[xx + 1][yy + 1] == 46
@@ -1249,14 +1249,14 @@ static bool DL2_FillVoids()
 			if (!xf1) {
 				while (yf1 || yf2) {
 					if (y1 == 0) {
-						yf1 = FALSE;
+						yf1 = false;
 					}
 					if (y2 == DMAXY - 1) {
-						yf2 = FALSE;
+						yf2 = false;
 					}
 					if (y2 - y1 >= 14) {
-						yf1 = FALSE;
-						yf2 = FALSE;
+						yf1 = false;
+						yf2 = false;
 					}
 					if (yf1) {
 						y1--;
@@ -1265,10 +1265,10 @@ static bool DL2_FillVoids()
 						y2++;
 					}
 					if (predungeon[x2][y1] != 32) {
-						yf1 = FALSE;
+						yf1 = false;
 					}
 					if (predungeon[x2][y2] != 32) {
-						yf2 = FALSE;
+						yf2 = false;
 					}
 				}
 				y1 += 2;
@@ -1276,14 +1276,14 @@ static bool DL2_FillVoids()
 				if (y2 - y1 > 5) {
 					while (xf2) {
 						if (x2 == 39) {
-							xf2 = FALSE;
+							xf2 = false;
 						}
 						if (x2 - x1 >= 12) {
-							xf2 = FALSE;
+							xf2 = false;
 						}
 						for (jj = y1; jj <= y2; jj++) {
 							if (predungeon[x2][jj] != 32) {
-								xf2 = FALSE;
+								xf2 = false;
 							}
 						}
 						if (xf2) {
@@ -1299,14 +1299,14 @@ static bool DL2_FillVoids()
 			} else if (!xf2) {
 				while (yf1 || yf2) {
 					if (y1 == 0) {
-						yf1 = FALSE;
+						yf1 = false;
 					}
 					if (y2 == DMAXY - 1) {
-						yf2 = FALSE;
+						yf2 = false;
 					}
 					if (y2 - y1 >= 14) {
-						yf1 = FALSE;
-						yf2 = FALSE;
+						yf1 = false;
+						yf2 = false;
 					}
 					if (yf1) {
 						y1--;
@@ -1315,10 +1315,10 @@ static bool DL2_FillVoids()
 						y2++;
 					}
 					if (predungeon[x1][y1] != 32) {
-						yf1 = FALSE;
+						yf1 = false;
 					}
 					if (predungeon[x1][y2] != 32) {
-						yf2 = FALSE;
+						yf2 = false;
 					}
 				}
 				y1 += 2;
@@ -1326,14 +1326,14 @@ static bool DL2_FillVoids()
 				if (y2 - y1 > 5) {
 					while (xf1) {
 						if (x1 == 0) {
-							xf1 = FALSE;
+							xf1 = false;
 						}
 						if (x2 - x1 >= 12) {
-							xf1 = FALSE;
+							xf1 = false;
 						}
 						for (jj = y1; jj <= y2; jj++) {
 							if (predungeon[x1][jj] != 32) {
-								xf1 = FALSE;
+								xf1 = false;
 							}
 						}
 						if (xf1) {
@@ -1349,14 +1349,14 @@ static bool DL2_FillVoids()
 			} else if (!yf1) {
 				while (xf1 || xf2) {
 					if (x1 == 0) {
-						xf1 = FALSE;
+						xf1 = false;
 					}
 					if (x2 == DMAXX - 1) {
-						xf2 = FALSE;
+						xf2 = false;
 					}
 					if (x2 - x1 >= 14) {
-						xf1 = FALSE;
-						xf2 = FALSE;
+						xf1 = false;
+						xf2 = false;
 					}
 					if (xf1) {
 						x1--;
@@ -1365,10 +1365,10 @@ static bool DL2_FillVoids()
 						x2++;
 					}
 					if (predungeon[x1][y2] != 32) {
-						xf1 = FALSE;
+						xf1 = false;
 					}
 					if (predungeon[x2][y2] != 32) {
-						xf2 = FALSE;
+						xf2 = false;
 					}
 				}
 				x1 += 2;
@@ -1376,14 +1376,14 @@ static bool DL2_FillVoids()
 				if (x2 - x1 > 5) {
 					while (yf2) {
 						if (y2 == DMAXY - 1) {
-							yf2 = FALSE;
+							yf2 = false;
 						}
 						if (y2 - y1 >= 12) {
-							yf2 = FALSE;
+							yf2 = false;
 						}
 						for (ii = x1; ii <= x2; ii++) {
 							if (predungeon[ii][y2] != 32) {
-								yf2 = FALSE;
+								yf2 = false;
 							}
 						}
 						if (yf2) {
@@ -1399,14 +1399,14 @@ static bool DL2_FillVoids()
 			} else if (!yf2) {
 				while (xf1 || xf2) {
 					if (x1 == 0) {
-						xf1 = FALSE;
+						xf1 = false;
 					}
 					if (x2 == DMAXX - 1) {
-						xf2 = FALSE;
+						xf2 = false;
 					}
 					if (x2 - x1 >= 14) {
-						xf1 = FALSE;
-						xf2 = FALSE;
+						xf1 = false;
+						xf2 = false;
 					}
 					if (xf1) {
 						x1--;
@@ -1415,10 +1415,10 @@ static bool DL2_FillVoids()
 						x2++;
 					}
 					if (predungeon[x1][y1] != 32) {
-						xf1 = FALSE;
+						xf1 = false;
 					}
 					if (predungeon[x2][y1] != 32) {
-						xf2 = FALSE;
+						xf2 = false;
 					}
 				}
 				x1 += 2;
@@ -1426,14 +1426,14 @@ static bool DL2_FillVoids()
 				if (x2 - x1 > 5) {
 					while (yf1) {
 						if (y1 == 0) {
-							yf1 = FALSE;
+							yf1 = false;
 						}
 						if (y2 - y1 >= 12) {
-							yf1 = FALSE;
+							yf1 = false;
 						}
 						for (ii = x1; ii <= x2; ii++) {
 							if (predungeon[ii][y1] != 32) {
-								yf1 = FALSE;
+								yf1 = false;
 							}
 						}
 						if (yf1) {
@@ -1461,7 +1461,7 @@ static bool CreateDungeon()
 
 	ForceW = 0;
 	ForceH = 0;
-	ForceHW = FALSE;
+	ForceHW = false;
 
 	switch (lvl.currlevel) {
 	case 5:
@@ -1541,7 +1541,7 @@ static bool CreateDungeon()
 	}
 
 	if (!DL2_FillVoids()) {
-		return FALSE;
+		return false;
 	}
 
 	for (j = 0; j < DMAXY; j++) {
@@ -1745,7 +1745,7 @@ void L2LockoutFix()
 				continue;
 			}
 			if ((dgrid[i][j].dungeon == 2 || dgrid[i][j].dungeon == 5) && dgrid[i][j - 1].dungeon == 3 && dgrid[i][j + 1].dungeon == 3) {
-				doorok = FALSE;
+				doorok = false;
 				while (1) {
 					if (dgrid[i][j].dungeon != 2 && dgrid[i][j].dungeon != 5) {
 						break;
@@ -1770,7 +1770,7 @@ void L2LockoutFix()
 				continue;
 			}
 			if ((dgrid[j][i].dungeon == 1 || dgrid[j][i].dungeon == 4) && dgrid[j - 1][i].dungeon == 3 && dgrid[j + 1][i].dungeon == 3) {
-				doorok = FALSE;
+				doorok = false;
 				while (1) {
 					if (dgrid[j][i].dungeon != 1 && dgrid[j][i].dungeon != 4) {
 						break;
@@ -1812,7 +1812,7 @@ static void DRLG_L2(int entry)
 	int i, j;
 	bool doneflag;
 
-	doneflag = FALSE;
+	doneflag = false;
 	while (!doneflag) {
 		nRoomCnt = 0;
 		InitDungeon();

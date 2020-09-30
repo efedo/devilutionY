@@ -25,22 +25,28 @@ Item::Item(ItemID nid, Player *new_owner)
 {
 	_itype = ITYPE_MISC;
 	_i = { 0, 0 };
-	_iAnimFlag = FALSE;
+	_iAnimFlag = false;
 	_iSelFlag = 0;
-	_iIdentified = FALSE;
-	_iPostDraw = FALSE;
+	_iIdentified = false;
+	_iPostDraw = false;
 	items.addItem(id, this);
 }
 
 Item::~Item()
 {
-	items.removeItem(id);
+	items.destroyItem(id);
 }
 
 Player &Item::owner()
 {
 	assert(_owner);
 	return *_owner;
+}
+
+V2Di Item::getSize()
+{
+	int it = ItemCAnimTbl[_iCurs];
+	_iAnimData = itemTypes[it];
 }
 
 bool Item::GetItemSpace(V2Di pos)
@@ -59,7 +65,7 @@ bool Item::GetItemSpace(V2Di pos)
 		n.y++;
 	}
 
-	savail = FALSE;
+	savail = false;
 	for (j = 0; j < 3; j++) {
 		for (i = 0; i < 3; i++) {
 			if (itemhold[i][j])
@@ -69,7 +75,7 @@ bool Item::GetItemSpace(V2Di pos)
 
 	rs = random_(13, 15) + 1;
 	if (!savail)
-		return FALSE;
+		return false;
 
 	n = { 0, 0 };
 	while (rs > 0) {
@@ -185,7 +191,7 @@ void Item::GetStaffPower(int lvl, int bs, bool onlygood)
 			if (PL_Prefix[j].PLIType & PLT_STAFF && PL_Prefix[j].PLMinLvl <= lvl) {
 				addok = TRUE;
 				if (onlygood && !PL_Prefix[j].PLOk)
-					addok = FALSE;
+					addok = false;
 				if (addok) {
 					l[nl] = j;
 					nl++;
@@ -316,7 +322,7 @@ void Item::GetItemAttrs(int idata, int curlvl)
 	_iPLGetHit = 0;
 	_iPLLight = 0;
 	_iSplLvlAdd = 0;
-	_iRequest = FALSE;
+	_iRequest = false;
 	_iFMinDam = 0;
 	_iFMaxDam = 0;
 	_iLMinDam = 0;
@@ -794,8 +800,8 @@ void Item::SetupItem()
 	_iAnimLen = ItemAnimLs[it];
 	_iAnimWidth = 96;
 	_iAnimWidth2 = 16;
-	_iIdentified = FALSE;
-	_iPostDraw = FALSE;
+	_iIdentified = false;
+	_iPostDraw = false;
 
 	if (!myplr().data.pLvlLoad) {
 		_iAnimFrame = 1;
@@ -803,7 +809,7 @@ void Item::SetupItem()
 		_iSelFlag = 0;
 	} else {
 		_iAnimFrame = _iAnimLen;
-		_iAnimFlag = FALSE;
+		_iAnimFlag = false;
 		_iSelFlag = 1;
 	}
 }
@@ -880,15 +886,15 @@ void Item::RespawnItem(bool FlipFlag)
 	_iAnimLen = ItemAnimLs[it];
 	_iAnimWidth = 96;
 	_iAnimWidth2 = 16;
-	_iPostDraw = FALSE;
-	_iRequest = FALSE;
+	_iPostDraw = false;
+	_iRequest = false;
 	if (FlipFlag) {
 		_iAnimFrame = 1;
 		_iAnimFlag = TRUE;
 		_iSelFlag = 0;
 	} else {
 		_iAnimFrame = _iAnimLen;
-		_iAnimFlag = FALSE;
+		_iAnimFlag = false;
 		_iSelFlag = 1;
 	}
 
@@ -1043,7 +1049,7 @@ void Item::RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue)
 				uper = 0;
 				onlygood = 0;
 				recreate = 0;
-				pregen = FALSE;
+				pregen = false;
 				if (icreateinfo & 0x0100)
 					uper = 1;
 				if (icreateinfo & 0x80)
@@ -1059,34 +1065,6 @@ void Item::RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue)
 		}
 	}
 }
-
-void Item::RecreateEar(WORD ic, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, int ibuff)
-{
-	SetPlrHandItem(this, IDI_EAR);
-	tempstr[0] = (ic >> 8) & 0x7F;
-	tempstr[1] = ic & 0x7F;
-	tempstr[2] = (iseed >> 24) & 0x7F;
-	tempstr[3] = (iseed >> 16) & 0x7F;
-	tempstr[4] = (iseed >> 8) & 0x7F;
-	tempstr[5] = iseed & 0x7F;
-	tempstr[6] = Id & 0x7F;
-	tempstr[7] = dur & 0x7F;
-	tempstr[8] = mdur & 0x7F;
-	tempstr[9] = ch & 0x7F;
-	tempstr[10] = mch & 0x7F;
-	tempstr[11] = (ivalue >> 8) & 0x7F;
-	tempstr[12] = (ibuff >> 24) & 0x7F;
-	tempstr[13] = (ibuff >> 16) & 0x7F;
-	tempstr[14] = (ibuff >> 8) & 0x7F;
-	tempstr[15] = ibuff & 0x7F;
-	tempstr[16] = '\0';
-	sprintf(_iName, "Ear of %s", tempstr);
-	_iCurs = ((ivalue >> 6) & 3) + 19;
-	_ivalue = ivalue & 0x3F;
-	_iCreateInfo = ic;
-	_iSeed = iseed;
-}
-
 
 void Item::RecreateSmithItem(int idx, int lvl, int iseed)
 {

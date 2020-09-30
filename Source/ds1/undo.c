@@ -115,7 +115,7 @@ void undo_new_tile_buffer(int ds1_idx)
    fwrite(&fake, sizeof(u->seg_num), 1, u->fptr);
 
    // init
-   u->in_seg      = FALSE;
+   u->in_seg      = false;
    u->seg_num     = 0;
    u->cell_offset = -1;
    u->cell_num    = 0;
@@ -143,7 +143,7 @@ void undo_start_seg_in_tile_buffer(int ds1_idx, UBYTE x, UBYTE y)
    }
 
    // just in case (bis)
-   if (u->in_seg != FALSE)
+   if (u->in_seg != false)
    {
       fclose(u->fptr);
       sprintf(tmp, "undo_start_seg_in_tile_buffer() : try to start a "
@@ -190,7 +190,7 @@ void undo_close_seg_in_tile_buffer(int ds1_idx)
    if (u->seg_num != 0)
    {
       // just in case
-      if (u->in_seg == FALSE)
+      if (u->in_seg == false)
       {
          fclose(u->fptr);
          sprintf(tmp, "undo_close_seg_in_tile_buffer() : try to close a "
@@ -206,7 +206,7 @@ void undo_close_seg_in_tile_buffer(int ds1_idx)
    }
 
    // init
-   u->in_seg = FALSE;
+   u->in_seg = false;
 }
 
 
@@ -256,7 +256,7 @@ void undo_add_to_tile_buffer(int ds1_idx, int ix, int iy)
       if ( (u->seg_num == 0) || ((x != (u->old_x + 1)) || (y != u->old_y)) )
       {
          // another segment, close a precedent one ?
-         if (u->in_seg != FALSE)
+         if (u->in_seg != false)
          {
             // close the precednet
             undo_close_seg_in_tile_buffer(ds1_idx);
@@ -371,7 +371,7 @@ void undo_close_tile_buffer(int ds1_idx)
       ds1edit_error(tmp);
    }
 
-   if (u->in_seg != FALSE)
+   if (u->in_seg != false)
       undo_close_seg_in_tile_buffer(ds1_idx);
 
    // write the True segment number
@@ -591,7 +591,7 @@ void undo_add_this_tile_to_buffer(int ds1_idx, int ix, int iy,
       if ( (u->seg_num == 0) || ((x != (u->old_x + 1)) || (y != u->old_y)) )
       {
          // another segment, close a precedent one ?
-         if (u->in_seg != FALSE)
+         if (u->in_seg != false)
          {
             // close the precednet
             undo_close_seg_in_tile_buffer(ds1_idx);

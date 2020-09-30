@@ -102,7 +102,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield)
 	if (plr.isSingleplayer() || manashield)
 		pPack->pManaShield = SwapLE32(pPlayer->pManaShield);
 	else
-		pPack->pManaShield = FALSE;
+		pPack->pManaShield = false;
 }
 
 /**
@@ -245,7 +245,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 			witchitem[i]._itype = ITYPE_NONE;
 	}
 
-	CalcPlrInv(pnum, FALSE);
+	CalcPlrInv(pnum, false);
 	pPlayer->pTownWarps = 0;
 	pPlayer->pDungMsgs = 0;
 	pPlayer->pLvlLoad = 0;

@@ -220,7 +220,7 @@ void wedit_draw_w(int ds1_idx, int x, int y, int upper)
       o = w_ptr[order_data[n].idx].orientation;
       if ((upper == TRUE) && (o >= 15))
          continue;
-      if ((upper == FALSE) && (o <= 15))
+      if ((upper == false) && (o <= 15))
          continue;
 
       if (glb_ds1[ds1_idx].special_layer_mask && ((o == 10) || (o == 11)))
@@ -302,8 +302,8 @@ void wedit_draw_w(int ds1_idx, int x, int y, int upper)
          // search the o=4 m=m s=s
          m = bt_ptr->main_index;
          s = bt_ptr->sub_index;
-         done  = FALSE;
-         found = FALSE;
+         done  = false;
+         found = false;
          while( ! done)
          {
             if (bt_idx >= glb_ds1[ds1_idx].bt_num)
@@ -817,7 +817,7 @@ int wedit_tab_have(int ds1_idx, BLK_TYP_E t)
       bt_ptr++;
    }
 
-   return FALSE;
+   return false;
 }
 
 
@@ -876,7 +876,7 @@ void wedit_tiles_make(int ds1_idx)
    for (t = BT_NULL + 1; t < BT_MAX; t++)
    {
       for (i=0; i<numb; i++)
-         * (is_keep + i) = FALSE;
+         * (is_keep + i) = false;
          
       line = 0;
       old_o = old_m = -1;
@@ -937,7 +937,7 @@ void wedit_tiles_make(int ds1_idx)
          old_s = bt_ptr[b].sub_index;
          col   = 1;
          y     = b;
-         done  = FALSE;
+         done  = false;
 
          // # of different sub (but only 1st tile of the same set of random)
          do
@@ -989,7 +989,7 @@ void wedit_tiles_make(int ds1_idx)
             m_ptr->sub_elm[i].y1         = 0;
             m_ptr->sub_elm[i].x2         = 0;
             m_ptr->sub_elm[i].y2         = 0;
-            m_ptr->sub_elm[i].is_draw    = FALSE;
+            m_ptr->sub_elm[i].is_draw    = false;
          }
          m_ptr->bt_idx_num = col;
 
@@ -1001,7 +1001,7 @@ void wedit_tiles_make(int ds1_idx)
          old_s = -1;
          y     = b - 1;
          x     = 0;
-         done  = FALSE;
+         done  = false;
          
          // for each col of this line
          do
@@ -1047,7 +1047,7 @@ void wedit_tiles_make(int ds1_idx)
          old_s = -1;
          y     = b - 1;
          x     = 0;
-         done  = FALSE;
+         done  = false;
          
          // for each col of this line
          do
@@ -1269,7 +1269,7 @@ void wedit_tab_tiles(int ds1_idx, BLK_TYP_E t, int x0, int y0, int bt_sel,
                if (((y1 + m_ptr->max_height - 1) < 0) || (y1 >= w->tmp_edit->h))
                {
                   // nothing to draw
-                  s_ptr->is_draw = FALSE;
+                  s_ptr->is_draw = false;
                }
                else
                {
@@ -1312,7 +1312,7 @@ void wedit_tab_tiles(int ds1_idx, BLK_TYP_E t, int x0, int y0, int bt_sel,
             else
             {
                // nothing to draw (tmp_bmp == NULL)
-               s_ptr->is_draw = FALSE;
+               s_ptr->is_draw = false;
             }
          }
       }
@@ -1610,7 +1610,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
    DS1_S         * d = & glb_ds1[ds1_idx];
    BUTTON_S      * b;
    BLOCK_TABLE_S * bt_ptr = glb_ds1[ds1_idx].block_table;
-   int           i, n, done=FALSE, mx, my, mb;
+   int           i, n, done=false, mx, my, mb;
    int           focus=0, focus_can_change=TRUE, bt_sel;
    int           my_border = 1, xn=0, yn=0, old_xn=0, old_yn=0;
    BUT_TYP_E     current_button = BU_NULL;
@@ -1626,25 +1626,25 @@ void wedit_test(int ds1_idx, int tx, int ty)
    wedit_tiles_make(ds1_idx);
    position_mouse(200, 70);
    
-   w->button[BU_WALL1].active  = 0 < d->wall_num ? TRUE : FALSE;
-   w->button[BU_WALL2].active  = 1 < d->wall_num ? TRUE : FALSE;
-   w->button[BU_WALL3].active  = 2 < d->wall_num ? TRUE : FALSE;
-   w->button[BU_WALL4].active  = 3 < d->wall_num ? TRUE : FALSE;
+   w->button[BU_WALL1].active  = 0 < d->wall_num ? TRUE : false;
+   w->button[BU_WALL2].active  = 1 < d->wall_num ? TRUE : false;
+   w->button[BU_WALL3].active  = 2 < d->wall_num ? TRUE : false;
+   w->button[BU_WALL4].active  = 3 < d->wall_num ? TRUE : false;
    
-   w->button[BU_FLOOR1].active = 0 < d->floor_num ? TRUE : FALSE;
-   w->button[BU_FLOOR2].active = 1 < d->floor_num ? TRUE : FALSE;
+   w->button[BU_FLOOR1].active = 0 < d->floor_num ? TRUE : false;
+   w->button[BU_FLOOR2].active = 1 < d->floor_num ? TRUE : false;
 
    w->button[BU_OK].active     = TRUE;
    w->button[BU_CANCEL].active = TRUE;
 
-   w->button[BU_VIEW_RAND].active = FALSE;
+   w->button[BU_VIEW_RAND].active = false;
 //   w->button[BU_VIEW_RAND].active = TRUE;
    
    for (i=BU_NULL + 1; i<BU_MAX; i++)
    {
       if (w->button[i].active)
       {
-         w->button[i].mouse_over  = FALSE;
+         w->button[i].mouse_over  = false;
          w->button[i].state       = BS_OFF;
       }
    }
@@ -1663,27 +1663,27 @@ void wedit_test(int ds1_idx, int tx, int ty)
    b = & w->tab[BT_STATIC];
    b->x0             = w_elm->i_x0;
    b->y0             = 88;
-   b->active         = FALSE;
+   b->active         = false;
    b->state          = BS_OFF;
    b->tab_have_tiles = wedit_tab_have(ds1_idx, BT_STATIC);
 
    b = & w->tab[BT_ANIMATED];
    b->x0             = w->tab[BT_STATIC].x0 + w->tab[BT_STATIC].w + my_border;
    b->y0             = 88;
-   b->active         = FALSE;
+   b->active         = false;
    b->state          = BS_OFF;
    b->tab_have_tiles = wedit_tab_have(ds1_idx, BT_ANIMATED);
    
    b = & w->tab[BT_SHADOW];
    b->x0             = w_elm->i_x0;
    b->y0             = 88;
-   b->active         = FALSE;
+   b->active         = false;
    b->state          = BS_OFF;
    b->tab_have_tiles = wedit_tab_have(ds1_idx, BT_SHADOW);
    if (b->tab_have_tiles)
       w->button[BU_SHADOW].active = TRUE;
    else
-      w->button[BU_SHADOW].active = FALSE;
+      w->button[BU_SHADOW].active = false;
 
    b = & w->tab[BT_WALL_UP];
    b->x0             = w_elm->i_x0;
@@ -1773,7 +1773,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
       w_elm = & glb_ds1edit.win_edit.w_tiles;
       draw_rle_sprite(glb_ds1edit.screen_buff, w_elm->border, w_elm->b_x0, w_elm->b_y0);
 
-      wedit_draw_w (ds1_idx, tx, ty, FALSE); // lower walls
+      wedit_draw_w (ds1_idx, tx, ty, false); // lower walls
       wedit_draw_f (ds1_idx, tx, ty);        // floors
       wedit_draw_s (ds1_idx, tx, ty);        // shadows
       wedit_draw_w (ds1_idx, tx, ty, TRUE);  // upper walls
@@ -1925,7 +1925,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
                      if (focus_can_change)
                      {
                         focus = i;
-                        focus_can_change = FALSE;
+                        focus_can_change = false;
                      }
                   }
                }
@@ -1940,7 +1940,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
             }
             else // mouse NOT over
             {
-               b->mouse_over = FALSE;
+               b->mouse_over = false;
                if (mb)
                {
                   // change state if needed
@@ -1985,13 +1985,13 @@ void wedit_test(int ds1_idx, int tx, int ty)
                }
             }
             else // mouse NOT over
-               b->mouse_over = FALSE;
+               b->mouse_over = false;
          }
       }
       
       // anti-bug
       if ((focus == 0) && (mb))
-         focus_can_change = FALSE;
+         focus_can_change = false;
          
       // when no mouse button
       if (mb == 0)
@@ -2007,7 +2007,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
          }
 
          // releasing the focus button ?
-         if (focus_can_change == FALSE)
+         if (focus_can_change == false)
          {
             if (w->button[focus].mouse_over == TRUE)
             {
@@ -2030,7 +2030,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
                   case BU_FLOOR2 :
                      for (n=BT_NULL + 1; n<BT_MAX; n++)
                      {
-                        w->tab[n].active = FALSE;
+                        w->tab[n].active = false;
                         w->tab[n].state  = BS_OFF;
                      }
                      w->tab[BT_STATIC].active   = w->tab[BT_STATIC].tab_have_tiles;
@@ -2061,7 +2061,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
                   case BU_SHADOW :
                      for (n=BT_NULL + 1; n<BT_MAX; n++)
                      {
-                        w->tab[n].active = FALSE;
+                        w->tab[n].active = false;
                         w->tab[n].state  = BS_OFF;
                      }
                      w->tab[BT_SHADOW].active = w->tab[BT_SHADOW].tab_have_tiles;
@@ -2089,7 +2089,7 @@ void wedit_test(int ds1_idx, int tx, int ty)
                   case BU_WALL4 :
                      for (n=BT_NULL + 1; n<BT_MAX; n++)
                      {
-                        w->tab[n].active = FALSE;
+                        w->tab[n].active = false;
                         w->tab[n].state  = BS_OFF;
                      }
                      w->tab[BT_WALL_UP].active   = w->tab[BT_WALL_UP].tab_have_tiles;

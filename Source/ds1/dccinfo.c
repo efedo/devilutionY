@@ -71,7 +71,7 @@ int dcc_read_bytes(DCC_BITSTREAM_S * bs, int bytes_number, void * dest)
 // ==========================================================================
 // copy 'bits_number' bits into 'dest' from the current byte & bit position
 //    in the bitstream
-// is_signed = TRUE / FALSE
+// is_signed = TRUE / false
 // the dest variable MUST BE 32 bits width
 // return 0 on success, non-zero if error
 int dcc_read_bits(DCC_BITSTREAM_S * bs, int bits_number, int is_signed,
@@ -141,7 +141,7 @@ int dcc_read_bits(DCC_BITSTREAM_S * bs, int bits_number, int is_signed,
    }
 
    // signed value handle
-   if (is_signed == FALSE)
+   if (is_signed == false)
       return 0;
       
    // else it's a signed value (1 bit value will be 0 or -1, NOT 1)
@@ -171,7 +171,7 @@ int dcc_frame_header_bitstream(DCC_S *dcc, DCC_BITSTREAM_S *bs, int d, int f)
    // read frame datas
    for (i=0; i<8; i++)
    {
-      sign = FALSE;
+      sign = false;
       switch(i)
       {
          case 0 :
@@ -435,7 +435,7 @@ int dcc_other_bitstream_size(DCC_S * dcc, DCC_BITSTREAM_S * bs, int d)
    // equal cell bitstream
    if (dcc->direction[d].compression_flag & 0x02)
    {
-      if (dcc_read_bits(bs, 20, FALSE,
+      if (dcc_read_bits(bs, 20, false,
              & dcc->direction[d].equal_cell_bitstream_size))
       {
          sprintf(add_error,
@@ -446,7 +446,7 @@ int dcc_other_bitstream_size(DCC_S * dcc, DCC_BITSTREAM_S * bs, int d)
    }
    
    // pixel mask bitstream
-   if (dcc_read_bits(bs, 20, FALSE,
+   if (dcc_read_bits(bs, 20, false,
           & dcc->direction[d].pixel_mask_bitstream_size))
    {
       sprintf(add_error,
@@ -458,7 +458,7 @@ int dcc_other_bitstream_size(DCC_S * dcc, DCC_BITSTREAM_S * bs, int d)
    if (dcc->direction[d].compression_flag & 0x01)
    {
       // encoding type bitstream
-      if (dcc_read_bits(bs, 20, FALSE,
+      if (dcc_read_bits(bs, 20, false,
              & dcc->direction[d].encoding_type_bitstream_size))
       {
          sprintf(add_error,
@@ -468,7 +468,7 @@ int dcc_other_bitstream_size(DCC_S * dcc, DCC_BITSTREAM_S * bs, int d)
       }
 
       // raw pixel bitstream
-      if (dcc_read_bits(bs, 20, FALSE,
+      if (dcc_read_bits(bs, 20, false,
              & dcc->direction[d].raw_pixel_bitstream_size))
       {
          sprintf(add_error,
@@ -496,7 +496,7 @@ int dcc_pixel_values_key(DCC_S * dcc, DCC_BITSTREAM_S * bs, int d)
 
    for (i=0; i<256; i++)
    {
-      if (dcc_read_bits(bs, 1, FALSE, & tmp))
+      if (dcc_read_bits(bs, 1, false, & tmp))
       {
          sprintf(add_error,
                  "direction %i, pixel_values %i\n", d, i);
@@ -844,13 +844,13 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
             }
 
             // check if this cell need a new entry in pixel_buffer
-            next_cell = FALSE;
+            next_cell = false;
             if (cell_buffer[curr_cell] != NULL)
             {
                if (dir->equal_cell_bitstream_size)
                {
                   if (dcc_read_bits( & dir->equal_cell_bitstream,
-                                     1, FALSE, & tmp))
+                                     1, false, & tmp))
                   {
                      sprintf(add_error, "dcc_fill_pixel_buffer() : "
                         "equal_cell bitstream\ndirection %i, frame %i, "
@@ -866,7 +866,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
                if (tmp == 0)
                {
                   if (dcc_read_bits( & dir->pixel_mask_bitstream,
-                                     4, FALSE, & pixel_mask))
+                                     4, false, & pixel_mask))
                   {
                      sprintf(add_error, "dcc_fill_pixel_buffer() : "
                         "pixel_mask bitstream\n"
@@ -885,7 +885,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
             else
                pixel_mask = 0x0F;
 
-            if (next_cell == FALSE)
+            if (next_cell == false)
             {
                // decode the pixels
 
@@ -897,7 +897,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
                if (nb_pix && dir->encoding_type_bitstream_size)
                {
                   if (dcc_read_bits( & dir->encoding_type_bitstream,
-                                     1, FALSE, & encoding_type))
+                                     1, false, & encoding_type))
                   {
                      sprintf(add_error, "dcc_fill_pixel_buffer() :\n   "
                         "encoding_type bitstream, direction %i, frame %i, "
@@ -917,7 +917,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
                   if (encoding_type)
                   {
                      if (dcc_read_bits( & dir->raw_pixel_bitstream,
-                                        8, FALSE, & read_pixel[i]))
+                                        8, false, & read_pixel[i]))
                      {
                         sprintf(add_error, "dcc_fill_pixel_buffer() :\n   "
                            "raw_pixel bitstream, direction %i, frame %i, "
@@ -934,7 +934,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
                      read_pixel[i] = last_pixel;
                      if (dcc_read_bits(
                         & dir->pixel_code_and_displacment_bitstream,
-                        4, FALSE, & pix_displ))
+                        4, false, & pix_displ))
                      {
                         sprintf(add_error, "dcc_fill_pixel_buffer() :\n   "
                            "pixel_code_and_displacment bitstream, direction %i, frame %i, "
@@ -949,7 +949,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
                      {
                         if (dcc_read_bits(
                            & dir->pixel_code_and_displacment_bitstream,
-                           4, FALSE, & pix_displ))
+                           4, false, & pix_displ))
                         {
                            sprintf(add_error, "dcc_fill_pixel_buffer() :\n   "
                               "pixel_code_and_displacment bitstream, direction %i, frame %i, "
@@ -1180,7 +1180,7 @@ int dcc_make_frames(DCC_S * dcc, int d)
                   {
                      if (dcc_read_bits(
                         & dcc->direction[d].pixel_code_and_displacment_bitstream,
-                        nb_bit, FALSE, & pix))
+                        nb_bit, false, & pix))
                      {
                         sprintf(add_error, "dcc_make_frame() :\n   "
                            "pixel_code_and_displacment bitstream, direction %i, frame %i, "
@@ -1260,63 +1260,63 @@ int dcc_dir_bitstream(DCC_S * dcc, int d)
                      dcc->header.dir_offset[d]);
    
    // read direction datas
-   if (dcc_read_bits( & bs, 32, FALSE, & dcc->direction[d].outsize_coded))
+   if (dcc_read_bits( & bs, 32, false, & dcc->direction[d].outsize_coded))
    {
       sprintf(add_error, "direction %i, outsize_coded\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 2, FALSE, & dcc->direction[d].compression_flag))
+   if (dcc_read_bits( & bs, 2, false, & dcc->direction[d].compression_flag))
    {
       sprintf(add_error, "direction %i, compression_flag\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].variable0_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].variable0_bits))
    {
       sprintf(add_error, "direction %i, variable0_bits\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].width_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].width_bits))
    {
       sprintf(add_error, "direction %i, width_bits\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].height_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].height_bits))
    {
       sprintf(add_error, "direction %i, height_bits\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].xoffset_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].xoffset_bits))
    {
       sprintf(add_error, "direction %i, xoffset_bits\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].yoffset_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].yoffset_bits))
    {
       sprintf(add_error, "direction %i, yoffset_bits\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].optional_bytes_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].optional_bytes_bits))
    {
       sprintf(add_error, "direction %i, optional_bytes_bits\n", d);
       strcat(dcc_error, add_error);
       return 1;
    }
    
-   if (dcc_read_bits( & bs, 4, FALSE, & dcc->direction[d].coded_bytes_bits))
+   if (dcc_read_bits( & bs, 4, false, & dcc->direction[d].coded_bytes_bits))
    {
       sprintf(add_error, "direction %i, coded_bytes_bits\n", d);
       strcat(dcc_error, add_error);

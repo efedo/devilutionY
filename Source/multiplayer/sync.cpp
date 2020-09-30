@@ -33,7 +33,7 @@ DWORD sync_all_monsters(const uint8_t *pbBuf, DWORD dwMaxLen)
 	sync_one_monster();
 
 	for (i = 0; i < nummonsters && dwMaxLen >= sizeof(TSyncMonster); i++) {
-		sync = FALSE;
+		sync = false;
 		if (i < 2) {
 			sync = sync_monster_active2((TSyncMonster *)pbBuf);
 		}
@@ -83,7 +83,7 @@ bool sync_monster_active(TSyncMonster *p)
 	}
 
 	if (ndx == -1) {
-		return FALSE;
+		return false;
 	}
 
 	sync_monster_pos(p, ndx);
@@ -123,7 +123,7 @@ bool sync_monster_active2(TSyncMonster *p)
 	}
 
 	if (ndx == -1) {
-		return FALSE;
+		return false;
 	}
 
 	sync_monster_pos(p, ndx);

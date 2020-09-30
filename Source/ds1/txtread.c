@@ -17,7 +17,7 @@
 // note : handle both LF and CR/LF line type
 char * txt_gets(char * bptr, int * nb_char, int * is_new_line, int del_char)
 {
-   * is_new_line = FALSE;
+   * is_new_line = false;
    * nb_char = 0;
 
 
@@ -70,7 +70,7 @@ void txt_count_header_cols(char * cur_col, int * col_count)
    (* col_count) = 0;
    while (cur_col != NULL)
    {
-      next_col = txt_gets(cur_col, & nb_char, & is_new_line, FALSE);
+      next_col = txt_gets(cur_col, & nb_char, & is_new_line, false);
 
       // don't count empty headers or "*eol" column
       if (nb_char)
@@ -126,7 +126,7 @@ char * txt_read_header(char * cur_col, TXT_S * txt)
 // ==========================================================================
 int txt_check_type_and_size(char * cur_col, TXT_S * txt)
 {
-   int  nb_char, i, col_pos = 0, is_new_line = FALSE, x;
+   int  nb_char, i, col_pos = 0, is_new_line = false, x;
    char * next_col;
    
    if (cur_col == NULL)
@@ -138,7 +138,7 @@ int txt_check_type_and_size(char * cur_col, TXT_S * txt)
    while (cur_col != NULL)
    {
       // read this col
-      next_col = txt_gets(cur_col, & nb_char, & is_new_line, FALSE);
+      next_col = txt_gets(cur_col, & nb_char, & is_new_line, false);
       
       if (nb_char)
       {
@@ -284,7 +284,7 @@ void txt_get_user_filter_cols(char * cur_col, TXT_S * txt)
 
    while (cur_col != NULL)
    {
-      next_col = txt_gets(cur_col, & nb_char, & is_new_line, FALSE);
+      next_col = txt_gets(cur_col, & nb_char, & is_new_line, false);
 
       // don't count empty headers or "*eol" column
       if (nb_char)
@@ -419,7 +419,7 @@ TXT_S * txt_load(char * mem, RQ_ENUM enum_txt, char * filename)
       {
          printf("txt_load() : didn't found required column %i (%s)\n", i, txt->col[i].name);
          fflush(stdout);
-         all_col_ok = FALSE;
+         all_col_ok = false;
       }
    }
 
@@ -617,7 +617,7 @@ int read_lvltypes_txt(int ds1_idx, int type)
          sptr = txt->data + (i * txt->line_size) + txt->col[misc_get_txt_column_num(RQ_LVLTYPE, "Act")].offset;
          lptr = (long *) sptr;
          act  = * lptr;
-         if ((act != glb_ds1[ds1_idx].act) && (glb_ds1edit.cmd_line.no_check_act == FALSE))
+         if ((act != glb_ds1[ds1_idx].act) && (glb_ds1edit.cmd_line.no_check_act == false))
          {
             sprintf(tmp, "read_lvltypes_txt() : Acts from LvlTypes.txt (%li) and the Ds1 (%li) "
                "are different",
@@ -793,7 +793,7 @@ int read_lvlprest_txt(int ds1_idx, int def)
             if (b == 0)
                glb_ds1[ds1_idx].dt1_mask[b] = TRUE;
             else
-               glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? TRUE : FALSE;
+               glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? TRUE : false;
          }
 
          // end
@@ -845,7 +845,7 @@ int read_lvlprest_txt(int ds1_idx, int def)
                if (b == 0)
                   glb_ds1[ds1_idx].dt1_mask[b] = TRUE;
                else
-                  glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? TRUE : FALSE;
+                  glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? TRUE : false;
             }
 
             // end

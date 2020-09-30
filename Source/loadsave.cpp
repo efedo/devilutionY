@@ -211,7 +211,7 @@ bool OLoad()
 	if (*tbuff++ == TRUE)
 		return TRUE;
 	else
-		return FALSE;
+		return false;
 }
 
 void CopyBytes(const void *src, const int n, void *dst)
@@ -994,10 +994,10 @@ void ISave(int v)
 
 void OSave(bool v)
 {
-	if (v != FALSE)
+	if (v != false)
 		*tbuff++ = TRUE;
 	else
-		*tbuff++ = FALSE;
+		*tbuff++ = false;
 }
 
 void SavePlayer(int i)

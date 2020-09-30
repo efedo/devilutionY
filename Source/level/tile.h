@@ -39,7 +39,8 @@ public:
 	[[nodiscard]] uint16_t getPlayerDraw() const;
 	[[nodiscard]] uint16_t getMonster() const;
 	[[nodiscard]] uint8_t getObject() const;
-	[[nodiscard]] Item * viewItem() const;
+	[[nodiscard]] Item * getItem() const;
+	[[nodiscard]] std::unique_ptr<Item> &_getItemPtr() const;
 	[[nodiscard]] uint8_t getMissile() const;
 
 	// Unsafe content access

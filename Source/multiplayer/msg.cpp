@@ -85,19 +85,19 @@ bool msg_wait_resync()
 	gbBufferMsgs = 0;
 	if (!success) {
 		msg_free_packets();
-		return FALSE;
+		return false;
 	}
 
 	if (gbGameDestroyed) {
 		DrawDlg("The game ended");
 		msg_free_packets();
-		return FALSE;
+		return false;
 	}
 
 	if (sgbDeltaChunks != 21) {
 		DrawDlg("Unable to get level data");
 		msg_free_packets();
-		return FALSE;
+		return false;
 	}
 
 	return TRUE;
@@ -127,7 +127,7 @@ int msg_wait_for_turns()
 	}
 	multi_process_network_packets();
 	nthread_send_and_recv_turn(0, 0);
-	if (nthread_has_500ms_passed(FALSE))
+	if (nthread_has_500ms_passed(false))
 		nthread_recv_turns(&received);
 
 	if (gbGameDestroyed)
@@ -300,11 +300,11 @@ int msg_comp_level(uint8_t *buffer, uint8_t *end)
 
 void delta_init()
 {
-	sgbDeltaChanged = FALSE;
+	sgbDeltaChanged = false;
 	memset(&sgJunk, 0xFF, sizeof(sgJunk));
 	memset(sgLevels, 0xFF, sizeof(sgLevels));
 	memset(sgLocals, 0, sizeof(sgLocals));
-	deltaload = FALSE;
+	deltaload = false;
 }
 
 void delta_kill_monster(int mi, V2Di pos, uint8_t bLevel)
@@ -560,7 +560,7 @@ void DeltaLoadLevel()
 				pos.x = sgLevels[lvl.currlevel].item[i].x;
 				pos.y = sgLevels[lvl.currlevel].item[i].y;
 				if (!CanPut(pos)) {
-					done = FALSE;
+					done = false;
 					for (k = 1; k < 50 && !done; k++) {
 						for (j = -k; j <= k && !done; j++) {
 							posb.y = pos.y + j;
@@ -576,7 +576,7 @@ void DeltaLoadLevel()
 				}
 				item[ii]._i = pos;
 				grid.at(pos).setItem(ii);
-				RespawnItem(ii, FALSE);
+				RespawnItem(ii, false);
 				numitems++;
 			}
 		}
@@ -603,7 +603,7 @@ void DeltaLoadLevel()
 				Obj_Trap(objectactive[i]);
 		}
 	}
-	deltaload = FALSE;
+	deltaload = false;
 }
 
 void NetSendCmd(bool bHiPri, uint8_t bCmd)
@@ -824,7 +824,7 @@ bool NetSendCmdReq2(uint8_t bCmd, uint8_t mast, uint8_t pnum, TCmdGItem *p)
 	if (!cmd.dwTime) {
 		cmd.dwTime = ticks;
 	} else if (ticks - cmd.dwTime > 5000) {
-		return FALSE;
+		return false;
 	}
 
 	multi_msg_add((uint8_t *)&cmd.bCmd, sizeof(cmd));
@@ -1256,7 +1256,7 @@ void DeltaImportJunk(uint8_t *src)
 		if (*src == 0xFF) {
 			memset(&sgJunk.portal[i], 0xFF, sizeof(DPortal));
 			src++;
-			SetPortalStats(i, FALSE, { 0, 0 }, 0, DunType::town);
+			SetPortalStats(i, false, { 0, 0 }, 0, DunType::town);
 		} else {
 			memcpy(&sgJunk.portal[i], src, sizeof(DPortal));
 			src += sizeof(DPortal);
@@ -1387,7 +1387,7 @@ DWORD On_GOTOGETITEM(TCmd *pCmd, int pnum)
 	TCmdLocParam1 *p = (TCmdLocParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
-		plr[pnum].MakePlrPath({ p->x, p->y }, FALSE);
+		plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		plr[pnum].data.destAction = ACTION_PICKUPITEM;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -1403,7 +1403,7 @@ DWORD On_REQUESTGITEM(TCmd *pCmd, int pnum)
 		if (GetItemRecord(p->dwSeed, p->wCI, p->wIndx)) {
 			int ii = FindGetItem(p->wIndx, p->wCI, p->dwSeed);
 			if (ii != -1) {
-				NetSendCmdGItem2(FALSE, CMD_GETITEM, myplr(), p->bPnum, p);
+				NetSendCmdGItem2(false, CMD_GETITEM, myplr(), p->bPnum, p);
 				if (p->bPnum != myplr())
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 				else
@@ -1467,7 +1467,7 @@ bool delta_get_item(TCmdGItem *pI, uint8_t bLevel)
 	bool found;
 
 	result = TRUE;
-	found = FALSE;
+	found = false;
 	if (plr.isMultiplayer()) {
 		pD = sgLevels[bLevel].item;
 		for (i = 0; i < MAXITEMS; i++, pD++) {
@@ -1493,7 +1493,7 @@ bool delta_get_item(TCmdGItem *pI, uint8_t bLevel)
 			app_fatal("delta:1");
 		}
 		if (((pI->wCI >> 8) & 0x80) == 0)
-			return FALSE;
+			return false;
 		pD = sgLevels[bLevel].item;
 		for (i = 0; i < MAXITEMS; i++, pD++) {
 			if (pD->bCmd == 0xFF) {
@@ -1524,7 +1524,7 @@ DWORD On_GOTOAGETITEM(TCmd *pCmd, int pnum)
 	TCmdLocParam1 *p = (TCmdLocParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
-		plr[pnum].MakePlrPath({ p->x, p->y }, FALSE);
+		plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		plr[pnum].data.destAction = ACTION_PICKUPAITEM;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -1540,7 +1540,7 @@ DWORD On_REQUESTAGITEM(TCmd *pCmd, int pnum)
 		if (GetItemRecord(p->dwSeed, p->wCI, p->wIndx)) {
 			int ii = FindGetItem(p->wIndx, p->wCI, p->dwSeed);
 			if (ii != -1) {
-				NetSendCmdGItem2(FALSE, CMD_AGETITEM, myplr(), p->bPnum, p);
+				NetSendCmdGItem2(false, CMD_AGETITEM, myplr(), p->bPnum, p);
 				if (p->bPnum != myplr())
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 				else
@@ -1708,7 +1708,7 @@ DWORD On_ATTACKXY(TCmd *pCmd, int pnum)
 	TCmdLoc *p = (TCmdLoc *)pCmd;
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
-		plr[pnum].MakePlrPath({ p->x, p->y }, FALSE);
+		plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		plr[pnum].data.destAction = ACTION_ATTACK;
 		plr[pnum].data.destParam1 = p->x;
 		plr[pnum].data.destParam2 = p->y;
@@ -1815,7 +1815,7 @@ DWORD On_OPOBJXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (object[p->wParam1]._oSolidFlag || object[p->wParam1]._oDoorFlag)
-			plr[pnum].MakePlrPath({ p->x, p->y }, FALSE);
+			plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		else
 			plr[pnum].MakePlrPath({ p->x, p->y }, TRUE);
 		plr[pnum].data.destAction = ACTION_OPERATE;
@@ -1831,7 +1831,7 @@ DWORD On_DISARMXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (object[p->wParam1]._oSolidFlag || object[p->wParam1]._oDoorFlag)
-			plr[pnum].MakePlrPath({ p->x, p->y }, FALSE);
+			plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		else
 			plr[pnum].MakePlrPath({ p->x, p->y }, TRUE);
 		plr[pnum].data.destAction = ACTION_DISARM;
@@ -1861,7 +1861,7 @@ DWORD On_ATTACKID(TCmd *pCmd, int pnum)
 		int distx = abs(plr[pnum].pos().x - monsters[p->wParam1].data._mfut.x);
 		int disty = abs(plr[pnum].pos().y - monsters[p->wParam1].data._mfut.y);
 		if (distx > 1 || disty > 1)
-			plr[pnum].MakePlrPath({ monsters[p->wParam1].data._mfut.x, monsters[p->wParam1].data._mfut.y }, FALSE);
+			plr[pnum].MakePlrPath({ monsters[p->wParam1].data._mfut.x, monsters[p->wParam1].data._mfut.y }, false);
 		plr[pnum].data.destAction = ACTION_ATTACKMON;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -1874,7 +1874,7 @@ DWORD On_ATTACKPID(TCmd *pCmd, int pnum)
 	TCmdParam1 *p = (TCmdParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
-		plr[pnum].MakePlrPath(plr[p->wParam1].futpos(), FALSE);
+		plr[pnum].MakePlrPath(plr[p->wParam1].futpos(), false);
 		plr[pnum].data.destAction = ACTION_ATTACKPLR;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -2029,7 +2029,7 @@ DWORD On_TALKXY(TCmd *pCmd, int pnum)
 	TCmdLocParam1 *p = (TCmdLocParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
-		plr[pnum].MakePlrPath({ p->x, p->y }, FALSE);
+		plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		plr[pnum].data.destAction = ACTION_TALK;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -2111,7 +2111,7 @@ DWORD On_AWAKEGOLEM(TCmd *pCmd, int pnum)
 		for (i = 0; i < nummissiles; i++) {
 			int mi = missileactive[i];
 			if (missile[mi]._mitype == MIS_GOLEM && missile[mi]._misource == pnum) {
-				addGolem = FALSE;
+				addGolem = false;
 				// BUGFIX: break, don't need to check the rest
 			}
 		}
@@ -2336,7 +2336,7 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs == 1)
 		msg_send_packet(pnum, p, sizeof(*p));
 	else {
-		plr[pnum].data._pLvlChanging = FALSE;
+		plr[pnum].data._pLvlChanging = false;
 		if (plr[pnum].data._pName[0] && !plr[pnum].data.plractive) {
 			plr[pnum].data.plractive = TRUE;
 			gbActivePlayers++;
@@ -2388,7 +2388,7 @@ DWORD On_ACTIVATEPORTAL(TCmd *pCmd, int pnum)
 				for (i = 0; i < nummissiles; i++) {
 					int mi = missileactive[i];
 					if (missile[mi]._mitype == MIS_TOWN && missile[mi]._misource == pnum) {
-						addPortal = FALSE;
+						addPortal = false;
 						// BUGFIX: break
 					}
 				}
@@ -2433,7 +2433,7 @@ DWORD On_RETOWN(TCmd *pCmd, int pnum)
 		msg_send_packet(pnum, pCmd, sizeof(*pCmd));
 	else {
 		if (pnum == myplr()) {
-			deathflag = FALSE;
+			deathflag = false;
 			gamemenu_off();
 		}
 		plr[pnum].RestartTownLvl();
@@ -2595,7 +2595,7 @@ DWORD On_SETSHIELD(TCmd *pCmd, int pnum)
 DWORD On_REMSHIELD(TCmd *pCmd, int pnum)
 {
 	if (gbBufferMsgs != 1)
-		plr[pnum].data.pManaShield = FALSE;
+		plr[pnum].data.pManaShield = false;
 
 	return sizeof(*pCmd);
 }

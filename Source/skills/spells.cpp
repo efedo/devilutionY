@@ -57,10 +57,10 @@ void UseMana(int id, int sn)
 		case RSPLTYPE_INVALID:
 			break;
 		case RSPLTYPE_SCROLL:
-			plr[id].inventory.RemoveScroll();
+			plr[id].inv.UseScroll();
 			break;
 		case RSPLTYPE_CHARGES:
-			plr[id].inventory.UseStaffCharge();
+			plr[id].inv.UseStaffCharge();
 			break;
 		case RSPLTYPE_SPELL:
 #ifdef _DEBUG
@@ -89,11 +89,11 @@ bool CheckSpell(int id, int sn, char st, bool manaonly)
 
 	result = TRUE;
 	if (!manaonly && pcurs != CURSOR_HAND) {
-		result = FALSE;
+		result = false;
 	} else {
 		if (st != RSPLTYPE_SKILL) {
 			if (GetSpellLevel(id, sn) <= 0) {
-				result = FALSE;
+				result = false;
 			} else {
 				result = plr[id].data._pMana >= GetManaAmount(id, sn);
 			}
@@ -157,7 +157,7 @@ static void PlacePlayer(int pnum)
 		}
 
 		if (!PosOkPlayer(pnum, n)) {
-			done = FALSE;
+			done = false;
 
 			for (max = 1, min = -1; min > -50 && !done; max++, min--) {
 				for (y = min; y <= max && !done; y++) {
@@ -195,7 +195,7 @@ void DoResurrect(int pnum, int rid)
 
 	if ((char)rid != -1 && plr[rid].data._pHitPoints == 0) {
 		if (rid == myplr()) {
-			deathflag = FALSE;
+			deathflag = false;
 			gamemenu_off();
 			drawhpflag = TRUE;
 			drawmanaflag = TRUE;
@@ -203,7 +203,7 @@ void DoResurrect(int pnum, int rid)
 
 		plr[rid].ClrPlrPath();
 		plr[rid].data.destAction = ACTION_NONE;
-		plr[rid].data._pInvincible = FALSE;
+		plr[rid].data._pInvincible = false;
 		PlacePlayer(rid);
 
 		hp = 640;
@@ -216,7 +216,7 @@ void DoResurrect(int pnum, int rid)
 		plr[rid].data._pMana = 0;
 		plr[rid].data._pManaBase = plr[rid].data._pMana + (plr[rid].data._pMaxManaBase - plr[rid].data._pMaxMana);
 
-		CalcPlrInv(rid, TRUE);
+		plr[rid].CalcPlrInv(TRUE);
 
 		if (plr[rid].data.plrlevel == lvl.currlevel) {
 			plr[rid].StartStand(plr[rid].data._pdir);

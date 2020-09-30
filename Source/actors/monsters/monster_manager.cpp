@@ -32,7 +32,7 @@ void MonsterManager::ClrAllMonsters()
 		Monst->_mAnimLen = 0;
 		Monst->_mAnimFrame = 0;
 		Monst->_mFlags = 0;
-		Monst->_mDelFlag = FALSE;
+		Monst->_mDelFlag = false;
 		Monst->_menemy = random_(89, gbActivePlayers);
 		Monst->_menemypos = plr[Monst->_menemy].futpos();
 	}
@@ -113,7 +113,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		zharflag = TRUE;
 		for (i = 0; i < lvl.themeCount; i++) {
 			if (i == zharlib && zharflag == TRUE) {
-				zharflag = FALSE;
+				zharflag = false;
 				p.x = 2 * lvl.themeLoc[i].x + 20;
 				p.y = 2 * lvl.themeLoc[i].y + 20;
 			}
@@ -147,7 +147,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		}
 	}
 	if (uniqindex == UMT_BUTCHER) {
-		done = FALSE;
+		done = false;
 		for (p.y = 0; p.y < MAXDUNY && !done; p.y++) {
 			for (p.x = 0; p.x < MAXDUNX && !done; p.x++) {
 				done = grid[p.x][p.y].getPiece() == 367;

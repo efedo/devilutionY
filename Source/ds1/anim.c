@@ -29,7 +29,7 @@ int anim_load_dcc(
    lay = & cof->lay_inf[lay_idx];
 
    // load dcc file
-   entry = misc_load_mpq_file(name, & buff, & len, FALSE);
+   entry = misc_load_mpq_file(name, & buff, & len, false);
    if (entry == -1)
       return 1;
 
@@ -347,7 +347,7 @@ COF_S * anim_load_cof(char * base, char * tok, char * mod, char * clas,
    // search line in objects.txt for this ID
    if (id)
    {
-      done = FALSE;
+      done = false;
       i = 0;
       line = 0;
       glb_ds1edit.obj_desc[obj_line].objects_line = -1;
@@ -581,7 +581,7 @@ void anim_update_gfx(int progress)
    {
       if (glb_ds1[d].name[0] == 0)
          continue;
-      ds1_anim_used = FALSE;
+      ds1_anim_used = false;
       for (o=0; o < glb_ds1[d].obj_num; o++)
       {
          idx = glb_ds1[d].obj[o].desc_idx;
@@ -594,7 +594,7 @@ void anim_update_gfx(int progress)
             }
          }
       }
-      if (ds1_anim_used == FALSE)
+      if (ds1_anim_used == false)
          glb_ds1[d].animations_layer_mask = 0;
    }
 }

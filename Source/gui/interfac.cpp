@@ -55,7 +55,7 @@ void DrawCutscene()
 
 	unlock_buf(1);
 	force_redraw = 255;
-	scrollrt_draw_game_screen(FALSE);
+	scrollrt_draw_game_screen(false);
 }
 
 void DrawProgress(int screen_x, int screen_y, int progress_id)
@@ -74,7 +74,7 @@ void ShowProgress(unsigned int uMsg)
 {
 	WNDPROC saveProc;
 
-	gbSomebodyWonGameKludge = FALSE;
+	gbSomebodyWonGameKludge = false;
 	plrmsg_delay(TRUE);
 
 	assert(ghMainWnd);
@@ -121,7 +121,7 @@ void ShowProgress(unsigned int uMsg)
 		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
-		LoadGameLevel(FALSE, 0);
+		LoadGameLevel(false, 0);
 		IncProgress();
 		break;
 	case WM_DIABPREVLVL:
@@ -137,7 +137,7 @@ void ShowProgress(unsigned int uMsg)
 		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
-		LoadGameLevel(FALSE, 1);
+		LoadGameLevel(false, 1);
 		IncProgress();
 		break;
 	case WM_DIABSETLVL:
@@ -153,7 +153,7 @@ void ShowProgress(unsigned int uMsg)
 		lvl.setType(lvl.setlvltype);
 		FreeGameMem();
 		IncProgress();
-		LoadGameLevel(FALSE, 2);
+		LoadGameLevel(false, 2);
 		IncProgress();
 		break;
 	case WM_DIABRTNLVL:
@@ -164,11 +164,11 @@ void ShowProgress(unsigned int uMsg)
 			DeltaSaveLevel();
 		}
 		IncProgress();
-		lvl.setlevel = FALSE;
+		lvl.setlevel = false;
 		FreeGameMem();
 		IncProgress();
 		GetReturnLvlPos();
-		LoadGameLevel(FALSE, 3);
+		LoadGameLevel(false, 3);
 		IncProgress();
 		break;
 	case WM_DIABWARPLVL:
@@ -182,7 +182,7 @@ void ShowProgress(unsigned int uMsg)
 		FreeGameMem();
 		GetPortalLevel();
 		IncProgress();
-		LoadGameLevel(FALSE, 5);
+		LoadGameLevel(false, 5);
 		IncProgress();
 		break;
 	case WM_DIABTOWNWARP:
@@ -198,7 +198,7 @@ void ShowProgress(unsigned int uMsg)
 		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
-		LoadGameLevel(FALSE, 6);
+		LoadGameLevel(false, 6);
 		IncProgress();
 		break;
 	case WM_DIABTWARPUP:
@@ -214,7 +214,7 @@ void ShowProgress(unsigned int uMsg)
 		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
-		LoadGameLevel(FALSE, 7);
+		LoadGameLevel(false, 7);
 		IncProgress();
 		break;
 	case WM_DIABRETOWN:
@@ -230,7 +230,7 @@ void ShowProgress(unsigned int uMsg)
 		lvl.setType(DunType(gnLevelTypeTbl[lvl.currlevel]));
 		assert(myplr().data.plrlevel == lvl.currlevel);
 		IncProgress();
-		LoadGameLevel(FALSE, 0);
+		LoadGameLevel(false, 0);
 		IncProgress();
 		break;
 	}
@@ -244,14 +244,14 @@ void ShowProgress(unsigned int uMsg)
 	assert(saveProc == DisableInputWndProc);
 
 	NetSendCmdLocParam1(TRUE, CMD_PLAYER_JOINLEVEL, myplr().pos(), myplr().data.plrlevel);
-	plrmsg_delay(FALSE);
+	plrmsg_delay(false);
 	ResetPal();
 
 	if (gbSomebodyWonGameKludge && myplr().data.plrlevel == 16) {
 		PrepDoEnding();
 	}
 
-	gbSomebodyWonGameKludge = FALSE;
+	gbSomebodyWonGameKludge = false;
 }
 
 void FreeInterface()

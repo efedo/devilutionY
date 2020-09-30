@@ -211,7 +211,7 @@ void edittile_paste_preview(int ds1_idx, int dx, int dy, PASTE_POS_S * p)
    // if tiles are 'cut' instead of 'copy', then delete the source tiles
    if (p->is_cut == TRUE)
    {
-      if (p->cut_saved == FALSE)
+      if (p->cut_saved == false)
       {
          // with UNDO
          edittile_delete_selected_tiles(p->src_ds1_idx);
@@ -373,7 +373,7 @@ void edittile_paste_final(int ds1_idx)
          w2    = glb_ds1[ds1_idx].wall_buff2   + tw;
 
          // undo managment
-         make_undo = FALSE;
+         make_undo = false;
          for (i=0; i<glb_ds1[ds1_idx].floor_num; i++)
          {
             if (f_ptr[i].prop1 != f2[i].prop1)
@@ -509,7 +509,7 @@ void edittile_delete_selected_tiles(int ds1_idx)
          w_ptr = glb_ds1[ds1_idx].wall_buff   + tw;
 
          // undo managment
-         make_undo = FALSE;
+         make_undo = false;
          for (i=0; i<glb_ds1[ds1_idx].floor_num; i++)
          {
             if (IS_SELECTED(f_ptr[i].flags))
@@ -728,7 +728,7 @@ void edittile_deselect_one(int ds1_idx, int x, int y)
    CELL_S_S * s_ptr;
    CELL_W_S * w_ptr;
    UNDO_S   * u  = & glb_ds1[ds1_idx].undo;
-   int      n, tf, ts, tw, make_undo = FALSE;
+   int      n, tf, ts, tw, make_undo = false;
 
    
    tf    = (y * glb_ds1[ds1_idx].floor_line)  + (x * glb_ds1[ds1_idx].floor_num);
@@ -800,7 +800,7 @@ void edittile_deselect_one_completly(int ds1_idx, int x, int y)
    CELL_S_S * s_ptr;
    CELL_W_S * w_ptr;
    UNDO_S   * u  = & glb_ds1[ds1_idx].undo;
-   int      n, tf, ts, tw, make_undo = FALSE;
+   int      n, tf, ts, tw, make_undo = false;
 
 
    tf    = (y * glb_ds1[ds1_idx].floor_line)  + (x * glb_ds1[ds1_idx].floor_num);
@@ -860,7 +860,7 @@ void edittile_select_one(int ds1_idx, int x, int y)
    CELL_S_S * s_ptr;
    CELL_W_S * w_ptr;
    UNDO_S   * u  = & glb_ds1[ds1_idx].undo;
-   int      n, tf, ts, tw, make_undo = FALSE;
+   int      n, tf, ts, tw, make_undo = false;
 
 
    tf    = (y * glb_ds1[ds1_idx].floor_line)  + (x * glb_ds1[ds1_idx].floor_num);
@@ -932,7 +932,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
    CELL_S_S * s_ptr;
    CELL_W_S * w_ptr;
    UNDO_S   * u  = & glb_ds1[ds1_idx].undo;
-   int      n, tf, ts, tw, make_undo = FALSE;
+   int      n, tf, ts, tw, make_undo = false;
 
 
    tf    = (y * glb_ds1[ds1_idx].floor_line)  + (x * glb_ds1[ds1_idx].floor_num);
@@ -1108,7 +1108,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
       for (x=0; x < glb_ds1[ds1_idx].width; x++)
       {
          // set undo to default "don't save this tile flags"
-         make_undo = FALSE;
+         make_undo = false;
 
          // check all layers to see if same as any ref
          
@@ -1120,7 +1120,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
             u->dat_flg.f[i] = 0; // don't save floor[].flag
             
             // is same as one of the ref ?
-            is_same = FALSE;
+            is_same = false;
             for (n=0; n < glb_ds1[ds1_idx].floor_num; n++)
             {
                if (fl_ref[n])
@@ -1171,7 +1171,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   }
                }
             }
-            if (is_same == FALSE)
+            if (is_same == false)
             {
                // different
                
@@ -1205,7 +1205,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
             u->dat_flg.s[i] = 0; // don't save shadow[].flag
             
             // is same as one of the ref ?
-            is_same = FALSE;
+            is_same = false;
             for (n=0; n < glb_ds1[ds1_idx].shadow_num; n++)
             {
                if (sh_ref[n])
@@ -1256,7 +1256,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   }
                }
             }
-            if (is_same == FALSE)
+            if (is_same == false)
             {
                // different
                
@@ -1290,7 +1290,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
             u->dat_flg.w[i] = 0; // don't save wall[].flag
             
             // is same as one of the ref ?
-            is_same = FALSE;
+            is_same = false;
             for (n=0; n < glb_ds1[ds1_idx].wall_num; n++)
             {
                if (wa_ref[n])
@@ -1341,7 +1341,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   }
                }
             }
-            if (is_same == FALSE)
+            if (is_same == false)
             {
                // different
                

@@ -33,7 +33,7 @@ void ItemManager::addItem(const ItemID id, Item * item)
 	list.emplace(id, Item(id));
 }
 
-void ItemManager::removeItem(const ItemID id)
+void ItemManager::destroyItem(const ItemID id)
 {
 	if (!list.count(id)) app_fatal("Illegal item %d", id);
 	list.erase(id);

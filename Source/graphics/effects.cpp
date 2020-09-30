@@ -902,7 +902,7 @@ bool effect_is_playing(int nSFX)
 	if (sfx->bFlags & sfx_STREAM)
 		return sfx == sgpStreamSFX;
 
-	return FALSE;
+	return false;
 }
 
 void stream_stop()
@@ -1002,14 +1002,14 @@ bool calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 	*plPan = pan;
 
 	if (abs(pan) > 6400)
-		return FALSE;
+		return false;
 
 	volume = abs(pos.x) > abs(pos.y) ? abs(pos.x) : abs(pos.y);
 	volume *= 64;
 	*plVolume = volume;
 
 	if (volume >= 6400)
-		return FALSE;
+		return false;
 
 	*plVolume = -volume;
 
@@ -1019,7 +1019,7 @@ bool calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 void PlaySFX(int psfx)
 {
 	psfx = RndSFX(psfx);
-	PlaySFX_priv(&sgSFX[psfx], FALSE, { 0, 0 });
+	PlaySFX_priv(&sgSFX[psfx], false, { 0, 0 });
 }
 
 void PlaySFX_priv(TSFX *pSFX, bool loc, V2Di pos)

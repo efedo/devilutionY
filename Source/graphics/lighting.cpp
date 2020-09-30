@@ -682,7 +682,7 @@ void DoVision(V2Di pos, int nRadius, bool doautomap, bool visible)
 
 	for (v = 0; v < 4; v++) {
 		for (j = 0; j < 23; j++) {
-			nBlockerFlag = FALSE;
+			nBlockerFlag = false;
 			nLineLen = 2 * (nRadius - RadiusAdj[j]);
 			for (k = 0; k < nLineLen && !nBlockerFlag; k += 2) {
 				x1adj = 0;
@@ -980,8 +980,8 @@ void InitLighting()
 	int i;
 
 	numlights = 0;
-	dolighting = FALSE;
-	lightflag = FALSE;
+	dolighting = false;
+	lightflag = false;
 
 	for (i = 0; i < MAXLIGHTS; i++) {
 		lightactive[i] = i;
@@ -998,8 +998,8 @@ int AddLight(V2Di pos, int r)
 		LightList[lid]._l = pos;
 		LightList[lid]._lradius = r;
 		LightList[lid]._off = { 0, 0 };
-		LightList[lid]._ldel = FALSE;
-		LightList[lid]._lunflag = FALSE;
+		LightList[lid]._ldel = false;
+		LightList[lid]._lunflag = false;
 		dolighting = TRUE;
 	}
 	return lid;
@@ -1073,7 +1073,7 @@ void ProcessLightList()
 			}
 			if (LightList[j]._lunflag) {
 				DoUnLight(LightList[j]._lun, LightList[j]._lunr);
-				LightList[j]._lunflag = FALSE;
+				LightList[j]._lunflag = false;
 			}
 		}
 		for (i = 0; i < numlights; i++) {
@@ -1095,7 +1095,7 @@ void ProcessLightList()
 		}
 	}
 
-	dolighting = FALSE;
+	dolighting = false;
 }
 
 void SavePreLighting()
@@ -1109,11 +1109,11 @@ void InitVision()
 	int i;
 
 	numvision = 0;
-	dovision = FALSE;
+	dovision = false;
 	visionid = 1;
 
 	for (i = 0; i < lvl.TransVal; i++) {
-		lvl.TransList[i] = FALSE;
+		lvl.TransList[i] = false;
 	}
 }
 
@@ -1175,11 +1175,11 @@ void ProcessVisionList()
 			}
 			if (VisionList[i]._lunflag) {
 				DoUnVision(VisionList[i]._lun, VisionList[i]._lunr);
-				VisionList[i]._lunflag = FALSE;
+				VisionList[i]._lunflag = false;
 			}
 		}
 		for (i = 0; i < lvl.TransVal; i++) {
-			lvl.TransList[i] = FALSE;
+			lvl.TransList[i] = false;
 		}
 		for (i = 0; i < numvision; i++) {
 			if (!VisionList[i]._ldel) {
@@ -1191,7 +1191,7 @@ void ProcessVisionList()
 			}
 		}
 		do {
-			delflag = FALSE;
+			delflag = false;
 			for (i = 0; i < numvision; i++) {
 				if (VisionList[i]._ldel) {
 					numvision--;
@@ -1204,7 +1204,7 @@ void ProcessVisionList()
 		} while (delflag);
 	}
 
-	dovision = FALSE;
+	dovision = false;
 }
 
 void lighting_color_cycling()

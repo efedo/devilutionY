@@ -19,7 +19,7 @@ public:
 private:
 	friend class Item;
 	void ItemManager::addItem(const ItemID id, Item *item);
-	void ItemManager::removeItem(const ItemID id);
+	void ItemManager::destroyItem(const ItemID id);
 	std::unordered_map<ItemID, Item *> list;
 };
 

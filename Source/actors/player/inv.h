@@ -22,9 +22,6 @@ public:
 	void InitInv();
 	void FreeInvGFX();
 
-	// Misc
-	InvSlot * GetCursorInvSlot(V2Di pos);
-
 	// Draw
 	void DrawInvSlotBack(RECT32 r);
 	void DrawBodySlot(BodyLoc bodyloc);
@@ -34,68 +31,67 @@ public:
 	void DrawInvMsg(char *msg);
 	char CheckInvHLight();
 
-	// Place into inventory
-	bool AutoPlaceBag(V2Di size, bool saveflag);		// Place in bag
-	bool AutoPlaceBelt(bool saveflag);					// Place in belt
-	bool AutoPlaceSpecial(V2Di size, bool saveflag);	// Place anywhere
-	bool AutoPlaceGold();
+	// Cut and paste from inventory
+	InvSlot *GetCursorInvSlot(V2Di pos);
+	bool tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap);
+	bool tryCutSlot(InvSlot &slot);
+	bool tryPaste(V2Di pos);
+	bool tryCut(V2Di pos);
 
-	// Pick up item
-	void PickupItem(ItemID id);
-	void AutoPickUpItem(Item &item);
+	// Place into inventory (from HAND)
+	Item * GetGoldSeed(); // Eventually will generalize this to all stackables
+	void AddHeldGoldToStack(Item *item);  // Adds gold in hand to specified stack; Eventually will generalize this to all stackables
+	bool tryEquipHeld(bool checkOnly);
+	bool stashHeldIntoBag(bool checkOnly);		// Place in bag
+	bool stashHeldIntoBelt(bool checkOnly);            // Place in belt
+	bool stashHeld(bool checkOnly);  // Automatically tries to stash item from hand
 
-	// Drop item
-	bool GetDropPos(V2Di & pos); // returns valid pos
+	// Pick up item from ground
+	void PickupItem(V2Di pos);
+	void PickupAndStashItem(V2Di pos);
+
+	// Drop item onto ground
+	bool GetDropPos(V2Di & pos); // returns valid pos if available
 	Item *DropItem(V2Di pos);
 	Item *DropItemSync(V2Di pos, int idx, WORD icreateinfo, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, DWORD ibuff);
 	bool DropItemBeforeTrig();
 
-	// Cut and paste from inventory
-	void CheckInvPaste(V2Di pos);
-	void CheckInvCut(V2Di pos);
-
 	// Access inventory slots
-	InvSlot & getBodySlot(BodyLoc) const;
+	InvSlot & getBodySlot(BodyLoc) const; // Enforce body only
+	InvSlot & getLeftHandSlot() const;
+	InvSlot & getRightHandSlot() const;
 	InvSlot & getBeltSlot(uint8_t) const;
 	InvSlot & getBagSlot(uint8_t) const;
+	InvSlot & getBagSlot(uint8_t, uint8_t) const; //yy = 10 * (i / 10); //xx = i % 10;
 	InvSlot * getEmptyBagSlot() const;
-	InvSlot * getHeldSlot() const;
-
-	// Access inventory items
-	Item * const getBodyItem(BodyLoc) const;
-	Item * const getBeltItem(uint8_t) const;
-	Item * const getBagItem(uint8_t) const;
-	Item * const getBagItem(uint8_t, uint8_t) const;
-	Item * const getHeldItem() const;
-	//yy = 10 * (i / 10); //xx = i % 10;
-
+	InvSlot & getHeldSlot() const;
+	Item * getHeldItem() const; // FOr now, only funtion to directly return an item (based on freq. of usage)
 
 	// Modify inventory items
-	void removeItem(InvSlot &);
-	void removeBeltItem(uint8_t);
-	void removeBagItem(uint8_t);
+	int SwapHeldItem(InvSlot &a);
+	int SwapHeldItem(std::unique_ptr<Item> & a);
+		/*CheckQuestItem();
+		CheckBookLevel();
+		CheckItemStats();*/
 
-	void setItem(const InvSlot &, const Item * const);
-	void setBodyItem(BodyLoc, const Item *const);
-	void setBagItem(uint8_t, uint8_t, const Item * const);
-	void setBeltItem(uint8_t, const Item * const);
-	void setHeldItem(const Item *const);
+	//	CheckQuestItem();
+	//CheckBookLevel();
+	//CheckItemStats();
+	int SwapSlots(InvSlot &a, InvSlot &b);  // Not for held items!... check!
+
+	void destroyItem(InvSlot &);
 
 	// Find Items
 	Item *const findBagItemType(int);
 
 	// Misc
-	bool TryArmWeapon();
 	void CheckItemStats();
 	void CheckBookLevel();
 	void CheckQuestItem();
 	bool UseInvItem(InvSlot &);
-	void UseStaffCharge();
-	bool UseStaff();
-	bool UseScroll();
-	void RemoveScroll();
+	bool UseStaff(bool checkOnly);
+	bool UseScroll(bool checkOnly);
 	int CalculateGold();
-	int SwapItem(Item *a, Item *b);
 	void CheckInvItem();
 	void CheckInvScrn();
 	//int FindGetItem(int idx, WORD ci, int iseed);
@@ -110,13 +106,7 @@ private:
 
 	// Data
 	struct {
-		InvSlot head;
-		InvSlot ring_left;
-		InvSlot ring_right;
-		InvSlot amulet;
-		InvSlot hand_left;
-		InvSlot hand_right;
-		InvSlot chest;
+		std::array<InvSlot, 7> slots;
 		// InvSlot belt; (for DII)
 	} body;
 
@@ -125,7 +115,7 @@ private:
 	} belt;
 
 	struct {
-		std::array<InvSlot, NUM_INV_GRID_ELEM> grid;
+		std::array<InvSlot, NUM_INV_GRID_ELEM> slots;
 	} bag;
 
 	struct {

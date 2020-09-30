@@ -22,7 +22,8 @@ public:
 	Item &operator=(const Item &) = delete; // no explicit copies
 
 	Player &owner();
-	ItemID id;
+
+	V2Di getSize();
 
 	bool GetItemSpace(V2Di pos);
 	void GetSuperItemSpace(V2Di pos);
@@ -47,7 +48,6 @@ public:
 	void SetupAllUseful(int iseed, int lvl);
 
 	void RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue);
-	void RecreateEar(WORD ic, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, int ibuff);
 	void RecreateSmithItem(int idx, int lvl, int iseed);
 	void RecreatePremiumItem(int idx, int plvl, int iseed);
 	void RecreateBoyItem(int idx, int lvl, int iseed);
@@ -56,6 +56,7 @@ public:
 	void RecreateTownItem(int idx, WORD icreateinfo, int iseed, int ivalue);
 private:
 	Player *_owner = 0;
+	ItemID id; // only used for saving
 };
 
 DEVILUTION_END_NAMESPACE

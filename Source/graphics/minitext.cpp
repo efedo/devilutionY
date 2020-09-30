@@ -64,13 +64,13 @@ void InitQuestText()
 {
 	pMedTextCels = LoadFileInMem("Data\\MedTextS.CEL", NULL);
 	pTextBoxCels = LoadFileInMem("Data\\TextBox.CEL", NULL);
-	qtextflag = FALSE;
+	qtextflag = false;
 }
 
 void InitQTextMsg(int m)
 {
 	if (alltext[m].scrlltxt) {
-		questlog = FALSE;
+		questlog = false;
 		qtextptr = alltext[m].txtstr;
 		qtextflag = TRUE;
 		qtexty = 500;
@@ -121,7 +121,7 @@ void DrawQText()
 	tx = 48 + PANEL_X;
 	ty = qtexty;
 
-	doneflag = FALSE;
+	doneflag = false;
 	while (!doneflag) {
 		w = 0;
 		s = p;
@@ -174,7 +174,7 @@ void DrawQText()
 			qtexty += 38;
 			qtextptr = pnl;
 			if (*pnl == '|') {
-				qtextflag = FALSE;
+				qtextflag = false;
 			}
 			break;
 		}

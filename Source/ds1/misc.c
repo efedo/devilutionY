@@ -151,7 +151,7 @@ void misc_check_tiles_conflicts(int ds1_idx)
 {
    BLOCK_TABLE_S * bt = glb_ds1[ds1_idx].block_table;
    long          old_o, old_m, old_s, o, m, s;
-   int           old_d, d, done = FALSE, done2, start_i = 0, i, end_i, r;
+   int           old_d, d, done = false, done2, start_i = 0, i, end_i, r;
    int           last_block, first_block;
    int           bt_max = glb_ds1[ds1_idx].bt_num, b;
    long          sum_rarity, max_rarity;
@@ -164,10 +164,10 @@ void misc_check_tiles_conflicts(int ds1_idx)
       old_s = bt[start_i].sub_index;
       old_d = bt[start_i].dt1_idx;
 
-      bt[start_i].used_by_game = bt[start_i].used_by_editor = FALSE;
+      bt[start_i].used_by_game = bt[start_i].used_by_editor = false;
 
       // how many tiles have the same Orientation / Main index / Sub index ?
-      done2       = FALSE;
+      done2       = false;
       sum_rarity  = bt[start_i].rarity;
       last_block  = start_i;
       i           = start_i + 1;
@@ -187,7 +187,7 @@ void misc_check_tiles_conflicts(int ds1_idx)
             done2 = TRUE;
          else
          {
-            bt[i].used_by_game = bt[i].used_by_editor = FALSE;
+            bt[i].used_by_game = bt[i].used_by_editor = false;
             if (d == old_d)
                last_block = i; // last block of the first dt1
             if (r)
@@ -404,7 +404,7 @@ void misc_make_block_table(int ds1_idx)
          glb_ds1[ds1_idx].block_table[b].type,
          glb_ds1[ds1_idx].block_table[b].zero_line
       );
-      glb_ds1[ds1_idx].block_table[b].conflict = FALSE;
+      glb_ds1[ds1_idx].block_table[b].conflict = false;
       if (glb_ds1[ds1_idx].block_table[b].rarity == 0)
       {
          if (b>1)
@@ -548,7 +548,7 @@ void misc_make_cmaps(void)
       {
          fprintf(stderr, ".");
          sprintf(tmp, "%scmap%i_%i.bin", glb_ds1edit_data_dir, a, cm);
-         cmap_ok = FALSE;
+         cmap_ok = false;
          if (file_exists(tmp, -1, NULL) && (glb_ds1edit.pal_loaded[a] == TRUE))
          {
             // load the colormap from disk, instead of making it
@@ -564,7 +564,7 @@ void misc_make_cmaps(void)
             }
          }
          
-         if (cmap_ok == FALSE)
+         if (cmap_ok == false)
          {
             // not found or can't be open, so create it
 
@@ -651,7 +651,7 @@ int misc_load_pal_from_disk(int pal_idx)
          return TRUE;
       }
    }
-   return FALSE;
+   return false;
 }
 
 
@@ -1222,7 +1222,7 @@ int misc_load_mpq_file(char * filename, char ** buffer, long * buf_len, int outp
    // 2nd try, in a mpq
    for (i=0; i<MAX_MPQ_FILE; i++)
    {
-      if (glb_mpq_struct[i].is_open != FALSE)
+      if (glb_mpq_struct[i].is_open != false)
       {
          glb_mpq = & glb_mpq_struct[i];
          entry = mpq_batch_load_in_mem(
@@ -1298,7 +1298,7 @@ int misc_is_numerical(char * str)
          // ok
       }
       else
-         return FALSE;
+         return false;
    }
    return TRUE;
 }
@@ -1342,7 +1342,7 @@ void misc_pl2_correct(int i)
 int misc_cmd_line_parse(int argc, char ** argv)
 {
    int  i                  = 0;
-   int  force_dt1_present  = FALSE;
+   int  force_dt1_present  = false;
    char * ext              = NULL;
    int  n                  = 0;
    int  lvltype_id_found   = 0;
@@ -1460,7 +1460,7 @@ int misc_cmd_line_parse(int argc, char ** argv)
          // -no_check_act is a flag
          glb_ds1edit.cmd_line.no_check_act = TRUE;
       }
-      else if ((force_dt1_present == FALSE) && (glb_ds1edit.cmd_line.ds1_filename != NULL))
+      else if ((force_dt1_present == false) && (glb_ds1edit.cmd_line.ds1_filename != NULL))
       {
          if ( ! lvltype_id_found)
          {

@@ -73,7 +73,7 @@ public:
 	void StartPlrBlock(Dir dir);
 	void StartSpell(Dir d, V2Di c);
 	void StartPlrHit(int dam, bool forcehit);
-	void StartPlayerKill(int earflag);
+	void StartPlayerKill();
 	bool PM_DoAttack();
 	bool PM_DoRangeAttack();
 	bool PM_DoBlock();
@@ -83,7 +83,7 @@ public:
 	bool PlrHitMonst(int m);
 	bool PlrHitPlr(char p);
 	bool PlrHitObj(V2Di m);
-	void j_StartPlayerKill(int earflag);
+	void j_StartPlayerKill();
 	void RemovePlrMissiles();
 
 	void AddPlrExperience(int lvl, int exp);
@@ -101,11 +101,10 @@ public:
 	void InitLevelChange();
 	void StartNewLvl(int fom, int lvl);
 	void StartWarpLvl(int pidx);
-	bool WeaponDur(int durrnd);
-	void ShieldDur();
-	void ArmorDur();
 
-	void SyncPlrKill(int earflag);
+
+
+	void SyncPlrKill();
 	void SyncPlrAnim();
 	void SyncInitPlrPos();
 	void SyncInitPlr();
@@ -151,9 +150,12 @@ public:
 	void CalcPlrItemMin();
 	void CalcPlrBookVals();
 	void CalcPlrInv(bool Loadgfx);
-	void GetGoldSeed(ItemStruct *h);
 	void CreatePlrItems();
 	void UseItem(int Mid, int spl);
+	bool DurReduce(BodyLoc loc, int itmclass, int itmtype);
+	bool WeaponDur(int durrnd);  // reduces weapon and/or shield dur
+	void ShieldDur();            // reduces shield dur
+	void ArmorDur();             // reduces armor dur
 
 	PlayerStruct data;
 	PlayerInventory inv;

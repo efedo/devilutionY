@@ -375,7 +375,7 @@ static void DRLG_L4Shadows()
 
 	for (y = 1; y < DMAXY; y++) {
 		for (x = 1; x < DMAXY; x++) {
-			okflag = FALSE;
+			okflag = false;
 			if (dgrid[x][y].dungeon == 3) {
 				okflag = TRUE;
 			}
@@ -418,7 +418,7 @@ static void InitL4Dungeon()
 
 void DRLG_LoadL4SP()
 {
-	setloadflag = FALSE;
+	setloadflag = false;
 	if (QuestStatus(Q_WARLORD)) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 		setloadflag = TRUE;
@@ -490,7 +490,7 @@ static int L4HWallOk(int i, int j)
 		}
 	}
 
-	wallok = FALSE;
+	wallok = false;
 
 	if (dgrid[i + x][j].dungeon == 10) {
 		wallok = TRUE;
@@ -514,7 +514,7 @@ static int L4HWallOk(int i, int j)
 		wallok = TRUE;
 	}
 	if (x <= 3) {
-		wallok = FALSE;
+		wallok = false;
 	}
 
 	if (wallok) {
@@ -541,7 +541,7 @@ static int L4VWallOk(int i, int j)
 		}
 	}
 
-	wallok = FALSE;
+	wallok = false;
 
 	if (dgrid[i][j + y].dungeon == 8) {
 		wallok = TRUE;
@@ -568,7 +568,7 @@ static int L4VWallOk(int i, int j)
 		wallok = TRUE;
 	}
 	if (y <= 3) {
-		wallok = FALSE;
+		wallok = false;
 	}
 
 	if (wallok) {
@@ -1208,7 +1208,7 @@ static void uShape()
 	for (j = 19; j >= 0; j--) {
 		for (i = 19; i >= 0; i--) {
 			if (dung[i][j] != 1) {
-				hallok[j] = FALSE;
+				hallok[j] = false;
 			}
 			if (dung[i][j] == 1) {
 				// BUGFIX: check that i + 1 < 20 and j + 1 < 20 (fixed)
@@ -1216,7 +1216,7 @@ static void uShape()
 				    && dung[i][j + 1] == 1 && dung[i + 1][j + 1] == 0) {
 					hallok[j] = TRUE;
 				} else {
-					hallok[j] = FALSE;
+					hallok[j] = false;
 				}
 				i = 0;
 			}
@@ -1246,7 +1246,7 @@ static void uShape()
 	for (i = 19; i >= 0; i--) {
 		for (j = 19; j >= 0; j--) {
 			if (dung[i][j] != 1) {
-				hallok[i] = FALSE;
+				hallok[i] = false;
 			}
 			if (dung[i][j] == 1) {
 				// BUGFIX: check that i + 1 < 20 and j + 1 < 20 (fixed)
@@ -1254,7 +1254,7 @@ static void uShape()
 				    && dung[i + 1][j] == 1 && dung[i + 1][j + 1] == 0) {
 					hallok[i] = TRUE;
 				} else {
-					hallok[i] = FALSE;
+					hallok[i] = false;
 				}
 				j = 0;
 			}
@@ -1316,16 +1316,16 @@ static bool L4checkRoom(int x, int y, int width, int height)
 	int i, j;
 
 	if (x <= 0 || y <= 0) {
-		return FALSE;
+		return false;
 	}
 
 	for (j = 0; j < height; j++) {
 		for (i = 0; i < width; i++) {
 			if (i + x < 0 || i + x >= 20 || j + y < 0 || j + y >= 20) {
-				return FALSE;
+				return false;
 			}
 			if (dung[i + x][j + y] != 0) {
-				return FALSE;
+				return false;
 			}
 		}
 	}
@@ -1343,7 +1343,7 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 	int dirProb = random_(0, 4);
 
 	switch (dir == 1 ? dirProb != 0 : dirProb == 0) {
-	case FALSE:
+	case false:
 		num = 0;
 		do {
 			cw = (random_(0, 5) + 2) & ~1;
@@ -1352,7 +1352,7 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 			cx1 = x - cw;
 			ran = L4checkRoom(cx1 - 1, cy1 - 1, ch + 2, cw + 1); /// BUGFIX: swap args 3 and 4 ("ch+2" and "cw+1")
 			num++;
-		} while (ran == FALSE && num < 20);
+		} while (ran == false && num < 20);
 
 		if (ran == TRUE)
 			L4drawRoom(cx1, cy1, cw, ch);
@@ -1374,7 +1374,7 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 			ry = y - height;
 			ran = L4checkRoom(rx - 1, ry - 1, width + 2, height + 1);
 			num++;
-		} while (ran == FALSE && num < 20);
+		} while (ran == false && num < 20);
 
 		if (ran == TRUE)
 			L4drawRoom(rx, ry, width, height);
@@ -1547,30 +1547,30 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 	for (i = 0; i < numt; i++) {
 		sx = random_(0, DMAXX - sw);
 		sy = random_(0, DMAXY - sh);
-		found = FALSE;
+		found = false;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
 			found = TRUE;
 			if (sx >= SP4x1 && sx <= SP4x2 && sy >= SP4y1 && sy <= SP4y2) {
-				found = FALSE;
+				found = false;
 			}
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
 				sx = random_(0, DMAXX - sw);
 				sy = random_(0, DMAXY - sh);
-				found = FALSE;
+				found = false;
 			}
 			if (cy != -1 && sy >= cy - sh && sy <= cy + 12) {
 				sx = random_(0, DMAXX - sw);
 				sy = random_(0, DMAXY - sh);
-				found = FALSE;
+				found = false;
 			}
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
-						found = FALSE;
+						found = false;
 					}
 					if (dgrid[xx + sx][yy + sy].dflags != 0) {
-						found = FALSE;
+						found = false;
 					}
 					ii++;
 				}
@@ -1587,7 +1587,7 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 			}
 		}
 		if (bailcnt >= 200) {
-			return FALSE;
+			return false;
 		}
 		ii = sw * sh + 2;
 		for (yy = 0; yy < sh; yy++) {
@@ -1694,7 +1694,7 @@ bool IsDURWall(char d)
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool IsDLLWall(char dd)
@@ -1709,7 +1709,7 @@ bool IsDLLWall(char dd)
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 static void DRLG_L4TransFix()
@@ -1949,7 +1949,7 @@ static void DRLG_L4(int entry)
 				dgrid[i][j].pdungeon = dgrid[i][j].dungeon;
 			}
 		}
-		DRLG_LoadDiabQuads(FALSE);
+		DRLG_LoadDiabQuads(false);
 	}
 }
 

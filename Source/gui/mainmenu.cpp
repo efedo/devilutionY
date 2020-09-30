@@ -58,7 +58,7 @@ bool mainmenu_select_hero_dialog(
 		if (dlgresult == SELHERO_CONTINUE)
 			gbLoadGame = TRUE;
 		else
-			gbLoadGame = FALSE;
+			gbLoadGame = false;
 
 	} else if (!UiSelHeroMultDialog(
 	               pfile_ui_set_hero_infos,
@@ -72,7 +72,7 @@ bool mainmenu_select_hero_dialog(
 	}
 	if (dlgresult == SELHERO_PREVIOUS) {
 		SErrSetLastError(1223);
-		return FALSE;
+		return false;
 	}
 
 	pfile_create_player_description(cdesc, cdlen);
@@ -93,7 +93,7 @@ void mainmenu_loop()
 	bool done;
 	int menu;
 
-	done = FALSE;
+	done = false;
 	mainmenu_refresh_music();
 
 	do {

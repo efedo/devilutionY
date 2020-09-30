@@ -11,23 +11,61 @@ bool PlayerInventory::invflag = false; // Inventory is open flag???
 uint8_t *pInvCels = 0;
 int users = 0;
 
-bool PlayerInventory::AutoPlaceBag(V2Di size, bool saveflag)
+Item *const PlayerInventory::findBagItemType(int itemType)
+{
+	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
+		Item *item = getBagSlot(i).item();
+		if (!item) continue;
+		if (item->_itype == itemType) return item;
+	}
+	return 0;
+}
+
+Item * PlayerInventory::GetGoldSeed()
+{
+	Item *item = findBagItemType(ITYPE_GOLD);
+
+	if (!item) {
+		InvSlot *slot = getEmptyBagSlot();
+		if (slot) {
+			slot->takeItem(std::make_unique<Item>());
+			return slot->item();
+		}
+	}
+	return 0;
+}
+
+bool PlayerInventory::stashHeldIntoBag(bool checkOnly)
 {
 	// Find empty spot
 	const int numrows = 10;
 	const int numcols = 4;
 	bool goodpos = false;
 	int i, j;
+
+	// If gold, handle specially (eventually will encompass all stackables)
+	if (getHeldItem()->_itype == ITYPE_GOLD) {
+		Item *item = GetGoldSeed();
+		if (item) {
+			if (!checkOnly) AddHeldGoldToStack(item);
+			return true;
+		}
+		return false;
+	}
+
+	Item *item = getBagSlot(i, j).item();
+	const V2Di size = {cursW / 28, cursH / 28};  // Very shit way of doing this
+
 	for (i = 0; !goodpos && i <= numrows - size.x; ++i) {
 		for (j = 0; !goodpos && j <= numcols - size.y; ++j) {
-			if (getBagItem(i, j)) {
+			if (getBagSlot(i, j).item()) {
 				continue;
 			} else {
 				// Check if required number of spots left and right are also empty
 				goodpos = true;
 				for (int k = 0; goodpos && k < size.x; ++k) {
 					for (int l = 0; goodpos && l < size.y; ++l) {
-						if (getBagItem(i, j)) {
+						if (getBagSlot(i, j).item()) {
 							goodpos = false;
 						}
 					}
@@ -35,24 +73,24 @@ bool PlayerInventory::AutoPlaceBag(V2Di size, bool saveflag)
 			}
 		}
 	}
+	if (!goodpos || checkOnly) return goodpos;
 
-	// Place
-	if (!goodpos || !saveflag)
-		return goodpos;
+	// Stash in bag
+	SwapHeldItem(getBagSlot(i, j));
 	for (int k = 0; k < size.x; ++k) {
 		for (int l = 0; l < size.y; ++l) {
-			setBagItem(i + k, j + l, getHeldItem());
+			getBagSlot(i + k, j + l).filled = true;
 		}
 	}
 	return goodpos;
 }
 
-bool PlayerInventory::AutoPlaceBelt(bool saveflag)
+bool PlayerInventory::stashHeldIntoBelt(bool checkOnly)
 {
 	for (int i = 0; i < MAXBELTITEMS; i++) {
-		if (!getBeltItem(i)) {
-			if (saveflag) {
-				setBeltItem(i, getHeldItem());
+		if (!getBeltSlot(i).item()) {
+			if (!checkOnly) {
+				SwapHeldItem(getBeltSlot(i));
 			}
 			return true;
 		}
@@ -60,281 +98,249 @@ bool PlayerInventory::AutoPlaceBelt(bool saveflag)
 	return false;
 }
 
-bool PlayerInventory::AutoPlaceSpecial(V2Di size, bool saveflag)
+void PlayerInventory::AddHeldGoldToStack(Item * item)
 {
-	if (size.maxdim() <= 1) { // fits in belt
-		if (AutoPlaceBelt(saveflag))
-			return true;
-	}
-	return AutoPlaceBag(size, saveflag);
+	assert(item && item->_itype == ITYPE_GOLD);
+	Item *held = getHeldItem();
+	if (!held) return;
+	item->_ivalue += held->_ivalue;
+	if (item->_ivalue >= GOLD_MEDIUM_LIMIT) {
+		item->_iCurs = ICURS_GOLD_LARGE;
+	} else if (item->_ivalue >= GOLD_SMALL_LIMIT) {
+		item->_iCurs = ICURS_GOLD_MEDIUM;
+	} else {
+		item->_iCurs = ICURS_GOLD_SMALL; }
+	owner.data._pGold = CalculateGold();
 }
 
-Item * const PlayerInventory::findBagItemType(int itemType)
+bool PlayerInventory::tryEquipHeld(bool checkOnly)
 {
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		Item * item = getBagItem(i);
-		if (!item) continue;
-		if (item->_itype == itemType) return item;
-	}
-	return 0;
-}
-
-bool PlayerInventory::AutoPlaceGold()
-{
-	bool done = false;
-	Item * item = findBagItemType(ITYPE_GOLD);
-
-	if (!item) {
-		InvSlot * slot = getEmptyBagSlot();
-		if (slot) slot->item.reset(new Item);
-	}
-	
-	if (item) {
-		item->_ivalue += getHeldSlot()->item->_ivalue;
-		if (item->_ivalue >= GOLD_MEDIUM_LIMIT)
-			item->_iCurs = ICURS_GOLD_LARGE;
-		else if (item->_ivalue >= GOLD_SMALL_LIMIT)
-			item->_iCurs = ICURS_GOLD_MEDIUM;
-		else item->_iCurs = ICURS_GOLD_SMALL;
-		owner.data._pGold = CalculateGold();
-		done = true;
-	}
-	return done;
-}
-
-
-
-bool PlayerInventory::TryArmWeapon()
-{
-	Item *item = getHeldItem();
-	if (!item) return false;
-
-	// Already armed
-	Item * left = getBodyItem(BodyLoc::HandLeft);
-	Item * right = getBodyItem(BodyLoc::HandRight);
-	if (left && left->_iClass == ICLASS_WEAPON) return false;
-	if (right && right->_iClass == ICLASS_WEAPON) return false;
-
-	if (item->_iLoc != ItemClass::TwoHand) { // Single-handed
-		if (!left) {
-			NetSendCmdChItem(true, BodyLoc::HandLeft);
-			setBodyItem(BodyLoc::HandLeft, item);
-			return true;
-		}
-
-		if (!right && (!left || left->_iLoc != ItemClass::TwoHand)) {
-			NetSendCmdChItem(true, BodyLoc::HandRight);
-			setBodyItem(BodyLoc::HandRight, item);
-			return true;
-		}
-	} else if (!left && !right) { // Two-handed and unarmed
-		NetSendCmdChItem(TRUE, BodyLoc::HandLeft);
-		setBodyItem(BodyLoc::HandLeft, item);
-		return true;
-	}
+	if (tryPasteSlot(getBodySlot(BodyLoc::HandLeft), checkOnly, false)) return true;
+	if (tryPasteSlot(getBodySlot(BodyLoc::HandRight), checkOnly, false)) return true;
+	if (tryPasteSlot(getBodySlot(BodyLoc::Head), checkOnly, false)) return true;
+	if (tryPasteSlot(getBodySlot(BodyLoc::Chest), checkOnly, false)) return true;
+	if (tryPasteSlot(getBodySlot(BodyLoc::Amulet), checkOnly, false)) return true;
+	if (tryPasteSlot(getBodySlot(BodyLoc::RingLeft), checkOnly, false)) return true;
+	if (tryPasteSlot(getBodySlot(BodyLoc::RingRight), checkOnly, false)) return true;
 	return false;
 }
 
-int SwapItem(Item * a, Item * b)
+bool PlayerInventory::stashHeld(bool checkOnly)
 {
-	assert(a);
-	Item * aold = a;
-	std::swap(a, b);
-	return aold->_iCurs + CURSOR_FIRSTITEM;
+	bool success = false;
+	if (!success) success = tryEquipHeld(checkOnly);
+	if (!success) success = stashHeldIntoBelt(checkOnly);
+	if (!success) success = stashHeldIntoBag(checkOnly);
+	return success;
 }
 
 InvSlot * PlayerInventory::GetCursorInvSlot(V2Di pos)
 {
-	int i, j;
-	int r, sx, sy;
-	bool done;
-	SetICursor(getHeldItem()->_iCurs + CURSOR_FIRSTITEM);
-	i = pos.x + (icursW >> 1);
-	j = pos.y + (icursH >> 1);
-	sx = icursW28;
-	sy = icursH28;
-
-	// Check over body slot
-
-
-	// Check over belt slot
-
-	// Check over bag slot
-
-
-
-	return 0;
-}
-
-void PlayerInventory::CheckInvPaste(V2Di pos)
-{
-	bool done = false;
-	int xx, yy, ii;
-	bool done2h;
-	int cn, it, iv, ig, gt;
-	ItemStruct tempitem;
-
-	if (!getHeldItem())
-		return;
-
-	InvSlot * slotptr = GetCursorInvSlot(pos);
-	if (!slotptr) return; // Not over slot
-	InvSlot & slot = *slotptr;
-	const BodyLoc bodyLoc = slot.bLoc;
-	const ItemClass itemClass = getHeldItem()->_iLoc;
-	const V2Di size = { cursW / 28, cursH / 28 }; // Very shit way of doing this
-
-	// Handle simple cases
-	auto _simplePaste = [&](ItemClass cls, BodyLoc loc) {
-		if (!done && itemClass == cls && bodyLoc == loc) {
-			NetSendCmdChItem(false, loc);
-			if (!getBodyItem(loc)) {
-				setBodyItem(loc, getHeldItem());
-			} else {
-				cn = SwapItem(getBodyItem(loc), getHeldItem());
-			}
-			done = true;
+	InvSlot *invslot = 0;
+	auto _over = [&](InvSlot &slot) -> bool {
+		RECT32 &rect = slot.rect;
+		if ((pos.x >= rect.x && pos.x <= (rect.x + rect.w)) &&
+		    (pos.y >= rect.y && pos.y <= (rect.y + rect.h))) {
+			invslot = &slot;
+			return true;
 		}
 	};
 
-	_simplePaste(ItemClass::Helm, BodyLoc::Head);
-	_simplePaste(ItemClass::Ring, BodyLoc::RingLeft);
-	_simplePaste(ItemClass::Ring, BodyLoc::RingRight);
-	_simplePaste(ItemClass::Armor, BodyLoc::Chest);
-	_simplePaste(ItemClass::Amulet, BodyLoc::Amulet);
-	_simplePaste(ItemClass::OneHand, BodyLoc::HandLeft);
-	_simplePaste(ItemClass::OneHand, BodyLoc::HandRight);
+	// Check over body slots
+	if (_over(getBodySlot(BodyLoc::Head))) return invslot;
+	if (_over(getBodySlot(BodyLoc::HandLeft))) return invslot;
+	if (_over(getBodySlot(BodyLoc::HandRight))) return invslot;
+	if (_over(getBodySlot(BodyLoc::Chest))) return invslot;
+	if (_over(getBodySlot(BodyLoc::Amulet))) return invslot;
+	if (_over(getBodySlot(BodyLoc::RingLeft))) return invslot;
+	if (_over(getBodySlot(BodyLoc::RingRight))) return invslot;
 
-	// Two-handed weapon to weapon slot
-	if (!done && itemClass == ItemClass::TwoHand) {
-		if (bodyLoc == BodyLoc::HandRight || bodyLoc == BodyLoc::HandLeft) {
-			if (!getBodyItem(BodyLoc::HandLeft) || !getBodyItem(BodyLoc::HandRight)) {
-				if (!getBodyItem(BodyLoc::HandLeft)) {     // Nothing in left hand
-					if (getBodyItem(BodyLoc::HandRight)) { // If there was something in right hand, swap it left
-						std::swap(body.hand_left.item, body.hand_right.item);
+	// Check over belt slots
+	for (int i = 0; i < MAXBELTITEMS; i++) {
+		if (_over(getBeltSlot(i))) return invslot;
+	}
+
+	// Check over bag slots
+	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
+		if (_over(getBagSlot(i))) return invslot;
+	}
+	return 0;
+}
+
+// Try pasting at the given position
+bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap)
+{
+	const Item *const held = getHeldItem();
+	if (!held) return false;  // Not holding an item
+	if (slot.item() && !forceSwap) return false; // Item already present and not swapping
+	bool success = false;
+	const BodyLoc bodyloc = slot.bLoc;
+	const ItemClass itemClass = held->_iLoc;
+
+	// Handle simple cases
+	auto _simplePaste = [&](BodyLoc loc, ItemClass cls) {
+		if (!success && bodyloc == loc && itemClass == cls) {
+			if (!checkOnly) {
+				NetSendCmdChItem(false, loc);
+				SwapHeldItem(slot);
+			}
+			success = true;
+		}
+	};
+
+	_simplePaste(BodyLoc::Head, ItemClass::Helm);
+	_simplePaste(BodyLoc::RingLeft, ItemClass::Ring);
+	_simplePaste(BodyLoc::RingRight, ItemClass::Ring);
+	_simplePaste(BodyLoc::Chest, ItemClass::Armor);
+	_simplePaste(BodyLoc::Amulet, ItemClass::Amulet);
+
+	// Add to weapons slot
+	if (!success && (bodyloc == BodyLoc::HandRight || bodyloc == BodyLoc::HandLeft)) {
+
+		Item *left = getBodySlot(BodyLoc::HandLeft).item();
+		Item *right = getBodySlot(BodyLoc::HandLeft).item();
+
+		// One-handed
+		if (itemClass == ItemClass::OneHand) {
+			if (!left || forceSwap) {
+				if (!checkOnly) {
+					SwapHeldItem(getBodySlot(BodyLoc::HandLeft));
+					NetSendCmdChItem(false, BodyLoc::HandLeft);
+				}
+				success = true;
+			}
+		}
+
+		// Two-handed
+		if (!success && itemClass == ItemClass::TwoHand) {
+			if (!left || !right) {  // At least one hand empty
+				if ((!left && !right) || forceSwap) {
+					if (!checkOnly) {
+						if (right) {  // Previous item in right hand, swap hands
+							          // first
+							SwapSlots(getBodySlot(BodyLoc::HandLeft),
+							          getBodySlot(BodyLoc::HandRight));
+						}
+						SwapHeldItem(getBodySlot(BodyLoc::HandLeft));
+						NetSendCmdChItem(false, BodyLoc::HandLeft);
+						NetSendCmdChItem(false, BodyLoc::HandRight);
 					}
+					success = true;
 				}
-				if (!getBodyItem(BodyLoc::HandLeft)) {
-					NetSendCmdChItem(false, BodyLoc::HandLeft);
-					NetSendCmdChItem(false, BodyLoc::HandRight);
-					setBodyItem(BodyLoc::HandLeft, getHeldItem());
-				} else {
-					NetSendCmdChItem(false, BodyLoc::HandLeft);
-					NetSendCmdChItem(false, BodyLoc::HandRight);
-					cn = SwapItem(getBodyItem(BodyLoc::HandLeft), getHeldItem());
+			}
+		}
+
+		// Shield
+		if (!success && held->_iClass == ITYPE_SHIELD) {
+			// swap with right unless two-handed in left
+			if (left->_iLoc != ItemClass::TwoHand) {
+				if (!right || forceSwap) {
+					if (!checkOnly) {
+						SwapHeldItem(getBodySlot(BodyLoc::HandRight));
+						NetSendCmdChItem(false, BodyLoc::HandRight);
+					}
+					success = true;
 				}
-				done = true;
 			}
 		}
 	}
 
-	// Belt anything
-	if (!done && bodyLoc == BodyLoc::Belt) {
-		if (size.maxabs() == 1) {
-			done = true;
-			if (!AllItemsList[getHeldItem()->IDidx].iUsable)
-				done = false;
-			if (!getHeldItem()->_iStatFlag)
-				done = false;
-			if (getHeldItem()->_itype == ITYPE_GOLD)
-				done = false;
-		}
-		if (done) {
-			if (!slot.item) {
-				slot.item = getHeldItem();
-			} else {
-				cn = SwapItem(slot.item, getHeldItem());
-			}
+	// Add item to belt
+	if (!success && bodyloc == BodyLoc::Belt) {
+		bool valid = true;
+		const V2Di size = {cursW / 28, cursH / 28};  // Very shit way of doing this
+		if (size.maxabs() != 1) valid = false;  // Too big
+		if (!AllItemsList[getHeldItem()->IDidx].iUsable)
+			valid = false;                                       // Not usable
+		if (!getHeldItem()->_iStatFlag) valid = false;           // ??
+		if (getHeldItem()->_itype == ITYPE_GOLD) valid = false;  // Gold
+		if (valid) {
+			if (!checkOnly) { SwapHeldItem(slot); }
+			success = true;
 		}
 	}
 
-	if (!done && bodyLoc == BodyLoc::Bag) {
-		if (getHeldItem()->_itype == ITYPE_GOLD) {
-			if (!slot.item) { // If over empty slot, make new pile
-				slot.item = &items.createNewItem();
-				slot.item->_itype = ITYPE_GOLD;
+	// Add item to bag
+	if (!success && bodyloc == BodyLoc::Bag) {
+		if (held->_itype == ITYPE_GOLD) {
+			if (!slot.item()) {  // If over empty slot, make new pile
+				slot.takeItem(std::make_unique<Item>());
+				slot.item()->_itype = ITYPE_GOLD;
 			}
-			if (slot.item->_itype == ITYPE_GOLD) {
-				slot.item->_ivalue += getHeldSlot()->item->_ivalue;
-				if (slot.item->_ivalue >= GOLD_MEDIUM_LIMIT)
-					slot.item->_iCurs = ICURS_GOLD_LARGE;
-				else if (slot.item->_ivalue >= GOLD_SMALL_LIMIT)
-					slot.item->_iCurs = ICURS_GOLD_MEDIUM;
-				else
-					slot.item->_iCurs = ICURS_GOLD_SMALL;
-				owner.data._pGold = CalculateGold();
-				done = true;
+			if (slot.item()->_itype = ITYPE_GOLD) {
+				AddHeldGoldToStack(slot.item());
+				success = true;
 			}
-		} else { // Not gold, place item in inventory
-			
+		} else {  // Not gold, place item in inventory
 		}
 	}
+	return false;
+}
 
-	CalcPlrInv(owner.id(), TRUE);
-
-	//// Update staff spells etc.
-	//if (owner.data.InvBody[INVLOC_HAND_LEFT]->_itype == ITYPE_STAFF && owner.data.InvBody[INVLOC_HAND_LEFT]->_iSpell != 0 && owner.data.InvBody[INVLOC_HAND_LEFT]->_iCharges > 0) {
-	//	owner.data._pRSpell = owner.data.InvBody[INVLOC_HAND_LEFT]->_iSpell;
-	//	owner.data._pRSplType = RSPLTYPE_CHARGES;
-	//	force_redraw = 255;
-	//}
-
-	if (!done) {
-		done = FALSE;
+bool PlayerInventory::tryPaste(V2Di pos)
+{
+	if (!getHeldItem()) return;
+	InvSlot * slotptr = GetCursorInvSlot(pos);
+	if (!slotptr) return; // Not over slot
+	InvSlot & slot = *slotptr;
+	if (tryPasteSlot(slot, false, true)) {
+		owner.CalcPlrInv(true);
+		owner.CalcPlrStaff();
+		if (owner.isMyPlr()) PlaySFX(ItemInvSnds[ItemCAnimTbl[getHeldItem()->_iCurs]]);
+	} else {
 		if (owner.data._pClass == PC_WARRIOR)
 			PlaySFX(PS_WARR13);
 		else if (owner.data._pClass == PC_ROGUE)
 			PlaySFX(PS_ROGUE13);
 		else if (owner.data._pClass == PC_SORCERER)
 			PlaySFX(PS_MAGE13);
+		//if (owner.data._pClass == PC_WARRIOR) {
+		//	PlaySFX(random_(0, 3) + PS_WARR14);
+		//} else if (owner.data._pClass == PC_ROGUE) {
+		//	PlaySFX(random_(0, 3) + PS_ROGUE14);
+		//} else if (owner.data._pClass == PC_SORCERER) {
+		//	PlaySFX(random_(0, 3) + PS_MAGE14);
+		//}
 	}
-
-	if (owner.isMyPlr()) PlaySFX(ItemInvSnds[ItemCAnimTbl[getHeldItem()->_iCurs]]);
+}
+bool PlayerInventory::tryCut(V2Di pos)
+{
+	if (getHeldItem()) return false;                 // Already holding an item
+	if (owner.data._pmode > PM_WALK3) return false;  // Doing action, can't pick up
+	InvSlot *slot = GetCursorInvSlot(pos);		  	 // Get cursor inventory slot
+	if (!slot) return false;                         // Not over a slot
+	tryCutSlot(*slot);
 }
 
-void PlayerInventory::CheckInvCut(V2Di pos)
+bool PlayerInventory::tryCutSlot(InvSlot &slot)
 {
-	if (getHeldItem()) return; // Already holding an item
-	if (owner.data._pmode > PM_WALK3) return; // Doing action, can't pick up
-	InvSlot * slot = GetCursorInvSlot(pos); // Get cursor inventory slot
-	if (!slot) return; // Not over a slot
-	if (!slot->item) return; // Slot is empty
-
+	if (!slot.item()) return;                 // Slot is empty
 	// Handle simple cases
-	auto _simpleCut = [&](BodyLoc loc) {
-		if (slot->bLoc == loc) {
+	auto _simpleBodyCut = [&](BodyLoc loc) {
+		if (slot.bLoc == loc) {
 			NetSendCmdDelItem(false, loc);
-			setHeldItem(slot->item);
-			slot->item = 0;
+			SwapHeldItem(slot);
 		}
 	};
 
-	_simpleCut(BodyLoc::Head);
-	_simpleCut(BodyLoc::RingLeft);
-	_simpleCut(BodyLoc::RingRight);
-	_simpleCut(BodyLoc::Amulet);
-	_simpleCut(BodyLoc::HandLeft);
-	_simpleCut(BodyLoc::HandRight);
-	_simpleCut(BodyLoc::Chest);
+	_simpleBodyCut(BodyLoc::Head);
+	_simpleBodyCut(BodyLoc::RingLeft);
+	_simpleBodyCut(BodyLoc::RingRight);
+	_simpleBodyCut(BodyLoc::Amulet);
+	_simpleBodyCut(BodyLoc::HandLeft);
+	_simpleBodyCut(BodyLoc::HandRight);
+	_simpleBodyCut(BodyLoc::Chest);
 
-	if (slot->bLoc == BodyLoc::Belt) {
-		setHeldItem(slot->item);
-		slot->item = 0;
-	}
-
-	if (slot->bLoc == BodyLoc::Bag) {
-		setHeldItem(slot->item);
-		slot->item = 0;
+	if (slot.bLoc == BodyLoc::Belt || slot.bLoc == BodyLoc::Bag) {
+		SwapHeldItem(slot);
 	}
 
 	if (getHeldItem()->_itype != ITYPE_NONE) {
 		if (getHeldItem()->_itype == ITYPE_GOLD) {
 			owner.data._pGold = CalculateGold();
 		}
-
-		CalcPlrInv(owner.id(), TRUE);
+		owner.CalcPlrInv(true);
 		CheckItemStats();
-
 		if (owner.isMyPlr()) {
 			PlaySFX(IS_IGRAB);
 			SetCursor_(getHeldItem()->_iCurs + CURSOR_FIRSTITEM);
@@ -343,45 +349,22 @@ void PlayerInventory::CheckInvCut(V2Di pos)
 	}
 }
 
-void PlayerInventory::removeItem(InvSlot & slot)
-{
-	slot.item = 0;
-	CalcPlrInv(owner.id(), true);
-	CalcPlrScrolls(owner.id());
-
-	if (owner.data._pRSplType == RSPLTYPE_SCROLL) {
-		if (owner.data._pRSpell != SPL_INVALID) {
-			// BUGFIX: Cast the literal `1` to `unsigned __int64` to make that bitshift 64bit
-			// this causes the last 4 skills to not reset correctly after use
-			if (!(
-			        owner.data._pScrlSpells
-			        & (1 << (owner.data._pRSpell - 1)))) {
-				owner.data._pRSpell = SPL_INVALID;
-			}
-
-			force_redraw = 255;
-		}
-	}
-}
-
-void PlayerInventory::removeBeltItem(uint8_t i)
-{
-	if (i >= MAXBELTITEMS) return;
-	removeItem(getBeltSlot(i));
-}
-
 void PlayerInventory::CheckInvItem()
 {
 	if (pcurs >= CURSOR_FIRSTITEM) {
-		CheckInvPaste(Mouse);
+		tryPaste(Mouse);
 	} else {
-		CheckInvCut(Mouse);
+		tryCut(Mouse);
 	}
 }
 
-/**
- * Check for interactions with belt
- */
+void PlayerInventory::destroyItem(InvSlot & slot)
+{
+	slot.destroyItem();
+	owner.CalcPlrInv(true);
+	owner.CalcPlrScrolls();
+}
+
 void PlayerInventory::CheckInvScrn()
 {
 	if (Mouse.x > 190 + PANEL_LEFT && Mouse.x < 437 + PANEL_LEFT
@@ -487,87 +470,25 @@ void PlayerInventory::CheckQuestItem()
 	}
 }
 
-// Gets item from ground
-void PlayerInventory::PickupItem(ItemID id)
+// Gets item from ground and puts in hand
+void PlayerInventory::PickupItem(V2Di pos)
 {
-	int i;
-
-	if (!items.exists(id)) return;
-	Item & item = items.get(id);
-	if (grid.at(item._i).isItem()) {
+	if (grid.at(pos).isItem()) {
 		if (owner.isMyPlr() && pcurs >= CURSOR_FIRSTITEM)
-			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, myplr().pos().x, myplr().pos().y);
-		item._iCreateInfo &= ~0x8000;
-		setHeldItem(&item);
-		CheckQuestItem();
-		CheckBookLevel();
-		CheckItemStats();
-		grid.at(item._i).clearItem();
-		i = 0;
+			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, myplr().pos().x, myplr().pos().y); //CmdPItem = player-held item?
+		grid.at(pos).getItem()->_iCreateInfo &= ~0x8000;
+		SwapHeldItem(grid.at(pos)._getItemPtr());
 		pcursitem = 0;
 		SetCursor_(getHeldItem()->_iCurs + CURSOR_FIRSTITEM);
 	}
 }
 
 // Gets item from ground
-void PlayerInventory::AutoPickUpItem(Item &item)
+void PlayerInventory::PickupAndStashItem(V2Di pos)
 {
-	int i, idx;
-	int w, h;
-	bool done;
-
-	if (pcurs != CURSOR_HAND) return;
-
-	if (!grid.at(item._i).isItem()) return;
-
-	item._iCreateInfo &= 0x7FFF;
-	setHeldItem(&item); /// BUGFIX: overwrites cursor item, allowing for belt dupe bug
-	CheckQuestItem();
-	CheckBookLevel();
-	CheckItemStats();
-	SetICursor(getHeldItem()->_iCurs + CURSOR_FIRSTITEM);
-	if (getHeldItem()->_itype == ITYPE_GOLD) {
-		done = AutoPlaceGold();
-	} else {
-		done = FALSE;
-		if (((owner.data._pgfxnum & 0xF) == ANIM_ID_UNARMED || (owner.data._pgfxnum & 0xF) == ANIM_ID_UNARMED_SHIELD) && owner.data._pmode <= PM_WALK3) {
-			if (getHeldItem()->_iStatFlag) {
-				if (getHeldItem()->_iClass == ICLASS_WEAPON) {
-					done = TryArmWeapon();
-					if (done)
-						CalcPlrInv(owner.id(), TRUE);
-				}
-			}
-		}
-		if (!done) {
-			w = icursW28;
-			h = icursH28;
-			if (w == 1 && h == 1) {
-				idx = getHeldItem()->IDidx;
-				if (getHeldItem()->_iStatFlag && AllItemsList[idx].iUsable) {
-					done = AutoPlaceBelt(true);
-				}
-			}
-			if (!done) done = AutoPlaceBag({ w, h }, true);
-		}
-	}
-	if (done) {
-		grid.at(item._i).clearItem();
-	} else {
-		if (owner.isMyPlr()) {
-			if (owner.data._pClass == PC_WARRIOR) {
-				PlaySFX(random_(0, 3) + PS_WARR14);
-			} else if (owner.data._pClass == PC_ROGUE) {
-				PlaySFX(random_(0, 3) + PS_ROGUE14);
-			} else if (owner.data._pClass == PC_SORCERER) {
-				PlaySFX(random_(0, 3) + PS_MAGE14);
-			}
-		}
-		setHeldItem(&item);
-		item.RespawnItem(TRUE);
-		NetSendCmdPItem(TRUE, CMD_RESPAWNITEM, item._i.x, item._i.y);
-		getHeldItem()->_itype = ITYPE_NONE;
-	}
+	PickupItem(pos);
+	stashHeld(false);
+	// NetSendCmdPItem(TRUE, CMD_RESPAWNITEM, item._i.x, item._i.y);
 }
 
 //int PlayerInventory::FindGetItem(int idx, WORD ci, int iseed)
@@ -649,118 +570,94 @@ Item * PlayerInventory::DropItem(V2Di pos)
 	V2Di off = offset(d2);
 	V2Di n = pos - owner.pos();
 	if (abs(n.x) > 1 || abs(n.y) > 1) {
-		pos = owner.pos() + off;
+		pos = owner.pos() + off; // Use new pos
 	}
 	if (!GetDropPos(pos)) return;
 	held->_i = pos;
-	held->RespawnItem(TRUE);
-	grid.at(pos).setItem(held->id);
+	held->RespawnItem(true);
+	SwapHeldItem(grid.at(pos)._getItemPtr());
 	NewCursor(CURSOR_HAND);
 	return held;
 	// Should release at some point?
 }
 
 // For when a non-local player drops an item
+// Note: destroys item that was in that position before, hope you wanted to do that!
 Item * PlayerInventory::DropItemSync(V2Di pos, int idx, WORD icreateinfo, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, DWORD ibuff)
 {
-	Item & item = items.createNewItem();
-	if (idx == IDI_EAR) {
-		item.RecreateEar(icreateinfo, iseed, Id, dur, mdur, ch, mch, ivalue, ibuff);
-	} else {
-		item.RecreateItem(idx, icreateinfo, iseed, ivalue);
-		if (Id) item._iIdentified = TRUE;
-		item._iDurability = dur;
-		item._iMaxDur = mdur;
-		item._iCharges = ch;
-		item._iMaxCharges = mch;
-	}
-
-	item._i = pos;
-	item.RespawnItem(TRUE);
-	grid.at(pos).setItem(item.id);
-	return &item;
+	auto item = std::make_unique<Item>();
+	item->RecreateItem(idx, icreateinfo, iseed, ivalue);
+	if (Id) item->_iIdentified = true;
+	item->_iDurability = dur;
+	item->_iMaxDur = mdur;
+	item->_iCharges = ch;
+	item->_iMaxCharges = mch;
+	item->_i = pos;
+	item->RespawnItem(true);
+	grid.at(pos).swapItem(item);
+	return grid.at(pos).getItem();
+	assert(!item); // Destroyed an item already on the ground
 }
 
-void PlayerInventory::RemoveScroll()
+bool PlayerInventory::UseScroll(bool checkOnly)
 {
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		Item *item = getBagItem(i);
-		if (!item) continue;
-		if (item->_itype != ITYPE_NONE
-		    && (item->_iMiscId == IMISC_SCROLL || item->_iMiscId == IMISC_SCROLLT)
-		    && item->_iSpell == owner.data._pRSpell) {
-			removeBagItem(i);
-			CalcPlrScrolls(owner.id());
-			return;
-		}
-	}
-	for (int i = 0; i < MAXBELTITEMS; i++) {
-		Item *item = getBeltItem(i);
-		if (!item) continue;
-		if (item->_itype != ITYPE_NONE
-		    && (item->_iMiscId == IMISC_SCROLL || item->_iMiscId == IMISC_SCROLLT)
-		    && item->_iSpell == owner.data._pRSpell) {
-			removeBeltItem(i);
-			CalcPlrScrolls(owner.id());
-			return;
-		}
-	}
-}
-
-bool PlayerInventory::UseScroll()
-{
-	if (pcurs != CURSOR_HAND) return FALSE;
+	if (pcurs != CURSOR_HAND) return false;
 	if (lvl.type() == DunType::town && !spelldata[myplr().data._pRSpell].sTownSpell)
-		return FALSE;
+		return false;
 
 	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		Item *item = getBagItem(i);
+		Item *item = getBagSlot(i).item();
 		if (!item) continue;
-		if (item->_itype != ITYPE_NONE
-		    && (item->_iMiscId == IMISC_SCROLL || item->_iMiscId == IMISC_SCROLLT)
-		    && item->_iSpell == myplr().data._pRSpell) {
-			return TRUE;
+		if (item->_itype != ITYPE_NONE &&
+		    (item->_iMiscId == IMISC_SCROLL ||
+		     item->_iMiscId == IMISC_SCROLLT) &&
+		    item->_iSpell == myplr().data._pRSpell) {
+			if (!checkOnly) {
+				destroyItem(getBagSlot(i));
+				owner.CalcPlrScrolls();
+			}
+			return true;
 		}
 	}
+
 	for (int i = 0; i < MAXBELTITEMS; i++) {
-		Item *item = getBeltItem(i);
+		Item *item = getBeltSlot(i).item();
 		if (!item) continue;
 		if (item->_itype != ITYPE_NONE
 		    && (item->_iMiscId == IMISC_SCROLL || item->_iMiscId == IMISC_SCROLLT)
 		    && item->_iSpell == myplr().data._pRSpell) {
-			return TRUE;
+			if (!checkOnly) {
+				destroyItem(getBeltSlot(i));
+				owner.CalcPlrScrolls();
+			}
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-void PlayerInventory::UseStaffCharge()
-{
-	if (getBodyItem(BodyLoc::HandLeft)->_itype != ITYPE_NONE
-	    && getBodyItem(BodyLoc::HandLeft)->_iMiscId == IMISC_STAFF
-	    && getBodyItem(BodyLoc::HandLeft)->_iSpell == owner.data._pRSpell
-	    && getBodyItem(BodyLoc::HandLeft)->_iCharges > 0) {
-		getBodyItem(BodyLoc::HandLeft)->_iCharges--;
-		CalcPlrStaff(owner.id());
-	}
-}
-
-bool PlayerInventory::UseStaff()
+bool PlayerInventory::UseStaff(bool checkOnly)
 {
 	if (pcurs == CURSOR_HAND) {
-		if (getBodyItem(BodyLoc::HandLeft)->_itype != ITYPE_NONE
-		    && getBodyItem(BodyLoc::HandLeft)->_iMiscId == IMISC_STAFF
-		    && getBodyItem(BodyLoc::HandLeft)->_iSpell == myplr().data._pRSpell
-		    && getBodyItem(BodyLoc::HandLeft)->_iCharges > 0) {
-			return TRUE;
+		Item * item = getBodySlot(BodyLoc::HandLeft).item();
+		if (item
+			&& item->_itype != ITYPE_NONE
+			&& item->_iMiscId == IMISC_STAFF
+			&& item->_iSpell == myplr().data._pRSpell
+			&& item->_iCharges > 0) {
+			if (!checkOnly) {
+				item->_iCharges--;
+				owner.CalcPlrStaff();
+			}
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 bool PlayerInventory::UseInvItem(InvSlot & slot)
 {
-	Item *item = slot.item;
+	Item *item = slot.item();
 	if (!item) return;
 
 	if (owner.data._pInvincible && !owner.data._pHitPoints && owner.isMyPlr())
@@ -796,7 +693,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 	}
 
 	if (!AllItemsList[item->IDidx].iUsable)
-		return FALSE;
+		return false;
 
 	if (!item->_iStatFlag) {
 		if (owner.data._pClass == PC_WARRIOR) {
@@ -823,10 +720,8 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 	else if (owner.isMyPlr())
 		PlaySFX(ItemInvSnds[idata]);
 
-	UseItem(owner.id(), item->_iMiscId, item->_iSpell);
-
-	removeItem(slot);
-	items.destroyItem(item->id);
+	owner.UseItem(item->_iMiscId, item->_iSpell);
+	destroyItem(slot);
 	return true;
 }
 
@@ -845,9 +740,9 @@ int PlayerInventory::CalculateGold()
 {
 	int gold = 0;
 	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		if (!getBagItem(i)) continue;
-		if (getBagItem(i)->_itype == ITYPE_GOLD)
-			gold += getBagItem(i)->_ivalue;
+		if (!getBagSlot(i).item()) continue;
+		if (getBagSlot(i).item()->_itype == ITYPE_GOLD)
+			gold += getBagSlot(i).item()->_ivalue;
 	}
 	assert(gold >= 0);
 	return gold;
@@ -861,7 +756,7 @@ bool PlayerInventory::DropItemBeforeTrig()
 		NewCursor(CURSOR_HAND);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 DEVILUTION_END_NAMESPACE

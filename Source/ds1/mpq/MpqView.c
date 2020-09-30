@@ -104,9 +104,9 @@ void mpq_batch_open(char * mpqname)
       sprintf(strtmp, "mpq_batch_open_mpq() : pointer glb_mpq == NULL");
       ds1edit_error(strtmp);
    }
-   if (glb_mpq->is_open != FALSE)
+   if (glb_mpq->is_open != false)
    {
-      sprintf(strtmp, "mpq_batch_open_mpq() : glb_mpq->is_open != FALSE");
+      sprintf(strtmp, "mpq_batch_open_mpq() : glb_mpq->is_open != false");
       ds1edit_error(strtmp);
    }
    if (mpqname == NULL)
@@ -153,9 +153,9 @@ int mpq_batch_load_in_mem(char * filename, void ** buffer, long * buf_len,
       sprintf(strtmp, "mpq_batch_load_in_mem_mpq() : pointer glb_mpq == NULL");
       ds1edit_error(strtmp);
    }
-   if (glb_mpq->is_open == FALSE)
+   if (glb_mpq->is_open == false)
    {
-      sprintf(strtmp, "mpq_batch_load_in_mem_mpq() : glb_mpq->is_open == FALSE");
+      sprintf(strtmp, "mpq_batch_load_in_mem_mpq() : glb_mpq->is_open == false");
       ds1edit_error(strtmp);
    }
    if (filename == NULL)

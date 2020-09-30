@@ -42,7 +42,7 @@ void Beastiary::InitLevelMonsters()
 
 int Beastiary::AddMonsterType(int type, int placeflag)
 {
-	bool done = FALSE;
+	bool done = false;
 	int i;
 
 	for (i = 0; i < nummtypes && !done; i++) {

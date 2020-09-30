@@ -89,7 +89,7 @@ bool TFit_Shrine(int i)
 				xp = 0;
 				yp++;
 				if (yp == MAXDUNY)
-					return FALSE;
+					return false;
 			}
 		}
 	}
@@ -110,15 +110,15 @@ bool TFit_Obj5(int t)
 	r = random_(0, 5) + 1;
 	rs = r;
 	while (r > 0) {
-		found = FALSE;
+		found = false;
 		if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 			found = TRUE;
 			for (i = 0; found && i < 25; i++) {
 				if (grid[xp + trm5x[i]][yp + trm5y[i]].isSolid()) {
-					found = FALSE;
+					found = false;
 				}
 				if (grid[xp + trm5x[i]][yp + trm5y[i]].dTransVal != themes[t].ttval) {
-					found = FALSE;
+					found = false;
 				}
 			}
 		}
@@ -130,7 +130,7 @@ bool TFit_Obj5(int t)
 				yp++;
 				if (yp == MAXDUNY) {
 					if (r == rs) {
-						return FALSE;
+						return false;
 					}
 					yp = 0;
 				}
@@ -152,7 +152,7 @@ bool TFit_SkelRoom(int t)
 	int i;
 
 	if (lvl.type() != DunType::cathedral && lvl.type() != DunType::catacombs) {
-		return FALSE;
+		return false;
 	}
 
 	for (i = 0; i < nummtypes; i++) {
@@ -162,7 +162,7 @@ bool TFit_SkelRoom(int t)
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool TFit_GoatShrine(int t)
@@ -176,7 +176,7 @@ bool TFit_GoatShrine(int t)
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool CheckThemeObj3(int xp, int yp, int t, int f)
@@ -184,15 +184,15 @@ bool CheckThemeObj3(int xp, int yp, int t, int f)
 	for (int i = 0; i < 9; i++) {
 		V2Di p = { xp + trm3x[i], yp + trm3y[i] };
 		if (p.x < 0 || p.y < 0)
-			return FALSE;
+			return false;
 		if (grid.at(p).isSolid())
-			return FALSE;
+			return false;
 		if (grid.at(p).dTransVal != themes[t].ttval)
-			return FALSE;
+			return false;
 		if (grid.at(p).isObject())
-			return FALSE;
+			return false;
 		if (f != -1 && !random_(0, f))
-			return FALSE;
+			return false;
 	}
 	return TRUE;
 }
@@ -209,7 +209,7 @@ bool TFit_Obj3(int t)
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 bool CheckThemeReqs(int t)
@@ -220,42 +220,42 @@ bool CheckThemeReqs(int t)
 	case THEME_SKELROOM:
 	case THEME_LIBRARY:
 		if (lvl.type() == DunType::caves || lvl.type() == DunType::hell) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_BLOODFOUNTAIN:
 		if (!bFountainFlag) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_PURIFYINGFOUNTAIN:
 		if (!pFountainFlag) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_ARMORSTAND:
 		if (lvl.type() == DunType::cathedral) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_CAULDRON:
 		if (lvl.type() != DunType::hell || !cauldronFlag) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_MURKYFOUNTAIN:
 		if (!mFountainFlag) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_TEARFOUNTAIN:
 		if (!tFountainFlag) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	case THEME_WEAPONRACK:
 		if (lvl.type() == DunType::cathedral) {
-			rv = FALSE;
+			rv = false;
 		}
 		break;
 	}
@@ -283,7 +283,7 @@ bool SpecialThemeFit(int i, int t)
 			rv = TFit_Obj5(i);
 		}
 		if (rv) {
-			bFountainFlag = FALSE;
+			bFountainFlag = false;
 		}
 		break;
 	case THEME_PURIFYINGFOUNTAIN:
@@ -291,7 +291,7 @@ bool SpecialThemeFit(int i, int t)
 			rv = TFit_Obj5(i);
 		}
 		if (rv) {
-			pFountainFlag = FALSE;
+			pFountainFlag = false;
 		}
 		break;
 	case THEME_MURKYFOUNTAIN:
@@ -299,7 +299,7 @@ bool SpecialThemeFit(int i, int t)
 			rv = TFit_Obj5(i);
 		}
 		if (rv) {
-			mFountainFlag = FALSE;
+			mFountainFlag = false;
 		}
 		break;
 	case THEME_TEARFOUNTAIN:
@@ -307,7 +307,7 @@ bool SpecialThemeFit(int i, int t)
 			rv = TFit_Obj5(i);
 		}
 		if (rv) {
-			tFountainFlag = FALSE;
+			tFountainFlag = false;
 		}
 		break;
 	case THEME_CAULDRON:
@@ -315,7 +315,7 @@ bool SpecialThemeFit(int i, int t)
 			rv = TFit_Obj5(i);
 		}
 		if (rv) {
-			cauldronFlag = FALSE;
+			cauldronFlag = false;
 		}
 		break;
 	case THEME_GOATSHRINE:
@@ -335,7 +335,7 @@ bool SpecialThemeFit(int i, int t)
 	case THEME_TREASURE:
 		rv = treasureFlag;
 		if (rv) {
-			treasureFlag = FALSE;
+			treasureFlag = false;
 		}
 		break;
 	}
@@ -346,7 +346,7 @@ bool CheckThemeRoom(int tv)
 {
 	for (int i = 0; i < numtrigs; i++) {
 		if (grid.at(trigs[i]._t).dTransVal == tv)
-			return FALSE;
+			return false;
 	}
 
 	int tarea = 0;
@@ -356,26 +356,26 @@ bool CheckThemeRoom(int tv)
 			if (grid[i][j].dTransVal != tv)
 				continue;
 			if (grid[i][j].dFlags & BFLAG_POPULATED)
-				return FALSE;
+				return false;
 			tarea++;
 		}
 	}
 
 	if (lvl.type() == DunType::cathedral && (tarea < 9 || tarea > 100))
-		return FALSE;
+		return false;
 
 	for (int j = 0; j < MAXDUNY; j++) {
 		for (int i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].dTransVal != tv || grid[i][j].isSolid())
 				continue;
 			if (grid[i - 1][j].dTransVal != tv && !grid[i - 1][j].isSolid())
-				return FALSE;
+				return false;
 			if (grid[i + 1][j].dTransVal != tv && !grid[i + 1][j].isSolid())
-				return FALSE;
+				return false;
 			if (grid[i][j - 1].dTransVal != tv && !grid[i][j - 1].isSolid())
-				return FALSE;
+				return false;
 			if (grid[i][j + 1].dTransVal != tv && !grid[i][j + 1].isSolid())
-				return FALSE;
+				return false;
 		}
 	}
 
@@ -395,7 +395,7 @@ void InitThemes()
 	pFountainFlag = TRUE;
 	tFountainFlag = TRUE;
 	treasureFlag = TRUE;
-	bCrossFlag = FALSE;
+	bCrossFlag = false;
 	weaponFlag = TRUE;
 
 	if (lvl.currlevel == 16)
@@ -403,7 +403,7 @@ void InitThemes()
 
 	if (lvl.type() == DunType::cathedral) {
 		for (i = 0; i < sizeof(ThemeGoodIn) / sizeof(ThemeGoodIn[0]); i++)
-			ThemeGoodIn[i] = FALSE;
+			ThemeGoodIn[i] = false;
 
 		for (i = 0; i < 256 && numthemes < MAXTHEMES; i++) {
 			if (CheckThemeRoom(i)) {
@@ -585,7 +585,7 @@ void Theme_MonstPit(int t)
 			}
 		}
 	}
-	CreateRndItem({ ixp, iyp }, TRUE, FALSE, TRUE);
+	CreateRndItem({ ixp, iyp }, TRUE, false, TRUE);
 	ItemNoFlippy();
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
@@ -679,11 +679,11 @@ void Theme_Treasure(int t)
 				int rv = random_(0, treasrnd[int(lvl.type()) - 1]);
 				// BUGFIX: the `2*` in `2*random_(0, treasrnd...) == 0` has no effect, should probably be `random_(0, 2*treasrnd...) == 0`
 				if ((2 * random_(0, treasrnd[int(lvl.type()) - 1])) == 0) {
-					CreateTypeItem({ xp, yp }, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
+					CreateTypeItem({ xp, yp }, false, ITYPE_GOLD, IMISC_NONE, false, TRUE);
 					ItemNoFlippy();
 				}
 				if (rv == 0) {
-					CreateRndItem({ xp, yp }, FALSE, FALSE, TRUE);
+					CreateRndItem({ xp, yp }, false, false, TRUE);
 					ItemNoFlippy();
 				}
 				if (rv == 0 || rv >= treasrnd[int(lvl.type()) - 1] - 2) {
@@ -848,7 +848,7 @@ void Theme_ArmorStand(int t)
 		}
 	}
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
-	armorFlag = FALSE;
+	armorFlag = false;
 }
 
 /**
@@ -966,7 +966,7 @@ void Theme_WeaponRack(int t)
 		}
 	}
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
-	weaponFlag = FALSE;
+	weaponFlag = false;
 }
 
 /**
@@ -1053,7 +1053,7 @@ void CreateThemeRooms()
 			break;
 		}
 	}
-	InitObjFlag = FALSE;
+	InitObjFlag = false;
 	if (lvl.type() == DunType::hell && lvl.themeCount > 0) {
 		UpdateL4Trans();
 	}

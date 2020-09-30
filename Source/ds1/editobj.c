@@ -185,7 +185,7 @@ void editobj_draw_obj_lab(int ds1_idx, int is_shadow)
          }
 
          // color for NORMAL objects / labels
-         if (is_shadow == FALSE)
+         if (is_shadow == false)
          {
             color1 = 0;   // background label
             color2 = 255; // sub-tile & line color
@@ -273,7 +273,7 @@ void editobj_draw_obj_lab(int ds1_idx, int is_shadow)
                y1 = ly0 - 8 - h - 4;
                y2 = y1 + h + 2;
 
-               if (is_shadow == FALSE)
+               if (is_shadow == false)
                {
                   label->x0 = x1;
                   label->y0 = y1;
@@ -501,7 +501,7 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
 {
    OBJ_LABEL_S * label;
    int         loop, o, w, h, x, y, x0, y0, last_t=0, last_o = -1;
-   int         redraw = FALSE, o_idx;
+   int         redraw = false, o_idx;
 
 
    for (loop=0; loop<2; loop++)
@@ -645,7 +645,7 @@ int editobj_moving_obj_lab(int ds1_idx, int dcx, int dcy, int dmx, int dmy)
    OBJ_LABEL_S * label;
    OBJ_S       * ptr_obj;
    static      int old_dcx, old_dcy, old_dmx, old_dmy, old_ds1_idx = -1;
-   int         o, redraw = FALSE, save_old = FALSE;
+   int         o, redraw = false, save_old = false;
 
 
    for (o=0; o < glb_ds1[ds1_idx].obj_num; o++)
@@ -745,7 +745,7 @@ void editobj_undo(int ds1_idx)
 
 
    // just in case
-   if (glb_ds1[ds1_idx].can_undo_obj == FALSE)
+   if (glb_ds1[ds1_idx].can_undo_obj == false)
       return;
 
    for (o=0; o < glb_ds1[ds1_idx].obj_num_undo; o++)
@@ -764,7 +764,7 @@ void editobj_undo(int ds1_idx)
 void editobj_del_obj(int ds1_idx)
 {
    OBJ_S * ptr_s, * ptr_d;
-   int   s=0, d=0, n=0, max = glb_ds1[ds1_idx].obj_num, done = FALSE;
+   int   s=0, d=0, n=0, max = glb_ds1[ds1_idx].obj_num, done = false;
 
 
    while ( ! done)
@@ -786,7 +786,7 @@ void editobj_del_obj(int ds1_idx)
          else
             done = TRUE;
       }
-      if (done == FALSE)
+      if (done == false)
       {
          n++;
          d++;
@@ -1262,10 +1262,10 @@ void editobj_draw_edit_obj(int ds1_idx)
 int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
 {
    WIN_EDT_OBJ_S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
-   int           redraw = FALSE, new_cur, end, w, wtmp;
+   int           redraw = false, new_cur, end, w, wtmp;
    
 
-   * edit_end = FALSE;
+   * edit_end = false;
    
    // managment
    if ((mx >= ptr_w->button[EB_OK].box.x1) &&
@@ -1277,7 +1277,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       // over OK button
       if (mb & 1)
       {
-         glb_ds1[ds1_idx].draw_edit_obj = FALSE;
+         glb_ds1[ds1_idx].draw_edit_obj = false;
          redraw = TRUE;
          * edit_end = TRUE;
          glb_ds1[ds1_idx].obj[ptr_w->obj_idx].type     = glb_ds1edit.obj_desc[ptr_w->desc_cur].type;
@@ -1299,7 +1299,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       // simulate the click on the OK button
       while (key[KEY_ENTER] || key[KEY_ENTER_PAD])
       {}
-      glb_ds1[ds1_idx].draw_edit_obj = FALSE;
+      glb_ds1[ds1_idx].draw_edit_obj = false;
       redraw = TRUE;
       * edit_end = TRUE;
       glb_ds1[ds1_idx].obj[ptr_w->obj_idx].type     = glb_ds1edit.obj_desc[ptr_w->desc_cur].type;
@@ -1315,7 +1315,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       }
       glb_ds1[ds1_idx].obj[ptr_w->obj_idx].label.w = w;
    }
-   else if ((glb_config.winobj_scroll_keyb == FALSE) && key[KEY_UP])
+   else if ((glb_config.winobj_scroll_keyb == false) && key[KEY_UP])
    {
       // scroll the list, up
       ptr_w->start -= glb_config.scroll.obj_edit;
@@ -1324,7 +1324,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       ptr_w->cur = -1;
       redraw = TRUE;
    }
-   else if ((glb_config.winobj_scroll_keyb == FALSE) && key[KEY_DOWN])
+   else if ((glb_config.winobj_scroll_keyb == false) && key[KEY_DOWN])
    {
       // scroll the list, down
       ptr_w->start += glb_config.scroll.obj_edit;
@@ -1344,7 +1344,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       // over CANCEL button
       if (mb & 1)
       {
-         glb_ds1[ds1_idx].draw_edit_obj = FALSE;
+         glb_ds1[ds1_idx].draw_edit_obj = false;
          redraw = TRUE;
          * edit_end = TRUE;
       }
@@ -1576,7 +1576,7 @@ void editobj_identical_obj_new(int ds1_idx, int o)
 // return TRUE if at least 1 object has been added
 int editobj_identical_obj_add(int ds1_idx, int o)
 {
-   int need_redraw = FALSE, i;
+   int need_redraw = false, i;
    
 
    // for all objects of that ds1
@@ -1603,7 +1603,7 @@ int editobj_identical_obj_add(int ds1_idx, int o)
 // return TRUE if at least 1 object has been deleted from the selection
 int editobj_identical_obj_del(int ds1_idx, int o)
 {
-   int need_redraw = FALSE, i;
+   int need_redraw = false, i;
 
 
    // for all objects of that ds1
@@ -1652,7 +1652,7 @@ void editobj_identical_lab_new(int ds1_idx, int o)
 // return TRUE if at least 1 lbel has been added
 int editobj_identical_lab_add(int ds1_idx, int o)
 {
-   int need_redraw = FALSE, i;
+   int need_redraw = false, i;
    
 
    // for all objects of that ds1
@@ -1679,7 +1679,7 @@ int editobj_identical_lab_add(int ds1_idx, int o)
 // return TRUE if at least 1 label has been deleted from the selection
 int editobj_identical_lab_del(int ds1_idx, int o)
 {
-   int need_redraw = FALSE, i;
+   int need_redraw = false, i;
 
 
    // for all objects of that ds1
@@ -1707,7 +1707,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
 {
    static int  old_ds1_idx = -1, old_t, old_o, cur_type;
    static enum {OM_NONE, OM_NEW, OM_ADD, OM_DEL, OM_MOV, OM_EDT, OM_INS} old_mode;
-   int         t=0, o=0, redraw = FALSE;
+   int         t=0, o=0, redraw = false;
    static int  start_cx, start_cy, start_mx, start_my;
    int         dif_cx=0, dif_cy=0, dif_mx=0, dif_my=0;
    int         hm = glb_ds1[ds1_idx].height_mul;
@@ -1795,7 +1795,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
          {
             // wait until the left mouse button is released
          }
-         anim_update_gfx(FALSE);
+         anim_update_gfx(false);
       }
    }
    else if (old_mode != OM_MOV)
@@ -2054,7 +2054,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
             editobj_prepare_undo(ds1_idx);
             editobj_del_obj(ds1_idx);
             redraw = TRUE;
-            anim_update_gfx(FALSE);
+            anim_update_gfx(false);
          }
          else if (key[KEY_U] && (key[KEY_LCONTROL] || key[KEY_RCONTROL]))
          {
@@ -2068,7 +2068,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                editobj_undo(ds1_idx);
                redraw = TRUE;
             }
-            anim_update_gfx(FALSE);
+            anim_update_gfx(false);
          }
          else if (key[KEY_C] && (key[KEY_LCONTROL] || key[KEY_RCONTROL]))
          {
@@ -2104,7 +2104,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
             {
                old_mode = OM_INS;
                redraw = TRUE;
-               anim_update_gfx(FALSE);
+               anim_update_gfx(false);
             }
          }
       }

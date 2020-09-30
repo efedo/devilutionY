@@ -76,7 +76,7 @@ DWORD nthread_send_and_recv_turn(DWORD cur_turn, int turn_delta)
 
 bool nthread_recv_turns(bool *pfSendAsync)
 {
-	*pfSendAsync = FALSE;
+	*pfSendAsync = false;
 	sgbPacketCountdown--;
 	if (sgbPacketCountdown) {
 		last_tick += 50;
@@ -93,10 +93,10 @@ bool nthread_recv_turns(bool *pfSendAsync)
 	if (!SNetReceiveTurns(0, MAX_PLRS, (char **)glpMsgTbl, gdwMsgLenTbl, (LPDWORD)player_state)) {
 		if (SErrGetLastError() != STORM_ERROR_NO_MESSAGES_WAITING)
 			nthread_terminate_game("SNetReceiveTurns");
-		sgbTicsOutOfSync = FALSE;
+		sgbTicsOutOfSync = false;
 		sgbSyncCountdown = 1;
 		sgbPacketCountdown = 1;
-		return FALSE;
+		return false;
 	} else {
 		if (!sgbTicsOutOfSync) {
 			sgbTicsOutOfSync = TRUE;
@@ -159,7 +159,7 @@ void nthread_start(bool set_turn_upper_bit)
 	if (gdwNormalMsgSize > largestMsgSize)
 		gdwNormalMsgSize = largestMsgSize;
 	if (plr.isMultiplayer()) {
-		sgbThreadIsRunning = FALSE;
+		sgbThreadIsRunning = false;
 		sgMemCrit.Enter();
 		nthread_should_run = TRUE;
 		sghThread = CreateThread(nthread_handler, &glpNThreadId);
@@ -198,7 +198,7 @@ unsigned int nthread_handler(void *data)
 
 void nthread_cleanup()
 {
-	nthread_should_run = FALSE;
+	nthread_should_run = false;
 	gdwTurnsInTransit = 0;
 	gdwNormalMsgSize = 0;
 	gdwLargestMsgSize = 0;

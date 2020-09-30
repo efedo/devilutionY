@@ -8,7 +8,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 #ifdef _DEBUG
-bool update_seed_check = FALSE;
+bool update_seed_check = false;
 #endif
 
 #define DEBUGSEEDS 4096
@@ -196,7 +196,7 @@ void PrintDebugMonster(int m)
 	sprintf(dstr, "Mode = %i, Var1 = %i", monsters[m].data._mmode, monsters[m].data._mVar1);
 	NetSendCmdString(1 << myplr(), dstr);
 
-	bActive = FALSE;
+	bActive = false;
 
 	for (i = 0; i < nummonsters; i++) {
 		if (monstactive[i] == m)

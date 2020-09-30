@@ -32,7 +32,7 @@ Automap automap;
  */
 void Automap::initOnce()
 {
-	automapflag = FALSE;
+	automapflag = false;
 	AutoMapScale = 50;
 	AmLine64 = 32;
 	AmLine32 = 16;
@@ -287,10 +287,10 @@ void Automap::drawTile(V2Di s, WORD automap_type)
 		DrawLine(s.x - AmLine32, s.y, s.x, s.y + AmLine16, COLOR_BRIGHT);
 	}
 
-	do_vert = FALSE;
-	do_horz = FALSE;
-	do_cave_horz = FALSE;
-	do_cave_vert = FALSE;
+	do_vert = false;
+	do_horz = false;
+	do_cave_horz = false;
+	do_cave_vert = false;
 	switch (automap_type & MAPFLAG_TYPE) {
 	case 1: // stand-alone column or other unpassable object
 		t1.x = s.x - AmLine16;
@@ -524,7 +524,7 @@ WORD Automap::GetAutomapType(V2Di pos, bool view)
 	int y = pos.y;
 
 	if (view && x == -1 && y >= 0 && y < DMAXY && automapview[0][y]) {
-		if (GetAutomapType({ 0, y }, FALSE) & (MAPFLAG_DIRT << 8)) {
+		if (GetAutomapType({ 0, y }, false) & (MAPFLAG_DIRT << 8)) {
 			return 0;
 		} else {
 			return MAPFLAG_DIRT << 8;
@@ -532,7 +532,7 @@ WORD Automap::GetAutomapType(V2Di pos, bool view)
 	}
 
 	if (view && y == -1 && x >= 0 && x < DMAXY && automapview[x][0]) {
-		if (GetAutomapType({ x, 0 }, FALSE) & (MAPFLAG_DIRT << 8)) {
+		if (GetAutomapType({ x, 0 }, false) & (MAPFLAG_DIRT << 8)) {
 			return 0;
 		} else {
 			return MAPFLAG_DIRT << 8;
@@ -551,8 +551,8 @@ WORD Automap::GetAutomapType(V2Di pos, bool view)
 
 	rv = automaptype[(uint8_t)dgrid[x][y].dungeon];
 	if (rv == 7) {
-		if ((GetAutomapType({ x - 1, y }, FALSE) >> 8) & MAPFLAG_HORZARCH) {
-			if ((GetAutomapType({ x, y - 1 }, FALSE) >> 8) & MAPFLAG_VERTARCH) {
+		if ((GetAutomapType({ x - 1, y }, false) >> 8) & MAPFLAG_HORZARCH) {
+			if ((GetAutomapType({ x, y - 1 }, false) >> 8) & MAPFLAG_VERTARCH) {
 				rv = 1;
 			}
 		}
@@ -603,58 +603,58 @@ void Automap::SetAutomapView(V2Di pos)
 
 	automapview[xx][yy] = TRUE;
 
-	maptype = GetAutomapType({ xx, yy }, FALSE);
+	maptype = GetAutomapType({ xx, yy }, false);
 	solid = maptype & 0x4000;
 
 	switch (maptype & 0xF) {
 	case 2:
 		if (solid) {
-			if (GetAutomapType({ xx, yy + 1 }, FALSE) == 0x4007)
+			if (GetAutomapType({ xx, yy + 1 }, false) == 0x4007)
 				automapview[xx][yy + 1] = TRUE;
-		} else if (GetAutomapType({ xx - 1, yy }, FALSE) & 0x4000) {
+		} else if (GetAutomapType({ xx - 1, yy }, false) & 0x4000) {
 			automapview[xx - 1][yy] = TRUE;
 		}
 		break;
 	case 3:
 		if (solid) {
-			if (GetAutomapType({ xx + 1, yy }, FALSE) == 0x4007)
+			if (GetAutomapType({ xx + 1, yy }, false) == 0x4007)
 				automapview[xx + 1][yy] = TRUE;
-		} else if (GetAutomapType({ xx, yy - 1 }, FALSE) & 0x4000) {
+		} else if (GetAutomapType({ xx, yy - 1 }, false) & 0x4000) {
 			automapview[xx][yy - 1] = TRUE;
 		}
 		break;
 	case 4:
 		if (solid) {
-			if (GetAutomapType({ xx, yy + 1 }, FALSE) == 0x4007)
+			if (GetAutomapType({ xx, yy + 1 }, false) == 0x4007)
 				automapview[xx][yy + 1] = TRUE;
-			if (GetAutomapType({ xx + 1, yy }, FALSE) == 0x4007)
+			if (GetAutomapType({ xx + 1, yy }, false) == 0x4007)
 				automapview[xx + 1][yy] = TRUE;
 		} else {
-			if (GetAutomapType({ xx - 1, yy }, FALSE) & 0x4000)
+			if (GetAutomapType({ xx - 1, yy }, false) & 0x4000)
 				automapview[xx - 1][yy] = TRUE;
-			if (GetAutomapType({xx, yy - 1 }, FALSE) & 0x4000)
+			if (GetAutomapType({xx, yy - 1 }, false) & 0x4000)
 				automapview[xx][yy - 1] = TRUE;
-			if (GetAutomapType({ xx - 1, yy - 1 }, FALSE) & 0x4000)
+			if (GetAutomapType({ xx - 1, yy - 1 }, false) & 0x4000)
 				automapview[xx - 1][yy - 1] = TRUE;
 		}
 		break;
 	case 5:
 		if (solid) {
-			if (GetAutomapType({ xx, yy - 1 }, FALSE) & 0x4000)
+			if (GetAutomapType({ xx, yy - 1 }, false) & 0x4000)
 				automapview[xx][yy - 1] = TRUE;
-			if (GetAutomapType({ xx, yy + 1 }, FALSE) == 0x4007)
+			if (GetAutomapType({ xx, yy + 1 }, false) == 0x4007)
 				automapview[xx][yy + 1] = TRUE;
-		} else if (GetAutomapType({ xx - 1, yy }, FALSE) & 0x4000) {
+		} else if (GetAutomapType({ xx - 1, yy }, false) & 0x4000) {
 			automapview[xx - 1][yy] = TRUE;
 		}
 		break;
 	case 6:
 		if (solid) {
-			if (GetAutomapType({ xx - 1, yy }, FALSE) & 0x4000)
+			if (GetAutomapType({ xx - 1, yy }, false) & 0x4000)
 				automapview[xx - 1][yy] = TRUE;
-			if (GetAutomapType({ xx + 1, yy }, FALSE) == 0x4007)
+			if (GetAutomapType({ xx + 1, yy }, false) == 0x4007)
 				automapview[xx + 1][yy] = TRUE;
-		} else if (GetAutomapType({ xx, yy - 1 }, FALSE) & 0x4000) {
+		} else if (GetAutomapType({ xx, yy - 1 }, false) & 0x4000) {
 			automapview[xx][yy - 1] = TRUE;
 		}
 		break;

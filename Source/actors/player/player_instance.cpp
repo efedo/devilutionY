@@ -671,7 +671,7 @@ void Player::CreatePlayer(char c)
 	data._pFireResist = 0;
 	data._pLghtResist = 0;
 	data._pLightRad = 10;
-	data._pInfraFlag = FALSE;
+	data._pInfraFlag = false;
 
 	if (c == PC_WARRIOR) {
 		data._pAblSpells = (__int64)1 << (SPL_REPAIR - 1);
@@ -712,21 +712,21 @@ void Player::CreatePlayer(char c)
 	}
 
 	for (i = 0; i < NUMLEVELS; i++) {
-		data._pLvlVisited[i] = FALSE;
+		data._pLvlVisited[i] = false;
 	}
 
 	for (i = 0; i < 10; i++) {
-		data._pSetLvlVisited[i] = FALSE;
+		data._pSetLvlVisited[i] = false;
 	}
 
-	data._pLvlChanging = FALSE;
+	data._pLvlChanging = false;
 	data.pTownWarps = 0;
 	data.pLvlLoad = 0;
-	data.pBattleNet = FALSE;
-	data.pManaShield = FALSE;
+	data.pBattleNet = false;
+	data.pManaShield = false;
 
 	InitDungMsgs();
-	CreatePlrItems(pnum);
+	CreatePlrItems();
 	SetRndSeed(0);
 }
 
@@ -857,7 +857,7 @@ void Player::AddPlrExperience(int lvl, int exp)
 		}
 	}
 
-	NetSendCmdParam1(FALSE, CMD_PLRLEVEL, data._pLevel);
+	NetSendCmdParam1(false, CMD_PLRLEVEL, data._pLevel);
 }
 
 void AddPlrMonstExper(int lvl, int exp, char pmask)
@@ -895,7 +895,7 @@ void Player::InitPlayer(bool FirstTime)
 		} else {
 			data._pwtype = WT_MELEE;
 		}
-		data.pManaShield = FALSE;
+		data.pManaShield = false;
 	}
 
 	if (data.plrlevel == lvl.currlevel || leveldebug) {
@@ -966,11 +966,11 @@ void Player::InitPlayer(bool FirstTime)
 	#endif
 
 	data._pNextExper = ExpLvlsTbl[data._pLevel];
-	data._pInvincible = FALSE;
+	data._pInvincible = false;
 
 	if (pnum == myplr()) {
 		deathdelay = 0;
-		deathflag = FALSE;
+		deathflag = false;
 		ScrollInfo._soff = { 0, 0 };
 		ScrollInfo._sdir = ScrollDir::NONE;
 	}
@@ -988,7 +988,7 @@ bool Player::PlrDirOK(Dir dir)
 {
 	V2Di p = pos() + offset(dir);
 
-	if (p.x < 0 || !grid.at(p).isPiece() || !PosOkPlayer(p)) return FALSE;
+	if (p.x < 0 || !grid.at(p).isPiece() || !PosOkPlayer(p)) return false;
 
 	bool isOk = TRUE;
 	if (dir == Dir::E) {
@@ -1006,7 +1006,7 @@ void PlrClrTrans(V2Di pos)
 {
 	for (int i = pos.y - 1; i <= pos.y + 1; i++) {
 		for (int j = pos.x - 1; j <= pos.x + 1; j++) {
-			lvl.TransList[grid[j][i].dTransVal] = FALSE;
+			lvl.TransList[grid[j][i].dTransVal] = false;
 		}
 	}
 }
@@ -1504,12 +1504,11 @@ void RespawnDeadItem(Item &item, V2Di pos)
 #if defined(__clang__) || defined(__GNUC__)
 __attribute__((no_sanitize("shift-base")))
 #endif
-void Player::StartPlayerKill(int earflag)
+void Player::StartPlayerKill()
 {
 	bool diablolevel;
 	int i;
 	Dir pdd;
-	Item &ear = items.createNewItem();
 	Item * pi;
 
 	if (data._pHitPoints <= 0 && data._pmode == PM_DEATH) {
@@ -1517,6 +1516,7 @@ void Player::StartPlayerKill(int earflag)
 	}
 
 	if (myplr() == pnum) {
+		bool earflag = false;
 		NetSendCmdParam1(TRUE, CMD_PLRDEAD, earflag);
 	}
 
@@ -1546,17 +1546,17 @@ void Player::StartPlayerKill(int earflag)
 
 	NewPlrAnim(data._pDAnim[int(data._pdir)], data._pDFrames, 1, data._pDWidth);
 
-	data._pBlockFlag = FALSE;
+	data._pBlockFlag = false;
 	data._pmode = PM_DEATH;
 	data._pInvincible = TRUE;
 	SetPlayerHitPoints(0);
 	data._pVar8 = 1;
 
-	if (pnum != myplr() && !earflag && !diablolevel) {
+	if (pnum != myplr() && !diablolevel) {
 		for (i = 0; i < NUM_INVLOC; i++) {
 			data.InvBody[i]._itype = ITYPE_NONE;
 		}
-		CalcPlrInv(pnum, FALSE);
+		CalcPlrInv(pnum, false);
 	}
 
 	if (data.plrlevel == lvl.currlevel) {
@@ -1577,38 +1577,15 @@ void Player::StartPlayerKill(int earflag)
 
 			if (!diablolevel) {
 				DropHalfPlayersGold();
-				if (earflag != -1) {
-					if (earflag != 0) {
-						SetPlrHandItem(&ear, IDI_EAR);
-						sprintf(ear._iName, "Ear of %s", data._pName);
-						if (data._pClass == PC_SORCERER) {
-							ear._iCurs = ICURS_EAR_SORCEROR;
-						} else if (data._pClass == PC_WARRIOR) {
-							ear._iCurs = ICURS_EAR_WARRIOR;
-						} else if (data._pClass == PC_ROGUE) {
-							ear._iCurs = ICURS_EAR_ROGUE;
-						}
-
-						ear._iCreateInfo = data._pName[0] << 8 | data._pName[1];
-						ear._iSeed = data._pName[2] << 24 | data._pName[3] << 16 | data._pName[4] << 8 | data._pName[5];
-						ear._ivalue = data._pLevel;
-
-						if (FindGetItem(IDI_EAR, ear._iCreateInfo, ear._iSeed) == -1) {
-							PlrDeadItem(ear, { 0, 0 });
-						}
-					} else {
-						pi = data.InvBody[0];
-						i = NUM_INVLOC;
-						while (i--) {
-							pdd = rotate(data._pdir, i);
-							assert(pi);
-							PlrDeadItem(*pi, offset(pdd));
-							pi++;
-						}
-
-						CalcPlrInv(pnum, FALSE);
-					}
+				pi = data.InvBody[0];
+				i = NUM_INVLOC;
+				while (i--) {
+					pdd = rotate(data._pdir, i);
+					assert(pi);
+					PlrDeadItem(*pi, offset(pdd));
+					pi++;
 				}
+				CalcPlrInv(pnum, false);
 			}
 		}
 	}
@@ -1623,7 +1600,7 @@ void Player::PlrDeadItem(Item & item, V2Di n)
 	if ((n.x || n.y) && ItemSpaceOk(p.x, p.y)) {
 		RespawnDeadItem(item, p);
 		data.HoldItem = &item;
-		NetSendCmdPItem(FALSE, CMD_RESPAWNITEM, p.x, p.y);
+		NetSendCmdPItem(false, CMD_RESPAWNITEM, p.x, p.y);
 		return;
 	}
 
@@ -1635,7 +1612,7 @@ void Player::PlrDeadItem(Item & item, V2Di n)
 				if (ItemSpaceOk(p.x, p.y)) {
 					RespawnDeadItem(item, p);
 					data.HoldItem = &item;
-					NetSendCmdPItem(FALSE, CMD_RESPAWNITEM, p.x, p.y);
+					NetSendCmdPItem(false, CMD_RESPAWNITEM, p.x, p.y);
 					return;
 				}
 			}
@@ -1645,133 +1622,27 @@ void Player::PlrDeadItem(Item & item, V2Di n)
 
 void Player::DropHalfPlayersGold()
 {
-	int i, hGold;
-
-	hGold = data._pGold >> 1;
-	for (i = 0; i < MAXBELTITEMS && hGold > 0; i++) {
-		if (data.SpdList[i]._itype == ITYPE_GOLD && data.SpdList[i]._ivalue != GOLD_MAX_LIMIT) {
-			if (hGold < data.SpdList[i]._ivalue) {
-				data.SpdList[i]._ivalue -= hGold;
-				SetSpdbarGoldCurs(pnum, i);
-				SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-				GetGoldSeed(pnum, &data.HoldItem);
-				SetPlrHandGoldCurs(&data.HoldItem);
-				data.HoldItem._ivalue = hGold;
-				PlrDeadItem(&data.HoldItem, { 0, 0 });
-				hGold = 0;
-			} else {
-				hGold -= data.SpdList[i]._ivalue;
-				inv.removeBeltItem(i);
-				SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-				GetGoldSeed(pnum, &data.HoldItem);
-				SetPlrHandGoldCurs(&data.HoldItem);
-				data.HoldItem._ivalue = data.SpdList[i]._ivalue;
-				PlrDeadItem(&data.HoldItem, { 0, 0 });
-				i = -1;
-			}
-		}
-	}
-	if (hGold > 0) {
-		for (i = 0; i < MAXBELTITEMS && hGold > 0; i++) {
-			if (data.SpdList[i]._itype == ITYPE_GOLD) {
-				if (hGold < data.SpdList[i]._ivalue) {
-					data.SpdList[i]._ivalue -= hGold;
-					SetSpdbarGoldCurs(pnum, i);
-					SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-					GetGoldSeed(pnum, &data.HoldItem);
-					SetPlrHandGoldCurs(&data.HoldItem);
-					data.HoldItem._ivalue = hGold;
-					PlrDeadItem(&data.HoldItem, { 0, 0 });
-					hGold = 0;
-				} else {
-					hGold -= data.SpdList[i]._ivalue;
-					plr[pnum].inventory.removeBeltItem(i);
-					SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-					GetGoldSeed(pnum, &data.HoldItem);
-					SetPlrHandGoldCurs(&data.HoldItem);
-					data.HoldItem._ivalue = data.SpdList[i]._ivalue;
-					PlrDeadItem(&data.HoldItem, { 0, 0 });
-					i = -1;
-				}
-			}
-		}
-	}
-	force_redraw = 255;
-	if (hGold > 0) {
-		for (i = 0; i < data._pNumInv && hGold > 0; i++) {
-			if (data.InvList[i]._itype == ITYPE_GOLD && data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
-				if (hGold < data.InvList[i]._ivalue) {
-					data.InvList[i]._ivalue -= hGold;
-					SetGoldCurs(pnum, i);
-					SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-					GetGoldSeed(pnum, &data.HoldItem);
-					SetPlrHandGoldCurs(&data.HoldItem);
-					data.HoldItem._ivalue = hGold;
-					PlrDeadItem(&data.HoldItem, { 0, 0 });
-					hGold = 0;
-				} else {
-					hGold -= data.InvList[i]._ivalue;
-					plr[pnum].inventory.RemoveInvItem(i);
-					SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-					GetGoldSeed(pnum, &data.HoldItem);
-					SetPlrHandGoldCurs(&data.HoldItem);
-					data.HoldItem._ivalue = data.InvList[i]._ivalue;
-					PlrDeadItem(&data.HoldItem, { 0, 0 });
-					i = -1;
-				}
-			}
-		}
-	}
-	if (hGold > 0) {
-		for (i = 0; i < data._pNumInv && hGold > 0; i++) {
-			if (data.InvList[i]._itype == ITYPE_GOLD) {
-				if (hGold < data.InvList[i]._ivalue) {
-					data.InvList[i]._ivalue -= hGold;
-					SetGoldCurs(pnum, i);
-					SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-					GetGoldSeed(pnum, &data.HoldItem);
-					SetPlrHandGoldCurs(&data.HoldItem);
-					data.HoldItem._ivalue = hGold;
-					PlrDeadItem(&data.HoldItem, { 0, 0 });
-					hGold = 0;
-				} else {
-					hGold -= data.InvList[i]._ivalue;
-					plr[pnum].inventory.RemoveInvItem(i);
-					SetPlrHandItem(&data.HoldItem, IDI_GOLD);
-					GetGoldSeed(pnum, &data.HoldItem);
-					SetPlrHandGoldCurs(&data.HoldItem);
-					data.HoldItem._ivalue = data.InvList[i]._ivalue;
-					PlrDeadItem(&data.HoldItem, { 0, 0 });
-					i = -1;
-				}
-			}
-		}
-	}
-	data._pGold = plr[pnum].inventory.CalculateGold();
+	const int hGold = data._pGold >> 1;
+	// Go through all piles of gold in inventory and take half
+	data._pGold = inv.CalculateGold();
 }
 
-void Player::SyncPlrKill(int earflag)
+void Player::SyncPlrKill()
 {
-	int ma, i;
-
 	if (data._pHitPoints == 0 && lvl.currlevel == 0) {
 		SetPlayerHitPoints(64);
 		return;
 	}
 
-	for (i = 0; i < nummissiles; i++) {
-		ma = missileactive[i];
-		if (missile[ma]._mitype == MIS_MANASHIELD && missile[ma]._misource == pnum && missile[ma]._miDelFlag == FALSE) {
-			if (earflag != -1) {
-				missile[ma]._miVar8 = earflag;
-			}
-
+	for (int i = 0; i < nummissiles; i++) {
+		int ma = missileactive[i];
+		if (missile[ma]._mitype == MIS_MANASHIELD && missile[ma]._misource == pnum && missile[ma]._miDelFlag == false) {
 			return;
 		}
 	}
 
 	SetPlayerHitPoints(0);
-	StartPlayerKill(earflag);
+	StartPlayerKill();
 }
 
 void Player::RemovePlrMissiles()
@@ -1808,7 +1679,7 @@ void Player::InitLevelChange()
 {
 	RemovePlrMissiles();
 	if (pnum == myplr() && qtextflag) {
-		qtextflag = FALSE;
+		qtextflag = false;
 		stream_stop();
 	}
 
@@ -1873,18 +1744,18 @@ void Player::RestartTownLvl()
 	InitLevelChange();
 
 	data.plrlevel = 0;
-	data._pInvincible = FALSE;
+	data._pInvincible = false;
 
 	SetPlayerHitPoints(64);
 
 	data._pMana = 0;
 	data._pManaBase = data._pMana - (data._pMaxMana - data._pMaxManaBase);
 
-	CalcPlrInv(pnum, FALSE);
+	CalcPlrInv(false);
 
 	if (pnum == myplr()) {
 		data._pmode = PM_NEWLVL;
-		data._pInvincible = TRUE;
+		data._pInvincible = true;
 		PostMessage(WM_DIABRETOWN, 0, 0);
 	}
 }
@@ -1911,7 +1782,7 @@ void Player::StartWarpLvl(int pidx)
 
 bool Player::PM_DoStand()
 {
-	return FALSE;
+	return false;
 }
 
 void Player::StartWalk(Dir walkdir)
@@ -2085,79 +1956,6 @@ bool Player::PM_DoWalk3()
 	}
 }
 
-bool Player::WeaponDur(int durrnd)
-{
-	if (pnum != myplr()) {
-		return FALSE;
-	}
-
-	if (random_(3, durrnd) != 0) {
-		return FALSE;
-	}
-
-	if ((DWORD)pnum >= MAX_PLRS) {
-		app_fatal("WeaponDur: illegal player %d", pnum);
-	}
-
-	if (data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && data.InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON) {
-		if (data.InvBody[INVLOC_HAND_LEFT]._iDurability == DUR_INDESTRUCTIBLE) {
-			return FALSE;
-		}
-
-		data.InvBody[INVLOC_HAND_LEFT]._iDurability--;
-		if (data.InvBody[INVLOC_HAND_LEFT]._iDurability == 0) {
-			NetSendCmdDelItem(TRUE, INVLOC_HAND_LEFT);
-			data.InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
-			CalcPlrInv(pnum, TRUE);
-			return TRUE;
-		}
-	}
-
-	if (data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE && data.InvBody[INVLOC_HAND_RIGHT]._iClass == ICLASS_WEAPON) {
-		if (data.InvBody[INVLOC_HAND_RIGHT]._iDurability == DUR_INDESTRUCTIBLE) {
-			return FALSE;
-		}
-
-		data.InvBody[INVLOC_HAND_RIGHT]._iDurability--;
-		if (data.InvBody[INVLOC_HAND_RIGHT]._iDurability == 0) {
-			NetSendCmdDelItem(TRUE, INVLOC_HAND_RIGHT);
-			data.InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
-			CalcPlrInv(pnum, TRUE);
-			return TRUE;
-		}
-	}
-
-	if (data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_NONE && data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD) {
-		if (data.InvBody[INVLOC_HAND_RIGHT]._iDurability == DUR_INDESTRUCTIBLE) {
-			return FALSE;
-		}
-
-		data.InvBody[INVLOC_HAND_RIGHT]._iDurability--;
-		if (data.InvBody[INVLOC_HAND_RIGHT]._iDurability == 0) {
-			NetSendCmdDelItem(TRUE, INVLOC_HAND_RIGHT);
-			data.InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
-			CalcPlrInv(pnum, TRUE);
-			return TRUE;
-		}
-	}
-
-	if (data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_NONE && data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD) {
-		if (data.InvBody[INVLOC_HAND_LEFT]._iDurability == DUR_INDESTRUCTIBLE) {
-			return FALSE;
-		}
-
-		data.InvBody[INVLOC_HAND_LEFT]._iDurability--;
-		if (data.InvBody[INVLOC_HAND_LEFT]._iDurability == 0) {
-			NetSendCmdDelItem(TRUE, INVLOC_HAND_LEFT);
-			data.InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
-			CalcPlrInv(pnum, TRUE);
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 bool Player::PlrHitMonst(int m)
 {
 	bool rv, ret;
@@ -2168,18 +1966,18 @@ bool Player::PlrHitMonst(int m)
 	}
 
 	if ((monsters[m].data._mhitpoints >> 6) <= 0) {
-		return FALSE;
+		return false;
 	}
 
 	if (monsters[m].data.MType->mtype == MT_ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT) {
-		return FALSE;
+		return false;
 	}
 
 	if (monsters[m].data._mmode == MM_CHARGE) {
-		return FALSE;
+		return false;
 	}
 
-	rv = FALSE;
+	rv = false;
 
 	hit = random_(4, 100);
 	if (monsters[m].data._mmode == MM_STONE) {
@@ -2343,7 +2141,7 @@ bool Player::PlrHitPlr(char p)
 		app_fatal("PlrHitPlr: illegal target player %d", p);
 	}
 
-	rv = FALSE;
+	rv = false;
 
 	if (plr[p].data._pInvincible) {
 		return rv;
@@ -2418,7 +2216,7 @@ bool Player::PlrHitPlr(char p)
 			if (pnum == myplr()) {
 				NetSendCmdDamage(TRUE, p, skdam);
 			}
-			plr[p].StartPlrHit(skdam, FALSE);
+			plr[p].StartPlrHit(skdam, false);
 		}
 
 		rv = TRUE;
@@ -2434,7 +2232,7 @@ bool Player::PlrHitObj(V2Di m)
 		BreakObject(pnum, oi);
 		return TRUE;
 	}
-	return FALSE;
+	return false;
 }
 
 bool Player::PM_DoAttack()
@@ -2471,7 +2269,7 @@ bool Player::PM_DoAttack()
 			}
 			if (CanTalkToMonst(m)) {
 				data._pVar1 = 0;
-				return FALSE;
+				return false;
 			}
 		}
 
@@ -2482,7 +2280,7 @@ bool Player::PM_DoAttack()
 			AddMissile(d, { 2, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
 
-		didhit = FALSE;
+		didhit = false;
 		if (grid.at(d).getMonster()) {
 			m = grid.at(d).getMonster();
 			if (grid.at(d).getMonster() > 0) {
@@ -2510,7 +2308,7 @@ bool Player::PM_DoAttack()
 		ClearPlrPVars();
 		return TRUE;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -2558,42 +2356,7 @@ bool Player::PM_DoRangeAttack()
 		ClearPlrPVars();
 		return TRUE;
 	} else {
-		return FALSE;
-	}
-}
-
-void Player::ShieldDur()
-{
-	if (pnum != myplr()) {
-		return;
-	}
-
-	if ((DWORD)pnum >= MAX_PLRS) {
-		app_fatal("ShieldDur: illegal player %d", pnum);
-	}
-
-	if (data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD) {
-		if (data.InvBody[INVLOC_HAND_LEFT]._iDurability == DUR_INDESTRUCTIBLE) {
-			return;
-		}
-
-		data.InvBody[INVLOC_HAND_LEFT]._iDurability--;
-		if (data.InvBody[INVLOC_HAND_LEFT]._iDurability == 0) {
-			NetSendCmdDelItem(TRUE, INVLOC_HAND_LEFT);
-			data.InvBody[INVLOC_HAND_LEFT]._itype = ITYPE_NONE;
-			CalcPlrInv(pnum, TRUE);
-		}
-	}
-
-	if (data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD) {
-		if (data.InvBody[INVLOC_HAND_RIGHT]._iDurability != DUR_INDESTRUCTIBLE) {
-			data.InvBody[INVLOC_HAND_RIGHT]._iDurability--;
-			if (data.InvBody[INVLOC_HAND_RIGHT]._iDurability == 0) {
-				NetSendCmdDelItem(TRUE, INVLOC_HAND_RIGHT);
-				data.InvBody[INVLOC_HAND_RIGHT]._itype = ITYPE_NONE;
-				CalcPlrInv(pnum, TRUE);
-			}
-		}
+		return false;
 	}
 }
 
@@ -2613,7 +2376,7 @@ bool Player::PM_DoBlock()
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool Player::PM_DoSpell()
@@ -2662,7 +2425,7 @@ bool Player::PM_DoSpell()
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool Player::PM_DoGotHit()
@@ -2690,58 +2453,10 @@ bool Player::PM_DoGotHit()
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
-void Player::ArmorDur()
-{
-	int a;
-	ItemStruct *pi;
-	PlayerStruct *p;
 
-	if (pnum != myplr()) {
-		return;
-	}
-
-	if ((DWORD)pnum >= MAX_PLRS) {
-		app_fatal("ArmorDur: illegal player %d", pnum);
-	}
-
-	p = &data;
-	if (p->InvBody[INVLOC_CHEST]._itype == ITYPE_NONE && p->InvBody[INVLOC_HEAD]._itype == ITYPE_NONE) {
-		return;
-	}
-
-	a = random_(8, 3);
-	if (p->InvBody[INVLOC_CHEST]._itype != ITYPE_NONE && p->InvBody[INVLOC_HEAD]._itype == ITYPE_NONE) {
-		a = 1;
-	}
-	if (p->InvBody[INVLOC_CHEST]._itype == ITYPE_NONE && p->InvBody[INVLOC_HEAD]._itype != ITYPE_NONE) {
-		a = 0;
-	}
-
-	if (a != 0) {
-		pi = &p->InvBody[INVLOC_CHEST];
-	} else {
-		pi = &p->InvBody[INVLOC_HEAD];
-	}
-	if (pi->_iDurability == DUR_INDESTRUCTIBLE) {
-		return;
-	}
-
-	pi->_iDurability--;
-	if (pi->_iDurability != 0) {
-		return;
-	}
-
-	if (a != 0) {
-		NetSendCmdDelItem(TRUE, INVLOC_CHEST);
-	} else {
-		NetSendCmdDelItem(TRUE, INVLOC_HEAD);
-	}
-	pi->_itype = ITYPE_NONE;
-	CalcPlrInv(pnum, TRUE);
-}
 
 bool Player::PM_DoDeath()
 {
@@ -2765,12 +2480,12 @@ bool Player::PM_DoDeath()
 		data._pVar8++;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool Player::PM_DoNewLvl()
 {
-	return FALSE;
+	return false;
 }
 
 void Player::CheckNewPath()
@@ -2781,11 +2496,11 @@ void Player::CheckNewPath()
 	int xvel3;
 
 	if (data.destAction == ACTION_ATTACKMON) {
-		MakePlrPath(monsters[data.destParam1].data._mfut, FALSE);
+		MakePlrPath(monsters[data.destParam1].data._mfut, false);
 	}
 
 	if (data.destAction == ACTION_ATTACKPLR) {
-		MakePlrPath(plr[data.destParam1].futpos(), FALSE);
+		MakePlrPath(plr[data.destParam1].futpos(), false);
 	}
 
 	if (!data.wkpath.empty()) {
@@ -2911,7 +2626,7 @@ void Player::CheckNewPath()
 					d = GetDirection(pos(), object[i]._o);
 					StartAttack(d);
 				} else {
-					OperateObject(pnum, i, FALSE);
+					OperateObject(pnum, i, false);
 				}
 			}
 			break;
@@ -2927,7 +2642,7 @@ void Player::CheckNewPath()
 					StartAttack(d);
 				} else {
 					TryDisarm(pnum, i);
-					OperateObject(pnum, i, FALSE);
+					OperateObject(pnum, i, false);
 				}
 			}
 			break;
@@ -3001,7 +2716,7 @@ void Player::CheckNewPath()
 					d = GetDirection(pos(), object[i]._o);
 					StartAttack(d);
 				} else {
-					OperateObject(pnum, i, FALSE);
+					OperateObject(pnum, i, false);
 				}
 			}
 		}
@@ -3062,7 +2777,7 @@ bool PlrDeathModeOK(int p)
 		return TRUE;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void ValidatePlayer()
@@ -3170,7 +2885,7 @@ void Player::ProcessPlayer()
 				}
 			}
 
-			tplayer = FALSE;
+			tplayer = false;
 			do {
 				switch (data._pmode) {
 				case PM_STAND:
@@ -3340,11 +3055,11 @@ void CheckPlrSpell()
 		}
 	}
 
-	addflag = FALSE;
+	addflag = false;
 	switch (myplr().data._pRSplType) {
 	case RSPLTYPE_SKILL:
 	case RSPLTYPE_SPELL:
-		addflag = CheckSpell(myplr(), rspell, myplr().data._pRSplType, FALSE);
+		addflag = CheckSpell(myplr(), rspell, myplr().data._pRSplType, false);
 		break;
 	case RSPLTYPE_SCROLL:
 		addflag = UseScroll();
@@ -3457,7 +3172,7 @@ void Player::SyncInitPlrPos()
 	}
 
 	if (!PosOkPlayer(p)) {
-		posOk = FALSE;
+		posOk = false;
 		for (range = 1; range < 50 && !posOk; range++) {
 			for (yy = -range; yy <= range && !posOk; yy++) {
 				p.y = yy + pos().y;
@@ -3554,7 +3269,7 @@ void Player::ModifyPlrStr(int l)
 	CalcPlrInv(pnum, TRUE);
 
 	if (pnum == myplr()) {
-		NetSendCmdParam1(FALSE, CMD_SETSTR, data._pBaseStr); //60
+		NetSendCmdParam1(false, CMD_SETSTR, data._pBaseStr); //60
 	}
 }
 
@@ -3585,7 +3300,7 @@ void Player::ModifyPlrMag(int l)
 	CalcPlrInv(pnum, TRUE);
 
 	if (pnum == myplr()) {
-		NetSendCmdParam1(FALSE, CMD_SETMAG, data._pBaseMag);
+		NetSendCmdParam1(false, CMD_SETMAG, data._pBaseMag);
 	}
 }
 
@@ -3607,7 +3322,7 @@ void Player::ModifyPlrDex(int l)
 	}
 
 	if (pnum == myplr()) {
-		NetSendCmdParam1(FALSE, CMD_SETDEX, data._pBaseDex);
+		NetSendCmdParam1(false, CMD_SETDEX, data._pBaseDex);
 	}
 }
 
@@ -3636,7 +3351,7 @@ void Player::ModifyPlrVit(int l)
 	CalcPlrInv(pnum, TRUE);
 
 	if (pnum == myplr()) {
-		NetSendCmdParam1(FALSE, CMD_SETVIT, data._pBaseVit);
+		NetSendCmdParam1(false, CMD_SETVIT, data._pBaseVit);
 	}
 }
 

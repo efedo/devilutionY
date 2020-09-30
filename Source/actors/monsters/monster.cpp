@@ -106,12 +106,12 @@ bool MonstPlace(V2Di p)
 	    || p.y < 0 || p.y >= MAXDUNY
 	    || grid.at(p).getMonster()
 	    || grid.at(p).isPlayer()) {
-		return FALSE;
+		return false;
 	}
 
 	char f = grid.at(p).dFlags;
-	if (f & BFLAG_VISIBLE) return FALSE;
-	if (f & BFLAG_POPULATED) return FALSE;
+	if (f & BFLAG_VISIBLE) return false;
+	if (f & BFLAG_POPULATED) return false;
 	return !grid.at(p).isSolid();
 }
 
@@ -146,10 +146,10 @@ void InitMonsters()
 	if (plr.isMultiplayer())
 		CheckDungeonClear();
 	if (!lvl.setlevel) {
-		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-		AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+		AddMonster({ 1, 0 }, Dir(0), 0, false);
+		AddMonster({ 1, 0 }, Dir(0), 0, false);
+		AddMonster({ 1, 0 }, Dir(0), 0, false);
+		AddMonster({ 1, 0 }, Dir(0), 0, false);
 	}
 	if (!lvl.setlevel && lvl.currlevel == 16)
 		LoadDiabMonsts();
@@ -159,7 +159,7 @@ void InitMonsters()
 	for (i = 0; i < nt; i++) {
 		for (s = -2; s < 2; s++) {
 			for (t = -2; t < 2; t++)
-				DoVision({ s + trigs[i]._t.x, t + trigs[i]._t.y }, 15, FALSE, FALSE);
+				DoVision({ s + trigs[i]._t.x, t + trigs[i]._t.y }, 15, false, false);
 		}
 	}
 	monsters.PlaceQuestMonsters();
@@ -184,12 +184,13 @@ void InitMonsters()
 		}
 		while (nummonsters < totalmonsters) {
 			mtype = scattertypes[random_(95, numscattypes)];
-			if (lvl.currlevel == 1 || random_(95, 2) == 0)
+			if (lvl.currlevel == 1 || random_(95, 2) == 0) {
 				na = 1;
-			else if (lvl.currlevel == 2)
+			} else if (lvl.currlevel == 2) {
 				na = random_(95, 2) + 2;
-			else
+			} else {
 				na = random_(95, 3) + 3;
+			}
 			monsters.PlaceGroup(mtype, na, 0, 0);
 		}
 	}
@@ -209,7 +210,7 @@ void PlaceUniques()
 	for (u = 0; UniqMonst[u].mtype != -1; u++) {
 		if (UniqMonst[u].mlevel != lvl.currlevel)
 			continue;
-		done = FALSE;
+		done = false;
 		for (mt = 0; mt < nummtypes; mt++) {
 			if (done)
 				break;
@@ -217,15 +218,15 @@ void PlaceUniques()
 		}
 		mt--;
 		if (u == UMT_GARBUD && quests[Q_GARBUD]._qactive == QUEST_NOTAVAIL)
-			done = FALSE;
+			done = false;
 		if (u == UMT_ZHAR && quests[Q_ZHAR]._qactive == QUEST_NOTAVAIL)
-			done = FALSE;
+			done = false;
 		if (u == UMT_SNOTSPIL && quests[Q_LTBANNER]._qactive == QUEST_NOTAVAIL)
-			done = FALSE;
+			done = false;
 		if (u == UMT_LACHDAN && quests[Q_VEIL]._qactive == QUEST_NOTAVAIL)
-			done = FALSE;
+			done = false;
 		if (u == UMT_WARLORD && quests[Q_WARLORD]._qactive == QUEST_NOTAVAIL)
-			done = FALSE;
+			done = false;
 		if (done)
 			monsters.PlaceUniqueMonster(u, mt, 8);
 	}
@@ -239,10 +240,10 @@ void SetMapMonsters(uint8_t *pMap, V2Di start)
 	int mtype;
 
 	beastiary.AddMonsterType(MT_GOLEM, 2);
-	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
-	AddMonster({ 1, 0 }, Dir(0), 0, FALSE);
+	AddMonster({ 1, 0 }, Dir(0), 0, false);
+	AddMonster({ 1, 0 }, Dir(0), 0, false);
+	AddMonster({ 1, 0 }, Dir(0), 0, false);
+	AddMonster({ 1, 0 }, Dir(0), 0, false);
 	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
 		beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
@@ -291,7 +292,7 @@ void M2MStartHit(int mid, int i, int dam)
 	if (i >= 0) monsters[i].data.mWhoHit |= 1 << i;
 
 	delta_monster_hp(mid, monsters[mid].data._mhitpoints, lvl.currlevel);
-	NetSendCmdParam2(FALSE, CMD_MONSTDAMAGE, mid, dam);
+	NetSendCmdParam2(false, CMD_MONSTDAMAGE, mid, dam);
 	PlayEffect(mid, 1);
 
 	if (monsters[mid].data.MType->mtype >= MT_SNEAK && monsters[mid].data.MType->mtype <= MT_ILLWEAV || dam >> 6 >= monsters[mid].data.mLevel + 3) {
@@ -342,13 +343,13 @@ void DoEnding()
 	if (plr.isMultiplayer()) SDL_Delay(1000);
 
 	if (myplr().data._pClass == PC_WARRIOR) {
-		play_movie("gendata\\DiabVic2.smk", FALSE);
+		play_movie("gendata\\DiabVic2.smk", false);
 	} else if (myplr().data._pClass == PC_SORCERER) {
-		play_movie("gendata\\DiabVic1.smk", FALSE);
+		play_movie("gendata\\DiabVic1.smk", false);
 	} else {
-		play_movie("gendata\\DiabVic3.smk", FALSE);
+		play_movie("gendata\\DiabVic3.smk", false);
 	}
-	play_movie("gendata\\Diabend.smk", FALSE);
+	play_movie("gendata\\Diabend.smk", false);
 
 	bool bMusicOn = gbMusicOn;
 	gbMusicOn = TRUE;
@@ -359,7 +360,7 @@ void DoEnding()
 	music_start(TMUSIC_L2);
 	loop_movie = TRUE;
 	play_movie("gendata\\loopdend.smk", TRUE);
-	loop_movie = FALSE;
+	loop_movie = false;
 	music_stop();
 
 	sound_get_or_set_music_volume(musicVolume);
@@ -372,8 +373,8 @@ void PrepDoEnding()
 	DWORD *killLevel;
 
 	gbSoundOn = sgbSaveSoundOn;
-	gbRunGame = FALSE;
-	deathflag = FALSE;
+	gbRunGame = false;
+	deathflag = false;
 	cineflag = TRUE;
 
 	killLevel = &myplr().data.pDiabloKillLevel;
@@ -404,7 +405,7 @@ void DeleteMonsterList()
 			monsters[i].data._m = { 1, 0 };
 			monsters[i].data._mfut = { 0, 0 };
 			monsters[i].data._mold = { 0, 0 };
-			monsters[i].data._mDelFlag = FALSE;
+			monsters[i].data._mDelFlag = false;
 		}
 	}
 
@@ -432,7 +433,7 @@ void ProcessMonsters()
 	for (i = 0; i < nummonsters; i++) {
 		mi = monstactive[i];
 		Monst = &monsters[mi].data;
-		raflag = FALSE;
+		raflag = false;
 		if (plr.isMultiplayer()) {
 			SetRndSeed(Monst->_mAISeed);
 			Monst->_mAISeed = GetRndSeed();
@@ -522,7 +523,7 @@ void ProcessMonsters()
 				raflag = monsters[mi].M_DoDelay();
 				break;
 			case MM_CHARGE:
-				raflag = FALSE;
+				raflag = false;
 				break;
 			case MM_STONE:
 				raflag = monsters[mi].M_DoStone();
@@ -583,26 +584,26 @@ bool MonsterInstance::DirOK(Dir mdir)
 	int mcount, mi;
 	V2Di f = data._m + offset(mdir);
 	if (f.y < 0 || f.y >= MAXDUNY || f.x < 0 || f.x >= MAXDUNX || !PosOkMonst(i, f))
-		return FALSE;
+		return false;
 	if (mdir == Dir::E) {
 		if (grid.at({ f.x, f.y + 1 }).isSolid() || grid[f.x][f.y + 1].dFlags & BFLAG_MONSTLR)
-			return FALSE;
+			return false;
 	}
 	if (mdir == Dir::W) {
 		if (grid.at({ f.x + 1, f.y }).isSolid() || grid[f.x + 1][f.y].dFlags & BFLAG_MONSTLR)
-			return FALSE;
+			return false;
 	}
 	if (mdir == Dir::N) {
 		if (grid.at({ f.x + 1, f.y }).isSolid() || grid.at({ f.x, f.y + 1 }).isSolid())
-			return FALSE;
+			return false;
 	}
 	if (mdir == Dir::S)
 		if (grid.at({ f.x - 1, f.y }).isSolid() || grid.at({ f.x, f.y - 1 }).isSolid())
-			return FALSE;
+			return false;
 	if (data.leaderflag == 1) {
 		int dist = (f - monsters[data.leader].data._mfut).maxabs();
 		if (dist >= 4) {
-			return FALSE;
+			return false;
 		}
 		return TRUE;
 	}
@@ -636,7 +637,7 @@ bool PosOkMissile(V2Di pos)
 
 bool CheckNoSolid(V2Di pos)
 {
-	return pieces[grid.at(pos).getPiece()].solid == FALSE;
+	return pieces[grid.at(pos).getPiece()].solid == false;
 }
 
 bool LineClearF(bool (*Clear)(V2Di), V2Di p1, V2Di p2)
@@ -1021,7 +1022,7 @@ void MissToMonst(int i, V2Di pos)
 		else
 			M2MStartHit(m, -1, 0);
 	} else {
-		monsters[m].M_StartFadein(Monst->_mdir, FALSE);
+		monsters[m].M_StartFadein(Monst->_mdir, false);
 	}
 
 	if (!(Monst->_mFlags & MFLAG_TARGETS_MONSTER)) {
@@ -1067,12 +1068,12 @@ bool PosOkMonst(int i, V2Di pos)
 	int oi, mi, j;
 	bool ret, fire;
 
-	fire = FALSE;
+	fire = false;
 	ret = !grid.at(pos).isSolid() && !grid.at(pos).isPlayer() && !grid.at(pos).isMonster();
 	if (ret && grid.at(pos).isObject()) {
 		oi = grid.at(pos).getObject();
 		if (object[oi]._oSolidFlag)
-			ret = FALSE;
+			ret = false;
 	}
 
 	if (ret && grid.at(pos).getMissile() && i >= 0) {
@@ -1088,7 +1089,7 @@ bool PosOkMonst(int i, V2Di pos)
 			}
 		}
 		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MT_DIABLO))
-			ret = FALSE;
+			ret = false;
 	}
 	return ret;
 }
@@ -1098,12 +1099,12 @@ bool PosOkMonst2(int i, V2Di pos)
 	int oi, mi, j;
 	bool ret, fire;
 
-	fire = FALSE;
+	fire = false;
 	ret = !grid.at(pos).isSolid();
 	if (ret && grid.at(pos).isObject()) {
 		oi = grid.at(pos).getObject();
 		if (object[oi]._oSolidFlag)
-			ret = FALSE;
+			ret = false;
 	}
 
 	if (ret && grid.at(pos).getMissile() && i >= 0) {
@@ -1119,7 +1120,7 @@ bool PosOkMonst2(int i, V2Di pos)
 			}
 		}
 		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MT_DIABLO))
-			ret = FALSE;
+			ret = false;
 	}
 
 	return ret;
@@ -1130,9 +1131,9 @@ bool PosOkMonst3(int i, V2Di pos)
 	int j, oi, objtype, mi;
 	bool ret, fire, isdoor;
 
-	fire = FALSE;
+	fire = false;
 	ret = TRUE;
-	isdoor = FALSE;
+	isdoor = false;
 
 	if (ret && grid.at(pos).isObject()) {
 		oi = grid.at(pos).getObject();
@@ -1141,7 +1142,7 @@ bool PosOkMonst3(int i, V2Di pos)
 		    || objtype == OBJ_L2LDOOR || objtype == OBJ_L2RDOOR
 		    || objtype == OBJ_L3LDOOR || objtype == OBJ_L3RDOOR;
 		if (object[oi]._oSolidFlag && !isdoor) {
-			ret = FALSE;
+			ret = false;
 		}
 	}
 	if (ret) {
@@ -1162,7 +1163,7 @@ bool PosOkMonst3(int i, V2Di pos)
 			}
 		}
 		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MT_DIABLO)) {
-			ret = FALSE;
+			ret = false;
 		}
 	}
 
@@ -1219,7 +1220,7 @@ bool SpawnSkeleton(int ii, V2Di pos)
 	bool savail;
 	int monstok[3][3];
 
-	if (ii == -1) return FALSE;
+	if (ii == -1) return false;
 
 	if (PosOkMonst(-1, pos)) {
 		dir = GetDirection(pos, pos); // ??? Gimmick to get random dir?
@@ -1227,7 +1228,7 @@ bool SpawnSkeleton(int ii, V2Di pos)
 		return TRUE;
 	}
 
-	savail = FALSE;
+	savail = false;
 	n.y = 0;
 	for (j = pos.y - 1; j <= pos.y + 1; j++) {
 		n.x = 0;
@@ -1239,7 +1240,7 @@ bool SpawnSkeleton(int ii, V2Di pos)
 		n.y++;
 	}
 	if (!savail) {
-		return FALSE;
+		return false;
 	}
 
 	rs = random_(137, 15) + 1;
@@ -1281,7 +1282,7 @@ int PreSpawnSkeleton()
 			if (IsSkel(beastiary[i].data.mtype))
 				j++;
 		}
-		skel = AddMonster({ 0, 0 }, Dir(0), i - 1, FALSE);
+		skel = AddMonster({ 0, 0 }, Dir(0), i - 1, false);
 		if (skel != -1)
 			monsters[skel].M_StartStand(Dir(0));
 		return skel;
@@ -1365,12 +1366,12 @@ bool CheckMonsterHit(int m, bool *ret)
 
 	if (monsters[m].data.MType->mtype >= MT_COUNSLR && monsters[m].data.MType->mtype <= MT_ADVOCATE) {
 		if (monsters[m].data._mgoal != MGOAL_NORMAL) {
-			*ret = FALSE;
+			*ret = false;
 			return TRUE;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 int encode_enemy(int m)
