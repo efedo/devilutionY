@@ -10,7 +10,7 @@ void StoreBoy::S_Start()
 	stextscrl = false;
 	AddSText(0, 2, true, "Wirt the Peg-legged boy", COL_GOLD, false);
 	AddSLine(5);
-	if (boyitem._itype != ITYPE_NONE) {
+	if (boyitem._itype != ItemType::none) {
 		AddSText(0, 8, true, "Talk to Wirt", COL_BLUE, true);
 		AddSText(0, 12, true, "I have something for sale,", COL_GOLD, false);
 		AddSText(0, 14, true, "but it will cost 50 gold", COL_GOLD, false);
@@ -25,7 +25,7 @@ void StoreBoy::S_Start()
 
 void StoreBoy::S_Enter()
 {
-	if (boyitem._itype != ITYPE_NONE && stextsel == 18) {
+	if (boyitem._itype != ItemType::none && stextsel == 18) {
 		if (myplr().data._pGold < 50) {
 			stextshold = STORE_BOY;
 			stextlhold = 18;
@@ -35,8 +35,8 @@ void StoreBoy::S_Enter()
 			TakePlrsMoney(50);
 			StartStore(STORE_BBOY);
 		}
-	} else if (stextsel == 8 && boyitem._itype != ITYPE_NONE ||
-	           stextsel == 12 && boyitem._itype == ITYPE_NONE) {
+	} else if (stextsel == 8 && boyitem._itype != ItemType::none ||
+	           stextsel == 12 && boyitem._itype == ItemType::none) {
 		talker = 8;
 		stextshold = STORE_BOY;
 		stextlhold = stextsel;
@@ -52,7 +52,7 @@ void StoreBoy::Spawn(int lvl)
 {
 	int itype;
 
-	if (boylevel < lvl >> 1 || boyitem._itype == ITYPE_NONE) {
+	if (boylevel < lvl >> 1 || boyitem._itype == ItemType::none) {
 		do {
 			item[0]._iSeed = GetRndSeed();
 			SetRndSeed(item[0]._iSeed);
@@ -89,7 +89,7 @@ void StoreBoy::BuyItem()
 {
 	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 	StoreAutoPlace();
-	boyitem._itype = ITYPE_NONE;
+	boyitem._itype = ItemType::none;
 	stextshold = STORE_BOY;
 	myplr().CalcPlrInv(true);
 }
@@ -107,9 +107,9 @@ void StoreBoy::S_StartBuy()
 	AddSLine(21);
 	iclr = COL_WHITE;
 
-	if (boyitem._iMagical != ITEM_QUALITY_NORMAL) iclr = COL_BLUE;
+	if (boyitem._iMagical != ItemQuality::normal) iclr = COL_BLUE;
 	if (!boyitem._iStatFlag) iclr = COL_RED;
-	if (boyitem._iMagical != ITEM_QUALITY_NORMAL)
+	if (boyitem._iMagical != ItemQuality::normal)
 		AddSText(20, 10, false, boyitem._iIName, iclr, true);
 	else
 		AddSText(20, 10, false, boyitem._iName, iclr, true);

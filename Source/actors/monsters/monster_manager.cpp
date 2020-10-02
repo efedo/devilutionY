@@ -101,15 +101,15 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 			break;
 	}
 
-	if (uniqindex == UMT_SNOTSPIL) {
+	if (uniqindex == UniqueMonsterType::SNOTSPIL) {
 		p.x = 2 * lvl.getpc().x + 24;
 		p.y = 2 * lvl.getpc().y + 28;
 	}
-	if (uniqindex == UMT_WARLORD) {
+	if (uniqindex == UniqueMonsterType::WARLORD) {
 		p.x = 2 * lvl.getpc().x + 22;
 		p.y = 2 * lvl.getpc().y + 23;
 	}
-	if (uniqindex == UMT_ZHAR) {
+	if (uniqindex == UniqueMonsterType::ZHAR) {
 		zharflag = true;
 		for (i = 0; i < lvl.themeCount; i++) {
 			if (i == zharlib && zharflag == true) {
@@ -120,33 +120,33 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		}
 	}
 	if (plr.isSingleplayer()) {
-		if (uniqindex == UMT_LAZURUS) {
+		if (uniqindex == UniqueMonsterType::LAZURUS) {
 			p = { 32, 46 };
 		}
-		if (uniqindex == UMT_RED_VEX) {
+		if (uniqindex == UniqueMonsterType::RED_VEX) {
 			p = { 40, 45 };
 		}
-		if (uniqindex == UMT_BLACKJADE) {
+		if (uniqindex == UniqueMonsterType::BLACKJADE) {
 			p = { 38, 49 };
 		}
-		if (uniqindex == UMT_SKELKING) {
+		if (uniqindex == UniqueMonsterType::SKELKING) {
 			p = { 35, 47 };
 		}
 	} else {
-		if (uniqindex == UMT_LAZURUS) {
+		if (uniqindex == UniqueMonsterType::LAZURUS) {
 			p.x = 2 * lvl.getpc().x + 19;
 			p.y = 2 * lvl.getpc().y + 22;
 		}
-		if (uniqindex == UMT_RED_VEX) {
+		if (uniqindex == UniqueMonsterType::RED_VEX) {
 			p.x = 2 * lvl.getpc().x + 21;
 			p.y = 2 * lvl.getpc().y + 19;
 		}
-		if (uniqindex == UMT_BLACKJADE) {
+		if (uniqindex == UniqueMonsterType::BLACKJADE) {
 			p.x = 2 * lvl.getpc().x + 21;
 			p.y = 2 * lvl.getpc().y + 25;
 		}
 	}
-	if (uniqindex == UMT_BUTCHER) {
+	if (uniqindex == UniqueMonsterType::BUTCHER) {
 		done = false;
 		for (p.y = 0; p.y < MAXDUNY && !done; p.y++) {
 			for (p.x = 0; p.x < MAXDUNX && !done; p.x++) {
@@ -243,7 +243,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	if (Monst->_mAi != AI_GARG) {
 		Monst->_mAnimData = Monst->MType->Anims[MA_STAND].Data[int(Monst->_mdir)];
 		Monst->_mAnimFrame = random_(88, Monst->_mAnimLen - 1) + 1;
-		Monst->_mFlags &= ~MFLAG_ALLOW_SPECIAL;
+		Monst->_mFlags &= ~MonsterFlag::allow_special;
 		Monst->_mmode = MM_STAND;
 	}
 }
@@ -255,7 +255,7 @@ void MonsterManager::PlaceQuestMonsters()
 
 	if (!lvl.setlevel) {
 		if (QuestStatus(Q_BUTCHER)) {
-			PlaceUniqueMonster(UMT_BUTCHER, 0, 0);
+			PlaceUniqueMonster(UniqueMonsterType::BUTCHER, 0, 0);
 		}
 
 		if (lvl.currlevel == quests[Q_SKELKING]._qlevel && plr.isMultiplayer()) {
@@ -267,7 +267,7 @@ void MonsterManager::PlaceQuestMonsters()
 				}
 			}
 
-			PlaceUniqueMonster(UMT_SKELKING, skeltype, 30);
+			PlaceUniqueMonster(UniqueMonsterType::SKELKING, skeltype, 30);
 		}
 
 		if (QuestStatus(Q_LTBANNER)) {
@@ -294,27 +294,27 @@ void MonsterManager::PlaceQuestMonsters()
 			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
-			beastiary.AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 1);
+			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::WARLORD].mtype, 1);
 		}
 		if (QuestStatus(Q_VEIL)) {
-			beastiary.AddMonsterType(UniqMonst[UMT_LACHDAN].mtype, 1);
+			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::LACHDAN].mtype, 1);
 		}
 		if (QuestStatus(Q_ZHAR) && zharlib == -1) {
 			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
 		if (lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
-			beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
-			beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
-			PlaceUniqueMonster(UMT_LAZURUS, 0, 0);
-			PlaceUniqueMonster(UMT_RED_VEX, 0, 0);
-			PlaceUniqueMonster(UMT_BLACKJADE, 0, 0);
+			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::LAZURUS].mtype, 4);
+			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::RED_VEX].mtype, 4);
+			PlaceUniqueMonster(UniqueMonsterType::LAZURUS, 0, 0);
+			PlaceUniqueMonster(UniqueMonsterType::RED_VEX, 0, 0);
+			PlaceUniqueMonster(UniqueMonsterType::BLACKJADE, 0, 0);
 			setp = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
 	} else if (lvl.setlvlnum == SetLvl::SkelKing) {
-		PlaceUniqueMonster(UMT_SKELKING, 0, 0);
+		PlaceUniqueMonster(UniqueMonsterType::SKELKING, 0, 0);
 	}
 }
 
@@ -369,7 +369,7 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 				if (list[nummonsters].data._mAi != AI_GARG) {
 					list[nummonsters].data._mAnimData = list[nummonsters].data.MType->Anims[MA_STAND].Data[int(list[nummonsters].data._mdir)];
 					list[nummonsters].data._mAnimFrame = random_(88, list[nummonsters].data._mAnimLen - 1) + 1;
-					list[nummonsters].data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
+					list[nummonsters].data._mFlags &= ~MonsterFlag::allow_special;
 					list[nummonsters].data._mmode = MM_STAND;
 				}
 			}

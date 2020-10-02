@@ -503,7 +503,7 @@ void DeltaLoadLevel()
 						grid[monsters[i].data._m.x][monsters[i].data._m.y].setActor(i);
 					if (i < MAX_PLRS) {
 						monsters[i].MAI_Golum();
-						monsters[i].data._mFlags |= (MFLAG_TARGETS_MONSTER | MFLAG_GOLEM);
+						monsters[i].data._mFlags |= (MonsterFlag::targets_monster | MonsterFlag::golem);
 					} else {
 						monsters[i].M_StartStand(monsters[i].data._mdir);
 					}
@@ -531,7 +531,7 @@ void DeltaLoadLevel()
 				ii = itemavail[0];
 				itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 				itemactive[numitems] = ii;
-				if (sgLevels[lvl.currlevel].item[i].wIndx == IDI_EAR) {
+				if (sgLevels[lvl.currlevel].item[i].wIndx == ItemIndex::EAR) {
 					RecreateEar(
 					    ii,
 					    sgLevels[lvl.currlevel].item[i].wCI,
@@ -757,7 +757,7 @@ void NetSendCmdGItem(bool bHiPri, uint8_t bCmd, uint8_t mast, uint8_t pnum, Item
 	cmd.y = item._i.y;
 	cmd.wIndx = item.IDidx;
 
-	if (item.IDidx == IDI_EAR) {
+	if (item.IDidx == ItemIndex::EAR) {
 		cmd.wCI = item._iName[8] | (item._iName[7] << 8);
 		cmd.dwSeed = item._iName[12] | ((item._iName[11] | ((item._iName[10] | (item._iName[9] << 8)) << 8)) << 8);
 		cmd.bId = item._iName[13];
@@ -851,7 +851,7 @@ void NetSendCmdPItem(bool bHiPri, uint8_t bCmd, uint8_t x, uint8_t y)
 	cmd.y = y;
 	cmd.wIndx = myplr().data.HoldItem.IDidx;
 
-	if (myplr().data.HoldItem.IDidx == IDI_EAR) {
+	if (myplr().data.HoldItem.IDidx == ItemIndex::EAR) {
 		cmd.wCI = myplr().data.HoldItem._iName[8] | (myplr().data.HoldItem._iName[7] << 8);
 		cmd.dwSeed = myplr().data.HoldItem._iName[12] | ((myplr().data.HoldItem._iName[11] | ((myplr().data.HoldItem._iName[10] | (myplr().data.HoldItem._iName[9] << 8)) << 8)) << 8);
 		cmd.bId = myplr().data.HoldItem._iName[13];
@@ -916,7 +916,7 @@ void NetSendCmdDItem(bool bHiPri, Item &item)
 	cmd.y = item._i.y;
 	cmd.wIndx = item.IDidx;
 
-	if (item.IDidx == IDI_EAR) {
+	if (item.IDidx == ItemIndex::EAR) {
 		cmd.wCI = item._iName[8] | (item._iName[7] << 8);
 		cmd.dwSeed = item._iName[12] | ((item._iName[11] | ((item._iName[10] | (item._iName[9] << 8)) << 8)) << 8);
 		cmd.bId = item._iName[13];

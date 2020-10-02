@@ -67,7 +67,7 @@ void StoreSmith::Spawn(int lvl)
 		smithitem[i]._iIdentified = true;
 		smithitem[i]._iStatFlag = StoreStatOk(&smithitem[i]);
 	}
-	for (i = iCnt; i < SMITH_ITEMS; i++) smithitem[i]._itype = ITYPE_NONE;
+	for (i = iCnt; i < SMITH_ITEMS; i++) smithitem[i]._itype = ItemType::none;
 	SortItems();
 }
 
@@ -98,7 +98,7 @@ void StoreSmith::SpawnPremium(int lvl)
 
 	if (numpremium < SMITH_PREMIUM_ITEMS) {
 		for (i = 0; i < SMITH_PREMIUM_ITEMS; i++) {
-			if (premiumitem[i]._itype == ITYPE_NONE)
+			if (premiumitem[i]._itype == ItemType::none)
 				SpawnOnePremium(i, premiumlevel + premiumlvladd[i]);
 		}
 		numpremium = SMITH_PREMIUM_ITEMS;
@@ -159,17 +159,17 @@ int StoreSmith::RndPremiumItem(int minlvl, int maxlvl)
 void StoreSmith::BuyItem()
 {
 	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
-	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical == ItemQuality::normal)
 		myplr().data.HoldItem._iIdentified = false;
 	StoreAutoPlace();
 	int idx = stextvhold + ((stextlhold - stextup) >> 2);
 	if (idx == SMITH_ITEMS - 1) {
-		smithitem[SMITH_ITEMS - 1]._itype = ITYPE_NONE;
+		smithitem[SMITH_ITEMS - 1]._itype = ItemType::none;
 	} else {
-		for (; smithitem[idx + 1]._itype != ITYPE_NONE; idx++) {
+		for (; smithitem[idx + 1]._itype != ItemType::none; idx++) {
 			smithitem[idx] = smithitem[idx + 1];
 		}
-		smithitem[idx]._itype = ITYPE_NONE;
+		smithitem[idx]._itype = ItemType::none;
 	}
 	myplr().CalcPlrInv(true);
 }
@@ -190,7 +190,7 @@ void StoreSmith::S_StartBuy()
 	AddSText(0, 22, true, "Back", COL_WHITE, false);
 	OffsetSTextY(22, 6);
 	storenumh = 0;
-	for (i = 0; smithitem[i]._itype != ITYPE_NONE; i++) { storenumh++; }
+	for (i = 0; smithitem[i]._itype != ItemType::none; i++) { storenumh++; }
 
 	stextsmax = storenumh - 4;
 	if (stextsmax < 0) stextsmax = 0;
@@ -239,7 +239,7 @@ void StoreSmith::S_ScrollBuy(int idx)
 	stextup = 5;
 
 	for (l = 5; l < 20; l += 4) {
-		if (smithitem[ls]._itype != ITYPE_NONE) {
+		if (smithitem[ls]._itype != ItemType::none) {
 			iclr = COL_WHITE;
 			if (smithitem[ls]._iMagical) { iclr = COL_BLUE; }
 
@@ -267,7 +267,7 @@ void StoreSmith::SortItems()
 	bool sorted;
 
 	j = 0;
-	while (smithitem[j + 1]._itype != ITYPE_NONE) { j++; }
+	while (smithitem[j + 1]._itype != ItemType::none) { j++; }
 
 	sorted = false;
 	while (j > 0 && !sorted) {
@@ -287,20 +287,20 @@ void StoreSmith::BuyPremiumItem()
 	int i, xx, idx;
 
 	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
-	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical == ItemQuality::normal)
 		myplr().data.HoldItem._iIdentified = false;
 	StoreAutoPlace();
 
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 	xx = 0;
 	for (i = 0; idx >= 0; i++) {
-		if (premiumitem[i]._itype != ITYPE_NONE) {
+		if (premiumitem[i]._itype != ItemType::none) {
 			idx--;
 			xx = i;
 		}
 	}
 
-	premiumitem[xx]._itype = ITYPE_NONE;
+	premiumitem[xx]._itype = ItemType::none;
 	numpremium--;
 	SpawnPremium(myplr().data._pLevel);
 }
@@ -320,7 +320,7 @@ void StoreSmith::S_PremiumBuyEnter()
 		xx = stextsval + ((stextsel - stextup) >> 2);
 		idx = 0;
 		for (i = 0; xx >= 0; i++) {
-			if (premiumitem[i]._itype != ITYPE_NONE) {
+			if (premiumitem[i]._itype != ItemType::none) {
 				xx--;
 				idx = i;
 			}
@@ -351,7 +351,7 @@ bool StoreSmith::S_StartPremiumBuy()
 
 	storenumh = 0;
 	for (i = 0; i < 6; i++) {
-		if (premiumitem[i]._itype != ITYPE_NONE) storenumh++;
+		if (premiumitem[i]._itype != ItemType::none) storenumh++;
 	}
 	if (!storenumh) {
 		StartStore(STORE_SMITH);
@@ -389,11 +389,11 @@ void StoreSmith::S_ScrollPremiumBuy(int idx)
 
 	stextup = 5;
 	for (idx = 0; boughtitems; idx++) {
-		if (premiumitem[idx]._itype != ITYPE_NONE) boughtitems--;
+		if (premiumitem[idx]._itype != ItemType::none) boughtitems--;
 	}
 
 	for (l = 5; l < 20 && idx < 6; l += 4) {
-		if (premiumitem[idx]._itype != ITYPE_NONE) {
+		if (premiumitem[idx]._itype != ItemType::none) {
 			iclr = COL_WHITE;
 			if (premiumitem[idx]._iMagical) iclr = COL_BLUE;
 			if (!premiumitem[idx]._iStatFlag) iclr = COL_RED;
@@ -416,12 +416,12 @@ bool StoreSmith::ItemOk(int i)
 	bool rv;
 
 	rv = true;
-	if (AllItemsList[i].itype == ITYPE_MISC) rv = false;
-	if (AllItemsList[i].itype == ITYPE_GOLD) rv = false;
-	if (AllItemsList[i].itype == ITYPE_MEAT) rv = false;
-	if (AllItemsList[i].itype == ITYPE_STAFF) rv = false;
-	if (AllItemsList[i].itype == ITYPE_RING) rv = false;
-	if (AllItemsList[i].itype == ITYPE_AMULET) rv = false;
+	if (AllItemsList[i].itype == ItemType::misc) rv = false;
+	if (AllItemsList[i].itype == ItemType::gold) rv = false;
+	if (AllItemsList[i].itype == ItemType::meat) rv = false;
+	if (AllItemsList[i].itype == ItemType::staff) rv = false;
+	if (AllItemsList[i].itype == ItemType::ring) rv = false;
+	if (AllItemsList[i].itype == ItemType::amulet) rv = false;
 
 	return rv;
 }
@@ -429,14 +429,14 @@ bool StoreSmith::ItemOk(int i)
 bool StoreSmith::PremiumItemOk(int i)
 {
 	bool rv = true;
-	if (AllItemsList[i].itype == ITYPE_MISC) rv = false;
-	if (AllItemsList[i].itype == ITYPE_GOLD) rv = false;
-	if (AllItemsList[i].itype == ITYPE_MEAT) rv = false;
-	if (AllItemsList[i].itype == ITYPE_STAFF) rv = false;
+	if (AllItemsList[i].itype == ItemType::misc) rv = false;
+	if (AllItemsList[i].itype == ItemType::gold) rv = false;
+	if (AllItemsList[i].itype == ItemType::meat) rv = false;
+	if (AllItemsList[i].itype == ItemType::staff) rv = false;
 
 	if (plr.isMultiplayer()) {
-		if (AllItemsList[i].itype == ITYPE_RING) rv = false;
-		if (AllItemsList[i].itype == ITYPE_AMULET) rv = false;
+		if (AllItemsList[i].itype == ItemType::ring) rv = false;
+		if (AllItemsList[i].itype == ItemType::amulet) rv = false;
 	}
 	return rv;
 }
@@ -450,14 +450,14 @@ void StoreSmith::S_StartSell()
 	sellok = false;
 	storenumh = 0;
 
-	for (i = 0; i < 48; i++) storehold[i]._itype = ITYPE_NONE;
+	for (i = 0; i < 48; i++) storehold[i]._itype = ItemType::none;
 
 	for (i = 0; i < myplr().data._pNumInv; i++) {
 		if (SmithSellOk(i)) {
 			sellok = true;
 			storehold[storenumh] = myplr().data.InvList[i];
 
-			if (storehold[storenumh]._iMagical != ITEM_QUALITY_NORMAL &&
+			if (storehold[storenumh]._iMagical != ItemQuality::normal &&
 			    storehold[storenumh]._iIdentified)
 				storehold[storenumh]._ivalue = storehold[storenumh]._iIvalue;
 
@@ -516,12 +516,12 @@ void StoreSmith::S_SellEnter()
 
 bool StoreSmith::SellOk(int i)
 {
-	if (myplr().data.InvList[i]._itype == ITYPE_NONE) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_MISC) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_GOLD) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_MEAT) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_STAFF) return false;
-	if (myplr().data.InvList[i].IDidx == IDI_LAZSTAFF) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::none) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::misc) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::gold) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::meat) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::staff) return false;
+	if (myplr().data.InvList[i].IDidx == ItemIndex::LAZSTAFF) return false;
 
 	return true;
 }
@@ -536,7 +536,7 @@ void StoreSmith::S_ScrollSell(int idx)
 
 	for (l = 5; l < 20; l += 4) {
 		if (idx >= storenumh) break;
-		if (storehold[idx]._itype != ITYPE_NONE) {
+		if (storehold[idx]._itype != ItemType::none) {
 			iclr = COL_WHITE;
 			if (storehold[idx]._iMagical) { iclr = COL_BLUE; }
 
@@ -611,10 +611,10 @@ void StoreSmith::S_RepairEnter()
 
 bool StoreSmith::RepairOk(int i)
 {
-	if (myplr().data.InvList[i]._itype == ITYPE_NONE) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_MISC) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_GOLD) return false;
-	if (myplr().data.InvList[i]._itype == ITYPE_MEAT) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::none) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::misc) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::gold) return false;
+	if (myplr().data.InvList[i]._itype == ItemType::meat) return false;
 	if (myplr().data.InvList[i]._iDurability ==
 	    myplr().data.InvList[i]._iMaxDur)
 		return false;
@@ -630,26 +630,26 @@ void StoreSmith::S_StartRepair()
 	stextsize = true;
 	repairok = false;
 	storenumh = 0;
-	for (i = 0; i < 48; i++) storehold[i]._itype = ITYPE_NONE;
-	if (myplr().data.InvBody[INVLOC_HEAD]._itype != ITYPE_NONE &&
+	for (i = 0; i < 48; i++) storehold[i]._itype = ItemType::none;
+	if (myplr().data.InvBody[INVLOC_HEAD]._itype != ItemType::none &&
 	    myplr().data.InvBody[INVLOC_HEAD]._iDurability !=
 	        myplr().data.InvBody[INVLOC_HEAD]._iMaxDur) {
 		repairok = true;
 		AddStoreHoldRepair(myplr().data.InvBody, -1);
 	}
-	if (myplr().data.InvBody[INVLOC_CHEST]._itype != ITYPE_NONE &&
+	if (myplr().data.InvBody[INVLOC_CHEST]._itype != ItemType::none &&
 	    myplr().data.InvBody[INVLOC_CHEST]._iDurability !=
 	        myplr().data.InvBody[INVLOC_CHEST]._iMaxDur) {
 		repairok = true;
 		AddStoreHoldRepair(&myplr().data.InvBody[INVLOC_CHEST], -2);
 	}
-	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE &&
+	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::none &&
 	    myplr().data.InvBody[INVLOC_HAND_LEFT]._iDurability !=
 	        myplr().data.InvBody[INVLOC_HAND_LEFT]._iMaxDur) {
 		repairok = true;
 		AddStoreHoldRepair(&myplr().data.InvBody[INVLOC_HAND_LEFT], -3);
 	}
-	if (myplr().data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE &&
+	if (myplr().data.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::none &&
 	    myplr().data.InvBody[INVLOC_HAND_RIGHT]._iDurability !=
 	        myplr().data.InvBody[INVLOC_HAND_RIGHT]._iMaxDur) {
 		repairok = true;

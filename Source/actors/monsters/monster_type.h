@@ -8,9 +8,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-class MonsterType {
+class MonsterClass {
 public:
-	MonsterType(int new_monst = 0)
+	MonsterClass(int new_monst = 0)
 	{
 	}
 	void InitMonsterTRN(bool special);

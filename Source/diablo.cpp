@@ -1203,43 +1203,43 @@ void PressChar(int vkey)
 		return;
 	case '!':
 	case '1':
-		if (myplr().data.SpdList[0]._itype != ITYPE_NONE && myplr().data.SpdList[0]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[0]._itype != ItemType::none && myplr().data.SpdList[0]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST);
 		}
 		return;
 	case '@':
 	case '2':
-		if (myplr().data.SpdList[1]._itype != ITYPE_NONE && myplr().data.SpdList[1]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[1]._itype != ItemType::none && myplr().data.SpdList[1]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 1);
 		}
 		return;
 	case '#':
 	case '3':
-		if (myplr().data.SpdList[2]._itype != ITYPE_NONE && myplr().data.SpdList[2]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[2]._itype != ItemType::none && myplr().data.SpdList[2]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 2);
 		}
 		return;
 	case '$':
 	case '4':
-		if (myplr().data.SpdList[3]._itype != ITYPE_NONE && myplr().data.SpdList[3]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[3]._itype != ItemType::none && myplr().data.SpdList[3]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 3);
 		}
 		return;
 	case '%':
 	case '5':
-		if (myplr().data.SpdList[4]._itype != ITYPE_NONE && myplr().data.SpdList[4]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[4]._itype != ItemType::none && myplr().data.SpdList[4]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 4);
 		}
 		return;
 	case '^':
 	case '6':
-		if (myplr().data.SpdList[5]._itype != ITYPE_NONE && myplr().data.SpdList[5]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[5]._itype != ItemType::none && myplr().data.SpdList[5]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 5);
 		}
 		return;
 	case '&':
 	case '7':
-		if (myplr().data.SpdList[6]._itype != ITYPE_NONE && myplr().data.SpdList[6]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[6]._itype != ItemType::none && myplr().data.SpdList[6]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 6);
 		}
 		return;
@@ -1251,7 +1251,7 @@ void PressChar(int vkey)
 			return;
 		}
 #endif
-		if (myplr().data.SpdList[7]._itype != ITYPE_NONE && myplr().data.SpdList[7]._itype != ITYPE_GOLD) {
+		if (myplr().data.SpdList[7]._itype != ItemType::none && myplr().data.SpdList[7]._itype != ItemType::gold) {
 			myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + 7);
 		}
 		return;
@@ -1263,14 +1263,14 @@ void PressChar(int vkey)
 				arrowdebug = 0;
 			}
 			if (arrowdebug == 0) {
-				myplr().data._pIFlags &= ~ISPL_FIRE_ARROWS;
-				myplr().data._pIFlags &= ~ISPL_LIGHT_ARROWS;
+				myplr().data._pIFlags &= ~ItemSpecialEffect::FIRE_ARROWS;
+				myplr().data._pIFlags &= ~ItemSpecialEffect::LIGHT_ARROWS;
 			}
 			if (arrowdebug == 1) {
-				myplr().data._pIFlags |= ISPL_FIRE_ARROWS;
+				myplr().data._pIFlags |= ItemSpecialEffect::FIRE_ARROWS;
 			}
 			if (arrowdebug == 2) {
-				myplr().data._pIFlags |= ISPL_LIGHT_ARROWS;
+				myplr().data._pIFlags |= ItemSpecialEffect::LIGHT_ARROWS;
 			}
 			arrowdebug++;
 		}

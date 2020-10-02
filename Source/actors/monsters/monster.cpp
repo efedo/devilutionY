@@ -217,15 +217,15 @@ void PlaceUniques()
 			done = (beastiary[mt].data.mtype == UniqMonst[u].mtype);
 		}
 		mt--;
-		if (u == UMT_GARBUD && quests[Q_GARBUD]._qactive == QUEST_NOTAVAIL)
+		if (u == UniqueMonsterType::GARBUD && quests[Q_GARBUD]._qactive == QUEST_NOTAVAIL)
 			done = false;
-		if (u == UMT_ZHAR && quests[Q_ZHAR]._qactive == QUEST_NOTAVAIL)
+		if (u == UniqueMonsterType::ZHAR && quests[Q_ZHAR]._qactive == QUEST_NOTAVAIL)
 			done = false;
-		if (u == UMT_SNOTSPIL && quests[Q_LTBANNER]._qactive == QUEST_NOTAVAIL)
+		if (u == UniqueMonsterType::SNOTSPIL && quests[Q_LTBANNER]._qactive == QUEST_NOTAVAIL)
 			done = false;
-		if (u == UMT_LACHDAN && quests[Q_VEIL]._qactive == QUEST_NOTAVAIL)
+		if (u == UniqueMonsterType::LACHDAN && quests[Q_VEIL]._qactive == QUEST_NOTAVAIL)
 			done = false;
-		if (u == UMT_WARLORD && quests[Q_WARLORD]._qactive == QUEST_NOTAVAIL)
+		if (u == UniqueMonsterType::WARLORD && quests[Q_WARLORD]._qactive == QUEST_NOTAVAIL)
 			done = false;
 		if (done)
 			monsters.PlaceUniqueMonster(u, mt, 8);
@@ -239,18 +239,18 @@ void SetMapMonsters(uint8_t *pMap, V2Di start)
 	int i, j;
 	int mtype;
 
-	beastiary.AddMonsterType(MT_GOLEM, 2);
+	beastiary.AddMonsterType(MonsterFlag::golem, 2);
 	AddMonster({ 1, 0 }, Dir(0), 0, false);
 	AddMonster({ 1, 0 }, Dir(0), 0, false);
 	AddMonster({ 1, 0 }, Dir(0), 0, false);
 	AddMonster({ 1, 0 }, Dir(0), 0, false);
 	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
-		beastiary.AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, 4);
-		beastiary.AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, 4);
-		beastiary.AddMonsterType(UniqMonst[UMT_BLACKJADE].mtype, 4);
-		monsters.PlaceUniqueMonster(UMT_LAZURUS, 0, 0);
-		monsters.PlaceUniqueMonster(UMT_RED_VEX, 0, 0);
-		monsters.PlaceUniqueMonster(UMT_BLACKJADE, 0, 0);
+		beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::LAZURUS].mtype, 4);
+		beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::RED_VEX].mtype, 4);
+		beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::BLACKJADE].mtype, 4);
+		monsters.PlaceUniqueMonster(UniqueMonsterType::LAZURUS, 0, 0);
+		monsters.PlaceUniqueMonster(UniqueMonsterType::RED_VEX, 0, 0);
+		monsters.PlaceUniqueMonster(UniqueMonsterType::BLACKJADE, 0, 0);
 	}
 	lm = (WORD *)pMap;
 	rw = SDL_SwapLE16(*lm);
@@ -295,18 +295,18 @@ void M2MStartHit(int mid, int i, int dam)
 	NetSendCmdParam2(false, CMD_MONSTDAMAGE, mid, dam);
 	PlayEffect(mid, 1);
 
-	if (monsters[mid].data.MType->mtype >= MT_SNEAK && monsters[mid].data.MType->mtype <= MT_ILLWEAV || dam >> 6 >= monsters[mid].data.mLevel + 3) {
+	if (monsters[mid].data.MType->mtype >= MonsterType::SNEAK && monsters[mid].data.MType->mtype <= MonsterType::ILLWEAV || dam >> 6 >= monsters[mid].data.mLevel + 3) {
 		if (i >= 0)
 			monsters[mid].data._mdir = rotate(monsters[i].data._mdir, -4);
 
-		if (monsters[mid].data.MType->mtype == MT_BLINK) {
+		if (monsters[mid].data.MType->mtype == MonsterType::BLINK) {
 			monsters[mid].M_Teleport();
-		} else if (monsters[mid].data.MType->mtype >= MT_NSCAV && monsters[mid].data.MType->mtype <= MT_YSCAV) {
+		} else if (monsters[mid].data.MType->mtype >= MonsterType::NSCAV && monsters[mid].data.MType->mtype <= MonsterType::YSCAV) {
 			monsters[mid].data._mgoal = MGOAL_NORMAL;
 		}
 
 		if (monsters[mid].data._mmode != MM_STONE) {
-			if (monsters[mid].data.MType->mtype != MT_GOLEM) {
+			if (monsters[mid].data.MType->mtype != MonsterFlag::golem) {
 				monsters[mid].NewMonsterAnim(&monsters[mid].data.MType->Anims[MA_GOTHIT], monsters[mid].data._mdir);
 				monsters[mid].data._mmode = MM_GOTHIT;
 			}
@@ -438,7 +438,7 @@ void ProcessMonsters()
 			SetRndSeed(Monst->_mAISeed);
 			Monst->_mAISeed = GetRndSeed();
 		}
-		if (!(Monst->_mFlags & MFLAG_NOHEAL) && Monst->_mhitpoints < Monst->_mmaxhp && Monst->_mhitpoints >> 6 > 0) {
+		if (!(Monst->_mFlags & MonsterFlag::noheal) && Monst->_mhitpoints < Monst->_mmaxhp && Monst->_mhitpoints >> 6 > 0) {
 			if (Monst->mLevel > 1) {
 				Monst->_mhitpoints += Monst->mLevel >> 1;
 			} else {
@@ -447,11 +447,11 @@ void ProcessMonsters()
 		}
 		m = Monst->_m;
 		if (grid.at(m).dFlags & BFLAG_VISIBLE && Monst->_msquelch == 0) {
-			if (Monst->MType->mtype == MT_CLEAVER) {
+			if (Monst->MType->mtype == MonsterType::CLEAVER) {
 				PlaySFX(USFX_CLEAVER);
 			}
 		}
-		if (Monst->_mFlags & MFLAG_TARGETS_MONSTER) {
+		if (Monst->_mFlags & MonsterFlag::targets_monster) {
 			_menemy = Monst->_menemy;
 			if ((DWORD)_menemy >= MAXMONSTERS) {
 				app_fatal("Illegal enemy monster %d for monster \"%s\"", _menemy, Monst->mName);
@@ -467,12 +467,12 @@ void ProcessMonsters()
 			if (grid.at(m).dFlags & BFLAG_VISIBLE) {
 				Monst->_msquelch = 255;
 				Monst->_last = plr[Monst->_menemy].futpos();
-			} else if (Monst->_msquelch != 0 && Monst->_mAi != MT_DIABLO) { /// BUGFIX: change '_mAi' to 'MType->mtype'
+			} else if (Monst->_msquelch != 0 && Monst->_mAi != MonsterType::DIABLO) { /// BUGFIX: change '_mAi' to 'MType->mtype'
 				Monst->_msquelch--;
 			}
 		}
 		do {
-			if (!(Monst->_mFlags & MFLAG_SEARCH)) {
+			if (!(Monst->_mFlags & MonsterFlag::search)) {
 				std::invoke(AiProc[Monst->_mAi], &monsters[mi]);
 				//AiProc[Monst->_mAi](monsters[mi]);
 			} else if (!monsters[mi].MAI_Path()) {
@@ -541,9 +541,9 @@ void ProcessMonsters()
 		} while (raflag);
 		if (Monst->_mmode != MM_STONE) {
 			Monst->_mAnimCnt++;
-			if (!(Monst->_mFlags & MFLAG_ALLOW_SPECIAL) && Monst->_mAnimCnt >= Monst->_mAnimDelay) {
+			if (!(Monst->_mFlags & MonsterFlag::allow_special) && Monst->_mAnimCnt >= Monst->_mAnimDelay) {
 				Monst->_mAnimCnt = 0;
-				if (Monst->_mFlags & MFLAG_LOCK_ANIMATION) {
+				if (Monst->_mFlags & MonsterFlag::lock_animation) {
 					Monst->_mAnimFrame--;
 					if (Monst->_mAnimFrame == 0) {
 						Monst->_mAnimFrame = Monst->_mAnimLen;
@@ -876,20 +876,20 @@ void M_FallenFear(V2Di pos)
 		mi = monstactive[i];
 
 		switch (monsters[mi].data.MType->mtype) {
-		case MT_RFALLSP:
-		case MT_RFALLSD:
+		case MonsterType::RFALLSP:
+		case MonsterType::RFALLSD:
 			rundist = 7;
 			break;
-		case MT_DFALLSP:
-		case MT_DFALLSD:
+		case MonsterType::DFALLSP:
+		case MonsterType::DFALLSD:
 			rundist = 5;
 			break;
-		case MT_YFALLSP:
-		case MT_YFALLSD:
+		case MonsterType::YFALLSP:
+		case MonsterType::YFALLSD:
 			rundist = 3;
 			break;
-		case MT_BFALLSP:
-		case MT_BFALLSD:
+		case MonsterType::BFALLSP:
+		case MonsterType::BFALLSD:
 			rundist = 2;
 			break;
 		}
@@ -1016,8 +1016,8 @@ void MissToMonst(int i, V2Di pos)
 	Monst->_mdir = Dir(Miss->_mimfnum);
 	Monst->_m = pos;
 	monsters[m].M_StartStand(Monst->_mdir);
-	if (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN) {
-		if (!(Monst->_mFlags & MFLAG_TARGETS_MONSTER))
+	if (Monst->MType->mtype < MonsterType::INCIN || Monst->MType->mtype > MonsterType::HELLBURN) {
+		if (!(Monst->_mFlags & MonsterFlag::targets_monster))
 			monsters[m].M_StartHit(-1, 0);
 		else
 			M2MStartHit(m, -1, 0);
@@ -1025,12 +1025,12 @@ void MissToMonst(int i, V2Di pos)
 		monsters[m].M_StartFadein(Monst->_mdir, false);
 	}
 
-	if (!(Monst->_mFlags & MFLAG_TARGETS_MONSTER)) {
+	if (!(Monst->_mFlags & MonsterFlag::targets_monster)) {
 		pnum = grid.at(old).getPlayer();
 		if (pnum > 0) {
-			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
+			if (Monst->MType->mtype != MonsterType::GLOOM && (Monst->MType->mtype < MonsterType::INCIN || Monst->MType->mtype > MonsterType::HELLBURN)) {
 				monsters[m].M_TryH2HHit(pnum, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
-				if (pnum == myplr() && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
+				if (pnum == myplr() && (Monst->MType->mtype < MonsterType::NSNAKE || Monst->MType->mtype > MonsterType::GSNAKE)) {
 					if (plr[pnum].data._pmode != 7 && plr[pnum].data._pmode != 8)
 						plr[pnum].StartPlrHit(0, true);
 					n = old + offset(Monst->_mdir);
@@ -1045,9 +1045,9 @@ void MissToMonst(int i, V2Di pos)
 		}
 	} else {
 		if (grid.at(old).getActor() > 0) {
-			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
+			if (Monst->MType->mtype != MonsterType::GLOOM && (Monst->MType->mtype < MonsterType::INCIN || Monst->MType->mtype > MonsterType::HELLBURN)) {
 				monsters[m].M_TryM2MHit(grid.at(old).getActor() - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
-				if (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE) {
+				if (Monst->MType->mtype < MonsterType::NSNAKE || Monst->MType->mtype > MonsterType::GSNAKE) {
 					n = old + offset(Monst->_mdir);
 					if (PosOkMonst(grid.at(old).getActor() - 1, n)) {
 						m = grid.at(old).getActor();
@@ -1088,7 +1088,7 @@ bool PosOkMonst(int i, V2Di pos)
 				}
 			}
 		}
-		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MT_DIABLO))
+		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MonsterType::DIABLO))
 			ret = false;
 	}
 	return ret;
@@ -1119,7 +1119,7 @@ bool PosOkMonst2(int i, V2Di pos)
 				}
 			}
 		}
-		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MT_DIABLO))
+		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MonsterType::DIABLO))
 			ret = false;
 	}
 
@@ -1162,7 +1162,7 @@ bool PosOkMonst3(int i, V2Di pos)
 				}
 			}
 		}
-		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MT_DIABLO)) {
+		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MonsterType::DIABLO)) {
 			ret = false;
 		}
 	}
@@ -1172,15 +1172,15 @@ bool PosOkMonst3(int i, V2Di pos)
 
 bool IsSkel(int mt)
 {
-	return mt >= MT_WSKELAX && mt <= MT_XSKELAX
-	    || mt >= MT_WSKELBW && mt <= MT_XSKELBW
-	    || mt >= MT_WSKELSD && mt <= MT_XSKELSD;
+	return mt >= MonsterType::WSKELAX && mt <= MonsterType::XSKELAX
+	    || mt >= MonsterType::WSKELBW && mt <= MonsterType::XSKELBW
+	    || mt >= MonsterType::WSKELSD && mt <= MonsterType::XSKELSD;
 }
 
 bool IsGoat(int mt)
 {
-	return mt >= MT_NGOATMC && mt <= MT_GGOATMC
-	    || mt >= MT_NGOATBW && mt <= MT_GGOATBW;
+	return mt >= MonsterType::NGOATMC && mt <= MonsterType::GGOATMC
+	    || mt >= MonsterType::NGOATBW && mt <= MonsterType::GGOATBW;
 }
 
 int M_SpawnSkel(V2Di pos, Dir dir)
@@ -1296,14 +1296,14 @@ void MonsterInstance::TalktoMonster()
 	pnum = data._menemy;
 	data._mmode = MM_TALK;
 	if (data._mAi == AI_SNOTSPIL || data._mAi == AI_LACHDAN) {
-		if (QuestStatus(Q_LTBANNER) && quests[Q_LTBANNER]._qvar1 == 2 && PlrHasItem(pnum, IDI_BANNER, &itm)) {
+		if (QuestStatus(Q_LTBANNER) && quests[Q_LTBANNER]._qvar1 == 2 && HasItem(pnum, ItemIndex::BANNER, &itm)) {
 			plr[pnum].inventory.RemoveInvItem(itm);
 			quests[Q_LTBANNER]._qactive = QUEST_DONE;
 			data.mtalkmsg = TEXT_BANNER12;
 			data._mgoal = MGOAL_INQUIRING;
 		}
 		if (QuestStatus(Q_VEIL) && data.mtalkmsg >= TEXT_VEIL9) {
-			if (PlrHasItem(pnum, IDI_GLDNELIX, &itm)) {
+			if (HasItem(pnum, ItemIndex::GLDNELIX, &itm)) {
 				plr[pnum].inventory.RemoveInvItem(itm);
 				data.mtalkmsg = TEXT_VEIL11;
 				data._mgoal = MGOAL_INQUIRING;
@@ -1319,7 +1319,7 @@ void MonsterInstance::SpawnGolum(V2Di pos, int mi)
 	data._mfut = pos;
 	data._mold = pos;
 	data._pathcount = 0;
-	data._mFlags |= MFLAG_GOLEM;
+	data._mFlags |= MonsterFlag::golem;
 	data.mArmorClass = 25;
 	data._mmaxhp = 2 * (320 * missile[mi]._mispllvl + plr[i].data._pMaxMana / 3);
 	data._mhitpoints = data._mmaxhp;
@@ -1357,14 +1357,14 @@ bool CheckMonsterHit(int m, bool *ret)
 		app_fatal("CheckMonsterHit: Invalid monster %d", m);
 	}
 
-	if (monsters[m].data._mAi == AI_GARG && monsters[m].data._mFlags & MFLAG_ALLOW_SPECIAL) {
-		monsters[m].data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
+	if (monsters[m].data._mAi == AI_GARG && monsters[m].data._mFlags & MonsterFlag::allow_special) {
+		monsters[m].data._mFlags &= ~MonsterFlag::allow_special;
 		monsters[m].data._mmode = MM_SATTACK;
 		*ret = true;
 		return true;
 	}
 
-	if (monsters[m].data.MType->mtype >= MT_COUNSLR && monsters[m].data.MType->mtype <= MT_ADVOCATE) {
+	if (monsters[m].data.MType->mtype >= MonsterType::COUNSLR && monsters[m].data.MType->mtype <= MonsterType::ADVOCATE) {
 		if (monsters[m].data._mgoal != MGOAL_NORMAL) {
 			*ret = false;
 			return true;
@@ -1376,7 +1376,7 @@ bool CheckMonsterHit(int m, bool *ret)
 
 int encode_enemy(int m)
 {
-	if (monsters[m].data._mFlags & MFLAG_TARGETS_MONSTER)
+	if (monsters[m].data._mFlags & MonsterFlag::targets_monster)
 		return monsters[m].data._menemy + MAX_PLRS;
 	else
 		return monsters[m].data._menemy;
@@ -1385,11 +1385,11 @@ int encode_enemy(int m)
 void decode_enemy(int m, int enemy)
 {
 	if (enemy < MAX_PLRS) {
-		monsters[m].data._mFlags &= ~MFLAG_TARGETS_MONSTER;
+		monsters[m].data._mFlags &= ~MonsterFlag::targets_monster;
 		monsters[m].data._menemy = enemy;
 		monsters[m].data._menemypos = plr[enemy].futpos();
 	} else {
-		monsters[m].data._mFlags |= MFLAG_TARGETS_MONSTER;
+		monsters[m].data._mFlags |= MonsterFlag::targets_monster;
 		enemy -= MAX_PLRS;
 		monsters[m].data._menemy = enemy;
 		monsters[m].data._menemypos = monsters[enemy].data._mfut;

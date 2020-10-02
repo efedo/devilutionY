@@ -22,7 +22,7 @@ Item *const PlayerInventory::findBagItemType(int itemType)
 
 Item * PlayerInventory::GetGoldSeed()
 {
-	Item *item = findBagItemType(ITYPE_GOLD);
+	Item *item = findBagItemType(ItemType::gold);
 
 	if (!item) {
 		InvSlot *slot = getEmptyBagSlot();
@@ -43,7 +43,7 @@ bool PlayerInventory::stashHeldIntoBag(bool checkOnly)
 	int i, j;
 
 	// If gold, handle specially (eventually will encompass all stackables)
-	if (getHeldItem()->_itype == ITYPE_GOLD) {
+	if (getHeldItem()->_itype == ItemType::gold) {
 		Item *item = GetGoldSeed();
 		if (item) {
 			if (!checkOnly) AddHeldGoldToStack(item);
@@ -99,16 +99,16 @@ bool PlayerInventory::stashHeldIntoBelt(bool checkOnly)
 
 void PlayerInventory::AddHeldGoldToStack(Item * item)
 {
-	assert(item && item->_itype == ITYPE_GOLD);
+	assert(item && item->_itype == ItemType::gold);
 	Item *held = getHeldItem();
 	if (!held) return;
 	item->_ivalue += held->_ivalue;
 	if (item->_ivalue >= GOLD_MEDIUM_LIMIT) {
-		item->_iCurs = ICURS_GOLD_LARGE;
+		item->_iCurs = ItemCursor::GOLD_LARGE;
 	} else if (item->_ivalue >= GOLD_SMALL_LIMIT) {
-		item->_iCurs = ICURS_GOLD_MEDIUM;
+		item->_iCurs = ItemCursor::GOLD_MEDIUM;
 	} else {
-		item->_iCurs = ICURS_GOLD_SMALL; }
+		item->_iCurs = ItemCursor::GOLD_SMALL; }
 	owner.data._pGold = CalculateGold();
 }
 
@@ -174,10 +174,10 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 	if (slot.item() && !forceSwap) return false; // Item already present and not swapping
 	bool success = false;
 	const BodyLoc bodyloc = slot.bLoc;
-	const ItemClass itemClass = held->_iLoc;
+	const ItemSlot itemClass = held->_iLoc;
 
 	// Handle simple cases
-	auto _simplePaste = [&](BodyLoc loc, ItemClass cls) {
+	auto _simplePaste = [&](BodyLoc loc, ItemSlot cls) {
 		if (!success && bodyloc == loc && itemClass == cls) {
 			if (!checkOnly) {
 				NetSendCmdChItem(false, loc);
@@ -187,11 +187,11 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 		}
 	};
 
-	_simplePaste(BodyLoc::Head, ItemClass::Helm);
-	_simplePaste(BodyLoc::RingLeft, ItemClass::Ring);
-	_simplePaste(BodyLoc::RingRight, ItemClass::Ring);
-	_simplePaste(BodyLoc::Chest, ItemClass::Armor);
-	_simplePaste(BodyLoc::Amulet, ItemClass::Amulet);
+	_simplePaste(BodyLoc::Head, ItemSlot::Helm);
+	_simplePaste(BodyLoc::RingLeft, ItemSlot::Ring);
+	_simplePaste(BodyLoc::RingRight, ItemSlot::Ring);
+	_simplePaste(BodyLoc::Chest, ItemSlot::Armor);
+	_simplePaste(BodyLoc::Amulet, ItemSlot::Amulet);
 
 	// Add to weapons slot
 	if (!success && (bodyloc == BodyLoc::HandRight || bodyloc == BodyLoc::HandLeft)) {
@@ -200,7 +200,7 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 		Item *right = getBodySlot(BodyLoc::HandLeft).item();
 
 		// One-handed
-		if (itemClass == ItemClass::OneHand) {
+		if (itemClass == ItemSlot::OneHand) {
 			if (!left || forceSwap) {
 				if (!checkOnly) {
 					SwapHeldItem(getBodySlot(BodyLoc::HandLeft));
@@ -211,7 +211,7 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 		}
 
 		// Two-handed
-		if (!success && itemClass == ItemClass::TwoHand) {
+		if (!success && itemClass == ItemSlot::TwoHand) {
 			if (!left || !right) {  // At least one hand empty
 				if ((!left && !right) || forceSwap) {
 					if (!checkOnly) {
@@ -230,9 +230,9 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 		}
 
 		// Shield
-		if (!success && held->_iClass == ITYPE_SHIELD) {
+		if (!success && held->_iClass == ItemType::shield) {
 			// swap with right unless two-handed in left
-			if (left->_iLoc != ItemClass::TwoHand) {
+			if (left->_iLoc != ItemSlot::TwoHand) {
 				if (!right || forceSwap) {
 					if (!checkOnly) {
 						SwapHeldItem(getBodySlot(BodyLoc::HandRight));
@@ -252,7 +252,7 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 		if (!AllItemsList[getHeldItem()->IDidx].iUsable)
 			valid = false;                                       // Not usable
 		if (!getHeldItem()->_iStatFlag) valid = false;           // ??
-		if (getHeldItem()->_itype == ITYPE_GOLD) valid = false;  // Gold
+		if (getHeldItem()->_itype == ItemType::gold) valid = false;  // Gold
 		if (valid) {
 			if (!checkOnly) { SwapHeldItem(slot); }
 			success = true;
@@ -261,12 +261,12 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 
 	// Add item to bag
 	if (!success && bodyloc == BodyLoc::Bag) {
-		if (held->_itype == ITYPE_GOLD) {
+		if (held->_itype == ItemType::gold) {
 			if (!slot.item()) {  // If over empty slot, make new pile
 				slot.takeItem(std::make_unique<Item>());
-				slot.item()->_itype = ITYPE_GOLD;
+				slot.item()->_itype = ItemType::gold;
 			}
-			if (slot.item()->_itype = ITYPE_GOLD) {
+			if (slot.item()->_itype = ItemType::gold) {
 				AddHeldGoldToStack(slot.item());
 				success = true;
 			}
@@ -336,8 +336,8 @@ bool PlayerInventory::tryCutSlot(InvSlot &slot)
 		SwapHeldItem(slot);
 	}
 
-	if (getHeldItem()->_itype != ITYPE_NONE) {
-		if (getHeldItem()->_itype == ITYPE_GOLD) {
+	if (getHeldItem()->_itype != ItemType::none) {
+		if (getHeldItem()->_itype == ItemType::gold) {
 			owner.data._pGold = CalculateGold();
 		}
 		owner.CalcPlrInv(true);
@@ -387,7 +387,7 @@ void PlayerInventory::CheckItemStats()
 
 void PlayerInventory::CheckBookLevel()
 {
-	if (getHeldItem()->_iMiscId == IMISC_BOOK) {
+	if (getHeldItem()->_iMiscId == MiscItemId::BOOK) {
 		getHeldItem()->_iMinMag = spelldata[getHeldItem()->_iSpell].sMinInt;
 		int slvl = owner.data._pSplLvl[getHeldItem()->_iSpell];
 		while (slvl != 0) {
@@ -403,9 +403,9 @@ void PlayerInventory::CheckBookLevel()
 
 void PlayerInventory::CheckQuestItem()
 {
-	if (getHeldItem()->IDidx == IDI_OPTAMULET)
+	if (getHeldItem()->IDidx == ItemIndex::OPTAMULET)
 		quests[Q_BLIND]._qactive = QUEST_DONE;
-	if (getHeldItem()->IDidx == IDI_MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
+	if (getHeldItem()->IDidx == ItemIndex::MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
 		sfxdelay = 10;
 		if (owner.data._pClass == PC_WARRIOR) { // BUGFIX: Voice for this quest might be wrong in MP
 			sfxdnum = PS_WARR95;
@@ -416,7 +416,7 @@ void PlayerInventory::CheckQuestItem()
 		}
 		quests[Q_MUSHROOM]._qvar1 = QS_MUSHPICKED;
 	}
-	if (getHeldItem()->IDidx == IDI_ANVIL) {
+	if (getHeldItem()->IDidx == ItemIndex::ANVIL) {
 		if (quests[Q_ANVIL]._qactive == QUEST_INIT) {
 			quests[Q_ANVIL]._qactive = QUEST_ACTIVE;
 			quests[Q_ANVIL]._qvar1 = 1;
@@ -432,7 +432,7 @@ void PlayerInventory::CheckQuestItem()
 			}
 		}
 	}
-	if (getHeldItem()->IDidx == IDI_GLDNELIX) {
+	if (getHeldItem()->IDidx == ItemIndex::GLDNELIX) {
 		sfxdelay = 30;
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR88;
@@ -442,7 +442,7 @@ void PlayerInventory::CheckQuestItem()
 			sfxdnum = PS_MAGE88;
 		}
 	}
-	if (getHeldItem()->IDidx == IDI_ROCK) {
+	if (getHeldItem()->IDidx == ItemIndex::ROCK) {
 		if (quests[Q_ROCK]._qactive == QUEST_INIT) {
 			quests[Q_ROCK]._qactive = QUEST_ACTIVE;
 			quests[Q_ROCK]._qvar1 = 1;
@@ -458,7 +458,7 @@ void PlayerInventory::CheckQuestItem()
 			}
 		}
 	}
-	if (getHeldItem()->IDidx == IDI_ARMOFVAL) {
+	if (getHeldItem()->IDidx == ItemIndex::ARMOFVAL) {
 		quests[Q_BLOOD]._qactive = QUEST_DONE;
 		sfxdelay = 20;
 		if (myplr().data._pClass == PC_WARRIOR) {
@@ -609,9 +609,9 @@ bool PlayerInventory::UseScroll(bool checkOnly)
 	for (InvSlot &i : getBagArray()) {
 		Item *item = i.item();
 		if (!item) continue;
-		if (item->_itype != ITYPE_NONE &&
-		    (item->_iMiscId == IMISC_SCROLL ||
-		     item->_iMiscId == IMISC_SCROLLT) &&
+		if (item->_itype != ItemType::none &&
+		    (item->_iMiscId == MiscItemId::SCROLL ||
+		     item->_iMiscId == MiscItemId::SCROLLT) &&
 		    item->_iSpell == myplr().data._pRSpell) {
 			if (!checkOnly) {
 				destroyItem(i);
@@ -624,8 +624,8 @@ bool PlayerInventory::UseScroll(bool checkOnly)
 	for (int i = 0; i < MAXBELTITEMS; i++) {
 		Item *item = getBeltSlot(i).item();
 		if (!item) continue;
-		if (item->_itype != ITYPE_NONE
-		    && (item->_iMiscId == IMISC_SCROLL || item->_iMiscId == IMISC_SCROLLT)
+		if (item->_itype != ItemType::none
+		    && (item->_iMiscId == MiscItemId::SCROLL || item->_iMiscId == MiscItemId::SCROLLT)
 		    && item->_iSpell == myplr().data._pRSpell) {
 			if (!checkOnly) {
 				destroyItem(getBeltSlot(i));
@@ -642,8 +642,8 @@ bool PlayerInventory::UseStaff(bool checkOnly)
 	if (pcurs == CURSOR_HAND) {
 		Item * item = getBodySlot(BodyLoc::HandLeft).item();
 		if (item
-			&& item->_itype != ITYPE_NONE
-			&& item->_iMiscId == IMISC_STAFF
+			&& item->_itype != ItemType::none
+			&& item->_iMiscId == MiscItemId::STAFF
 			&& item->_iSpell == myplr().data._pRSpell
 			&& item->_iCharges > 0) {
 			if (!checkOnly) {
@@ -670,7 +670,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 	if (talkflag) return true;
 
 	switch (item->IDidx) {
-	case IDI_MUSHROOM:
+	case ItemIndex::MUSHROOM:
 		sfxdelay = 10;
 		if (owner.data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR95;
@@ -680,7 +680,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 			sfxdnum = PS_MAGE95;
 		}
 		return true;
-	case IDI_FUNGALTM:
+	case ItemIndex::FUNGALTM:
 		PlaySFX(IS_IBOOK);
 		sfxdelay = 10;
 		if (owner.data._pClass == PC_WARRIOR) {
@@ -707,16 +707,16 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 		return true;
 	}
 
-	if (item->_iMiscId == IMISC_SCROLL && lvl.currlevel == 0 && !spelldata[item->_iSpell].sTownSpell) {
+	if (item->_iMiscId == MiscItemId::SCROLL && lvl.currlevel == 0 && !spelldata[item->_iSpell].sTownSpell) {
 		return true;
 	}
 
-	if (item->_iMiscId == IMISC_SCROLLT && lvl.currlevel == 0 && !spelldata[item->_iSpell].sTownSpell) {
+	if (item->_iMiscId == MiscItemId::SCROLLT && lvl.currlevel == 0 && !spelldata[item->_iSpell].sTownSpell) {
 		return true;
 	}
 
 	int idata = ItemCAnimTbl[item->_iCurs];
-	if (item->_iMiscId == IMISC_BOOK)
+	if (item->_iMiscId == MiscItemId::BOOK)
 		PlaySFX(IS_RBOOK);
 	else if (owner.isMyPlr())
 		PlaySFX(ItemInvSnds[idata]);
@@ -742,7 +742,7 @@ int PlayerInventory::CalculateGold()
 	int gold = 0;
 	for (InvSlot &i : getBagArray()) {
 		if (!i.item()) continue;
-		if (i.item()->_itype == ITYPE_GOLD)
+		if (i.item()->_itype == ItemType::gold)
 			gold += i.item()->_ivalue;
 	}
 	assert(gold >= 0);

@@ -457,40 +457,40 @@ void Player::SetPlrAnims()
 
 	gn = data._pgfxnum & 0xF;
 	if (pc == PC_WARRIOR) {
-		if (gn == ANIM_ID_BOW) {
+		if (gn == AnimWeaponId::bow) {
 			if (lvl.type() != DunType::town) {
 				data._pNFrames = 8;
 			}
 			data._pAWidth = 96;
 			data._pAFNum = 11;
-		} else if (gn == ANIM_ID_AXE) {
+		} else if (gn == AnimWeaponId::axe) {
 			data._pAFrames = 20;
 			data._pAFNum = 10;
-		} else if (gn == ANIM_ID_STAFF) {
+		} else if (gn == AnimWeaponId::staff) {
 			data._pAFrames = 16;
 			data._pAFNum = 11;
 		}
 	} else if (pc == PC_ROGUE) {
-		if (gn == ANIM_ID_AXE) {
+		if (gn == AnimWeaponId::axe) {
 			data._pAFrames = 22;
 			data._pAFNum = 13;
-		} else if (gn == ANIM_ID_BOW) {
+		} else if (gn == AnimWeaponId::bow) {
 			data._pAFrames = 12;
 			data._pAFNum = 7;
-		} else if (gn == ANIM_ID_STAFF) {
+		} else if (gn == AnimWeaponId::staff) {
 			data._pAFrames = 16;
 			data._pAFNum = 11;
 		}
 	} else if (pc == PC_SORCERER) {
 		data._pSWidth = 128;
-		if (gn == ANIM_ID_UNARMED) {
+		if (gn == AnimWeaponId::unarmed) {
 			data._pAFrames = 20;
-		} else if (gn == ANIM_ID_UNARMED_SHIELD) {
+		} else if (gn == AnimWeaponId::unarmed_shield) {
 			data._pAFNum = 9;
-		} else if (gn == ANIM_ID_BOW) {
+		} else if (gn == AnimWeaponId::bow) {
 			data._pAFrames = 20;
 			data._pAFNum = 16;
-		} else if (gn == ANIM_ID_AXE) {
+		} else if (gn == AnimWeaponId::axe) {
 			data._pAFrames = 24;
 			data._pAFNum = 16;
 		}
@@ -645,11 +645,11 @@ void Player::CreatePlayer(char c)
 	}
 
 	if (c == PC_WARRIOR) {
-		data._pgfxnum = ANIM_ID_SWORD_SHIELD;
+		data._pgfxnum = AnimWeaponId::sword_shield;
 	} else if (c == PC_ROGUE) {
-		data._pgfxnum = ANIM_ID_BOW;
+		data._pgfxnum = AnimWeaponId::bow;
 	} else if (c == PC_SORCERER) {
-		data._pgfxnum = ANIM_ID_STAFF;
+		data._pgfxnum = AnimWeaponId::staff;
 	}
 
 	for (i = 0; i < NUMLEVELS; i++) {
@@ -725,7 +725,7 @@ void Player::NextPlrLevel()
 	data._pMaxMana += mana;
 	data._pMaxManaBase += mana;
 
-	if (!(data._pIFlags & ISPL_NOMANA)) {
+	if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 		data._pMana = data._pMaxMana;
 		data._pManaBase = data._pMaxManaBase;
 	}
@@ -814,7 +814,7 @@ void Player::InitPlayer(bool FirstTime)
 		data._pSBkSpell = SPL_INVALID;
 		data._pSpell = data._pRSpell;
 		data._pSplType = data._pRSplType;
-		if ((data._pgfxnum & 0xF) == ANIM_ID_BOW) {
+		if ((data._pgfxnum & 0xF) == AnimWeaponId::bow) {
 			data._pwtype = WT_RANGED;
 		} else {
 			data._pwtype = WT_MELEE;
@@ -1398,7 +1398,7 @@ void RespawnDeadItem(Item &item, V2Di pos)
 	grid.at(pos).setItem(item.id);
 	item._i = pos;
 	item.RespawnItem(true);
-	item._itype = ITYPE_NONE;
+	item._itype = ItemType::none;
 }
 
 #if defined(__clang__) || defined(__GNUC__)
@@ -1455,7 +1455,7 @@ void Player::StartPlayerKill()
 	if (pnum != myplr() && !diablolevel) {
 		for (InvSlot &i : inv.getBagArray()) {
 			if (!i.item()) continue;
-			i.item()->_itype = ITYPE_NONE;
+			i.item()->_itype = ItemType::none;
 		}
 		CalcPlrInv(false);
 	}
@@ -1495,7 +1495,7 @@ void Player::StartPlayerKill()
 
 void Player::PlrDeadItem(Item & item, V2Di n)
 {
-	if (item._itype == ITYPE_NONE) return;
+	if (item._itype == ItemType::none) return;
 
 	V2Di p = n + pos();
 	if ((n.x || n.y) && ItemSpaceOk(p.x, p.y)) {
@@ -1870,7 +1870,7 @@ bool Player::PlrHitMonst(int m)
 		return false;
 	}
 
-	if (monsters[m].data.MType->mtype == MT_ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT) {
+	if (monsters[m].data.MType->mtype == MonsterType::ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT) {
 		return false;
 	}
 
@@ -1918,34 +1918,34 @@ bool Player::PlrHitMonst(int m)
 			}
 		}
 
-		phanditype = ITYPE_NONE;
-		if (data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SWORD || data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SWORD) {
-			phanditype = ITYPE_SWORD;
+		phanditype = ItemType::none;
+		if (data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::sword || data.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::sword) {
+			phanditype = ItemType::sword;
 		}
-		if (data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_MACE || data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_MACE) {
-			phanditype = ITYPE_MACE;
+		if (data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::mace || data.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::mace) {
+			phanditype = ItemType::mace;
 		}
 
 		switch (monsters[m].data.MData->mMonstClass) {
 		case MC_UNDEAD:
-			if (phanditype == ITYPE_SWORD) {
+			if (phanditype == ItemType::sword) {
 				dam -= dam >> 1;
 			}
-			if (phanditype == ITYPE_MACE) {
+			if (phanditype == ItemType::mace) {
 				dam += dam >> 1;
 			}
 			break;
 		case MC_ANIMAL:
-			if (phanditype == ITYPE_MACE) {
+			if (phanditype == ItemType::mace) {
 				dam -= dam >> 1;
 			}
-			if (phanditype == ITYPE_SWORD) {
+			if (phanditype == ItemType::sword) {
 				dam += dam >> 1;
 			}
 			break;
 		}
 
-		if (data._pIFlags & ISPL_3XDAMVDEM && monsters[m].data.MData->mMonstClass == MC_DEMON) {
+		if (data._pIFlags & ItemSpecialEffect::T3XDAMVDEM && monsters[m].data.MData->mMonstClass == MC_DEMON) {
 			dam *= 3;
 		}
 
@@ -1954,7 +1954,7 @@ bool Player::PlrHitMonst(int m)
 			monsters[m].data._mhitpoints -= dam;
 		}
 
-		if (data._pIFlags & ISPL_RNDSTEALLIFE) {
+		if (data._pIFlags & ItemSpecialEffect::RNDSTEALLIFE) {
 			skdam = random_(7, dam >> 3);
 			data._pHitPoints += skdam;
 			if (data._pHitPoints > data._pMaxHP) {
@@ -1966,11 +1966,11 @@ bool Player::PlrHitMonst(int m)
 			}
 			drawhpflag = true;
 		}
-		if (data._pIFlags & (ISPL_STEALMANA_3 | ISPL_STEALMANA_5) && !(data._pIFlags & ISPL_NOMANA)) {
-			if (data._pIFlags & ISPL_STEALMANA_3) {
+		if (data._pIFlags & (ItemSpecialEffect::STEALMANA_3 | ItemSpecialEffect::STEALMANA_5) && !(data._pIFlags & ItemSpecialEffect::NOMANA)) {
+			if (data._pIFlags & ItemSpecialEffect::STEALMANA_3) {
 				skdam = 3 * dam / 100;
 			}
-			if (data._pIFlags & ISPL_STEALMANA_5) {
+			if (data._pIFlags & ItemSpecialEffect::STEALMANA_5) {
 				skdam = 5 * dam / 100;
 			}
 			data._pMana += skdam;
@@ -1983,11 +1983,11 @@ bool Player::PlrHitMonst(int m)
 			}
 			drawmanaflag = true;
 		}
-		if (data._pIFlags & (ISPL_STEALLIFE_3 | ISPL_STEALLIFE_5)) {
-			if (data._pIFlags & ISPL_STEALLIFE_3) {
+		if (data._pIFlags & (ItemSpecialEffect::STEALLIFE_3 | ItemSpecialEffect::STEALLIFE_5)) {
+			if (data._pIFlags & ItemSpecialEffect::STEALLIFE_3) {
 				skdam = 3 * dam / 100;
 			}
-			if (data._pIFlags & ISPL_STEALLIFE_5) {
+			if (data._pIFlags & ItemSpecialEffect::STEALLIFE_5) {
 				skdam = 5 * dam / 100;
 			}
 			data._pHitPoints += skdam;
@@ -2000,8 +2000,8 @@ bool Player::PlrHitMonst(int m)
 			}
 			drawhpflag = true;
 		}
-		if (data._pIFlags & ISPL_NOHEALPLR) {
-			monsters[m].data._mFlags |= MFLAG_NOHEAL;
+		if (data._pIFlags & ItemSpecialEffect::NOHEALPLR) {
+			monsters[m].data._mFlags |= MonsterFlag::noheal;
 		}
 #ifdef _DEBUG
 		if (debug_mode_dollar_sign || debug_mode_key_inverted_v) {
@@ -2020,7 +2020,7 @@ bool Player::PlrHitMonst(int m)
 				monsters[m].M_StartHit(pnum, dam);
 				monsters[m].data._mmode = MM_STONE;
 			} else {
-				if (data._pIFlags & ISPL_KNOCKBACK) {
+				if (data._pIFlags & ItemSpecialEffect::KNOCKBACK) {
 					monsters[m].M_GetKnockback();
 				}
 				monsters[m].M_StartHit(pnum, dam);
@@ -2102,7 +2102,7 @@ bool Player::PlrHitPlr(char p)
 				}
 			}
 			skdam = dam << 6;
-			if (data._pIFlags & ISPL_RNDSTEALLIFE) {
+			if (data._pIFlags & ItemSpecialEffect::RNDSTEALLIFE) {
 				tac = random_(7, skdam >> 3);
 				data._pHitPoints += tac;
 				if (data._pHitPoints > data._pMaxHP) {
@@ -2143,16 +2143,16 @@ bool Player::PM_DoAttack()
 	bool didhit;
 	V2Di d;
 	frame = data._pAnimFrame;
-	if (data._pIFlags & ISPL_QUICKATTACK && frame == 1) {
+	if (data._pIFlags & ItemSpecialEffect::QUICKATTACK && frame == 1) {
 		data._pAnimFrame++;
 	}
-	if (data._pIFlags & ISPL_FASTATTACK && (frame == 1 || frame == 3)) {
+	if (data._pIFlags & ItemSpecialEffect::FASTATTACK && (frame == 1 || frame == 3)) {
 		data._pAnimFrame++;
 	}
-	if (data._pIFlags & ISPL_FASTERATTACK && (frame == 1 || frame == 3 || frame == 5)) {
+	if (data._pIFlags & ItemSpecialEffect::FASTERATTACK && (frame == 1 || frame == 3 || frame == 5)) {
 		data._pAnimFrame++;
 	}
-	if (data._pIFlags & ISPL_FASTESTATTACK && (frame == 1 || frame == 4)) {
+	if (data._pIFlags & ItemSpecialEffect::FASTESTATTACK && (frame == 1 || frame == 4)) {
 		data._pAnimFrame += 2;
 	}
 	if (data._pAnimFrame == data._pAFNum - 1) {
@@ -2174,10 +2174,10 @@ bool Player::PM_DoAttack()
 			}
 		}
 
-		if (data._pIFlags & ISPL_FIREDAM) {
+		if (data._pIFlags & ItemSpecialEffect::FIREDAM) {
 			AddMissile(d, { 1, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
-		if (data._pIFlags & ISPL_LIGHTDAM) {
+		if (data._pIFlags & ItemSpecialEffect::LIGHTDAM) {
 			AddMissile(d, { 2, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
 		}
 
@@ -2218,19 +2218,19 @@ bool Player::PM_DoRangeAttack()
 	int origFrame, mistype;
 
 	origFrame = data._pAnimFrame;
-	if (data._pIFlags & ISPL_QUICKATTACK && origFrame == 1) {
+	if (data._pIFlags & ItemSpecialEffect::QUICKATTACK && origFrame == 1) {
 		data._pAnimFrame++;
 	}
-	if (data._pIFlags & ISPL_FASTATTACK && (origFrame == 1 || origFrame == 3)) {
+	if (data._pIFlags & ItemSpecialEffect::FASTATTACK && (origFrame == 1 || origFrame == 3)) {
 		data._pAnimFrame++;
 	}
 
 	if (data._pAnimFrame == data._pAFNum) {
 		mistype = MIS_ARROW;
-		if (data._pIFlags & ISPL_FIRE_ARROWS) {
+		if (data._pIFlags & ItemSpecialEffect::FIRE_ARROWS) {
 			mistype = MIS_FARROW;
 		}
-		if (data._pIFlags & ISPL_LIGHT_ARROWS) {
+		if (data._pIFlags & ItemSpecialEffect::LIGHT_ARROWS) {
 			mistype = MIS_LARROW;
 		}
 		AddMissile(
@@ -2263,7 +2263,7 @@ bool Player::PM_DoRangeAttack()
 
 bool Player::PM_DoBlock()
 {
-	if (data._pIFlags & ISPL_FASTBLOCK && data._pAnimFrame != 1) {
+	if (data._pIFlags & ItemSpecialEffect::FASTBLOCK && data._pAnimFrame != 1) {
 		data._pAnimFrame = data._pBFrames;
 	}
 
@@ -2334,13 +2334,13 @@ bool Player::PM_DoGotHit()
 	int frame;
 
 	frame = data._pAnimFrame;
-	if (data._pIFlags & ISPL_FASTRECOVER && frame == 3) {
+	if (data._pIFlags & ItemSpecialEffect::FASTRECOVER && frame == 3) {
 		data._pAnimFrame++;
 	}
-	if (data._pIFlags & ISPL_FASTERRECOVER && (frame == 3 || frame == 5)) {
+	if (data._pIFlags & ItemSpecialEffect::FASTERRECOVER && (frame == 3 || frame == 5)) {
 		data._pAnimFrame++;
 	}
-	if (data._pIFlags & ISPL_FASTESTRECOVER && (frame == 1 || frame == 3 || frame == 5)) {
+	if (data._pIFlags & ItemSpecialEffect::FASTESTRECOVER && (frame == 1 || frame == 3 || frame == 5)) {
 		data._pAnimFrame++;
 	}
 
@@ -2693,7 +2693,7 @@ void Player::ValidatePlayer()
 
 	gt = 0;
 	for (i = 0; i < data._pNumInv; i++) {
-		if (data.InvList[i]._itype == ITYPE_GOLD) {
+		if (data.InvList[i]._itype == ItemType::gold) {
 			if (data.InvList[i]._ivalue > GOLD_MAX_LIMIT) {
 				data.InvList[i]._ivalue = GOLD_MAX_LIMIT;
 			}
@@ -2755,7 +2755,7 @@ void Player::ProcessPlayer()
 			}
 
 			if (pnum == myplr()) {
-				if ((data._pIFlags & ISPL_DRAINLIFE) && lvl.currlevel != 0) {
+				if ((data._pIFlags & ItemSpecialEffect::DRAINLIFE) && lvl.currlevel != 0) {
 					data._pHitPoints -= 4;
 					data._pHPBase -= 4;
 					if ((data._pHitPoints >> 6) <= 0) {
@@ -2763,7 +2763,7 @@ void Player::ProcessPlayer()
 					}
 					drawhpflag = true;
 				}
-				if (data._pIFlags & ISPL_NOMANA && data._pManaBase > 0) {
+				if (data._pIFlags & ItemSpecialEffect::NOMANA && data._pManaBase > 0) {
 					data._pManaBase -= data._pMana;
 					data._pMana = 0;
 					drawmanaflag = true;
@@ -3173,7 +3173,7 @@ void Player::ModifyPlrMag(int l)
 
 	data._pMaxManaBase += ms;
 	data._pMaxMana += ms;
-	if (!(data._pIFlags & ISPL_NOMANA)) {
+	if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 		data._pManaBase += ms;
 		data._pMana += ms;
 	}
@@ -3371,14 +3371,13 @@ void PlayDungMsgs()
 	}
 }
 
-ItemStruct *Player::PlrHasItem(int item, int *i)
+Item *Player::HasItem(int item) // takes IDI enum, e.g. ItemIndex::LAZSTAFF
 {
 	for (*i = 0; *i < data._pNumInv; (*i)++) {
 		if (data.InvList[*i].IDidx == item)
 			return &data.InvList[*i];
 	}
-
-	return NULL;
+	return 0;
 }
 
 DEVILUTION_END_NAMESPACE

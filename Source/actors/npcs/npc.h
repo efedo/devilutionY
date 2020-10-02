@@ -9,6 +9,7 @@ DEVILUTION_BEGIN_NAMESPACE
 // Non-player actor
 class Npc : public Actor
 {
+   public:
 	Npc() : Actor(ActorType::towner)
 	{
 	}

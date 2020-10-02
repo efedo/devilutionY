@@ -150,12 +150,12 @@ private:
 	bool CheckError(const char *fmt, PrintFArgs... args)
 	{
 		if (s_->fail()) {
-			std::string fmt_with_error = fmt;
-			fmt_with_error.append(": failed with \"%s\"");
+			std::string fMonsterType::with_error = fmt;
+			fMonsterType::with_error.append(": failed with \"%s\"");
 			const char *error_message = std::strerror(errno);
 			if (error_message == NULL)
 				error_message = "";
-			SDL_Log(fmt_with_error.c_str(), args..., error_message);
+			SDL_Log(fMonsterType::with_error.c_str(), args..., error_message);
 #ifdef _DEBUG
 		} else {
 			SDL_Log(fmt, args...);

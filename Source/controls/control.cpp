@@ -392,15 +392,15 @@ void DrawSpellList()
 					sprintf(infostr, "Scroll of %s", spelldata[pSpell].sNameText);
 					v = 0;
 					for (t = 0; t < myplr().data._pNumInv; t++) {
-						if (myplr().data.InvList[t]._itype != ITYPE_NONE
-						    && (myplr().data.InvList[t]._iMiscId == IMISC_SCROLL || myplr().data.InvList[t]._iMiscId == IMISC_SCROLLT)
+						if (myplr().data.InvList[t]._itype != ItemType::none
+						    && (myplr().data.InvList[t]._iMiscId == MiscItemId::SCROLL || myplr().data.InvList[t]._iMiscId == MiscItemId::SCROLLT)
 						    && myplr().data.InvList[t]._iSpell == pSpell) {
 							v++;
 						}
 					}
 					for (t = 0; t < MAXBELTITEMS; t++) {
-						if (myplr().data.SpdList[t]._itype != ITYPE_NONE
-						    && (myplr().data.SpdList[t]._iMiscId == IMISC_SCROLL || myplr().data.SpdList[t]._iMiscId == IMISC_SCROLLT)
+						if (myplr().data.SpdList[t]._itype != ItemType::none
+						    && (myplr().data.SpdList[t]._iMiscId == MiscItemId::SCROLL || myplr().data.SpdList[t]._iMiscId == MiscItemId::SCROLLT)
 						    && myplr().data.SpdList[t]._iSpell == pSpell) {
 							v++;
 						}
@@ -1041,15 +1041,15 @@ void CheckPanelInfo()
 				AddPanelString(tempstr, true);
 				s = 0;
 				for (i = 0; i < myplr().data._pNumInv; i++) {
-					if (myplr().data.InvList[i]._itype != ITYPE_NONE
-					    && (myplr().data.InvList[i]._iMiscId == IMISC_SCROLL || myplr().data.InvList[i]._iMiscId == IMISC_SCROLLT)
+					if (myplr().data.InvList[i]._itype != ItemType::none
+					    && (myplr().data.InvList[i]._iMiscId == MiscItemId::SCROLL || myplr().data.InvList[i]._iMiscId == MiscItemId::SCROLLT)
 					    && myplr().data.InvList[i]._iSpell == v) {
 						s++;
 					}
 				}
 				for (i = 0; i < MAXBELTITEMS; i++) {
-					if (myplr().data.SpdList[i]._itype != ITYPE_NONE
-					    && (myplr().data.SpdList[i]._iMiscId == IMISC_SCROLL || myplr().data.SpdList[i]._iMiscId == IMISC_SCROLLT)
+					if (myplr().data.SpdList[i]._itype != ItemType::none
+					    && (myplr().data.SpdList[i]._iMiscId == MiscItemId::SCROLL || myplr().data.SpdList[i]._iMiscId == MiscItemId::SCROLLT)
 					    && myplr().data.SpdList[i]._iSpell == v) {
 						s++;
 					}
@@ -1208,7 +1208,7 @@ void DrawInfoBox()
 	if (spselflag || trigflag) {
 		infoclr = COL_WHITE;
 	} else if (pcurs >= CURSOR_FIRSTITEM) {
-		if (myplr().data.HoldItem._itype == ITYPE_GOLD) {
+		if (myplr().data.HoldItem._itype == ItemType::gold) {
 			nGold = myplr().data.HoldItem._ivalue;
 			sprintf(infostr, "%i gold %s", nGold, get_pieces_str(nGold));
 		} else if (!myplr().data.HoldItem._iStatFlag) {
@@ -1220,9 +1220,9 @@ void DrawInfoBox()
 				strcpy(infostr, myplr().data.HoldItem._iIName);
 			else
 				strcpy(infostr, myplr().data.HoldItem._iName);
-			if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_MAGIC)
+			if (myplr().data.HoldItem._iMagical == ItemQuality::magic)
 				infoclr = COL_BLUE;
-			if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_UNIQUE)
+			if (myplr().data.HoldItem._iMagical == ItemQuality::unique)
 				infoclr = COL_GOLD;
 		}
 	} else {
@@ -1386,7 +1386,7 @@ void DrawChr()
 	mindam = myplr().data._pIMinDam;
 	mindam += myplr().data._pIBonusDam * mindam / 100;
 	mindam += myplr().data._pIBonusDamMod;
-	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_BOW) {
+	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::bow) {
 		if (myplr().data._pClass == PC_ROGUE)
 			mindam += myplr().data._pDamageMod;
 		else
@@ -1397,7 +1397,7 @@ void DrawChr()
 	maxdam = myplr().data._pIMaxDam;
 	maxdam += myplr().data._pIBonusDam * maxdam / 100;
 	maxdam += myplr().data._pIBonusDamMod;
-	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_BOW) {
+	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::bow) {
 		if (myplr().data._pClass == PC_ROGUE)
 			maxdam += myplr().data._pDamageMod;
 		else
@@ -1693,26 +1693,26 @@ void DrawDurIcon()
 
 int DrawDurIcon4Item(ItemStruct *pItem, int x, int c)
 {
-	if (pItem->_itype == ITYPE_NONE)
+	if (pItem->_itype == ItemType::none)
 		return x;
 	if (pItem->_iDurability > 5)
 		return x;
 	if (c == 0) {
-		if (pItem->_iClass == ICLASS_WEAPON) {
+		if (pItem->_iClass == ItemClass::weapon) {
 			switch (pItem->_itype) {
-			case ITYPE_SWORD:
+			case ItemType::sword:
 				c = 2;
 				break;
-			case ITYPE_AXE:
+			case ItemType::axe:
 				c = 6;
 				break;
-			case ITYPE_BOW:
+			case ItemType::bow:
 				c = 7;
 				break;
-			case ITYPE_MACE:
+			case ItemType::mace:
 				c = 5;
 				break;
-			case ITYPE_STAFF:
+			case ItemType::staff:
 				c = 8;
 				break;
 			}
@@ -1992,7 +1992,7 @@ void control_remove_gold(int pnum, int gold_index)
 		else
 			plr[pnum].inventory.removeBeltItem(gi);
 	}
-	SetPlrHandItem(&plr[pnum].data.HoldItem, IDI_GOLD);
+	SetPlrHandItem(&plr[pnum].data.HoldItem, ItemIndex::GOLD);
 	GetGoldSeed(pnum, &plr[pnum].data.HoldItem);
 	plr[pnum].data.HoldItem._ivalue = dropGoldValue;
 	plr[pnum].data.HoldItem._iStatFlag = true;
@@ -2004,11 +2004,11 @@ void control_remove_gold(int pnum, int gold_index)
 void control_set_gold_curs(int pnum)
 {
 	if (plr[pnum].data.HoldItem._ivalue >= GOLD_MEDIUM_LIMIT)
-		plr[pnum].data.HoldItem._iCurs = ICURS_GOLD_LARGE;
+		plr[pnum].data.HoldItem._iCurs = ItemCursor::GOLD_LARGE;
 	else if (plr[pnum].data.HoldItem._ivalue <= GOLD_SMALL_LIMIT)
-		plr[pnum].data.HoldItem._iCurs = ICURS_GOLD_SMALL;
+		plr[pnum].data.HoldItem._iCurs = ItemCursor::GOLD_SMALL;
 	else
-		plr[pnum].data.HoldItem._iCurs = ICURS_GOLD_MEDIUM;
+		plr[pnum].data.HoldItem._iCurs = ItemCursor::GOLD_MEDIUM;
 
 	NewCursor(plr[pnum].data.HoldItem._iCurs + CURSOR_FIRSTITEM);
 }

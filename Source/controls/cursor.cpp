@@ -340,11 +340,11 @@ void CheckCursMove()
 			_monst1(m + V2Di(0, 0), flipflag, 0);
 			_monst1(m + V2Di(1, 1), flipflag, 0);
 
-			if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_HIDDEN) {
+			if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MonsterFlag::hidden) {
 				pcursmonst = -1;
 				cursm = m;
 			}
-			if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_GOLEM) {
+			if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MonsterFlag::golem) {
 				pcursmonst = -1;
 			}
 			if (pcursmonst != -1) {
@@ -360,11 +360,11 @@ void CheckCursMove()
 		_monst1(m + V2Di(0, 0), flipflag, 0);
 		_monst1(m + V2Di(1, 1), flipflag, 0);
 
-		if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_HIDDEN) {
+		if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MonsterFlag::hidden) {
 			pcursmonst = -1;
 			cursm = m;
 		}
-		if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_GOLEM) {
+		if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MonsterFlag::golem) {
 			pcursmonst = -1;
 		}
 	} else { // In town... less aggresive monster selection?
@@ -498,7 +498,7 @@ void CheckCursMove()
 		pcursitem = 0;
 		cursm = m;
 	}
-	if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_GOLEM) {
+	if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MonsterFlag::golem) {
 		pcursmonst = -1;
 	}
 }

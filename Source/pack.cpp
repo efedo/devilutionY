@@ -4,11 +4,11 @@ DEVILUTION_BEGIN_NAMESPACE
 
 static void PackItem(PkItemStruct *id, ItemStruct *is)
 {
-	if (is->_itype == ITYPE_NONE) {
+	if (is->_itype == ItemType::none) {
 		id->idx = 0xFFFF;
 	} else {
 		id->idx = SwapLE16(is->IDidx);
-		if (is->IDidx == IDI_EAR) {
+		if (is->IDidx == ItemIndex::EAR) {
 			id->iCreateInfo = is->_iName[8] | (is->_iName[7] << 8);
 			id->iSeed = SwapLE32(is->_iName[12] | ((is->_iName[11] | ((is->_iName[10] | (is->_iName[9] << 8)) << 8)) << 8));
 			id->bId = is->_iName[13];
@@ -26,7 +26,7 @@ static void PackItem(PkItemStruct *id, ItemStruct *is)
 			id->bMDur = is->_iMaxDur;
 			id->bCh = is->_iCharges;
 			id->bMCh = is->_iMaxCharges;
-			if (is->IDidx == IDI_GOLD)
+			if (is->IDidx == ItemIndex::GOLD)
 				id->wValue = SwapLE16(is->_ivalue);
 		}
 	}
@@ -118,9 +118,9 @@ static void UnPackItem(PkItemStruct *is, ItemStruct *id)
 	WORD idx = SwapLE16(is->idx);
 
 	if (idx == 0xFFFF) {
-		id->_itype = ITYPE_NONE;
+		id->_itype = ItemType::none;
 	} else {
-		if (idx == IDI_EAR) {
+		if (idx == ItemIndex::EAR) {
 			RecreateEar(
 			    MAXITEMS,
 			    SwapLE16(is->iCreateInfo),
@@ -150,10 +150,10 @@ void VerifyGoldSeeds(PlayerStruct *pPlayer)
 	int i, j;
 
 	for (i = 0; i < pPlayer->_pNumInv; i++) {
-		if (pPlayer->InvList[i].IDidx == IDI_GOLD) {
+		if (pPlayer->InvList[i].IDidx == ItemIndex::GOLD) {
 			for (j = 0; j < pPlayer->_pNumInv; j++) {
 				if (i != j) {
-					if (pPlayer->InvList[j].IDidx == IDI_GOLD && pPlayer->InvList[i]._iSeed == pPlayer->InvList[j]._iSeed) {
+					if (pPlayer->InvList[j].IDidx == ItemIndex::GOLD && pPlayer->InvList[i]._iSeed == pPlayer->InvList[j]._iSeed) {
 						pPlayer->InvList[i]._iSeed = GetRndSeed();
 						j = -1;
 					}
@@ -242,7 +242,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 
 	if (pnum == myplr()) {
 		for (i = 0; i < 20; i++)
-			witchitem[i]._itype = ITYPE_NONE;
+			witchitem[i]._itype = ItemType::none;
 	}
 
 	CalcPlrInv(pnum, false);

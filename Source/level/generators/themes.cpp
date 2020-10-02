@@ -679,7 +679,7 @@ void Theme_Treasure(int t)
 				int rv = random_(0, treasrnd[int(lvl.type()) - 1]);
 				// BUGFIX: the `2*` in `2*random_(0, treasrnd...) == 0` has no effect, should probably be `random_(0, 2*treasrnd...) == 0`
 				if ((2 * random_(0, treasrnd[int(lvl.type()) - 1])) == 0) {
-					CreateTypeItem({ xp, yp }, false, ITYPE_GOLD, IMISC_NONE, false, true);
+					CreateTypeItem({ xp, yp }, false, ItemType::gold, MiscItemId::NONE, false, true);
 					ItemNoFlippy();
 				}
 				if (rv == 0) {

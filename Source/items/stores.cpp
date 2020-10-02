@@ -66,9 +66,9 @@ void InitStores()
 	premiumlevel = 1;
 
 	for (i = 0; i < 6; i++)
-		premiumitem[i]._itype = ITYPE_NONE;
+		premiumitem[i]._itype = ItemType::none;
 
-	boyitem._itype = ITYPE_NONE;
+	boyitem._itype = ItemType::none;
 	boylevel = 0;
 }
 
@@ -127,7 +127,7 @@ void StoreAutoPlace()
 		idx = myplr().data.HoldItem.IDidx;
 		if (myplr().data.HoldItem._iStatFlag && AllItemsList[idx].iUsable) {
 			for (i = 0; i < 8 && !done; i++) { // try to place in speed list
-				if (myplr().data.SpdList[i]._itype == ITYPE_NONE) {
+				if (myplr().data.SpdList[i]._itype == ItemType::none) {
 					myplr().data.SpdList[i] = myplr().data.HoldItem;
 					done = true;
 				}
@@ -196,7 +196,7 @@ void PrintStoreItem(ItemStruct *x, int l, char iclr)
 
 	sstr[0] = '\0';
 	if (x->_iIdentified) {
-		if (x->_iMagical != ITEM_QUALITY_UNIQUE) {
+		if (x->_iMagical != ItemQuality::unique) {
 			if (x->_iPrePower != -1) {
 				PrintItemPower(x->_iPrePower, x);
 				strcat(sstr, tempstr);
@@ -209,7 +209,7 @@ void PrintStoreItem(ItemStruct *x, int l, char iclr)
 			strcat(sstr, tempstr);
 		}
 	}
-	if (x->_iMiscId == IMISC_STAFF && x->_iMaxCharges) {
+	if (x->_iMiscId == MiscItemId::STAFF && x->_iMaxCharges) {
 		sprintf(tempstr, "Charges: %i/%i", x->_iCharges, x->_iMaxCharges);
 		if (sstr[0])
 			strcat(sstr, ",  ");
@@ -220,9 +220,9 @@ void PrintStoreItem(ItemStruct *x, int l, char iclr)
 		l++;
 	}
 	sstr[0] = '\0';
-	if (x->_iClass == ICLASS_WEAPON)
+	if (x->_iClass == ItemClass::weapon)
 		sprintf(sstr, "Damage: %i-%i  ", x->_iMinDam, x->_iMaxDam);
-	if (x->_iClass == ICLASS_ARMOR)
+	if (x->_iClass == ItemClass::armor)
 		sprintf(sstr, "Armor: %i  ", x->_iAC);
 	if (x->_iMaxDur != DUR_INDESTRUCTIBLE && x->_iMaxDur) {
 		sprintf(tempstr, "Dur: %i/%i,  ", x->_iDurability, x->_iMaxDur);
@@ -230,7 +230,7 @@ void PrintStoreItem(ItemStruct *x, int l, char iclr)
 	} else {
 		strcat(sstr, "Indestructible,  ");
 	}
-	if (x->_itype == ITYPE_MISC)
+	if (x->_itype == ItemType::misc)
 		sstr[0] = '\0';
 	str = x->_iMinStr;
 	dex = x->_iMinDex;
@@ -248,7 +248,7 @@ void PrintStoreItem(ItemStruct *x, int l, char iclr)
 		strcat(sstr, tempstr);
 	}
 	AddSText(40, l++, false, sstr, iclr, false);
-	if (x->_iMagical == ITEM_QUALITY_UNIQUE) {
+	if (x->_iMagical == ItemQuality::unique) {
 		if (x->_iIdentified)
 			AddSText(40, l, false, "Unique Item", iclr, false);
 	}
@@ -261,11 +261,11 @@ void AddStoreHoldRepair(ItemStruct *itm, int i)
 
 	item = &storehold[storenumh];
 	storehold[storenumh] = *itm;
-	if (item->_iMagical != ITEM_QUALITY_NORMAL && item->_iIdentified)
+	if (item->_iMagical != ItemQuality::normal && item->_iIdentified)
 		item->_ivalue = 30 * item->_iIvalue / 100;
 	v = item->_ivalue * (100 * (item->_iMaxDur - item->_iDurability) / item->_iMaxDur) / 100;
 	if (!v) {
-		if (item->_iMagical != ITEM_QUALITY_NORMAL && item->_iIdentified)
+		if (item->_iMagical != ItemQuality::normal && item->_iIdentified)
 			return;
 		v = 1;
 	}
@@ -310,16 +310,16 @@ void S_StartConfirm()
 	ClearSText(5, 23);
 	iclr = COL_WHITE;
 
-	if (myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical != ItemQuality::normal)
 		iclr = COL_BLUE;
 	if (!myplr().data.HoldItem._iStatFlag)
 		iclr = COL_RED;
 
-	idprint = myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL;
+	idprint = myplr().data.HoldItem._iMagical != ItemQuality::normal;
 
 	if (stextshold == STORE_SIDENTIFY)
 		idprint = false;
-	if (myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL && !myplr().data.HoldItem._iIdentified) {
+	if (myplr().data.HoldItem._iMagical != ItemQuality::normal && !myplr().data.HoldItem._iIdentified) {
 		if (stextshold == STORE_SSELL)
 			idprint = false;
 		if (stextshold == STORE_WSELL)
@@ -385,10 +385,10 @@ void S_StartStory()
 
 bool IdItemOk(ItemStruct *i)
 {
-	if (i->_itype == ITYPE_NONE) {
+	if (i->_itype == ItemType::none) {
 		return false;
 	}
-	if (i->_iMagical == ITEM_QUALITY_NORMAL) {
+	if (i->_iMagical == ItemQuality::normal) {
 		return false;
 	}
 	return !i->_iIdentified;
@@ -413,7 +413,7 @@ void S_StartSIdentify()
 	storenumh = 0;
 
 	for (i = 0; i < 48; i++)
-		storehold[i]._itype = ITYPE_NONE;
+		storehold[i]._itype = ItemType::none;
 
 	if (IdItemOk(&myplr().data.InvBody[INVLOC_HEAD])) {
 		idok = true;
@@ -482,7 +482,7 @@ void S_StartIdShow()
 	ClearSText(5, 23);
 	iclr = COL_WHITE;
 
-	if (myplr().data.HoldItem._iMagical != ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical != ItemQuality::normal)
 		iclr = COL_BLUE;
 	if (!myplr().data.HoldItem._iStatFlag)
 		iclr = COL_RED;
@@ -669,21 +669,21 @@ void StartStore(char s)
 void SetGoldCurs(int pnum, int i)
 {
 	if (plr[pnum].data.InvList[i]._ivalue >= GOLD_MEDIUM_LIMIT)
-		plr[pnum].data.InvList[i]._iCurs = ICURS_GOLD_LARGE;
+		plr[pnum].data.InvList[i]._iCurs = ItemCursor::GOLD_LARGE;
 	else if (plr[pnum].data.InvList[i]._ivalue <= GOLD_SMALL_LIMIT)
-		plr[pnum].data.InvList[i]._iCurs = ICURS_GOLD_SMALL;
+		plr[pnum].data.InvList[i]._iCurs = ItemCursor::GOLD_SMALL;
 	else
-		plr[pnum].data.InvList[i]._iCurs = ICURS_GOLD_MEDIUM;
+		plr[pnum].data.InvList[i]._iCurs = ItemCursor::GOLD_MEDIUM;
 }
 
 void SetSpdbarGoldCurs(int pnum, int i)
 {
 	if (plr[pnum].data.SpdList[i]._ivalue >= GOLD_MEDIUM_LIMIT)
-		plr[pnum].data.SpdList[i]._iCurs = ICURS_GOLD_LARGE;
+		plr[pnum].data.SpdList[i]._iCurs = ItemCursor::GOLD_LARGE;
 	else if (plr[pnum].data.SpdList[i]._ivalue <= GOLD_SMALL_LIMIT)
-		plr[pnum].data.SpdList[i]._iCurs = ICURS_GOLD_SMALL;
+		plr[pnum].data.SpdList[i]._iCurs = ItemCursor::GOLD_SMALL;
 	else
-		plr[pnum].data.SpdList[i]._iCurs = ICURS_GOLD_MEDIUM;
+		plr[pnum].data.SpdList[i]._iCurs = ItemCursor::GOLD_MEDIUM;
 }
 
 void TakePlrsMoney(int cost)
@@ -692,7 +692,7 @@ void TakePlrsMoney(int cost)
 
 	myplr().data._pGold = myplr().inventory.CalculateGold() - cost;
 	for (i = 0; i < MAXBELTITEMS && cost > 0; i++) {
-		if (myplr().data.SpdList[i]._itype == ITYPE_GOLD && myplr().data.SpdList[i]._ivalue != GOLD_MAX_LIMIT) {
+		if (myplr().data.SpdList[i]._itype == ItemType::gold && myplr().data.SpdList[i]._ivalue != GOLD_MAX_LIMIT) {
 			if (cost < myplr().data.SpdList[i]._ivalue) {
 				myplr().data.SpdList[i]._ivalue -= cost;
 				SetSpdbarGoldCurs(myplr(), i);
@@ -706,7 +706,7 @@ void TakePlrsMoney(int cost)
 	}
 	if (cost > 0) {
 		for (i = 0; i < MAXBELTITEMS && cost > 0; i++) {
-			if (myplr().data.SpdList[i]._itype == ITYPE_GOLD) {
+			if (myplr().data.SpdList[i]._itype == ItemType::gold) {
 				if (cost < myplr().data.SpdList[i]._ivalue) {
 					myplr().data.SpdList[i]._ivalue -= cost;
 					SetSpdbarGoldCurs(myplr(), i);
@@ -722,7 +722,7 @@ void TakePlrsMoney(int cost)
 	force_redraw = 255;
 	if (cost > 0) {
 		for (i = 0; i < myplr().data._pNumInv && cost > 0; i++) {
-			if (myplr().data.InvList[i]._itype == ITYPE_GOLD && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
+			if (myplr().data.InvList[i]._itype == ItemType::gold && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
 				if (cost < myplr().data.InvList[i]._ivalue) {
 					myplr().data.InvList[i]._ivalue -= cost;
 					SetGoldCurs(myplr(), i);
@@ -736,7 +736,7 @@ void TakePlrsMoney(int cost)
 		}
 		if (cost > 0) {
 			for (i = 0; i < myplr().data._pNumInv && cost > 0; i++) {
-				if (myplr().data.InvList[i]._itype == ITYPE_GOLD) {
+				if (myplr().data.InvList[i]._itype == ItemType::gold) {
 					if (cost < myplr().data.InvList[i]._ivalue) {
 						myplr().data.InvList[i]._ivalue -= cost;
 						SetGoldCurs(myplr(), i);
@@ -775,7 +775,7 @@ bool StoreGoldFit(int idx)
 	}
 
 	for (i = 0; i < myplr().data._pNumInv; i++) {
-		if (myplr().data.InvList[i]._itype == ITYPE_GOLD && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
+		if (myplr().data.InvList[i]._itype == ItemType::gold && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
 			if (cost + myplr().data.InvList[i]._ivalue <= GOLD_MAX_LIMIT)
 				cost = 0;
 			else
@@ -833,7 +833,7 @@ void StoreSellItem()
 	}
 	myplr().data._pGold += cost;
 	for (i = 0; i < myplr().data._pNumInv && cost > 0; i++) {
-		if (myplr().data.InvList[i]._itype == ITYPE_GOLD && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
+		if (myplr().data.InvList[i]._itype == ItemType::gold && myplr().data.InvList[i]._ivalue != GOLD_MAX_LIMIT) {
 			if (cost + myplr().data.InvList[i]._ivalue <= GOLD_MAX_LIMIT) {
 				myplr().data.InvList[i]._ivalue += cost;
 				SetGoldCurs(myplr(), i);

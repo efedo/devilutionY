@@ -2,7 +2,7 @@
 #include "all.h"
 
 TEST(Cursor, SetCursor) {
-	int i = dvl::ICURS_SPIKED_CLUB + dvl::CURSOR_FIRSTITEM;
+	int i = dvl::ItemCursor::SPIKED_CLUB + dvl::CURSOR_FIRSTITEM;
 	dvl::SetCursor_(i);
 	EXPECT_EQ(dvl::pcurs, i);
 	EXPECT_EQ(dvl::cursW, 1 * 28);

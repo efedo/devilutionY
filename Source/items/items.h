@@ -11,14 +11,12 @@ DEVILUTION_BEGIN_NAMESPACE
 
 class Player;
 
-class ItemType {
+class ItemTemplate {
 public:
 	uint8_t *anims;
 };
 
-extern ItemType itemTypes[ITEMTYPES];
-
-
+extern ItemTemplate itemTypes[ITEMTYPES];
 
 extern bool UniqueItemFlag[128];
 

@@ -14,7 +14,7 @@ void PlayerInventory::DrawBodySlot(BodyLoc bodyloc)
 	RECT32 slotrect = slot.rect;
 
 	Item *item = getBodySlot(bodyloc).item();
-	if (!item || item->_itype == ITYPE_NONE)
+	if (!item || item->_itype == ItemType::none)
 		return;
 
 	V2Di slotpos = { slotrect.x, slotrect.y };
@@ -26,7 +26,7 @@ void PlayerInventory::DrawBodySlot(BodyLoc bodyloc)
 
 	if (pcursinvitem == INVITEM_HEAD) {
 		color = ICOL_WHITE;
-		if (item->_iMagical != ITEM_QUALITY_NORMAL)
+		if (item->_iMagical != ItemQuality::normal)
 			color = ICOL_BLUE;
 		if (!item->_iStatFlag)
 			color = ICOL_RED;
@@ -61,7 +61,7 @@ void PlayerInventory::DrawInvSlots()
 		int frame_width = InvItemWidth[frame];
 		if (pcursinvitem == INVITEM_INV_FIRST) { // may be incorrect
 			int color = ICOL_WHITE;
-			if (item->_iMagical != ITEM_QUALITY_NORMAL) {
+			if (item->_iMagical != ItemQuality::normal) {
 				color = ICOL_BLUE;
 			}
 			if (!item->_iStatFlag) {
@@ -92,7 +92,7 @@ void PlayerInventory::DrawInvBelt()
 		Item *item = getBeltSlot(i).item();
 		if (!item)
 			continue;
-		if (item->_itype == ITYPE_NONE) {
+		if (item->_itype == ItemType::none) {
 			continue;
 		}
 		auto rect = _belt.slots[i].rect;
@@ -120,7 +120,7 @@ void PlayerInventory::DrawInvBelt()
 
 		if (AllItemsList[item->IDidx].iUsable
 		    && item->_iStatFlag
-		    && item->_itype != ITYPE_GOLD) {
+		    && item->_itype != ItemType::gold) {
 			fi = i + 49;
 			ff = fontframe[gbFontTransTbl[fi]];
 			PrintChar({ pos.x + 28 - fontkern[ff], pos.y }, ff, 0);
@@ -165,15 +165,15 @@ char PlayerInventory::CheckInvHLight()
 	PlayerStruct *p = &myplr().data;
 	ClearPanel();
 
-	if (pi->_itype == ITYPE_NONE) return -1;
+	if (pi->_itype == ItemType::none) return -1;
 
-	if (pi->_itype == ITYPE_GOLD) {
+	if (pi->_itype == ItemType::gold) {
 		int nGold = pi->_ivalue;
 		sprintf(infostr, "%i gold %s", nGold, get_pieces_str(nGold));
 	} else {
-		if (pi->_iMagical == ITEM_QUALITY_MAGIC) {
+		if (pi->_iMagical == ItemQuality::magic) {
 			infoclr = COL_BLUE;
-		} else if (pi->_iMagical == ITEM_QUALITY_UNIQUE) {
+		} else if (pi->_iMagical == ItemQuality::unique) {
 			infoclr = COL_GOLD;
 		}
 		strcpy(infostr, pi->_iName);

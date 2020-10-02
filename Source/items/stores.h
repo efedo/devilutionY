@@ -51,18 +51,7 @@ void AddStoreHoldId(ItemStruct itm, int i);
 void CheckStoreBtn();
 void ReleaseStoreBtn();
 
-void S_StartSIdentify();
-void S_StartIdShow();
-void S_StartTalk();
-void S_StartNoMoney();
-void S_StartNoRoom();
-void S_StartConfirm();
-void S_StartStory();
-void S_ConfirmEnter();
-void S_StoryEnter();
-void S_SIDEnter();
-void S_TalkEnter();
-void STextEnter();
+
 void SetGoldCurs(int pnum, int i);
 void SetSpdbarGoldCurs(int pnum, int i);
 void TakePlrsMoney(int cost);

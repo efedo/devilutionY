@@ -29,6 +29,19 @@ class Store
 	std::vector<ItemStruct> items;
 };
 
+void S_StartSIdentify();
+void S_StartIdShow();
+void S_StartTalk();
+void S_StartNoMoney();
+void S_StartNoRoom();
+void S_StartConfirm();
+void S_StartStory();
+void S_ConfirmEnter();
+void S_StoryEnter();
+void S_SIDEnter();
+void S_TalkEnter();
+void STextEnter();
+
 
 
 

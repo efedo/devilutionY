@@ -24,7 +24,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	int btohit = 0; // bonus chance to hit
 	int bac = 0;    // bonus accuracy
 
-	int iflgs = ISPL_NONE; // item_special_effect flags
+	int iflgs = ItemSpecialEffect::NONE; // item_special_effect flags
 
 	int sadd = 0; // added strength
 	int madd = 0; // added magic
@@ -56,7 +56,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	for (InvSlot &i : inv.getBagArray()) {
 		Item *itm = i.item();
 		if (!itm) continue;
-		if (itm->_itype != ITYPE_NONE && itm->_iStatFlag) {
+		if (itm->_itype != ItemType::none && itm->_iStatFlag) {
 
 			tac += itm->_iAC;
 			mind += itm->_iMinDam;
@@ -66,7 +66,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 				spl |= (unsigned __int64)1 << (itm->_iSpell - 1);
 			}
 
-			if (itm->_iMagical == ITEM_QUALITY_NORMAL || itm->_iIdentified) {
+			if (itm->_iMagical == ItemQuality::normal || itm->_iIdentified) {
 				bdam += itm->_iPLDam;
 				btohit += itm->_iPLToHit;
 				if (itm->_iPLAC) {
@@ -104,11 +104,11 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		mind = 1;
 		maxd = 1;
 
-		if (left && left->_itype == ITYPE_SHIELD && left->_iStatFlag) {
+		if (left && left->_itype == ItemType::shield && left->_iStatFlag) {
 			maxd = 3;
 		}
 
-		if (right && right->_itype == ITYPE_SHIELD && right->_iStatFlag) {
+		if (right && right->_itype == ItemType::shield && right->_iStatFlag) {
 			maxd = 3;
 		}
 	}
@@ -182,7 +182,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pISplLvlAdd = spllvladd;
 	data._pIEnAc = enac;
 
-	if (iflgs & ISPL_ALLRESZERO) {
+	if (iflgs & ItemSpecialEffect::ALLRESZERO) {
 		// reset resistances to zero if the respective special effect is active
 		mr = 0;
 		fr = 0;
@@ -232,7 +232,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pILMinDam = lmin;
 	data._pILMaxDam = lmax;
 
-	if (iflgs & ISPL_INFRAVISION) {
+	if (iflgs & ItemSpecialEffect::INFRAVISION) {
 		data._pInfraFlag = true;
 	} else {
 		data._pInfraFlag = false;
@@ -243,51 +243,51 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 
 	g = 0;
 
-	if (left && left->_itype != ITYPE_NONE && left->_iClass == ICLASS_WEAPON &&
+	if (left && left->_itype != ItemType::none && left->_iClass == ItemClass::weapon &&
 	    left->_iStatFlag) {
 		g = left->_itype;
 	}
 
-	if (right && right->_itype != ITYPE_NONE &&
-	    right->_iClass == ICLASS_WEAPON && right->_iStatFlag) {
+	if (right && right->_itype != ItemType::none &&
+	    right->_iClass == ItemClass::weapon && right->_iStatFlag) {
 		g = right->_itype;
 	}
 
 	switch (g) {
-	case ITYPE_SWORD:
-		g = ANIM_ID_SWORD;
+	case ItemType::sword:
+		g = AnimWeaponId::sword;
 		break;
-	case ITYPE_AXE:
-		g = ANIM_ID_AXE;
+	case ItemType::axe:
+		g = AnimWeaponId::axe;
 		break;
-	case ITYPE_BOW:
+	case ItemType::bow:
 		data._pwtype = WT_RANGED;
-		g = ANIM_ID_BOW;
+		g = AnimWeaponId::bow;
 		break;
-	case ITYPE_MACE:
-		g = ANIM_ID_MACE;
+	case ItemType::mace:
+		g = AnimWeaponId::mace;
 		break;
-	case ITYPE_STAFF:
-		g = ANIM_ID_STAFF;
+	case ItemType::staff:
+		g = AnimWeaponId::staff;
 		break;
 	}
 
-	if (left && left->_itype == ITYPE_SHIELD && left->_iStatFlag) {
+	if (left && left->_itype == ItemType::shield && left->_iStatFlag) {
 		data._pBlockFlag = true;
 		g++;
 	}
-	if (right && right->_itype == ITYPE_SHIELD && right->_iStatFlag) {
+	if (right && right->_itype == ItemType::shield && right->_iStatFlag) {
 		data._pBlockFlag = true;
 		g++;
 	}
 
 	const Item * chest = inv.getBodySlot(BodyLoc::Chest).item();
 
-	if (chest && chest->_itype == ITYPE_MARMOR && chest->_iStatFlag) {
-		g += ANIM_ID_MEDIUM_ARMOR;
+	if (chest && chest->_itype == ItemType::medium_armor && chest->_iStatFlag) {
+		g += AnimArmorId::medium;
 	}
-	if (chest && chest->_itype == ITYPE_HARMOR && chest->_iStatFlag) {
-		g += ANIM_ID_HEAVY_ARMOR;
+	if (chest && chest->_itype == ItemType::heavy_armor && chest->_iStatFlag) {
+		g += AnimArmorId::heavy;
 	}
 
 	if (data._pgfxnum != g && Loadgfx) {
@@ -325,9 +325,9 @@ void Player::CalcPlrScrolls()
 	data._pScrlSpells = 0;
 	for (InvSlot &i : inv.getBagArray()) {
 		Item *item = i.item();
-		if (item && item->_itype != ITYPE_NONE &&
-		    (item->_iMiscId == IMISC_SCROLL ||
-		     item->_iMiscId == IMISC_SCROLLT)) {
+		if (item && item->_itype != ItemType::none &&
+		    (item->_iMiscId == MiscItemId::SCROLL ||
+		     item->_iMiscId == MiscItemId::SCROLLT)) {
 			if (item->_iStatFlag)
 				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
@@ -335,9 +335,9 @@ void Player::CalcPlrScrolls()
 
 	for (int j = 0; j < MAXBELTITEMS; j++) {
 		Item *item = inv.getBeltSlot(j).item();
-		if (item && item->_itype != ITYPE_NONE &&
-		    (item->_iMiscId == IMISC_SCROLL ||
-		     item->_iMiscId == IMISC_SCROLLT)) {
+		if (item && item->_itype != ItemType::none &&
+		    (item->_iMiscId == MiscItemId::SCROLL ||
+		     item->_iMiscId == MiscItemId::SCROLLT)) {
 			if (item->_iStatFlag)
 				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
@@ -357,11 +357,11 @@ void Player::CalcPlrStaff()
 	const Item *const left = inv.getBodySlot(BodyLoc::HandLeft).item();
 	if (!left) return;
 
-	if (left->_itype != ITYPE_NONE && left->_iStatFlag && left->_iCharges > 0) {
+	if (left->_itype != ItemType::none && left->_iStatFlag && left->_iCharges > 0) {
 		data._pISpells |= (__int64)1 << (left->_iSpell - 1);
 	}
 
-	if (left->_itype == ITYPE_STAFF && left->_iSpell != 0 && left->_iCharges > 0) {
+	if (left->_itype == ItemType::staff && left->_iSpell != 0 && left->_iCharges > 0) {
 		data._pRSpell = left->_iSpell;
 		data._pRSplType = RSPLTYPE_CHARGES;
 		force_redraw = 255;
@@ -377,7 +377,7 @@ void Player::CalcSelfItems()
 	for (InvSlot &i : inv.getBagArray()) {
 		Item *item = i.item();
 		if (!item) continue;
-		if (item->_itype != ITYPE_NONE) {
+		if (item->_itype != ItemType::none) {
 			item->_iStatFlag = true;
 			if (item->_iIdentified) {
 				sa += item->_iPLStr;
@@ -392,7 +392,7 @@ void Player::CalcSelfItems()
 		for (InvSlot &i : inv.getBagArray()) {
 			Item *item = i.item();
 			if (!item) continue;
-			if (item->_itype != ITYPE_NONE && item->_iStatFlag) {
+			if (item->_itype != ItemType::none && item->_iStatFlag) {
 				int sf = true;
 				if (sa + p->_pBaseStr < item->_iMinStr)
 					sf = false;
@@ -426,7 +426,7 @@ void Player::CalcPlrItemMin()
 
 	for (auto &i : inv.getBeltArray()) {
 		Item *item = i.item();
-		if (item && item->_itype != ITYPE_NONE) {
+		if (item && item->_itype != ItemType::none) {
 			item->_iStatFlag = ItemMinStats(p, item);
 		}
 	}
@@ -438,7 +438,7 @@ void Player::CalcPlrBookVals()
 	int i, slvl;
 
 	if (lvl.currlevel == 0) {
-		for (i = 1; witchitem[i]._itype != ITYPE_NONE; i++) {
+		for (i = 1; witchitem[i]._itype != ItemType::none; i++) {
 			WitchBookLevel(i);
 			witchitem[i]._iStatFlag = StoreStatOk(&witchitem[i]);
 		}
@@ -448,7 +448,7 @@ void Player::CalcPlrBookVals()
 		Item *item = i.item();
 		if (!item) continue;
 
-		if (item->_itype == ITYPE_MISC && item->_iMiscId == IMISC_BOOK) {
+		if (item->_itype == ItemType::misc && item->_iMiscId == MiscItemId::BOOK) {
 			item->_iMinMag = spelldata[item->_iSpell].sMinInt;
 			slvl = data._pSplLvl[item->_iSpell];
 
@@ -497,65 +497,65 @@ void Player::CreatePlrItems()
 
 	switch (data._pClass) {
 	case PC_WARRIOR:
-		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], IDI_WARRIOR);
+		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], ItemIndex::WARRIOR);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_LEFT]);
 
-		SetPlrHandItem(&data.InvBody[INVLOC_HAND_RIGHT], IDI_WARRSHLD);
+		SetPlrHandItem(&data.InvBody[INVLOC_HAND_RIGHT], ItemIndex::WARRSHLD);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_RIGHT]);
 
 #ifdef _DEBUG
 		if (!debug_mode_key_w) {
 #endif
-			SetPlrHandItem(&data.HoldItem, IDI_WARRCLUB);
+			SetPlrHandItem(&data.HoldItem, ItemIndex::WARRCLUB);
 			GetPlrHandSeed(&data.HoldItem);
 			inventory.AutoPlace(0, { 1, 3 }, true);
 #ifdef _DEBUG
 		}
 #endif
 
-		SetPlrHandItem(&data.SpdList[0], IDI_HEAL);
+		SetPlrHandItem(&data.SpdList[0], ItemIndex::HEAL);
 		GetPlrHandSeed(&data.SpdList[0]);
 
-		SetPlrHandItem(&data.SpdList[1], IDI_HEAL);
+		SetPlrHandItem(&data.SpdList[1], ItemIndex::HEAL);
 		GetPlrHandSeed(&data.SpdList[1]);
 		break;
 	case PC_ROGUE:
-		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], IDI_ROGUE);
+		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], ItemIndex::ROGUE);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_LEFT]);
 
-		SetPlrHandItem(&data.SpdList[0], IDI_HEAL);
+		SetPlrHandItem(&data.SpdList[0], ItemIndex::HEAL);
 		GetPlrHandSeed(&data.SpdList[0]);
 
-		SetPlrHandItem(&data.SpdList[1], IDI_HEAL);
+		SetPlrHandItem(&data.SpdList[1], ItemIndex::HEAL);
 		GetPlrHandSeed(&data.SpdList[1]);
 		break;
 	case PC_SORCERER:
-		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], IDI_SORCEROR);
+		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], ItemIndex::SORCEROR);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_LEFT]);
 
-		SetPlrHandItem(&data.SpdList[0], IDI_MANA);
+		SetPlrHandItem(&data.SpdList[0], ItemIndex::MANA);
 		GetPlrHandSeed(&data.SpdList[0]);
 
-		SetPlrHandItem(&data.SpdList[1], IDI_MANA);
+		SetPlrHandItem(&data.SpdList[1], ItemIndex::MANA);
 		GetPlrHandSeed(&data.SpdList[1]);
 		break;
 	}
 
-	SetPlrHandItem(&data.HoldItem, IDI_GOLD);
+	SetPlrHandItem(&data.HoldItem, ItemIndex::GOLD);
 	GetPlrHandSeed(&data.HoldItem);
 
 #ifdef _DEBUG
 	if (!debug_mode_key_w) {
 #endif
 		data.HoldItem._ivalue = 100;
-		data.HoldItem._iCurs = ICURS_GOLD_SMALL;
+		data.HoldItem._iCurs = ItemCursor::GOLD_SMALL;
 		data._pGold = data.HoldItem._ivalue;
 		data.InvList[data._pNumInv++] = data.HoldItem;
 		data.InvGrid[30] = data._pNumInv;
 #ifdef _DEBUG
 	} else {
 		data.HoldItem._ivalue = GOLD_MAX_LIMIT;
-		data.HoldItem._iCurs = ICURS_GOLD_LARGE;
+		data.HoldItem._iCurs = ItemCursor::GOLD_LARGE;
 		data._pGold = data.HoldItem._ivalue * 40;
 		for (i = 0; i < MAXINVITEMS; i++) {
 			GetPlrHandSeed(&data.HoldItem);
@@ -573,8 +573,8 @@ void Player::UseItem(int Mid, int spl)
 	int l, j;
 
 	switch (Mid) {
-	case IMISC_HEAL:
-	case IMISC_MEAT:
+	case MiscItemId::HEAL:
+	case MiscItemId::MEAT:
 		j = data._pMaxHP >> 8;
 		l = ((j >> 1) + random_(39, j)) << 6;
 		if (data._pClass == PC_WARRIOR)
@@ -589,19 +589,19 @@ void Player::UseItem(int Mid, int spl)
 			data._pHPBase = data._pMaxHPBase;
 		drawhpflag = true;
 		break;
-	case IMISC_FULLHEAL:
+	case MiscItemId::FULLHEAL:
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
 		drawhpflag = true;
 		break;
-	case IMISC_MANA:
+	case MiscItemId::MANA:
 		j = data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
 		if (data._pClass == PC_SORCERER)
 			l *= 2;
 		if (data._pClass == PC_ROGUE)
 			l += l >> 1;
-		if (!(data._pIFlags & ISPL_NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana += l;
 			if (data._pMana > data._pMaxMana)
 				data._pMana = data._pMaxMana;
@@ -611,26 +611,26 @@ void Player::UseItem(int Mid, int spl)
 			drawmanaflag = true;
 		}
 		break;
-	case IMISC_FULLMANA:
-		if (!(data._pIFlags & ISPL_NOMANA)) {
+	case MiscItemId::FULLMANA:
+		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
 			drawmanaflag = true;
 		}
 		break;
-	case IMISC_ELIXSTR:
+	case MiscItemId::ELIXSTR:
 		ModifyPlrStr(1);
 		break;
-	case IMISC_ELIXMAG:
+	case MiscItemId::ELIXMAG:
 		ModifyPlrMag(1);
 		break;
-	case IMISC_ELIXDEX:
+	case MiscItemId::ELIXDEX:
 		ModifyPlrDex(1);
 		break;
-	case IMISC_ELIXVIT:
+	case MiscItemId::ELIXVIT:
 		ModifyPlrVit(1);
 		break;
-	case IMISC_REJUV:
+	case MiscItemId::REJUV:
 		j = data._pMaxHP >> 8;
 		l = ((j >> 1) + random_(39, j)) << 6;
 		if (data._pClass == PC_WARRIOR)
@@ -650,7 +650,7 @@ void Player::UseItem(int Mid, int spl)
 			l *= 2;
 		if (data._pClass == PC_ROGUE)
 			l += l >> 1;
-		if (!(data._pIFlags & ISPL_NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana += l;
 			if (data._pMana > data._pMaxMana)
 				data._pMana = data._pMaxMana;
@@ -660,17 +660,17 @@ void Player::UseItem(int Mid, int spl)
 			drawmanaflag = true;
 		}
 		break;
-	case IMISC_FULLREJUV:
+	case MiscItemId::FULLREJUV:
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
 		drawhpflag = true;
-		if (!(data._pIFlags & ISPL_NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
 			drawmanaflag = true;
 		}
 		break;
-	case IMISC_SCROLL:
+	case MiscItemId::SCROLL:
 		if (spelldata[spl].sTargeted) {
 			data._pTSpell = spl;
 			data._pTSplType = RSPLTYPE_INVALID;
@@ -688,7 +688,7 @@ void Player::UseItem(int Mid, int spl)
 				NetSendCmdLoc(true, CMD_NOVA, cursm);
 		}
 		break;
-	case IMISC_SCROLLT:
+	case MiscItemId::SCROLLT:
 		if (spelldata[spl].sTargeted) {
 			data._pTSpell = spl;
 			data._pTSplType = RSPLTYPE_INVALID;
@@ -704,7 +704,7 @@ void Player::UseItem(int Mid, int spl)
 			data.destParam2 = cursm.y;
 		}
 		break;
-	case IMISC_BOOK:
+	case MiscItemId::BOOK:
 		data._pMemSpells |= (__int64)1 << (spl - 1);
 		if (data._pSplLvl[spl] < 15)
 			data._pSplLvl[spl]++;
@@ -718,10 +718,10 @@ void Player::UseItem(int Mid, int spl)
 			CalcPlrBookVals();
 		drawmanaflag = true;
 		break;
-	case IMISC_MAPOFDOOM:
+	case MiscItemId::MAPOFDOOM:
 		doom_init();
 		break;
-	case IMISC_SPECELIX:
+	case MiscItemId::SPECELIX:
 		ModifyPlrStr(3);
 		ModifyPlrMag(3);
 		ModifyPlrDex(3);
@@ -734,8 +734,8 @@ bool Player::DurReduce(BodyLoc loc, int itmclass, int itmtype)
 {
 	Item *item = inv.getBodySlot(loc).item();
 	if (!item) return false;
-	if (itmclass != ICLASS_NONE && item->_iClass != itmclass) return false;
-	if (itmtype != ITYPE_NONE && item->_itype != itmtype) return false;
+	if (itmclass != ItemClass::none && item->_iClass != itmclass) return false;
+	if (itmtype != ItemType::none && item->_itype != itmtype) return false;
 	if (item->_iDurability == DUR_INDESTRUCTIBLE) return false;
 
 	item->_iDurability--;
@@ -751,25 +751,25 @@ bool Player::WeaponDur(int durrnd)
 {
 	if (pnum != myplr()) return false;
 	if (random_(3, durrnd) != 0) return false;
-	if (DurReduce(BodyLoc::HandLeft, ICLASS_WEAPON, ITYPE_NONE)) return true;
-	if (DurReduce(BodyLoc::HandRight, ICLASS_WEAPON, ITYPE_NONE)) return true;
-	if (DurReduce(BodyLoc::HandLeft, ICLASS_NONE, ITYPE_SHIELD)) return true;
-	if (DurReduce(BodyLoc::HandLeft, ICLASS_NONE, ITYPE_SHIELD)) return true;
+	if (DurReduce(BodyLoc::HandLeft, ItemClass::weapon, ItemType::none)) return true;
+	if (DurReduce(BodyLoc::HandRight, ItemClass::weapon, ItemType::none)) return true;
+	if (DurReduce(BodyLoc::HandLeft, ItemClass::none, ItemType::shield)) return true;
+	if (DurReduce(BodyLoc::HandLeft, ItemClass::none, ItemType::shield)) return true;
 	return false;
 }
 
 void Player::ShieldDur()
 {
 	if (pnum != myplr()) return;
-	if (DurReduce(BodyLoc::HandLeft, ICLASS_NONE, ITYPE_SHIELD)) return;
-	if (DurReduce(BodyLoc::HandLeft, ICLASS_NONE, ITYPE_SHIELD)) return;
+	if (DurReduce(BodyLoc::HandLeft, ItemClass::none, ItemType::shield)) return;
+	if (DurReduce(BodyLoc::HandLeft, ItemClass::none, ItemType::shield)) return;
 }
 
 void Player::ArmorDur()
 {
 	if (pnum != myplr()) return;
-	if (DurReduce(BodyLoc::Head, ICLASS_NONE, ITYPE_NONE)) return;
-	if (DurReduce(BodyLoc::Chest, ICLASS_NONE, ITYPE_NONE)) return;
+	if (DurReduce(BodyLoc::Head, ItemClass::none, ItemType::none)) return;
+	if (DurReduce(BodyLoc::Chest, ItemClass::none, ItemType::none)) return;
 }
 
 
@@ -832,7 +832,7 @@ void Player::DoRecharge(int cii)
 	} else {
 		pi = &p->InvBody[cii];
 	}
-	if (pi->_itype == ITYPE_STAFF && pi->_iSpell) {
+	if (pi->_itype == ItemType::staff && pi->_iSpell) {
 		r = spelldata[pi->_iSpell].sBookLvl;
 		r = random_(38, p->_pLevel / r) + 1;
 		RechargeItem(pi, r);

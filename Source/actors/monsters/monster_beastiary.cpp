@@ -12,7 +12,7 @@ Beastiary::Beastiary()
 {
 }
 
-MonsterType & Beastiary::operator[](size_t n)
+MonsterClass & Beastiary::operator[](size_t n)
 {
 	return types[n];
 }
@@ -78,34 +78,34 @@ void Beastiary::GetLevelMTypes()
 	int nt; // number of types
 	char mamask = 3; // monster availability mask
 
-	AddMonsterType(MT_GOLEM, 2);
+	AddMonsterType(MonsterFlag::golem, 2);
 	if (lvl.currlevel == 16) {
-		AddMonsterType(MT_ADVOCATE, 1);
-		AddMonsterType(MT_RBLACK, 1);
-		AddMonsterType(MT_DIABLO, 2);
+		AddMonsterType(MonsterType::ADVOCATE, 1);
+		AddMonsterType(MonsterType::RBLACK, 1);
+		AddMonsterType(MonsterType::DIABLO, 2);
 		return;
 	}
 
 	if (!lvl.setlevel) {
 		if (QuestStatus(Q_BUTCHER))
-			AddMonsterType(MT_CLEAVER, 2);
+			AddMonsterType(MonsterType::CLEAVER, 2);
 		if (QuestStatus(Q_GARBUD))
-			AddMonsterType(UniqMonst[UMT_GARBUD].mtype, 4);
+			AddMonsterType(UniqMonst[UniqueMonsterType::GARBUD].mtype, 4);
 		if (QuestStatus(Q_ZHAR))
-			AddMonsterType(UniqMonst[UMT_ZHAR].mtype, 4);
+			AddMonsterType(UniqMonst[UniqueMonsterType::ZHAR].mtype, 4);
 		if (QuestStatus(Q_LTBANNER))
-			AddMonsterType(UniqMonst[UMT_SNOTSPIL].mtype, 4);
+			AddMonsterType(UniqMonst[UniqueMonsterType::SNOTSPIL].mtype, 4);
 		if (QuestStatus(Q_VEIL))
-			AddMonsterType(UniqMonst[UMT_LACHDAN].mtype, 4);
+			AddMonsterType(UniqMonst[UniqueMonsterType::LACHDAN].mtype, 4);
 		if (QuestStatus(Q_WARLORD))
-			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, 4);
+			AddMonsterType(UniqMonst[UniqueMonsterType::WARLORD].mtype, 4);
 
 		if (plr.isMultiplayer() && lvl.currlevel == quests[Q_SKELKING]._qlevel) {
 
-			AddMonsterType(MT_SKING, 4);
+			AddMonsterType(MonsterType::SKING, 4);
 
 			nt = 0;
-			for (i = MT_WSKELAX; i <= MT_WSKELAX + numskeltypes; i++) {
+			for (i = MonsterType::WSKELAX; i <= MonsterType::WSKELAX + numskeltypes; i++) {
 				if (IsSkel(i)) {
 					minl = 15 * monsterdata[i].mMinDLvl / 30 + 1;
 					maxl = 15 * monsterdata[i].mMaxDLvl / 30 + 1;
@@ -157,7 +157,7 @@ void Beastiary::GetLevelMTypes()
 
 	} else {
 		if (lvl.setlvlnum == SetLvl::SkelKing) {
-			AddMonsterType(MT_SKING, 4);
+			AddMonsterType(MonsterType::SKING, 4);
 		}
 	}
 }

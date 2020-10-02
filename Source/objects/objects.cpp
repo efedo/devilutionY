@@ -2293,9 +2293,9 @@ void OperateBookLever(int pnum, int i)
 			quests[Q_BLOOD]._qactive = QUEST_ACTIVE;
 			quests[Q_BLOOD]._qlog = 1;
 			quests[Q_BLOOD]._qvar1 = 1;
-			SpawnQuestItem(IDI_BLDSTONE, { 2 * lvl.getpc().x + 19, 2 * lvl.getpc().y + 26 }, 0, 1);
-			SpawnQuestItem(IDI_BLDSTONE, { 2 * lvl.getpc().x + 31, 2 * lvl.getpc().y + 26 }, 0, 1);
-			SpawnQuestItem(IDI_BLDSTONE, { 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 33 }, 0, 1);
+			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 19, 2 * lvl.getpc().y + 26 }, 0, 1);
+			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 31, 2 * lvl.getpc().y + 26 }, 0, 1);
+			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 33 }, 0, 1);
 		}
 		object[i]._otype = object[i]._otype;
 		if (object[i]._otype == OBJ_STEELTOME && !quests[Q_WARLORD]._qvar1) {
@@ -2415,7 +2415,7 @@ void OperateMushPatch(int pnum, int i)
 			object[i]._oAnimFrame++;
 			if (!deltaload) {
 				GetSuperItemLoc(object[i]._o, p);
-				SpawnQuestItem(IDI_MUSHROOM, p, 0, 0);
+				SpawnQuestItem(ItemIndex::MUSHROOM, p, 0, 0);
 				quests[Q_MUSHROOM]._qvar1 = QS_MUSHSPAWNED;
 			}
 		}
@@ -2443,7 +2443,7 @@ void OperateInnSignChest(int pnum, int i)
 			object[i]._oAnimFrame += 2;
 			if (!deltaload) {
 				GetSuperItemLoc(object[i]._o, p);
-				SpawnQuestItem(IDI_BANNER, p, 0, 0);
+				SpawnQuestItem(ItemIndex::BANNER, p, 0, 0);
 			}
 		}
 	}
@@ -2455,10 +2455,10 @@ void OperateSlainHero(int pnum, int i, bool sendmsg)
 		object[i]._oSelFlag = 0;
 		if (!deltaload) {
 			if (plr[pnum].data._pClass == PC_WARRIOR) {
-				CreateMagicArmor(object[i]._o, ITYPE_HARMOR, ICURS_BREAST_PLATE, false, true);
+				CreateMagicArmor(object[i]._o, ItemType::heavy_armor, ItemCursor::BREAST_PLATE, false, true);
 				PlaySfxLoc(PS_WARR9, myplr().pos());
 			} else if (plr[pnum].data._pClass == PC_ROGUE) {
-				CreateMagicWeapon(object[i]._o, ITYPE_BOW, ICURS_int32_t_WAR_BOW, false, true);
+				CreateMagicWeapon(object[i]._o, ItemType::bow, ItemCursor::LONGBOW, false, true);
 				PlaySfxLoc(PS_ROGUE9, myplr().pos());
 			} else if (plr[pnum].data._pClass == PC_SORCERER) {
 				CreateSpellBook(object[i]._o, SPL_LIGHTNING, false, true);
@@ -2546,7 +2546,7 @@ void OperatePedistal(int pnum, int i)
 	int iv;
 
 	if (object[i]._oVar6 != 3) {
-		if (PlrHasItem(pnum, IDI_BLDSTONE, &iv) != NULL) {
+		if (HasItem(pnum, ItemIndex::BLDSTONE, &iv) != NULL) {
 			plr[pnum].inventory.RemoveInvItem(iv);
 			object[i]._oAnimFrame++;
 			object[i]._oVar6++;
@@ -2676,12 +2676,12 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			return;
 		for (j = 0; j < MAXINVITEMS; j++) {
-			if (plr[pnum].data.InvBody[j]._itype != ITYPE_NONE)
+			if (plr[pnum].data.InvBody[j]._itype != ItemType::none)
 				cnt++;
 		}
 		if (cnt > 0) {
 			for (j = 0; j < MAXINVITEMS; j++) {
-				if (plr[pnum].data.InvBody[j]._itype != ITYPE_NONE
+				if (plr[pnum].data.InvBody[j]._itype != ItemType::none
 				    && plr[pnum].data.InvBody[j]._iMaxDur != DUR_INDESTRUCTIBLE
 				    && plr[pnum].data.InvBody[j]._iMaxDur != 0) {
 					plr[pnum].data.InvBody[j]._iDurability += 10;
@@ -2693,7 +2693,7 @@ void OperateShrine(int pnum, int i, int sType)
 			while (true) {
 				cnt = 0;
 				for (j = 0; j < MAXINVITEMS; j++) {
-					if (plr[pnum].data.InvBody[j]._itype != ITYPE_NONE
+					if (plr[pnum].data.InvBody[j]._itype != ItemType::none
 					    && plr[pnum].data.InvBody[j]._iMaxDur != DUR_INDESTRUCTIBLE
 					    && plr[pnum].data.InvBody[j]._iMaxDur != 0)
 						cnt++;
@@ -2701,7 +2701,7 @@ void OperateShrine(int pnum, int i, int sType)
 				if (cnt == 0)
 					break;
 				r = random_(0, MAXINVITEMS);
-				if (plr[pnum].data.InvBody[r]._itype == ITYPE_NONE || plr[pnum].data.InvBody[r]._iMaxDur == DUR_INDESTRUCTIBLE || plr[pnum].data.InvBody[r]._iMaxDur == 0)
+				if (plr[pnum].data.InvBody[r]._itype == ItemType::none || plr[pnum].data.InvBody[r]._iMaxDur == DUR_INDESTRUCTIBLE || plr[pnum].data.InvBody[r]._iMaxDur == 0)
 					continue;
 
 				plr[pnum].data.InvBody[r]._iDurability -= 20;
@@ -2720,12 +2720,12 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			break;
-		if (plr[pnum].data.InvBody[INVLOC_HEAD]._itype != ITYPE_NONE)
+		if (plr[pnum].data.InvBody[INVLOC_HEAD]._itype != ItemType::none)
 			plr[pnum].data.InvBody[INVLOC_HEAD]._iAC += 2;
-		if (plr[pnum].data.InvBody[INVLOC_CHEST]._itype != ITYPE_NONE)
+		if (plr[pnum].data.InvBody[INVLOC_CHEST]._itype != ItemType::none)
 			plr[pnum].data.InvBody[INVLOC_CHEST]._iAC += 2;
-		if (plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE) {
-			if (plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD) {
+		if (plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::none) {
+			if (plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::shield) {
 				plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._iAC += 2;
 			} else {
 				plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._iMaxDam--;
@@ -2733,8 +2733,8 @@ void OperateShrine(int pnum, int i, int sType)
 					plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._iMaxDam = plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._iMinDam;
 			}
 		}
-		if (plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE) {
-			if (plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD) {
+		if (plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::none) {
+			if (plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::shield) {
 				plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._iAC += 2;
 			} else {
 				plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._iMaxDam--;
@@ -2744,20 +2744,20 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		for (j = 0; j < plr[pnum].data._pNumInv; j++) {
 			switch (plr[pnum].data.InvList[j]._itype) {
-			case ITYPE_SWORD:
-			case ITYPE_AXE:
-			case ITYPE_BOW:
-			case ITYPE_MACE:
-			case ITYPE_STAFF:
+			case ItemType::sword:
+			case ItemType::axe:
+			case ItemType::bow:
+			case ItemType::mace:
+			case ItemType::staff:
 				plr[pnum].data.InvList[j]._iMaxDam--;
 				if (plr[pnum].data.InvList[j]._iMaxDam < plr[pnum].data.InvList[j]._iMinDam)
 					plr[pnum].data.InvList[j]._iMaxDam = plr[pnum].data.InvList[j]._iMinDam;
 				break;
-			case ITYPE_SHIELD:
-			case ITYPE_LARMOR:
-			case ITYPE_HELM:
-			case ITYPE_MARMOR:
-			case ITYPE_HARMOR:
+			case ItemType::shield:
+			case ItemType::light_armor:
+			case ItemType::helm:
+			case ItemType::medium_armor:
+			case ItemType::heavy_armor:
 				plr[pnum].data.InvList[j]._iAC += 2;
 				break;
 			}
@@ -2770,17 +2770,17 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			break;
 
-		if (plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE && plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_SHIELD)
+		if (plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::none && plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::shield)
 			plr[pnum].data.InvBody[INVLOC_HAND_LEFT]._iMaxDam++;
-		if (plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE && plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_SHIELD)
+		if (plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::none && plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::shield)
 			plr[pnum].data.InvBody[INVLOC_HAND_RIGHT]._iMaxDam++;
 		for (j = 0; j < plr[pnum].data._pNumInv; j++) {
 			switch (plr[pnum].data.InvList[j]._itype) {
-			case ITYPE_SWORD:
-			case ITYPE_AXE:
-			case ITYPE_BOW:
-			case ITYPE_MACE:
-			case ITYPE_STAFF:
+			case ItemType::sword:
+			case ItemType::axe:
+			case ItemType::bow:
+			case ItemType::mace:
+			case ItemType::staff:
 				plr[pnum].data.InvList[j]._iMaxDam++;
 				break;
 			}
@@ -2812,15 +2812,15 @@ void OperateShrine(int pnum, int i, int sType)
 			break;
 
 		for (j = 0; j < MAXINVITEMS; j++) {
-			if (plr[pnum].data.InvBody[j]._itype == ITYPE_STAFF)
+			if (plr[pnum].data.InvBody[j]._itype == ItemType::staff)
 				plr[pnum].data.InvBody[j]._iCharges = plr[pnum].data.InvBody[j]._iMaxCharges;
 		}
 		for (j = 0; j < plr[pnum].data._pNumInv; j++) {
-			if (plr[pnum].data.InvList[j]._itype == ITYPE_STAFF)
+			if (plr[pnum].data.InvList[j]._itype == ItemType::staff)
 				plr[pnum].data.InvList[j]._iCharges = plr[pnum].data.InvList[j]._iMaxCharges;
 		}
 		for (j = 0; j < MAXBELTITEMS; j++) {
-			if (plr[pnum].data.SpdList[j]._itype == ITYPE_STAFF)
+			if (plr[pnum].data.SpdList[j]._itype == ItemType::staff)
 				plr[pnum].data.SpdList[j]._iCharges = plr[pnum].data.SpdList[j]._iMaxCharges; // belt items don't have charges?
 		}
 		InitDiabloMsg(EMSG_SHRINE_STONE);
@@ -2941,17 +2941,17 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			break;
 		for (j = 0; j < plr[pnum].data._pNumInv; j++) {
-			if (plr[pnum].data.InvList[j]._itype == ITYPE_MISC) {
-				if (plr[pnum].data.InvList[j]._iMiscId == IMISC_HEAL
-				    || plr[pnum].data.InvList[j]._iMiscId == IMISC_MANA) {
-					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_REJUV));
+			if (plr[pnum].data.InvList[j]._itype == ItemType::misc) {
+				if (plr[pnum].data.InvList[j]._iMiscId == MiscItemId::HEAL
+				    || plr[pnum].data.InvList[j]._iMiscId == MiscItemId::MANA) {
+					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(MiscItemId::REJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
 					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.InvList[j] = plr[pnum].data.HoldItem;
 				}
-				if (plr[pnum].data.InvList[j]._iMiscId == IMISC_FULLHEAL
-				    || plr[pnum].data.InvList[j]._iMiscId == IMISC_FULLMANA) {
-					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_FULLREJUV));
+				if (plr[pnum].data.InvList[j]._iMiscId == MiscItemId::FULLHEAL
+				    || plr[pnum].data.InvList[j]._iMiscId == MiscItemId::FULLMANA) {
+					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(MiscItemId::FULLREJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
 					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.InvList[j] = plr[pnum].data.HoldItem;
@@ -2959,17 +2959,17 @@ void OperateShrine(int pnum, int i, int sType)
 			}
 		}
 		for (j = 0; j < MAXBELTITEMS; j++) {
-			if (plr[pnum].data.SpdList[j]._itype == ITYPE_MISC) {
-				if (plr[pnum].data.SpdList[j]._iMiscId == IMISC_HEAL
-				    || plr[pnum].data.SpdList[j]._iMiscId == IMISC_MANA) {
-					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_REJUV));
+			if (plr[pnum].data.SpdList[j]._itype == ItemType::misc) {
+				if (plr[pnum].data.SpdList[j]._iMiscId == MiscItemId::HEAL
+				    || plr[pnum].data.SpdList[j]._iMiscId == MiscItemId::MANA) {
+					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(MiscItemId::REJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
 					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.SpdList[j] = plr[pnum].data.HoldItem;
 				}
-				if (plr[pnum].data.SpdList[j]._iMiscId == IMISC_FULLHEAL
-				    || plr[pnum].data.SpdList[j]._iMiscId == IMISC_FULLMANA) {
-					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_FULLREJUV));
+				if (plr[pnum].data.SpdList[j]._iMiscId == MiscItemId::FULLHEAL
+				    || plr[pnum].data.SpdList[j]._iMiscId == MiscItemId::FULLMANA) {
+					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(MiscItemId::FULLREJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
 					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.SpdList[j] = plr[pnum].data.HoldItem;
@@ -2993,11 +2993,11 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			return;
 		if (2 * lvl.currlevel < 7) {
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLMANA, false, true);
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLHEAL, false, true);
+			CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::FULLMANA, false, true);
+			CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::FULLHEAL, false, true);
 		} else {
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLREJUV, false, true);
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLREJUV, false, true);
+			CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::FULLREJUV, false, true);
+			CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::FULLREJUV, false, true);
 		}
 		plr[pnum].data._pMana = plr[pnum].data._pMaxMana;
 		plr[pnum].data._pManaBase = plr[pnum].data._pMaxManaBase;
@@ -3221,9 +3221,9 @@ void OperateSkelBook(int pnum, int i, bool sendmsg)
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
 			if (random_(161, 5))
-				CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_SCROLL, sendmsg, false);
+				CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::SCROLL, sendmsg, false);
 			else
-				CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_BOOK, sendmsg, false);
+				CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::BOOK, sendmsg, false);
 			if (pnum == myplr())
 				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
 		}
@@ -3239,9 +3239,9 @@ void OperateBookCase(int pnum, int i, bool sendmsg)
 		object[i]._oAnimFrame -= 2;
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_BOOK, sendmsg, false);
+			CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::BOOK, sendmsg, false);
 			if (QuestStatus(Q_ZHAR)
-			    && monsters[MAX_PLRS].data.mName == UniqMonst[UMT_ZHAR].mName
+			    && monsters[MAX_PLRS].data.mName == UniqMonst[UniqueMonsterType::ZHAR].mName
 			    && monsters[MAX_PLRS].data._msquelch == UINT8_MAX
 			    && monsters[MAX_PLRS].data._mhitpoints) {
 				monsters[MAX_PLRS].data.mtalkmsg = TEXT_ZHAR2;
@@ -3279,13 +3279,13 @@ void OperateArmorStand(int pnum, int i, bool sendmsg)
 			SetRndSeed(object[i]._oRndSeed);
 			uniqueRnd = random_(0, 2);
 			if (lvl.currlevel <= 5) {
-				CreateTypeItem(object[i]._o, true, ITYPE_LARMOR, IMISC_NONE, sendmsg, false);
+				CreateTypeItem(object[i]._o, true, ItemType::light_armor, MiscItemId::NONE, sendmsg, false);
 			} else if (lvl.currlevel >= 6 && lvl.currlevel <= 9) {
-				CreateTypeItem(object[i]._o, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, sendmsg, false);
+				CreateTypeItem(object[i]._o, uniqueRnd, ItemType::medium_armor, MiscItemId::NONE, sendmsg, false);
 			} else if (lvl.currlevel >= 10 && lvl.currlevel <= 12) {
-				CreateTypeItem(object[i]._o, false, ITYPE_HARMOR, IMISC_NONE, sendmsg, false);
+				CreateTypeItem(object[i]._o, false, ItemType::heavy_armor, MiscItemId::NONE, sendmsg, false);
 			} else if (lvl.currlevel >= 13 && lvl.currlevel <= 16) {
-				CreateTypeItem(object[i]._o, true, ITYPE_HARMOR, IMISC_NONE, sendmsg, false);
+				CreateTypeItem(object[i]._o, true, ItemType::heavy_armor, MiscItemId::NONE, sendmsg, false);
 			}
 			if (pnum == myplr())
 				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
@@ -3466,17 +3466,17 @@ void OperateWeaponRack(int pnum, int i, bool sendmsg)
 	SetRndSeed(object[i]._oRndSeed);
 
 	switch (random_(0, 4) + 1) {
-	case ITYPE_SWORD:
-		weaponType = ITYPE_SWORD;
+	case ItemType::sword:
+		weaponType = ItemType::sword;
 		break;
-	case ITYPE_AXE:
-		weaponType = ITYPE_AXE;
+	case ItemType::axe:
+		weaponType = ItemType::axe;
 		break;
-	case ITYPE_BOW:
-		weaponType = ITYPE_BOW;
+	case ItemType::bow:
+		weaponType = ItemType::bow;
 		break;
-	case ITYPE_MACE:
-		weaponType = ITYPE_MACE;
+	case ItemType::mace:
+		weaponType = ItemType::mace;
 		break;
 	}
 
@@ -3486,9 +3486,9 @@ void OperateWeaponRack(int pnum, int i, bool sendmsg)
 		return;
 
 	if (int(lvl.type()) > 1)
-		CreateTypeItem(object[i]._o, true, weaponType, IMISC_NONE, sendmsg, false);
+		CreateTypeItem(object[i]._o, true, weaponType, MiscItemId::NONE, sendmsg, false);
 	else
-		CreateTypeItem(object[i]._o, false, weaponType, IMISC_NONE, sendmsg, false);
+		CreateTypeItem(object[i]._o, false, weaponType, MiscItemId::NONE, sendmsg, false);
 	if (pnum == myplr())
 		NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
 }
@@ -3510,7 +3510,7 @@ void OperateLazStand(int pnum, int i)
 		object[i]._oAnimFrame++;
 		object[i]._oSelFlag = 0;
 		GetSuperItemLoc(object[i]._o, p);
-		SpawnQuestItem(IDI_LAZSTAFF, p, 0, 0);
+		SpawnQuestItem(ItemIndex::LAZSTAFF, p, 0, 0);
 	}
 }
 

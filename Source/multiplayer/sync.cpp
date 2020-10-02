@@ -144,7 +144,7 @@ void SyncPlrInv(TSyncHeader *pHdr)
 		pHdr->bItemX = item[ii]._i.x;
 		pHdr->bItemY = item[ii]._i.y;
 		pHdr->wItemIndx = item[ii].IDidx;
-		if (item[ii].IDidx == IDI_EAR) {
+		if (item[ii].IDidx == ItemIndex::EAR) {
 			pHdr->wItemCI = (item[ii]._iName[7] << 8) | item[ii]._iName[8];
 			pHdr->dwItemSeed = (item[ii]._iName[9] << 24) | (item[ii]._iName[10] << 16) | (item[ii]._iName[11] << 8) | item[ii]._iName[12];
 			pHdr->bItemId = item[ii]._iName[13];
@@ -162,7 +162,7 @@ void SyncPlrInv(TSyncHeader *pHdr)
 			pHdr->bItemMDur = item[ii]._iMaxDur;
 			pHdr->bItemCh = item[ii]._iCharges;
 			pHdr->bItemMCh = item[ii]._iMaxCharges;
-			if (item[ii].IDidx == IDI_GOLD) {
+			if (item[ii].IDidx == ItemIndex::GOLD) {
 				pHdr->wItemVal = item[ii]._ivalue;
 			}
 		}
@@ -172,7 +172,7 @@ void SyncPlrInv(TSyncHeader *pHdr)
 
 	assert((DWORD)sgnSyncPInv < MAXINVITEMS);
 	pItem = &myplr().data.InvBody[sgnSyncPInv];
-	if (pItem->_itype != ITYPE_NONE) {
+	if (pItem->_itype != ItemType::none) {
 		pHdr->bPInvLoc = sgnSyncPInv;
 		pHdr->wPInvIndx = pItem->IDidx;
 		pHdr->wPInvCI = pItem->_iCreateInfo;

@@ -7,7 +7,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-ItemType itemTypes[ITEMTYPES];
+ItemTemplate itemTypes[ITEMTYPES];
 ItemManager items;
 
 //int itemactive[MAXITEMS];
@@ -236,9 +236,9 @@ void AddInitItems()
 		item._iSeed = GetRndSeed();
 		SetRndSeed(item._iSeed);
 		if (random_(12, 2))
-			item.loadPresetAttributes(IDI_HEAL, lvl.currlevel);
+			item.loadPresetAttributes(ItemIndex::HEAL, lvl.currlevel);
 		else
-			item.loadPresetAttributes(IDI_MANA, lvl.currlevel);
+			item.loadPresetAttributes(ItemIndex::MANA, lvl.currlevel);
 		item._iCreateInfo = lvl.currlevel - 0x8000;
 		item.SetupItem();
 		item._iAnimFrame = item._iAnimLen;
@@ -251,7 +251,7 @@ void AddInitItems()
 void InitItems()
 {
 	golditem = item[0];
-	loadPresetAttributes(0, IDI_GOLD, 1);
+	loadPresetAttributes(0, ItemIndex::GOLD, 1);
 	golditem._iStatFlag = true;
 
 	if (!lvl.setlevel) {
@@ -259,7 +259,7 @@ void InitItems()
 		if (QuestStatus(Q_ROCK))
 			SpawnRock();
 		if (QuestStatus(Q_ANVIL))
-			SpawnQuestItem(IDI_ANVIL, { 2 * lvl.getpc().x + 27, 2 * lvl.getpc().y + 27 }, 0, 1);
+			SpawnQuestItem(ItemIndex::ANVIL, { 2 * lvl.getpc().x + 27, 2 * lvl.getpc().y + 27 }, 0, 1);
 		if (lvl.currlevel > 0 && lvl.currlevel < 16)
 			AddInitItems();
 	}
@@ -302,7 +302,7 @@ void SetPlrHandItem(ItemStruct *h, int idata)
 	h->_iMiscId = pAllItem->iMiscId;
 	h->_iSpell = pAllItem->iSpell;
 
-	if (pAllItem->iMiscId == IMISC_STAFF) {
+	if (pAllItem->iMiscId == MiscItemId::STAFF) {
 		h->_iCharges = 40;
 	}
 
@@ -316,7 +316,7 @@ void SetPlrHandItem(ItemStruct *h, int idata)
 	h->_iIvalue = pAllItem->iValue;
 	h->_iPrePower = -1;
 	h->_iSufPower = -1;
-	h->_iMagical = ITEM_QUALITY_NORMAL;
+	h->_iMagical = ItemQuality::normal;
 	h->IDidx = idata;
 }
 
@@ -334,11 +334,11 @@ void SetPlrHandSeed(ItemStruct *h, int iseed)
 void SetPlrHandGoldCurs(ItemStruct *h)
 {
 	if (h->_ivalue >= GOLD_MEDIUM_LIMIT)
-		h->_iCurs = ICURS_GOLD_LARGE;
+		h->_iCurs = ItemCursor::GOLD_LARGE;
 	else if (h->_ivalue <= GOLD_SMALL_LIMIT)
-		h->_iCurs = ICURS_GOLD_SMALL;
+		h->_iCurs = ItemCursor::GOLD_SMALL;
 	else
-		h->_iCurs = ICURS_GOLD_MEDIUM;
+		h->_iCurs = ItemCursor::GOLD_MEDIUM;
 }
 
 bool ItemSpaceOk(int i, int j)
@@ -465,13 +465,13 @@ int RndUItem(int m)
 			if (2 * lvl.currlevel < AllItemsList[i].iMinMLvl)
 				okflag = false;
 		}
-		if (AllItemsList[i].itype == ITYPE_MISC)
+		if (AllItemsList[i].itype == ItemType::misc)
 			okflag = false;
-		if (AllItemsList[i].itype == ITYPE_GOLD)
+		if (AllItemsList[i].itype == ItemType::gold)
 			okflag = false;
-		if (AllItemsList[i].itype == ITYPE_MEAT)
+		if (AllItemsList[i].itype == ItemType::meat)
 			okflag = false;
-		if (AllItemsList[i].iMiscId == IMISC_BOOK)
+		if (AllItemsList[i].iMiscId == MiscItemId::BOOK)
 			okflag = true;
 		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
 			okflag = false;
@@ -573,7 +573,7 @@ void SpawnItem(int m, V2Di pos, bool sendmsg)
 			return;
 		}
 	} else {
-		idx = IDI_BRAIN;
+		idx = ItemIndex::BRAIN;
 		quests[Q_MUSHROOM]._qvar1 = QS_BRAINSPAWNED;
 	}
 
@@ -601,7 +601,7 @@ void CreateItem(int uid, V2Di pos)
 	item.loadPresetAttributes(idx, lvl.currlevel);
 	item.GetUniqueItem(uid);
 	item.SetupItem();
-	item._iMagical = ITEM_QUALITY_UNIQUE;
+	item._iMagical = ItemQuality::unique;
 }
 
 void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta)
@@ -625,7 +625,7 @@ void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta)
 void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg, bool delta)
 {
 	int idx;
-	if (itype != ITYPE_GOLD)
+	if (itype != ItemType::gold)
 		idx = RndTypeItems(itype, imisc);
 	else
 		idx = 0;
@@ -687,7 +687,7 @@ void SpawnRock()
 		V2Di n = object[ii]._o;
 		item._i = n;
 		grid[n.x][item._i.y].setItem(item.id);
-		item.loadPresetAttributes(IDI_ROCK, lvl.currlevel);
+		item.loadPresetAttributes(ItemIndex::ROCK, lvl.currlevel);
 		item.SetupItem();
 		item._iSelFlag = 2;
 		item._iPostDraw = true;
@@ -717,7 +717,7 @@ void ProcessItems()
 		int ii = itemactive[i];
 		if (item[ii]._iAnimFlag) {
 			item[ii]._iAnimFrame++;
-			if (item[ii]._iCurs == ICURS_MAGIC_ROCK) {
+			if (item[ii]._iCurs == ItemCursor::MAGIC_ROCK) {
 				if (item[ii]._iSelFlag == 1 && item[ii]._iAnimFrame == 11)
 					item[ii]._iAnimFrame = 1;
 				if (item[ii]._iSelFlag == 2 && item[ii]._iAnimFrame == 21)
@@ -842,7 +842,7 @@ void WitchBookLevel(int ii)
 {
 	int slvl;
 
-	if (witchitem[ii]._iMiscId == IMISC_BOOK) {
+	if (witchitem[ii]._iMiscId == MiscItemId::BOOK) {
 		witchitem[ii]._iMinMag = spelldata[witchitem[ii]._iSpell].sMinInt;
 		slvl = myplr().data._pSplLvl[witchitem[ii]._iSpell];
 		while (slvl) {
@@ -864,7 +864,7 @@ void WitchBookLevel(int ii)
 
 void SpawnStoreGold()
 {
-	loadPresetAttributes(0, IDI_GOLD, 1);
+	loadPresetAttributes(0, ItemIndex::GOLD, 1);
 	golditem = item[0];
 	golditem._iStatFlag = true;
 }
@@ -874,22 +874,22 @@ void RecalcStoreStats()
 	int i;
 
 	for (i = 0; i < SMITH_ITEMS; i++) {
-		if (smithitem[i]._itype != ITYPE_NONE) {
+		if (smithitem[i]._itype != ItemType::none) {
 			smithitem[i]._iStatFlag = StoreStatOk(&smithitem[i]);
 		}
 	}
 	for (i = 0; i < SMITH_PREMIUM_ITEMS; i++) {
-		if (premiumitem[i]._itype != ITYPE_NONE) {
+		if (premiumitem[i]._itype != ItemType::none) {
 			premiumitem[i]._iStatFlag = StoreStatOk(&premiumitem[i]);
 		}
 	}
 	for (i = 0; i < 20; i++) {
-		if (witchitem[i]._itype != ITYPE_NONE) {
+		if (witchitem[i]._itype != ItemType::none) {
 			witchitem[i]._iStatFlag = StoreStatOk(&witchitem[i]);
 		}
 	}
 	for (i = 0; i < 20; i++) {
-		if (healitem[i]._itype != ITYPE_NONE) {
+		if (healitem[i]._itype != ItemType::none) {
 			healitem[i]._iStatFlag = StoreStatOk(&healitem[i]);
 		}
 	}
@@ -909,12 +909,12 @@ int ItemNoFlippy()
 void CreateSpellBook(V2Di pos, int ispell, bool sendmsg, bool delta)
 {
 	bool done = false;
-	int idx = RndTypeItems(ITYPE_MISC, IMISC_BOOK);
+	int idx = RndTypeItems(ItemType::misc, MiscItemId::BOOK);
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
 	while (!done) {
 		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, true, false, delta);
-		if (item._iMiscId == IMISC_BOOK && item._iSpell == ispell)
+		if (item._iMiscId == MiscItemId::BOOK && item._iSpell == ispell)
 			done = true;
 	}
 	if (sendmsg)
@@ -928,13 +928,13 @@ void CreateMagicArmor(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 	bool done = false;
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
-	int idx = RndTypeItems(imisc, IMISC_NONE);
+	int idx = RndTypeItems(imisc, MiscItemId::NONE);
 	while (!done) {
 		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, true, false, delta);
 		if (item._iCurs == icurs)
 			done = true;
 		else
-			idx = RndTypeItems(imisc, IMISC_NONE);
+			idx = RndTypeItems(imisc, MiscItemId::NONE);
 	}
 	if (sendmsg)
 		NetSendCmdDItem(false, item);
@@ -947,13 +947,13 @@ void CreateMagicWeapon(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta)
 	bool done = false;
 	Item &item = items.createNewItem();
 	item.GetSuperItemSpace(pos);
-	int idx = RndTypeItems(imisc, IMISC_NONE);
+	int idx = RndTypeItems(imisc, MiscItemId::NONE);
 	while (!done) {
 		item.SetupAllItems(idx, GetRndSeed(), 2 * lvl.currlevel, 1, true, false, delta);
 		if (item._iCurs == icurs)
 			done = true;
 		else
-			idx = RndTypeItems(imisc, IMISC_NONE);
+			idx = RndTypeItems(imisc, MiscItemId::NONE);
 	}
 	if (sendmsg)
 		NetSendCmdDItem(false, item);

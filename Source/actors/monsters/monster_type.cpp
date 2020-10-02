@@ -8,7 +8,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-void MonsterType::InitMonsterTRN(bool special)
+void MonsterClass::InitMonsterTRN(bool special)
 {
 	uint8_t *f;
 	int i, n, j;
@@ -23,7 +23,7 @@ void MonsterType::InitMonsterTRN(bool special)
 
 	n = special ? 6 : 5;
 	for (i = 0; i < n; i++) {
-		if (i != 1 || data.mtype < MT_COUNSLR || data.mtype > MT_ADVOCATE) {
+		if (i != 1 || data.mtype < MonsterType::COUNSLR || data.mtype > MonsterType::ADVOCATE) {
 			for (j = 0; j < 8; j++) {
 				Cl2ApplyTrans(
 				    data.Anims[i].Data[j],
@@ -34,7 +34,7 @@ void MonsterType::InitMonsterTRN(bool special)
 	}
 }
 
-void MonsterType::InitMonsterGFX()
+void MonsterClass::InitMonsterGFX()
 {
 	int mtype, anim, i;
 	char strBuff[256];
@@ -49,7 +49,7 @@ void MonsterType::InitMonsterGFX()
 			celBuf = LoadFileInMem(strBuff, NULL);
 			data.Anims[anim].CMem = celBuf;
 
-			if (data.mtype != MT_GOLEM || (animletter[anim] != 's' && animletter[anim] != 'd')) {
+			if (data.mtype != MonsterFlag::golem || (animletter[anim] != 's' && animletter[anim] != 'd')) {
 
 				for (i = 0; i < 8; i++) {
 					data.Anims[anim].Data[i] = CelGetFrameStart(celBuf, i);
@@ -80,45 +80,45 @@ void MonsterType::InitMonsterGFX()
 		MemFreeDbg(data.trans_file);
 	}
 
-	if (mtype >= MT_NMAGMA && mtype <= MT_WMAGMA && !(MissileFileFlag & 1)) {
+	if (mtype >= MonsterType::NMAGMA && mtype <= MonsterType::WMAGMA && !(MissileFileFlag & 1)) {
 		MissileFileFlag |= 1;
 		LoadMissileGFX(MFILE_MAGBALL);
 	}
-	if (mtype >= MT_STORM && mtype <= MT_MAEL && !(MissileFileFlag & 2)) {
+	if (mtype >= MonsterType::STORM && mtype <= MonsterType::MAEL && !(MissileFileFlag & 2)) {
 		MissileFileFlag |= 2;
 		LoadMissileGFX(MFILE_THINLGHT);
 	}
-	if (mtype == MT_SUCCUBUS && !(MissileFileFlag & 4)) {
+	if (mtype == MonsterType::SUCCUBUS && !(MissileFileFlag & 4)) {
 		MissileFileFlag |= 4;
 		LoadMissileGFX(MFILE_FLARE);
 		LoadMissileGFX(MFILE_FLAREEXP);
 	}
-	if (mtype == MT_SNOWWICH && !(MissileFileFlag & 0x20)) {
+	if (mtype == MonsterType::SNOWWICH && !(MissileFileFlag & 0x20)) {
 		MissileFileFlag |= 0x20;
 		LoadMissileGFX(MFILE_SCUBMISB);
 		LoadMissileGFX(MFILE_SCBSEXPB);
 	}
-	if (mtype == MT_HLSPWN && !(MissileFileFlag & 0x40)) {
+	if (mtype == MonsterType::HLSPWN && !(MissileFileFlag & 0x40)) {
 		MissileFileFlag |= 0x40;
 		LoadMissileGFX(MFILE_SCUBMISD);
 		LoadMissileGFX(MFILE_SCBSEXPD);
 	}
-	if (mtype == MT_SOLBRNR && !(MissileFileFlag & 0x80)) {
+	if (mtype == MonsterType::SOLBRNR && !(MissileFileFlag & 0x80)) {
 		MissileFileFlag |= 0x80;
 		LoadMissileGFX(MFILE_SCUBMISC);
 		LoadMissileGFX(MFILE_SCBSEXPC);
 	}
-	if (mtype >= MT_INCIN && mtype <= MT_HELLBURN && !(MissileFileFlag & 8)) {
+	if (mtype >= MonsterType::INCIN && mtype <= MonsterType::HELLBURN && !(MissileFileFlag & 8)) {
 		MissileFileFlag |= 8;
 		LoadMissileGFX(MFILE_KRULL);
 	}
-	if (mtype >= MT_NACID && mtype <= MT_XACID && !(MissileFileFlag & 0x10)) {
+	if (mtype >= MonsterType::NACID && mtype <= MonsterType::XACID && !(MissileFileFlag & 0x10)) {
 		MissileFileFlag |= 0x10;
 		LoadMissileGFX(MFILE_ACIDBF);
 		LoadMissileGFX(MFILE_ACIDSPLA);
 		LoadMissileGFX(MFILE_ACIDPUD);
 	}
-	if (mtype == MT_DIABLO) {
+	if (mtype == MonsterType::DIABLO) {
 		LoadMissileGFX(MFILE_FIREPLAR);
 	}
 }

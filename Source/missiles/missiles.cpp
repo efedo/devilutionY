@@ -447,7 +447,7 @@ bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, bool shift)
 	if (monsters[m].data._mhitpoints >> 6 <= 0) {
 		return false;
 	}
-	if (monsters[m].data.MType->mtype == MT_ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT)
+	if (monsters[m].data.MType->mtype == MonsterType::ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT)
 		return false;
 	if (monsters[m].data._mmode == MM_CHARGE)
 		return false;
@@ -524,10 +524,10 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 	resist = false;
 	if (monsters[m].data.mtalkmsg
 	    || monsters[m].data._mhitpoints >> 6 <= 0
-	    || t == MIS_HBOLT && monsters[m].data.MType->mtype != MT_DIABLO && monsters[m].data.MData->mMonstClass) {
+	    || t == MIS_HBOLT && monsters[m].data.MType->mtype != MonsterType::DIABLO && monsters[m].data.MData->mMonstClass) {
 		return false;
 	}
-	if (monsters[m].data.MType->mtype == MT_ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT)
+	if (monsters[m].data.MType->mtype == MonsterType::ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT)
 		return false;
 	if (monsters[m].data._mmode == MM_CHARGE)
 		return false;
@@ -597,8 +597,8 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 		dam >>= 2;
 	if (pnum == myplr())
 		monsters[m].data._mhitpoints -= dam;
-	if (plr[pnum].data._pIFlags & ISPL_FIRE_ARROWS)
-		monsters[m].data._mFlags |= MFLAG_NOHEAL;
+	if (plr[pnum].data._pIFlags & ItemSpecialEffect::FIRE_ARROWS)
+		monsters[m].data._mFlags |= MonsterFlag::noheal;
 
 	if (monsters[m].data._mhitpoints >> 6 <= 0) {
 		if (monsters[m].data._mmode == MM_STONE) {
@@ -615,7 +615,7 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 				monsters[m].M_StartHit(pnum, dam);
 			monsters[m].data._mmode = MM_STONE;
 		} else {
-			if (!missiledata[t].mType && plr[pnum].data._pIFlags & ISPL_KNOCKBACK) {
+			if (!missiledata[t].mType && plr[pnum].data._pIFlags & ItemSpecialEffect::KNOCKBACK) {
 				monsters[m].M_GetKnockback();
 			}
 			if (m > 3)
@@ -723,12 +723,12 @@ bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, bool s
 			if (shift == false) {
 
 				dam = (mind << 6) + random_(75, (maxd - mind + 1) << 6);
-				if (m == -1 && plr[pnum].data._pIFlags & ISPL_ABSHALFTRAP)
+				if (m == -1 && plr[pnum].data._pIFlags & ItemSpecialEffect::ABSHALFTRAP)
 					dam >>= 1;
 				dam += (plr[pnum].data._pIGetHit * 64);
 			} else {
 				dam = mind + random_(75, maxd - mind + 1);
-				if (m == -1 && plr[pnum].data._pIFlags & ISPL_ABSHALFTRAP)
+				if (m == -1 && plr[pnum].data._pIFlags & ItemSpecialEffect::ABSHALFTRAP)
 					dam >>= 1;
 				dam += plr[pnum].data._pIGetHit;
 			}
@@ -951,9 +951,9 @@ void CheckMissileCol(int i, int mindam, int maxdam, bool shift, V2Di m, bool nod
 				missile[i]._miHitFlag = true;
 			}
 		} else {
-			if (monsters[missile[i]._misource].data._mFlags & MFLAG_TARGETS_MONSTER
+			if (monsters[missile[i]._misource].data._mFlags & MonsterFlag::targets_monster
 			    && grid.at(m).getActor() > 0
-			    && monsters[grid.at(m).getActor() - 1].data._mFlags & MFLAG_GOLEM
+			    && monsters[grid.at(m).getActor() - 1].data._mFlags & MonsterFlag::golem
 			    && MonsterTrapHit(grid.at(m).getActor() - 1, mindam, maxdam, missile[i]._midist, missile[i]._mitype, shift)) {
 				if (!nodel)
 					missile[i]._mirange = 0;
@@ -1051,7 +1051,7 @@ void LoadMissileGFX(uint8_t mi)
 	MisFileData *mfd;
 
 	mfd = &misfiledata[mi];
-	if (mfd->mFlags & MFLAG_ALLOW_SPECIAL) {
+	if (mfd->mFlags & MonsterFlag::allow_special) {
 		sprintf(pszName, "Missiles\\%s.CL2", mfd->mName);
 		file = LoadFileInMem(pszName, NULL);
 		for (i = 0; i < mfd->mAnimFAmt; i++)
@@ -1076,7 +1076,7 @@ void InitMissileGFX()
 	int mi;
 
 	for (mi = 0; misfiledata[mi].mAnimFAmt; mi++) {
-		if (!(misfiledata[mi].mFlags & MFLAG_HIDDEN))
+		if (!(misfiledata[mi].mFlags & MonsterFlag::hidden))
 			LoadMissileGFX(mi);
 	}
 }
@@ -1086,7 +1086,7 @@ void FreeMissileGFX(int mi)
 	int i;
 	DWORD *p;
 
-	if (misfiledata[mi].mFlags & MFLAG_ALLOW_SPECIAL) {
+	if (misfiledata[mi].mFlags & MonsterFlag::allow_special) {
 		if (misfiledata[mi].mAnimData[0]) {
 			p = (DWORD *)misfiledata[mi].mAnimData[0];
 			p -= misfiledata[mi].mAnimFAmt;
@@ -1108,7 +1108,7 @@ void FreeMissiles()
 	int mi;
 
 	for (mi = 0; misfiledata[mi].mAnimFAmt; mi++) {
-		if (!(misfiledata[mi].mFlags & MFLAG_HIDDEN))
+		if (!(misfiledata[mi].mFlags & MonsterFlag::hidden))
 			FreeMissileGFX(mi);
 	}
 }
@@ -1118,7 +1118,7 @@ void FreeMissiles2()
 	int mi;
 
 	for (mi = 0; misfiledata[mi].mAnimFAmt; mi++) {
-		if (misfiledata[mi].mFlags & MFLAG_HIDDEN)
+		if (misfiledata[mi].mFlags & MonsterFlag::hidden)
 			FreeMissileGFX(mi);
 	}
 }
@@ -1181,7 +1181,7 @@ void AddArrow(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	if (s == d) d += offset(midir);
 	if (!mienemy) {
 		int av = 32;
-		if (plr[id].data._pIFlags & ISPL_RNDARROWVEL) {
+		if (plr[id].data._pIFlags & ItemSpecialEffect::RNDARROWVEL) {
 			av = random_(64, 32) + 16;
 		}
 		if (plr[id].data._pClass == PC_ROGUE)
@@ -1436,13 +1436,13 @@ void AddMisexp(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 
 	if (mienemy && id > 0) {
 		mon = monsters[id].data.MType;
-		if (mon->mtype == MT_SUCCUBUS)
+		if (mon->mtype == MonsterType::SUCCUBUS)
 			SetMissAnim(mi, MFILE_FLAREEXP);
-		if (mon->mtype == MT_SNOWWICH)
+		if (mon->mtype == MonsterType::SNOWWICH)
 			SetMissAnim(mi, MFILE_SCBSEXPB);
-		if (mon->mtype == MT_HLSPWN)
+		if (mon->mtype == MonsterType::HLSPWN)
 			SetMissAnim(mi, MFILE_SCBSEXPD);
-		if (mon->mtype == MT_SOLBRNR)
+		if (mon->mtype == MonsterType::SOLBRNR)
 			SetMissAnim(mi, MFILE_SCBSEXPC);
 	}
 
@@ -1693,8 +1693,8 @@ void AddRhino(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	AnimStruct *anim;
 
-	if (monsters[id].data.MType->mtype < MT_HORNED || monsters[id].data.MType->mtype > MT_OBLORD) {
-		if (monsters[id].data.MType->mtype < MT_NSNAKE || monsters[id].data.MType->mtype > MT_GSNAKE) {
+	if (monsters[id].data.MType->mtype < MonsterType::HORNED || monsters[id].data.MType->mtype > MonsterType::OBLORD) {
+		if (monsters[id].data.MType->mtype < MonsterType::NSNAKE || monsters[id].data.MType->mtype > MonsterType::GSNAKE) {
 			anim = &monsters[id].data.MType->Anims[MA_WALK];
 		} else {
 			anim = &monsters[id].data.MType->Anims[MA_ATTACK];
@@ -1711,7 +1711,7 @@ void AddRhino(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miAnimWidth = monsters[id].data.MType->width;
 	missile[mi]._miAnimWidth2 = monsters[id].data.MType->width2;
 	missile[mi]._miAnimAdd = 1;
-	if (monsters[id].data.MType->mtype >= MT_NSNAKE && monsters[id].data.MType->mtype <= MT_GSNAKE)
+	if (monsters[id].data.MType->mtype >= MonsterType::NSNAKE && monsters[id].data.MType->mtype <= MonsterType::GSNAKE)
 		missile[mi]._miAnimFrame = 7;
 	missile[mi]._miVar1 = 0;
 	missile[mi]._miVar2 = 0;
@@ -1769,13 +1769,13 @@ void AddFlare(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 			plr[id].SyncPlrKill(0);
 	} else {
 		if (id > 0) {
-			if (monsters[id].data.MType->mtype == MT_SUCCUBUS)
+			if (monsters[id].data.MType->mtype == MonsterType::SUCCUBUS)
 				SetMissAnim(mi, MFILE_FLARE);
-			if (monsters[id].data.MType->mtype == MT_SNOWWICH)
+			if (monsters[id].data.MType->mtype == MonsterType::SNOWWICH)
 				SetMissAnim(mi, MFILE_SCUBMISB);
-			if (monsters[id].data.MType->mtype == MT_HLSPWN)
+			if (monsters[id].data.MType->mtype == MonsterType::HLSPWN)
 				SetMissAnim(mi, MFILE_SCUBMISD);
-			if (monsters[id].data.MType->mtype == MT_SOLBRNR)
+			if (monsters[id].data.MType->mtype == MonsterType::SOLBRNR)
 				SetMissAnim(mi, MFILE_SCUBMISC);
 		}
 	}
@@ -2820,8 +2820,8 @@ void MI_Lightctrl(int i)
 		if ((m.x != missile[i]._miVar1 || m.y != missile[i]._miVar2) && grid.isValid(m)) {
 			if (missile[i]._misource != -1) {
 				if (missile[i]._micaster == 1
-				    && monsters[missile[i]._misource].data.MType->mtype >= MT_STORM
-				    && monsters[missile[i]._misource].data.MType->mtype <= MT_MAEL) {
+				    && monsters[missile[i]._misource].data.MType->mtype >= MonsterType::STORM
+				    && monsters[missile[i]._misource].data.MType->mtype <= MonsterType::MAEL) {
 					AddMissile(
 					    m,
 					    missile[i]._mis,
@@ -3402,7 +3402,7 @@ void mi_null_32(int i)
 	src = missile[i]._misource;
 	b = missile[i]._mi;
 	enemy = monsters[src].data._menemy;
-	if (!(monsters[src].data._mFlags & MFLAG_TARGETS_MONSTER)) {
+	if (!(monsters[src].data._mFlags & MonsterFlag::targets_monster)) {
 		c = plr[enemy].pos();
 	} else {
 		c = monsters[enemy].data._m;
@@ -3411,7 +3411,7 @@ void mi_null_32(int i)
 		missile[i]._miVar2 > 1) && PosOkMonst(missile[i]._misource, a)) {
 		MissToMonst(i, a);
 		missile[i]._miDelFlag = true;
-	} else if (!(monsters[src].data._mFlags & MFLAG_TARGETS_MONSTER)) {
+	} else if (!(monsters[src].data._mFlags & MonsterFlag::targets_monster)) {
 		j = grid.at(b).isPlayer();
 	} else {
 		j = grid.at(b).getActor();
@@ -3879,7 +3879,7 @@ void ProcessMissiles()
 	for (i = 0; i < nummissiles; i++) {
 		mi = missileactive[i];
 		missiledata[missile[mi]._mitype].mProc(missileactive[i]);
-		if (!(missile[mi]._miAnimFlags & MFLAG_LOCK_ANIMATION)) {
+		if (!(missile[mi]._miAnimFlags & MonsterFlag::lock_animation)) {
 			missile[mi]._miAnimCnt++;
 			if (missile[mi]._miAnimCnt >= missile[mi]._miAnimDelay) {
 				missile[mi]._miAnimCnt = 0;
@@ -3924,10 +3924,10 @@ void missiles_process_charge()
 		mis->_miAnimData = misfiledata[mis->_miAnimType].mAnimData[int(mis->_mimfnum)];
 		if (mis->_mitype == MIS_RHINO) {
 			mon = monsters[mis->_misource].data.MType;
-			if (mon->mtype >= MT_HORNED && mon->mtype <= MT_OBLORD) {
+			if (mon->mtype >= MonsterType::HORNED && mon->mtype <= MonsterType::OBLORD) {
 				anim = &mon->Anims[MA_SPECIAL];
 			} else {
-				if (mon->mtype >= MT_NSNAKE && mon->mtype <= MT_GSNAKE)
+				if (mon->mtype >= MonsterType::NSNAKE && mon->mtype <= MonsterType::GSNAKE)
 					anim = &mon->Anims[MA_ATTACK];
 				else
 					anim = &mon->Anims[MA_WALK];

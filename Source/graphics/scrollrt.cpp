@@ -633,7 +633,7 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 	}
 
 	pMonster = &monsters[mi].data;
-	if (pMonster->_mFlags & MFLAG_HIDDEN) {
+	if (pMonster->_mFlags & MonsterFlag::hidden) {
 		return;
 	}
 

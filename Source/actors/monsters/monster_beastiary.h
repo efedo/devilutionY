@@ -11,13 +11,13 @@ DEVILUTION_BEGIN_NAMESPACE
 class Beastiary {
 public:
 	Beastiary();
-	MonsterType &operator[](size_t n);
+	MonsterClass &operator[](size_t n);
 	void InitLevelMonsters();
 	int AddMonsterType(int type, int placeflag);
 	void GetLevelMTypes();
 	uint8_t GraphicTable[NUMLEVELS][MAX_LVLMTYPES]; // Stores all monster graphics
 private:
-	MonsterType types[MAX_LVLMTYPES];
+	MonsterClass types[MAX_LVLMTYPES];
 };
 
 extern Beastiary beastiary;

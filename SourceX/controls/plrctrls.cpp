@@ -101,7 +101,7 @@ void FindItemOrObject()
 
 			if (!grid.at(tp).isItem()) continue;
 			int i = grid.at(tp).getItem();
-			if (item[i]._itype == ITYPE_NONE
+			if (item[i]._itype == ItemType::none
 			    || item[i]._iSelFlag == 0)
 				continue;
 			int newRotations = GetRotaryDistance(tp);
@@ -165,7 +165,7 @@ bool CanTargetMonster(int mi)
 {
 	const MonsterStruct &monst = monsters[mi].data;
 
-	if (monst._mFlags & (MFLAG_HIDDEN | MFLAG_GOLEM))
+	if (monst._mFlags & (MonsterFlag::hidden | MonsterFlag::golem))
 		return false;
 	if (monst._mhitpoints >> 6 <= 0) // dead
 		return false;
@@ -923,9 +923,9 @@ void UseBeltItem(int type)
 	for (int i = 0; i < MAXBELTITEMS; i++) {
 		const int id = AllItemsList[myplr().data.SpdList[i].IDidx].iMiscId;
 		const int spellId = AllItemsList[myplr().data.SpdList[i].IDidx].iSpell;
-		if ((type == BLT_HEALING && (id == IMISC_HEAL || id == IMISC_FULLHEAL || (id == IMISC_SCROLL && spellId == SPL_HEAL)))
-		    || (type == BLT_MANA && (id == IMISC_MANA || id == IMISC_FULLMANA))
-		    || id == IMISC_REJUV || id == IMISC_FULLREJUV) {
+		if ((type == BLT_HEALING && (id == MiscItemId::HEAL || id == MiscItemId::FULLHEAL || (id == MiscItemId::SCROLL && spellId == SPL_HEAL)))
+		    || (type == BLT_MANA && (id == MiscItemId::MANA || id == MiscItemId::FULLMANA))
+		    || id == MiscItemId::REJUV || id == MiscItemId::FULLREJUV) {
 			if (myplr().data.SpdList[i]._itype > -1) {
 				myplr().inventory.UseInvItem(INVITEM_BELT_FIRST + i);
 				break;
@@ -1062,7 +1062,7 @@ void CtrlUseInvItem()
 	else
 		Item = &myplr().data.SpdList[pcursinvitem - INVITEM_BELT_FIRST];
 
-	if ((Item->_iMiscId == IMISC_SCROLLT || Item->_iMiscId == IMISC_SCROLL) && spelldata[Item->_iSpell].sTargeted) {
+	if ((Item->_iMiscId == MiscItemId::SCROLLT || Item->_iMiscId == MiscItemId::SCROLL) && spelldata[Item->_iSpell].sTargeted) {
 		return;
 	}
 

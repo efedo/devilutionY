@@ -50,18 +50,18 @@ void StoreHealer::Spawn(int lvl)
 {
 	int i, nsi, srnd, itype;
 
-	loadPresetAttributes(0, IDI_HEAL, 1);
+	loadPresetAttributes(0, ItemIndex::HEAL, 1);
 	healitem[0] = item[0];
 	healitem[0]._iCreateInfo = lvl;
 	healitem[0]._iStatFlag = true;
 
-	loadPresetAttributes(0, IDI_FULLHEAL, 1);
+	loadPresetAttributes(0, ItemIndex::FULLHEAL, 1);
 	healitem[1] = item[0];
 	healitem[1]._iCreateInfo = lvl;
 	healitem[1]._iStatFlag = true;
 
 	if (plr.isMultiplayer()) {
-		loadPresetAttributes(0, IDI_RESURRECT, 1);
+		loadPresetAttributes(0, ItemIndex::RESURRECT, 1);
 		healitem[2] = item[0];
 		healitem[2]._iCreateInfo = lvl;
 		healitem[2]._iStatFlag = true;
@@ -81,7 +81,7 @@ void StoreHealer::Spawn(int lvl)
 		healitem[i]._iIdentified = true;
 		healitem[i]._iStatFlag = StoreStatOk(&healitem[i]);
 	}
-	for (i = nsi; i < 20; i++) { healitem[i]._itype = ITYPE_NONE; }
+	for (i = nsi; i < 20; i++) { healitem[i]._itype = ItemType::none; }
 	SortItems();
 }
 
@@ -118,7 +118,7 @@ void StoreHealer::BuyItem()
 	if (ok) { myplr().data.HoldItem._iSeed = GetRndSeed(); }
 
 	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
-	if (myplr().data.HoldItem._iMagical == ITEM_QUALITY_NORMAL)
+	if (myplr().data.HoldItem._iMagical == ItemQuality::normal)
 		myplr().data.HoldItem._iIdentified = false;
 	StoreAutoPlace();
 
@@ -131,12 +131,12 @@ void StoreHealer::BuyItem()
 	if (ok) {
 		idx = stextvhold + ((stextlhold - stextup) >> 2);
 		if (idx == 19) {
-			healitem[19]._itype = ITYPE_NONE;
+			healitem[19]._itype = ItemType::none;
 		} else {
-			for (; healitem[idx + 1]._itype != ITYPE_NONE; idx++) {
+			for (; healitem[idx + 1]._itype != ItemType::none; idx++) {
 				healitem[idx] = healitem[idx + 1];
 			}
-			healitem[idx]._itype = ITYPE_NONE;
+			healitem[idx]._itype = ItemType::none;
 		}
 		myplr().CalcPlrInv(true);
 	}
@@ -160,7 +160,7 @@ void StoreHealer::S_StartBuy()
 	OffsetSTextY(22, 6);
 
 	storenumh = 0;
-	for (i = 0; healitem[i]._itype != ITYPE_NONE; i++) { storenumh++; }
+	for (i = 0; healitem[i]._itype != ItemType::none; i++) { storenumh++; }
 	stextsmax = storenumh - 4;
 	if (stextsmax < 0) stextsmax = 0;
 }
@@ -206,7 +206,7 @@ void StoreHealer::S_ScrollBuy(int idx)
 	ClearSText(5, 21);
 	stextup = 5;
 	for (l = 5; l < 20; l += 4) {
-		if (healitem[idx]._itype != ITYPE_NONE) {
+		if (healitem[idx]._itype != ItemType::none) {
 			iclr = COL_WHITE;
 			if (!healitem[idx]._iStatFlag) { iclr = COL_RED; }
 
@@ -227,7 +227,7 @@ void StoreHealer::SortItems()
 	bool sorted;
 
 	j = 2;
-	while (healitem[j + 1]._itype != ITYPE_NONE) { j++; }
+	while (healitem[j + 1]._itype != ItemType::none) { j++; }
 
 	sorted = false;
 	while (j > 2 && !sorted) {
@@ -247,35 +247,35 @@ bool StoreHealer::ItemOk(int i)
 	bool result;
 
 	result = false;
-	if (AllItemsList[i].itype != ITYPE_MISC) return false;
+	if (AllItemsList[i].itype != ItemType::misc) return false;
 
-	if (AllItemsList[i].iMiscId == IMISC_SCROLL &&
+	if (AllItemsList[i].iMiscId == MiscItemId::SCROLL &&
 	    AllItemsList[i].iSpell == SPL_HEAL)
 		result = true;
-	if (AllItemsList[i].iMiscId == IMISC_SCROLLT &&
+	if (AllItemsList[i].iMiscId == MiscItemId::SCROLLT &&
 	    AllItemsList[i].iSpell == SPL_RESURRECT && plr.isMultiplayer())
 		result = false;
-	if (AllItemsList[i].iMiscId == IMISC_SCROLLT &&
+	if (AllItemsList[i].iMiscId == MiscItemId::SCROLLT &&
 	    AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isMultiplayer())
 		result = true;
 
 	if (plr.isSingleplayer()) {
-		if (AllItemsList[i].iMiscId == IMISC_ELIXSTR) result = true;
-		if (AllItemsList[i].iMiscId == IMISC_ELIXMAG) result = true;
-		if (AllItemsList[i].iMiscId == IMISC_ELIXDEX) result = true;
-		if (AllItemsList[i].iMiscId == IMISC_ELIXVIT) result = true;
+		if (AllItemsList[i].iMiscId == MiscItemId::ELIXSTR) result = true;
+		if (AllItemsList[i].iMiscId == MiscItemId::ELIXMAG) result = true;
+		if (AllItemsList[i].iMiscId == MiscItemId::ELIXDEX) result = true;
+		if (AllItemsList[i].iMiscId == MiscItemId::ELIXVIT) result = true;
 	}
 
 	if (AllItemsList[i].iMiscId ==
-	    IMISC_FULLHEAL)  // BUGFIX this is a duplicate with the wrong case
+	    MiscItemId::FULLHEAL)  // BUGFIX this is a duplicate with the wrong case
 		result = true;
 
-	if (AllItemsList[i].iMiscId == IMISC_REJUV) result = true;
-	if (AllItemsList[i].iMiscId == IMISC_FULLREJUV) result = true;
-	if (AllItemsList[i].iMiscId == IMISC_HEAL) result = false;
-	if (AllItemsList[i].iMiscId == IMISC_FULLHEAL) result = false;
-	if (AllItemsList[i].iMiscId == IMISC_MANA) result = false;
-	if (AllItemsList[i].iMiscId == IMISC_FULLMANA) result = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::REJUV) result = true;
+	if (AllItemsList[i].iMiscId == MiscItemId::FULLREJUV) result = true;
+	if (AllItemsList[i].iMiscId == MiscItemId::HEAL) result = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::FULLHEAL) result = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::MANA) result = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::FULLMANA) result = false;
 
 	return result;
 }

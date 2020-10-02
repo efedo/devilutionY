@@ -45,6 +45,7 @@ class GameDialog
 	int qtexty;
 	char *qtextptr;
 	bool qtextflag;
+	bool storeflag;
 	uint8_t *pMedTextCels;
 	uint8_t *pTextBoxCels;
 

@@ -189,6 +189,8 @@ add_library(devilution STATIC
   Source/actors/monsters/monster_instance.cpp
   Source/actors/monsters/monster_manager.cpp
   Source/actors/monsters/monster_type.cpp
+  Source/actors/npcs/npc.cpp
+  Source/actors/npcs/npc_manager.cpp
   Source/actors/npcs/towners.cpp
   Source/actors/player/character.cpp
   Source/actors/player/inv.cpp
@@ -215,7 +217,7 @@ add_library(devilution STATIC
   Source/gui/help.cpp
   Source/gui/interfac.cpp
   Source/gui/mainmenu.cpp
-  "Source/items/stores/store_base_interface.cpp"
+  "Source/items/stores/store_base.cpp"
   Source/items/stores/store_boy.cpp
   Source/items/stores/store_healer.cpp
   Source/items/stores/store_misc.cpp
@@ -250,8 +252,8 @@ add_library(devilution STATIC
   Source/multiplayer/msg.cpp
   Source/multiplayer/multi.cpp
   Source/multiplayer/sync.cpp
-  Source/objects/misdat.cpp
-  Source/objects/missiles.cpp
+  "Source/missiles/misdat.cpp"
+  "Source/missiles/missiles.cpp"
   Source/objects/objdat.cpp
   Source/objects/objects.cpp
   Source/pathfinding/directions.cpp
@@ -275,7 +277,7 @@ add_library(devilution STATIC
   Source/pack.cpp
   Source/pfile.cpp
   Source/plrmsg.cpp
-  Source/quests.cpp
+  "Source/quests/quests.cpp"
   Source/restrict.cpp
   Source/sha.cpp
   Source/textdat.cpp

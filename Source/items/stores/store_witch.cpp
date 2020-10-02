@@ -50,16 +50,16 @@ void StoreWitch::Spawn(int lvl)
 	int i, iCnt;
 	int idata, maxlvl;
 
-	loadPresetAttributes(0, IDI_MANA, 1);
+	loadPresetAttributes(0, ItemIndex::MANA, 1);
 
 	witchitem[0] = item[0];
 	witchitem[0]._iCreateInfo = lvl;
 	witchitem[0]._iStatFlag = true;
-	loadPresetAttributes(0, IDI_FULLMANA, 1);
+	loadPresetAttributes(0, ItemIndex::FULLMANA, 1);
 	witchitem[1] = item[0];
 	witchitem[1]._iCreateInfo = lvl;
 	witchitem[1]._iStatFlag = true;
-	loadPresetAttributes(0, IDI_PORTAL, 1);
+	loadPresetAttributes(0, ItemIndex::PORTAL, 1);
 	witchitem[2] = item[0];
 	witchitem[2]._iCreateInfo = lvl;
 	witchitem[2]._iStatFlag = true;
@@ -73,7 +73,7 @@ void StoreWitch::Spawn(int lvl)
 			loadPresetAttributes(0, idata, lvl);
 			maxlvl = -1;
 			if (random_(51, 100) <= 5) maxlvl = 2 * lvl;
-			if (maxlvl == -1 && item[0]._iMiscId == IMISC_STAFF)
+			if (maxlvl == -1 && item[0]._iMiscId == MiscItemId::STAFF)
 				maxlvl = 2 * lvl;
 			if (maxlvl != -1) GetItemBonus(0, idata, maxlvl >> 1, maxlvl, true);
 		} while (item[0]._iIvalue > 140000);
@@ -84,7 +84,7 @@ void StoreWitch::Spawn(int lvl)
 		witchitem[i]._iStatFlag = StoreStatOk(&witchitem[i]);
 	}
 
-	for (i = iCnt; i < 20; i++) witchitem[i]._itype = ITYPE_NONE;
+	for (i = iCnt; i < 20; i++) witchitem[i]._itype = ItemType::none;
 
 	SortItems();
 }
@@ -120,12 +120,12 @@ void StoreWitch::BuyItem()
 
 	if (idx >= 3) {
 		if (idx == 19) {
-			witchitem[19]._itype = ITYPE_NONE;
+			witchitem[19]._itype = ItemType::none;
 		} else {
-			for (; witchitem[idx + 1]._itype != ITYPE_NONE; idx++) {
+			for (; witchitem[idx + 1]._itype != ItemType::none; idx++) {
 				witchitem[idx] = witchitem[idx + 1];
 			}
-			witchitem[idx]._itype = ITYPE_NONE;
+			witchitem[idx]._itype = ItemType::none;
 		}
 	}
 
@@ -150,7 +150,7 @@ void StoreWitch::S_StartBuy()
 	OffsetSTextY(22, 6);
 
 	storenumh = 0;
-	for (i = 0; witchitem[i]._itype != ITYPE_NONE; i++) { storenumh++; }
+	for (i = 0; witchitem[i]._itype != ItemType::none; i++) { storenumh++; }
 	stextsmax = storenumh - 4;
 	if (stextsmax < 0) stextsmax = 0;
 }
@@ -201,7 +201,7 @@ void StoreWitch::S_ScrollBuy(int idx)
 	stextup = 5;
 
 	for (l = 5; l < 20; l += 4) {
-		if (witchitem[ls]._itype != ITYPE_NONE) {
+		if (witchitem[ls]._itype != ItemType::none) {
 			iclr = COL_WHITE;
 			if (witchitem[ls]._iMagical) { iclr = COL_BLUE; }
 
@@ -229,7 +229,7 @@ void StoreWitch::SortItems()
 	bool sorted;
 
 	j = 3;
-	while (witchitem[j + 1]._itype != ITYPE_NONE) { j++; }
+	while (witchitem[j + 1]._itype != ItemType::none) { j++; }
 
 	sorted = false;
 	while (j > 3 && !sorted) {
@@ -247,13 +247,13 @@ void StoreWitch::SortItems()
 bool StoreWitch::ItemOk(int i)
 {
 	bool rv = false;
-	if (AllItemsList[i].itype == ITYPE_MISC) rv = true;
-	if (AllItemsList[i].itype == ITYPE_STAFF) rv = true;
-	if (AllItemsList[i].iMiscId == IMISC_MANA) rv = false;
-	if (AllItemsList[i].iMiscId == IMISC_FULLMANA) rv = false;
+	if (AllItemsList[i].itype == ItemType::misc) rv = true;
+	if (AllItemsList[i].itype == ItemType::staff) rv = true;
+	if (AllItemsList[i].iMiscId == MiscItemId::MANA) rv = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::FULLMANA) rv = false;
 	if (AllItemsList[i].iSpell == SPL_TOWN) rv = false;
-	if (AllItemsList[i].iMiscId == IMISC_FULLHEAL) rv = false;
-	if (AllItemsList[i].iMiscId == IMISC_HEAL) rv = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::FULLHEAL) rv = false;
+	if (AllItemsList[i].iMiscId == MiscItemId::HEAL) rv = false;
 	if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
 		rv = false;
 	if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
@@ -271,14 +271,14 @@ void StoreWitch::S_StartSell()
 	sellok = false;
 	storenumh = 0;
 
-	for (i = 0; i < 48; i++) storehold[i]._itype = ITYPE_NONE;
+	for (i = 0; i < 48; i++) storehold[i]._itype = ItemType::none;
 
 	for (i = 0; i < myplr().data._pNumInv; i++) {
 		if (WitchSellOk(i)) {
 			sellok = true;
 			storehold[storenumh] = myplr().data.InvList[i];
 
-			if (storehold[storenumh]._iMagical != ITEM_QUALITY_NORMAL &&
+			if (storehold[storenumh]._iMagical != ItemQuality::normal &&
 			    storehold[storenumh]._iIdentified)
 				storehold[storenumh]._ivalue = storehold[storenumh]._iIvalue;
 
@@ -291,12 +291,12 @@ void StoreWitch::S_StartSell()
 	}
 
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (myplr().data.SpdList[i]._itype != ITYPE_NONE &&
+		if (myplr().data.SpdList[i]._itype != ItemType::none &&
 		    WitchSellOk(-(i + 1))) {
 			sellok = true;
 			storehold[storenumh] = myplr().data.SpdList[i];
 
-			if (storehold[storenumh]._iMagical != ITEM_QUALITY_NORMAL &&
+			if (storehold[storenumh]._iMagical != ItemQuality::normal &&
 			    storehold[storenumh]._iIdentified)
 				storehold[storenumh]._ivalue = storehold[storenumh]._iIvalue;
 
@@ -364,10 +364,10 @@ bool StoreWitch::SellOk(int i)
 	else
 		pI = &myplr().data.SpdList[-(i + 1)];
 
-	if (pI->_itype == ITYPE_MISC) rv = true;
-	if (pI->_itype == ITYPE_STAFF) rv = true;
-	if (pI->IDidx >= IDI_FIRSTQUEST && pI->IDidx <= IDI_LASTQUEST) rv = false;
-	if (pI->IDidx == IDI_LAZSTAFF) rv = false;
+	if (pI->_itype == ItemType::misc) rv = true;
+	if (pI->_itype == ItemType::staff) rv = true;
+	if (pI->IDidx >= ItemIndex::FIRSTQUEST && pI->IDidx <= ItemIndex::LASTQUEST) rv = false;
+	if (pI->IDidx == ItemIndex::LAZSTAFF) rv = false;
 	return rv;
 }
 
@@ -417,7 +417,7 @@ bool StoreWitch::RechargeOk(int i)
 	bool rv;
 
 	rv = false;
-	if (myplr().data.InvList[i]._itype == ITYPE_STAFF &&
+	if (myplr().data.InvList[i]._itype == ItemType::staff &&
 	    myplr().data.InvList[i]._iCharges !=
 	        myplr().data.InvList[i]._iMaxCharges) {
 		rv = true;
@@ -450,9 +450,9 @@ void StoreWitch::S_StartRecharge()
 	rechargeok = false;
 	storenumh = 0;
 
-	for (i = 0; i < 48; i++) { storehold[i]._itype = ITYPE_NONE; }
+	for (i = 0; i < 48; i++) { storehold[i]._itype = ItemType::none; }
 
-	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_STAFF &&
+	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::staff &&
 	    myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges !=
 	        myplr().data.InvBody[INVLOC_HAND_LEFT]._iMaxCharges) {
 		rechargeok = true;

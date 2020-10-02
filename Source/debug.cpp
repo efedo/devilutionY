@@ -55,10 +55,10 @@ void GiveGoldCheat()
 	for (i = 0; i < MAXINVITEMS; i++) {
 		if (!myplr().data.InvGrid[i]) {
 			ni = myplr().data._pNumInv++;
-			SetPlrHandItem(&myplr().data.InvList[ni], IDI_GOLD);
+			SetPlrHandItem(&myplr().data.InvList[ni], ItemIndex::GOLD);
 			GetPlrHandSeed(&myplr().data.InvList[ni]);
 			myplr().data.InvList[ni]._ivalue = GOLD_MAX_LIMIT;
-			myplr().data.InvList[ni]._iCurs = ICURS_GOLD_LARGE;
+			myplr().data.InvList[ni]._iCurs = ItemCursor::GOLD_LARGE;
 			myplr().data._pGold += GOLD_MAX_LIMIT;
 			myplr().data.InvGrid[i] = myplr().data._pNumInv;
 		}
@@ -72,12 +72,12 @@ void StoresCheat()
 	numpremium = 0;
 
 	for (i = 0; i < SMITH_PREMIUM_ITEMS; i++)
-		premiumitem[i]._itype = ITYPE_NONE;
+		premiumitem[i]._itype = ItemType::none;
 
 	SpawnPremium(30);
 
 	for (i = 0; i < 20; i++)
-		witchitem[i]._itype = ITYPE_NONE;
+		witchitem[i]._itype = ItemType::none;
 
 	SpawnWitch(30);
 }
@@ -89,13 +89,13 @@ void TakeGoldCheat()
 
 	for (i = 0; i < MAXINVITEMS; i++) {
 		ig = myplr().data.InvGrid[i];
-		if (ig > 0 && myplr().data.InvList[ig - 1]._itype == ITYPE_GOLD)
+		if (ig > 0 && myplr().data.InvList[ig - 1]._itype == ItemType::gold)
 			myplr().inventory.RemoveInvItem(ig - 1);
 	}
 
 	for (i = 0; i < MAXBELTITEMS; i++) {
-		if (myplr().data.SpdList[i]._itype == ITYPE_GOLD)
-			myplr().data.SpdList[i]._itype = ITYPE_NONE;
+		if (myplr().data.SpdList[i]._itype == ItemType::gold)
+			myplr().data.SpdList[i]._itype = ItemType::none;
 	}
 
 	myplr().data._pGold = 0;

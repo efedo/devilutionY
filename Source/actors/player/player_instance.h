@@ -159,7 +159,7 @@ public:
 	void ArmorDur();             // reduces armor dur
 
 	// Misc
-	ItemStruct *PlrHasItem(int item, int *i);
+	Item *HasItem(int item);
 	void ValidatePlayer();
 
 	// Not yet fixed
