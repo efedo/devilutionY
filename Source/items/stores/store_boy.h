@@ -1,6 +1,6 @@
 // HEADER_GOES_HERE
-#ifndef __STORE_BOY_H__
-#define __STORE_BOY_H__
+#ifndef __StoreTalkId::BOY_H__
+#define __StoreTalkId::BOY_H__
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -25,4 +25,4 @@ extern StoreBoy boyStore;
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __STORE_BOY_H__ */
+#endif /* __StoreTalkId::BOY_H__ */

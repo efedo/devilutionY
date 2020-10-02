@@ -27,25 +27,25 @@ void StoreSmith::S_Enter()
 		case 10:
 			talker = 0;
 			stextlhold = 10;
-			stextshold = STORE_SMITH;
+			stextshold = StoreTalkId::SMITH;
 			gossipstart = TEXT_GRISWOLD2;
 			gossipend = TEXT_GRISWOLD13;
-			StartStore(STORE_GOSSIP);
+			StartStore(StoreTalkId::GOSSIP);
 			break;
 		case 12:
-			StartStore(STORE_SBUY);
+			StartStore(StoreTalkId::SBUY);
 			break;
 		case 14:
-			StartStore(STORE_SPBUY);
+			StartStore(StoreTalkId::SPBUY);
 			break;
 		case 16:
-			StartStore(STORE_SSELL);
+			StartStore(StoreTalkId::SSELL);
 			break;
 		case 18:
-			StartStore(STORE_SREPAIR);
+			StartStore(StoreTalkId::SREPAIR);
 			break;
 		case 20:
-			stextflag = STORE_NONE;
+			stextflag = StoreTalkId::NONE;
 			break;
 	}
 }
@@ -202,15 +202,15 @@ void StoreSmith::S_BuyEnter()
 	bool done;
 
 	if (stextsel == 22) {
-		StartStore(STORE_SMITH);
+		StartStore(StoreTalkId::SMITH);
 		stextsel = 12;
 	} else {
 		stextlhold = stextsel;
 		stextvhold = stextsval;
-		stextshold = STORE_SBUY;
+		stextshold = StoreTalkId::SBUY;
 		idx = stextsval + ((stextsel - stextup) >> 2);
 		if (myplr().data._pGold < smithitem[idx]._iIvalue) {
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = smithitem[idx];
 			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
@@ -221,9 +221,9 @@ void StoreSmith::S_BuyEnter()
 				                                   false);
 			}
 			if (done)
-				StartStore(STORE_CONFIRM);
+				StartStore(StoreTalkId::CONFIRM);
 			else
-				StartStore(STORE_NOROOM);
+				StartStore(StoreTalkId::NOROOM);
 			SetCursor_(CURSOR_HAND);
 		}
 	}
@@ -311,10 +311,10 @@ void StoreSmith::S_PremiumBuyEnter()
 	bool done;
 
 	if (stextsel == 22) {
-		StartStore(STORE_SMITH);
+		StartStore(StoreTalkId::SMITH);
 		stextsel = 14;
 	} else {
-		stextshold = STORE_SPBUY;
+		stextshold = StoreTalkId::SPBUY;
 		stextlhold = stextsel;
 		stextvhold = stextsval;
 		xx = stextsval + ((stextsel - stextup) >> 2);
@@ -326,7 +326,7 @@ void StoreSmith::S_PremiumBuyEnter()
 			}
 		}
 		if (myplr().data._pGold < premiumitem[idx]._iIvalue) {
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = premiumitem[idx];
 			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
@@ -336,9 +336,9 @@ void StoreSmith::S_PremiumBuyEnter()
 				                                   false);
 			}
 			if (done)
-				StartStore(STORE_CONFIRM);
+				StartStore(StoreTalkId::CONFIRM);
 			else
-				StartStore(STORE_NOROOM);
+				StartStore(StoreTalkId::NOROOM);
 			SetCursor_(CURSOR_HAND);
 		}
 	}
@@ -354,7 +354,7 @@ bool StoreSmith::S_StartPremiumBuy()
 		if (premiumitem[i]._itype != ItemType::none) storenumh++;
 	}
 	if (!storenumh) {
-		StartStore(STORE_SMITH);
+		StartStore(StoreTalkId::SMITH);
 		stextsel = 14;
 		return false;
 	}
@@ -498,19 +498,19 @@ void StoreSmith::S_SellEnter()
 	int idx;
 
 	if (stextsel == 22) {
-		StartStore(STORE_SMITH);
+		StartStore(StoreTalkId::SMITH);
 		stextsel = 16;
 	} else {
 		stextlhold = stextsel;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		stextshold = STORE_SSELL;
+		stextshold = StoreTalkId::SSELL;
 		stextvhold = stextsval;
 		myplr().data.HoldItem = storehold[idx];
 
 		if (StoreGoldFit(idx))
-			StartStore(STORE_CONFIRM);
+			StartStore(StoreTalkId::CONFIRM);
 		else
-			StartStore(STORE_NOROOM);
+			StartStore(StoreTalkId::NOROOM);
 	}
 }
 
@@ -593,18 +593,18 @@ void StoreSmith::S_RepairEnter()
 	int idx;
 
 	if (stextsel == 22) {
-		StartStore(STORE_SMITH);
+		StartStore(StoreTalkId::SMITH);
 		stextsel = 18;
 	} else {
-		stextshold = STORE_SREPAIR;
+		stextshold = StoreTalkId::SREPAIR;
 		stextlhold = stextsel;
 		stextvhold = stextsval;
 		idx = stextsval + ((stextsel - stextup) >> 2);
 		myplr().data.HoldItem = storehold[idx];
 		if (myplr().data._pGold < storehold[idx]._iIvalue)
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		else
-			StartStore(STORE_CONFIRM);
+			StartStore(StoreTalkId::CONFIRM);
 	}
 }
 

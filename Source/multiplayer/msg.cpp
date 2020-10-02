@@ -488,7 +488,7 @@ void DeltaLoadLevel()
 				if (!sgLevels[lvl.currlevel].monster[i]._mhitpoints) {
 					monsters[i].data._mold = pos;
 					monsters[i].M_ClearSquares();
-					if (monsters[i].data._mAi != AI_DIABLO) {
+					if (monsters[i].data._mAi != MonstAi::DIABLO) {
 						if (!monsters[i].data._uniqtype)
 							/// ASSERT: assert(monsters[i].data.MType != NULL);
 							AddDead(monsters[i].data._m, monsters[i].data.MType->mdeadval, monsters[i].data._mdir);
@@ -502,7 +502,7 @@ void DeltaLoadLevel()
 					if (monsters[i].data._m.x && monsters[i].data._m.x != 1 || monsters[i].data._m.y)
 						grid[monsters[i].data._m.x][monsters[i].data._m.y].setActor(i);
 					if (i < MAX_PLRS) {
-						monsters[i].MAI_Golum();
+						monsters[i].MMonstAi::Golum();
 						monsters[i].data._mFlags |= (MonsterFlag::targets_monster | MonsterFlag::golem);
 					} else {
 						monsters[i].M_StartStand(monsters[i].data._mdir);
@@ -2110,13 +2110,13 @@ DWORD On_AWAKEGOLEM(TCmd *pCmd, int pnum)
 		bool addGolem = true;
 		for (i = 0; i < nummissiles; i++) {
 			int mi = missileactive[i];
-			if (missile[mi]._mitype == MIS_GOLEM && missile[mi]._misource == pnum) {
+			if (missile[mi]._mitype == MissileType::GOLEM && missile[mi]._misource == pnum) {
 				addGolem = false;
 				// BUGFIX: break, don't need to check the rest
 			}
 		}
 		if (addGolem)
-			AddMissile(plr[pnum].pos(), { p->_mx, p->_my }, Dir(p->_mdir), MIS_GOLEM, 0, pnum, 0, 1);
+			AddMissile(plr[pnum].pos(), { p->_mx, p->_my }, Dir(p->_mdir), MissileType::GOLEM, 0, pnum, 0, 1);
 	}
 
 	return sizeof(*p);
@@ -2387,7 +2387,7 @@ DWORD On_ACTIVATEPORTAL(TCmd *pCmd, int pnum)
 				bool addPortal = true;
 				for (i = 0; i < nummissiles; i++) {
 					int mi = missileactive[i];
-					if (missile[mi]._mitype == MIS_TOWN && missile[mi]._misource == pnum) {
+					if (missile[mi]._mitype == MissileType::TOWN && missile[mi]._misource == pnum) {
 						addPortal = false;
 						// BUGFIX: break
 					}
@@ -2528,7 +2528,7 @@ DWORD On_ENDSHIELD(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && pnum != myplr() && lvl.currlevel == plr[pnum].data.plrlevel) {
 		for (i = 0; i < nummissiles; i++) {
 			int mi = missileactive[i];
-			if (missile[mi]._mitype == MIS_MANASHIELD && missile[mi]._misource == pnum) {
+			if (missile[mi]._mitype == MissileType::MANASHIELD && missile[mi]._misource == pnum) {
 				ClearMissileSpot(mi);
 				DeleteMissile(mi, i);
 			}

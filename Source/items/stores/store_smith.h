@@ -1,6 +1,6 @@
 // HEADER_GOES_HERE
-#ifndef __STORE_SMITH_H__
-#define __STORE_SMITH_H__
+#ifndef __StoreTalkId::SMITH_H__
+#define __StoreTalkId::SMITH_H__
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -52,4 +52,4 @@ extern StoreSmith smithStore;
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __STORE_SMITH_H__ */
+#endif /* __StoreTalkId::SMITH_H__ */

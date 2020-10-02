@@ -25,8 +25,8 @@ void InitDead()
 	for (i = 0; i < nummtypes; i++) {
 		if (mtypes[beastiary[i].data.mtype] == 0) {
 			for (d = 0; d < 8; d++)
-				dead[nd]._deadData[d] = beastiary[i].data.Anims[MA_DEATH].Data[d];
-			dead[nd]._deadFrame = beastiary[i].data.Anims[MA_DEATH].Frames;
+				dead[nd]._deadData[d] = beastiary[i].data.Anims[MonstAnim::DEATH].Data[d];
+			dead[nd]._deadFrame = beastiary[i].data.Anims[MonstAnim::DEATH].Frames;
 			dead[nd]._deadWidth = beastiary[i].data.width;
 			dead[nd]._deadWidth2 = beastiary[i].data.width2;
 			dead[nd]._deadtrans = 0;
@@ -37,7 +37,7 @@ void InitDead()
 	}
 
 	for (d = 0; d < 8; d++)
-		dead[nd]._deadData[d] = misfiledata[MFILE_BLODBUR].mAnimData[0];
+		dead[nd]._deadData[d] = misfiledata[MissileGraphic::BLODBUR].mAnimData[0];
 	dead[nd]._deadFrame = 8;
 	dead[nd]._deadWidth = 128;
 	dead[nd]._deadWidth2 = 32;
@@ -46,7 +46,7 @@ void InitDead()
 	nd++;
 
 	for (d = 0; d < 8; d++)
-		dead[nd]._deadData[d] = misfiledata[MFILE_SHATTER1].mAnimData[0];
+		dead[nd]._deadData[d] = misfiledata[MissileGraphic::SHATTER1].mAnimData[0];
 	dead[nd]._deadFrame = 12;
 	dead[nd]._deadWidth = 128;
 	dead[nd]._deadWidth2 = 32;
@@ -58,8 +58,8 @@ void InitDead()
 		mi = monstactive[i];
 		if (monsters[mi].data._uniqtype != 0) {
 			for (d = 0; d < 8; d++)
-				dead[nd]._deadData[d] = monsters[mi].data.MType->Anims[MA_DEATH].Data[d];
-			dead[nd]._deadFrame = monsters[mi].data.MType->Anims[MA_DEATH].Frames;
+				dead[nd]._deadData[d] = monsters[mi].data.MType->Anims[MonstAnim::DEATH].Data[d];
+			dead[nd]._deadFrame = monsters[mi].data.MType->Anims[MonstAnim::DEATH].Frames;
 			dead[nd]._deadWidth = monsters[mi].data.MType->width;
 			dead[nd]._deadWidth2 = monsters[mi].data.MType->width2;
 			dead[nd]._deadtrans = monsters[mi].data._uniqtrans + 4;

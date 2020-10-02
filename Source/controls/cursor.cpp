@@ -132,7 +132,7 @@ void CheckTown()
 
 	for (i = 0; i < nummissiles; i++) {
 		mx = missileactive[i];
-		if (missile[mx]._mitype == MIS_TOWN) {
+		if (missile[mx]._mitype == MissileType::TOWN) {
 			if (cursm.x == missile[mx]._mi.x - 1 && cursm.y == missile[mx]._mi.y
 			    || cursm.x == missile[mx]._mi.x && cursm.y == missile[mx]._mi.y - 1
 			    || cursm.x == missile[mx]._mi.x - 1 && cursm.y == missile[mx]._mi.y - 1
@@ -157,7 +157,7 @@ void CheckRportal()
 
 	for (i = 0; i < nummissiles; i++) {
 		mx = missileactive[i];
-		if (missile[mx]._mitype == MIS_RPORTAL) {
+		if (missile[mx]._mitype == MissileType::RPORTAL) {
 			if (cursm.x == missile[mx]._mi.x - 1 && cursm.y == missile[mx]._mi.y
 			    || cursm.x == missile[mx]._mi.x && cursm.y == missile[mx]._mi.y - 1
 			    || cursm.x == missile[mx]._mi.x - 1 && cursm.y == missile[mx]._mi.y - 1

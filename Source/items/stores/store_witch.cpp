@@ -25,22 +25,22 @@ void StoreWitch::S_Enter()
 		case 12:
 			stextlhold = 12;
 			talker = 6;
-			stextshold = STORE_WITCH;
+			stextshold = StoreTalkId::WITCH;
 			gossipstart = TEXT_ADRIA2;
 			gossipend = TEXT_ADRIA13;
-			StartStore(STORE_GOSSIP);
+			StartStore(StoreTalkId::GOSSIP);
 			return;
 		case 14:
-			StartStore(STORE_WBUY);
+			StartStore(StoreTalkId::WBUY);
 			return;
 		case 16:
-			StartStore(STORE_WSELL);
+			StartStore(StoreTalkId::WSELL);
 			return;
 		case 18:
-			StartStore(STORE_WRECHARGE);
+			StartStore(StoreTalkId::WRECHARGE);
 			return;
 		case 20:
-			stextflag = STORE_NONE;
+			stextflag = StoreTalkId::NONE;
 			break;
 	}
 }
@@ -161,16 +161,16 @@ void StoreWitch::S_BuyEnter()
 	bool done;
 
 	if (stextsel == 22) {
-		StartStore(STORE_WITCH);
+		StartStore(StoreTalkId::WITCH);
 		stextsel = 14;
 	} else {
 		stextlhold = stextsel;
 		stextvhold = stextsval;
-		stextshold = STORE_WBUY;
+		stextshold = StoreTalkId::WBUY;
 		idx = stextsval + ((stextsel - stextup) >> 2);
 
 		if (myplr().data._pGold < witchitem[idx]._iIvalue) {
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = witchitem[idx];
 			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
@@ -182,9 +182,9 @@ void StoreWitch::S_BuyEnter()
 			}
 
 			if (done)
-				StartStore(STORE_CONFIRM);
+				StartStore(StoreTalkId::CONFIRM);
 			else
-				StartStore(STORE_NOROOM);
+				StartStore(StoreTalkId::NOROOM);
 
 			SetCursor_(CURSOR_HAND);
 		}
@@ -337,18 +337,18 @@ void StoreWitch::S_SellEnter()
 	int idx;
 
 	if (stextsel == 22) {
-		StartStore(STORE_WITCH);
+		StartStore(StoreTalkId::WITCH);
 		stextsel = 16;
 	} else {
 		stextlhold = stextsel;
 		idx = stextsval + ((stextsel - stextup) >> 2);
-		stextshold = STORE_WSELL;
+		stextshold = StoreTalkId::WSELL;
 		stextvhold = stextsval;
 		myplr().data.HoldItem = storehold[idx];
 		if (StoreGoldFit(idx))
-			StartStore(STORE_CONFIRM);
+			StartStore(StoreTalkId::CONFIRM);
 		else
-			StartStore(STORE_NOROOM);
+			StartStore(StoreTalkId::NOROOM);
 	}
 }
 
@@ -397,18 +397,18 @@ void StoreWitch::S_RechargeEnter()
 	int idx;
 
 	if (stextsel == 22) {
-		StartStore(STORE_WITCH);
+		StartStore(StoreTalkId::WITCH);
 		stextsel = 18;
 	} else {
-		stextshold = STORE_WRECHARGE;
+		stextshold = StoreTalkId::WRECHARGE;
 		stextlhold = stextsel;
 		stextvhold = stextsval;
 		idx = stextsval + ((stextsel - stextup) >> 2);
 		myplr().data.HoldItem = storehold[idx];
 		if (myplr().data._pGold < storehold[idx]._iIvalue)
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		else
-			StartStore(STORE_CONFIRM);
+			StartStore(StoreTalkId::CONFIRM);
 	}
 }
 

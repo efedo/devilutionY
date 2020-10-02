@@ -151,100 +151,99 @@ enum class MonsterFlag {
 	nolifesteal = 0x1000
 };
 
-typedef enum monster_goal {
-	MGOAL_NORMAL = 1,
-	MGOAL_RETREAT = 2,
-	MGOAL_HEALING = 3,
-	MGOAL_MOVE = 4,
-	MGOAL_SHOOT = 5,
-	MGOAL_INQUIRING = 6,
-	MGOAL_TALKING = 7,
-} monster_goal;
+enum class MonsterGoal {
+	NORMAL = 1,
+	RETREAT = 2,
+	HEALING = 3,
+	MOVE = 4,
+	SHOOT = 5,
+	INQUIRING = 6,
+	TALKING = 7,
+};
 
-typedef enum monster_resistance {
-	RESIST_MAGIC = 0x01,
-	RESIST_FIRE = 0x02,
-	RESIST_LIGHTNING = 0x04,
-	IMUNE_MAGIC = 0x08,
-	IMUNE_FIRE = 0x10,
-	IMUNE_LIGHTNING = 0x20,
-	IMUNE_NULL_40 = 0x40,
-	IMUNE_ACID = 0x80,
-} monster_resistance;
+enum class MonsterResist {
+	resist_magic = 0x01,
+	resist_fire = 0x02,
+	resist_lightning = 0x04,
+	imune_magic = 0x08,
+	imune_fire = 0x10,
+	imune_lightning = 0x20,
+	null_40 = 0x40,
+	imune_acid = 0x80,
+};
 
+enum class MonsterMode {
+	STAND = 0,
+	WALK = 1,
+	WALK2 = 2,
+	WALK3 = 3,
+	ATTACK = 4,
+	GOTHIT = 5,
+	DEATH = 6,
+	SATTACK = 7,
+	FADEIN = 8,
+	FADEOUT = 9,
+	RATTACK = 10,
+	SPSTAND = 11,
+	RSPATTACK = 12,
+	DELAY = 13,
+	CHARGE = 14,
+	STONE = 15,
+	HEAL = 16,
+	TALK = 17,
+};
 
-typedef enum MON_MODE {
-	MM_STAND = 0,
-	MM_WALK = 1,
-	MM_WALK2 = 2,
-	MM_WALK3 = 3,
-	MM_ATTACK = 4,
-	MM_GOTHIT = 5,
-	MM_DEATH = 6,
-	MM_SATTACK = 7,
-	MM_FADEIN = 8,
-	MM_FADEOUT = 9,
-	MM_RATTACK = 10,
-	MM_SPSTAND = 11,
-	MM_RSPATTACK = 12,
-	MM_DELAY = 13,
-	MM_CHARGE = 14,
-	MM_STONE = 15,
-	MM_HEAL = 16,
-	MM_TALK = 17,
-} MON_MODE;
-
-typedef enum MON_ANIM {
-	MA_STAND = 0,
-	MA_WALK = 1,
-	MA_ATTACK = 2,
-	MA_GOTHIT = 3,
-	MA_DEATH = 4,
-	MA_SPECIAL = 5,
-} MON_ANIM;
-
+enum class MonstAnim {
+	STAND = 0,
+	WALK = 1,
+	ATTACK = 2,
+	GOTHIT = 3,
+	DEATH = 4,
+	SPECIAL = 5,
+};
 
 
-typedef enum _mai_id {
-	AI_ZOMBIE = 0,
-	AI_FAT = 1,
-	AI_SKELSD = 2,
-	AI_SKELBOW = 3,
-	AI_SCAV = 4,
-	AI_RHINO = 5,
-	AI_GOATMC = 6,
-	AI_GOATBOW = 7,
-	AI_FALLEN = 8,
-	AI_MAGMA = 9,
-	AI_SKELKING = 10,
-	AI_BAT = 11,
-	AI_GARG = 12,
-	AI_CLEAVER = 13,
-	AI_SUCC = 14,
-	AI_SNEAK = 15,
-	AI_STORM = 16,
-	AI_FIREMAN = 17,
-	AI_GARBUD = 18,
-	AI_ACID = 19,
-	AI_ACIDUNIQ = 20,
-	AI_GOLUM = 21,
-	AI_ZHAR = 22,
-	AI_SNOTSPIL = 23,
-	AI_SNAKE = 24,
-	AI_COUNSLR = 25,
-	AI_MEGA = 26,
-	AI_DIABLO = 27,
-	AI_LAZURUS = 28,
-	AI_LAZHELP = 29,
-	AI_LACHDAN = 30,
-	AI_WARLORD = 31,
-} _mai_id;
 
-typedef enum _mc_id {
-	MC_UNDEAD = 0,
-	MC_DEMON = 1,
-	MC_ANIMAL = 2,
-} _mc_id;
+enum class MonstAi {
+	ZOMBIE = 0,
+	FAT = 1,
+	SKELSD = 2,
+	SKELBOW = 3,
+	SCAV = 4,
+	RHINO = 5,
+	GOATMC = 6,
+	GOATBOW = 7,
+	FALLEN = 8,
+	MAGMA = 9,
+	SKELKING = 10,
+	BAT = 11,
+	GARG = 12,
+	CLEAVER = 13,
+	SUCC = 14,
+	SNEAK = 15,
+	STORM = 16,
+	FIREMAN = 17,
+	GARBUD = 18,
+	ACID = 19,
+	ACIDUNIQ = 20,
+	GOLUM = 21,
+	ZHAR = 22,
+	SNOTSPIL = 23,
+	SNAKE = 24,
+	COUNSLR = 25,
+	MEGA = 26,
+	DIABLO = 27,
+	LAZURUS = 28,
+	LAZHELP = 29,
+	LACHDAN = 30,
+	WARLORD = 31,
+};
+
+enum class MonstClassId {
+	undead = 0,
+	demon = 1,
+	animal = 2,
+};
 
 
 

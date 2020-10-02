@@ -34,7 +34,7 @@ void NpcManager::InitCows()
 		x = TownCowX[i];
 		y = TownCowY[i];
 		dir = TownCowDir[i];
-		cow[i].InitTownerInfo(128, false, TOWN_COW, x, y, -1, 10);
+		cow[i].InitTownerInfo(128, false, TownerId::COW, x, y, -1, 10);
 		cow[i]._tNData = Cow::pCowCels;
 		SetTownerGPtrs(cow[i]._tNData, cow[i]._tNAnim);
 		cow[i]._tNFrames = 12;

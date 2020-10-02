@@ -1,6 +1,6 @@
 // HEADER_GOES_HERE
-#ifndef __STORE_MISC_H__
-#define __STORE_MISC_H__
+#ifndef __StoreTalkId::MISC_H__
+#define __StoreTalkId::MISC_H__
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -14,4 +14,4 @@ void S_DrunkEnter();
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __STORE_MISC_H__ */
+#endif /* __StoreTalkId::MISC_H__ */

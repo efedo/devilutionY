@@ -86,7 +86,7 @@ void ini_create(char * ininame)
       "; default gamma correction\n"
       "; valid value : 0.60, 0.62, [...] 0.98, 1.00, 1.10, 1.20, [...], 3.00\n"
       "; -------------------------------------------------------------------\n"
-      "gamma_correction = 1.30\n"
+      "gamMonstAnim::correction = 1.30\n"
       "\n"
       "\n"
       "; does the editor allow you to use Type 2 objects of higher act ?\n"

@@ -18,7 +18,7 @@ void MonsterManager::ClrAllMonsters()
 		list[i].ClearMVars();
 		Monst->mName = "Invalid Monster";
 		Monst->_mgoal = 0;
-		Monst->_mmode = MM_STAND;
+		Monst->_mmode = MonsterMode::STAND;
 		Monst->_mVar1 = 0;
 		Monst->_mVar2 = 0;
 		Monst->_m = { 0, 0 };
@@ -187,17 +187,17 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	Monst->mlid = AddLight(Monst->_m, 3);
 
 	if (plr.isMultiplayer()) {
-		if (Monst->_mAi == AI_LAZHELP)
+		if (Monst->_mAi == MonstAi::LAZHELP)
 			Monst->mtalkmsg = 0;
-		if (Monst->_mAi != AI_LAZURUS || quests[Q_BETRAYER]._qvar1 <= 3) {
+		if (Monst->_mAi != MonstAi::LAZURUS || quests[Q_BETRAYER]._qvar1 <= 3) {
 			if (Monst->mtalkmsg) {
-				Monst->_mgoal = MGOAL_INQUIRING;
+				Monst->_mgoal = MonsterGoal::INQUIRING;
 			}
 		} else {
-			Monst->_mgoal = MGOAL_NORMAL;
+			Monst->_mgoal = MonsterGoal::NORMAL;
 		}
 	} else if (Monst->mtalkmsg)
-		Monst->_mgoal = MGOAL_INQUIRING;
+		Monst->_mgoal = MonsterGoal::INQUIRING;
 
 	if (gnDifficulty == DIFF_NIGHTMARE) {
 		Monst->_mmaxhp = 3 * Monst->_mmaxhp + 64;
@@ -240,11 +240,11 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		PlaceGroup(miniontype, unpackfilesize, Uniq->mUnqAttr, nummonsters - 1);
 	}
 
-	if (Monst->_mAi != AI_GARG) {
-		Monst->_mAnimData = Monst->MType->Anims[MA_STAND].Data[int(Monst->_mdir)];
+	if (Monst->_mAi != MonstAi::GARG) {
+		Monst->_mAnimData = Monst->MType->Anims[MonstAnim::STAND].Data[int(Monst->_mdir)];
 		Monst->_mAnimFrame = random_(88, Monst->_mAnimLen - 1) + 1;
 		Monst->_mFlags &= ~MonsterFlag::allow_special;
-		Monst->_mmode = MM_STAND;
+		Monst->_mmode = MonsterMode::STAND;
 	}
 }
 
@@ -366,11 +366,11 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 					list[nummonsters].data._mAi = list[leader].data._mAi;
 				}
 
-				if (list[nummonsters].data._mAi != AI_GARG) {
-					list[nummonsters].data._mAnimData = list[nummonsters].data.MType->Anims[MA_STAND].Data[int(list[nummonsters].data._mdir)];
+				if (list[nummonsters].data._mAi != MonstAi::GARG) {
+					list[nummonsters].data._mAnimData = list[nummonsters].data.MType->Anims[MonstAnim::STAND].Data[int(list[nummonsters].data._mdir)];
 					list[nummonsters].data._mAnimFrame = random_(88, list[nummonsters].data._mAnimLen - 1) + 1;
 					list[nummonsters].data._mFlags &= ~MonsterFlag::allow_special;
-					list[nummonsters].data._mmode = MM_STAND;
+					list[nummonsters].data._mmode = MonsterMode::STAND;
 				}
 			}
 			nummonsters++;

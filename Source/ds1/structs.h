@@ -471,7 +471,7 @@ typedef struct GLB_DS1EDIT_S
    BITMAP        * screen_buff;
    BITMAP        * video_page[2];
    int           video_page_num;
-   UBYTE         gamma_table[GC_MAX][256];
+   UBYTE         gamMonstAnim::table[GC_MAX][256];
    GC_ENUM       cur_gamma;
    volatile int  old_fps;
    volatile int  fps;

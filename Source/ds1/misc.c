@@ -32,9 +32,9 @@ void misc_pal_d2_2_vga(int pal_idx)
       r = glb_ds1edit.d2_pal[pal_idx][ridx];
       g = glb_ds1edit.d2_pal[pal_idx][ridx + 1];
       b = glb_ds1edit.d2_pal[pal_idx][ridx + 2];
-      r = glb_ds1edit.gamma_table[glb_ds1edit.cur_gamma][r];
-      g = glb_ds1edit.gamma_table[glb_ds1edit.cur_gamma][g];
-      b = glb_ds1edit.gamma_table[glb_ds1edit.cur_gamma][b];
+      r = glb_ds1edit.gamMonstAnim::table[glb_ds1edit.cur_gamma][r];
+      g = glb_ds1edit.gamMonstAnim::table[glb_ds1edit.cur_gamma][g];
+      b = glb_ds1edit.gamMonstAnim::table[glb_ds1edit.cur_gamma][b];
       glb_ds1edit.vga_pal[pal_idx][i].r = r >> 2;
       glb_ds1edit.vga_pal[pal_idx][i].g = g >> 2;
       glb_ds1edit.vga_pal[pal_idx][i].b = b >> 2;
@@ -436,14 +436,14 @@ void misc_read_gamma(void)
 {
    FILE * in;
    int  gt, i, v;
-   char tmp[150], gamma_path[100];
+   char tmp[150], gamMonstAnim::path[100];
 
-   sprintf(gamma_path, "%s%s", glb_ds1edit_data_dir, "gamma.dat");
-   fprintf(stderr, "read gamma correction table (%s)\n", gamma_path);
-   in = fopen(gamma_path, "rb");
+   sprintf(gamMonstAnim::path, "%s%s", glb_ds1edit_data_dir, "gamma.dat");
+   fprintf(stderr, "read gamma correction table (%s)\n", gamMonstAnim::path);
+   in = fopen(gamMonstAnim::path, "rb");
    if (in == NULL)
    {
-      sprintf(tmp, "misc_read_gamma() : can't open %s", gamma_path);
+      sprintf(tmp, "misc_read_gamma() : can't open %s", gamMonstAnim::path);
       ds1edit_error(tmp);
    }
    for (gt=GC_060; gt<GC_MAX; gt++)
@@ -451,7 +451,7 @@ void misc_read_gamma(void)
       for (i=0; i<256; i++)
       {
          v = fgetc(in);
-         glb_ds1edit.gamma_table[gt][i] = v;
+         glb_ds1edit.gamMonstAnim::table[gt][i] = v;
       }
    }
    fclose(in);
@@ -492,9 +492,9 @@ void misc_pcx_put_d2_palette(char * name, int pal_idx)
       r = glb_ds1edit.d2_pal[pal_idx][ridx];
       g = glb_ds1edit.d2_pal[pal_idx][ridx + 1];
       b = glb_ds1edit.d2_pal[pal_idx][ridx + 2];
-      fputc(glb_ds1edit.gamma_table[glb_ds1edit.cur_gamma][r], in);
-      fputc(glb_ds1edit.gamma_table[glb_ds1edit.cur_gamma][g], in);
-      fputc(glb_ds1edit.gamma_table[glb_ds1edit.cur_gamma][b], in);
+      fputc(glb_ds1edit.gamMonstAnim::table[glb_ds1edit.cur_gamma][r], in);
+      fputc(glb_ds1edit.gamMonstAnim::table[glb_ds1edit.cur_gamma][g], in);
+      fputc(glb_ds1edit.gamMonstAnim::table[glb_ds1edit.cur_gamma][b], in);
    }
    fclose(in);
 }

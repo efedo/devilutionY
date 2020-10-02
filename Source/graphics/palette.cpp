@@ -10,7 +10,7 @@ SDL_Color orig_palette[256];
 
 /* data */
 
-int gamma_correction = 100;
+int gamMonstAnim::correction = 100;
 bool color_cycling_enabled = true;
 bool sgbFadedIn = true;
 
@@ -28,7 +28,7 @@ void ApplyGamma(SDL_Color *dst, const SDL_Color *src, int n)
 	int i;
 	double g;
 
-	g = gamma_correction / 100.0;
+	g = gamMonstAnim::correction / 100.0;
 
 	for (i = 0; i < n; i++) {
 		dst->r = pow(src->r / 256.0, g) * 256.0;
@@ -42,25 +42,25 @@ void ApplyGamma(SDL_Color *dst, const SDL_Color *src, int n)
 
 void SaveGamma()
 {
-	SRegSaveValue(APP_NAME, "Gamma Correction", 0, gamma_correction);
+	SRegSaveValue(APP_NAME, "Gamma Correction", 0, gamMonstAnim::correction);
 	SRegSaveValue(APP_NAME, "Color Cycling", false, color_cycling_enabled);
 }
 
 static void LoadGamma()
 {
-	int gamma_value;
+	int gamMonstAnim::value;
 	int value;
 
-	value = gamma_correction;
+	value = gamMonstAnim::correction;
 	if (!SRegLoadValue(APP_NAME, "Gamma Correction", 0, &value))
 		value = 100;
-	gamma_value = value;
+	gamMonstAnim::value = value;
 	if (value < 30) {
-		gamma_value = 30;
+		gamMonstAnim::value = 30;
 	} else if (value > 100) {
-		gamma_value = 100;
+		gamMonstAnim::value = 100;
 	}
-	gamma_correction = gamma_value - gamma_value % 5;
+	gamMonstAnim::correction = gamMonstAnim::value - gamMonstAnim::value % 5;
 	if (!SRegLoadValue(APP_NAME, "Color Cycling", 0, &value))
 		value = 1;
 	color_cycling_enabled = value;
@@ -115,10 +115,10 @@ void ResetPal()
 
 void IncreaseGamma()
 {
-	if (gamma_correction < 100) {
-		gamma_correction += 5;
-		if (gamma_correction > 100)
-			gamma_correction = 100;
+	if (gamMonstAnim::correction < 100) {
+		gamMonstAnim::correction += 5;
+		if (gamMonstAnim::correction > 100)
+			gamMonstAnim::correction = 100;
 		ApplyGamma(system_palette, logical_palette, 256);
 		palette_update();
 	}
@@ -126,10 +126,10 @@ void IncreaseGamma()
 
 void DecreaseGamma()
 {
-	if (gamma_correction > 30) {
-		gamma_correction -= 5;
-		if (gamma_correction < 30)
-			gamma_correction = 30;
+	if (gamMonstAnim::correction > 30) {
+		gamMonstAnim::correction -= 5;
+		if (gamMonstAnim::correction < 30)
+			gamMonstAnim::correction = 30;
 		ApplyGamma(system_palette, logical_palette, 256);
 		palette_update();
 	}
@@ -138,12 +138,12 @@ void DecreaseGamma()
 int UpdateGamma(int gamma)
 {
 	if (gamma) {
-		gamma_correction = 130 - gamma;
+		gamMonstAnim::correction = 130 - gamma;
 		ApplyGamma(system_palette, logical_palette, 256);
 		palette_update();
 	}
 	SaveGamma();
-	return 130 - gamma_correction;
+	return 130 - gamMonstAnim::correction;
 }
 
 void SetFadeLevel(DWORD fadeval)

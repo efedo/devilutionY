@@ -310,7 +310,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 
 	for (i = 0; i < nummissiles; i++) {
 		mi = missileactive[i];
-		if (missile[mi]._mitype == MIS_MANASHIELD && missile[mi]._misource == pnum) {
+		if (missile[mi]._mitype == MissileType::MANASHIELD && missile[mi]._misource == pnum) {
 			missile[mi]._miVar1 = data._pHitPoints;
 			missile[mi]._miVar2 = data._pHPBase;
 		}

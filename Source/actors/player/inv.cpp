@@ -665,7 +665,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 		return true;
 	if (pcurs != CURSOR_HAND)
 		return true;
-	if (stextflag != STORE_NONE)
+	if (stextflag != StoreTalkId::NONE)
 		return true;
 	if (talkflag) return true;
 

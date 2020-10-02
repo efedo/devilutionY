@@ -154,7 +154,7 @@ void CheckQuests()
 	    && (quests[Q_BETRAYER]._qvar2 == 0 || quests[Q_BETRAYER]._qvar2 == 2)) {
 		quests[Q_BETRAYER]._qt = 2 * quests[Q_BETRAYER]._qt + V2Di(16, 16);
 		rport = quests[Q_BETRAYER]._qt;
-		AddMissile(rport, rport, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile(rport, rport, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 1;
 		if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
 			quests[Q_BETRAYER]._qvar1 = 3;
@@ -166,7 +166,7 @@ void CheckQuests()
 	    && lvl.setlvlnum == SetLvl::VileBetrayer
 	    && quests[Q_BETRAYER]._qvar2 == 4) {
 		rport = { 35, 32 };
-		AddMissile(rport, rport, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile(rport, rport, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
 		quests[Q_BETRAYER]._qvar2 = 3;
 	}
 
@@ -324,7 +324,7 @@ void CheckQuestKill(int m, bool sendmsg)
 		quests[Q_BETRAYER]._qvar1 = 7;
 		quests[Q_BETRAYER]._qvar2 = 4;
 		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
-		AddMissile({ 35, 32 }, { 35, 32 }, Dir(0), MIS_RPORTAL, 0, myplr(), 0, 0);
+		AddMissile({ 35, 32 }, { 35, 32 }, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
 		if (myplr().data._pClass == PC_WARRIOR) {
 			sfxdnum = PS_WARR83;
 		} else if (myplr().data._pClass == PC_ROGUE) {
@@ -643,10 +643,10 @@ void ResyncQuests()
 		} else {
 			if (quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE) {
 				if (quests[Q_MUSHROOM]._qvar1 >= QS_MUSHGIVEN) {
-					Qtalklist[TOWN_WITCH]._qblkm = -1;
-					Qtalklist[TOWN_HEALER]._qblkm = TEXT_MUSH3;
+					Qtalklist[TownerId::WITCH]._qblkm = -1;
+					Qtalklist[TownerId::HEALER]._qblkm = TEXT_MUSH3;
 				} else if (quests[Q_MUSHROOM]._qvar1 >= QS_BRAINGIVEN) {
-					Qtalklist[TOWN_HEALER]._qblkm = -1;
+					Qtalklist[TownerId::HEALER]._qblkm = -1;
 				}
 			}
 		}

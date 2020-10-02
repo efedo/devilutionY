@@ -252,13 +252,13 @@ void sync_monster(int pnum, const TSyncMonster *p)
 	if (monsters[ndx].data._mfut.x == p->_mx && monsters[ndx].data._mfut.y == p->_my) {
 		return;
 	}
-	if (monsters[ndx].data._mmode == MM_CHARGE || monsters[ndx].data._mmode == MM_STONE) {
+	if (monsters[ndx].data._mmode == MonsterMode::CHARGE || monsters[ndx].data._mmode == MonsterMode::STONE) {
 		return;
 	}
 	mdv = monsters[ndx].data._m;
 	mdv -= { p->_mx, p->_my	};
 	if (mdv.maxabs() <= 2) {
-		if (monsters[ndx].data._mmode < MM_WALK || monsters[ndx].data._mmode > MM_WALK3) {
+		if (monsters[ndx].data._mmode < MonsterMode::WALK || monsters[ndx].data._mmode > MonsterMode::WALK3) {
 			md = GetDirection(monsters[ndx].data._m, { p->_mx, p->_my });
 			if (monsters[ndx].DirOK(md)) {
 				monsters[ndx].M_ClearSquares();

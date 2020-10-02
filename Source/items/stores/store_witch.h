@@ -1,6 +1,6 @@
 // HEADER_GOES_HERE
-#ifndef __STORE_WITCH_H__
-#define __STORE_WITCH_H__
+#ifndef __StoreTalkId::WITCH_H__
+#define __StoreTalkId::WITCH_H__
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -43,4 +43,4 @@ void WitchBookLevel(int ii);
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __STORE_WITCH_H__ */
+#endif /* __StoreTalkId::WITCH_H__ */

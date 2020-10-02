@@ -1,6 +1,6 @@
 // HEADER_GOES_HERE
-#ifndef __STORE_BASE_H__
-#define __STORE_BASE_H__
+#ifndef __StoreTalkId::BASE_H__
+#define __StoreTalkId::BASE_H__
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -47,4 +47,4 @@ void STextEnter();
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __STORE_BASE_H__ */
+#endif /* __StoreTalkId::BASE_H__ */

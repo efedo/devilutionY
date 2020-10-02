@@ -1,6 +1,6 @@
 // HEADER_GOES_HERE
-#ifndef __STORE_HEALER_H__
-#define __STORE_HEALER_H__
+#ifndef __StoreTalkId::HEALER_H__
+#define __StoreTalkId::HEALER_H__
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -29,4 +29,4 @@ extern StoreHealer healerStore;
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __STORE_HEALER_H__ */
+#endif /* __StoreTalkId::HEALER_H__ */

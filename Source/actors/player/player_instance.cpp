@@ -1537,7 +1537,7 @@ void Player::SyncPlrKill()
 
 	for (int i = 0; i < nummissiles; i++) {
 		int ma = missileactive[i];
-		if (missile[ma]._mitype == MIS_MANASHIELD && missile[ma]._misource == pnum && missile[ma]._miDelFlag == false) {
+		if (missile[ma]._mitype == MissileType::MANASHIELD && missile[ma]._misource == pnum && missile[ma]._miDelFlag == false) {
 			return;
 		}
 	}
@@ -1562,14 +1562,14 @@ void Player::RemovePlrMissiles()
 
 	for (i = 0; i < nummissiles; i++) {
 		am = missileactive[i];
-		if (missile[am]._mitype == MIS_STONE && missile[am]._misource == pnum) {
+		if (missile[am]._mitype == MissileType::STONE && missile[am]._misource == pnum) {
 			monsters[missile[am]._miVar2].data._mmode = missile[am]._miVar1;
 		}
-		if (missile[am]._mitype == MIS_MANASHIELD && missile[am]._misource == pnum) {
+		if (missile[am]._mitype == MissileType::MANASHIELD && missile[am]._misource == pnum) {
 			ClearMissileSpot(am);
 			DeleteMissile(am, i);
 		}
-		if (missile[am]._mitype == MIS_ETHEREALIZE && missile[am]._misource == pnum) {
+		if (missile[am]._mitype == MissileType::ETHEREALIZE && missile[am]._misource == pnum) {
 			ClearMissileSpot(am);
 			DeleteMissile(am, i);
 		}
@@ -1870,18 +1870,18 @@ bool Player::PlrHitMonst(int m)
 		return false;
 	}
 
-	if (monsters[m].data.MType->mtype == MonsterType::ILLWEAV && monsters[m].data._mgoal == MGOAL_RETREAT) {
+	if (monsters[m].data.MType->mtype == MonsterType::ILLWEAV && monsters[m].data._mgoal == MonsterGoal::RETREAT) {
 		return false;
 	}
 
-	if (monsters[m].data._mmode == MM_CHARGE) {
+	if (monsters[m].data._mmode == MonsterMode::CHARGE) {
 		return false;
 	}
 
 	rv = false;
 
 	hit = random_(4, 100);
-	if (monsters[m].data._mmode == MM_STONE) {
+	if (monsters[m].data._mmode == MonsterMode::STONE) {
 		hit = 0;
 	}
 
@@ -1927,7 +1927,7 @@ bool Player::PlrHitMonst(int m)
 		}
 
 		switch (monsters[m].data.MData->mMonstClass) {
-		case MC_UNDEAD:
+		case MonstClassId::undead:
 			if (phanditype == ItemType::sword) {
 				dam -= dam >> 1;
 			}
@@ -1935,7 +1935,7 @@ bool Player::PlrHitMonst(int m)
 				dam += dam >> 1;
 			}
 			break;
-		case MC_ANIMAL:
+		case MonstClassId::animal:
 			if (phanditype == ItemType::mace) {
 				dam -= dam >> 1;
 			}
@@ -1945,7 +1945,7 @@ bool Player::PlrHitMonst(int m)
 			break;
 		}
 
-		if (data._pIFlags & ItemSpecialEffect::T3XDAMVDEM && monsters[m].data.MData->mMonstClass == MC_DEMON) {
+		if (data._pIFlags & ItemSpecialEffect::T3XDAMVDEM && monsters[m].data.MData->mMonstClass == MonstClassId::demon) {
 			dam *= 3;
 		}
 
@@ -2009,16 +2009,16 @@ bool Player::PlrHitMonst(int m)
 		}
 #endif
 		if ((monsters[m].data._mhitpoints >> 6) <= 0) {
-			if (monsters[m].data._mmode == MM_STONE) {
+			if (monsters[m].data._mmode == MonsterMode::STONE) {
 				monsters[m].M_StartKill(pnum);
-				monsters[m].data._mmode = MM_STONE;
+				monsters[m].data._mmode = MonsterMode::STONE;
 			} else {
 				monsters[m].M_StartKill(pnum);
 			}
 		} else {
-			if (monsters[m].data._mmode == MM_STONE) {
+			if (monsters[m].data._mmode == MonsterMode::STONE) {
 				monsters[m].M_StartHit(pnum, dam);
-				monsters[m].data._mmode = MM_STONE;
+				monsters[m].data._mmode = MonsterMode::STONE;
 			} else {
 				if (data._pIFlags & ItemSpecialEffect::KNOCKBACK) {
 					monsters[m].M_GetKnockback();
@@ -2175,10 +2175,10 @@ bool Player::PM_DoAttack()
 		}
 
 		if (data._pIFlags & ItemSpecialEffect::FIREDAM) {
-			AddMissile(d, { 1, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
+			AddMissile(d, { 1, 0 }, Dir(0), MissileType::WEAPEXP, 0, pnum, 0, 0);
 		}
 		if (data._pIFlags & ItemSpecialEffect::LIGHTDAM) {
-			AddMissile(d, { 2, 0 }, Dir(0), MIS_WEAPEXP, 0, pnum, 0, 0);
+			AddMissile(d, { 2, 0 }, Dir(0), MissileType::WEAPEXP, 0, pnum, 0, 0);
 		}
 
 		didhit = false;
@@ -2226,12 +2226,12 @@ bool Player::PM_DoRangeAttack()
 	}
 
 	if (data._pAnimFrame == data._pAFNum) {
-		mistype = MIS_ARROW;
+		mistype = MissileType::ARROW;
 		if (data._pIFlags & ItemSpecialEffect::FIRE_ARROWS) {
-			mistype = MIS_FARROW;
+			mistype = MissileType::FARROW;
 		}
 		if (data._pIFlags & ItemSpecialEffect::LIGHT_ARROWS) {
-			mistype = MIS_LARROW;
+			mistype = MissileType::LARROW;
 		}
 		AddMissile(
 		    pos(),

@@ -1,9 +1,8 @@
 // HEADER_GOES_HERE
-#ifndef __TEMPLATE_H__
-#define __TEMPLATE_H__
+#ifndef __SOUND_ENUMS_H__
+#define __SOUND_ENUMS_H__
 
 DEVILUTION_BEGIN_NAMESPACE
-
 
 typedef enum _sfx_id {
 	PS_WALK1,
@@ -877,7 +876,6 @@ typedef enum sfx_flag {
 	sfx_LOADED = 0x80,
 } sfx_flag;
 
-
 typedef enum _speech_id {
 	TEXT_KING1 = 0x0,
 	TEXT_KING2 = 0x1,
@@ -1143,4 +1141,4 @@ typedef enum _speech_id {
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __TEMPLATE_H__ */
+#endif /* __SOUND_ENUMS_H__ */

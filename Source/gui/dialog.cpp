@@ -196,23 +196,23 @@ void GameDialog::DrawSText()
 
 	if (stextscrl) {
 		switch (stextflag) {
-			case STORE_SBUY:
+			case StoreTalkId::SBUY:
 				smithStore.S_ScrollBuy(stextsval);
 				break;
-			case STORE_SSELL:
-			case STORE_SREPAIR:
-			case STORE_WSELL:
-			case STORE_WRECHARGE:
-			case STORE_SIDENTIFY:
+			case StoreTalkId::SSELL:
+			case StoreTalkId::SREPAIR:
+			case StoreTalkId::WSELL:
+			case StoreTalkId::WRECHARGE:
+			case StoreTalkId::SIDENTIFY:
 				smithStore.S_ScrollSell(stextsval);
 				break;
-			case STORE_WBUY:
+			case StoreTalkId::WBUY:
 				witchStore.S_ScrollBuy(stextsval);
 				break;
-			case STORE_HBUY:
+			case StoreTalkId::HBUY:
 				healerStore.S_ScrollBuy(stextsval);
 				break;
-			case STORE_SPBUY:
+			case StoreTalkId::SPBUY:
 				smithStore.S_ScrollPremiumBuy(stextsval);
 				break;
 		}
@@ -237,63 +237,63 @@ void GameDialog::STextESC()
 		if (lvl.type() == DunType::town) stream_stop();
 	} else {
 		switch (stextflag) {
-			case STORE_SMITH:
-			case STORE_WITCH:
-			case STORE_BOY:
-			case STORE_BBOY:
-			case STORE_HEALER:
-			case STORE_STORY:
-			case STORE_TAVERN:
-			case STORE_DRUNK:
-			case STORE_BARMAID:
-				stextflag = STORE_NONE;
+			case StoreTalkId::SMITH:
+			case StoreTalkId::WITCH:
+			case StoreTalkId::BOY:
+			case StoreTalkId::BBOY:
+			case StoreTalkId::HEALER:
+			case StoreTalkId::STORY:
+			case StoreTalkId::TAVERN:
+			case StoreTalkId::DRUNK:
+			case StoreTalkId::BARMAID:
+				stextflag = StoreTalkId::NONE;
 				break;
-			case STORE_GOSSIP:
+			case StoreTalkId::GOSSIP:
 				StartStore(stextshold);
 				stextsel = stextlhold;
 				break;
-			case STORE_SBUY:
-				StartStore(STORE_SMITH);
+			case StoreTalkId::SBUY:
+				StartStore(StoreTalkId::SMITH);
 				stextsel = 12;
 				break;
-			case STORE_SPBUY:
-				StartStore(STORE_SMITH);
+			case StoreTalkId::SPBUY:
+				StartStore(StoreTalkId::SMITH);
 				stextsel = 14;
 				break;
-			case STORE_SSELL:
-				StartStore(STORE_SMITH);
+			case StoreTalkId::SSELL:
+				StartStore(StoreTalkId::SMITH);
 				stextsel = 16;
 				break;
-			case STORE_SREPAIR:
-				StartStore(STORE_SMITH);
+			case StoreTalkId::SREPAIR:
+				StartStore(StoreTalkId::SMITH);
 				stextsel = 18;
 				break;
-			case STORE_WBUY:
-				StartStore(STORE_WITCH);
+			case StoreTalkId::WBUY:
+				StartStore(StoreTalkId::WITCH);
 				stextsel = 14;
 				break;
-			case STORE_WSELL:
-				StartStore(STORE_WITCH);
+			case StoreTalkId::WSELL:
+				StartStore(StoreTalkId::WITCH);
 				stextsel = 16;
 				break;
-			case STORE_WRECHARGE:
-				StartStore(STORE_WITCH);
+			case StoreTalkId::WRECHARGE:
+				StartStore(StoreTalkId::WITCH);
 				stextsel = 18;
 				break;
-			case STORE_HBUY:
-				StartStore(STORE_HEALER);
+			case StoreTalkId::HBUY:
+				StartStore(StoreTalkId::HEALER);
 				stextsel = 16;
 				break;
-			case STORE_SIDENTIFY:
-				StartStore(STORE_STORY);
+			case StoreTalkId::SIDENTIFY:
+				StartStore(StoreTalkId::STORY);
 				stextsel = 14;
 				break;
-			case STORE_IDSHOW:
-				StartStore(STORE_SIDENTIFY);
+			case StoreTalkId::IDSHOW:
+				StartStore(StoreTalkId::SIDENTIFY);
 				break;
-			case STORE_NOMONEY:
-			case STORE_NOROOM:
-			case STORE_CONFIRM:
+			case StoreTalkId::NOMONEY:
+			case StoreTalkId::NOROOM:
+			case StoreTalkId::CONFIRM:
 				StartStore(stextshold);
 				stextsel = stextlhold;
 				stextsval = stextvhold;

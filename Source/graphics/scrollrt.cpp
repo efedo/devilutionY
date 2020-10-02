@@ -322,7 +322,7 @@ static void DrawMonster(V2Di p, V2Di mv, int m)
 		trans = 0;
 		if (monsters[m].data._uniqtype)
 			trans = monsters[m].data._uniqtrans + 4;
-		if (monsters[m].data._mmode == MM_STONE)
+		if (monsters[m].data._mmode == MonsterMode::STONE)
 			trans = 2;
 		if (myplr().data._pInfraFlag && light_table_index > 8)
 			trans = 1;
@@ -378,16 +378,16 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, uint8_t *pCelBuff, int nCel, in
 			Cl2Draw(p, pCelBuff, nCel, nWidth);
 			if (plr[pnum].data.pManaShield)
 				Cl2Draw(
-				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0], p.y },
-				    misfiledata[MFILE_MANASHLD].mAnimData[0], 1,
-				    misfiledata[MFILE_MANASHLD].mAnimWidth[0]);
+				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MissileGraphic::MANASHLD].mAnimWidth2[0], p.y },
+				    misfiledata[MissileGraphic::MANASHLD].mAnimData[0], 1,
+				    misfiledata[MissileGraphic::MANASHLD].mAnimWidth[0]);
 		} else if (!(grid[x][y].dFlags & BFLAG_LIT) || myplr().data._pInfraFlag && light_table_index > 8) {
 			Cl2DrawLightTbl(p, pCelBuff, nCel, nWidth, 1);
 			if (plr[pnum].data.pManaShield)
 				Cl2DrawLightTbl(
-				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0], p.y },
-				    misfiledata[MFILE_MANASHLD].mAnimData[0], 1,
-				    misfiledata[MFILE_MANASHLD].mAnimWidth[0], 1);
+				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MissileGraphic::MANASHLD].mAnimWidth2[0], p.y },
+				    misfiledata[MissileGraphic::MANASHLD].mAnimData[0], 1,
+				    misfiledata[MissileGraphic::MANASHLD].mAnimWidth[0], 1);
 		} else {
 			l = light_table_index;
 			if (light_table_index < 5)
@@ -397,9 +397,9 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, uint8_t *pCelBuff, int nCel, in
 			Cl2DrawLight(p, pCelBuff, nCel, nWidth);
 			if (plr[pnum].data.pManaShield)
 				Cl2DrawLight(
-				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MFILE_MANASHLD].mAnimWidth2[0], p.y },
-				    misfiledata[MFILE_MANASHLD].mAnimData[0], 1,
-				    misfiledata[MFILE_MANASHLD].mAnimWidth[0]);
+				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MissileGraphic::MANASHLD].mAnimWidth2[0], p.y },
+				    misfiledata[MissileGraphic::MANASHLD].mAnimData[0], 1,
+				    misfiledata[MissileGraphic::MANASHLD].mAnimWidth[0]);
 			light_table_index = l;
 		}
 	}

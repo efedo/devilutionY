@@ -25,10 +25,10 @@ void StoreHealer::S_Enter()
 		case 12:
 			stextlhold = 12;
 			talker = 1;
-			stextshold = STORE_HEALER;
+			stextshold = StoreTalkId::HEALER;
 			gossipstart = TEXT_PEPIN2;
 			gossipend = TEXT_PEPIN11;
-			StartStore(STORE_GOSSIP);
+			StartStore(StoreTalkId::GOSSIP);
 			break;
 		case 14:
 			if (myplr().data._pHitPoints != myplr().data._pMaxHP)
@@ -38,10 +38,10 @@ void StoreHealer::S_Enter()
 			myplr().data._pHPBase = myplr().data._pMaxHPBase;
 			break;
 		case 16:
-			StartStore(STORE_HBUY);
+			StartStore(StoreTalkId::HBUY);
 			break;
 		case 18:
-			stextflag = STORE_NONE;
+			stextflag = StoreTalkId::NONE;
 			break;
 	}
 }
@@ -171,15 +171,15 @@ void StoreHealer::S_BuyEnter()
 	bool done;
 
 	if (stextsel == 22) {
-		StartStore(STORE_HEALER);
+		StartStore(StoreTalkId::HEALER);
 		stextsel = 16;
 	} else {
 		stextlhold = stextsel;
 		stextvhold = stextsval;
-		stextshold = STORE_HBUY;
+		stextshold = StoreTalkId::HBUY;
 		idx = stextsval + ((stextsel - stextup) >> 2);
 		if (myplr().data._pGold < healitem[idx]._iIvalue) {
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = healitem[idx];
 			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
@@ -190,9 +190,9 @@ void StoreHealer::S_BuyEnter()
 				    i, {cursW / 28, cursH / 28}, false);
 			}
 			if (done)
-				StartStore(STORE_CONFIRM);
+				StartStore(StoreTalkId::CONFIRM);
 			else
-				StartStore(STORE_NOROOM);
+				StartStore(StoreTalkId::NOROOM);
 			SetCursor_(CURSOR_HAND);
 		}
 	}

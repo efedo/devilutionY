@@ -27,24 +27,24 @@ void StoreBoy::S_Enter()
 {
 	if (boyitem._itype != ItemType::none && stextsel == 18) {
 		if (myplr().data._pGold < 50) {
-			stextshold = STORE_BOY;
+			stextshold = StoreTalkId::BOY;
 			stextlhold = 18;
 			stextvhold = stextsval;
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			TakePlrsMoney(50);
-			StartStore(STORE_BBOY);
+			StartStore(StoreTalkId::BBOY);
 		}
 	} else if (stextsel == 8 && boyitem._itype != ItemType::none ||
 	           stextsel == 12 && boyitem._itype == ItemType::none) {
 		talker = 8;
-		stextshold = STORE_BOY;
+		stextshold = StoreTalkId::BOY;
 		stextlhold = stextsel;
 		gossipstart = TEXT_WIRT2;
 		gossipend = TEXT_WIRT12;
-		StartStore(STORE_GOSSIP);
+		StartStore(StoreTalkId::GOSSIP);
 	} else {
-		stextflag = STORE_NONE;
+		stextflag = StoreTalkId::NONE;
 	}
 }
 
@@ -90,7 +90,7 @@ void StoreBoy::BuyItem()
 	TakePlrsMoney(myplr().data.HoldItem._iIvalue);
 	StoreAutoPlace();
 	boyitem._itype = ItemType::none;
-	stextshold = STORE_BOY;
+	stextshold = StoreTalkId::BOY;
 	myplr().CalcPlrInv(true);
 }
 
@@ -126,11 +126,11 @@ void StoreBoy::S_BuyEnter()
 	int i;
 
 	if (stextsel == 10) {
-		stextshold = STORE_BBOY;
+		stextshold = StoreTalkId::BBOY;
 		stextvhold = stextsval;
 		stextlhold = 10;
 		if (myplr().data._pGold < boyitem._iIvalue + (boyitem._iIvalue >> 1)) {
-			StartStore(STORE_NOMONEY);
+			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = boyitem;
 			myplr().data.HoldItem._iIvalue +=
@@ -142,13 +142,13 @@ void StoreBoy::S_BuyEnter()
 				                                   false);
 			}
 			if (done)
-				StartStore(STORE_CONFIRM);
+				StartStore(StoreTalkId::CONFIRM);
 			else
-				StartStore(STORE_NOROOM);
+				StartStore(StoreTalkId::NOROOM);
 			SetCursor_(CURSOR_HAND);
 		}
 	} else {
-		stextflag = STORE_NONE;
+		stextflag = StoreTalkId::NONE;
 	}
 }
 

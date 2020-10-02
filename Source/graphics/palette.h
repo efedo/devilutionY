@@ -35,7 +35,7 @@ bool palette_set_color_cycling(bool enabled);
 
 /* data */
 
-extern int gamma_correction;
+extern int gamMonstAnim::correction;
 extern bool color_cycling_enabled;
 
 //#ifdef __cplusplus

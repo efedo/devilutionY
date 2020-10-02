@@ -35,9 +35,9 @@ void AddWarpMissile(int i, V2Di p)
 {
 	int mi;
 
-	missiledata[MIS_TOWN].mlSFX = -1;
+	missiledata[MissileType::TOWN].mlSFX = -1;
 	grid.at(p).clearMissile();
-	mi = AddMissile({ 0, 0 }, p, Dir(0), MIS_TOWN, 0, i, 0, 0);
+	mi = AddMissile({ 0, 0 }, p, Dir(0), MissileType::TOWN, 0, i, 0, 0);
 
 	if (mi != -1) {
 		SetMissDir(mi, Dir(1));
@@ -45,7 +45,7 @@ void AddWarpMissile(int i, V2Di p)
 		if (lvl.currlevel != 0)
 			missile[mi]._mlid = AddLight(missile[mi]._mi, 15);
 
-		missiledata[MIS_TOWN].mlSFX = LS_SENTINEL;
+		missiledata[MissileType::TOWN].mlSFX = LS_SENTINEL;
 	}
 }
 
@@ -105,7 +105,7 @@ void RemovePortalMissile(int id)
 
 	for (i = 0; i < nummissiles; i++) {
 		mi = missileactive[i];
-		if (missile[mi]._mitype == MIS_TOWN && missile[mi]._misource == id) {
+		if (missile[mi]._mitype == MissileType::TOWN && missile[mi]._misource == id) {
 			grid.at(missile[mi]._mi).dFlags &= ~BFLAG_MISSILE;
 			grid.at(missile[mi]._mi).clearMissile();
 			if (portal[id].level != 0) AddUnLight(missile[mi]._mlid);

@@ -29,7 +29,7 @@ int uniquetrans;
 int nummtypes;
 
 const char plr2monst[9] = { 0, 5, 3, 7, 1, 4, 6, 0, 2 };
-const uint8_t counsmiss[4] = { MIS_FIREBOLT, MIS_CBOLT, MIS_LIGHTCTRL, MIS_FIREBALL };
+const uint8_t counsmiss[4] = { MissileType::FIREBOLT, MissileType::CBOLT, MissileType::LIGHTCTRL, MissileType::FIREBALL };
 
 /* data */
 
@@ -62,38 +62,38 @@ int MWVel[24][3] = {
 char animletter[7] = "nwahds";
 
 void (MonsterInstance:: *AiProc[])() = {
-	&MonsterInstance::MAI_Zombie,
-	&MonsterInstance::MAI_Fat,
-	&MonsterInstance::MAI_SkelSd,
-	&MonsterInstance::MAI_SkelBow,
-	&MonsterInstance::MAI_Scav,
-	&MonsterInstance::MAI_Rhino,
-	&MonsterInstance::MAI_GoatMc,
-	&MonsterInstance::MAI_GoatBow,
-	&MonsterInstance::MAI_Fallen,
-	&MonsterInstance::MAI_Magma,
-	&MonsterInstance::MAI_SkelKing,
-	&MonsterInstance::MAI_Bat,
-	&MonsterInstance::MAI_Garg,
-	&MonsterInstance::MAI_Cleaver,
-	&MonsterInstance::MAI_Succ,
-	&MonsterInstance::MAI_Sneak,
-	&MonsterInstance::MAI_Storm,
-	&MonsterInstance::MAI_Fireman,
-	&MonsterInstance::MAI_Garbud,
-	&MonsterInstance::MAI_Acid,
-	&MonsterInstance::MAI_AcidUniq,
-	&MonsterInstance::MAI_Golum,
-	&MonsterInstance::MAI_Zhar,
-	&MonsterInstance::MAI_SnotSpil,
-	&MonsterInstance::MAI_Snake,
-	&MonsterInstance::MAI_Counselor,
-	&MonsterInstance::MAI_Mega,
-	&MonsterInstance::MAI_Diablo,
-	&MonsterInstance::MAI_Lazurus,
-	&MonsterInstance::MAI_Lazhelp,
-	&MonsterInstance::MAI_Lachdanan,
-	&MonsterInstance::MAI_Warlord,
+	&MonsterInstance::MMonstAi::Zombie,
+	&MonsterInstance::MMonstAi::Fat,
+	&MonsterInstance::MMonstAi::SkelSd,
+	&MonsterInstance::MMonstAi::SkelBow,
+	&MonsterInstance::MMonstAi::Scav,
+	&MonsterInstance::MMonstAi::Rhino,
+	&MonsterInstance::MMonstAi::GoatMc,
+	&MonsterInstance::MMonstAi::GoatBow,
+	&MonsterInstance::MMonstAi::Fallen,
+	&MonsterInstance::MMonstAi::Magma,
+	&MonsterInstance::MMonstAi::SkelKing,
+	&MonsterInstance::MMonstAi::Bat,
+	&MonsterInstance::MMonstAi::Garg,
+	&MonsterInstance::MMonstAi::Cleaver,
+	&MonsterInstance::MMonstAi::Succ,
+	&MonsterInstance::MMonstAi::Sneak,
+	&MonsterInstance::MMonstAi::Storm,
+	&MonsterInstance::MMonstAi::Fireman,
+	&MonsterInstance::MMonstAi::Garbud,
+	&MonsterInstance::MMonstAi::Acid,
+	&MonsterInstance::MMonstAi::AcidUniq,
+	&MonsterInstance::MMonstAi::Golum,
+	&MonsterInstance::MMonstAi::Zhar,
+	&MonsterInstance::MMonstAi::SnotSpil,
+	&MonsterInstance::MMonstAi::Snake,
+	&MonsterInstance::MMonstAi::Counselor,
+	&MonsterInstance::MMonstAi::Mega,
+	&MonsterInstance::MMonstAi::Diablo,
+	&MonsterInstance::MMonstAi::Lazurus,
+	&MonsterInstance::MMonstAi::Lazhelp,
+	&MonsterInstance::MMonstAi::Lachdanan,
+	&MonsterInstance::MMonstAi::Warlord,
 };
 
 
@@ -302,13 +302,13 @@ void M2MStartHit(int mid, int i, int dam)
 		if (monsters[mid].data.MType->mtype == MonsterType::BLINK) {
 			monsters[mid].M_Teleport();
 		} else if (monsters[mid].data.MType->mtype >= MonsterType::NSCAV && monsters[mid].data.MType->mtype <= MonsterType::YSCAV) {
-			monsters[mid].data._mgoal = MGOAL_NORMAL;
+			monsters[mid].data._mgoal = MonsterGoal::NORMAL;
 		}
 
-		if (monsters[mid].data._mmode != MM_STONE) {
+		if (monsters[mid].data._mmode != MonsterMode::STONE) {
 			if (monsters[mid].data.MType->mtype != MonsterFlag::golem) {
-				monsters[mid].NewMonsterAnim(&monsters[mid].data.MType->Anims[MA_GOTHIT], monsters[mid].data._mdir);
-				monsters[mid].data._mmode = MM_GOTHIT;
+				monsters[mid].NewMonsterAnim(&monsters[mid].data.MType->Anims[MonstAnim::GOTHIT], monsters[mid].data._mdir);
+				monsters[mid].data._mmode = MonsterMode::GOTHIT;
 			}
 
 			monsters[mid].PlantInPosition(monsters[mid].data._mdir, &monsters[mid].data._mold);
@@ -475,63 +475,63 @@ void ProcessMonsters()
 			if (!(Monst->_mFlags & MonsterFlag::search)) {
 				std::invoke(AiProc[Monst->_mAi], &monsters[mi]);
 				//AiProc[Monst->_mAi](monsters[mi]);
-			} else if (!monsters[mi].MAI_Path()) {
+			} else if (!monsters[mi].MMonstAi::Path()) {
 				//AiProc[Monst->_mAi](monsters[mi]);
 				std::invoke(AiProc[Monst->_mAi], &monsters[mi]);
 			}
 			switch (Monst->_mmode) {
-			case MM_STAND:
+			case MonsterMode::STAND:
 				raflag = monsters[mi].M_DoStand();
 				break;
-			case MM_WALK:
+			case MonsterMode::WALK:
 				raflag = monsters[mi].M_DoWalk();
 				break;
-			case MM_WALK2:
+			case MonsterMode::WALK2:
 				raflag = monsters[mi].M_DoWalk2();
 				break;
-			case MM_WALK3:
+			case MonsterMode::WALK3:
 				raflag = monsters[mi].M_DoWalk3();
 				break;
-			case MM_ATTACK:
+			case MonsterMode::ATTACK:
 				raflag = monsters[mi].M_DoAttack();
 				break;
-			case MM_GOTHIT:
+			case MonsterMode::GOTHIT:
 				raflag = monsters[mi].M_DoGotHit();
 				break;
-			case MM_DEATH:
+			case MonsterMode::DEATH:
 				raflag = monsters[mi].M_DoDeath();
 				break;
-			case MM_SATTACK:
+			case MonsterMode::SATTACK:
 				raflag = monsters[mi].M_DoSAttack();
 				break;
-			case MM_FADEIN:
+			case MonsterMode::FADEIN:
 				raflag = monsters[mi].M_DoFadein();
 				break;
-			case MM_FADEOUT:
+			case MonsterMode::FADEOUT:
 				raflag = monsters[mi].M_DoFadeout();
 				break;
-			case MM_RATTACK:
+			case MonsterMode::RATTACK:
 				raflag = monsters[mi].M_DoRAttack();
 				break;
-			case MM_SPSTAND:
+			case MonsterMode::SPSTAND:
 				raflag = monsters[mi].M_DoSpStand();
 				break;
-			case MM_RSPATTACK:
+			case MonsterMode::RSPATTACK:
 				raflag = monsters[mi].M_DoRSpAttack();
 				break;
-			case MM_DELAY:
+			case MonsterMode::DELAY:
 				raflag = monsters[mi].M_DoDelay();
 				break;
-			case MM_CHARGE:
+			case MonsterMode::CHARGE:
 				raflag = false;
 				break;
-			case MM_STONE:
+			case MonsterMode::STONE:
 				raflag = monsters[mi].M_DoStone();
 				break;
-			case MM_HEAL:
+			case MonsterMode::HEAL:
 				raflag = monsters[mi].M_DoHeal();
 				break;
-			case MM_TALK:
+			case MonsterMode::TALK:
 				raflag = monsters[mi].M_DoTalk();
 				break;
 			}
@@ -539,7 +539,7 @@ void ProcessMonsters()
 				monsters[mi].GroupUnity();
 			}
 		} while (raflag);
-		if (Monst->_mmode != MM_STONE) {
+		if (Monst->_mmode != MonsterMode::STONE) {
 			Monst->_mAnimCnt++;
 			if (!(Monst->_mFlags & MonsterFlag::allow_special) && Monst->_mAnimCnt >= Monst->_mAnimDelay) {
 				Monst->_mAnimCnt = 0;
@@ -818,51 +818,51 @@ void MonsterInstance::SyncMonsterAnim()
 	_mdir = data._mdir;
 
 	switch (data._mmode) {
-	case MM_WALK:
-	case MM_WALK2:
-	case MM_WALK3:
-		data._mAnimData = data.MType->Anims[MA_WALK].Data[int(_mdir)];
+	case MonsterMode::WALK:
+	case MonsterMode::WALK2:
+	case MonsterMode::WALK3:
+		data._mAnimData = data.MType->Anims[MonstAnim::WALK].Data[int(_mdir)];
 		return;
-	case MM_ATTACK:
-	case MM_RATTACK:
-		data._mAnimData = data.MType->Anims[MA_ATTACK].Data[int(_mdir)];
+	case MonsterMode::ATTACK:
+	case MonsterMode::RATTACK:
+		data._mAnimData = data.MType->Anims[MonstAnim::ATTACK].Data[int(_mdir)];
 		return;
-	case MM_GOTHIT:
-		data._mAnimData = data.MType->Anims[MA_GOTHIT].Data[int(_mdir)];
+	case MonsterMode::GOTHIT:
+		data._mAnimData = data.MType->Anims[MonstAnim::GOTHIT].Data[int(_mdir)];
 		return;
-	case MM_DEATH:
-		data._mAnimData = data.MType->Anims[MA_DEATH].Data[int(_mdir)];
+	case MonsterMode::DEATH:
+		data._mAnimData = data.MType->Anims[MonstAnim::DEATH].Data[int(_mdir)];
 		return;
-	case MM_SATTACK:
-	case MM_FADEIN:
-	case MM_FADEOUT:
-		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(_mdir)];
+	case MonsterMode::SATTACK:
+	case MonsterMode::FADEIN:
+	case MonsterMode::FADEOUT:
+		data._mAnimData = data.MType->Anims[MonstAnim::SPECIAL].Data[int(_mdir)];
 		return;
-	case MM_SPSTAND:
-	case MM_RSPATTACK:
-		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(_mdir)];
+	case MonsterMode::SPSTAND:
+	case MonsterMode::RSPATTACK:
+		data._mAnimData = data.MType->Anims[MonstAnim::SPECIAL].Data[int(_mdir)];
 		return;
-	case MM_HEAL:
-		data._mAnimData = data.MType->Anims[MA_SPECIAL].Data[int(_mdir)];
+	case MonsterMode::HEAL:
+		data._mAnimData = data.MType->Anims[MonstAnim::SPECIAL].Data[int(_mdir)];
 		return;
-	case MM_STAND:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
+	case MonsterMode::STAND:
+		data._mAnimData = data.MType->Anims[MonstAnim::STAND].Data[int(_mdir)];
 		return;
-	case MM_DELAY:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
+	case MonsterMode::DELAY:
+		data._mAnimData = data.MType->Anims[MonstAnim::STAND].Data[int(_mdir)];
 		return;
-	case MM_TALK:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
+	case MonsterMode::TALK:
+		data._mAnimData = data.MType->Anims[MonstAnim::STAND].Data[int(_mdir)];
 		return;
-	case MM_CHARGE:
-		data._mAnimData = data.MType->Anims[MA_ATTACK].Data[int(_mdir)];
+	case MonsterMode::CHARGE:
+		data._mAnimData = data.MType->Anims[MonstAnim::ATTACK].Data[int(_mdir)];
 		data._mAnimFrame = 1;
-		data._mAnimLen = data.MType->Anims[MA_ATTACK].Frames;
+		data._mAnimLen = data.MType->Anims[MonstAnim::ATTACK].Frames;
 		break;
 	default:
-		data._mAnimData = data.MType->Anims[MA_STAND].Data[int(_mdir)];
+		data._mAnimData = data.MType->Anims[MonstAnim::STAND].Data[int(_mdir)];
 		data._mAnimFrame = 1;
-		data._mAnimLen = data.MType->Anims[MA_STAND].Frames;
+		data._mAnimLen = data.MType->Anims[MonstAnim::STAND].Frames;
 		break;
 	}
 }
@@ -894,12 +894,12 @@ void M_FallenFear(V2Di pos)
 			break;
 		}
 		aitype = monsters[mi].data._mAi;
-		if (aitype == AI_FALLEN
+		if (aitype == MonstAi::FALLEN
 		    && rundist
 		    && ::abs(pos.x - monsters[mi].data._m.x) < 5
 		    && ::abs(pos.y - monsters[mi].data._m.y) < 5
 		    && monsters[mi].data._mhitpoints >> 6 > 0) {
-			monsters[mi].data._mgoal = MGOAL_RETREAT;
+			monsters[mi].data._mgoal = MonsterGoal::RETREAT;
 			monsters[mi].data._mgoalvar1 = rundist;
 			monsters[mi].data._mdir = GetDirection(pos, monsters[i].data._m);
 		}
@@ -939,29 +939,29 @@ void PrintMonstHistory(int mt)
 			res = monsterdata[mt].mMagicRes;
 		else
 			res = monsterdata[mt].mMagicRes2;
-		res = res & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING | IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING);
+		res = res & (MonsterResist::resist_magic | MonsterResist::resist_fire | MonsterResist::resist_lightning | MonsterResist::imune_magic | MonsterResist::imune_fire | MonsterResist::imune_lightning);
 		if (!res) {
 			strcpy(tempstr, "No magic resistance");
 			AddPanelString(tempstr, true);
 		} else {
-			if (res & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING)) {
+			if (res & (MonsterResist::resist_magic | MonsterResist::resist_fire | MonsterResist::resist_lightning)) {
 				strcpy(tempstr, "Resists : ");
-				if (res & RESIST_MAGIC)
+				if (res & MonsterResist::resist_magic)
 					strcat(tempstr, "Magic ");
-				if (res & RESIST_FIRE)
+				if (res & MonsterResist::resist_fire)
 					strcat(tempstr, "Fire ");
-				if (res & RESIST_LIGHTNING)
+				if (res & MonsterResist::resist_lightning)
 					strcat(tempstr, "Lightning ");
 				tempstr[strlen(tempstr) - 1] = '\0';
 				AddPanelString(tempstr, true);
 			}
-			if (res & (IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING)) {
+			if (res & (MonsterResist::imune_magic | MonsterResist::imune_fire | MonsterResist::imune_lightning)) {
 				strcpy(tempstr, "Immune : ");
-				if (res & IMUNE_MAGIC)
+				if (res & MonsterResist::imune_magic)
 					strcat(tempstr, "Magic ");
-				if (res & IMUNE_FIRE)
+				if (res & MonsterResist::imune_fire)
 					strcat(tempstr, "Fire ");
-				if (res & IMUNE_LIGHTNING)
+				if (res & MonsterResist::imune_lightning)
 					strcat(tempstr, "Lightning ");
 				tempstr[strlen(tempstr) - 1] = '\0';
 				AddPanelString(tempstr, true);
@@ -973,18 +973,18 @@ void PrintMonstHistory(int mt)
 
 void PrintUniqueHistory()
 {
-	int res = monsters[pcursmonst].data.mMagicRes & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING | IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING);
+	int res = monsters[pcursmonst].data.mMagicRes & (MonsterResist::resist_magic | MonsterResist::resist_fire | MonsterResist::resist_lightning | MonsterResist::imune_magic | MonsterResist::imune_fire | MonsterResist::imune_lightning);
 	if (!res) {
 		strcpy(tempstr, "No resistances");
 		AddPanelString(tempstr, true);
 		strcpy(tempstr, "No Immunities");
 	} else {
-		if (res & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING))
+		if (res & (MonsterResist::resist_magic | MonsterResist::resist_fire | MonsterResist::resist_lightning))
 			strcpy(tempstr, "Some Magic Resistances");
 		else
 			strcpy(tempstr, "No resistances");
 		AddPanelString(tempstr, true);
-		if (res & (IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING)) {
+		if (res & (MonsterResist::imune_magic | MonsterResist::imune_fire | MonsterResist::imune_lightning)) {
 			strcpy(tempstr, "Some Magic Immunities");
 		} else {
 			strcpy(tempstr, "No Immunities");
@@ -1079,16 +1079,16 @@ bool PosOkMonst(int i, V2Di pos)
 	if (ret && grid.at(pos).getMissile() && i >= 0) {
 		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
-			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
+			if (missile[mi - 1]._mitype == MissileType::FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = true;
 			} else {
 				for (j = 0; j < nummissiles; j++) {
-					if (missile[missileactive[j]]._mitype == MIS_FIREWALL)
+					if (missile[missileactive[j]]._mitype == MissileType::FIREWALL)
 						fire = true;
 				}
 			}
 		}
-		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MonsterType::DIABLO))
+		if (fire && (!(monsters[i].data.mMagicRes & MonsterResist::imune_fire) || monsters[i].data.MType->mtype == MonsterType::DIABLO))
 			ret = false;
 	}
 	return ret;
@@ -1110,16 +1110,16 @@ bool PosOkMonst2(int i, V2Di pos)
 	if (ret && grid.at(pos).getMissile() && i >= 0) {
 		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
-			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
+			if (missile[mi - 1]._mitype == MissileType::FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = true;
 			} else {
 				for (j = 0; j < nummissiles; j++) {
-					if (missile[missileactive[j]]._mitype == MIS_FIREWALL)
+					if (missile[missileactive[j]]._mitype == MissileType::FIREWALL)
 						fire = true;
 				}
 			}
 		}
-		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MonsterType::DIABLO))
+		if (fire && (!(monsters[i].data.mMagicRes & MonsterResist::imune_fire) || monsters[i].data.MType->mtype == MonsterType::DIABLO))
 			ret = false;
 	}
 
@@ -1151,18 +1151,18 @@ bool PosOkMonst3(int i, V2Di pos)
 	if (ret && grid.at(pos).getMissile() != 0 && i >= 0) {
 		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
-			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
+			if (missile[mi - 1]._mitype == MissileType::FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
 				fire = true;
 			} else {
 				for (j = 0; j < nummissiles; j++) {
 					mi = missileactive[j];
-					if (missile[mi]._mitype == MIS_FIREWALL) {
+					if (missile[mi]._mitype == MissileType::FIREWALL) {
 						fire = true;
 					}
 				}
 			}
 		}
-		if (fire && (!(monsters[i].data.mMagicRes & IMUNE_FIRE) || monsters[i].data.MType->mtype == MonsterType::DIABLO)) {
+		if (fire && (!(monsters[i].data.mMagicRes & MonsterResist::imune_fire) || monsters[i].data.MType->mtype == MonsterType::DIABLO)) {
 			ret = false;
 		}
 	}
@@ -1294,19 +1294,19 @@ void MonsterInstance::TalktoMonster()
 {
 	int pnum, itm;
 	pnum = data._menemy;
-	data._mmode = MM_TALK;
-	if (data._mAi == AI_SNOTSPIL || data._mAi == AI_LACHDAN) {
+	data._mmode = MonsterMode::TALK;
+	if (data._mAi == MonstAi::SNOTSPIL || data._mAi == MonstAi::LACHDAN) {
 		if (QuestStatus(Q_LTBANNER) && quests[Q_LTBANNER]._qvar1 == 2 && HasItem(pnum, ItemIndex::BANNER, &itm)) {
 			plr[pnum].inventory.RemoveInvItem(itm);
 			quests[Q_LTBANNER]._qactive = QUEST_DONE;
 			data.mtalkmsg = TEXT_BANNER12;
-			data._mgoal = MGOAL_INQUIRING;
+			data._mgoal = MonsterGoal::INQUIRING;
 		}
 		if (QuestStatus(Q_VEIL) && data.mtalkmsg >= TEXT_VEIL9) {
 			if (HasItem(pnum, ItemIndex::GLDNELIX, &itm)) {
 				plr[pnum].inventory.RemoveInvItem(itm);
 				data.mtalkmsg = TEXT_VEIL11;
-				data._mgoal = MGOAL_INQUIRING;
+				data._mgoal = MonsterGoal::INQUIRING;
 			}
 		}
 	}
@@ -1344,11 +1344,11 @@ bool CanTalkToMonst(int m)
 		app_fatal("CanTalkToMonst: Invalid monster %d", m);
 	}
 
-	if (monsters[m].data._mgoal == MGOAL_INQUIRING) {
+	if (monsters[m].data._mgoal == MonsterGoal::INQUIRING) {
 		return true;
 	}
 
-	return monsters[m].data._mgoal == MGOAL_TALKING;
+	return monsters[m].data._mgoal == MonsterGoal::TALKING;
 }
 
 bool CheckMonsterHit(int m, bool *ret)
@@ -1357,15 +1357,15 @@ bool CheckMonsterHit(int m, bool *ret)
 		app_fatal("CheckMonsterHit: Invalid monster %d", m);
 	}
 
-	if (monsters[m].data._mAi == AI_GARG && monsters[m].data._mFlags & MonsterFlag::allow_special) {
+	if (monsters[m].data._mAi == MonstAi::GARG && monsters[m].data._mFlags & MonsterFlag::allow_special) {
 		monsters[m].data._mFlags &= ~MonsterFlag::allow_special;
-		monsters[m].data._mmode = MM_SATTACK;
+		monsters[m].data._mmode = MonsterMode::SATTACK;
 		*ret = true;
 		return true;
 	}
 
 	if (monsters[m].data.MType->mtype >= MonsterType::COUNSLR && monsters[m].data.MType->mtype <= MonsterType::ADVOCATE) {
-		if (monsters[m].data._mgoal != MGOAL_NORMAL) {
+		if (monsters[m].data._mgoal != MonsterGoal::NORMAL) {
 			*ret = false;
 			return true;
 		}

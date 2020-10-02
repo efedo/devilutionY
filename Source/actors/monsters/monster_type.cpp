@@ -82,44 +82,44 @@ void MonsterClass::InitMonsterGFX()
 
 	if (mtype >= MonsterType::NMAGMA && mtype <= MonsterType::WMAGMA && !(MissileFileFlag & 1)) {
 		MissileFileFlag |= 1;
-		LoadMissileGFX(MFILE_MAGBALL);
+		LoadMissileGFX(MissileGraphic::MAGBALL);
 	}
 	if (mtype >= MonsterType::STORM && mtype <= MonsterType::MAEL && !(MissileFileFlag & 2)) {
 		MissileFileFlag |= 2;
-		LoadMissileGFX(MFILE_THINLGHT);
+		LoadMissileGFX(MissileGraphic::THINLGHT);
 	}
 	if (mtype == MonsterType::SUCCUBUS && !(MissileFileFlag & 4)) {
 		MissileFileFlag |= 4;
-		LoadMissileGFX(MFILE_FLARE);
-		LoadMissileGFX(MFILE_FLAREEXP);
+		LoadMissileGFX(MissileGraphic::FLARE);
+		LoadMissileGFX(MissileGraphic::FLAREEXP);
 	}
 	if (mtype == MonsterType::SNOWWICH && !(MissileFileFlag & 0x20)) {
 		MissileFileFlag |= 0x20;
-		LoadMissileGFX(MFILE_SCUBMISB);
-		LoadMissileGFX(MFILE_SCBSEXPB);
+		LoadMissileGFX(MissileGraphic::SCUBMISB);
+		LoadMissileGFX(MissileGraphic::SCBSEXPB);
 	}
 	if (mtype == MonsterType::HLSPWN && !(MissileFileFlag & 0x40)) {
 		MissileFileFlag |= 0x40;
-		LoadMissileGFX(MFILE_SCUBMISD);
-		LoadMissileGFX(MFILE_SCBSEXPD);
+		LoadMissileGFX(MissileGraphic::SCUBMISD);
+		LoadMissileGFX(MissileGraphic::SCBSEXPD);
 	}
 	if (mtype == MonsterType::SOLBRNR && !(MissileFileFlag & 0x80)) {
 		MissileFileFlag |= 0x80;
-		LoadMissileGFX(MFILE_SCUBMISC);
-		LoadMissileGFX(MFILE_SCBSEXPC);
+		LoadMissileGFX(MissileGraphic::SCUBMISC);
+		LoadMissileGFX(MissileGraphic::SCBSEXPC);
 	}
 	if (mtype >= MonsterType::INCIN && mtype <= MonsterType::HELLBURN && !(MissileFileFlag & 8)) {
 		MissileFileFlag |= 8;
-		LoadMissileGFX(MFILE_KRULL);
+		LoadMissileGFX(MissileGraphic::KRULL);
 	}
 	if (mtype >= MonsterType::NACID && mtype <= MonsterType::XACID && !(MissileFileFlag & 0x10)) {
 		MissileFileFlag |= 0x10;
-		LoadMissileGFX(MFILE_ACIDBF);
-		LoadMissileGFX(MFILE_ACIDSPLA);
-		LoadMissileGFX(MFILE_ACIDPUD);
+		LoadMissileGFX(MissileGraphic::ACIDBF);
+		LoadMissileGFX(MissileGraphic::ACIDSPLA);
+		LoadMissileGFX(MissileGraphic::ACIDPUD);
 	}
 	if (mtype == MonsterType::DIABLO) {
-		LoadMissileGFX(MFILE_FIREPLAR);
+		LoadMissileGFX(MissileGraphic::FIREPLAR);
 	}
 }
 

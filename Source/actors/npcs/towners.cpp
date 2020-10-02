@@ -158,7 +158,7 @@ void Towner::InitQstSnds()
 
 void Smith::Init()
 {
-	InitTownerInfo(96, true, TOWN_SMITH, 62, 63, 0, 10);
+	InitTownerInfo(96, true, TownerId::SMITH, 62, 63, 0, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\Smith\\SmithN.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -171,7 +171,7 @@ void Smith::Init()
 
 void BarOwner::Init()
 {
-	InitTownerInfo(96, true, TOWN_TAVERN, 55, 62, 3, 10);
+	InitTownerInfo(96, true, TownerId::TAVERN, 55, 62, 3, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\TwnF\\TwnFN.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -184,7 +184,7 @@ void BarOwner::Init()
 
 void DeadGuy::Init()
 {
-	InitTownerInfo(96, true, TOWN_DEADGUY, 24, 32, -1, 10);
+	InitTownerInfo(96, true, TownerId::DEADGUY, 24, 32, -1, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\Butch\\Deadguy.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -197,7 +197,7 @@ void DeadGuy::Init()
 
 void Witch::Init()
 {
-	InitTownerInfo(96, true, TOWN_WITCH, 80, 20, 5, 10);
+	InitTownerInfo(96, true, TownerId::WITCH, 80, 20, 5, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\TownWmn1\\Witch.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -210,7 +210,7 @@ void Witch::Init()
 
 void Barmaid::Init()
 {
-	InitTownerInfo(96, true, TOWN_BMAID, 43, 66, -1, 10);
+	InitTownerInfo(96, true, TownerId::BMAID, 43, 66, -1, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\TownWmn1\\WmnN.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -224,7 +224,7 @@ void Barmaid::Init()
 void Boy::Init()
 {
 	npcs.boyloadflag = true;
-	InitTownerInfo(96, true, TOWN_PEGBOY, 11, 53, -1, 10);
+	InitTownerInfo(96, true, TownerId::PEGBOY, 11, 53, -1, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\TownBoy\\PegKid1.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -237,7 +237,7 @@ void Boy::Init()
 
 void Healer::Init()
 {
-	InitTownerInfo(96, true, TOWN_HEALER, 55, 79, 1, 10);
+	InitTownerInfo(96, true, TownerId::HEALER, 55, 79, 1, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\Healer\\Healer.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -250,7 +250,7 @@ void Healer::Init()
 
 void Teller::Init()
 {
-	InitTownerInfo(96, true, TOWN_STORY, 62, 71, 2, 10);
+	InitTownerInfo(96, true, TownerId::STORY, 62, 71, 2, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\Strytell\\Strytell.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -263,7 +263,7 @@ void Teller::Init()
 
 void Drunk::Init()
 {
-	InitTownerInfo(96, true, TOWN_DRUNK, 71, 84, 4, 10);
+	InitTownerInfo(96, true, TownerId::DRUNK, 71, 84, 4, 10);
 	InitQstSnds();
 	_tNData = LoadFileInMem("Towners\\Drunk\\TwnDrunk.CEL", NULL);
 	for (int i = 0; i < 8; i++) {
@@ -423,7 +423,7 @@ void BarOwner::TalkToTowner(Player &player)
 	}
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_OGDEN1);
-		if (dialog.storeflag) { StartStore(STORE_TAVERN); }
+		if (dialog.storeflag) { StartStore(StoreTalkId::TAVERN); }
 	}
 }
 
@@ -540,7 +540,7 @@ void Smith::TalkToTowner(Player &player)
 	}
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_GRISWOLD1);
-		if (dialog.storeflag) { StartStore(STORE_SMITH); }
+		if (dialog.storeflag) { StartStore(StoreTalkId::SMITH); }
 	}
 }
 
@@ -563,8 +563,8 @@ void Witch::TalkToTowner(Player &player)
 			if (player.HasItem(ItemIndex::MUSHROOM) != NULL) {
 				player.RemoveInvItem(i);
 				quests[Q_MUSHROOM]._qvar1 = 5;
-				Qtalklist[TOWN_HEALER]._qblkm = TEXT_MUSH3;
-				Qtalklist[TOWN_WITCH]._qblkm = -1;
+				Qtalklist[TownerId::HEALER]._qblkm = TEXT_MUSH3;
+				Qtalklist[TownerId::WITCH]._qblkm = -1;
 				_tbtcnt = 150;
 				_tVar1 = &player;
 				quests[Q_MUSHROOM]._qmsg = TEXT_MUSH10;
@@ -598,7 +598,7 @@ void Witch::TalkToTowner(Player &player)
 	}
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_ADRIA1);
-		if (dialog.storeflag) { StartStore(STORE_WITCH); }
+		if (dialog.storeflag) { StartStore(StoreTalkId::WITCH); }
 	}
 }
 
@@ -607,7 +607,7 @@ void Barmaid::TalkToTowner(Player &player)
 	Towner::TalkToTowner(player);
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_GILLIAN1);
-		if (dialog.storeflag) { StartStore(STORE_BARMAID); }
+		if (dialog.storeflag) { StartStore(StoreTalkId::BARMAID); }
 	}
 }
 
@@ -617,7 +617,7 @@ void Drunk::TalkToTowner(Player &player)
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_FARNHAM1);
 		if (dialog.storeflag) {
-			StartStore(STORE_DRUNK);
+			StartStore(StoreTalkId::DRUNK);
 		}
 	}
 }
@@ -654,12 +654,12 @@ void Healer::TalkToTowner(Player &player)
 			               0, 0);
 			dialog.InitQTextMsg(TEXT_MUSH4);
 			quests[Q_MUSHROOM]._qvar1 = QS_BRAINGIVEN;
-			Qtalklist[TOWN_HEALER]._qblkm = -1;
+			Qtalklist[TownerId::HEALER]._qblkm = -1;
 		}
 	}
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_PEPIN1);
-		if (dialog.storeflag) { StartStore(STORE_HEALER); }
+		if (dialog.storeflag) { StartStore(StoreTalkId::HEALER); }
 	}
 }
 
@@ -669,7 +669,7 @@ void Boy::TalkToTowner(Player &player)
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_WIRT1);
 		if (dialog.storeflag) {
-			StartStore(STORE_BOY);
+			StartStore(StoreTalkId::BOY);
 		}
 	}
 }
@@ -727,7 +727,7 @@ void Story::TalkToTowner(Player &player)
 	}
 	if (!dialog.qtextflag) {
 		TownerTalk(TEXT_STORY1);
-		if (dialog.storeflag) { StartStore(STORE_STORY); }
+		if (dialog.storeflag) { StartStore(StoreTalkId::STORY); }
 	}
 }
 

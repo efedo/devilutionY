@@ -27,9 +27,9 @@ void   misc_open_1_ds1_force_dt1       (int ds1_idx);
 void   misc_pl2_correct                (int i);
 int    misc_cmd_line_parse             (int argc, char ** argv);
 /*
-void   misc_restore_mouse_background   (void);
+void   misc_reStoreTalkId::mouse_background   (void);
 void   misc_save_mouse_background      (int x, int y);
-void   misc_draw_mouse_cursor          (int x, int y, int restore_background_first);
+void   misc_draw_mouse_cursor          (int x, int y, int reStoreTalkId::background_first);
 void   misc_set_mouse_cursor           (BITMAP * sprite);
 */
 void   misc_draw_screen                (int mx, int my);

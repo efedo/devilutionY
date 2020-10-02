@@ -124,18 +124,18 @@ void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 		break;
 	}
 
-	for (i = 0; spelldata[spl].sMissiles[i] != MIS_ARROW && i < 3; i++) {
+	for (i = 0; spelldata[spl].sMissiles[i] != MissileType::ARROW && i < 3; i++) {
 		AddMissile(s, d, dir, spelldata[spl].sMissiles[i], caster, id, 0, spllvl);
 	}
 
-	if (spelldata[spl].sMissiles[0] == MIS_TOWN) {
+	if (spelldata[spl].sMissiles[0] == MissileType::TOWN) {
 		UseMana(id, SPL_TOWN);
 	}
-	if (spelldata[spl].sMissiles[0] == MIS_CBOLT) {
+	if (spelldata[spl].sMissiles[0] == MissileType::CBOLT) {
 		UseMana(id, SPL_CBOLT);
 
 		for (i = (spllvl >> 1) + 3; i > 0; i--) {
-			AddMissile(s, d, dir, MIS_CBOLT, caster, id, 0, spllvl);
+			AddMissile(s, d, dir, MissileType::CBOLT, caster, id, 0, spllvl);
 		}
 	}
 }
@@ -186,7 +186,7 @@ void DoResurrect(int pnum, int rid)
 	int hp;
 
 	if ((char)rid != -1) {
-		AddMissile(plr[rid].pos(), plr[rid].pos(), Dir(0), MIS_RESURRECTBEAM, 0, pnum, 0, 0);
+		AddMissile(plr[rid].pos(), plr[rid].pos(), Dir(0), MissileType::RESURRECTBEAM, 0, pnum, 0, 0);
 	}
 
 	if (pnum == myplr()) {

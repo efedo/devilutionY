@@ -638,7 +638,7 @@ bool LeftMouseDown(int wParam)
 				doom_close();
 			} else if (spselflag) {
 				SetSpell();
-			} else if (stextflag != STORE_NONE) {
+			} else if (stextflag != StoreTalkId::NONE) {
 				CheckStoreBtn();
 			} else if (Mouse.y < PANEL_TOP || Mouse.x < PANEL_LEFT || Mouse.x >= PANEL_LEFT + PANEL_WIDTH) {
 				if (!gmenu_is_active() && !TryIconCurs()) {
@@ -794,7 +794,7 @@ void LeftMouseUp()
 		ReleaseChrBtns();
 	if (lvlbtndown)
 		ReleaseLvlBtn();
-	if (stextflag != STORE_NONE)
+	if (stextflag != StoreTalkId::NONE)
 		ReleaseStoreBtn();
 }
 
@@ -803,7 +803,7 @@ void RightMouseDown()
 	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE && PauseMode != 2 && !myplr().data._pInvincible) {
 		if (doomflag) {
 			doom_close();
-		} else if (stextflag == STORE_NONE) {
+		} else if (stextflag == StoreTalkId::NONE) {
 			if (spselflag) {
 				SetSpell();
 			} else if (Mouse.y >= SPANEL_HEIGHT
@@ -918,7 +918,7 @@ void PressKey(int vkey)
 	} else if (vkey == DVL_VK_F1) {
 		if (helpflag) {
 			helpflag = false;
-		} else if (stextflag != STORE_NONE) {
+		} else if (stextflag != StoreTalkId::NONE) {
 			ClearPanel();
 			AddPanelString("No help available", true); /// BUGFIX: message isn't displayed
 			AddPanelString("while in stores", true);
@@ -1119,7 +1119,7 @@ void PressChar(int vkey)
 		return;
 	case 'I':
 	case 'i':
-		if (stextflag == STORE_NONE) {
+		if (stextflag == StoreTalkId::NONE) {
 			sbookflag = false;
 			invflag = !invflag;
 			if (!invflag || chrflag) {
@@ -1135,7 +1135,7 @@ void PressChar(int vkey)
 		return;
 	case 'C':
 	case 'c':
-		if (stextflag == STORE_NONE) {
+		if (stextflag == StoreTalkId::NONE) {
 			questlog = false;
 			chrflag = !chrflag;
 			if (!chrflag || invflag) {
@@ -1151,7 +1151,7 @@ void PressChar(int vkey)
 		return;
 	case 'Q':
 	case 'q':
-		if (stextflag == STORE_NONE) {
+		if (stextflag == StoreTalkId::NONE) {
 			chrflag = false;
 			if (!questlog) {
 				StartQuestlog();
@@ -1166,7 +1166,7 @@ void PressChar(int vkey)
 		return;
 	case 'S':
 	case 's':
-		if (stextflag == STORE_NONE) {
+		if (stextflag == StoreTalkId::NONE) {
 			invflag = false;
 			if (!spselflag) {
 				DoSpeedBook();
@@ -1178,7 +1178,7 @@ void PressChar(int vkey)
 		return;
 	case 'B':
 	case 'b':
-		if (stextflag == STORE_NONE) {
+		if (stextflag == StoreTalkId::NONE) {
 			invflag = false;
 			sbookflag = !sbookflag;
 		}

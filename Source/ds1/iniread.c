@@ -35,7 +35,7 @@ void ini_read(char * ininame)
       {"obj_edit_scroll",         T_INT,  & glb_config.scroll.obj_edit,      (void *) 2},
       {"mouse_speed_x",           T_INT,  & glb_config.mouse_speed.x,        (void *) 2},
       {"mouse_speed_y",           T_INT,  & glb_config.mouse_speed.y,        (void *) 2},
-      {"gamma_correction",        T_GAM,  & glb_config.gamma,                "1.30"},
+      {"gamMonstAnim::correction",        T_GAM,  & glb_config.gamma,                "1.30"},
       {"only_normal_type2",       T_YES,  & glb_config.normal_type2,         "YES"},
       {"always_max_layers",       T_YES,  & glb_config.always_max_layers,    "YES"},
       {"stretch_sprite",          T_YES,  & glb_config.stretch_sprites,      "YES"},

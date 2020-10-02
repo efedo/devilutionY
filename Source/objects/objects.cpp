@@ -1037,7 +1037,7 @@ void AddFlameTrap(int i)
 void AddFlameLvr(int i)
 {
 	object[i]._oVar1 = trapid;
-	object[i]._oVar2 = MIS_FLAMEC;
+	object[i]._oVar2 = MissileType::FLAMEC;
 }
 
 void AddTrap(int i, int ot)
@@ -1045,11 +1045,11 @@ void AddTrap(int i, int ot)
 	int mt = lvl.currlevel / 3 + 1;
 	mt = random_(148, mt);
 	if (mt == 0)
-		object[i]._oVar3 = MIS_ARROW;
+		object[i]._oVar3 = MissileType::ARROW;
 	if (mt == 1)
-		object[i]._oVar3 = MIS_FIREBOLT;
+		object[i]._oVar3 = MissileType::FIREBOLT;
 	if (mt == 2)
-		object[i]._oVar3 = MIS_LIGHTCTRL;
+		object[i]._oVar3 = MissileType::LIGHTCTRL;
 	object[i]._oVar4 = 0;
 }
 
@@ -1465,7 +1465,7 @@ void Obj_Circle(int i)
 			ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 			if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE)
 				quests[Q_BETRAYER]._qvar1 = 4;
-			AddMissile(myplr().pos(), { 35, 46 }, myplr().data._pdir, MIS_RNDTELEPORT, 0, myplr(), 0, 0);
+			AddMissile(myplr().pos(), { 35, 46 }, myplr().data._pdir, MissileType::RNDTELEPORT, 0, myplr(), 0, 0);
 			track_repeat_walk(false);
 			sgbMouseDown = 0;
 			myplr().ClrPlrPath();
@@ -2245,7 +2245,7 @@ void OperateBook(int pnum, int i)
 			}
 			if (do_add_missile) {
 				object[grid[35][36].getObject()]._oVar5++;
-				AddMissile(plr[pnum].pos(), d, plr[pnum].data._pdir, MIS_RNDTELEPORT, 0, pnum, 0, 0);
+				AddMissile(plr[pnum].pos(), d, plr[pnum].data._pdir, MissileType::RNDTELEPORT, 0, pnum, 0, 0);
 				missile_added = true;
 				do_add_missile = false;
 			}
@@ -2267,7 +2267,7 @@ void OperateBook(int pnum, int i)
 			PlaySfxLoc(IS_QUESTDN, object[i]._o);
 		InitDiabloMsg(EMSG_BONECHAMB);
 		AddMissile(myplr().pos(), { object[i]._o.x - 2, object[i]._o.y - 4 }, myplr().data._pdir,
-		    MIS_GUARDIAN, 0, myplr(), 0, 0);
+		    MissileType::GUARDIAN, 0, myplr(), 0, 0);
 	}
 	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
 		ObjChangeMapResync( { object[i]._oVar1, object[i]._oVar2 },
@@ -2375,13 +2375,13 @@ void OperateChest(int pnum, int i, bool sendmsg)
 				mdir = GetDirection(object[i]._o, plr[pnum].pos());
 				switch (object[i]._oVar4) {
 				case 0:
-					mtype = MIS_ARROW;
+					mtype = MissileType::ARROW;
 					break;
 				case 1:
-					mtype = MIS_FARROW;
+					mtype = MissileType::FARROW;
 					break;
 				case 2:
-					mtype = MIS_NOVA;
+					mtype = MissileType::NOVA;
 					break;
 				}
 				AddMissile(object[i]._o, plr[pnum].pos(), mdir, mtype, 1, -1, 0, 0);
@@ -2796,7 +2796,7 @@ void OperateShrine(int pnum, int i, int sType)
 		    plr[pnum].pos(),
 		    plr[pnum].pos(),
 		    plr[pnum].data._pdir,
-		    MIS_MANASHIELD,
+		    MissileType::MANASHIELD,
 		    -1,
 		    pnum,
 		    0,
@@ -2924,7 +2924,7 @@ void OperateShrine(int pnum, int i, int sType)
 		    plr[pnum].pos(),
 		    plr[pnum].pos(),
 		    plr[pnum].data._pdir,
-		    MIS_NOVA,
+		    MissileType::NOVA,
 		    -1,
 		    pnum,
 		    0,
@@ -3017,7 +3017,7 @@ void OperateShrine(int pnum, int i, int sType)
 				break;
 			lv = grid.at(p).getPiece();
 		} while (pieces[lv].solid || grid.at(p).isObject() || grid.at(p).getActor());
-		AddMissile(plr[pnum].pos(), p, plr[pnum].data._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * int(lvl.type()));
+		AddMissile(plr[pnum].pos(), p, plr[pnum].data._pdir, MissileType::RNDTELEPORT, -1, pnum, 0, 2 * int(lvl.type()));
 		if (pnum != myplr())
 			return;
 		InitDiabloMsg(EMSG_SHRINE_HOLY);
@@ -3246,8 +3246,8 @@ void OperateBookCase(int pnum, int i, bool sendmsg)
 			    && monsters[MAX_PLRS].data._mhitpoints) {
 				monsters[MAX_PLRS].data.mtalkmsg = TEXT_ZHAR2;
 				monsters[0].M_StartStand(monsters[MAX_PLRS].data._mdir);
-				monsters[MAX_PLRS].data._mgoal = MGOAL_SHOOT;
-				monsters[MAX_PLRS].data._mmode = MM_TALK;
+				monsters[MAX_PLRS].data._mgoal = MonsterGoal::SHOOT;
+				monsters[MAX_PLRS].data._mmode = MonsterMode::TALK;
 			}
 			if (pnum == myplr())
 				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
@@ -3398,7 +3398,7 @@ bool OperateFountains(int pnum, int i)
 		    plr[pnum].pos(),
 		    plr[pnum].pos(),
 		    plr[pnum].data._pdir,
-		    MIS_INFRA,
+		    MissileType::INFRA,
 		    -1,
 		    pnum,
 		    0,
