@@ -9,7 +9,7 @@
 
 // ==========================================================================
 // prepare the reading of a col value
-// give del_char TRUE to replace the TAB and CR/LF chars by 0
+// give del_char true to replace the TAB and CR/LF chars by 0
 //
 // function set nb_char to # of characters there's in that value
 // function set is_new_line if after col was a LF of CR/LF
@@ -31,23 +31,23 @@ char * txt_gets(char * bptr, int * nb_char, int * is_new_line, int del_char)
       else if (bptr[* nb_char] == '\t')
       {
          // tab
-         if (del_char == TRUE)
+         if (del_char == true)
             bptr[* nb_char] = 0;
          return bptr + (* nb_char) + 1;
       }
       else if (bptr[* nb_char] == 0x0A)
       {
          // end of LF line
-         * is_new_line = TRUE;
-         if (del_char == TRUE)
+         * is_new_line = true;
+         if (del_char == true)
             bptr[* nb_char] = 0;
          return bptr + (* nb_char) + 1;
       }
       else if (bptr[* nb_char] == 0x0D)
       {
          // end of CR / LF line
-         * is_new_line = TRUE;
-         if (del_char == TRUE)
+         * is_new_line = true;
+         if (del_char == true)
             bptr[* nb_char] = 0;
          return bptr + (* nb_char) + 2;
       }
@@ -97,7 +97,7 @@ char * txt_read_header(char * cur_col, TXT_S * txt)
 
    while (cur_col != NULL)
    {
-      next_col = txt_gets(cur_col, & nb_char, & is_new_line, TRUE);
+      next_col = txt_gets(cur_col, & nb_char, & is_new_line, true);
       if (nb_char)
       {
          // search if that col header is one of the required (or one of the user defined filters)
@@ -212,7 +212,7 @@ int txt_fill_data(char * cur_col, TXT_S * txt)
    while (cur_col != NULL)
    {
       // read this col
-      next_col = txt_gets(cur_col, & nb_char, & is_new_line, TRUE);
+      next_col = txt_gets(cur_col, & nb_char, & is_new_line, true);
       
       if (nb_char)
       {
@@ -350,7 +350,7 @@ void txt_get_user_filter_cols(char * cur_col, TXT_S * txt)
 TXT_S * txt_load(char * mem, RQ_ENUM enum_txt, char * filename)
 {
    TXT_S * txt = NULL;
-   int   i=0, size=0, all_col_ok = TRUE;
+   int   i=0, size=0, all_col_ok = true;
    char  * first_line = NULL, tmp[150] = "";
    char  ** required_col = NULL;
 
@@ -423,7 +423,7 @@ TXT_S * txt_load(char * mem, RQ_ENUM enum_txt, char * filename)
       }
    }
 
-   if (all_col_ok != TRUE)
+   if (all_col_ok != true)
    {
       txt = txt_destroy(txt);
       sprintf(tmp, "txt_load() : not all columns have been found");
@@ -480,7 +480,7 @@ void * txt_read_in_mem(char * txtname)
    char tmp[150];
 
    printf("\nwant to read a txt from mpq : %s\n", txtname);
-   entry = misc_load_mpq_file(txtname, (char **) & buff, & len, TRUE);
+   entry = misc_load_mpq_file(txtname, (char **) & buff, & len, true);
    if ((entry == -1) || (buff == NULL))
    {
       sprintf(tmp, "txt_read_in_mem() : file %s not found", txtname);
@@ -527,7 +527,7 @@ void txt_debug(char * file_path_mem, char * file_path_def, TXT_S * txt)
    int  i     = 0;
 
 
-   if (glb_ds1edit.cmd_line.debug_mode != TRUE)
+   if (glb_ds1edit.cmd_line.debug_mode != true)
       return;
    
    if ((file_path_mem == NULL) || (file_path_def == NULL) || (txt == NULL))
@@ -595,7 +595,7 @@ int read_lvltypes_txt(int ds1_idx, int type)
          return -1;
 
       // debug files
-      if (glb_ds1edit.cmd_line.debug_mode == TRUE)
+      if (glb_ds1edit.cmd_line.debug_mode == true)
          txt_debug(glb_path_lvltypes_mem, glb_path_lvltypes_def, txt);
    }
    else
@@ -704,7 +704,7 @@ int read_lvlprest_txt(int ds1_idx, int def)
          return -1;
 
       // debug files
-      if (glb_ds1edit.cmd_line.debug_mode == TRUE)
+      if (glb_ds1edit.cmd_line.debug_mode == true)
          txt_debug(glb_path_lvlprest_mem, glb_path_lvlprest_def, txt);
    }
    else
@@ -791,9 +791,9 @@ int read_lvlprest_txt(int ds1_idx, int def)
          for (b=0; b < DT1_IN_DS1_MAX; b++)
          {
             if (b == 0)
-               glb_ds1[ds1_idx].dt1_mask[b] = TRUE;
+               glb_ds1[ds1_idx].dt1_mask[b] = true;
             else
-               glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? TRUE : false;
+               glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? true : false;
          }
 
          // end
@@ -843,9 +843,9 @@ int read_lvlprest_txt(int ds1_idx, int def)
             for (b=0; b < DT1_IN_DS1_MAX; b++)
             {
                if (b == 0)
-                  glb_ds1[ds1_idx].dt1_mask[b] = TRUE;
+                  glb_ds1[ds1_idx].dt1_mask[b] = true;
                else
-                  glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? TRUE : false;
+                  glb_ds1[ds1_idx].dt1_mask[b] = mask & (1 << (b-1)) ? true : false;
             }
 
             // end
@@ -891,7 +891,7 @@ int read_obj_txt(void)
          return -1;
 
       // debug files
-      if (glb_ds1edit.cmd_line.debug_mode == TRUE)
+      if (glb_ds1edit.cmd_line.debug_mode == true)
          txt_debug(glb_path_obj_mem, glb_path_obj_def, txt);
    }
    else
@@ -964,7 +964,7 @@ int read_objects_txt(void)
          return -1;
 
       // debug files
-      if (glb_ds1edit.cmd_line.debug_mode == TRUE)
+      if (glb_ds1edit.cmd_line.debug_mode == true)
          txt_debug(glb_path_objects_mem, glb_path_objects_def, txt);
    }
    else

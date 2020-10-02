@@ -1,8 +1,12 @@
 
 Change to item pointers/numbers:
-	ItemStruct InvBody[NUM_INVLOC];
+	ItemStruct InvBody[NUM_INV_GRID_ELEM];
 	ItemStruct InvList[NUM_INV_GRID_ELEM];
 	int _pNumInv;
 	char InvGrid[NUM_INV_GRID_ELEM];
 	ItemStruct SpdList[MAXBELTITEMS];
 	ItemStruct HoldItem;
+
+
+Replace almost all instances of  MAXINVITEMS and MAXBELTITEMS with range loops
+	for (auto &i : inv.getBagArray()) {

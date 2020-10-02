@@ -8,10 +8,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 extern uint8_t *optbar_cel;
 extern bool mouseNavigation;
 extern uint8_t *PentSpin_cel;

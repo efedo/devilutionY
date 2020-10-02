@@ -18,7 +18,7 @@ void pfile_write_hero()
 	PkPlayerStruct pkplr;
 
 	save_num = pfile_get_save_num_from_name(myplr().data._pName);
-	if (pfile_open_archive(TRUE, save_num)) {
+	if (pfile_open_archive(true, save_num)) {
 		PackPlayer(&pkplr, myplr(), plr.isSingleplayer());
 		pfile_encode_hero(&pkplr);
 		pfile_flush(plr.isSingleplayer(), save_num);
@@ -60,7 +60,7 @@ bool pfile_open_archive(bool update, DWORD save_num)
 
 	pfile_get_save_path(FileName, sizeof(FileName), save_num);
 	if (OpenMPQ(FileName, save_num))
-		return TRUE;
+		return true;
 
 	return false;
 }
@@ -99,7 +99,7 @@ bool pfile_create_player_description(char *dst, DWORD len)
 			return false;
 		SStrCopy(dst, desc, len);
 	}
-	return TRUE;
+	return true;
 }
 
 bool pfile_rename_hero(const char *name_1, const char *name_2)
@@ -112,7 +112,7 @@ bool pfile_rename_hero(const char *name_1, const char *name_2)
 	if (pfile_get_save_num_from_name(name_2) == MAX_CHARACTERS) {
 		for (i = 0; i != MAX_PLRS; i++) {
 			if (!strcasecmp(name_1, plr[i].data._pName)) {
-				found = TRUE;
+				found = true;
 				break;
 			}
 		}
@@ -131,12 +131,12 @@ bool pfile_rename_hero(const char *name_1, const char *name_2)
 	game_2_ui_player(&plr[0].data, &uihero, gbValidSaveFile);
 	UiSetupPlayerInfo(gszHero, &uihero, GAME_ID);
 	pfile_write_hero();
-	return TRUE;
+	return true;
 }
 
 void pfile_flush_W()
 {
-	pfile_flush(TRUE, pfile_get_save_num_from_name(myplr().data._pName));
+	pfile_flush(true, pfile_get_save_num_from_name(myplr().data._pName));
 }
 
 void game_2_ui_player(const PlayerStruct *p, _uiheroinfo *heroinfo, bool bHasSaveFile)
@@ -176,7 +176,7 @@ bool pfile_ui_set_hero_infos(bool(*ui_add_hero_info)(_uiheroinfo *))
 
 	memset(hero_names, 0, sizeof(hero_names));
 
-	showFixedMsg = TRUE;
+	showFixedMsg = true;
 	for (i = 0; i < MAX_CHARACTERS; i++) {
 		PkPlayerStruct pkplr;
 		HANDLE archive = pfile_open_save_archive(&showFixedMsg, i);
@@ -192,7 +192,7 @@ bool pfile_ui_set_hero_infos(bool(*ui_add_hero_info)(_uiheroinfo *))
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 bool pfile_read_hero(HANDLE archive, PkPlayerStruct *pPack)
@@ -219,7 +219,7 @@ bool pfile_read_hero(HANDLE archive, PkPlayerStruct *pPack)
 				read = codec_decode(buf, dwlen, password);
 				if (read == sizeof(*pPack)) {
 					memcpy(pPack, buf, sizeof(*pPack));
-					ret = TRUE;
+					ret = true;
 				}
 			}
 			if (buf)
@@ -260,7 +260,7 @@ bool pfile_archive_contains_game(HANDLE hsArchive, DWORD save_num)
 		return false;
 
 	SFileCloseFile(file);
-	return TRUE;
+	return true;
 }
 
 bool pfile_ui_set_class_stats(unsigned int player_class_nr, _uidefaultstats *class_stats)
@@ -272,7 +272,7 @@ bool pfile_ui_set_class_stats(unsigned int player_class_nr, _uidefaultstats *cla
 	class_stats->magic = classes[c].magic;
 	class_stats->dexterity = classes[c].dexterity;
 	class_stats->vitality = classes[c].vitality;
-	return TRUE;
+	return true;
 }
 
 char pfile_get_player_class(unsigned int player_class_nr)
@@ -313,11 +313,11 @@ bool pfile_ui_save_create(_uiheroinfo *heroinfo)
 	plr[0].CreatePlayer(cl);
 	strncpy(plr[0].data._pName, heroinfo->name, PLR_NAME_LEN);
 	plr[0].data._pName[PLR_NAME_LEN - 1] = '\0';
-	PackPlayer(&pkplr, 0, TRUE);
+	PackPlayer(&pkplr, 0, true);
 	pfile_encode_hero(&pkplr);
 	game_2_ui_player(&plr[0].data, heroinfo, false);
-	pfile_flush(TRUE, save_num);
-	return TRUE;
+	pfile_flush(true, save_num);
+	return true;
 }
 
 bool pfile_get_file_name(DWORD lvl, char *dst)
@@ -342,7 +342,7 @@ bool pfile_get_file_name(DWORD lvl, char *dst)
 			return false;
 	}
 	sprintf(dst, fmt, lvl);
-	return TRUE;
+	return true;
 }
 
 bool pfile_delete_save(_uiheroinfo *hero_info)
@@ -356,7 +356,7 @@ bool pfile_delete_save(_uiheroinfo *hero_info)
 		pfile_get_save_path(FileName, sizeof(FileName), save_num);
 		RemoveFile(FileName);
 	}
-	return TRUE;
+	return true;
 }
 
 void pfile_read_player_from_save()
@@ -398,7 +398,7 @@ void GetPermLevelNames(char *szPerm)
 		app_fatal("Unable to read to save file archive");
 
 	has_file = mpqapi_has_file(szPerm);
-	pfile_flush(TRUE, save_num);
+	pfile_flush(true, save_num);
 	if (!has_file) {
 		if (lvl.setlevel)
 			sprintf(szPerm, "perms%02d", lvl.setlvlnum);
@@ -421,7 +421,7 @@ void pfile_remove_temp_files()
 		if (!pfile_open_archive(false, save_num))
 			app_fatal("Unable to write to save file archive");
 		mpqapi_remove_hash_entries(GetTempSaveNames);
-		pfile_flush(TRUE, save_num);
+		pfile_flush(true, save_num);
 	}
 }
 
@@ -438,7 +438,7 @@ bool GetTempSaveNames(DWORD dwIndex, char *szTemp)
 		return false;
 
 	sprintf(szTemp, fmt, dwIndex);
-	return TRUE;
+	return true;
 }
 
 void pfile_rename_temp_to_perm()
@@ -466,7 +466,7 @@ void pfile_rename_temp_to_perm()
 		}
 	}
 	assert(! GetPermSaveNames(dwIndex,szPerm));
-	pfile_flush(TRUE, dwChar);
+	pfile_flush(true, dwChar);
 }
 
 bool GetPermSaveNames(DWORD dwIndex, char *szPerm)
@@ -482,7 +482,7 @@ bool GetPermSaveNames(DWORD dwIndex, char *szPerm)
 		return false;
 
 	sprintf(szPerm, fmt, dwIndex);
-	return TRUE;
+	return true;
 }
 
 void pfile_write_save_file(const char *pszName, uint8_t *pbData, DWORD dwLen, DWORD qwLen)
@@ -502,7 +502,7 @@ void pfile_write_save_file(const char *pszName, uint8_t *pbData, DWORD dwLen, DW
 	if (!pfile_open_archive(false, save_num))
 		app_fatal("Unable to write so save file archive");
 	mpqapi_write_file(FileName, pbData, qwLen);
-	pfile_flush(TRUE, save_num);
+	pfile_flush(true, save_num);
 }
 
 void pfile_strcpy(char *dst, const char *src)

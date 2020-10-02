@@ -180,7 +180,7 @@ typedef struct BUTTON_S
    int         active;
    int         tab_have_tiles;
    BUT_STATE_E state;
-   int         mouse_over;  // TRUE / false
+   int         mouse_over;  // true / false
    BITMAP      * bmp[2];    // [0]=OFF, [1]=ON
 } BUTTON_S;
 
@@ -432,7 +432,7 @@ typedef struct CMD_LINE_S
    // -force_pal : number is act of palette, 0 to 4, -1 if not used
    int  force_pal_num;
 
-   // -no_check_act option (don't compare .ds1 and .txt acts for safety), TRUE / false
+   // -no_check_act option (don't compare .ds1 and .txt acts for safety), true / false
    int  no_check_act;
 
    // -dt1_list : number of file, 1 to DT1_IN_DS1_MAX, -1 if not used
@@ -738,7 +738,7 @@ typedef struct PATH_EDIT_WIN_S
    int x0, y0;          // screen position
    int w, h;            // dimensions in pixels
    int obj_idx;         // object index that is used, -1 = none
-   int obj_dirty;       // if TRUE, need a click on the OK or CANCEL button
+   int obj_dirty;       // if true, need a click on the OK or CANCEL button
                         // before another object can be edited
    int path_start_idx;  // first path index displayed
 
@@ -855,7 +855,7 @@ typedef struct DS1_S
    long          obj_num;
    long          obj_num_undo;
    int           can_undo_obj;
-   int           draw_edit_obj; // edit Type-Id of objects, false / TRUE
+   int           draw_edit_obj; // edit Type-Id of objects, false / true
    WIN_EDT_OBJ_S win_edt_obj;
 
    // current animated floor frame

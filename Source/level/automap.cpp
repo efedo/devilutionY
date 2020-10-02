@@ -82,7 +82,7 @@ void Automap::init()
 void Automap::start()
 {
 	AutoMapOfs = { 0, 0 };
-	automapflag = TRUE;
+	automapflag = true;
 }
 
 /**
@@ -225,7 +225,7 @@ void Automap::draw()
 		int y;
 
 		for (j = 0; j < cells; j++) {
-			WORD maptype = GetAutomapType({ map.x + j, map.y - j }, TRUE);
+			WORD maptype = GetAutomapType({ map.x + j, map.y - j }, true);
 			if (maptype != 0)
 				drawTile({x, s.y}, maptype);
 			x += AmLine64;
@@ -234,7 +234,7 @@ void Automap::draw()
 		x = s.x - AmLine32;
 		y = s.y + AmLine16;
 		for (j = 0; j <= cells; j++) {
-			WORD maptype = GetAutomapType({map.x + j, map.y - j }, TRUE);
+			WORD maptype = GetAutomapType({map.x + j, map.y - j }, true);
 			if (maptype != 0)
 				drawTile({ x, y }, maptype);
 			x += AmLine64;
@@ -304,33 +304,33 @@ void Automap::drawTile(V2Di s, WORD automap_type)
 		break;
 	case 2:
 	case 5:
-		do_vert = TRUE;
+		do_vert = true;
 		break;
 	case 3:
 	case 6:
-		do_horz = TRUE;
+		do_horz = true;
 		break;
 	case 4:
-		do_vert = TRUE;
-		do_horz = TRUE;
+		do_vert = true;
+		do_horz = true;
 		break;
 	case 8:
-		do_vert = TRUE;
-		do_cave_horz = TRUE;
+		do_vert = true;
+		do_cave_horz = true;
 		break;
 	case 9:
-		do_horz = TRUE;
-		do_cave_vert = TRUE;
+		do_horz = true;
+		do_cave_vert = true;
 		break;
 	case 10:
-		do_cave_horz = TRUE;
+		do_cave_horz = true;
 		break;
 	case 11:
-		do_cave_vert = TRUE;
+		do_cave_vert = true;
 		break;
 	case 12:
-		do_cave_horz = TRUE;
-		do_cave_vert = TRUE;
+		do_cave_horz = true;
+		do_cave_vert = true;
 		break;
 	}
 
@@ -601,7 +601,7 @@ void Automap::SetAutomapView(V2Di pos)
 		return;
 	}
 
-	automapview[xx][yy] = TRUE;
+	automapview[xx][yy] = true;
 
 	maptype = GetAutomapType({ xx, yy }, false);
 	solid = maptype & 0x4000;
@@ -610,52 +610,52 @@ void Automap::SetAutomapView(V2Di pos)
 	case 2:
 		if (solid) {
 			if (GetAutomapType({ xx, yy + 1 }, false) == 0x4007)
-				automapview[xx][yy + 1] = TRUE;
+				automapview[xx][yy + 1] = true;
 		} else if (GetAutomapType({ xx - 1, yy }, false) & 0x4000) {
-			automapview[xx - 1][yy] = TRUE;
+			automapview[xx - 1][yy] = true;
 		}
 		break;
 	case 3:
 		if (solid) {
 			if (GetAutomapType({ xx + 1, yy }, false) == 0x4007)
-				automapview[xx + 1][yy] = TRUE;
+				automapview[xx + 1][yy] = true;
 		} else if (GetAutomapType({ xx, yy - 1 }, false) & 0x4000) {
-			automapview[xx][yy - 1] = TRUE;
+			automapview[xx][yy - 1] = true;
 		}
 		break;
 	case 4:
 		if (solid) {
 			if (GetAutomapType({ xx, yy + 1 }, false) == 0x4007)
-				automapview[xx][yy + 1] = TRUE;
+				automapview[xx][yy + 1] = true;
 			if (GetAutomapType({ xx + 1, yy }, false) == 0x4007)
-				automapview[xx + 1][yy] = TRUE;
+				automapview[xx + 1][yy] = true;
 		} else {
 			if (GetAutomapType({ xx - 1, yy }, false) & 0x4000)
-				automapview[xx - 1][yy] = TRUE;
+				automapview[xx - 1][yy] = true;
 			if (GetAutomapType({xx, yy - 1 }, false) & 0x4000)
-				automapview[xx][yy - 1] = TRUE;
+				automapview[xx][yy - 1] = true;
 			if (GetAutomapType({ xx - 1, yy - 1 }, false) & 0x4000)
-				automapview[xx - 1][yy - 1] = TRUE;
+				automapview[xx - 1][yy - 1] = true;
 		}
 		break;
 	case 5:
 		if (solid) {
 			if (GetAutomapType({ xx, yy - 1 }, false) & 0x4000)
-				automapview[xx][yy - 1] = TRUE;
+				automapview[xx][yy - 1] = true;
 			if (GetAutomapType({ xx, yy + 1 }, false) == 0x4007)
-				automapview[xx][yy + 1] = TRUE;
+				automapview[xx][yy + 1] = true;
 		} else if (GetAutomapType({ xx - 1, yy }, false) & 0x4000) {
-			automapview[xx - 1][yy] = TRUE;
+			automapview[xx - 1][yy] = true;
 		}
 		break;
 	case 6:
 		if (solid) {
 			if (GetAutomapType({ xx - 1, yy }, false) & 0x4000)
-				automapview[xx - 1][yy] = TRUE;
+				automapview[xx - 1][yy] = true;
 			if (GetAutomapType({ xx + 1, yy }, false) == 0x4007)
-				automapview[xx + 1][yy] = TRUE;
+				automapview[xx + 1][yy] = true;
 		} else if (GetAutomapType({ xx, yy - 1 }, false) & 0x4000) {
-			automapview[xx][yy - 1] = TRUE;
+			automapview[xx][yy - 1] = true;
 		}
 		break;
 	}

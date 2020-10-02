@@ -69,7 +69,7 @@ void UseMana(int id, int sn)
 				ma = GetManaAmount(id, sn);
 				plr[id].data._pMana -= ma;
 				plr[id].data._pManaBase -= ma;
-				drawmanaflag = TRUE;
+				drawmanaflag = true;
 #ifdef _DEBUG
 			}
 #endif
@@ -84,10 +84,10 @@ bool CheckSpell(int id, int sn, char st, bool manaonly)
 
 #ifdef _DEBUG
 	if (debug_mode_key_inverted_v)
-		return TRUE;
+		return true;
 #endif
 
-	result = TRUE;
+	result = true;
 	if (!manaonly && pcurs != CURSOR_HAND) {
 		result = false;
 	} else {
@@ -165,7 +165,7 @@ static void PlacePlayer(int pnum)
 					for (x = min; x <= max && !done; x++) {
 						n.x = plr[pnum].pos().x + x;
 						if (PosOkPlayer(pnum, n)) {
-							done = TRUE;
+							done = true;
 						}
 					}
 				}
@@ -197,8 +197,8 @@ void DoResurrect(int pnum, int rid)
 		if (rid == myplr()) {
 			deathflag = false;
 			gamemenu_off();
-			drawhpflag = TRUE;
-			drawmanaflag = TRUE;
+			drawhpflag = true;
+			drawmanaflag = true;
 		}
 
 		plr[rid].ClrPlrPath();
@@ -216,7 +216,7 @@ void DoResurrect(int pnum, int rid)
 		plr[rid].data._pMana = 0;
 		plr[rid].data._pManaBase = plr[rid].data._pMana + (plr[rid].data._pMaxManaBase - plr[rid].data._pMaxMana);
 
-		plr[rid].CalcPlrInv(TRUE);
+		plr[rid].CalcPlrInv(true);
 
 		if (plr[rid].data.plrlevel == lvl.currlevel) {
 			plr[rid].StartStand(plr[rid].data._pdir);
@@ -265,7 +265,7 @@ void DoHealOther(int pnum, int rid)
 			plr[rid].data._pHPBase = plr[rid].data._pMaxHPBase;
 		}
 
-		drawhpflag = TRUE;
+		drawhpflag = true;
 	}
 }
 

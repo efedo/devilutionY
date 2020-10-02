@@ -184,7 +184,7 @@ void misc_check_tiles_conflicts(int ds1_idx)
          d = bt[i].dt1_idx;
          r = bt[i].rarity;
          if ((old_o != o) || (old_m != m) || (old_s != s) || (i >= bt_max))
-            done2 = TRUE;
+            done2 = true;
          else
          {
             bt[i].used_by_game = bt[i].used_by_editor = false;
@@ -211,24 +211,24 @@ void misc_check_tiles_conflicts(int ds1_idx)
       if (sum_rarity == 0)
       {
          // only last block of the first dt1
-         bt[last_block].used_by_game = bt[last_block].used_by_editor = TRUE;
+         bt[last_block].used_by_game = bt[last_block].used_by_editor = true;
       }
       else
       {
          // editor : only first block having the highest rarity
-         bt[first_block].used_by_editor = TRUE;
+         bt[first_block].used_by_editor = true;
          
          // game   : same, but also others which have a non-zero rarity
          for (b = start_i; b <= end_i; b++)
          {
             if (bt[b].rarity)
-               bt[b].used_by_game = TRUE;
+               bt[b].used_by_game = true;
          }
       }
 
       // next
       if (i >= bt_max)
-         done = TRUE;
+         done = true;
       else
          start_i = i;
    }
@@ -413,7 +413,7 @@ void misc_make_block_table(int ds1_idx)
                  (glb_ds1[ds1_idx].block_table[b].main_index  == glb_ds1[ds1_idx].block_table[b-1].main_index)  &&
                  (glb_ds1[ds1_idx].block_table[b].sub_index   == glb_ds1[ds1_idx].block_table[b-1].sub_index)
             )
-               glb_ds1[ds1_idx].block_table[b].conflict = TRUE;
+               glb_ds1[ds1_idx].block_table[b].conflict = true;
          }
          if (b < (glb_ds1[ds1_idx].bt_num-1))
          {
@@ -421,7 +421,7 @@ void misc_make_block_table(int ds1_idx)
                  (glb_ds1[ds1_idx].block_table[b].main_index  == glb_ds1[ds1_idx].block_table[b+1].main_index)  &&
                  (glb_ds1[ds1_idx].block_table[b].sub_index   == glb_ds1[ds1_idx].block_table[b+1].sub_index)
             )
-               glb_ds1[ds1_idx].block_table[b].conflict = TRUE;
+               glb_ds1[ds1_idx].block_table[b].conflict = true;
          }
       }  if (glb_ds1[ds1_idx].block_table[b].conflict)
          printf(" *");
@@ -549,7 +549,7 @@ void misc_make_cmaps(void)
          fprintf(stderr, ".");
          sprintf(tmp, "%scmap%i_%i.bin", glb_ds1edit_data_dir, a, cm);
          cmap_ok = false;
-         if (file_exists(tmp, -1, NULL) && (glb_ds1edit.pal_loaded[a] == TRUE))
+         if (file_exists(tmp, -1, NULL) && (glb_ds1edit.pal_loaded[a] == true))
          {
             // load the colormap from disk, instead of making it
             in = fopen(tmp, "rb");
@@ -560,7 +560,7 @@ void misc_make_cmaps(void)
                printf("loading %s\n", tmp);
                fread(& glb_ds1edit.cmap[cm][a], sizeof(COLOR_MAP), 1, in);
                fclose(in);
-               cmap_ok = TRUE;
+               cmap_ok = true;
             }
          }
          
@@ -648,7 +648,7 @@ int misc_load_pal_from_disk(int pal_idx)
          fread(glb_ds1edit.d2_pal[pal_idx], size, 1, in);
          fclose(in);
          glb_ds1edit.pal_size[pal_idx] = size;
-         return TRUE;
+         return true;
       }
    }
    return false;
@@ -1300,7 +1300,7 @@ int misc_is_numerical(char * str)
       else
          return false;
    }
-   return TRUE;
+   return true;
 }
 
 
@@ -1353,7 +1353,7 @@ int misc_cmd_line_parse(int argc, char ** argv)
    for (i=1; i < argc; i++)
    {
       if (stricmp(argv[i], "-force_dt1") == 0)
-         force_dt1_present = TRUE; // no LvlType.txt ID and no LvlPrest.txt DEF expected in the arguments
+         force_dt1_present = true; // no LvlType.txt ID and no LvlPrest.txt DEF expected in the arguments
    }
 
    // scan all parameters 1 by 1
@@ -1376,12 +1376,12 @@ int misc_cmd_line_parse(int argc, char ** argv)
       else if (stricmp(argv[i], "-debug") == 0)
       {
          // -debug
-         glb_ds1edit.cmd_line.debug_mode = TRUE;
+         glb_ds1edit.cmd_line.debug_mode = true;
       }
       else if (stricmp(argv[i], "-no_vis_debug") == 0)
       {
          // -no_vis_debug
-         glb_ds1edit.cmd_line.no_vis_debug = TRUE;
+         glb_ds1edit.cmd_line.no_vis_debug = true;
       }
       else if (stricmp(argv[i], "-force_dt1") == 0)
       {
@@ -1458,7 +1458,7 @@ int misc_cmd_line_parse(int argc, char ** argv)
       else if (stricmp(argv[i], "-no_check_act") == 0)
       {
          // -no_check_act is a flag
-         glb_ds1edit.cmd_line.no_check_act = TRUE;
+         glb_ds1edit.cmd_line.no_check_act = true;
       }
       else if ((force_dt1_present == false) && (glb_ds1edit.cmd_line.ds1_filename != NULL))
       {

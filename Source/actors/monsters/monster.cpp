@@ -104,7 +104,7 @@ bool MonstPlace(V2Di p)
 {
 	if (p.x < 0 || p.x >= MAXDUNX
 	    || p.y < 0 || p.y >= MAXDUNY
-	    || grid.at(p).getMonster()
+	    || grid.at(p).getActor()
 	    || grid.at(p).isPlayer()) {
 		return false;
 	}
@@ -276,7 +276,7 @@ int AddMonster(V2Di pos, Dir dir, int mtype, bool InMap)
 {
 	if (nummonsters < MAXMONSTERS) {
 		int i = monstactive[nummonsters++];
-		if (InMap) grid.at(pos).setMonster(i);
+		if (InMap) grid.at(pos).setActor(i);
 		monsters[i] = MonsterInstance(i, dir, mtype, pos);
 		return i;
 	}
@@ -313,7 +313,7 @@ void M2MStartHit(int mid, int i, int dam)
 
 			monsters[mid].PlantInPosition(monsters[mid].data._mdir, &monsters[mid].data._mold);
 			monsters[mid].M_ClearSquares();
-			grid.at(monsters[mid].data._m).setMonster(mid);
+			grid.at(monsters[mid].data._m).setActor(mid);
 		}
 	}
 }
@@ -352,14 +352,14 @@ void DoEnding()
 	play_movie("gendata\\Diabend.smk", false);
 
 	bool bMusicOn = gbMusicOn;
-	gbMusicOn = TRUE;
+	gbMusicOn = true;
 
 	int musicVolume = sound_get_or_set_music_volume(1);
 	sound_get_or_set_music_volume(0);
 
 	music_start(TMUSIC_L2);
-	loop_movie = TRUE;
-	play_movie("gendata\\loopdend.smk", TRUE);
+	loop_movie = true;
+	play_movie("gendata\\loopdend.smk", true);
 	loop_movie = false;
 	music_stop();
 
@@ -375,7 +375,7 @@ void PrepDoEnding()
 	gbSoundOn = sgbSaveSoundOn;
 	gbRunGame = false;
 	deathflag = false;
-	cineflag = TRUE;
+	cineflag = true;
 
 	killLevel = &myplr().data.pDiabloKillLevel;
 	newKillLevel = gnDifficulty + 1;
@@ -385,7 +385,7 @@ void PrepDoEnding()
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		plr[i].data._pmode = PM_QUIT;
-		plr[i].data._pInvincible = TRUE;
+		plr[i].data._pInvincible = true;
 		if (plr.isMultiplayer()) {
 			if (plr[i].data._pHitPoints >> 6 == 0)
 				plr[i].data._pHitPoints = 64;
@@ -605,16 +605,16 @@ bool MonsterInstance::DirOK(Dir mdir)
 		if (dist >= 4) {
 			return false;
 		}
-		return TRUE;
+		return true;
 	}
 	if (data._uniqtype == 0 || !(UniqMonst[data._uniqtype - 1].mUnqAttr & 2))
-		return TRUE;
+		return true;
 	mcount = 0;
 	for (int x = f.x - 3; x <= f.x + 3; x++) {
 		for (int y = f.y - 3; y <= f.y + 3; y++) {
 			if (y < 0 || y >= MAXDUNY || x < 0 || x >= MAXDUNX)
 				continue;
-			mi = grid[x][y].getMonster();
+			mi = grid[x][y].getActor();
 			if (mi < 0)
 				mi = -mi;
 			if (mi != 0)
@@ -911,7 +911,7 @@ void PrintMonstHistory(int mt)
 	int minHP, maxHP, res;
 
 	sprintf(tempstr, "Total kills : %i", monstkills[mt]);
-	AddPanelString(tempstr, TRUE);
+	AddPanelString(tempstr, true);
 	if (monstkills[mt] >= 30) {
 		minHP = monsterdata[mt].mMinHP;
 		maxHP = monsterdata[mt].mMaxHP;
@@ -932,7 +932,7 @@ void PrintMonstHistory(int mt)
 			maxHP = 4 * maxHP + 3;
 		}
 		sprintf(tempstr, "Hit Points : %i-%i", minHP, maxHP);
-		AddPanelString(tempstr, TRUE);
+		AddPanelString(tempstr, true);
 	}
 	if (monstkills[mt] >= 15) {
 		if (gnDifficulty != DIFF_HELL)
@@ -942,7 +942,7 @@ void PrintMonstHistory(int mt)
 		res = res & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING | IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING);
 		if (!res) {
 			strcpy(tempstr, "No magic resistance");
-			AddPanelString(tempstr, TRUE);
+			AddPanelString(tempstr, true);
 		} else {
 			if (res & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING)) {
 				strcpy(tempstr, "Resists : ");
@@ -953,7 +953,7 @@ void PrintMonstHistory(int mt)
 				if (res & RESIST_LIGHTNING)
 					strcat(tempstr, "Lightning ");
 				tempstr[strlen(tempstr) - 1] = '\0';
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 			}
 			if (res & (IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING)) {
 				strcpy(tempstr, "Immune : ");
@@ -964,11 +964,11 @@ void PrintMonstHistory(int mt)
 				if (res & IMUNE_LIGHTNING)
 					strcat(tempstr, "Lightning ");
 				tempstr[strlen(tempstr) - 1] = '\0';
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 			}
 		}
 	}
-	pinfoflag = TRUE;
+	pinfoflag = true;
 }
 
 void PrintUniqueHistory()
@@ -976,22 +976,22 @@ void PrintUniqueHistory()
 	int res = monsters[pcursmonst].data.mMagicRes & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING | IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING);
 	if (!res) {
 		strcpy(tempstr, "No resistances");
-		AddPanelString(tempstr, TRUE);
+		AddPanelString(tempstr, true);
 		strcpy(tempstr, "No Immunities");
 	} else {
 		if (res & (RESIST_MAGIC | RESIST_FIRE | RESIST_LIGHTNING))
 			strcpy(tempstr, "Some Magic Resistances");
 		else
 			strcpy(tempstr, "No resistances");
-		AddPanelString(tempstr, TRUE);
+		AddPanelString(tempstr, true);
 		if (res & (IMUNE_MAGIC | IMUNE_FIRE | IMUNE_LIGHTNING)) {
 			strcpy(tempstr, "Some Magic Immunities");
 		} else {
 			strcpy(tempstr, "No Immunities");
 		}
 	}
-	AddPanelString(tempstr, TRUE);
-	pinfoflag = TRUE;
+	AddPanelString(tempstr, true);
+	pinfoflag = true;
 }
 
 void MissToMonst(int i, V2Di pos)
@@ -1012,7 +1012,7 @@ void MissToMonst(int i, V2Di pos)
 
 	Monst = &monsters[m].data;
 	old = Miss->_mi;
-	grid.at(pos).setMonster(m);
+	grid.at(pos).setActor(m);
 	Monst->_mdir = Dir(Miss->_mimfnum);
 	Monst->_m = pos;
 	monsters[m].M_StartStand(Monst->_mdir);
@@ -1032,7 +1032,7 @@ void MissToMonst(int i, V2Di pos)
 				monsters[m].M_TryH2HHit(pnum, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
 				if (pnum == myplr() && (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE)) {
 					if (plr[pnum].data._pmode != 7 && plr[pnum].data._pmode != 8)
-						plr[pnum].StartPlrHit(0, TRUE);
+						plr[pnum].StartPlrHit(0, true);
 					n = old + offset(Monst->_mdir);
 					if (PosOkPlayer(pnum, n)) {
 						plr[pnum].PlantInPlace(plr[pnum].data._pdir);
@@ -1044,14 +1044,14 @@ void MissToMonst(int i, V2Di pos)
 			}
 		}
 	} else {
-		if (grid.at(old).getMonster() > 0) {
+		if (grid.at(old).getActor() > 0) {
 			if (Monst->MType->mtype != MT_GLOOM && (Monst->MType->mtype < MT_INCIN || Monst->MType->mtype > MT_HELLBURN)) {
-				monsters[m].M_TryM2MHit(grid.at(old).getMonster() - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
+				monsters[m].M_TryM2MHit(grid.at(old).getActor() - 1, 500, Monst->mMinDamage2, Monst->mMaxDamage2);
 				if (Monst->MType->mtype < MT_NSNAKE || Monst->MType->mtype > MT_GSNAKE) {
 					n = old + offset(Monst->_mdir);
-					if (PosOkMonst(grid.at(old).getMonster() - 1, n)) {
-						m = grid.at(old).getMonster();
-						grid.at(n).setMonster(m);
+					if (PosOkMonst(grid.at(old).getActor() - 1, n)) {
+						m = grid.at(old).getActor();
+						grid.at(n).setActor(m);
 						grid.at(old).clearMonster();
 						m--;
 						monsters[m].data._m = n;
@@ -1069,7 +1069,7 @@ bool PosOkMonst(int i, V2Di pos)
 	bool ret, fire;
 
 	fire = false;
-	ret = !grid.at(pos).isSolid() && !grid.at(pos).isPlayer() && !grid.at(pos).isMonster();
+	ret = !grid.at(pos).isSolid() && !grid.at(pos).isPlayer() && !grid.at(pos).isActor();
 	if (ret && grid.at(pos).isObject()) {
 		oi = grid.at(pos).getObject();
 		if (object[oi]._oSolidFlag)
@@ -1080,11 +1080,11 @@ bool PosOkMonst(int i, V2Di pos)
 		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
-				fire = TRUE;
+				fire = true;
 			} else {
 				for (j = 0; j < nummissiles; j++) {
 					if (missile[missileactive[j]]._mitype == MIS_FIREWALL)
-						fire = TRUE;
+						fire = true;
 				}
 			}
 		}
@@ -1111,11 +1111,11 @@ bool PosOkMonst2(int i, V2Di pos)
 		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
-				fire = TRUE;
+				fire = true;
 			} else {
 				for (j = 0; j < nummissiles; j++) {
 					if (missile[missileactive[j]]._mitype == MIS_FIREWALL)
-						fire = TRUE;
+						fire = true;
 				}
 			}
 		}
@@ -1132,7 +1132,7 @@ bool PosOkMonst3(int i, V2Di pos)
 	bool ret, fire, isdoor;
 
 	fire = false;
-	ret = TRUE;
+	ret = true;
 	isdoor = false;
 
 	if (ret && grid.at(pos).isObject()) {
@@ -1146,18 +1146,18 @@ bool PosOkMonst3(int i, V2Di pos)
 		}
 	}
 	if (ret) {
-		ret = (!grid.at(pos).isSolid() || isdoor) && !grid.at(pos).isPlayer() && grid.at(pos).getMonster() == 0;
+		ret = (!grid.at(pos).isSolid() || isdoor) && !grid.at(pos).isPlayer() && grid.at(pos).getActor() == 0;
 	}
 	if (ret && grid.at(pos).getMissile() != 0 && i >= 0) {
 		mi = grid.at(pos).getMissile();
 		if (mi > 0) {
 			if (missile[mi - 1]._mitype == MIS_FIREWALL) { // BUGFIX: Change 'mi' to 'mi - 1' (fixed)
-				fire = TRUE;
+				fire = true;
 			} else {
 				for (j = 0; j < nummissiles; j++) {
 					mi = missileactive[j];
 					if (missile[mi]._mitype == MIS_FIREWALL) {
-						fire = TRUE;
+						fire = true;
 					}
 				}
 			}
@@ -1196,7 +1196,7 @@ int M_SpawnSkel(V2Di pos, Dir dir)
 		for (i = 0; i < nummtypes && j <= skeltypes; i++) {
 			if (IsSkel(beastiary[i].data.mtype)) j++;
 		}
-		int skel = AddMonster(pos, dir, i - 1, TRUE);
+		int skel = AddMonster(pos, dir, i - 1, true);
 		if (skel != -1) monsters[skel].M_StartSpStand(dir);
 		return skel;
 	}
@@ -1205,7 +1205,7 @@ int M_SpawnSkel(V2Di pos, Dir dir)
 
 void MonsterInstance::ActivateSpawn(V2Di pos, Dir dir)
 {
-	grid.at(pos).setMonster(i);
+	grid.at(pos).setActor(i);
 	data._m = pos;
 	data._mfut = pos;
 	data._mold = pos;
@@ -1225,7 +1225,7 @@ bool SpawnSkeleton(int ii, V2Di pos)
 	if (PosOkMonst(-1, pos)) {
 		dir = GetDirection(pos, pos); // ??? Gimmick to get random dir?
 		monsters[ii].ActivateSpawn(pos, dir);
-		return TRUE;
+		return true;
 	}
 
 	savail = false;
@@ -1262,7 +1262,7 @@ bool SpawnSkeleton(int ii, V2Di pos)
 	d = pos + n - V2Di(1, 1);
 	dir = GetDirection(d, pos);
 	monsters[ii].ActivateSpawn(d, dir);
-	return TRUE;
+	return true;
 }
 
 int PreSpawnSkeleton()
@@ -1314,7 +1314,7 @@ void MonsterInstance::TalktoMonster()
 
 void MonsterInstance::SpawnGolum(V2Di pos, int mi)
 {
-	grid.at(pos).setMonster(i);
+	grid.at(pos).setActor(i);
 	data._m = pos;
 	data._mfut = pos;
 	data._mold = pos;
@@ -1345,7 +1345,7 @@ bool CanTalkToMonst(int m)
 	}
 
 	if (monsters[m].data._mgoal == MGOAL_INQUIRING) {
-		return TRUE;
+		return true;
 	}
 
 	return monsters[m].data._mgoal == MGOAL_TALKING;
@@ -1360,14 +1360,14 @@ bool CheckMonsterHit(int m, bool *ret)
 	if (monsters[m].data._mAi == AI_GARG && monsters[m].data._mFlags & MFLAG_ALLOW_SPECIAL) {
 		monsters[m].data._mFlags &= ~MFLAG_ALLOW_SPECIAL;
 		monsters[m].data._mmode = MM_SATTACK;
-		*ret = TRUE;
-		return TRUE;
+		*ret = true;
+		return true;
 	}
 
 	if (monsters[m].data.MType->mtype >= MT_COUNSLR && monsters[m].data.MType->mtype <= MT_ADVOCATE) {
 		if (monsters[m].data._mgoal != MGOAL_NORMAL) {
 			*ret = false;
-			return TRUE;
+			return true;
 		}
 	}
 

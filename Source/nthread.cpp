@@ -36,9 +36,9 @@ void nthread_terminate_game(const char *pszFcn)
 	if (sErr == STORM_ERROR_INVALID_PLAYER) {
 		return;
 	} else if (sErr == STORM_ERROR_GAME_TERMINATED) {
-		gbGameDestroyed = TRUE;
+		gbGameDestroyed = true;
 	} else if (sErr == STORM_ERROR_NOT_IN_GAME) {
-		gbGameDestroyed = TRUE;
+		gbGameDestroyed = true;
 	} else {
 		app_fatal("%s:\n%s", pszFcn, TraceLastError());
 	}
@@ -80,15 +80,15 @@ bool nthread_recv_turns(bool *pfSendAsync)
 	sgbPacketCountdown--;
 	if (sgbPacketCountdown) {
 		last_tick += 50;
-		return TRUE;
+		return true;
 	}
 	sgbSyncCountdown--;
 	sgbPacketCountdown = sgbNetUpdateRate;
 	if (sgbSyncCountdown != 0) {
 
-		*pfSendAsync = TRUE;
+		*pfSendAsync = true;
 		last_tick += 50;
-		return TRUE;
+		return true;
 	}
 	if (!SNetReceiveTurns(0, MAX_PLRS, (char **)glpMsgTbl, gdwMsgLenTbl, (LPDWORD)player_state)) {
 		if (SErrGetLastError() != STORM_ERROR_NO_MESSAGES_WAITING)
@@ -99,14 +99,14 @@ bool nthread_recv_turns(bool *pfSendAsync)
 		return false;
 	} else {
 		if (!sgbTicsOutOfSync) {
-			sgbTicsOutOfSync = TRUE;
+			sgbTicsOutOfSync = true;
 			last_tick = SDL_GetTicks();
 		}
 		sgbSyncCountdown = 4;
 		multi_msg_countdown();
-		*pfSendAsync = TRUE;
+		*pfSendAsync = true;
 		last_tick += 50;
-		return TRUE;
+		return true;
 	}
 }
 
@@ -124,7 +124,7 @@ void nthread_start(bool set_turn_upper_bit)
 	last_tick = SDL_GetTicks();
 	sgbPacketCountdown = 1;
 	sgbSyncCountdown = 1;
-	sgbTicsOutOfSync = TRUE;
+	sgbTicsOutOfSync = true;
 	if (set_turn_upper_bit)
 		nthread_set_turn_upper_bit();
 	else
@@ -161,7 +161,7 @@ void nthread_start(bool set_turn_upper_bit)
 	if (plr.isMultiplayer()) {
 		sgbThreadIsRunning = false;
 		sgMemCrit.Enter();
-		nthread_should_run = TRUE;
+		nthread_should_run = true;
 		sghThread = CreateThread(nthread_handler, &glpNThreadId);
 		if (sghThread == NULL) {
 			err2 = TraceLastError();

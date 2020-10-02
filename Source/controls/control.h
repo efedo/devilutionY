@@ -39,7 +39,6 @@ extern int pSplType;
 extern int initialDropGoldIndex;
 extern bool talkflag;
 extern uint8_t *pSBkIconCels;
-extern bool sbookflag;
 extern bool chrflag;
 extern bool drawbtnflag;
 extern uint8_t *pSpellBkCel;

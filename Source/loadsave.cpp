@@ -128,7 +128,7 @@ void LoadGame(bool firstflag)
 	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].setMonster(WLoad());
+				grid[i][j].setActor(WLoad());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -176,7 +176,7 @@ void LoadGame(bool firstflag)
 	missiles_process_charge();
 	ResetPal();
 	SetCursor_(CURSOR_HAND);
-	gbProcessPlayers = TRUE;
+	gbProcessPlayers = true;
 }
 
 char BLoad()
@@ -208,8 +208,8 @@ int ILoad()
 
 bool OLoad()
 {
-	if (*tbuff++ == TRUE)
-		return TRUE;
+	if (*tbuff++ == true)
+		return true;
 	else
 		return false;
 }
@@ -421,10 +421,10 @@ void LoadPlayer(int i)
 	CopyInt(tbuff, &pPlayer->_pBFrames);
 	CopyInt(tbuff, &pPlayer->_pBWidth);
 
-	LoadItems(NUM_INVLOC, pPlayer->InvBody);
-	LoadItems(NUM_INV_GRID_ELEM, pPlayer->InvList);
+	LoadItems(MAXINVITEMS, pPlayer->InvBody);
+	LoadItems(MAXINVITEMS, pPlayer->InvList);
 	CopyInt(tbuff, &pPlayer->_pNumInv);
-	CopyBytes(tbuff, NUM_INV_GRID_ELEM, pPlayer->InvGrid);
+	CopyBytes(tbuff, MAXINVITEMS, pPlayer->InvGrid);
 	LoadItems(MAXBELTITEMS, pPlayer->SpdList);
 	LoadItemData(&pPlayer->HoldItem);
 
@@ -926,7 +926,7 @@ void SaveGame()
 	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				WSave(grid[i][j].getMonster());
+				WSave(grid[i][j].getActor());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -966,7 +966,7 @@ void SaveGame()
 	dwLen = codec_get_encoded_len(tbuff - SaveBuff);
 	pfile_write_save_file(szName, SaveBuff, tbuff - SaveBuff, dwLen);
 	mem_free_dbg(SaveBuff);
-	gbValidSaveFile = TRUE;
+	gbValidSaveFile = true;
 	pfile_rename_temp_to_perm();
 	pfile_write_hero();
 }
@@ -995,7 +995,7 @@ void ISave(int v)
 void OSave(bool v)
 {
 	if (v != false)
-		*tbuff++ = TRUE;
+		*tbuff++ = true;
 	else
 		*tbuff++ = false;
 }
@@ -1146,10 +1146,10 @@ void SavePlayer(int i)
 	CopyInt(&pPlayer->_pBFrames, tbuff);
 	CopyInt(&pPlayer->_pBWidth, tbuff);
 
-	SaveItems(pPlayer->InvBody, NUM_INVLOC);
-	SaveItems(pPlayer->InvList, NUM_INV_GRID_ELEM);
+	SaveItems(pPlayer->InvBody, MAXINVITEMS);
+	SaveItems(pPlayer->InvList, MAXINVITEMS);
 	CopyInt(&pPlayer->_pNumInv, tbuff);
-	CopyBytes(pPlayer->InvGrid, NUM_INV_GRID_ELEM, tbuff);
+	CopyBytes(pPlayer->InvGrid, MAXINVITEMS, tbuff);
 	SaveItems(pPlayer->SpdList, MAXBELTITEMS);
 	SaveItem(&pPlayer->HoldItem);
 
@@ -1603,7 +1603,7 @@ void SaveLevel()
 	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				WSave(grid[i][j].getMonster());
+				WSave(grid[i][j].getActor());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -1633,9 +1633,9 @@ void SaveLevel()
 	mem_free_dbg(SaveBuff);
 
 	if (!lvl.setlevel)
-		myplr().data._pLvlVisited[lvl.currlevel] = TRUE;
+		myplr().data._pLvlVisited[lvl.currlevel] = true;
 	else
-		myplr().data._pSetLvlVisited[int(lvl.setlvlnum)] = TRUE;
+		myplr().data._pSetLvlVisited[int(lvl.setlvlnum)] = true;
 }
 
 void LoadLevel()
@@ -1695,7 +1695,7 @@ void LoadLevel()
 	if (lvl.type() != DunType::town) {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
-				grid[i][j].setMonster(WLoad());
+				grid[i][j].setActor(WLoad());
 		}
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++)
@@ -1722,11 +1722,11 @@ void LoadLevel()
 	automap.zoomReset();
 	ResyncQuests();
 	SyncPortals();
-	dolighting = TRUE;
+	dolighting = true;
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		if (plr[i].data.plractive && lvl.currlevel == plr[i].data.plrlevel)
-			LightList[plr[i].data._plid]._lunflag = TRUE;
+			LightList[plr[i].data._plid]._lunflag = true;
 	}
 
 	mem_free_dbg(LoadBuff);

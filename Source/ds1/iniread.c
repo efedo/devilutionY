@@ -49,7 +49,7 @@ void ini_read(char * ininame)
       {"workspace_enable",        T_YES,  & glb_config.workspace_enable,     "YES"},
       {"", T_NULL, NULL, NULL} // do not remove
    };
-   int        i, val, is_ok = TRUE, n, len;
+   int        i, val, is_ok = true, n, len;
    const char * str;
    char       tmp[256], * buf, ** tmpptr;
 
@@ -138,12 +138,12 @@ void ini_read(char * ininame)
             }
             break;
 
-         // read a YES/NO string, but store it as TRUE/false
+         // read a YES/NO string, but store it as true/false
          case T_YES :
             if (strlen(str))
             {
                if (stricmp(str, "YES") == 0)
-                  * ((int *) datas[i].data_ptr) = TRUE;
+                  * ((int *) datas[i].data_ptr) = true;
                else
                   * ((int *) datas[i].data_ptr) = false;
             }
@@ -175,7 +175,7 @@ void ini_read(char * ininame)
       }
       i++;
    }
-   if (is_ok != TRUE)
+   if (is_ok != true)
    {
       sprintf(
          tmp,

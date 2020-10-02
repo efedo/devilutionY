@@ -21,9 +21,9 @@ void track_process()
 		DWORD tick = SDL_GetTicks();
 		if ((int)(tick - sgdwLastWalk) >= 300) {
 			sgdwLastWalk = tick;
-			NetSendCmdLoc(TRUE, CMD_WALKXY, cursm);
+			NetSendCmdLoc(true, CMD_WALKXY, cursm);
 			if (!sgbIsScrolling)
-				sgbIsScrolling = TRUE;
+				sgbIsScrolling = true;
 		}
 	}
 }
@@ -37,7 +37,7 @@ void track_repeat_walk(bool rep)
 	if (rep) {
 		sgbIsScrolling = false;
 		sgdwLastWalk = SDL_GetTicks() - 50;
-		NetSendCmdLoc(TRUE, CMD_WALKXY, cursm);
+		NetSendCmdLoc(true, CMD_WALKXY, cursm);
 	} else if (sgbIsScrolling) {
 		sgbIsScrolling = false;
 	}

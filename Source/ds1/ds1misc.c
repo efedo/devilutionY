@@ -1013,12 +1013,12 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
                   last_o = o;
                   nb++;
                   if (nb >= 2)
-                     done = TRUE;
+                     done = true;
                }
                o++; // next object
             }
             else
-               done = TRUE;
+               done = true;
          }
 
          if (nb >= 2)
@@ -1026,9 +1026,9 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
             // there are a least 2 objects at the same coordinates
 
             // put a warning
-            if (obj_path_warn_wrote != TRUE)
+            if (obj_path_warn_wrote != true)
             {
-               obj_path_warn_wrote = TRUE;
+               obj_path_warn_wrote = true;
                printf("\n"
                       "ds1_read() : WARNING, there are at least 2 objects at the same coordinates for some paths datas.\n"
                );

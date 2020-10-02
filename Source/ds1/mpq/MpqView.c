@@ -135,7 +135,7 @@ void mpq_batch_open(char * mpqname)
       exit(DS1ERR_INITMPQ);
 
    // flag this mpq to have some memory to free at exit
-   glb_mpq->is_open = TRUE;
+   glb_mpq->is_open = true;
 }
 
 

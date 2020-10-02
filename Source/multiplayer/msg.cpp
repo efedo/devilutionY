@@ -100,7 +100,7 @@ bool msg_wait_resync()
 		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 void msg_free_packets()
@@ -312,7 +312,7 @@ void delta_kill_monster(int mi, V2Di pos, uint8_t bLevel)
 	DMonsterStr *pD;
 
 	if (plr.isMultiplayer()) {
-		sgbDeltaChanged = TRUE;
+		sgbDeltaChanged = true;
 		pD = &sgLevels[bLevel].monster[mi];
 		pD->_mx = pos.x;
 		pD->_my = pos.y;
@@ -326,7 +326,7 @@ void delta_monster_hp(int mi, int hp, uint8_t bLevel)
 	DMonsterStr *pD;
 
 	if (plr.isMultiplayer()) {
-		sgbDeltaChanged = TRUE;
+		sgbDeltaChanged = true;
 		pD = &sgLevels[bLevel].monster[mi];
 		if (pD->_mhitpoints > hp)
 			pD->_mhitpoints = hp;
@@ -343,7 +343,7 @@ void delta_sync_monster(const TSyncMonster *pSync, uint8_t bLevel)
 
 	/// ASSERT: assert(pSync != NULL);
 	/// ASSERT: assert(bLevel < NUMLEVELS);
-	sgbDeltaChanged = TRUE;
+	sgbDeltaChanged = true;
 
 	pD = &sgLevels[bLevel].monster[pSync->_mndx];
 	if (pD->_mhitpoints != 0) {
@@ -359,7 +359,7 @@ void delta_sync_golem(TCmdGolem *pG, int pnum, uint8_t bLevel)
 	DMonsterStr *pD;
 
 	if (plr.isMultiplayer()) {
-		sgbDeltaChanged = TRUE;
+		sgbDeltaChanged = true;
 		pD = &sgLevels[bLevel].monster[pnum];
 		pD->_mx = pG->_mx;
 		pD->_my = pG->_my;
@@ -383,7 +383,7 @@ void delta_leave_sync(uint8_t bLevel)
 			for (i = 0; i < nummonsters; ++i) {
 				ma = monstactive[i];
 				if (monsters[ma].data._mhitpoints) {
-					sgbDeltaChanged = TRUE;
+					sgbDeltaChanged = true;
 					pD = &sgLevels[bLevel].monster[ma];
 					pD->_mx = monsters[ma].data._m.x;
 					pD->_my = monsters[ma].data._m.y;
@@ -431,7 +431,7 @@ void DeltaAddItem(Item & item)
 	for (i = 0; i < MAXITEMS; i++, pD++) {
 		if (pD->bCmd == 0xFF) {
 			pD->bCmd = CMD_STAND;
-			sgbDeltaChanged = TRUE;
+			sgbDeltaChanged = true;
 			pD->x = item._i.x;
 			pD->y = item._i.y;
 			pD->wIndx = item.IDidx;
@@ -457,7 +457,7 @@ void DeltaSaveLevel()
 			if (i != myplr())
 				plr[i].data._pGFXLoad = 0;
 		}
-		myplr().data._pLvlVisited[lvl.currlevel] = TRUE;
+		myplr().data._pLvlVisited[lvl.currlevel] = true;
 		delta_leave_sync(lvl.currlevel);
 	}
 }
@@ -473,7 +473,7 @@ void DeltaLoadLevel()
 		return;
 	}
 
-	deltaload = TRUE;
+	deltaload = true;
 	if (lvl.currlevel != 0) {
 		for (i = 0; i < nummonsters; i++) {
 			if (sgLevels[lvl.currlevel].monster[i]._mx != 0xFF) {
@@ -495,12 +495,12 @@ void DeltaLoadLevel()
 						else
 							AddDead(monsters[i].data._m, monsters[i].data._udeadval, monsters[i].data._mdir);
 					}
-					monsters[i].data._mDelFlag = TRUE;
+					monsters[i].data._mDelFlag = true;
 					monsters[i].M_UpdateLeader();
 				} else {
 					decode_enemy(i, sgLevels[lvl.currlevel].monster[i]._menemy);
 					if (monsters[i].data._m.x && monsters[i].data._m.x != 1 || monsters[i].data._m.y)
-						grid[monsters[i].data._m.x][monsters[i].data._m.y].setMonster(i);
+						grid[monsters[i].data._m.x][monsters[i].data._m.y].setActor(i);
 					if (i < MAX_PLRS) {
 						monsters[i].MAI_Golum();
 						monsters[i].data._mFlags |= (MFLAG_TARGETS_MONSTER | MFLAG_GOLEM);
@@ -551,7 +551,7 @@ void DeltaLoadLevel()
 					    sgLevels[lvl.currlevel].item[i].dwSeed,
 					    sgLevels[lvl.currlevel].item[i].wValue);
 					if (sgLevels[lvl.currlevel].item[i].bId)
-						item[ii]._iIdentified = TRUE;
+						item[ii]._iIdentified = true;
 					item[ii]._iDurability = sgLevels[lvl.currlevel].item[i].bDur;
 					item[ii]._iMaxDur = sgLevels[lvl.currlevel].item[i].bMDur;
 					item[ii]._iCharges = sgLevels[lvl.currlevel].item[i].bCh;
@@ -567,7 +567,7 @@ void DeltaLoadLevel()
 							for (l = -k; l <= k && !done; l++) {
 								posb.x = pos.x + l;
 								if (CanPut(posb)) {
-									done = TRUE;
+									done = true;
 									pos = posb;
 								}
 							}
@@ -829,7 +829,7 @@ bool NetSendCmdReq2(uint8_t bCmd, uint8_t mast, uint8_t pnum, TCmdGItem *p)
 
 	multi_msg_add((uint8_t *)&cmd.bCmd, sizeof(cmd));
 
-	return TRUE;
+	return true;
 }
 
 void NetSendCmdExtra(TCmdGItem *p)
@@ -970,7 +970,7 @@ void NetSendCmdString(int pmask, const char *pszStr)
 void delta_close_portal(int pnum)
 {
 	memset(&sgJunk.portal[pnum], 0xFF, sizeof(sgJunk.portal[pnum]));
-	sgbDeltaChanged = TRUE;
+	sgbDeltaChanged = true;
 }
 
 DWORD ParseCmd(int pnum, TCmd *pCmd)
@@ -1202,7 +1202,7 @@ void DeltaImportData(uint8_t cmd, DWORD recv_offset)
 	}
 
 	sgbDeltaChunks++;
-	sgbDeltaChanged = TRUE;
+	sgbDeltaChanged = true;
 }
 
 uint8_t *DeltaImportItem(uint8_t *src, TCmdPItem *dst)
@@ -1262,7 +1262,7 @@ void DeltaImportJunk(uint8_t *src)
 			src += sizeof(DPortal);
 			SetPortalStats(
 			    i,
-			    TRUE,
+			    true,
 			    { sgJunk.portal[i].x, sgJunk.portal[i].y },
 			    sgJunk.portal[i].level,
 			    sgJunk.portal[i].ltype);
@@ -1293,7 +1293,7 @@ DWORD On_WALKXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].ClrPlrPath();
-		plr[pnum].MakePlrPath({ p->x, p->y }, TRUE);
+		plr[pnum].MakePlrPath({ p->x, p->y }, true);
 		plr[pnum].data.destAction = ACTION_NONE;
 	}
 
@@ -1453,7 +1453,7 @@ DWORD On_GETITEM(TCmd *pCmd, int pnum)
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 			}
 		} else
-			NetSendCmdGItem2(TRUE, CMD_GETITEM, p->bMaster, p->bPnum, p);
+			NetSendCmdGItem2(true, CMD_GETITEM, p->bMaster, p->bPnum, p);
 	}
 
 	return sizeof(*p);
@@ -1466,13 +1466,13 @@ bool delta_get_item(TCmdGItem *pI, uint8_t bLevel)
 	int i;
 	bool found;
 
-	result = TRUE;
+	result = true;
 	found = false;
 	if (plr.isMultiplayer()) {
 		pD = sgLevels[bLevel].item;
 		for (i = 0; i < MAXITEMS; i++, pD++) {
 			if (pD->bCmd != 0xFF && pD->wIndx == pI->wIndx && pD->wCI == pI->wCI && pD->dwSeed == pI->dwSeed) {
-				found = TRUE;
+				found = true;
 				break;
 			}
 		}
@@ -1511,7 +1511,7 @@ bool delta_get_item(TCmdGItem *pI, uint8_t bLevel)
 				pD->bMCh = pI->bMCh;
 				pD->wValue = pI->wValue;
 				pD->dwBuff = pI->dwBuff;
-				result = TRUE;
+				result = true;
 				break;
 			}
 		}
@@ -1575,7 +1575,7 @@ DWORD On_AGETITEM(TCmd *pCmd, int pnum)
 					SyncGetItem({ p->x, p->y }, p->wIndx, p->wCI, p->dwSeed);
 			}
 		} else
-			NetSendCmdGItem2(TRUE, CMD_AGETITEM, p->bMaster, p->bPnum, p);
+			NetSendCmdGItem2(true, CMD_AGETITEM, p->bMaster, p->bPnum, p);
 	}
 
 	return sizeof(*p);
@@ -1647,7 +1647,7 @@ void delta_put_item(TCmdPItem *pI, V2Di pos, uint8_t bLevel)
 	pD = sgLevels[bLevel].item;
 	for (i = 0; i < MAXITEMS; i++, pD++) {
 		if (pD->bCmd == 0xFF) {
-			sgbDeltaChanged = TRUE;
+			sgbDeltaChanged = true;
 			memcpy(pD, pI, sizeof(TCmdPItem));
 			pD->bCmd = CMD_ACK_PLRINFO;
 			pD->x = pos.x;
@@ -1660,7 +1660,7 @@ void delta_put_item(TCmdPItem *pI, V2Di pos, uint8_t bLevel)
 void check_update_plr(int pnum)
 {
 	if (plr.isMultiplayer() && pnum == myplr())
-		pfile_update(TRUE);
+		pfile_update(true);
 }
 
 DWORD On_SYNCPUTITEM(TCmd *pCmd, int pnum)
@@ -1817,7 +1817,7 @@ DWORD On_OPOBJXY(TCmd *pCmd, int pnum)
 		if (object[p->wParam1]._oSolidFlag || object[p->wParam1]._oDoorFlag)
 			plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		else
-			plr[pnum].MakePlrPath({ p->x, p->y }, TRUE);
+			plr[pnum].MakePlrPath({ p->x, p->y }, true);
 		plr[pnum].data.destAction = ACTION_OPERATE;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -1833,7 +1833,7 @@ DWORD On_DISARMXY(TCmd *pCmd, int pnum)
 		if (object[p->wParam1]._oSolidFlag || object[p->wParam1]._oDoorFlag)
 			plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		else
-			plr[pnum].MakePlrPath({ p->x, p->y }, TRUE);
+			plr[pnum].MakePlrPath({ p->x, p->y }, true);
 		plr[pnum].data.destAction = ACTION_DISARM;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
@@ -2107,7 +2107,7 @@ DWORD On_AWAKEGOLEM(TCmd *pCmd, int pnum)
 	else if (pnum != myplr()) {
 		int i;
 		// check if this player already has an active golem
-		bool addGolem = TRUE;
+		bool addGolem = true;
 		for (i = 0; i < nummissiles; i++) {
 			int mi = missileactive[i];
 			if (missile[mi]._mitype == MIS_GOLEM && missile[mi]._misource == pnum) {
@@ -2165,7 +2165,7 @@ DWORD On_PLRDAMAGE(TCmd *pCmd, int pnum)
 	if (p->bPlr == myplr() && lvl.currlevel != 0) {
 		if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel && p->dwDam <= 192000) {
 			if ((myplr().data._pHitPoints >> 6) > 0) {
-				drawhpflag = TRUE;
+				drawhpflag = true;
 				myplr().data._pHitPoints -= p->dwDam;
 				myplr().data._pHPBase -= p->dwDam;
 				if (myplr().data._pHitPoints > myplr().data._pMaxHP) {
@@ -2199,7 +2199,7 @@ DWORD On_OPENDOOR(TCmd *pCmd, int pnum)
 void delta_sync_object(int oi, uint8_t bCmd, uint8_t bLevel)
 {
 	if (plr.isMultiplayer()) {
-		sgbDeltaChanged = TRUE;
+		sgbDeltaChanged = true;
 		sgLevels[bLevel].object[oi].bCmd = bCmd;
 	}
 }
@@ -2338,7 +2338,7 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 	else {
 		plr[pnum].data._pLvlChanging = false;
 		if (plr[pnum].data._pName[0] && !plr[pnum].data.plractive) {
-			plr[pnum].data.plractive = TRUE;
+			plr[pnum].data.plractive = true;
 			gbActivePlayers++;
 			EventPlrMsg("Player '%s' (level %d) just joined the game", plr[pnum].data._pName, plr[pnum].data._pLevel);
 		}
@@ -2384,7 +2384,7 @@ DWORD On_ACTIVATEPORTAL(TCmd *pCmd, int pnum)
 				AddInTownPortal(pnum);
 			else if (lvl.currlevel == plr[pnum].data.plrlevel) {
 				int i;
-				bool addPortal = TRUE;
+				bool addPortal = true;
 				for (i = 0; i < nummissiles; i++) {
 					int mi = missileactive[i];
 					if (missile[mi]._mitype == MIS_TOWN && missile[mi]._misource == pnum) {
@@ -2405,7 +2405,7 @@ DWORD On_ACTIVATEPORTAL(TCmd *pCmd, int pnum)
 
 void delta_open_portal(int pnum, V2Di pos, uint8_t bLevel, DunType bLType, uint8_t bSetLvl)
 {
-	sgbDeltaChanged = TRUE;
+	sgbDeltaChanged = true;
 	sgJunk.portal[pnum].x = pos.x;
 	sgJunk.portal[pnum].y = pos.y;
 	sgJunk.portal[pnum].level = bLevel;
@@ -2515,7 +2515,7 @@ DWORD On_SYNCQUEST(TCmd *pCmd, int pnum)
 	else {
 		if (pnum != myplr())
 			SetMultiQuest(p->q, p->qstate, p->qlog, p->qvar1);
-		sgbDeltaChanged = TRUE;
+		sgbDeltaChanged = true;
 	}
 
 	return sizeof(*p);
@@ -2587,7 +2587,7 @@ DWORD On_NOVA(TCmd *pCmd, int pnum)
 DWORD On_SETSHIELD(TCmd *pCmd, int pnum)
 {
 	if (gbBufferMsgs != 1)
-		plr[pnum].data.pManaShield = TRUE;
+		plr[pnum].data.pManaShield = true;
 
 	return sizeof(*pCmd);
 }

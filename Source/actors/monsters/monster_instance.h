@@ -13,7 +13,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 class MonsterInstance : public Actor {
 public:
-	MonsterInstance() {};
+	MonsterInstance() : Actor(ActorType::monster) {};
 	MonsterInstance(int i, Dir rd, int mtype, V2Di pos);
 	void NewMonsterAnim(AnimStruct *anim, Dir md);
 	void PlantInPosition(Dir dir = Dir::NONE, V2Di *pos = 0);

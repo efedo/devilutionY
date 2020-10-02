@@ -149,8 +149,8 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
          if (mb & 1)
          {
             // OK button selected
-            save = TRUE;
-            done = TRUE;
+            save = true;
+            done = true;
             while (mouse_b & 1)
             {
                // wait until left mouse button is not pressed anymore
@@ -159,8 +159,8 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
       }
       if (key[KEY_ENTER] || key[KEY_ENTER_PAD])
       {
-         save = TRUE;
-         done = TRUE;
+         save = true;
+         done = true;
       }
       rectfill(glb_ds1edit.screen_buff, ok_x0, ok_y0-3, ok_x0 + 64, ok_y0 + 20, c1);
       rect(glb_ds1edit.screen_buff,     ok_x0, ok_y0-3, ok_x0 + 64, ok_y0 + 20, c2);
@@ -179,7 +179,7 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
          {
             // CANCEL button selected
             save = false;
-            done = TRUE;
+            done = true;
             while (mouse_b & 1)
             {
                // wait until left mouse button is not pressed anymore
@@ -189,7 +189,7 @@ void wbits_main_single_tile(int ds1_idx, int tx, int ty)
       if (key[KEY_ESC])
       {
          save = false;
-         done = TRUE;
+         done = true;
       }
       rectfill(glb_ds1edit.screen_buff, cancel_x0, ok_y0-3, cancel_x0 + 64, ok_y0 + 20, c1);
       rect(glb_ds1edit.screen_buff,     cancel_x0, ok_y0-3, cancel_x0 + 64, ok_y0 + 20, c2);
@@ -953,8 +953,8 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          if (mb & 1)
          {
             // OK button selected
-            save = TRUE;
-            done = TRUE;
+            save = true;
+            done = true;
             while (mouse_b & 1)
             {
                // wait until left mouse button is not pressed anymore
@@ -963,8 +963,8 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
       }
       if (key[KEY_ENTER] || key[KEY_ENTER_PAD])
       {
-         save = TRUE;
-         done = TRUE;
+         save = true;
+         done = true;
       }
       rectfill(glb_ds1edit.screen_buff, ok_x0, ok_y0-3, ok_x0 + 64, ok_y0 + 20, c1);
       rect(glb_ds1edit.screen_buff,     ok_x0, ok_y0-3, ok_x0 + 64, ok_y0 + 20, c2);
@@ -983,7 +983,7 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          {
             // CANCEL button selected
             save = false;
-            done = TRUE;
+            done = true;
             while (mouse_b & 1)
             {
                // wait until left mouse button is not pressed anymore
@@ -993,7 +993,7 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
       if (key[KEY_ESC])
       {
          save = false;
-         done = TRUE;
+         done = true;
       }
       rectfill(glb_ds1edit.screen_buff, cancel_x0, ok_y0-3, cancel_x0 + 64, ok_y0 + 20, c1);
       rect(glb_ds1edit.screen_buff,     cancel_x0, ok_y0-3, cancel_x0 + 64, ok_y0 + 20, c2);
@@ -1433,7 +1433,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
          {
             f_ptr = glb_ds1[ds1_idx].floor_buff + t + i;
             if (IS_SELECTED(f_ptr->flags))
-               has_selection = TRUE;
+               has_selection = true;
          }
 
          // shadows
@@ -1442,7 +1442,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
          {
             s_ptr = glb_ds1[ds1_idx].shadow_buff + t + i;
             if (IS_SELECTED(s_ptr->flags))
-               has_selection = TRUE;
+               has_selection = true;
          }
 
          // walls
@@ -1451,7 +1451,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
          {
             w_ptr = glb_ds1[ds1_idx].wall_buff + t + i;
             if (IS_SELECTED(w_ptr->flags))
-               has_selection = TRUE;
+               has_selection = true;
          }
 
          // tags
@@ -1460,7 +1460,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
          {
             t_ptr = glb_ds1[ds1_idx].tag_buff + t + i;
             if (IS_SELECTED(t_ptr->flags))
-               has_selection = TRUE;
+               has_selection = true;
          }
       }
    }

@@ -142,7 +142,7 @@ int wmsg_main(WMSG_S * wmsg)
          {
             // is this shortcut is pressed ?
             // check all keys of that combination
-            all_keys = TRUE;
+            all_keys = true;
             if (wmsg->button[i].shortcut[s].key[0] != 0)
             {
                for (k=0; k < MW_COMBINATION_KEY_NUM; k++)
@@ -156,13 +156,13 @@ int wmsg_main(WMSG_S * wmsg)
             }
             else
                all_keys = false;
-            if (all_keys == TRUE)
+            if (all_keys == true)
             {
-               done = TRUE;
+               done = true;
                ret  = i;
 
                // wait for all keys of the shortcut to not be pressed
-               while (all_keys == TRUE)
+               while (all_keys == true)
                {
                   all_keys = false;
                   for (k=0; k < MW_COMBINATION_KEY_NUM; k++)
@@ -170,7 +170,7 @@ int wmsg_main(WMSG_S * wmsg)
                      if (wmsg->button[i].shortcut[s].key[k])
                      {
                         if (key[ wmsg->button[i].shortcut[s].key[k] ])
-                           all_keys = TRUE;
+                           all_keys = true;
                      }
                   }
                }
@@ -204,7 +204,7 @@ int wmsg_main(WMSG_S * wmsg)
             {
                while (mb)
                   mb = mouse_b;
-               done = TRUE;
+               done = true;
                ret  = i;
             }
          }

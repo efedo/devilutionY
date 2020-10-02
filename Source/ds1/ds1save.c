@@ -6,7 +6,7 @@
 
 // ==========================================================================
 // as expected, save the ds1
-//    if is_tmp_file == TRUE, will save a file "*.tmp", else "*-nnn.ds1"
+//    if is_tmp_file == true, will save a file "*.tmp", else "*-nnn.ds1"
 void ds1_save(int ds1_idx, int is_tmp_file)
 {
    CELL_W_S * w_ptr;
@@ -122,7 +122,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
          if ((glb_wrkspc_datas[y].id[x] == 0x00) && (cptr[x]== '='))
          {
             // this is our data, don't count it
-            is_data = TRUE;
+            is_data = true;
             break;
          }
       }
@@ -159,7 +159,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
          if ((glb_wrkspc_datas[y].id[x] == 0x00) && (cptr[x]== '='))
          {
             // this is our data, skip it
-            is_data = TRUE;
+            is_data = true;
             break;
          }
       }
@@ -223,7 +223,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
    // minimize ds1 size
    save_wall_num  = glb_ds1[ds1_idx].wall_num;
    save_floor_num = glb_ds1[ds1_idx].floor_num;
-   if (glb_config.minimize_ds1 == TRUE)
+   if (glb_config.minimize_ds1 == true)
    {
       // how many wall layers are really used ?
       // (keep a minimum of 1)
@@ -240,7 +240,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
                if ((w_ptr->prop1 | w_ptr->prop2 | w_ptr->prop3 | w_ptr->prop4 |
                     w_ptr->orientation) != 0)
                {
-                  used = TRUE;
+                  used = true;
                   break;
                }
             }
@@ -267,7 +267,7 @@ void ds1_save(int ds1_idx, int is_tmp_file)
                f_ptr = glb_ds1[ds1_idx].floor_buff + t + i;
                if ((f_ptr->prop1 | f_ptr->prop2 | f_ptr->prop3 | f_ptr->prop4) != 0)
                {
-                  used = TRUE;
+                  used = true;
                   break;
                }
             }

@@ -53,8 +53,9 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	int lmin = 0; // minimum lightning damage
 	int lmax = 0; // maximum lightning damage
 
-	for (i = 0; i < NUM_INVLOC; i++) {
-		ItemStruct *itm = &data.InvBody[i];
+	for (InvSlot &i : inv.getBagArray()) {
+		Item *itm = i.item();
+		if (!itm) continue;
 		if (itm->_itype != ITYPE_NONE && itm->_iStatFlag) {
 
 			tac += itm->_iAC;
@@ -97,17 +98,17 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		}
 	}
 
+	const Item * const left = inv.getBodySlot(BodyLoc::HandLeft).item();
+	const Item * const right = inv.getBodySlot(BodyLoc::HandRight).item();
 	if (mind == 0 && maxd == 0) {
 		mind = 1;
 		maxd = 1;
 
-		if (inv.getBodyItem(BodyLoc::HandRight))
-
-		if (data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD && data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
+		if (left && left->_itype == ITYPE_SHIELD && left->_iStatFlag) {
 			maxd = 3;
 		}
 
-		if (data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD && data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
+		if (right && right->_itype == ITYPE_SHIELD && right->_iStatFlag) {
 			maxd = 3;
 		}
 	}
@@ -129,7 +130,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		lrad = 15;
 	}
 
-	if (data._pLightRad != lrad && p == myplr()) {
+	if (data._pLightRad != lrad && pnum == myplr()) {
 		ChangeLightRadius(data._plid, lrad);
 
 		pvid = data._pvid;
@@ -219,7 +220,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pHitPoints = ihp + data._pHPBase;
 	data._pMaxHP = ihp + data._pMaxHPBase;
 
-	if (p == myplr() && (data._pHitPoints >> 6) <= 0) {
+	if (pnum == myplr() && (data._pHitPoints >> 6) <= 0) {
 		SetPlayerHitPoints(0);
 	}
 
@@ -232,7 +233,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pILMaxDam = lmax;
 
 	if (iflgs & ISPL_INFRAVISION) {
-		data._pInfraFlag = TRUE;
+		data._pInfraFlag = true;
 	} else {
 		data._pInfraFlag = false;
 	}
@@ -242,16 +243,14 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 
 	g = 0;
 
-	if (data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-	    && data.InvBody[INVLOC_HAND_LEFT]._iClass == ICLASS_WEAPON
-	    && data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
-		g = data.InvBody[INVLOC_HAND_LEFT]._itype;
+	if (left && left->_itype != ITYPE_NONE && left->_iClass == ICLASS_WEAPON &&
+	    left->_iStatFlag) {
+		g = left->_itype;
 	}
 
-	if (data.InvBody[INVLOC_HAND_RIGHT]._itype != ITYPE_NONE
-	    && data.InvBody[INVLOC_HAND_RIGHT]._iClass == ICLASS_WEAPON
-	    && data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
-		g = data.InvBody[INVLOC_HAND_RIGHT]._itype;
+	if (right && right->_itype != ITYPE_NONE &&
+	    right->_iClass == ICLASS_WEAPON && right->_iStatFlag) {
+		g = right->_itype;
 	}
 
 	switch (g) {
@@ -273,19 +272,21 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		break;
 	}
 
-	if (data.InvBody[INVLOC_HAND_LEFT]._itype == ITYPE_SHIELD && data.InvBody[INVLOC_HAND_LEFT]._iStatFlag) {
-		data._pBlockFlag = TRUE;
+	if (left && left->_itype == ITYPE_SHIELD && left->_iStatFlag) {
+		data._pBlockFlag = true;
 		g++;
 	}
-	if (data.InvBody[INVLOC_HAND_RIGHT]._itype == ITYPE_SHIELD && data.InvBody[INVLOC_HAND_RIGHT]._iStatFlag) {
-		data._pBlockFlag = TRUE;
+	if (right && right->_itype == ITYPE_SHIELD && right->_iStatFlag) {
+		data._pBlockFlag = true;
 		g++;
 	}
 
-	if (data.InvBody[INVLOC_CHEST]._itype == ITYPE_MARMOR && data.InvBody[INVLOC_CHEST]._iStatFlag) {
+	const Item * chest = inv.getBodySlot(BodyLoc::Chest).item();
+
+	if (chest && chest->_itype == ITYPE_MARMOR && chest->_iStatFlag) {
 		g += ANIM_ID_MEDIUM_ARMOR;
 	}
-	if (data.InvBody[INVLOC_CHEST]._itype == ITYPE_HARMOR && data.InvBody[INVLOC_CHEST]._iStatFlag) {
+	if (chest && chest->_itype == ITYPE_HARMOR && chest->_iStatFlag) {
 		g += ANIM_ID_HEAVY_ARMOR;
 	}
 
@@ -309,32 +310,36 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 
 	for (i = 0; i < nummissiles; i++) {
 		mi = missileactive[i];
-		if (missile[mi]._mitype == MIS_MANASHIELD && missile[mi]._misource == p) {
+		if (missile[mi]._mitype == MIS_MANASHIELD && missile[mi]._misource == pnum) {
 			missile[mi]._miVar1 = data._pHitPoints;
 			missile[mi]._miVar2 = data._pHPBase;
 		}
 	}
 
-	drawmanaflag = TRUE;
-	drawhpflag = TRUE;
+	drawmanaflag = true;
+	drawhpflag = true;
 }
 
 void Player::CalcPlrScrolls()
 {
-	int i, j;
-
 	data._pScrlSpells = 0;
-	for (i = 0; i < data._pNumInv; i++) {
-		if (data.InvList[i]._itype != ITYPE_NONE && (data.InvList[i]._iMiscId == IMISC_SCROLL || data.InvList[i]._iMiscId == IMISC_SCROLLT)) {
-			if (data.InvList[i]._iStatFlag)
-				data._pScrlSpells |= (__int64)1 << (data.InvList[i]._iSpell - 1);
+	for (InvSlot &i : inv.getBagArray()) {
+		Item *item = i.item();
+		if (item && item->_itype != ITYPE_NONE &&
+		    (item->_iMiscId == IMISC_SCROLL ||
+		     item->_iMiscId == IMISC_SCROLLT)) {
+			if (item->_iStatFlag)
+				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
 	}
 
-	for (j = 0; j < MAXBELTITEMS; j++) {
-		if (data.SpdList[j]._itype != ITYPE_NONE && (data.SpdList[j]._iMiscId == IMISC_SCROLL || data.SpdList[j]._iMiscId == IMISC_SCROLLT)) {
-			if (data.SpdList[j]._iStatFlag)
-				data._pScrlSpells |= (__int64)1 << (data.SpdList[j]._iSpell - 1);
+	for (int j = 0; j < MAXBELTITEMS; j++) {
+		Item *item = inv.getBeltSlot(j).item();
+		if (item && item->_itype != ITYPE_NONE &&
+		    (item->_iMiscId == IMISC_SCROLL ||
+		     item->_iMiscId == IMISC_SCROLLT)) {
+			if (item->_iStatFlag)
+				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
 	}
 	if (data._pRSplType == RSPLTYPE_SCROLL) {
@@ -344,80 +349,64 @@ void Player::CalcPlrScrolls()
 			force_redraw = 255;
 		}
 	}
-
-	//	if (owner.data._pRSplType == RSPLTYPE_SCROLL) {
-	//	if (owner.data._pRSpell != SPL_INVALID) {
-	//		// BUGFIX: Cast the literal `1` to `unsigned __int64` to make that
-	//		// bitshift 64bit this causes the last 4 skills to not reset
-	//		// correctly after use
-	//		if (!(owner.data._pScrlSpells & (1 << (owner.data._pRSpell - 1)))) {
-	//			owner.data._pRSpell = SPL_INVALID;
-	//		}
-
-	//		force_redraw = 255;
-	//	}
-	//}
-
 }
 
 void Player::CalcPlrStaff()
 {
 	data._pISpells = 0;
-	if (data.InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-	    && data.InvBody[INVLOC_HAND_LEFT]._iStatFlag
-	    && data.InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
-		data._pISpells |= (__int64)1 << (data.InvBody[INVLOC_HAND_LEFT]._iSpell - 1);
+	const Item *const left = inv.getBodySlot(BodyLoc::HandLeft).item();
+	if (!left) return;
+
+	if (left->_itype != ITYPE_NONE && left->_iStatFlag && left->_iCharges > 0) {
+		data._pISpells |= (__int64)1 << (left->_iSpell - 1);
 	}
 
-		//// Update staff spells etc.
-	// if (owner.data.InvBody[INVLOC_HAND_LEFT]->_itype == ITYPE_STAFF &&
-	// owner.data.InvBody[INVLOC_HAND_LEFT]->_iSpell != 0 &&
-	// owner.data.InvBody[INVLOC_HAND_LEFT]->_iCharges > 0) { 	owner.data._pRSpell
-	//= owner.data.InvBody[INVLOC_HAND_LEFT]->_iSpell; 	owner.data._pRSplType =
-	//RSPLTYPE_CHARGES; 	force_redraw = 255;
-	//}
+	if (left->_itype == ITYPE_STAFF && left->_iSpell != 0 && left->_iCharges > 0) {
+		data._pRSpell = left->_iSpell;
+		data._pRSplType = RSPLTYPE_CHARGES;
+		force_redraw = 255;
+	}
 }
 
 void Player::CalcSelfItems()
 {
-	int i;
-	PlayerStruct *p;
-	bool sf, changeflag;
-	int sa, ma, da;
-
-	p = &plr[pnum].data;
-
-	sa = 0;
-	ma = 0;
-	da = 0;
-	for (i = 0; i < NUM_INVLOC; i++) {
-		if (p->InvBody[i]._itype != ITYPE_NONE) {
-			p->InvBody[i]._iStatFlag = TRUE;
-			if (p->InvBody[i]._iIdentified) {
-				sa += p->InvBody[i]._iPLStr;
-				ma += p->InvBody[i]._iPLMag;
-				da += p->InvBody[i]._iPLDex;
+	PlayerStruct *p = &plr[pnum].data;
+	int sa = 0;
+	int ma = 0;
+	int da = 0;
+	for (InvSlot &i : inv.getBagArray()) {
+		Item *item = i.item();
+		if (!item) continue;
+		if (item->_itype != ITYPE_NONE) {
+			item->_iStatFlag = true;
+			if (item->_iIdentified) {
+				sa += item->_iPLStr;
+				ma += item->_iPLMag;
+				da += item->_iPLDex;
 			}
 		}
 	}
+	bool changeflag;
 	do {
 		changeflag = false;
-		for (i = 0; i < NUM_INVLOC; i++) {
-			if (p->InvBody[i]._itype != ITYPE_NONE && p->InvBody[i]._iStatFlag) {
-				sf = TRUE;
-				if (sa + p->_pBaseStr < p->InvBody[i]._iMinStr)
+		for (InvSlot &i : inv.getBagArray()) {
+			Item *item = i.item();
+			if (!item) continue;
+			if (item->_itype != ITYPE_NONE && item->_iStatFlag) {
+				int sf = true;
+				if (sa + p->_pBaseStr < item->_iMinStr)
 					sf = false;
-				if (ma + p->_pBaseMag < p->InvBody[i]._iMinMag)
+				if (ma + p->_pBaseMag < item->_iMinMag)
 					sf = false;
-				if (da + p->_pBaseDex < p->InvBody[i]._iMinDex)
+				if (da + p->_pBaseDex < item->_iMinDex)
 					sf = false;
 				if (!sf) {
-					changeflag = TRUE;
-					p->InvBody[i]._iStatFlag = false;
-					if (p->InvBody[i]._iIdentified) {
-						sa -= p->InvBody[i]._iPLStr;
-						ma -= p->InvBody[i]._iPLMag;
-						da -= p->InvBody[i]._iPLDex;
+					changeflag = true;
+					item->_iStatFlag = false;
+					if (item->_iIdentified) {
+						sa -= item->_iPLStr;
+						ma -= item->_iPLMag;
+						da -= item->_iPLDex;
 					}
 				}
 			}
@@ -427,25 +416,19 @@ void Player::CalcSelfItems()
 
 void Player::CalcPlrItemMin()
 {
-	PlayerStruct *p;
-	ItemStruct *pi;
-	int i;
+	PlayerStruct *p = &plr[pnum].data;
 
-	p = &plr[pnum].data;
-	pi = p->InvList;
-	i = p->_pNumInv;
-
-	while (i--) {
-		pi->_iStatFlag = ItemMinStats(p, pi);
-		pi++;
+	for (auto &i : inv.getBagArray()) {
+		Item *item = i.item();
+		if (!item) continue;
+		item->_iStatFlag = ItemMinStats(p, item);
 	}
 
-	pi = p->SpdList;
-	for (i = MAXBELTITEMS; i != 0; i--) {
-		if (pi->_itype != ITYPE_NONE) {
-			pi->_iStatFlag = ItemMinStats(p, pi);
+	for (auto &i : inv.getBeltArray()) {
+		Item *item = i.item();
+		if (item && item->_itype != ITYPE_NONE) {
+			item->_iStatFlag = ItemMinStats(p, item);
 		}
-		pi++;
 	}
 }
 
@@ -461,20 +444,23 @@ void Player::CalcPlrBookVals()
 		}
 	}
 
-	for (i = 0; i < data._pNumInv; i++) {
-		if (data.InvList[i]._itype == ITYPE_MISC && data.InvList[i]._iMiscId == IMISC_BOOK) {
-			data.InvList[i]._iMinMag = spelldata[data.InvList[i]._iSpell].sMinInt;
-			slvl = data._pSplLvl[data.InvList[i]._iSpell];
+	for (auto &i : inv.getBagArray()) {
+		Item *item = i.item();
+		if (!item) continue;
+
+		if (item->_itype == ITYPE_MISC && item->_iMiscId == IMISC_BOOK) {
+			item->_iMinMag = spelldata[item->_iSpell].sMinInt;
+			slvl = data._pSplLvl[item->_iSpell];
 
 			while (slvl != 0) {
-				data.InvList[i]._iMinMag += 20 * data.InvList[i]._iMinMag / 100;
+				item->_iMinMag += 20 * item->_iMinMag / 100;
 				slvl--;
-				if (data.InvList[i]._iMinMag + 20 * data.InvList[i]._iMinMag / 100 > 255) {
-					data.InvList[i]._iMinMag = 255;
+				if (item->_iMinMag + 20 * item->_iMinMag / 100 > 255) {
+					item->_iMinMag = 255;
 					slvl = 0;
 				}
 			}
-			data.InvList[i]._iStatFlag = ItemMinStats(&data, &data.InvList[i]);
+			item->_iStatFlag = ItemMinStats(&data, item);
 		}
 	}
 }
@@ -497,30 +483,16 @@ void Player::CalcPlrInv(bool Loadgfx)
 
 void Player::CreatePlrItems()
 {
-	int i;
-	ItemStruct *pi = data.InvBody;
-
-	for (i = NUM_INVLOC; i != 0; i--) {
-		pi->_itype = ITYPE_NONE;
-		pi++;
+	for (InvSlot &i : inv.getBodyArray()) {
+		if (i.item()) i.destroyItem();
 	}
 
-	// converting this to a for loop creates a `rep stosd` instruction,
-	// so this probably actually was a memset
-	memset(&data.InvGrid, 0, sizeof(data.InvGrid));
-
-	pi = data.InvList;
-	for (i = NUM_INV_GRID_ELEM; i != 0; i--) {
-		pi->_itype = ITYPE_NONE;
-		pi++;
+	for (InvSlot &i : inv.getBagArray()) {
+		if (i.item()) i.destroyItem();
 	}
 
-	data._pNumInv = 0;
-
-	pi = &data.SpdList[0];
-	for (i = MAXBELTITEMS; i != 0; i--) {
-		pi->_itype = ITYPE_NONE;
-		pi++;
+	for (InvSlot &i : inv.getBeltArray()) {
+		if (i.item()) i.destroyItem();
 	}
 
 	switch (data._pClass) {
@@ -536,7 +508,7 @@ void Player::CreatePlrItems()
 #endif
 			SetPlrHandItem(&data.HoldItem, IDI_WARRCLUB);
 			GetPlrHandSeed(&data.HoldItem);
-			inventory.AutoPlace(0, { 1, 3 }, TRUE);
+			inventory.AutoPlace(0, { 1, 3 }, true);
 #ifdef _DEBUG
 		}
 #endif
@@ -585,7 +557,7 @@ void Player::CreatePlrItems()
 		data.HoldItem._ivalue = GOLD_MAX_LIMIT;
 		data.HoldItem._iCurs = ICURS_GOLD_LARGE;
 		data._pGold = data.HoldItem._ivalue * 40;
-		for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
+		for (i = 0; i < MAXINVITEMS; i++) {
 			GetPlrHandSeed(&data.HoldItem);
 			data.InvList[data._pNumInv++] = data.HoldItem;
 			data.InvGrid[i] = data._pNumInv;
@@ -615,12 +587,12 @@ void Player::UseItem(int Mid, int spl)
 		data._pHPBase += l;
 		if (data._pHPBase > data._pMaxHPBase)
 			data._pHPBase = data._pMaxHPBase;
-		drawhpflag = TRUE;
+		drawhpflag = true;
 		break;
 	case IMISC_FULLHEAL:
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
-		drawhpflag = TRUE;
+		drawhpflag = true;
 		break;
 	case IMISC_MANA:
 		j = data._pMaxMana >> 8;
@@ -636,14 +608,14 @@ void Player::UseItem(int Mid, int spl)
 			data._pManaBase += l;
 			if (data._pManaBase > data._pMaxManaBase)
 				data._pManaBase = data._pMaxManaBase;
-			drawmanaflag = TRUE;
+			drawmanaflag = true;
 		}
 		break;
 	case IMISC_FULLMANA:
 		if (!(data._pIFlags & ISPL_NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
-			drawmanaflag = TRUE;
+			drawmanaflag = true;
 		}
 		break;
 	case IMISC_ELIXSTR:
@@ -671,7 +643,7 @@ void Player::UseItem(int Mid, int spl)
 		data._pHPBase += l;
 		if (data._pHPBase > data._pMaxHPBase)
 			data._pHPBase = data._pMaxHPBase;
-		drawhpflag = TRUE;
+		drawhpflag = true;
 		j = data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
 		if (data._pClass == PC_SORCERER)
@@ -685,17 +657,17 @@ void Player::UseItem(int Mid, int spl)
 			data._pManaBase += l;
 			if (data._pManaBase > data._pMaxManaBase)
 				data._pManaBase = data._pMaxManaBase;
-			drawmanaflag = TRUE;
+			drawmanaflag = true;
 		}
 		break;
 	case IMISC_FULLREJUV:
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
-		drawhpflag = TRUE;
+		drawhpflag = true;
 		if (!(data._pIFlags & ISPL_NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
-			drawmanaflag = TRUE;
+			drawmanaflag = true;
 		}
 		break;
 	case IMISC_SCROLL:
@@ -713,7 +685,7 @@ void Player::UseItem(int Mid, int spl)
 			data.destParam1 = cursm.x;
 			data.destParam2 = cursm.y;
 			if (pnum == myplr() && spl == SPL_NOVA)
-				NetSendCmdLoc(TRUE, CMD_NOVA, cursm);
+				NetSendCmdLoc(true, CMD_NOVA, cursm);
 		}
 		break;
 	case IMISC_SCROLLT:
@@ -744,7 +716,7 @@ void Player::UseItem(int Mid, int spl)
 			data._pManaBase = data._pMaxManaBase;
 		if (pnum == myplr())
 			CalcPlrBookVals();
-		drawmanaflag = TRUE;
+		drawmanaflag = true;
 		break;
 	case IMISC_MAPOFDOOM:
 		doom_init();
@@ -760,7 +732,7 @@ void Player::UseItem(int Mid, int spl)
 
 bool Player::DurReduce(BodyLoc loc, int itmclass, int itmtype)
 {
-	Item *item = inv.getBodyItem(loc);
+	Item *item = inv.getBodySlot(loc).item();
 	if (!item) return false;
 	if (itmclass != ICLASS_NONE && item->_iClass != itmclass) return false;
 	if (itmtype != ITYPE_NONE && item->_itype != itmtype) return false;
@@ -800,5 +772,74 @@ void Player::ArmorDur()
 	if (DurReduce(BodyLoc::Chest, ICLASS_NONE, ITYPE_NONE)) return;
 }
 
+
+
+
+
+
+void Player::CreateRndUseful(V2Di pos, bool sendmsg)
+{
+	Item &item = items.createNewItem();
+	item.GetSuperItemSpace(pos);
+	item.SetupAllUseful(GetRndSeed(), lvl.currlevel);
+	if (sendmsg) { NetSendCmdDItem(false, item); }
+}
+
+
+
+void Player::CheckIdentify(int cii)
+{
+	ItemStruct *pi;
+
+	if (cii >= MAXINVITEMS)
+		pi = &plr[pnum].data.InvList[cii - MAXINVITEMS];
+	else
+		pi = &plr[pnum].data.InvBody[cii];
+
+	pi->_iIdentified = true;
+	CalcPlrInv(pnum, true);
+
+	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
+}
+
+void Player::DoRepair(int cii)
+{
+	ItemStruct *pi;
+	Player &p = plr[pnum];
+	PlaySfxLoc(IS_REPAIR, p.pos());
+
+	if (cii >= MAXINVITEMS) {
+		pi = &p.data.InvList[cii - MAXINVITEMS];
+	} else {
+		pi = &p.data.InvBody[cii];
+	}
+
+	RepairItem(pi, p.data._pLevel);
+	CalcPlrInv(pnum, true);
+
+	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
+}
+
+void Player::DoRecharge(int cii)
+{
+	PlayerStruct *p;
+	ItemStruct *pi;
+	int r;
+
+	p = &plr[pnum].data;
+	if (cii >= MAXINVITEMS) {
+		pi = &p->InvList[cii - MAXINVITEMS];
+	} else {
+		pi = &p->InvBody[cii];
+	}
+	if (pi->_itype == ITYPE_STAFF && pi->_iSpell) {
+		r = spelldata[pi->_iSpell].sBookLvl;
+		r = random_(38, p->_pLevel / r) + 1;
+		RechargeItem(pi, r);
+		CalcPlrInv(pnum, true);
+	}
+
+	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
+}
 
 DEVILUTION_END_NAMESPACE

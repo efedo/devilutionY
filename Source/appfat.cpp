@@ -46,7 +46,7 @@ void FreeDlg()
 	if (terminating && cleanup_thread_id != SDL_GetThreadID(NULL))
 		SDL_Delay(20000);
 
-	terminating = TRUE;
+	terminating = true;
 	cleanup_thread_id = SDL_GetThreadID(NULL);
 
 	if (plr.isMultiplayer()) {

@@ -7,14 +7,13 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-bool PlayerInventory::invflag = false; // Inventory is open flag???
 uint8_t *pInvCels = 0;
 int users = 0;
 
 Item *const PlayerInventory::findBagItemType(int itemType)
 {
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		Item *item = getBagSlot(i).item();
+	for (InvSlot &i : getBagArray()) {
+		Item *item = i.item();
 		if (!item) continue;
 		if (item->_itype == itemType) return item;
 	}
@@ -156,13 +155,13 @@ InvSlot * PlayerInventory::GetCursorInvSlot(V2Di pos)
 	if (_over(getBodySlot(BodyLoc::RingRight))) return invslot;
 
 	// Check over belt slots
-	for (int i = 0; i < MAXBELTITEMS; i++) {
-		if (_over(getBeltSlot(i))) return invslot;
+	for (InvSlot &i : getBeltArray()) {
+		if (_over(i)) return invslot;
 	}
 
 	// Check over bag slots
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		if (_over(getBagSlot(i))) return invslot;
+	for (InvSlot &i : getBagArray()) {
+		if (_over(i)) return invslot;
 	}
 	return 0;
 }
@@ -279,29 +278,30 @@ bool PlayerInventory::tryPasteSlot(InvSlot &slot, bool checkOnly, bool forceSwap
 
 bool PlayerInventory::tryPaste(V2Di pos)
 {
-	if (!getHeldItem()) return;
+	if (!getHeldItem()) return false;
 	InvSlot * slotptr = GetCursorInvSlot(pos);
-	if (!slotptr) return; // Not over slot
+	if (!slotptr) return false;  // Not over slot
 	InvSlot & slot = *slotptr;
 	if (tryPasteSlot(slot, false, true)) {
 		owner.CalcPlrInv(true);
 		owner.CalcPlrStaff();
 		if (owner.isMyPlr()) PlaySFX(ItemInvSnds[ItemCAnimTbl[getHeldItem()->_iCurs]]);
-	} else {
-		if (owner.data._pClass == PC_WARRIOR)
-			PlaySFX(PS_WARR13);
-		else if (owner.data._pClass == PC_ROGUE)
-			PlaySFX(PS_ROGUE13);
-		else if (owner.data._pClass == PC_SORCERER)
-			PlaySFX(PS_MAGE13);
-		//if (owner.data._pClass == PC_WARRIOR) {
-		//	PlaySFX(random_(0, 3) + PS_WARR14);
-		//} else if (owner.data._pClass == PC_ROGUE) {
-		//	PlaySFX(random_(0, 3) + PS_ROGUE14);
-		//} else if (owner.data._pClass == PC_SORCERER) {
-		//	PlaySFX(random_(0, 3) + PS_MAGE14);
-		//}
+		return true;
 	}
+	if (owner.data._pClass == PC_WARRIOR)
+		PlaySFX(PS_WARR13);
+	else if (owner.data._pClass == PC_ROGUE)
+		PlaySFX(PS_ROGUE13);
+	else if (owner.data._pClass == PC_SORCERER)
+		PlaySFX(PS_MAGE13);
+	//if (owner.data._pClass == PC_WARRIOR) {
+	//	PlaySFX(random_(0, 3) + PS_WARR14);
+	//} else if (owner.data._pClass == PC_ROGUE) {
+	//	PlaySFX(random_(0, 3) + PS_ROGUE14);
+	//} else if (owner.data._pClass == PC_SORCERER) {
+	//	PlaySFX(random_(0, 3) + PS_MAGE14);
+	//}
+	return false;
 }
 bool PlayerInventory::tryCut(V2Di pos)
 {
@@ -332,6 +332,7 @@ bool PlayerInventory::tryCutSlot(InvSlot &slot)
 	_simpleBodyCut(BodyLoc::Chest);
 
 	if (slot.bLoc == BodyLoc::Belt || slot.bLoc == BodyLoc::Bag) {
+		// Need to worry about size somewhere
 		SwapHeldItem(slot);
 	}
 
@@ -420,7 +421,7 @@ void PlayerInventory::CheckQuestItem()
 			quests[Q_ANVIL]._qactive = QUEST_ACTIVE;
 			quests[Q_ANVIL]._qvar1 = 1;
 		}
-		if (quests[Q_ANVIL]._qlog == TRUE) {
+		if (quests[Q_ANVIL]._qlog == true) {
 			sfxdelay = 10;
 			if (myplr().data._pClass == PC_WARRIOR) {
 				sfxdnum = PS_WARR89;
@@ -446,7 +447,7 @@ void PlayerInventory::CheckQuestItem()
 			quests[Q_ROCK]._qactive = QUEST_ACTIVE;
 			quests[Q_ROCK]._qvar1 = 1;
 		}
-		if (quests[Q_ROCK]._qlog == TRUE) {
+		if (quests[Q_ROCK]._qlog == true) {
 			sfxdelay = 10;
 			if (myplr().data._pClass == PC_WARRIOR) {
 				sfxdnum = PS_WARR87;
@@ -475,7 +476,7 @@ void PlayerInventory::PickupItem(V2Di pos)
 {
 	if (grid.at(pos).isItem()) {
 		if (owner.isMyPlr() && pcurs >= CURSOR_FIRSTITEM)
-			NetSendCmdPItem(TRUE, CMD_SYNCPUTITEM, myplr().pos().x, myplr().pos().y); //CmdPItem = player-held item?
+			NetSendCmdPItem(true, CMD_SYNCPUTITEM, myplr().pos().x, myplr().pos().y); //CmdPItem = player-held item?
 		grid.at(pos).getItem()->_iCreateInfo &= ~0x8000;
 		SwapHeldItem(grid.at(pos)._getItemPtr());
 		pcursitem = 0;
@@ -488,7 +489,7 @@ void PlayerInventory::PickupAndStashItem(V2Di pos)
 {
 	PickupItem(pos);
 	stashHeld(false);
-	// NetSendCmdPItem(TRUE, CMD_RESPAWNITEM, item._i.x, item._i.y);
+	// NetSendCmdPItem(true, CMD_RESPAWNITEM, item._i.x, item._i.y);
 }
 
 //int PlayerInventory::FindGetItem(int idx, WORD ci, int iseed)
@@ -555,7 +556,7 @@ bool PlayerInventory::GetDropPos(V2Di & pos)
 	for (int i = 0; i < 8; ++i) {
 		V2Di off = offset(dir);
 		if (grid.at(myplr().pos() + offset(dir)).canPutItem()) {
-			return TRUE;
+			return true;
 		}
 		dir = right(dir);
 	}
@@ -605,15 +606,15 @@ bool PlayerInventory::UseScroll(bool checkOnly)
 	if (lvl.type() == DunType::town && !spelldata[myplr().data._pRSpell].sTownSpell)
 		return false;
 
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		Item *item = getBagSlot(i).item();
+	for (InvSlot &i : getBagArray()) {
+		Item *item = i.item();
 		if (!item) continue;
 		if (item->_itype != ITYPE_NONE &&
 		    (item->_iMiscId == IMISC_SCROLL ||
 		     item->_iMiscId == IMISC_SCROLLT) &&
 		    item->_iSpell == myplr().data._pRSpell) {
 			if (!checkOnly) {
-				destroyItem(getBagSlot(i));
+				destroyItem(i);
 				owner.CalcPlrScrolls();
 			}
 			return true;
@@ -661,12 +662,12 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 	if (!item) return;
 
 	if (owner.data._pInvincible && !owner.data._pHitPoints && owner.isMyPlr())
-		return TRUE;
+		return true;
 	if (pcurs != CURSOR_HAND)
-		return TRUE;
+		return true;
 	if (stextflag != STORE_NONE)
-		return TRUE;
-	if (talkflag) return TRUE;
+		return true;
+	if (talkflag) return true;
 
 	switch (item->IDidx) {
 	case IDI_MUSHROOM:
@@ -678,7 +679,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE95;
 		}
-		return TRUE;
+		return true;
 	case IDI_FUNGALTM:
 		PlaySFX(IS_IBOOK);
 		sfxdelay = 10;
@@ -689,7 +690,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 		} else if (owner.data._pClass == PC_SORCERER) {
 			sfxdnum = PS_MAGE29;
 		}
-		return TRUE;
+		return true;
 	}
 
 	if (!AllItemsList[item->IDidx].iUsable)
@@ -703,15 +704,15 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 		} else if (owner.data._pClass == PC_SORCERER) {
 			PlaySFX(PS_MAGE13);
 		}
-		return TRUE;
+		return true;
 	}
 
 	if (item->_iMiscId == IMISC_SCROLL && lvl.currlevel == 0 && !spelldata[item->_iSpell].sTownSpell) {
-		return TRUE;
+		return true;
 	}
 
 	if (item->_iMiscId == IMISC_SCROLLT && lvl.currlevel == 0 && !spelldata[item->_iSpell].sTownSpell) {
-		return TRUE;
+		return true;
 	}
 
 	int idata = ItemCAnimTbl[item->_iCurs];
@@ -728,21 +729,21 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 void PlayerInventory::DoTelekinesis()
 {
 	if (pcursobj != -1)
-		NetSendCmdParam1(TRUE, CMD_OPOBJT, pcursobj);
+		NetSendCmdParam1(true, CMD_OPOBJT, pcursobj);
 	if (pcursitem)
-		NetSendCmdGItem(TRUE, CMD_REQUESTAGITEM, myplr(), myplr(), *pcursitem);
+		NetSendCmdGItem(true, CMD_REQUESTAGITEM, myplr(), myplr(), *pcursitem);
 	if (pcursmonst != -1 && !monsters[pcursmonst].M_Talker() && monsters[pcursmonst].data.mtalkmsg == 0)
-		NetSendCmdParam1(TRUE, CMD_KNOCKBACK, pcursmonst);
+		NetSendCmdParam1(true, CMD_KNOCKBACK, pcursmonst);
 	NewCursor(CURSOR_HAND);
 }
 
 int PlayerInventory::CalculateGold()
 {
 	int gold = 0;
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		if (!getBagSlot(i).item()) continue;
-		if (getBagSlot(i).item()->_itype == ITYPE_GOLD)
-			gold += getBagSlot(i).item()->_ivalue;
+	for (InvSlot &i : getBagArray()) {
+		if (!i.item()) continue;
+		if (i.item()->_itype == ITYPE_GOLD)
+			gold += i.item()->_ivalue;
 	}
 	assert(gold >= 0);
 	return gold;
@@ -752,9 +753,9 @@ bool PlayerInventory::DropItemBeforeTrig()
 {
 	if (GetDropPos(owner.pos()))
 	{
-		NetSendCmdPItem(TRUE, CMD_PUTITEM, cursm.x, cursm.y);
+		NetSendCmdPItem(true, CMD_PUTITEM, cursm.x, cursm.y);
 		NewCursor(CURSOR_HAND);
-		return TRUE;
+		return true;
 	}
 	return false;
 }

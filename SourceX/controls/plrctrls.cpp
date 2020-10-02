@@ -173,7 +173,7 @@ bool CanTargetMonster(int mi)
 	const V2Di m = monst._m;
 	if (!(grid.at(m).dFlags & BFLAG_LIT)) // not visable
 		return false;
-	if (grid.at(m).getMonster() == 0)
+	if (grid.at(m).getActor() == 0)
 		return false;
 
 	return true;
@@ -243,7 +243,7 @@ void FindMeleeTarget()
 			if (!PosOkPlayer(myplr(), d)) {
 				visited[d.x][d.y] = true;
 
-				const int m = grid.at(d).getMonster();
+				const int m = grid.at(d).getActor();
 				if (m != 0) {
 					const int mi = m > 0 ? m - 1 : -(m + 1);
 					if (CanTargetMonster(mi)) {

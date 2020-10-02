@@ -72,7 +72,7 @@ void gamemenu_update_single(TMenuItem *pMenuItems)
 
 	enable = false;
 	if (myplr().data._pmode != PM_DEATH && !deathflag)
-		enable = TRUE;
+		enable = true;
 
 	gmenu_enable(&sgSingleMenu[0], enable);
 }
@@ -107,13 +107,13 @@ void gamemenu_new_game(bool bActivate)
 	for (i = 0; i < plr.maxPlayers(); i++) {
 		if (plr.isValidPlayer(i)) {
 			plr[i].data._pmode = PM_QUIT;
-			plr[i].data._pInvincible = TRUE;
+			plr[i].data._pInvincible = true;
 		}
 	}
 
 	deathflag = false;
 	force_redraw = 255;
-	scrollrt_draw_game_screen(TRUE);
+	scrollrt_draw_game_screen(true);
 	gbRunGame = false;
 	gamemenu_off();
 }
@@ -171,7 +171,7 @@ void gamemenu_save_game(bool bActivate)
 
 void gamemenu_restart_town(bool bActivate)
 {
-	NetSendCmd(TRUE, CMD_RETOWN);
+	NetSendCmd(true, CMD_RETOWN);
 }
 
 void gamemenu_options(bool bActivate)
@@ -228,7 +228,7 @@ void gamemenu_music_volume(bool bActivate)
 			music_stop();
 			sound_get_or_set_music_volume(VOLUME_MIN);
 		} else {
-			gbMusicOn = TRUE;
+			gbMusicOn = true;
 			sound_get_or_set_music_volume(VOLUME_MAX);
 			music_start(int(lvl.type()));
 		}
@@ -242,7 +242,7 @@ void gamemenu_music_volume(bool bActivate)
 				music_stop();
 			}
 		} else if (!gbMusicOn) {
-			gbMusicOn = TRUE;
+			gbMusicOn = true;
 			music_start(int(lvl.type()));
 		}
 	}
@@ -263,7 +263,7 @@ void gamemenu_sound_volume(bool bActivate)
 			sound_stop();
 			sound_get_or_set_sound_volume(VOLUME_MIN);
 		} else {
-			gbSoundOn = TRUE;
+			gbSoundOn = true;
 			sound_get_or_set_sound_volume(VOLUME_MAX);
 		}
 	} else {
@@ -275,7 +275,7 @@ void gamemenu_sound_volume(bool bActivate)
 				sound_stop();
 			}
 		} else if (!gbSoundOn) {
-			gbSoundOn = TRUE;
+			gbSoundOn = true;
 		}
 	}
 	PlaySFX(IS_TITLEMOV);

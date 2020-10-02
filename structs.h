@@ -1028,42 +1028,42 @@ typedef struct SpellData {
 //////////////////////////////////////////////////
 
 typedef struct TNQ {
-	unsigned char _qsttype;
-	unsigned char _qstmsg;
-	bool _qstmsgact;
+	unsigned char _qsttype = 0;
+	unsigned char _qstmsg = 0;
+	bool _qstmsgact = 0;
 } TNQ;
 
 typedef struct TownerStruct {
-	int _tmode;
-	int _ttype;
+	int _tmode = 0;
+	int _ttype = 0;
 	V2Di _t;
 	V2Di _toff;
 	V2Di _tvel;
-	int _tdir;
-	unsigned char *_tAnimData;
-	int _tAnimDelay;
-	int _tAnimCnt;
-	int _tAnimLen;
-	int _tAnimFrame;
-	int _tAnimFrameCnt;
-	char _tAnimOrder;
-	int _tAnimWidth;
-	int _tAnimWidth2;
-	int _tTenPer;
-	int _teflag;
-	int _tbtcnt;
-	int _tSelFlag;
-	bool _tMsgSaid;
+	int _tdir = 0;
+	unsigned char *_tAnimData = 0;
+	int _tAnimDelay = 0;
+	int _tAnimCnt = 0;
+	int _tAnimLen = 0;
+	int _tAnimFrame = 0;
+	int _tAnimFrameCnt = 0;
+	char _tAnimOrder = 0;
+	int _tAnimWidth = 0;
+	int _tAnimWidth2 = 0;
+	int _tTenPer = 0;
+	int _teflag = 0;
+	int _tbtcnt = 0;
+	int _tSelFlag = 0;
+	bool _tMsgSaid = 0;
 	TNQ qsts[MAXQUESTS];
-	int _tSeed;
-	int _tVar1;
-	int _tVar2;
-	int _tVar3;
-	int _tVar4;
+	int _tSeed = 0;
+	int _tVar1 = 0;
+	int _tVar2 = 0;
+	int _tVar3 = 0;
+	int _tVar4 = 0;
 	char _tName[PLR_NAME_LEN];
 	unsigned char *_tNAnim[8];
-	int _tNFrames;
-	unsigned char *_tNData;
+	int _tNFrames = 0;
+	unsigned char *_tNData = 0;
 } TownerStruct;
 
 typedef struct QuestTalkData {
@@ -1370,9 +1370,9 @@ typedef struct PkPlayerStruct {
 	int pMaxManaBase;
 	char pSplLvl[MAX_SPELLS];
 	uint64_t pMemSpells;
-	PkItemStruct InvBody[NUM_INVLOC];
-	PkItemStruct InvList[NUM_INV_GRID_ELEM];
-	char InvGrid[NUM_INV_GRID_ELEM];
+	PkItemStruct InvBody[MAXINVITEMS];
+	PkItemStruct InvList[MAXINVITEMS];
+	char InvGrid[MAXINVITEMS];
 	uint8_t _pNumInv;
 	PkItemStruct SpdList[MAXBELTITEMS];
 	char pTownWarps;

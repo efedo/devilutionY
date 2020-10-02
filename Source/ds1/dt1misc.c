@@ -18,7 +18,7 @@ int dt1_already_loaded(char * dt1name, int * idx)
       if (stricmp(glb_dt1[i].name, dt1name) == 0)
       {
          * idx = i;
-         return TRUE;
+         return true;
       }
    }
    * idx = -1;
@@ -389,7 +389,7 @@ int dt1_add(char * dt1name)
    int  i, idx, entry;
    char tmp[256];
 
-   if (dt1_already_loaded(dt1name, & idx) == TRUE)
+   if (dt1_already_loaded(dt1name, & idx) == true)
    {
       glb_dt1[idx].ds1_usage++;
       return idx;
@@ -406,7 +406,7 @@ int dt1_add(char * dt1name)
                        dt1name,
                        (char **) & glb_dt1[i].buffer,
                        & glb_dt1[i].buff_len,
-                       TRUE
+                       true
                     );
             if (entry == -1)
             {
@@ -443,7 +443,7 @@ int dt1_add_special(char * dt1name)
    int  i, idx, entry;
    char tmp[256];
 
-   if (dt1_already_loaded(dt1name, & idx) == TRUE)
+   if (dt1_already_loaded(dt1name, & idx) == true)
    {
       glb_dt1[idx].ds1_usage++;
       return idx;

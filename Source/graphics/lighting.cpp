@@ -742,7 +742,7 @@ void DoVision(V2Di pos, int nRadius, bool doautomap, bool visible)
 						if (!nBlockerFlag) {
 							nTrans = grid[nCrawlX][nCrawlY].dTransVal;
 							if (nTrans != 0) {
-								lvl.TransList[nTrans] = TRUE;
+								lvl.TransList[nTrans] = true;
 							}
 						}
 					}
@@ -949,7 +949,7 @@ void ToggleLighting()
 {
 	int i;
 
-	lightflag ^= TRUE;
+	lightflag ^= true;
 
 	if (lightflag != 0) {
 		grid.clearLight();
@@ -1000,7 +1000,7 @@ int AddLight(V2Di pos, int r)
 		LightList[lid]._off = { 0, 0 };
 		LightList[lid]._ldel = false;
 		LightList[lid]._lunflag = false;
-		dolighting = TRUE;
+		dolighting = true;
 	}
 	return lid;
 }
@@ -1011,49 +1011,49 @@ void AddUnLight(int i)
 		return;
 	}
 
-	LightList[i]._ldel = TRUE;
-	dolighting = TRUE;
+	LightList[i]._ldel = true;
+	dolighting = true;
 }
 
 void ChangeLightRadius(int i, int r)
 {
 	if (lightflag || i == -1) return;
-	LightList[i]._lunflag = TRUE;
+	LightList[i]._lunflag = true;
 	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
 	LightList[i]._lradius = r;
-	dolighting = TRUE;
+	dolighting = true;
 }
 
 void ChangeLightXY(int i, V2Di pos)
 {
 	if (lightflag || i == -1) return;
-	LightList[i]._lunflag = TRUE;
+	LightList[i]._lunflag = true;
 	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
 	LightList[i]._l = pos;
-	dolighting = TRUE;
+	dolighting = true;
 }
 
 void ChangeLightOff(int i, V2Di pos)
 {
 	if (lightflag || i == -1) return;
-	LightList[i]._lunflag = TRUE;
+	LightList[i]._lunflag = true;
 	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
 	LightList[i]._off = pos;
-	dolighting = TRUE;
+	dolighting = true;
 }
 
 void ChangeLight(int i, V2Di pos, int r)
 {
 	if (lightflag || i == -1) return;
-	LightList[i]._lunflag = TRUE;
+	LightList[i]._lunflag = true;
 	LightList[i]._lun = LightList[i]._l;
 	LightList[i]._lunr = LightList[i]._lradius;
 	LightList[i]._l = pos;
 	LightList[i]._lradius = r;
-	dolighting = TRUE;
+	dolighting = true;
 }
 
 void ProcessLightList()
@@ -1129,7 +1129,7 @@ int AddVision(V2Di pos, int r, bool mine)
 		VisionList[numvision]._lunflag = 0;
 		VisionList[numvision]._lflags = mine != 0;
 		numvision++;
-		dovision = TRUE;
+		dovision = true;
 	}
 
 	return vid;
@@ -1141,11 +1141,11 @@ void ChangeVisionRadius(int id, int r)
 
 	for (i = 0; i < numvision; i++) {
 		if (VisionList[i]._lid == id) {
-			VisionList[i]._lunflag = TRUE;
+			VisionList[i]._lunflag = true;
 			VisionList[i]._lun = VisionList[i]._l;
 			VisionList[i]._lunr = VisionList[i]._lradius;
 			VisionList[i]._lradius = r;
-			dovision = TRUE;
+			dovision = true;
 		}
 	}
 }
@@ -1154,11 +1154,11 @@ void ChangeVisionXY(int id, V2Di pos)
 {
 	for (int i = 0; i < numvision; i++) {
 		if (VisionList[i]._lid == id) {
-			VisionList[i]._lunflag = TRUE;
+			VisionList[i]._lunflag = true;
 			VisionList[i]._lun = VisionList[i]._l;
 			VisionList[i]._lunr = VisionList[i]._lradius;
 			VisionList[i]._l = pos;
-			dovision = TRUE;
+			dovision = true;
 		}
 	}
 }
@@ -1198,7 +1198,7 @@ void ProcessVisionList()
 					if (numvision > 0 && i != numvision) {
 						VisionList[i] = VisionList[numvision];
 					}
-					delflag = TRUE;
+					delflag = true;
 				}
 			}
 		} while (delflag);

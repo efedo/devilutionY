@@ -23,7 +23,7 @@ bool WOpenFile(const char *FileName, HANDLE *phsFile, bool mayNotExist)
 	if (!SFileOpenFile(FileName, phsFile))
 		FileErrDlg(FileName);
 
-	return TRUE;
+	return true;
 }
 
 void WReadFile(HANDLE hsFile, LPVOID buf, DWORD to_read, const char *FileName)

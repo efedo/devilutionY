@@ -36,7 +36,7 @@ void CheckDungeonClear()
 	V2Di n;
 	for (n.y = 0; n.y < MAXDUNY; n.y++) {
 		for (n.x = 0; n.x < MAXDUNX; n.x++) {
-			if (grid.at(n).isMonster())
+			if (grid.at(n).isActor())
 				app_fatal("Monsters not cleared");
 			if (grid.at(n).isPlayer())
 				app_fatal("Players not cleared");
@@ -52,7 +52,7 @@ void GiveGoldCheat()
 {
 	int i, ni;
 
-	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
+	for (i = 0; i < MAXINVITEMS; i++) {
 		if (!myplr().data.InvGrid[i]) {
 			ni = myplr().data._pNumInv++;
 			SetPlrHandItem(&myplr().data.InvList[ni], IDI_GOLD);
@@ -87,7 +87,7 @@ void TakeGoldCheat()
 	int i;
 	char ig;
 
-	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
+	for (i = 0; i < MAXINVITEMS; i++) {
 		ig = myplr().data.InvGrid[i];
 		if (ig > 0 && myplr().data.InvList[ig - 1]._itype == ITYPE_GOLD)
 			myplr().inventory.RemoveInvItem(ig - 1);
@@ -200,7 +200,7 @@ void PrintDebugMonster(int m)
 
 	for (i = 0; i < nummonsters; i++) {
 		if (monstactive[i] == m)
-			bActive = TRUE;
+			bActive = true;
 	}
 
 	sprintf(dstr, "Active List = %i, Squelch = %i", bActive, monsters[m].data._msquelch);
@@ -213,7 +213,7 @@ void GetDebugMonster()
 
 	mi1 = pcursmonst;
 	if (mi1 == -1) {
-		mi2 = grid.at(cursm).getMonster();
+		mi2 = grid.at(cursm).getActor();
 		if (mi2 != 0) {
 			mi1 = mi2 - 1;
 			if (mi2 <= 0)

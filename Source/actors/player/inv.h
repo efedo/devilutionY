@@ -58,14 +58,29 @@ public:
 
 	// Access inventory slots
 	InvSlot & getBodySlot(BodyLoc) const; // Enforce body only
-	InvSlot & getLeftHandSlot() const;
-	InvSlot & getRightHandSlot() const;
 	InvSlot & getBeltSlot(uint8_t) const;
 	InvSlot & getBagSlot(uint8_t) const;
 	InvSlot & getBagSlot(uint8_t, uint8_t) const; //yy = 10 * (i / 10); //xx = i % 10;
 	InvSlot * getEmptyBagSlot() const;
 	InvSlot & getHeldSlot() const;
+
 	Item * getHeldItem() const; // FOr now, only funtion to directly return an item (based on freq. of usage)
+
+
+	auto &getBodyArray()
+	{
+		return _body.slots;
+	}
+
+	auto & getBeltArray()
+	{
+		return _belt.slots;
+	}
+
+	auto &getBagArray()
+	{
+		return _bag.slots;
+	}
 
 	// Modify inventory items
 	int SwapHeldItem(InvSlot &a);
@@ -100,7 +115,6 @@ public:
 private:
 	Player & owner;
 
-	static bool invflag; // Inventory is open flag???
 	static uint8_t *pInvCels;
 	static int users;
 
@@ -108,19 +122,19 @@ private:
 	struct {
 		std::array<InvSlot, 7> slots;
 		// InvSlot belt; (for DII)
-	} body;
+	} _body;
 
 	struct {
 		std::array<InvSlot, MAXBELTITEMS> slots;
-	} belt;
+	} _belt;
 
 	struct {
-		std::array<InvSlot, NUM_INV_GRID_ELEM> slots;
-	} bag;
+		std::array<InvSlot, MAXINVITEMS> slots;
+	} _bag;
 
 	struct {
 		InvSlot item;
-	} hand;
+	} _hand;
 };
 
 DEVILUTION_END_NAMESPACE

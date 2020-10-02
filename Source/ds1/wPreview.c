@@ -405,7 +405,7 @@ void wpreview_draw_f(int ds1_idx, int x, int y, int mx, int my, int z, int selec
          {
             bt_ptr->curr_frame =
                (glb_ds1[ds1_idx].cur_anim_floor_frame / 5) % (bt_ptr->rarity + 1);
-            bt_ptr->updated = TRUE;
+            bt_ptr->updated = true;
          }
          bt_ptr += bt_ptr->curr_frame - bt_ptr->rarity;
       }
@@ -575,7 +575,7 @@ void wpreview_draw_w(int ds1_idx, int x, int y, int mx, int my, int z,
       
       // draw only lower or upper wall, according to 'upper' param
       o = w_ptr[order_data[n].idx].orientation;
-      if ((upper == TRUE) && (o >= 15))
+      if ((upper == true) && (o >= 15))
          continue;
       if ((upper == false) && (o <= 15))
          continue;
@@ -747,7 +747,7 @@ void wpreview_draw_w(int ds1_idx, int x, int y, int mx, int my, int z,
          while( ! done)
          {
             if (bt_idx >= glb_ds1[ds1_idx].bt_num)
-               done = TRUE;
+               done = true;
             else
             {
                bt_ptr++;
@@ -757,11 +757,11 @@ void wpreview_draw_w(int ds1_idx, int x, int y, int mx, int my, int z,
                {
                   if (bt_ptr->orientation == 4)
                      if ((bt_ptr->main_index == m) && (bt_ptr->sub_index == s))
-                        done = found = TRUE;
+                        done = found = true;
                }
             }
          }
-         if (found == TRUE)
+         if (found == true)
          {
             dt1_idx   = bt_ptr->dt1_idx;
             block_idx = bt_ptr->block_idx;
@@ -1619,7 +1619,7 @@ void wpreview_draw_an_object(int ds1_idx, int o)
            (dy >= glb_ds1edit.win_preview.h))
          continue;
 
-      if ((glb_ds1[ds1_idx].cur_zoom == ZM_11) || (glb_config.stretch_sprites != TRUE))
+      if ((glb_ds1[ds1_idx].cur_zoom == ZM_11) || (glb_config.stretch_sprites != true))
       {
          // normal drawing
          if ((lay->trans_a) && (lay->trans_b <= 6) && (lay->trans_b != 5))
@@ -1805,7 +1805,7 @@ void wpreview_draw_an_object_shad(int ds1_idx, int o)
          bptr += (256 * 14); // 10th level of transparency table on 32
       }
 
-      if ((glb_ds1[ds1_idx].cur_zoom == ZM_11) || (glb_config.stretch_sprites != TRUE))
+      if ((glb_ds1[ds1_idx].cur_zoom == ZM_11) || (glb_config.stretch_sprites != true))
       {
          offx = cof->xoffset + lay->off_x;
          offy = cof->yoffset + lay->off_y;
@@ -2208,7 +2208,7 @@ void wpreview_draw_tiles(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2231,7 +2231,7 @@ void wpreview_draw_tiles(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2255,7 +2255,7 @@ void wpreview_draw_tiles(int ds1_idx)
          {
             select = false;
             if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-               select = TRUE;
+               select = true;
             mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
             if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
                 (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2281,13 +2281,13 @@ void wpreview_draw_tiles(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
          {
             my = base_y + x * glb_ds1[ds1_idx].tile_h / 2;
-            wpreview_draw_w(ds1_idx, x, y, mx, my, z, select, TRUE);  // upper walls
+            wpreview_draw_w(ds1_idx, x, y, mx, my, z, select, true);  // upper walls
 
             // objects of this tile
             if (glb_ds1[ds1_idx].animations_layer_mask)
@@ -2305,7 +2305,7 @@ void wpreview_draw_tiles(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2327,7 +2327,7 @@ void wpreview_draw_tiles(int ds1_idx)
          {
             select = false;
             if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-               select = TRUE;
+               select = true;
             mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
             if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
                 (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2435,7 +2435,7 @@ void wpreview_draw_tiles(int ds1_idx)
    // objects infos
    if (glb_ds1edit.mode == MOD_O)
    {
-      editobj_draw_obj_lab(ds1_idx, TRUE);
+      editobj_draw_obj_lab(ds1_idx, true);
       editobj_draw_obj_lab(ds1_idx, false);
       if (glb_ds1[ds1_idx].draw_edit_obj)
          editobj_draw_edit_obj(ds1_idx);
@@ -2463,7 +2463,7 @@ void wpreview_draw_tiles(int ds1_idx)
    }
    
    // make up & bottom border black, with white line
-   if (glb_ds1edit.show_2nd_row == TRUE)
+   if (glb_ds1edit.show_2nd_row == true)
    {
       rectfill(glb_ds1edit.screen_buff, 0,  0, glb_config.screen.width, 19, 0);
       hline(glb_ds1edit.screen_buff,    0,  9, glb_config.screen.width, 29);
@@ -2919,7 +2919,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2942,7 +2942,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2966,7 +2966,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
          {
             select = false;
             if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-               select = TRUE;
+               select = true;
             mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
             if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
                 (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -2988,13 +2988,13 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
          {
             my = base_y + x * glb_ds1[ds1_idx].tile_h / 2;
-            wpreview_draw_w(ds1_idx, x, y, mx, my, z, select, TRUE);  // upper walls
+            wpreview_draw_w(ds1_idx, x, y, mx, my, z, select, true);  // upper walls
 
             // objects of this tile
             if (glb_ds1[ds1_idx].animations_layer_mask)
@@ -3012,7 +3012,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
       {
          select = false;
          if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-            select = TRUE;
+            select = true;
          mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
          if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
              (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -3034,7 +3034,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
          {
             select = false;
             if ((glb_ds1edit.mode == MOD_T) && (x==cx) && (y==cy))
-               select = TRUE;
+               select = true;
             mx = base_x + x * glb_ds1[ds1_idx].tile_w / 2;
             if ((mx >= glb_ds1edit.win_preview.x0-glb_ds1[ds1_idx].tile_w) &&
                 (mx < glb_ds1edit.win_preview.x0 + glb_ds1edit.win_preview.w))
@@ -3078,7 +3078,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
    }
 
    // tile grid
-   if (glb_ds1edit.display_tile_grid == TRUE)
+   if (glb_ds1edit.display_tile_grid == true)
       wpreview_draw_tile_grid(ds1_idx);
 
    // npc paths
@@ -3090,7 +3090,7 @@ int wpreview_draw_tiles_big_screenshot(int ds1_idx)
    // objects infos
    if (glb_ds1edit.mode == MOD_O)
    {
-      editobj_draw_obj_lab(ds1_idx, TRUE);
+      editobj_draw_obj_lab(ds1_idx, true);
       editobj_draw_obj_lab(ds1_idx, false);
       if (glb_ds1[ds1_idx].draw_edit_obj)
          editobj_draw_edit_obj(ds1_idx);

@@ -87,7 +87,7 @@ void animdata_load(void)
            ((UBYTE *) glb_ds1edit.anim_data.buffer + glb_ds1edit.anim_data.buffer_size)
          )
       {
-         done = TRUE;
+         done = true;
       }
    }
    printf("\n");

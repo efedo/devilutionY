@@ -11,8 +11,8 @@ SDL_Color orig_palette[256];
 /* data */
 
 int gamma_correction = 100;
-bool color_cycling_enabled = TRUE;
-bool sgbFadedIn = TRUE;
+bool color_cycling_enabled = true;
+bool sgbFadedIn = true;
 
 void palette_update()
 {
@@ -177,7 +177,7 @@ void PaletteFadeIn(int fr)
 	}
 	SetFadeLevel(256);
 	memcpy(logical_palette, orig_palette, sizeof(orig_palette));
-	sgbFadedIn = TRUE;
+	sgbFadedIn = true;
 }
 
 void PaletteFadeOut(int fr)

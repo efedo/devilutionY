@@ -47,7 +47,7 @@
 #define ITEMTYPES				35
 
 // number of inventory grid cells
-#define NUM_INV_GRID_ELEM		40
+#define MAXINVITEMS		40
 #define INV_SLOT_SIZE_PX		28
 
 // Item indestructible durability

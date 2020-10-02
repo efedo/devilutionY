@@ -42,7 +42,7 @@ bool mainmenu_select_hero_dialog(
     char *cdesc, DWORD cdlen,
     bool *multi)
 {
-	bool hero_is_created = TRUE;
+	bool hero_is_created = true;
 	int dlgresult = 0;
 	if (plr.isSingleplayer()) {
 		if (!UiSelHeroSingDialog(
@@ -56,7 +56,7 @@ bool mainmenu_select_hero_dialog(
 			app_fatal("Unable to display SelHeroSing");
 
 		if (dlgresult == SELHERO_CONTINUE)
-			gbLoadGame = TRUE;
+			gbLoadGame = true;
 		else
 			gbLoadGame = false;
 
@@ -85,7 +85,7 @@ bool mainmenu_select_hero_dialog(
 	if (cname && clen)
 		SStrCopy(cname, gszHero, clen);
 
-	return TRUE;
+	return true;
 }
 
 void mainmenu_loop()
@@ -104,11 +104,11 @@ void mainmenu_loop()
 		switch (menu) {
 		case MAINMENU_SINGLE_PLAYER:
 			if (!mainmenu_single_player())
-				done = TRUE;
+				done = true;
 			break;
 		case MAINMENU_MULTIPLAYER:
 			if (!mainmenu_multi_player())
-				done = TRUE;
+				done = true;
 			break;
 		case MAINMENU_REPLAY_INTRO:
 		case MAINMENU_ATTRACT_MODE:
@@ -119,7 +119,7 @@ void mainmenu_loop()
 			UiCreditsDialog(16);
 			break;
 		case MAINMENU_EXIT_DIABLO:
-			done = TRUE;
+			done = true;
 			break;
 		}
 	} while (!done);
@@ -138,7 +138,7 @@ bool mainmenu_init_menu(int type)
 	bool success;
 
 	if (type == SELHERO_PREVIOUS)
-		return TRUE;
+		return true;
 
 	music_stop();
 
@@ -158,7 +158,7 @@ bool mainmenu_multi_player()
 void mainmenu_play_intro()
 {
 	music_stop();
-	play_movie("gendata\\diablo1.smk", TRUE);
+	play_movie("gendata\\diablo1.smk", true);
 	mainmenu_refresh_music();
 }
 

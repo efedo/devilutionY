@@ -112,7 +112,7 @@ void editobj_make_obj_label(int ds1_idx)
 
 // ==========================================================================
 // draw the objects & the label windows of 1 ds1
-//   if is_shadow is TRUE, only draw the ones which are moving (copy, move)
+//   if is_shadow is true, only draw the ones which are moving (copy, move)
 void editobj_draw_obj_lab(int ds1_idx, int is_shadow)
 {
    OBJ_LABEL_S * label;
@@ -527,7 +527,7 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
                   if (IS_MOUSE_OVER(glb_ds1[ds1_idx].obj[o].flags))
                   {
                      // mouse WAS over this object, but not anymore
-                     redraw = TRUE;
+                     redraw = true;
                   }
                }
                break;
@@ -552,7 +552,7 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
                   if (IS_MOUSE_OVER(glb_ds1[ds1_idx].obj[o].label.flags))
                   {
                      // mouse WAS over this label, but not anymore
-                     redraw = TRUE;
+                     redraw = true;
                   }
                }
                break;
@@ -560,7 +560,7 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
       }
    }
 
-   if (redraw == TRUE)
+   if (redraw == true)
    {
       // mouse WAS over an object or label, not anymore
       editobj_clear_obj_lab_over(ds1_idx);
@@ -584,7 +584,7 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
             // new label
             editobj_clear_obj_lab_over(ds1_idx);
             SET_MOUSE_OVER(glb_ds1[ds1_idx].obj[last_o].label.flags);
-            redraw = TRUE;
+            redraw = true;
          }
       }
       else
@@ -595,7 +595,7 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
             // new object
             editobj_clear_obj_lab_over(ds1_idx);
             SET_MOUSE_OVER(glb_ds1[ds1_idx].obj[last_o].flags);
-            redraw = TRUE;
+            redraw = true;
          }
       }
    }
@@ -668,7 +668,7 @@ int editobj_moving_obj_lab(int ds1_idx, int dcx, int dcy, int dmx, int dmy)
             if (ptr_obj->y >= glb_ds1[ds1_idx].height * 5)
                ptr_obj->y = glb_ds1[ds1_idx].height * 5 - 1;
 
-            save_old = TRUE;
+            save_old = true;
          }
       }
 
@@ -680,7 +680,7 @@ int editobj_moving_obj_lab(int ds1_idx, int dcx, int dcy, int dmx, int dmy)
             label->rx = label->old_rx + dmx;
             label->ry = label->old_ry + dmy;
             
-            save_old = TRUE;
+            save_old = true;
          }
       }
    }
@@ -691,7 +691,7 @@ int editobj_moving_obj_lab(int ds1_idx, int dcx, int dcy, int dmx, int dmy)
       old_dcy     = dcy;
       old_dmx     = dmx;
       old_dmy     = dmy;
-      redraw      = TRUE;
+      redraw      = true;
    }
    return redraw;
 }
@@ -732,7 +732,7 @@ void editobj_prepare_undo(int ds1_idx)
       memcpy(ptr_d, ptr_s, sizeof (OBJ_S));
    }
    glb_ds1[ds1_idx].obj_num_undo = glb_ds1[ds1_idx].obj_num;
-   glb_ds1[ds1_idx].can_undo_obj = TRUE;
+   glb_ds1[ds1_idx].can_undo_obj = true;
 }
 
 
@@ -784,7 +784,7 @@ void editobj_del_obj(int ds1_idx)
             SET_SELECTED(ptr_s->flags);
          }
          else
-            done = TRUE;
+            done = true;
       }
       if (done == false)
       {
@@ -792,7 +792,7 @@ void editobj_del_obj(int ds1_idx)
          d++;
          s++;
          if (d >= max)
-            done = TRUE;
+            done = true;
       }
    }
    
@@ -1101,7 +1101,7 @@ void editobj_prepare_edit_obj_win(int ds1_idx, int obj_idx)
    else
    {
       SET_SELECTED(ptr_w->button[EB_TYPE2].flags);
-      if (glb_config.normal_type2 == TRUE)
+      if (glb_config.normal_type2 == true)
       {
          // act 1 always possible
          SET_ACTIVATED(ptr_w->button[EB_ACT1].flags);
@@ -1139,7 +1139,7 @@ void editobj_prepare_edit_obj_win(int ds1_idx, int obj_idx)
    }
 
    // end
-   glb_ds1[ds1_idx].draw_edit_obj = TRUE;
+   glb_ds1[ds1_idx].draw_edit_obj = true;
 }
 
 
@@ -1278,8 +1278,8 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       if (mb & 1)
       {
          glb_ds1[ds1_idx].draw_edit_obj = false;
-         redraw = TRUE;
-         * edit_end = TRUE;
+         redraw = true;
+         * edit_end = true;
          glb_ds1[ds1_idx].obj[ptr_w->obj_idx].type     = glb_ds1edit.obj_desc[ptr_w->desc_cur].type;
          glb_ds1[ds1_idx].obj[ptr_w->obj_idx].id       = glb_ds1edit.obj_desc[ptr_w->desc_cur].id;
          glb_ds1[ds1_idx].obj[ptr_w->obj_idx].desc_idx = ptr_w->desc_cur;
@@ -1300,8 +1300,8 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       while (key[KEY_ENTER] || key[KEY_ENTER_PAD])
       {}
       glb_ds1[ds1_idx].draw_edit_obj = false;
-      redraw = TRUE;
-      * edit_end = TRUE;
+      redraw = true;
+      * edit_end = true;
       glb_ds1[ds1_idx].obj[ptr_w->obj_idx].type     = glb_ds1edit.obj_desc[ptr_w->desc_cur].type;
       glb_ds1[ds1_idx].obj[ptr_w->obj_idx].id       = glb_ds1edit.obj_desc[ptr_w->desc_cur].id;
       glb_ds1[ds1_idx].obj[ptr_w->obj_idx].desc_idx = ptr_w->desc_cur;
@@ -1322,7 +1322,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       if (ptr_w->start < ptr_w->desc_start)
          ptr_w->start = ptr_w->desc_start;
       ptr_w->cur = -1;
-      redraw = TRUE;
+      redraw = true;
    }
    else if ((glb_config.winobj_scroll_keyb == false) && key[KEY_DOWN])
    {
@@ -1333,7 +1333,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       if (ptr_w->start < ptr_w->desc_start)
          ptr_w->start = ptr_w->desc_start;
       ptr_w->cur = -1;
-      redraw = TRUE;
+      redraw = true;
    }
    else if ((mx >= ptr_w->button[EB_CANCEL].box.x1) &&
             (mx <= ptr_w->button[EB_CANCEL].box.x2) &&
@@ -1345,8 +1345,8 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
       if (mb & 1)
       {
          glb_ds1[ds1_idx].draw_edit_obj = false;
-         redraw = TRUE;
-         * edit_end = TRUE;
+         redraw = true;
+         * edit_end = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_TYPE1].box.x1) &&
@@ -1366,7 +1366,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
             ptr_w->cur_act  = glb_ds1[ds1_idx].act;
          ptr_w->cur_type = 1;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_TYPE2].box.x1) &&
@@ -1385,7 +1385,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          ptr_w->cur_type = 2;
          ptr_w->cur_act  = glb_ds1[ds1_idx].act;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_ACT1].box.x1) &&
@@ -1403,7 +1403,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          }
          ptr_w->cur_act = 1;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_ACT2].box.x1) &&
@@ -1421,7 +1421,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          }
          ptr_w->cur_act = 2;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_ACT3].box.x1) &&
@@ -1439,7 +1439,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          }
          ptr_w->cur_act = 3;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_ACT4].box.x1) &&
@@ -1457,7 +1457,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          }
          ptr_w->cur_act = 4;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else if ((mx >= ptr_w->button[EB_ACT5].box.x1) &&
@@ -1475,7 +1475,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          }
          ptr_w->cur_act = 5;
          editobj_prepare_edit_obj_win(ds1_idx, ptr_w->obj_idx);
-         redraw = TRUE;
+         redraw = true;
       }
    }
    else
@@ -1496,7 +1496,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
             if (ptr_w->start < ptr_w->desc_start)
                ptr_w->start = ptr_w->desc_start;
             ptr_w->cur = -1;
-            redraw = TRUE;
+            redraw = true;
          }
          else if ((new_cur > end) && (end < ptr_w->desc_end))
          {
@@ -1507,7 +1507,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
             if (ptr_w->start < ptr_w->desc_start)
                ptr_w->start = ptr_w->desc_start;
             ptr_w->cur = -1;
-            redraw = TRUE;
+            redraw = true;
          }
          else
          {
@@ -1517,7 +1517,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
             {
                // NEW row pointed by mouse
                ptr_w->cur = new_cur;
-               redraw = TRUE;
+               redraw = true;
             }
 
             if (mb & 1)
@@ -1529,7 +1529,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
                {
                   // NEW selected row
                   ptr_w->desc_cur = new_cur;
-                  redraw = TRUE;
+                  redraw = true;
                }
             }
          }
@@ -1540,7 +1540,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
          if (ptr_w->cur != -1)
          {
             ptr_w->cur = -1;
-            redraw = TRUE;
+            redraw = true;
          }
       }
    }
@@ -1551,7 +1551,7 @@ int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
 
 // ==========================================================================
 // make a NEW selection of all same object
-// return TRUE if at least 1 object has been added
+// return true if at least 1 object has been added
 // (it assume not even 1 object is already selected)
 void editobj_identical_obj_new(int ds1_idx, int o)
 {
@@ -1573,7 +1573,7 @@ void editobj_identical_obj_new(int ds1_idx, int o)
 
 // ==========================================================================
 // add all same object to the selection
-// return TRUE if at least 1 object has been added
+// return true if at least 1 object has been added
 int editobj_identical_obj_add(int ds1_idx, int o)
 {
    int need_redraw = false, i;
@@ -1590,7 +1590,7 @@ int editobj_identical_obj_add(int ds1_idx, int o)
          {
             // no, add it
             SET_SELECTED(glb_ds1[ds1_idx].obj[i].flags);
-            need_redraw = TRUE;
+            need_redraw = true;
          }
       }
    }
@@ -1600,7 +1600,7 @@ int editobj_identical_obj_add(int ds1_idx, int o)
 
 // ==========================================================================
 // delete all same object from the selection
-// return TRUE if at least 1 object has been deleted from the selection
+// return true if at least 1 object has been deleted from the selection
 int editobj_identical_obj_del(int ds1_idx, int o)
 {
    int need_redraw = false, i;
@@ -1617,7 +1617,7 @@ int editobj_identical_obj_del(int ds1_idx, int o)
          {
             // yes, remove it
             DEL_SELECTED(glb_ds1[ds1_idx].obj[i].flags);
-            need_redraw = TRUE;
+            need_redraw = true;
          }
       }
    }
@@ -1627,7 +1627,7 @@ int editobj_identical_obj_del(int ds1_idx, int o)
 
 // ==========================================================================
 // make a NEW selection of all same labels
-// return TRUE if at least 1 label has been added
+// return true if at least 1 label has been added
 // (it assume not even 1 label is already selected)
 void editobj_identical_lab_new(int ds1_idx, int o)
 {
@@ -1649,7 +1649,7 @@ void editobj_identical_lab_new(int ds1_idx, int o)
 
 // ==========================================================================
 // add all same labels to the selection
-// return TRUE if at least 1 lbel has been added
+// return true if at least 1 lbel has been added
 int editobj_identical_lab_add(int ds1_idx, int o)
 {
    int need_redraw = false, i;
@@ -1666,7 +1666,7 @@ int editobj_identical_lab_add(int ds1_idx, int o)
          {
             // no, add it
             SET_SELECTED(glb_ds1[ds1_idx].obj[i].label.flags);
-            need_redraw = TRUE;
+            need_redraw = true;
          }
       }
    }
@@ -1676,7 +1676,7 @@ int editobj_identical_lab_add(int ds1_idx, int o)
 
 // ==========================================================================
 // delete all same labels from the selection
-// return TRUE if at least 1 label has been deleted from the selection
+// return true if at least 1 label has been deleted from the selection
 int editobj_identical_lab_del(int ds1_idx, int o)
 {
    int need_redraw = false, i;
@@ -1693,7 +1693,7 @@ int editobj_identical_lab_del(int ds1_idx, int o)
          {
             // yes, remove it
             DEL_SELECTED(glb_ds1[ds1_idx].obj[i].label.flags);
-            need_redraw = TRUE;
+            need_redraw = true;
          }
       }
    }
@@ -1786,7 +1786,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
    {
       // handler of objects Type-Id edition
       if (editobj_edit_obj(ds1_idx, & edit_end, mx, my, mb))
-         redraw = TRUE;
+         redraw = true;
 
       if (edit_end)
       {
@@ -1803,7 +1803,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
       // NOT moving obj or label
       
       if (editobj_over_obj_lab(ds1_idx, & t, & o, cx, cy, mx, my))
-         redraw = TRUE;
+         redraw = true;
 
       if (mb & 1)
       {
@@ -1864,7 +1864,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                         if (editobj_identical_lab_add(ds1_idx, o))
                         {
                            // at least 1 label added
-                           redraw = TRUE;
+                           redraw = true;
                            old_mode = OM_ADD;
                            old_o = o;
                            old_t = t;
@@ -1873,7 +1873,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                      else if ( ! IS_SELECTED(glb_ds1[ds1_idx].obj[o].label.flags))
                      {
                         SET_SELECTED(glb_ds1[ds1_idx].obj[o].label.flags);
-                        redraw = TRUE;
+                        redraw = true;
                         old_mode = OM_ADD;
                         old_o = o;
                         old_t = t;
@@ -1888,7 +1888,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                         if (editobj_identical_obj_add(ds1_idx, o))
                         {
                            // at least 1 object added
-                           redraw = TRUE;
+                           redraw = true;
                            old_mode = OM_ADD;
                            old_o = o;
                            old_t = t;
@@ -1897,7 +1897,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                      else if ( ! IS_SELECTED(glb_ds1[ds1_idx].obj[o].flags))
                      {
                         SET_SELECTED(glb_ds1[ds1_idx].obj[o].flags);
-                        redraw = TRUE;
+                        redraw = true;
                         old_mode = OM_ADD;
                         old_o = o;
                         old_t = t;
@@ -1920,7 +1920,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                      if (editobj_identical_lab_del(ds1_idx, o))
                      {
                         // at least 1 object deleted
-                        redraw   = TRUE;
+                        redraw   = true;
                         old_o    = o;
                         old_mode = OM_DEL;
                      }
@@ -1928,7 +1928,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                   else if (IS_SELECTED(glb_ds1[ds1_idx].obj[o].label.flags))
                   {
                      DEL_SELECTED(glb_ds1[ds1_idx].obj[o].label.flags);
-                     redraw   = TRUE;
+                     redraw   = true;
                      old_o    = o;
                      old_mode = OM_DEL;
                   }
@@ -1942,7 +1942,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                      if (editobj_identical_obj_del(ds1_idx, o))
                      {
                         // at least 1 object deleted
-                        redraw   = TRUE;
+                        redraw   = true;
                         old_o    = o;
                         old_mode = OM_DEL;
                      }
@@ -1950,7 +1950,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                   else if (IS_SELECTED(glb_ds1[ds1_idx].obj[o].flags))
                   {
                      DEL_SELECTED(glb_ds1[ds1_idx].obj[o].flags);
-                     redraw   = TRUE;
+                     redraw   = true;
                      old_o    = o;
                      old_mode = OM_DEL;
                   }
@@ -1967,7 +1967,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                cur_type = t;
                old_o    = o;
                old_mode = OM_NEW;
-               redraw   = TRUE;
+               redraw   = true;
                editobj_clear_obj_lab_sel(ds1_idx);
                if (o != -1)
                {
@@ -2037,7 +2037,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
             editobj_prepare_edit_obj_win(ds1_idx, o);
             old_mode = OM_EDT;
 
-            redraw = TRUE;
+            redraw = true;
          }
       }
       else
@@ -2053,7 +2053,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
             }
             editobj_prepare_undo(ds1_idx);
             editobj_del_obj(ds1_idx);
-            redraw = TRUE;
+            redraw = true;
             anim_update_gfx(false);
          }
          else if (key[KEY_U] && (key[KEY_LCONTROL] || key[KEY_RCONTROL]))
@@ -2066,7 +2066,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                   // wait until the 'U' key is released
                }
                editobj_undo(ds1_idx);
-               redraw = TRUE;
+               redraw = true;
             }
             anim_update_gfx(false);
          }
@@ -2085,7 +2085,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
                editobj_prepare_undo(ds1_idx);
                editobj_copy_obj(ds1_idx);
                old_mode = OM_MOV;
-               redraw   = TRUE;
+               redraw   = true;
                start_cx = cx;
                start_cy = cy;
                start_mx = (mx + glb_ds1edit.win_preview.x0) * hd / hm;
@@ -2103,7 +2103,7 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
             if (editobj_insert_obj(ds1_idx, cx, cy) == 0)
             {
                old_mode = OM_INS;
-               redraw = TRUE;
+               redraw = true;
                anim_update_gfx(false);
             }
          }
@@ -2123,14 +2123,14 @@ int editobj_handler(int ds1_idx, int cx, int cy, int mx, int my, int mb)
          dif_my = ((my + glb_ds1edit.win_preview.y0) * hd / hm) - start_my;
 
          if (editobj_moving_obj_lab(ds1_idx, dif_cx, dif_cy, dif_mx, dif_my))
-            redraw = TRUE;
+            redraw = true;
       }
       else
       {
          // end the move
          editobj_end_move_obj_lab(ds1_idx);
          old_mode = OM_NONE;
-         redraw   = TRUE;
+         redraw   = true;
          while (mouse_b & 1)
          {
             // wait until the left mouse button is released

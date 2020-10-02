@@ -45,7 +45,6 @@ int pSplType;
 int initialDropGoldIndex;
 bool talkflag;
 uint8_t *pSBkIconCels;
-bool sbookflag;
 bool chrflag;
 bool drawbtnflag;
 uint8_t *pSpellBkCel;
@@ -169,14 +168,14 @@ char SpellITbl[MAX_SPELLS] = {
 /** Maps from panel_button_id to the position and dimensions of a panel button. */
 int PanBtnPos[8][5] = {
 	// clang-format off
-	{ PANEL_LEFT +   9, PANEL_TOP +   9, 71, 19, TRUE  }, // char button
+	{ PANEL_LEFT +   9, PANEL_TOP +   9, 71, 19, true  }, // char button
 	{ PANEL_LEFT +   9, PANEL_TOP +  35, 71, 19, false }, // quests button
-	{ PANEL_LEFT +   9, PANEL_TOP +  75, 71, 19, TRUE  }, // map button
+	{ PANEL_LEFT +   9, PANEL_TOP +  75, 71, 19, true  }, // map button
 	{ PANEL_LEFT +   9, PANEL_TOP + 101, 71, 19, false }, // menu button
-	{ PANEL_LEFT + 560, PANEL_TOP +   9, 71, 19, TRUE  }, // inv button
+	{ PANEL_LEFT + 560, PANEL_TOP +   9, 71, 19, true  }, // inv button
 	{ PANEL_LEFT + 560, PANEL_TOP +  35, 71, 19, false }, // spells button
-	{ PANEL_LEFT +  87, PANEL_TOP +  91, 33, 32, TRUE  }, // chat button
-	{ PANEL_LEFT + 527, PANEL_TOP +  91, 33, 32, TRUE  }, // friendly fire button
+	{ PANEL_LEFT +  87, PANEL_TOP +  91, 33, 32, true  }, // chat button
+	{ PANEL_LEFT + 527, PANEL_TOP +  91, 33, 32, true  }, // friendly fire button
 	// clang-format on
 };
 /** Maps from panel_button_id to hotkey name. */
@@ -303,7 +302,7 @@ void DrawSpell()
 	// BUGFIX: Move the next line into the if statement to avoid OOB (SPL_INVALID is -1) (fixed)
 	if (st == RSPLTYPE_SPELL && spl != SPL_INVALID) {
 		tlvl = myplr().data._pISplLvlAdd + myplr().data._pSplLvl[spl];
-		if (!CheckSpell(myplr(), spl, RSPLTYPE_SPELL, TRUE))
+		if (!CheckSpell(myplr(), spl, RSPLTYPE_SPELL, true))
 			st = RSPLTYPE_INVALID;
 		if (tlvl <= 0)
 			st = RSPLTYPE_INVALID;
@@ -381,13 +380,13 @@ void DrawSpellList()
 					sprintf(infostr, "%s Spell", spelldata[pSpell].sNameText);
 					if (pSpell == SPL_HBOLT) {
 						sprintf(tempstr, "Damages undead only");
-						AddPanelString(tempstr, TRUE);
+						AddPanelString(tempstr, true);
 					}
 					if (s == 0)
 						sprintf(tempstr, "Spell Level 0 - Unusable");
 					else
 						sprintf(tempstr, "Spell Level %i", s);
-					AddPanelString(tempstr, TRUE);
+					AddPanelString(tempstr, true);
 					break;
 				case RSPLTYPE_SCROLL:
 					sprintf(infostr, "Scroll of %s", spelldata[pSpell].sNameText);
@@ -410,7 +409,7 @@ void DrawSpellList()
 						strcpy(tempstr, "1 Scroll");
 					else
 						sprintf(tempstr, "%i Scrolls", v);
-					AddPanelString(tempstr, TRUE);
+					AddPanelString(tempstr, true);
 					break;
 				case RSPLTYPE_CHARGES:
 					sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
@@ -418,14 +417,14 @@ void DrawSpellList()
 						strcpy(tempstr, "1 Charge");
 					else
 						sprintf(tempstr, "%i Charges", myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges);
-					AddPanelString(tempstr, TRUE);
+					AddPanelString(tempstr, true);
 					break;
 				}
 				for (t = 0; t < 4; t++) {
 					if (myplr().data._pSplHotKey[t] == pSpell && myplr().data._pSplTHotKey[t] == pSplType) {
 						DrawSpellCel(x, y, pSpellCels, t + SPLICONLAST + 5, SPLICONLENGTH);
 						sprintf(tempstr, "Spell Hot Key #F%i", t + 5);
-						AddPanelString(tempstr, TRUE);
+						AddPanelString(tempstr, true);
 					}
 				}
 			}
@@ -791,7 +790,7 @@ void InitControlPan()
 		sgbPlrTalkTbl = 0;
 		sgszTalkMsg[0] = '\0';
 		for (i = 0; i < MAX_PLRS; i++)
-			whisper[i] = TRUE;
+			whisper[i] = true;
 		for (i = 0; i < sizeof(talkbtndown) / sizeof(talkbtndown[0]); i++)
 			talkbtndown[i] = false;
 	}
@@ -812,8 +811,8 @@ void InitControlPan()
 	pDurIcons = LoadFileInMem("Items\\DurIcons.CEL", NULL);
 	strcpy(infostr, "");
 	ClearPanel();
-	drawhpflag = TRUE;
-	drawmanaflag = TRUE;
+	drawhpflag = true;
+	drawmanaflag = true;
 	chrflag = false;
 	spselflag = false;
 	pSpellBkCel = LoadFileInMem("Data\\SpellBk.CEL", NULL);
@@ -875,7 +874,7 @@ void DoSpeedBook()
 	unsigned __int64 spells, spell;
 	int xo, yo, X, Y, i, j;
 
-	spselflag = TRUE;
+	spselflag = true;
 	xo = PANEL_X + 12 + SPLICONLENGTH * 10;
 	yo = PANEL_Y - 17;
 	X = xo - (BORDER_LEFT - SPLICONLENGTH / 2);
@@ -933,9 +932,9 @@ void DoPanBtn()
 	for (i = 0; i < numpanbtns; i++) {
 		if (Mouse.x >= PanBtnPos[i][0] && Mouse.x <= PanBtnPos[i][0] + PanBtnPos[i][2]) {
 			if (Mouse.y >= PanBtnPos[i][1] && Mouse.y <= PanBtnPos[i][1] + PanBtnPos[i][3]) {
-				panbtn[i] = TRUE;
-				drawbtnflag = TRUE;
-				panbtndown = TRUE;
+				panbtn[i] = true;
+				drawbtnflag = true;
+				panbtndown = true;
 			}
 		}
 	}
@@ -947,9 +946,9 @@ void DoPanBtn()
 
 void control_set_button_down(int btn_id)
 {
-	panbtn[btn_id] = TRUE;
-	drawbtnflag = TRUE;
-	panbtndown = TRUE;
+	panbtn[btn_id] = true;
+	drawbtnflag = true;
+	panbtndown = true;
 }
 
 void control_check_btn_press()
@@ -1004,30 +1003,30 @@ void CheckPanelInfo()
 			}
 			if (PanBtnHotKey[i] != NULL) {
 				sprintf(tempstr, "Hotkey : %s", PanBtnHotKey[i]);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 			}
 			infoclr = COL_WHITE;
-			panelflag = TRUE;
-			pinfoflag = TRUE;
+			panelflag = true;
+			pinfoflag = true;
 		}
 	}
 	if (!spselflag && Mouse.x >= 565 + PANEL_LEFT && Mouse.x < 621 + PANEL_LEFT && Mouse.y >= 64 + PANEL_TOP && Mouse.y < 120 + PANEL_TOP) {
 		strcpy(infostr, "Select current spell button");
 		infoclr = COL_WHITE;
-		panelflag = TRUE;
-		pinfoflag = TRUE;
+		panelflag = true;
+		pinfoflag = true;
 		strcpy(tempstr, "Hotkey : 's'");
-		AddPanelString(tempstr, TRUE);
+		AddPanelString(tempstr, true);
 		v = myplr().data._pRSpell;
 		if (v != SPL_INVALID) {
 			switch (myplr().data._pRSplType) {
 			case RSPLTYPE_SKILL:
 				sprintf(tempstr, "%s Skill", spelldata[v].sSkillText);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				break;
 			case RSPLTYPE_SPELL:
 				sprintf(tempstr, "%s Spell", spelldata[v].sNameText);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				c = myplr().data._pISplLvlAdd + myplr().data._pSplLvl[v];
 				if (c < 0)
 					c = 0;
@@ -1035,11 +1034,11 @@ void CheckPanelInfo()
 					sprintf(tempstr, "Spell Level 0 - Unusable");
 				else
 					sprintf(tempstr, "Spell Level %i", c);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				break;
 			case RSPLTYPE_SCROLL:
 				sprintf(tempstr, "Scroll of %s", spelldata[v].sNameText);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				s = 0;
 				for (i = 0; i < myplr().data._pNumInv; i++) {
 					if (myplr().data.InvList[i]._itype != ITYPE_NONE
@@ -1059,16 +1058,16 @@ void CheckPanelInfo()
 					strcpy(tempstr, "1 Scroll");
 				else
 					sprintf(tempstr, "%i Scrolls", s);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				break;
 			case RSPLTYPE_CHARGES:
 				sprintf(tempstr, "Staff of %s", spelldata[v].sNameText);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				if (myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
 					strcpy(tempstr, "1 Charge");
 				else
 					sprintf(tempstr, "%i Charges", myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				break;
 			}
 		}
@@ -1086,8 +1085,8 @@ void CheckBtnUp()
 	int i;
 	bool gamemenuOff;
 
-	gamemenuOff = TRUE;
-	drawbtnflag = TRUE;
+	gamemenuOff = true;
+	drawbtnflag = true;
 	panbtndown = false;
 
 	for (i = 0; i < 8; i++) {
@@ -1190,7 +1189,7 @@ bool control_WriteStringToBuffer(uint8_t *str)
 			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 /**
@@ -1214,8 +1213,8 @@ void DrawInfoBox()
 			sprintf(infostr, "%i gold %s", nGold, get_pieces_str(nGold));
 		} else if (!myplr().data.HoldItem._iStatFlag) {
 			ClearPanel();
-			AddPanelString("Requirements not met", TRUE);
-			pinfoflag = TRUE;
+			AddPanelString("Requirements not met", true);
+			pinfoflag = true;
 		} else {
 			if (myplr().data.HoldItem._iIdentified)
 				strcpy(infostr, myplr().data.HoldItem._iIName);
@@ -1251,9 +1250,9 @@ void DrawInfoBox()
 			strcpy(infostr, plr[pcursplr].data._pName);
 			ClearPanel();
 			sprintf(tempstr, "Level : %i", plr[pcursplr].data._pLevel);
-			AddPanelString(tempstr, TRUE);
+			AddPanelString(tempstr, true);
 			sprintf(tempstr, "Hit Points %i of %i", plr[pcursplr].data._pHitPoints >> 6, plr[pcursplr].data._pMaxHP >> 6);
-			AddPanelString(tempstr, TRUE);
+			AddPanelString(tempstr, true);
 		}
 	}
 	if (infostr[0] != '\0' || pnumlines != 0)
@@ -1268,7 +1267,7 @@ void PrintInfo()
 		yo = 0;
 		lo = 1;
 		if (infostr[0] != '\0') {
-			CPrintString(0, infostr, TRUE, pnumlines);
+			CPrintString(0, infostr, true, pnumlines);
 			yo = 1;
 			lo = 0;
 		}
@@ -1289,7 +1288,7 @@ void CPrintString(int y, char *str, bool center, int lines)
 	lineOffset = 0;
 	s.x = 177 + PANEL_X;
 	s.y = lineOffsets[lines][y] + PANEL_Y;
-	if (center == TRUE) {
+	if (center == true) {
 		strWidth = 0;
 		tmp = str;
 		while (*tmp) {
@@ -1581,13 +1580,13 @@ void MY_PlrStringXY(V2Di pos, int endX, char *pszStr, char col, int base)
 void CheckLvlBtn()
 {
 	if (!lvlbtndown && Mouse.x >= 40 + PANEL_LEFT && Mouse.x <= 81 + PANEL_LEFT && Mouse.y >= -39 + PANEL_TOP && Mouse.y <= -17 + PANEL_TOP)
-		lvlbtndown = TRUE;
+		lvlbtndown = true;
 }
 
 void ReleaseLvlBtn()
 {
 	if (Mouse.x >= 40 + PANEL_LEFT && Mouse.x <= 81 + PANEL_LEFT && Mouse.y >= -39 + PANEL_TOP && Mouse.y <= -17 + PANEL_TOP)
-		chrflag = TRUE;
+		chrflag = true;
 	lvlbtndown = false;
 }
 
@@ -1633,8 +1632,8 @@ void CheckChrBtns()
 			    && Mouse.x <= ChrBtnsRect[i].x + ChrBtnsRect[i].w
 			    && Mouse.y >= ChrBtnsRect[i].y
 			    && Mouse.y <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
-				chrbtn[i] = TRUE;
-				chrbtnactive = TRUE;
+				chrbtn[i] = true;
+				chrbtnactive = true;
 			}
 		}
 	}
@@ -1654,19 +1653,19 @@ void ReleaseChrBtns()
 			    && Mouse.y <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
 				switch (i) {
 				case 0:
-					NetSendCmdParam1(TRUE, CMD_ADDSTR, 1);
+					NetSendCmdParam1(true, CMD_ADDSTR, 1);
 					myplr().data._pStatPts--;
 					break;
 				case 1:
-					NetSendCmdParam1(TRUE, CMD_ADDMAG, 1);
+					NetSendCmdParam1(true, CMD_ADDMAG, 1);
 					myplr().data._pStatPts--;
 					break;
 				case 2:
-					NetSendCmdParam1(TRUE, CMD_ADDDEX, 1);
+					NetSendCmdParam1(true, CMD_ADDDEX, 1);
 					myplr().data._pStatPts--;
 					break;
 				case 3:
-					NetSendCmdParam1(TRUE, CMD_ADDVIT, 1);
+					NetSendCmdParam1(true, CMD_ADDVIT, 1);
 					myplr().data._pStatPts--;
 					break;
 				}
@@ -1772,7 +1771,7 @@ char GetSBookTrans(int ii, bool townok)
 		st = RSPLTYPE_SKILL;
 	}
 	if (st == RSPLTYPE_SPELL) {
-		if (!CheckSpell(myplr(), ii, RSPLTYPE_SPELL, TRUE)) {
+		if (!CheckSpell(myplr(), ii, RSPLTYPE_SPELL, true)) {
 			st = RSPLTYPE_INVALID;
 		}
 		if ((char)(myplr().data._pSplLvl[ii] + myplr().data._pISplLvlAdd) <= 0) {
@@ -1801,7 +1800,7 @@ void DrawSpellBook()
 	for (i = 1; i < 8; i++) {
 		sn = SpellPages[sbooktab][i - 1];
 		if (sn != -1 && spl & (__int64)1 << (sn - 1)) {
-			st = GetSBookTrans(sn, TRUE);
+			st = GetSBookTrans(sn, true);
 			SetSpellTrans(st);
 			DrawSpellCel(RIGHT_PANEL + 75, yp, pSBkIconCels, SpellITbl[sn], 37);
 			if (sn == myplr().data._pRSpell && st == myplr().data._pRSplType) {
@@ -1996,7 +1995,7 @@ void control_remove_gold(int pnum, int gold_index)
 	SetPlrHandItem(&plr[pnum].data.HoldItem, IDI_GOLD);
 	GetGoldSeed(pnum, &plr[pnum].data.HoldItem);
 	plr[pnum].data.HoldItem._ivalue = dropGoldValue;
-	plr[pnum].data.HoldItem._iStatFlag = TRUE;
+	plr[pnum].data.HoldItem._iStatFlag = true;
 	control_set_gold_curs(pnum);
 	plr[pnum].data._pGold = plr[pnum].inventory.CalculateGold();
 	dropGoldValue = 0;
@@ -2118,9 +2117,9 @@ bool control_check_talk_btn()
 		talkbtndown[i] = false;
 	}
 
-	talkbtndown[(Mouse.y - (69 + PANEL_TOP)) / 18] = TRUE;
+	talkbtndown[(Mouse.y - (69 + PANEL_TOP)) / 18] = true;
 
-	return TRUE;
+	return true;
 }
 
 void control_release_talk_btn()
@@ -2163,7 +2162,7 @@ void control_type_message()
 		return;
 	}
 
-	talkflag = TRUE;
+	talkflag = true;
 	sgszTalkMsg[0] = '\0';
 	PentSpn2Frame = 1;
 	for (i = 0; i < 3; i++) {
@@ -2199,7 +2198,7 @@ bool control_talk_last_key(int vkey)
 		sgszTalkMsg[result] = vkey;
 		sgszTalkMsg[result + 1] = '\0';
 	}
-	return TRUE;
+	return true;
 }
 
 bool control_presskeys(int vkey)
@@ -2227,7 +2226,7 @@ bool control_presskeys(int vkey)
 			} else {
 				return false;
 			}
-			ret = TRUE;
+			ret = true;
 		}
 	} else {
 		ret = false;

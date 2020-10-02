@@ -71,7 +71,7 @@ int dcc_read_bytes(DCC_BITSTREAM_S * bs, int bytes_number, void * dest)
 // ==========================================================================
 // copy 'bits_number' bits into 'dest' from the current byte & bit position
 //    in the bitstream
-// is_signed = TRUE / false
+// is_signed = true / false
 // the dest variable MUST BE 32 bits width
 // return 0 on success, non-zero if error
 int dcc_read_bits(DCC_BITSTREAM_S * bs, int bits_number, int is_signed,
@@ -193,14 +193,14 @@ int dcc_frame_header_bitstream(DCC_S *dcc, DCC_BITSTREAM_S *bs, int d, int f)
             break;
             
          case 3 :
-            sign  = TRUE;
+            sign  = true;
             width = dir->xoffset_bits;
             ptr   = & frm->xoffset;
             strcpy(str, "xoffset");
             break;
             
          case 4 :
-            sign  = TRUE;
+            sign  = true;
             width = dir->yoffset_bits;
             ptr   = & frm->yoffset;
             strcpy(str, "yoffset");
@@ -880,7 +880,7 @@ int dcc_fill_pixel_buffer(DCC_S * dcc, int d)
                                  
                }
                else
-                  next_cell = TRUE;
+                  next_cell = true;
             }
             else
                pixel_mask = 0x0F;
@@ -1428,7 +1428,7 @@ int dcc_file_header(DCC_S * dcc)
    DCC_BITSTREAM_S bs;
    int             i;
    
-   if (dcc->header.already_decoded == TRUE)
+   if (dcc->header.already_decoded == true)
       return 0;
       
    bs.cur_bit     = 0;
@@ -1460,7 +1460,7 @@ int dcc_file_header(DCC_S * dcc)
          return 1;
 
    // end
-   dcc->header.already_decoded = TRUE;
+   dcc->header.already_decoded = true;
    return 0;
 }
 

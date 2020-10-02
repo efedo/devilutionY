@@ -69,7 +69,7 @@ bool Item::GetItemSpace(V2Di pos)
 	for (j = 0; j < 3; j++) {
 		for (i = 0; i < 3; i++) {
 			if (itemhold[i][j])
-				savail = TRUE;
+				savail = true;
 		}
 	}
 
@@ -95,7 +95,7 @@ bool Item::GetItemSpace(V2Di pos)
 	_i = n;
 	grid.at(n).setItem(id);
 
-	return TRUE;
+	return true;
 }
 
 void Item::GetSuperItemSpace(V2Di pos)
@@ -189,7 +189,7 @@ void Item::GetStaffPower(int lvl, int bs, bool onlygood)
 		nl = 0;
 		for (j = 0; PL_Prefix[j].PLPower != -1; j++) {
 			if (PL_Prefix[j].PLIType & PLT_STAFF && PL_Prefix[j].PLMinLvl <= lvl) {
-				addok = TRUE;
+				addok = true;
 				if (onlygood && !PL_Prefix[j].PLOk)
 					addok = false;
 				if (addok) {
@@ -277,7 +277,7 @@ void Item::GetStaffSpell(int lvl, bool onlygood)
 	}
 }
 
-void Item::GetItemAttrs(int idata, int curlvl)
+void Item::loadPresetAttributes(int idata, int curlvl)
 {
 	int rndv;
 
@@ -285,7 +285,7 @@ void Item::GetItemAttrs(int idata, int curlvl)
 	_iCurs = AllItemsList[idata].iCurs;
 	strcpy(_iName, AllItemsList[idata].iName);
 	strcpy(_iIName, AllItemsList[idata].iName);
-	_iLoc = AllItemsList[idata].iLoc;
+	_iLoc = ItemClass(AllItemsList[idata].iLoc);
 	_iClass = AllItemsList[idata].iClass;
 	_iMinDam = AllItemsList[idata].iMinDam;
 	_iMaxDam = AllItemsList[idata].iMaxDam;
@@ -511,11 +511,11 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		break;
 	case IPL_MANA:
 		_iPLMana += r << 6;
-		drawmanaflag = TRUE;
+		drawmanaflag = true;
 		break;
 	case IPL_MANA_CURSE:
 		_iPLMana -= r << 6;
-		drawmanaflag = TRUE;
+		drawmanaflag = true;
 		break;
 	case IPL_DUR:
 		r2 = r * _iMaxDur / 100;
@@ -553,7 +553,7 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		break;
 	case IPL_NOMANA:
 		_iFlags |= ISPL_NOMANA;
-		drawmanaflag = TRUE;
+		drawmanaflag = true;
 		break;
 	case IPL_NOHEALPLR:
 		_iFlags |= ISPL_NOHEALPLR;
@@ -578,14 +578,14 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 			_iFlags |= ISPL_STEALMANA_3;
 		if (param1 == 5)
 			_iFlags |= ISPL_STEALMANA_5;
-		drawmanaflag = TRUE;
+		drawmanaflag = true;
 		break;
 	case IPL_STEALLIFE:
 		if (param1 == 3)
 			_iFlags |= ISPL_STEALLIFE_3;
 		if (param1 == 5)
 			_iFlags |= ISPL_STEALLIFE_5;
-		drawhpflag = TRUE;
+		drawhpflag = true;
 		break;
 	case IPL_TARGAC:
 		_iPLEnAc += r;
@@ -629,7 +629,7 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		_iFlags |= ISPL_FASTERATTACK;
 		break;
 	case IPL_ONEHAND:
-		_iLoc = ILOC_ONEHAND;
+		_iLoc = ItemClass::OneHand;
 		break;
 	case IPL_DRAINLIFE:
 		_iFlags |= ISPL_DRAINLIFE;
@@ -686,7 +686,7 @@ void Item::GetItemPower(int minlvl, int maxlvl, int flgs, bool onlygood)
 	sufidx = -1;
 	goe = 0;
 	if (!onlygood && random_(0, 3))
-		onlygood = TRUE;
+		onlygood = true;
 	if (!pre) {
 		nt = 0;
 		for (j = 0; PL_Prefix[j].PLPower != -1; j++) {
@@ -805,7 +805,7 @@ void Item::SetupItem()
 
 	if (!myplr().data.pLvlLoad) {
 		_iAnimFrame = 1;
-		_iAnimFlag = TRUE;
+		_iAnimFlag = true;
 		_iSelFlag = 0;
 	} else {
 		_iAnimFrame = _iAnimLen;
@@ -829,7 +829,7 @@ int Item::CheckUnique(int lvl, int uper, bool recreate)
 		if (UniqueItemList[j].UIItemId == AllItemsList[IDidx].iItemId
 		    && lvl >= UniqueItemList[j].UIMinLvl
 		    && (recreate || !UniqueItemFlag[j] || plr.isMultiplayer())) {
-			uok[j] = TRUE;
+			uok[j] = true;
 			numu++;
 		}
 	}
@@ -854,7 +854,7 @@ int Item::CheckUnique(int lvl, int uper, bool recreate)
 
 void Item::GetUniqueItem(int uid)
 {
-	UniqueItemFlag[uid] = TRUE;
+	UniqueItemFlag[uid] = true;
 	SaveItemPower(UniqueItemList[uid].UIPower1, UniqueItemList[uid].UIParam1, UniqueItemList[uid].UIParam2, 0, 0, 1);
 
 	if (UniqueItemList[uid].UINumPL > 1)
@@ -890,7 +890,7 @@ void Item::RespawnItem(bool FlipFlag)
 	_iRequest = false;
 	if (FlipFlag) {
 		_iAnimFrame = 1;
-		_iAnimFlag = TRUE;
+		_iAnimFlag = true;
 		_iSelFlag = 0;
 	} else {
 		_iAnimFrame = _iAnimLen;
@@ -946,7 +946,7 @@ void Item::SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood, bo
 
 	_iSeed = iseed;
 	SetRndSeed(iseed);
-	GetItemAttrs(idx, lvl >> 1);
+	loadPresetAttributes(idx, lvl >> 1);
 	_iCreateInfo = lvl;
 
 	if (pregen)
@@ -989,7 +989,7 @@ void Item::SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood, bo
 		if (_iMagical != ITEM_QUALITY_UNIQUE)
 			ItemRndDur();
 	} else {
-		if (_iLoc != ILOC_UNEQUIPABLE) {
+		if (_iLoc != ItemClass::Unequipable) {
 			//uid = CheckUnique(ii, iblvl, uper, recreate);
 			//if (uid != UITYPE_INVALID) {
 			//	GetUniqueItem(ii, uid);
@@ -1015,7 +1015,7 @@ void Item::SetupAllUseful(int iseed, int lvl)
 	if (lvl > 1 && !random_(34, 3))
 		idx = IDI_PORTAL;
 
-	GetItemAttrs(idx, lvl);
+	loadPresetAttributes(idx, lvl);
 	_iCreateInfo = lvl + 384;
 	SetupItem();
 }
@@ -1059,7 +1059,7 @@ void Item::RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue)
 				if (icreateinfo & 0x0200)
 					recreate = 1;
 				if (icreateinfo & 0x8000)
-					pregen = TRUE;
+					pregen = true;
 				SetupAllItems(idx, iseed, icreateinfo & 0x3F, uper, onlygood, recreate, pregen);
 			}
 		}
@@ -1071,12 +1071,12 @@ void Item::RecreateSmithItem(int idx, int lvl, int iseed)
 	int itype;
 
 	SetRndSeed(iseed);
-	itype = RndSmithItem(lvl) - 1;
-	GetItemAttrs(itype, lvl);
+	itype = StoreSmith::RndItem(lvl) - 1;
+	loadPresetAttributes(itype, lvl);
 
 	_iSeed = iseed;
 	_iCreateInfo = lvl | 0x400;
-	_iIdentified = TRUE;
+	_iIdentified = true;
 }
 
 void Item::RecreatePremiumItem(int idx, int plvl, int iseed)
@@ -1084,13 +1084,13 @@ void Item::RecreatePremiumItem(int idx, int plvl, int iseed)
 	int itype;
 
 	SetRndSeed(iseed);
-	itype = RndPremiumItem(plvl >> 2, plvl) - 1;
-	GetItemAttrs(itype, plvl);
-	GetItemBonus(itype, plvl >> 1, plvl, TRUE);
+	itype = StoreSmith::RndPremiumItem(plvl >> 2, plvl) - 1;
+	loadPresetAttributes(itype, plvl);
+	GetItemBonus(itype, plvl >> 1, plvl, true);
 
 	_iSeed = iseed;
 	_iCreateInfo = plvl | 0x800;
-	_iIdentified = TRUE;
+	_iIdentified = true;
 }
 
 void Item::RecreateBoyItem(int idx, int lvl, int iseed)
@@ -1098,12 +1098,12 @@ void Item::RecreateBoyItem(int idx, int lvl, int iseed)
 	int itype;
 
 	SetRndSeed(iseed);
-	itype = RndBoyItem(lvl) - 1;
-	GetItemAttrs(itype, lvl);
-	GetItemBonus(itype, lvl, 2 * lvl, TRUE);
+	itype = StoreBoy::RndItem(lvl) - 1;
+	loadPresetAttributes(itype, lvl);
+	GetItemBonus(itype, lvl, 2 * lvl, true);
 	_iSeed = iseed;
 	_iCreateInfo = lvl | 0x1000;
-	_iIdentified = TRUE;
+	_iIdentified = true;
 }
 
 void Item::RecreateWitchItem(int idx, int lvl, int iseed)
@@ -1111,23 +1111,23 @@ void Item::RecreateWitchItem(int idx, int lvl, int iseed)
 	int iblvl, itype;
 
 	if (idx == IDI_MANA || idx == IDI_FULLMANA || idx == IDI_PORTAL) {
-		GetItemAttrs(idx, lvl);
+		loadPresetAttributes(idx, lvl);
 	} else {
 		SetRndSeed(iseed);
-		itype = RndWitchItem(lvl) - 1;
-		GetItemAttrs(itype, lvl);
+		itype = StoreWitch::RndItem(lvl) - 1;
+		loadPresetAttributes(itype, lvl);
 		iblvl = -1;
 		if (random_(51, 100) <= 5)
 			iblvl = 2 * lvl;
 		if (iblvl == -1 && _iMiscId == IMISC_STAFF)
 			iblvl = 2 * lvl;
 		if (iblvl != -1)
-			GetItemBonus(itype, iblvl >> 1, iblvl, TRUE);
+			GetItemBonus(itype, iblvl >> 1, iblvl, true);
 	}
 
 	_iSeed = iseed;
 	_iCreateInfo = lvl | 0x2000;
-	_iIdentified = TRUE;
+	_iIdentified = true;
 }
 
 void Item::RecreateHealerItem(int idx, int lvl, int iseed)
@@ -1135,16 +1135,16 @@ void Item::RecreateHealerItem(int idx, int lvl, int iseed)
 	int itype;
 
 	if (idx == IDI_HEAL || idx == IDI_FULLHEAL || idx == IDI_RESURRECT) {
-		GetItemAttrs(idx, lvl);
+		loadPresetAttributes(idx, lvl);
 	} else {
 		SetRndSeed(iseed);
-		itype = RndHealerItem(lvl) - 1;
-		GetItemAttrs(itype, lvl);
+		itype = StoreHealer::RndItem(lvl) - 1;
+		loadPresetAttributes(itype, lvl);
 	}
 
 	_iSeed = iseed;
 	_iCreateInfo = lvl | 0x4000;
-	_iIdentified = TRUE;
+	_iIdentified = true;
 }
 
 void Item::RecreateTownItem(int idx, WORD icreateinfo, int iseed, int ivalue)
@@ -1160,6 +1160,488 @@ void Item::RecreateTownItem(int idx, WORD icreateinfo, int iseed, int ivalue)
 	else if (icreateinfo & 0x4000)
 		RecreateHealerItem(idx, icreateinfo & 0x3F, iseed);
 }
+
+void Item::Repair(int lvl)
+{
+	int rep, d;
+
+	if (_iDurability == _iMaxDur) { return; }
+
+	if (_iMaxDur <= 0) {
+		_itype = ITYPE_NONE;
+		return;
+	}
+
+	rep = 0;
+	do {
+		rep += lvl + random_(37, lvl);
+		d = _iMaxDur / (lvl + 9);
+		if (d < 1) d = 1;
+		_iMaxDur = _iMaxDur - d;
+		if (!_iMaxDur) {
+			_itype = ITYPE_NONE;
+			return;
+		}
+	} while (rep + _iDurability < _iMaxDur);
+
+	_iDurability += rep;
+	if (_iDurability > _iMaxDur) _iDurability = _iMaxDur;
+}
+
+void Item::Recharge(int r)
+{
+	while (_iCharges != _iMaxCharges) {
+		_iMaxCharges--;
+		if (_iMaxCharges == 0) { break; }
+		_iCharges += r;
+		if (_iCharges >= _iMaxCharges) {
+			if (_iCharges > _iMaxCharges) _iCharges = _iMaxCharges;
+			return;
+		}
+	}
+}
+
+void Item::PrintOil()
+{
+	switch (IDidx) {
+		case IMISC_FULLHEAL:
+			strcpy(tempstr, "fully recover life");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_HEAL:
+			strcpy(tempstr, "recover partial life");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_OLDHEAL:
+			strcpy(tempstr, "recover life");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_DEADHEAL:
+			strcpy(tempstr, "deadly heal");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_MANA:
+			strcpy(tempstr, "recover mana");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_FULLMANA:
+			strcpy(tempstr, "fully recover mana");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXSTR:
+			strcpy(tempstr, "increase strength");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXMAG:
+			strcpy(tempstr, "increase magic");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXDEX:
+			strcpy(tempstr, "increase dexterity");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXVIT:
+			strcpy(tempstr, "increase vitality");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXWEAK:
+			strcpy(tempstr, "decrease strength");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXDIS:
+			strcpy(tempstr, "decrease strength");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXCLUM:
+			strcpy(tempstr, "decrease dexterity");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_ELIXSICK:
+			strcpy(tempstr, "decrease vitality");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_REJUV:
+			strcpy(tempstr, "recover life and mana");
+			AddPanelString(tempstr, true);
+			break;
+		case IMISC_FULLREJUV:
+			strcpy(tempstr, "fully recover life and mana");
+			AddPanelString(tempstr, true);
+			break;
+	}
+}
+
+
+void Item::PrintMisc()
+{
+	if (_iMiscId == IMISC_SCROLL) {
+		strcpy(tempstr, "Right-click to read");
+		AddPanelString(tempstr, true);
+	}
+	if (_iMiscId == IMISC_SCROLLT) {
+		strcpy(tempstr, "Right-click to read, then");
+		AddPanelString(tempstr, true);
+		strcpy(tempstr, "left-click to target");
+		AddPanelString(tempstr, true);
+	}
+	if (_iMiscId >= IMISC_USEFIRST && _iMiscId <= IMISC_USELAST) {
+		PrintOil();
+		strcpy(tempstr, "Right click to use");
+		AddPanelString(tempstr, true);
+	}
+	if (_iMiscId == IMISC_BOOK) {
+		strcpy(tempstr, "Right click to read");
+		AddPanelString(tempstr, true);
+	}
+	if (_iMiscId == IMISC_MAPOFDOOM) {
+		strcpy(tempstr, "Right click to view");
+		AddPanelString(tempstr, true);
+	}
+	if (_iMiscId == IMISC_EAR) {
+		sprintf(tempstr, "Level : %i", _ivalue);
+		AddPanelString(tempstr, true);
+	}
+}
+
+void Item::PrintDetails()
+{
+	if (_iClass == ICLASS_WEAPON) {
+		if (_iMaxDur == DUR_INDESTRUCTIBLE)
+			sprintf(tempstr, "damage: %i-%i  Indestructible", _iMinDam,
+			        _iMaxDam);
+		else
+			sprintf(tempstr, "damage: %i-%i  Dur: %i/%i", _iMinDam,
+			        _iMaxDam, _iDurability, _iMaxDur);
+		AddPanelString(tempstr, true);
+	}
+	if (_iClass == ICLASS_ARMOR) {
+		if (_iMaxDur == DUR_INDESTRUCTIBLE)
+			sprintf(tempstr, "armor: %i  Indestructible", _iAC);
+		else
+			sprintf(tempstr, "armor: %i  Dur: %i/%i", _iAC, _iDurability,
+			        _iMaxDur);
+		AddPanelString(tempstr, true);
+	}
+	if (_iMiscId == IMISC_STAFF && _iMaxCharges) {
+		sprintf(tempstr, "dam: %i-%i  Dur: %i/%i", _iMinDam, _iMaxDam,
+		        _iDurability, _iMaxDur);
+		sprintf(tempstr, "Charges: %i/%i", _iCharges, _iMaxCharges);
+		AddPanelString(tempstr, true);
+	}
+	if (_iPrePower != -1) {
+		PrintPower(_iPrePower);
+		AddPanelString(tempstr, true);
+	}
+	if (_iSufPower != -1) {
+		PrintPower(_iSufPower);
+		AddPanelString(tempstr, true);
+	}
+	if (_iMagical == ITEM_QUALITY_UNIQUE) {
+		AddPanelString("unique item", true);
+		uitemflag = true;
+		curruitem = *this;
+	}
+	PrintMisc();
+	if (_iMinMag + _iMinDex + _iMinStr) {
+		strcpy(tempstr, "Required:");
+		if (_iMinStr) sprintf(tempstr, "%s %i Str", tempstr, _iMinStr);
+		if (_iMinMag) sprintf(tempstr, "%s %i Mag", tempstr, _iMinMag);
+		if (_iMinDex) sprintf(tempstr, "%s %i Dex", tempstr, _iMinDex);
+		AddPanelString(tempstr, true);
+	}
+	pinfoflag = true;
+}
+
+void Item::PrintDur()
+{
+	if (_iClass == ICLASS_WEAPON) {
+		if (_iMaxDur == DUR_INDESTRUCTIBLE)
+			sprintf(tempstr, "damage: %i-%i  Indestructible", _iMinDam,
+			        _iMaxDam);
+		else
+			sprintf(tempstr, "damage: %i-%i  Dur: %i/%i", _iMinDam,
+			        _iMaxDam, _iDurability, _iMaxDur);
+		AddPanelString(tempstr, true);
+		if (_iMiscId == IMISC_STAFF && _iMaxCharges) {
+			sprintf(tempstr, "Charges: %i/%i", _iCharges, _iMaxCharges);
+			AddPanelString(tempstr, true);
+		}
+		if (_iMagical != ITEM_QUALITY_NORMAL)
+			AddPanelString("Not Identified", true);
+	}
+	if (_iClass == ICLASS_ARMOR) {
+		if (_iMaxDur == DUR_INDESTRUCTIBLE)
+			sprintf(tempstr, "armor: %i  Indestructible", _iAC);
+		else
+			sprintf(tempstr, "armor: %i  Dur: %i/%i", _iAC, _iDurability,
+			        _iMaxDur);
+		AddPanelString(tempstr, true);
+		if (_iMagical != ITEM_QUALITY_NORMAL)
+			AddPanelString("Not Identified", true);
+		if (_iMiscId == IMISC_STAFF && _iMaxCharges) {
+			sprintf(tempstr, "Charges: %i/%i", _iCharges, _iMaxCharges);
+			AddPanelString(tempstr, true);
+		}
+	}
+	if (_itype == ITYPE_RING || _itype == ITYPE_AMULET)
+		AddPanelString("Not Identified", true);
+	PrintMisc();
+	if (_iMinMag + _iMinDex + _iMinStr) {
+		strcpy(tempstr, "Required:");
+		if (_iMinStr) sprintf(tempstr, "%s %i Str", tempstr, _iMinStr);
+		if (_iMinMag) sprintf(tempstr, "%s %i Mag", tempstr, _iMinMag);
+		if (_iMinDex) sprintf(tempstr, "%s %i Dex", tempstr, _iMinDex);
+		AddPanelString(tempstr, true);
+	}
+	pinfoflag = true;
+}
+
+bool StoreStatOk(ItemStruct *h)
+{
+	bool sf;
+
+	sf = true;
+	if (myplr().data._pStrength < h->_iMinStr) sf = false;
+	if (myplr().data._pMagic < h->_iMinMag) sf = false;
+	if (myplr().data._pDexterity < h->_iMinDex) sf = false;
+
+	return sf;
+}
+
+void Item::PrintPower(char plidx)
+{
+	switch (plidx) {
+		case IPL_TOHIT:
+		case IPL_TOHIT_CURSE:
+			sprintf(tempstr, "chance to hit : %+i%%", _iPLToHit);
+			break;
+		case IPL_DAMP:
+		case IPL_DAMP_CURSE:
+			sprintf(tempstr, "%+i%% damage", _iPLDam);
+			break;
+		case IPL_TOHIT_DAMP:
+		case IPL_TOHIT_DAMP_CURSE:
+			sprintf(tempstr, "to hit: %+i%%, %+i%% damage", _iPLToHit,
+			        _iPLDam);
+			break;
+		case IPL_ACP:
+		case IPL_ACP_CURSE:
+			sprintf(tempstr, "%+i%% armor", _iPLAC);
+			break;
+		case IPL_SETAC:
+			sprintf(tempstr, "armor class: %i", _iAC);
+			break;
+		case IPL_AC_CURSE:
+			sprintf(tempstr, "armor class: %i", _iAC);
+			break;
+		case IPL_FIRERES:
+			if (_iPLFR < 75)
+				sprintf(tempstr, "Resist Fire : %+i%%", _iPLFR);
+			if (_iPLFR >= 75) sprintf(tempstr, "Resist Fire : 75%% MAX");
+			break;
+		case IPL_LIGHTRES:
+			if (_iPLLR < 75)
+				sprintf(tempstr, "Resist Lightning : %+i%%", _iPLLR);
+			if (_iPLLR >= 75)
+				sprintf(tempstr, "Resist Lightning : 75%% MAX");
+			break;
+		case IPL_MAGICRES:
+			if (_iPLMR < 75)
+				sprintf(tempstr, "Resist Magic : %+i%%", _iPLMR);
+			if (_iPLMR >= 75) sprintf(tempstr, "Resist Magic : 75%% MAX");
+			break;
+		case IPL_ALLRES:
+			if (_iPLFR < 75)
+				sprintf(tempstr, "Resist All : %+i%%", _iPLFR);
+			if (_iPLFR >= 75) sprintf(tempstr, "Resist All : 75%% MAX");
+			break;
+		case IPL_SPLLVLADD:
+			if (_iSplLvlAdd == 1)
+				strcpy(tempstr, "spells are increased 1 level");
+			if (_iSplLvlAdd == 2)
+				strcpy(tempstr, "spells are increased 2 levels");
+			if (_iSplLvlAdd < 1)
+				strcpy(tempstr, "spells are decreased 1 level");
+			break;
+		case IPL_CHARGES:
+			strcpy(tempstr, "Extra charges");
+			break;
+		case IPL_SPELL:
+			sprintf(tempstr, "%i %s charges", _iMaxCharges,
+			        spelldata[_iSpell].sNameText);
+			break;
+		case IPL_FIREDAM:
+			sprintf(tempstr, "Fire hit damage: %i-%i", _iFMinDam,
+			        _iFMaxDam);
+			break;
+		case IPL_LIGHTDAM:
+			sprintf(tempstr, "Lightning hit damage: %i-%i", _iLMinDam,
+			        _iLMaxDam);
+			break;
+		case IPL_STR:
+		case IPL_STR_CURSE:
+			sprintf(tempstr, "%+i to strength", _iPLStr);
+			break;
+		case IPL_MAG:
+		case IPL_MAG_CURSE:
+			sprintf(tempstr, "%+i to magic", _iPLMag);
+			break;
+		case IPL_DEX:
+		case IPL_DEX_CURSE:
+			sprintf(tempstr, "%+i to dexterity", _iPLDex);
+			break;
+		case IPL_VIT:
+		case IPL_VIT_CURSE:
+			sprintf(tempstr, "%+i to vitality", _iPLVit);
+			break;
+		case IPL_ATTRIBS:
+		case IPL_ATTRIBS_CURSE:
+			sprintf(tempstr, "%+i to all attributes", _iPLStr);
+			break;
+		case IPL_GETHIT_CURSE:
+		case IPL_GETHIT:
+			sprintf(tempstr, "%+i damage from enemies", _iPLGetHit);
+			break;
+		case IPL_LIFE:
+		case IPL_LIFE_CURSE:
+			sprintf(tempstr, "Hit Points : %+i", _iPLHP >> 6);
+			break;
+		case IPL_MANA:
+		case IPL_MANA_CURSE:
+			sprintf(tempstr, "Mana : %+i", _iPLMana >> 6);
+			break;
+		case IPL_DUR:
+			strcpy(tempstr, "high durability");
+			break;
+		case IPL_DUR_CURSE:
+			strcpy(tempstr, "decreased durability");
+			break;
+		case IPL_INDESTRUCTIBLE:
+			strcpy(tempstr, "indestructible");
+			break;
+		case IPL_LIGHT:
+			sprintf(tempstr, "+%i%% light radius", 10 * _iPLLight);
+			break;
+		case IPL_LIGHT_CURSE:
+			sprintf(tempstr, "-%i%% light radius", -10 * _iPLLight);
+			break;
+		case IPL_FIRE_ARROWS:
+			sprintf(tempstr, "fire arrows damage: %i-%i", _iFMinDam,
+			        _iFMaxDam);
+			break;
+		case IPL_LIGHT_ARROWS:
+			sprintf(tempstr, "lightning arrows damage %i-%i", _iLMinDam,
+			        _iLMaxDam);
+			break;
+		case IPL_THORNS:
+			strcpy(tempstr, "attacker takes 1-3 damage");
+			break;
+		case IPL_NOMANA:
+			strcpy(tempstr, "user loses all mana");
+			break;
+		case IPL_NOHEALPLR:
+			strcpy(tempstr, "you can't heal");
+			break;
+		case IPL_ABSHALFTRAP:
+			strcpy(tempstr, "absorbs half of trap damage");
+			break;
+		case IPL_KNOCKBACK:
+			strcpy(tempstr, "knocks target back");
+			break;
+		case IPL_3XDAMVDEM:
+			strcpy(tempstr, "+200% damage vs. demons");
+			break;
+		case IPL_ALLRESZERO:
+			strcpy(tempstr, "All Resistance equals 0");
+			break;
+		case IPL_NOHEALMON:
+			strcpy(tempstr, "hit monster doesn't heal");
+			break;
+		case IPL_STEALMANA:
+			if (_iFlags & ISPL_STEALMANA_3)
+				strcpy(tempstr, "hit steals 3% mana");
+			if (_iFlags & ISPL_STEALMANA_5)
+				strcpy(tempstr, "hit steals 5% mana");
+			break;
+		case IPL_STEALLIFE:
+			if (_iFlags & ISPL_STEALLIFE_3)
+				strcpy(tempstr, "hit steals 3% life");
+			if (_iFlags & ISPL_STEALLIFE_5)
+				strcpy(tempstr, "hit steals 5% life");
+			break;
+		case IPL_TARGAC:
+			strcpy(tempstr, "damages target's armor");
+			break;
+		case IPL_FASTATTACK:
+			if (_iFlags & ISPL_QUICKATTACK) strcpy(tempstr, "quick attack");
+			if (_iFlags & ISPL_FASTATTACK) strcpy(tempstr, "fast attack");
+			if (_iFlags & ISPL_FASTERATTACK)
+				strcpy(tempstr, "faster attack");
+			if (_iFlags & ISPL_FASTESTATTACK)
+				strcpy(tempstr, "fastest attack");
+			break;
+		case IPL_FASTRECOVER:
+			if (_iFlags & ISPL_FASTRECOVER)
+				strcpy(tempstr, "fast hit recovery");
+			if (_iFlags & ISPL_FASTERRECOVER)
+				strcpy(tempstr, "faster hit recovery");
+			if (_iFlags & ISPL_FASTESTRECOVER)
+				strcpy(tempstr, "fastest hit recovery");
+			break;
+		case IPL_FASTBLOCK:
+			strcpy(tempstr, "fast block");
+			break;
+		case IPL_DAMMOD:
+			sprintf(tempstr, "adds %i points to damage", _iPLDamMod);
+			break;
+		case IPL_RNDARROWVEL:
+			strcpy(tempstr, "fires random speed arrows");
+			break;
+		case IPL_SETDAM:
+			sprintf(tempstr, "unusual item damage");
+			break;
+		case IPL_SETDUR:
+			strcpy(tempstr, "altered durability");
+			break;
+		case IPL_FASTSWING:
+			strcpy(tempstr, "Faster attack swing");
+			break;
+		case IPL_ONEHAND:
+			strcpy(tempstr, "one handed sword");
+			break;
+		case IPL_DRAINLIFE:
+			strcpy(tempstr, "constantly lose hit points");
+			break;
+		case IPL_RNDSTEALLIFE:
+			strcpy(tempstr, "life stealing");
+			break;
+		case IPL_NOMINSTR:
+			strcpy(tempstr, "no strength requirement");
+			break;
+		case IPL_INFRAVISION:
+			strcpy(tempstr, "see with infravision");
+			break;
+		case IPL_INVCURS:
+			strcpy(tempstr, " ");
+			break;
+		case IPL_ADDACLIFE:
+			strcpy(tempstr, "Armor class added to life");
+			break;
+		case IPL_ADDMANAAC:
+			strcpy(tempstr, "10% of mana added to armor");
+			break;
+		case IPL_FIRERESCLVL:
+			if (_iPLFR <= 0)
+				sprintf(tempstr, " ");
+			else if (_iPLFR >= 1)
+				sprintf(tempstr, "Resist Fire : %+i%%", _iPLFR);
+			break;
+		default:
+			strcpy(tempstr, "Another ability (NW)");
+			break;
+	}
+}
+
 
 
 DEVILUTION_END_NAMESPACE

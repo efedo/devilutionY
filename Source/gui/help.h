@@ -8,29 +8,26 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+// Should inherit from game dialog eventually
+class HelpDialog
+{
+	int help_select_line;
+	int dword_634494;
+	bool helpflag;
+	int displayinghelp[22];
+	int HelpTop;
 
-extern int help_select_line;
-extern int dword_634494;
-extern bool helpflag;
-extern int displayinghelp[22];
-extern int HelpTop;
+	void InitHelp();
+	void DrawHelp();
+	void DrawHelpLine(int always_0, int help_line_nr, char *text, char color);
+	void DisplayHelp();
+	void HelpScrollUp();
+	void HelpScrollDown();
 
-void InitHelp();
-void DrawHelp();
-void DrawHelpLine(int always_0, int help_line_nr, char *text, char color);
-void DisplayHelp();
-void HelpScrollUp();
-void HelpScrollDown();
+	static const char gszHelpText[];
+};
 
-/* rdata */
-extern const char gszHelpText[];
-
-//#ifdef __cplusplus
-//}
-//#endif
+extern HelpDialog help;
 
 DEVILUTION_END_NAMESPACE
 

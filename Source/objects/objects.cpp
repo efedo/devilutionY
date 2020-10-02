@@ -89,18 +89,18 @@ void InitObjectGFX()
 		if (AllObjects[i].oload == 1
 		    && (int)lvl.currlevel >= AllObjects[i].ominlvl
 		    && (int)lvl.currlevel <= AllObjects[i].omaxlvl) {
-			fileload[AllObjects[i].ofindex] = TRUE;
+			fileload[AllObjects[i].ofindex] = true;
 		}
 		if (AllObjects[i].otheme != THEME_NONE) {
 			for (j = 0; j < numthemes; j++) {
 				if (themes[j].ttype == AllObjects[i].otheme)
-					fileload[AllObjects[i].ofindex] = TRUE;
+					fileload[AllObjects[i].ofindex] = true;
 			}
 		}
 
 		if (AllObjects[i].oquest != -1) {
 			if (QuestStatus(AllObjects[i].oquest))
-				fileload[AllObjects[i].ofindex] = TRUE;
+				fileload[AllObjects[i].ofindex] = true;
 		}
 	}
 
@@ -129,7 +129,7 @@ bool RndLocOk(int x, int y)
 
 bool RndLocOk(V2Di p)
 {
-	if (grid.at(p).getMonster())
+	if (grid.at(p).getActor())
 		return false;
 	if (grid.at(p).isPlayer())
 		return false;
@@ -140,7 +140,7 @@ bool RndLocOk(V2Di p)
 	if (grid.at(p).isSolid())
 		return false;
 	if (lvl.type() != DunType::cathedral || grid.at(p).getPiece() <= 126 || grid.at(p).getPiece() >= 144)
-		return TRUE;
+		return true;
 	return false;
 }
 
@@ -204,7 +204,7 @@ void InitRndLocObj5x5(int min, int max, int objtype)
 		cnt = 0;
 		exit = false;
 		while (!exit) {
-			exit = TRUE;
+			exit = true;
 			xp = random_(139, 80) + 16;
 			yp = random_(139, 80) + 16;
 			for (n = -2; n <= 2; n++) {
@@ -284,7 +284,7 @@ void AddBookLever(V2Di /*l1*/, V2Di /*l2*/, V2Di p1, V2Di p2, int msg)
 	int cnt = 0;
 	bool exit = false;
 	while (!exit) {
-		exit = TRUE;
+		exit = true;
 		xp = random_(139, 80) + 16;
 		yp = random_(139, 80) + 16;
 		for (n = -2; n <= 2; n++) {
@@ -334,13 +334,13 @@ void InitRndBarrels()
 		} while (!RndLocOk(xp, yp));
 		o = (random_(143, 4) != 0) ? OBJ_BARREL : OBJ_BARRELEX;
 		AddObject(o, xp, yp);
-		found = TRUE;
+		found = true;
 		p = 0;
 		c = 1;
 		while (random_(143, p) == 0 && found) {
 			t = 0;
 			found = false;
-			while (TRUE) {
+			while (true) {
 				if (t >= 3)
 					break;
 				dir = random_(143, 8);
@@ -405,7 +405,7 @@ void AddL3Objs(V2Di p1, V2Di p2)
 bool WallTrapLocOk(V2Di p)
 {
 	if (grid.at(p).dFlags & BFLAG_POPULATED) return false;
-	return TRUE;
+	return true;
 }
 
 void AddL2Torches()
@@ -435,7 +435,7 @@ bool TorchLocOK(V2Di p)
 	if (grid.at(p).dFlags & BFLAG_POPULATED) return false;
 
 	if (pieces[grid.at(p).getPiece()].trap != false)
-		return TRUE;
+		return true;
 	else
 		return false;
 }
@@ -476,7 +476,7 @@ void AddObjTraps()
 				oi_trap = grid[xp][j].getObject();
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
-				object[oi]._oTrapFlag = TRUE;
+				object[oi]._oTrapFlag = true;
 			} else {
 				yp = j - 1;
 
@@ -492,7 +492,7 @@ void AddObjTraps()
 				oi_trap = grid[i][yp].getObject();
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
-				object[oi]._oTrapFlag = TRUE;
+				object[oi]._oTrapFlag = true;
 			}
 		}
 	}
@@ -509,7 +509,7 @@ void AddChestTraps()
 				oi = grid[i][j].getObject();
 				if (object[oi]._otype >= OBJ_CHEST1 && object[oi]._otype <= OBJ_CHEST3 && !object[oi]._oTrapFlag && random_(0, 100) < 10) {
 					object[oi]._otype += OBJ_BOOKCASER;
-					object[oi]._oTrapFlag = TRUE;
+					object[oi]._oTrapFlag = true;
 					if (lvl.type() == DunType::catacombs) {
 						object[oi]._oVar4 = random_(0, 2);
 					} else {
@@ -527,7 +527,7 @@ void LoadMapObjects(uint8_t *pMap, V2Di start, V2Di p1, int w, int h, int leveri
 	uint8_t *lm;
 	long mapoff;
 
-	InitObjFlag = TRUE;
+	InitObjFlag = true;
 
 	lm = pMap + 2;
 	rw = pMap[0];
@@ -558,7 +558,7 @@ void LoadMapObjs(uint8_t *pMap, V2Di start)
 	uint8_t *lm;
 	long mapoff;
 
-	InitObjFlag = TRUE;
+	InitObjFlag = true;
 	lm = pMap;
 	rw = *lm;
 	lm += 2;
@@ -604,7 +604,7 @@ void AddStoryBooks()
 	cnt = 0;
 	done = false;
 	while (!done) {
-		done = TRUE;
+		done = true;
 		xp = random_(139, 80) + 16;
 		yp = random_(139, 80) + 16;
 		for (yy = -2; yy <= 2; yy++) {
@@ -693,7 +693,7 @@ void AddLazStand()
 	cnt = 0;
 	found = false;
 	while (!found) {
-		found = TRUE;
+		found = true;
 		xp = random_(139, 80) + 16;
 		yp = random_(139, 80) + 16;
 		for (yy = -3; yy <= 3; yy++) {
@@ -731,7 +731,7 @@ void InitObjects()
 	if (lvl.currlevel == 16) {
 		AddDiabObjs();
 	} else {
-		InitObjFlag = TRUE;
+		InitObjFlag = true;
 		GetRndSeed();
 		if (lvl.currlevel == 9 && plr.isSingleplayer())
 			AddSlainHero();
@@ -836,11 +836,11 @@ void SetMapObjects(uint8_t *pMap, V2Di start)
 	ClrAllObjects();
 	for (i = 0; i < 56; i++)
 		fileload[i] = false;
-	InitObjFlag = TRUE;
+	InitObjFlag = true;
 
 	for (i = 0; AllObjects[i].oload != -1; i++) {
 		if (AllObjects[i].oload == 1 && lvl.type() == AllObjects[i].olvltype)
-			fileload[AllObjects[i].ofindex] = TRUE;
+			fileload[AllObjects[i].ofindex] = true;
 	}
 
 	lm = pMap;
@@ -857,7 +857,7 @@ void SetMapObjects(uint8_t *pMap, V2Di start)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm) {
-				fileload[AllObjects[ObjTypeConv[*lm]].ofindex] = TRUE;
+				fileload[AllObjects[ObjTypeConv[*lm]].ofindex] = true;
 			}
 			lm += 2;
 		}
@@ -944,7 +944,7 @@ void SetBookMsg(int i, int msg)
 
 void AddL1Door(int i, V2Di pos, int ot)
 {
-	object[i]._oDoorFlag = TRUE;
+	object[i]._oDoorFlag = true;
 	if (ot == 1) {
 		object[i]._oVar1 = grid.at(pos).getPiece();
 		object[i]._oVar2 = grid[pos.x][pos.y - 1].getPiece();
@@ -999,7 +999,7 @@ void AddChest(int i, int t)
 
 void AddL2Door(int i, V2Di p, int ot)
 {
-	object[i]._oDoorFlag = TRUE;
+	object[i]._oDoorFlag = true;
 	if (ot == OBJ_L2LDOOR)
 		ObjSetMicro(p, 538);
 	else
@@ -1009,7 +1009,7 @@ void AddL2Door(int i, V2Di p, int ot)
 
 void AddL3Door(int i, V2Di p, int ot)
 {
-	object[i]._oDoorFlag = TRUE;
+	object[i]._oDoorFlag = true;
 	if (ot == OBJ_L3LDOOR)
 		ObjSetMicro(p, 531);
 	else
@@ -1077,7 +1077,7 @@ void AddShrine(int i)
 	int val, j;
 	bool slist[NUM_SHRINETYPE];
 
-	object[i]._oPreFlag = TRUE;
+	object[i]._oPreFlag = true;
 	for (j = 0; j < NUM_SHRINETYPE; j++) {
 		if (lvl.currlevel < shrinemin[j] || lvl.currlevel > shrinemax[j]) {
 			slist[j] = 0;
@@ -1105,7 +1105,7 @@ void AddShrine(int i)
 void AddBookcase(int i)
 {
 	object[i]._oRndSeed = GetRndSeed();
-	object[i]._oPreFlag = TRUE;
+	object[i]._oPreFlag = true;
 }
 
 void AddBookstand(int i)
@@ -1164,7 +1164,7 @@ void AddDecap(int i)
 {
 	object[i]._oRndSeed = GetRndSeed();
 	object[i]._oAnimFrame = random_(151, 8) + 1;
-	object[i]._oPreFlag = TRUE;
+	object[i]._oPreFlag = true;
 }
 
 void AddVilebook(int i)
@@ -1177,7 +1177,7 @@ void AddVilebook(int i)
 void AddMagicCircle(int i)
 {
 	object[i]._oRndSeed = GetRndSeed();
-	object[i]._oPreFlag = TRUE;
+	object[i]._oPreFlag = true;
 	object[i]._oVar6 = 0;
 	object[i]._oVar5 = 1;
 }
@@ -1225,7 +1225,7 @@ void AddTorturedBody(int i)
 {
 	object[i]._oRndSeed = GetRndSeed();
 	object[i]._oAnimFrame = random_(0, 4) + 1;
-	object[i]._oPreFlag = TRUE;
+	object[i]._oPreFlag = true;
 }
 
 void GetRndObjLoc(int randarea, int *xx, int *yy)
@@ -1427,7 +1427,7 @@ void Obj_Light(int i, int lr)
 					if (lvl.currlevel == plr[p].data.plrlevel) {
 						const int dist = (plr[p].pos() - o).maxabs();
 						if (dist < tr)
-							turnon = TRUE;
+							turnon = true;
 					}
 				}
 			}
@@ -1497,13 +1497,13 @@ void Obj_Door(int i)
 		object[i]._oMissFlag = false;
 	} else {
 		d = object[i]._o;
-		dok = !grid.at(d).getMonster();
+		dok = !grid.at(d).getActor();
 		dok = dok & !grid.at(d).isItem();
 		dok = dok & !grid.at(d).dDead;
 		dok = dok & !grid.at(d).isPlayer();
 		object[i]._oSelFlag = 2;
 		object[i]._oVar4 = dok ? 1 : 2;
-		object[i]._oMissFlag = TRUE;
+		object[i]._oMissFlag = true;
 	}
 }
 
@@ -1547,7 +1547,7 @@ void Obj_FlameTrap(int i)
 			x = object[i]._o.x - 2;
 			y = object[i]._o.y;
 			for (j = 0; j < 5; j++) {
-				if (grid[x][y].isPlayer() || grid[x][y].getMonster())
+				if (grid[x][y].isPlayer() || grid[x][y].getActor())
 					object[i]._oVar4 = 1;
 				x++;
 			}
@@ -1555,7 +1555,7 @@ void Obj_FlameTrap(int i)
 			x = object[i]._o.x;
 			y = object[i]._o.y - 2;
 			for (k = 0; k < 5; k++) {
-				if (grid[x][y].isPlayer() || grid[x][y].getMonster())
+				if (grid[x][y].isPlayer() || grid[x][y].getActor())
 					object[i]._oVar4 = 1;
 				y++;
 			}
@@ -1587,7 +1587,7 @@ void Obj_Trap(int i)
 		case OBJ_L3LDOOR:
 		case OBJ_L3RDOOR:
 			if (object[oti]._oVar4)
-				otrig = TRUE;
+				otrig = true;
 			break;
 		case OBJ_LEVER:
 		case OBJ_CHEST1:
@@ -1596,7 +1596,7 @@ void Obj_Trap(int i)
 		case OBJ_SWITCHSKL:
 		case OBJ_SARC:
 			if (object[oti]._oSelFlag == 0)
-				otrig = TRUE;
+				otrig = true;
 			break;
 		}
 		if (otrig) {
@@ -1638,7 +1638,7 @@ void Obj_BCrossDamage(int i)
 	myplr().data._pHitPoints -= damage[int(lvl.type()) - 1];
 	myplr().data._pHPBase -= damage[int(lvl.type()) - 1];
 	if (myplr().data._pHitPoints >> 6 <= 0) {
-		myplr().SyncPlrKill(0);
+		myplr().SyncPlrKill();
 	} else {
 		if (myplr().data._pClass == PC_WARRIOR) {
 			PlaySfxLoc(PS_WARR68, myplr().pos());
@@ -1648,7 +1648,7 @@ void Obj_BCrossDamage(int i)
 			PlaySfxLoc(PS_MAGE68, myplr().pos());
 		}
 	}
-	drawhpflag = TRUE;
+	drawhpflag = true;
 }
 
 void ProcessObjects()
@@ -1930,11 +1930,11 @@ bool _SharedDoorStart(int oi)
 void _SharedDoorOpen(int pnum, int oi, bool sendflag)
 {
 	if (pnum == myplr() && sendflag)
-		NetSendCmdParam1(TRUE, CMD_OPENDOOR, oi);
+		NetSendCmdParam1(true, CMD_OPENDOOR, oi);
 	if (!deltaload)
 		PlaySfxLoc(IS_DOOROPEN, object[oi]._o);
 	object[oi]._oAnimFrame += 2;
-	object[oi]._oPreFlag = TRUE;
+	object[oi]._oPreFlag = true;
 	object[oi]._oVar4 = 1;
 	object[oi]._oSelFlag = 2;
 	RedoPlayerVision();
@@ -1943,7 +1943,7 @@ void _SharedDoorOpen(int pnum, int oi, bool sendflag)
 void _SharedDoorClose(int pnum, int oi, bool sendflag)
 {
 	if (pnum == myplr() && sendflag)
-		NetSendCmdParam1(TRUE, CMD_CLOSEDOOR, oi);
+		NetSendCmdParam1(true, CMD_CLOSEDOOR, oi);
 	object[oi]._oVar4 = 0;
 	object[oi]._oSelFlag = 3;
 	object[oi]._oAnimFrame -= 2;
@@ -1953,7 +1953,7 @@ void _SharedDoorClose(int pnum, int oi, bool sendflag)
 
 bool _isDoorFree(V2Di p)
 {
-	return (((grid.at(p).dDead != 0 ? 0 : 1) & (grid.at(p).getMonster() != 0 ? 0 : 1) & (grid.at(p).isItem() ? 0 : 1)) != 0);
+	return (((grid.at(p).dDead != 0 ? 0 : 1) & (grid.at(p).getActor() != 0 ? 0 : 1) & (grid.at(p).isItem() ? 0 : 1)) != 0);
 }
 
 void OperateL1RDoor(int pnum, int oi, bool sendflag)
@@ -2124,25 +2124,25 @@ void MonstCheckDoors(int n)
 				dp.x = abs(object[oi]._o.x - m.x);
 				dp.y = abs(object[oi]._o.y - m.y);
 				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L1LDOOR)
-					OperateL1LDoor(myplr(), oi, TRUE);
+					OperateL1LDoor(myplr(), oi, true);
 				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L1RDOOR)
-					OperateL1RDoor(myplr(), oi, TRUE);
+					OperateL1RDoor(myplr(), oi, true);
 			}
 			if ((object[oi]._otype == OBJ_L2LDOOR || object[oi]._otype == OBJ_L2RDOOR) && !object[oi]._oVar4) {
 				dp.x = abs(object[oi]._o.x - m.x);
 				dp.y = abs(object[oi]._o.y - m.y);
 				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L2LDOOR)
-					OperateL2LDoor(myplr(), oi, TRUE);
+					OperateL2LDoor(myplr(), oi, true);
 				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L2RDOOR)
-					OperateL2RDoor(myplr(), oi, TRUE);
+					OperateL2RDoor(myplr(), oi, true);
 			}
 			if ((object[oi]._otype == OBJ_L3LDOOR || object[oi]._otype == OBJ_L3RDOOR) && !object[oi]._oVar4) {
 				dp.x = abs(object[oi]._o.x - m.x);
 				dp.y = abs(object[oi]._o.y - m.y);
 				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L3RDOOR)
-					OperateL3RDoor(myplr(), oi, TRUE);
+					OperateL3RDoor(myplr(), oi, true);
 				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L3LDOOR)
-					OperateL3LDoor(myplr(), oi, TRUE);
+					OperateL3LDoor(myplr(), oi, true);
 			}
 		}
 	}
@@ -2200,7 +2200,7 @@ void OperateLever(int pnum, int i)
 		if (!deltaload) PlaySfxLoc(IS_LEVER, object[i]._o);
 		object[i]._oSelFlag = 0;
 		object[i]._oAnimFrame++;
-		mapflag = TRUE;
+		mapflag = true;
 		if (lvl.currlevel == 16) {
 			for (j = 0; j < nobjects; j++) {
 				oi = objectactive[j];
@@ -2236,17 +2236,17 @@ void OperateBook(int pnum, int i)
 			if (otype == OBJ_MCIRCLE2 && object[oi]._oVar6 == 1) {
 				d = { 27, 29 };
 				object[oi]._oVar6 = 4;
-				do_add_missile = TRUE;
+				do_add_missile = true;
 			}
 			if (otype == OBJ_MCIRCLE2 && object[oi]._oVar6 == 2) {
 				d = { 43, 29 };
 				object[oi]._oVar6 = 4;
-				do_add_missile = TRUE;
+				do_add_missile = true;
 			}
 			if (do_add_missile) {
 				object[grid[35][36].getObject()]._oVar5++;
 				AddMissile(plr[pnum].pos(), d, plr[pnum].data._pdir, MIS_RNDTELEPORT, 0, pnum, 0, 0);
-				missile_added = TRUE;
+				missile_added = true;
 				do_add_missile = false;
 			}
 		}
@@ -2361,7 +2361,7 @@ void OperateChest(int pnum, int i, bool sendmsg)
 			SetRndSeed(object[i]._oRndSeed);
 			if (lvl.setlevel) {
 				for (j = 0; j < object[i]._oVar1; j++) {
-					CreateRndItem(object[i]._o, TRUE, sendmsg, false);
+					CreateRndItem(object[i]._o, true, sendmsg, false);
 				}
 			} else {
 				for (j = 0; j < object[i]._oVar1; j++) {
@@ -2455,13 +2455,13 @@ void OperateSlainHero(int pnum, int i, bool sendmsg)
 		object[i]._oSelFlag = 0;
 		if (!deltaload) {
 			if (plr[pnum].data._pClass == PC_WARRIOR) {
-				CreateMagicArmor(object[i]._o, ITYPE_HARMOR, ICURS_BREAST_PLATE, false, TRUE);
+				CreateMagicArmor(object[i]._o, ITYPE_HARMOR, ICURS_BREAST_PLATE, false, true);
 				PlaySfxLoc(PS_WARR9, myplr().pos());
 			} else if (plr[pnum].data._pClass == PC_ROGUE) {
-				CreateMagicWeapon(object[i]._o, ITYPE_BOW, ICURS_int32_t_WAR_BOW, false, TRUE);
+				CreateMagicWeapon(object[i]._o, ITYPE_BOW, ICURS_int32_t_WAR_BOW, false, true);
 				PlaySfxLoc(PS_ROGUE9, myplr().pos());
 			} else if (plr[pnum].data._pClass == PC_SORCERER) {
-				CreateSpellBook(object[i]._o, SPL_LIGHTNING, false, TRUE);
+				CreateSpellBook(object[i]._o, SPL_LIGHTNING, false, true);
 				PlaySfxLoc(PS_MAGE9, myplr().pos());
 			}
 			if (pnum == myplr())
@@ -2588,9 +2588,9 @@ void TryDisarm(int pnum, int i)
 				oi = objectactive[j];
 				oti = object[oi]._otype;
 				if (oti == OBJ_TRAPL)
-					checkflag = TRUE;
+					checkflag = true;
 				if (oti == OBJ_TRAPR)
-					checkflag = TRUE;
+					checkflag = true;
 				if (checkflag && grid[object[oi]._oVar1][object[oi]._oVar2].getObject() == i) {
 					object[oi]._oVar4 = 1;
 					object[i]._oTrapFlag = false;
@@ -2675,12 +2675,12 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		for (j = 0; j < NUM_INVLOC; j++) {
+		for (j = 0; j < MAXINVITEMS; j++) {
 			if (plr[pnum].data.InvBody[j]._itype != ITYPE_NONE)
 				cnt++;
 		}
 		if (cnt > 0) {
-			for (j = 0; j < NUM_INVLOC; j++) {
+			for (j = 0; j < MAXINVITEMS; j++) {
 				if (plr[pnum].data.InvBody[j]._itype != ITYPE_NONE
 				    && plr[pnum].data.InvBody[j]._iMaxDur != DUR_INDESTRUCTIBLE
 				    && plr[pnum].data.InvBody[j]._iMaxDur != 0) {
@@ -2690,9 +2690,9 @@ void OperateShrine(int pnum, int i, int sType)
 						plr[pnum].data.InvBody[j]._iDurability = plr[pnum].data.InvBody[j]._iMaxDur;
 				}
 			}
-			while (TRUE) {
+			while (true) {
 				cnt = 0;
-				for (j = 0; j < NUM_INVLOC; j++) {
+				for (j = 0; j < MAXINVITEMS; j++) {
 					if (plr[pnum].data.InvBody[j]._itype != ITYPE_NONE
 					    && plr[pnum].data.InvBody[j]._iMaxDur != DUR_INDESTRUCTIBLE
 					    && plr[pnum].data.InvBody[j]._iMaxDur != 0)
@@ -2700,7 +2700,7 @@ void OperateShrine(int pnum, int i, int sType)
 				}
 				if (cnt == 0)
 					break;
-				r = random_(0, NUM_INVLOC);
+				r = random_(0, MAXINVITEMS);
 				if (plr[pnum].data.InvBody[r]._itype == ITYPE_NONE || plr[pnum].data.InvBody[r]._iMaxDur == DUR_INDESTRUCTIBLE || plr[pnum].data.InvBody[r]._iMaxDur == 0)
 					continue;
 
@@ -2811,7 +2811,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			break;
 
-		for (j = 0; j < NUM_INVLOC; j++) {
+		for (j = 0; j < MAXINVITEMS; j++) {
 			if (plr[pnum].data.InvBody[j]._itype == ITYPE_STAFF)
 				plr[pnum].data.InvBody[j]._iCharges = plr[pnum].data.InvBody[j]._iMaxCharges;
 		}
@@ -2831,7 +2831,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			break;
 
-		for (j = 0; j < NUM_INVLOC; j++)
+		for (j = 0; j < MAXINVITEMS; j++)
 			plr[pnum].data.InvBody[j]._iDurability = plr[pnum].data.InvBody[j]._iMaxDur;
 		for (j = 0; j < plr[pnum].data._pNumInv; j++)
 			plr[pnum].data.InvList[j]._iDurability = plr[pnum].data.InvList[j]._iMaxDur;
@@ -2946,14 +2946,14 @@ void OperateShrine(int pnum, int i, int sType)
 				    || plr[pnum].data.InvList[j]._iMiscId == IMISC_MANA) {
 					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_REJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
-					plr[pnum].data.HoldItem._iStatFlag = TRUE;
+					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.InvList[j] = plr[pnum].data.HoldItem;
 				}
 				if (plr[pnum].data.InvList[j]._iMiscId == IMISC_FULLHEAL
 				    || plr[pnum].data.InvList[j]._iMiscId == IMISC_FULLMANA) {
 					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_FULLREJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
-					plr[pnum].data.HoldItem._iStatFlag = TRUE;
+					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.InvList[j] = plr[pnum].data.HoldItem;
 				}
 			}
@@ -2964,14 +2964,14 @@ void OperateShrine(int pnum, int i, int sType)
 				    || plr[pnum].data.SpdList[j]._iMiscId == IMISC_MANA) {
 					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_REJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
-					plr[pnum].data.HoldItem._iStatFlag = TRUE;
+					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.SpdList[j] = plr[pnum].data.HoldItem;
 				}
 				if (plr[pnum].data.SpdList[j]._iMiscId == IMISC_FULLHEAL
 				    || plr[pnum].data.SpdList[j]._iMiscId == IMISC_FULLMANA) {
 					SetPlrHandItem(&plr[pnum].data.HoldItem, ItemMiscIdIdx(IMISC_FULLREJUV));
 					GetPlrHandSeed(&plr[pnum].data.HoldItem);
-					plr[pnum].data.HoldItem._iStatFlag = TRUE;
+					plr[pnum].data.HoldItem._iStatFlag = true;
 					plr[pnum].data.SpdList[j] = plr[pnum].data.HoldItem;
 				}
 			}
@@ -2993,11 +2993,11 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum != myplr())
 			return;
 		if (2 * lvl.currlevel < 7) {
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLMANA, false, TRUE);
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLHEAL, false, TRUE);
+			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLMANA, false, true);
+			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLHEAL, false, true);
 		} else {
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLREJUV, false, TRUE);
-			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLREJUV, false, TRUE);
+			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLREJUV, false, true);
+			CreateTypeItem(object[i]._o, false, ITYPE_MISC, IMISC_FULLREJUV, false, true);
 		}
 		plr[pnum].data._pMana = plr[pnum].data._pMaxMana;
 		plr[pnum].data._pManaBase = plr[pnum].data._pMaxManaBase;
@@ -3016,7 +3016,7 @@ void OperateShrine(int pnum, int i, int sType)
 			if (j > MAXDUNX * 112)
 				break;
 			lv = grid.at(p).getPiece();
-		} while (pieces[lv].solid || grid.at(p).isObject() || grid.at(p).getMonster());
+		} while (pieces[lv].solid || grid.at(p).isObject() || grid.at(p).getActor());
 		AddMissile(plr[pnum].pos(), p, plr[pnum].data._pdir, MIS_RNDTELEPORT, -1, pnum, 0, 2 * int(lvl.type()));
 		if (pnum != myplr())
 			return;
@@ -3052,7 +3052,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		for (j = 0; j < NUM_INV_GRID_ELEM; j++) {
+		for (j = 0; j < MAXINVITEMS; j++) {
 			if (!plr[pnum].data.InvGrid[j]) {
 				r = 5 * int(lvl.type()) + random_(160, 10 * int(lvl.type()));
 				t = plr[pnum].data._pNumInv; // check
@@ -3118,7 +3118,7 @@ void OperateShrine(int pnum, int i, int sType)
 
 		for (p.y = 0; p.y < DMAXY; p.y++) {
 			for (p.x = 0; p.x < DMAXX; p.x++) {
-				automap.getView()[p.x][p.y] = TRUE;
+				automap.getView()[p.x][p.y] = true;
 			}
 		}
 		InitDiabloMsg(EMSG_SHRINE_SECLUDED);
@@ -3155,17 +3155,17 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		for (j = 0; j < NUM_INVLOC; j++) {
+		for (j = 0; j < MAXINVITEMS; j++) {
 			if (plr[pnum].data.InvBody[j]._iMagical && !plr[pnum].data.InvBody[j]._iIdentified)
-				plr[pnum].data.InvBody[j]._iIdentified = TRUE;
+				plr[pnum].data.InvBody[j]._iIdentified = true;
 		}
 		for (j = 0; j < plr[pnum].data._pNumInv; j++) {
 			if (plr[pnum].data.InvList[j]._iMagical && !plr[pnum].data.InvList[j]._iIdentified)
-				plr[pnum].data.InvList[j]._iIdentified = TRUE;
+				plr[pnum].data.InvList[j]._iIdentified = true;
 		}
 		for (j = 0; j < 8; j++) {
 			if (plr[pnum].data.SpdList[j]._iMagical && !plr[pnum].data.SpdList[j]._iIdentified)
-				plr[pnum].data.SpdList[j]._iIdentified = TRUE; // belt items can't be magical?
+				plr[pnum].data.SpdList[j]._iIdentified = true; // belt items can't be magical?
 		}
 		InitDiabloMsg(EMSG_SHRINE_GLIMMERING);
 		break;
@@ -3204,7 +3204,7 @@ void OperateShrine(int pnum, int i, int sType)
 		break;
 	}
 
-	CalcPlrInv(pnum, TRUE);
+	CalcPlrInv(pnum, true);
 	force_redraw = 255;
 
 	if (pnum == myplr())
@@ -3279,13 +3279,13 @@ void OperateArmorStand(int pnum, int i, bool sendmsg)
 			SetRndSeed(object[i]._oRndSeed);
 			uniqueRnd = random_(0, 2);
 			if (lvl.currlevel <= 5) {
-				CreateTypeItem(object[i]._o, TRUE, ITYPE_LARMOR, IMISC_NONE, sendmsg, false);
+				CreateTypeItem(object[i]._o, true, ITYPE_LARMOR, IMISC_NONE, sendmsg, false);
 			} else if (lvl.currlevel >= 6 && lvl.currlevel <= 9) {
 				CreateTypeItem(object[i]._o, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, sendmsg, false);
 			} else if (lvl.currlevel >= 10 && lvl.currlevel <= 12) {
 				CreateTypeItem(object[i]._o, false, ITYPE_HARMOR, IMISC_NONE, sendmsg, false);
 			} else if (lvl.currlevel >= 13 && lvl.currlevel <= 16) {
-				CreateTypeItem(object[i]._o, TRUE, ITYPE_HARMOR, IMISC_NONE, sendmsg, false);
+				CreateTypeItem(object[i]._o, true, ITYPE_HARMOR, IMISC_NONE, sendmsg, false);
 			}
 			if (pnum == myplr())
 				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
@@ -3304,7 +3304,7 @@ int FindValidShrine(int i)
 		while (!done) {
 			rv = random_(0, NUM_SHRINETYPE);
 			if (lvl.currlevel >= shrinemin[rv] && lvl.currlevel <= shrinemax[rv] && rv != 8)
-				done = TRUE;
+				done = true;
 		}
 
 		if (plr.isMultiplayer()) {
@@ -3362,7 +3362,7 @@ bool OperateFountains(int pnum, int i)
 				plr[pnum].data._pHitPoints = plr[pnum].data._pMaxHP;
 				plr[pnum].data._pHPBase = plr[pnum].data._pMaxHPBase;
 			}
-			applied = TRUE;
+			applied = true;
 		} else
 			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		break;
@@ -3382,7 +3382,7 @@ bool OperateFountains(int pnum, int i)
 				plr[pnum].data._pManaBase = plr[pnum].data._pMaxManaBase;
 			}
 
-			applied = TRUE;
+			applied = true;
 		} else
 			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		break;
@@ -3403,7 +3403,7 @@ bool OperateFountains(int pnum, int i)
 		    pnum,
 		    0,
 		    2 * int(lvl.type()));
-		applied = TRUE;
+		applied = true;
 		if (pnum == myplr())
 			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
 		break;
@@ -3445,10 +3445,10 @@ bool OperateFountains(int pnum, int i)
 			if (cnt <= 1)
 				continue;
 
-			done = TRUE;
+			done = true;
 		}
 		plr[pnum].CheckStats();
-		applied = TRUE;
+		applied = true;
 		if (pnum == myplr())
 			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
 		break;
@@ -3486,7 +3486,7 @@ void OperateWeaponRack(int pnum, int i, bool sendmsg)
 		return;
 
 	if (int(lvl.type()) > 1)
-		CreateTypeItem(object[i]._o, TRUE, weaponType, IMISC_NONE, sendmsg, false);
+		CreateTypeItem(object[i]._o, true, weaponType, IMISC_NONE, sendmsg, false);
 	else
 		CreateTypeItem(object[i]._o, false, weaponType, IMISC_NONE, sendmsg, false);
 	if (pnum == myplr())
@@ -3523,37 +3523,37 @@ void OperateObject(int pnum, int i, bool TeleFlag)
 	case OBJ_L1RDOOR:
 		if (TeleFlag) {
 			if (object[i]._otype == OBJ_L1LDOOR)
-				OperateL1LDoor(pnum, i, TRUE);
+				OperateL1LDoor(pnum, i, true);
 			if (object[i]._otype == OBJ_L1RDOOR)
-				OperateL1RDoor(pnum, i, TRUE);
+				OperateL1RDoor(pnum, i, true);
 			break;
 		}
 		if (pnum == myplr())
-			OperateL1Door(pnum, i, TRUE);
+			OperateL1Door(pnum, i, true);
 		break;
 	case OBJ_L2LDOOR:
 	case OBJ_L2RDOOR:
 		if (TeleFlag) {
 			if (object[i]._otype == OBJ_L2LDOOR)
-				OperateL2LDoor(pnum, i, TRUE);
+				OperateL2LDoor(pnum, i, true);
 			if (object[i]._otype == OBJ_L2RDOOR)
-				OperateL2RDoor(pnum, i, TRUE);
+				OperateL2RDoor(pnum, i, true);
 			break;
 		}
 		if (pnum == myplr())
-			OperateL2Door(pnum, i, TRUE);
+			OperateL2Door(pnum, i, true);
 		break;
 	case OBJ_L3LDOOR:
 	case OBJ_L3RDOOR:
 		if (TeleFlag) {
 			if (object[i]._otype == OBJ_L3LDOOR)
-				OperateL3LDoor(pnum, i, TRUE);
+				OperateL3LDoor(pnum, i, true);
 			if (object[i]._otype == OBJ_L3RDOOR)
-				OperateL3RDoor(pnum, i, TRUE);
+				OperateL3RDoor(pnum, i, true);
 			break;
 		}
 		if (pnum == myplr())
-			OperateL3Door(pnum, i, TRUE);
+			OperateL3Door(pnum, i, true);
 		break;
 	case OBJ_LEVER:
 	case OBJ_SWITCHSKL:
@@ -3649,10 +3649,10 @@ void SyncOpL1Door(int pnum, int cmd, int i)
 
 	do_sync = false;
 	if (cmd == CMD_OPENDOOR && object[i]._oVar4 == 0) {
-		do_sync = TRUE;
+		do_sync = true;
 	}
 	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
-		do_sync = TRUE;
+		do_sync = true;
 	if (do_sync) {
 		if (object[i]._otype == OBJ_L1LDOOR)
 			OperateL1LDoor(-1, i, false);
@@ -3670,10 +3670,10 @@ void SyncOpL2Door(int pnum, int cmd, int i)
 
 	do_sync = false;
 	if (cmd == CMD_OPENDOOR && object[i]._oVar4 == 0) {
-		do_sync = TRUE;
+		do_sync = true;
 	}
 	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
-		do_sync = TRUE;
+		do_sync = true;
 	if (do_sync) {
 		if (object[i]._otype == OBJ_L2LDOOR)
 			OperateL2LDoor(-1, i, false);
@@ -3691,10 +3691,10 @@ void SyncOpL3Door(int pnum, int cmd, int i)
 
 	do_sync = false;
 	if (cmd == CMD_OPENDOOR && object[i]._oVar4 == 0) {
-		do_sync = TRUE;
+		do_sync = true;
 	}
 	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
-		do_sync = TRUE;
+		do_sync = true;
 	if (do_sync) {
 		if (object[i]._otype == OBJ_L3LDOOR)
 			OperateL2LDoor(-1, i, false);
@@ -3797,11 +3797,11 @@ void BreakCrux(int i)
 	object[i]._oAnimFlag = 1;
 	object[i]._oAnimFrame = 1;
 	object[i]._oAnimDelay = 1;
-	object[i]._oSolidFlag = TRUE;
-	object[i]._oMissFlag = TRUE;
+	object[i]._oSolidFlag = true;
+	object[i]._oMissFlag = true;
 	object[i]._oBreak = -1;
 	object[i]._oSelFlag = 0;
-	triggered = TRUE;
+	triggered = true;
 	for (j = 0; j < nobjects; j++) {
 		oi = objectactive[j];
 		if (object[oi]._otype != OBJ_CRUX1 && object[oi]._otype != OBJ_CRUX2 && object[oi]._otype != OBJ_CRUX3)
@@ -3845,9 +3845,9 @@ void BreakBarrel(int pnum, int i, int dam, bool forcebreak, bool sendmsg)
 	object[i]._oAnimFrame = 1;
 	object[i]._oAnimDelay = 1;
 	object[i]._oSolidFlag = false;
-	object[i]._oMissFlag = TRUE;
+	object[i]._oMissFlag = true;
 	object[i]._oSelFlag = 0;
-	object[i]._oPreFlag = TRUE;
+	object[i]._oPreFlag = true;
 	if (deltaload) {
 		object[i]._oAnimCnt = 0;
 		object[i]._oAnimFrame = object[i]._oAnimLen;
@@ -3859,14 +3859,14 @@ void BreakBarrel(int pnum, int i, int dam, bool forcebreak, bool sendmsg)
 		PlaySfxLoc(IS_BARLFIRE, object[i]._o);
 		for (yp = object[i]._o.y - 1; yp <= object[i]._o.y + 1; yp++) {
 			for (xp = object[i]._o.x - 1; xp <= object[i]._o.x + 1; xp++) {
-				if (grid[xp][yp].isMonster())
-					MonsterTrapHit(grid[xp][yp].getMonster() - 1, 1, 4, 0, 1, false);
+				if (grid[xp][yp].isActor())
+					MonsterTrapHit(grid[xp][yp].getActor() - 1, 1, 4, 0, 1, false);
 				if (grid[xp][yp].isPlayer())
 					PlayerMHit(grid[xp][yp].getPlayer(), -1, 0, 8, 16, 1, false, 0);
 				if (grid[xp][yp].isObject()) {
 					oi = grid[xp][yp].getObject();
 					if (object[oi]._otype == OBJ_BARRELEX && object[oi]._oBreak != -1)
-						BreakBarrel(pnum, oi, dam, TRUE, sendmsg);
+						BreakBarrel(pnum, oi, dam, true, sendmsg);
 				}
 			}
 		}
@@ -3906,7 +3906,7 @@ void BreakObject(int pnum, int oi)
 		break;
 	case OBJ_BARREL:
 	case OBJ_BARRELEX:
-		BreakBarrel(pnum, oi, objdam, false, TRUE);
+		BreakBarrel(pnum, oi, objdam, false, true);
 		break;
 	}
 }
@@ -3914,7 +3914,7 @@ void BreakObject(int pnum, int oi)
 void SyncBreakObj(int pnum, int oi)
 {
 	if (object[oi]._otype >= OBJ_BARREL && object[oi]._otype <= OBJ_BARRELEX)
-		BreakBarrel(pnum, oi, 0, TRUE, false);
+		BreakBarrel(pnum, oi, 0, true, false);
 }
 
 void SyncL1Doors(int i)
@@ -3924,7 +3924,7 @@ void SyncL1Doors(int i)
 		return;
 	}
 	V2Di p = object[i]._o;
-	object[i]._oMissFlag = TRUE;
+	object[i]._oMissFlag = true;
 	object[i]._oSelFlag = 2;
 	if (object[i]._otype == OBJ_L1LDOOR) {
 		if (object[i]._oVar1 == 214)
@@ -3947,7 +3947,7 @@ void SyncCrux(int i)
 {
 	int j, oi, type;
 
-	bool found = TRUE;
+	bool found = true;
 	for (j = 0; j < nobjects; j++) {
 		oi = objectactive[j];
 		type = object[oi]._otype;
@@ -4005,7 +4005,7 @@ void SyncL2Doors(int i)
 	if (object[i]._oVar4 == 0)
 		object[i]._oMissFlag = false;
 	else
-		object[i]._oMissFlag = TRUE;
+		object[i]._oMissFlag = true;
 	V2Di p = object[i]._o;
 	object[i]._oSelFlag = 2;
 	if (object[i]._otype == OBJ_L2LDOOR && object[i]._oVar4 == 0) {
@@ -4021,7 +4021,7 @@ void SyncL2Doors(int i)
 
 void SyncL3Doors(int i)
 {
-	object[i]._oMissFlag = TRUE;
+	object[i]._oMissFlag = true;
 	V2Di p = object[i]._o;
 	object[i]._oSelFlag = 2;
 	if (object[i]._otype == OBJ_L3LDOOR && object[i]._oVar4 == 0) {

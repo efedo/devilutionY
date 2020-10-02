@@ -265,14 +265,14 @@ static void DRLG_L1Shadows()
 
 			for (i = 0; i < 37; i++) {
 				if (SPATS[i].strig == sd[0][0]) {
-					patflag = TRUE;
+					patflag = true;
 					if (SPATS[i].s1 && SPATS[i].s1 != sd[1][1])
 						patflag = false;
 					if (SPATS[i].s2 && SPATS[i].s2 != sd[0][1])
 						patflag = false;
 					if (SPATS[i].s3 && SPATS[i].s3 != sd[1][0])
 						patflag = false;
-					if (patflag == TRUE) {
+					if (patflag == true) {
 						if (SPATS[i].nv1 && !L5dflags[x - 1][y - 1])
 							dgrid[x - 1][y - 1].dungeon = SPATS[i].nv1;
 						if (SPATS[i].nv2 && !L5dflags[x][y - 1])
@@ -359,7 +359,7 @@ static int DRLG_PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx,
 		found = 0;
 
 		while (abort == false) {
-			abort = TRUE;
+			abort = true;
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
 				sx++;
 				abort = false;
@@ -390,8 +390,8 @@ static int DRLG_PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx,
 
 			ii = 2;
 
-			for (yy = 0; yy < sh && abort == TRUE; yy++) {
-				for (xx = 0; xx < sw && abort == TRUE; xx++) {
+			for (yy = 0; yy < sh && abort == true; yy++) {
+				for (xx = 0; xx < sw && abort == true; xx++) {
 					if (miniset[ii] && dgrid[xx + sx][sy + yy].dungeon != miniset[ii])
 						abort = false;
 					if (L5dflags[xx + sx][sy + yy])
@@ -432,7 +432,7 @@ static int DRLG_PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx,
 		quests[Q_PWATER]._qt.y = 2 * sy + 22;
 	}
 
-	if (setview == TRUE) {
+	if (setview == true) {
 		View.x = 2 * sx + 19;
 		View.y = 2 * sy + 20;
 	}
@@ -521,15 +521,15 @@ static void DRLG_LoadL1SP()
 	L5setloadflag = false;
 	if (QuestStatus(Q_BUTCHER)) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\rnd6.DUN", NULL);
-		L5setloadflag = TRUE;
+		L5setloadflag = true;
 	}
 	if (QuestStatus(Q_SKELKING) && plr.isSingleplayer()) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\SKngDO.DUN", NULL);
-		L5setloadflag = TRUE;
+		L5setloadflag = true;
 	}
 	if (QuestStatus(Q_LTBANNER)) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\Banner2.DUN", NULL);
-		L5setloadflag = TRUE;
+		L5setloadflag = true;
 	}
 }
 
@@ -738,7 +738,7 @@ static bool L5checkRoom(int x, int y, int width, int height)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 static void L5roomGen(int x, int y, int w, int h, int dir)
@@ -762,18 +762,18 @@ static void L5roomGen(int x, int y, int w, int h, int dir)
 			num++;
 		} while (ran == false && num < 20);
 
-		if (ran == TRUE)
+		if (ran == true)
 			L5drawRoom(cx1, cy1, cw, ch);
 		cx2 = x + w;
 		ran2 = L5checkRoom(cx2, cy1 - 1, cw + 1, ch + 2);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L5drawRoom(cx2, cy1, cw, ch);
-		if (ran == TRUE)
+		if (ran == true)
 			L5roomGen(cx1, cy1, cw, ch, 1);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L5roomGen(cx2, cy1, cw, ch, 1);
 		break;
-	case TRUE:
+	case true:
 		num = 0;
 		do {
 			width = (random_(0, 5) + 2) & 0xFFFFFFFE;
@@ -784,15 +784,15 @@ static void L5roomGen(int x, int y, int w, int h, int dir)
 			num++;
 		} while (ran == false && num < 20);
 
-		if (ran == TRUE)
+		if (ran == true)
 			L5drawRoom(rx, ry, width, height);
 		ry2 = y + h;
 		ran2 = L5checkRoom(rx - 1, ry2, width + 2, height + 1);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L5drawRoom(rx, ry2, width, height);
-		if (ran == TRUE)
+		if (ran == true)
 			L5roomGen(rx, ry, width, height, 0);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L5roomGen(rx, ry2, width, height, 0);
 		break;
 	}
@@ -956,9 +956,9 @@ static int L5HWallOk(int i, int j)
 
 	wallok = false;
 	if (dgrid[i + x][j].dungeon >= 3 && dgrid[i + x][j].dungeon <= 7)
-		wallok = TRUE;
+		wallok = true;
 	if (dgrid[i + x][j].dungeon >= 16 && dgrid[i + x][j].dungeon <= 24)
-		wallok = TRUE;
+		wallok = true;
 	if (dgrid[i + x][j].dungeon == 22)
 		wallok = false;
 	if (x == 1)
@@ -982,9 +982,9 @@ static int L5VWallOk(int i, int j)
 
 	wallok = false;
 	if (dgrid[i][j + y].dungeon >= 3 && dgrid[i][j + y].dungeon <= 7)
-		wallok = TRUE;
+		wallok = true;
 	if (dgrid[i][j + y].dungeon >= 16 && dgrid[i][j + y].dungeon <= 24)
-		wallok = TRUE;
+		wallok = true;
 	if (dgrid[i][j + y].dungeon == 22)
 		wallok = false;
 	if (y == 1)
@@ -1140,7 +1140,7 @@ static void DRLG_L5GChamber(int sx, int sy, bool topflag, bool bottomflag, bool 
 {
 	int i, j;
 
-	if (topflag == TRUE) {
+	if (topflag == true) {
 		dgrid[sx + 2][sy].dungeon = 12;
 		dgrid[sx + 3][sy].dungeon = 12;
 		dgrid[sx + 4][sy].dungeon = 3;
@@ -1148,7 +1148,7 @@ static void DRLG_L5GChamber(int sx, int sy, bool topflag, bool bottomflag, bool 
 		dgrid[sx + 8][sy].dungeon = 12;
 		dgrid[sx + 9][sy].dungeon = 2;
 	}
-	if (bottomflag == TRUE) {
+	if (bottomflag == true) {
 		sy += 11;
 		dgrid[sx + 2][sy].dungeon = 10;
 		dgrid[sx + 3][sy].dungeon = 12;
@@ -1160,7 +1160,7 @@ static void DRLG_L5GChamber(int sx, int sy, bool topflag, bool bottomflag, bool 
 		}
 		sy -= 11;
 	}
-	if (leftflag == TRUE) {
+	if (leftflag == true) {
 		dgrid[sx][sy + 2].dungeon = 11;
 		dgrid[sx][sy + 3].dungeon = 11;
 		dgrid[sx][sy + 4].dungeon = 3;
@@ -1168,7 +1168,7 @@ static void DRLG_L5GChamber(int sx, int sy, bool topflag, bool bottomflag, bool 
 		dgrid[sx][sy + 8].dungeon = 11;
 		dgrid[sx][sy + 9].dungeon = 1;
 	}
-	if (rightflag == TRUE) {
+	if (rightflag == true) {
 		sx += 11;
 		dgrid[sx][sy + 2].dungeon = 14;
 		dgrid[sx][sy + 3].dungeon = 11;
@@ -1685,7 +1685,7 @@ static void DRLG_L5(int entry)
 		L5ClearFlags();
 		DRLG_L5FloodTVal();
 
-		doneflag = TRUE;
+		doneflag = true;
 
 		if (QuestStatus(Q_PWATER)) {
 			if (entry == 0) {

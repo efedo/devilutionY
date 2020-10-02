@@ -121,7 +121,7 @@ void InitLevelCursor()
 	pcurstemp = -1;
 	pcursmonst = -1;
 	pcursobj = -1;
-	pcursitem = -1;
+	pcursitem = 0;
 	pcursplr = -1;
 	ClearCursor();
 }
@@ -140,11 +140,11 @@ void CheckTown()
 			    || cursm.x == missile[mx]._mi.x - 2 && cursm.y == missile[mx]._mi.y - 2
 			    || cursm.x == missile[mx]._mi.x - 1 && cursm.y == missile[mx]._mi.y - 2
 			    || cursm.x == missile[mx]._mi.x && cursm.y == missile[mx]._mi.y) {
-				trigflag = TRUE;
+				trigflag = true;
 				ClearPanel();
 				strcpy(infostr, "Town Portal");
 				sprintf(tempstr, "from %s", plr[missile[mx]._misource].data._pName);
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				cursm = missile[mx]._mi;
 			}
 		}
@@ -165,14 +165,14 @@ void CheckRportal()
 			    || cursm.x == missile[mx]._mi.x - 2 && cursm.y == missile[mx]._mi.y - 2
 			    || cursm.x == missile[mx]._mi.x - 1 && cursm.y == missile[mx]._mi.y - 2
 			    || cursm.x == missile[mx]._mi.x && cursm.y == missile[mx]._mi.y) {
-				trigflag = TRUE;
+				trigflag = true;
 				ClearPanel();
 				strcpy(infostr, "Portal to");
 				if (!lvl.setlevel)
 					strcpy(tempstr, "The Unholy Altar");
 				else
 					strcpy(tempstr, "level 15");
-				AddPanelString(tempstr, TRUE);
+				AddPanelString(tempstr, true);
 				cursm = missile[mx]._mi;
 			}
 		}
@@ -187,8 +187,8 @@ void CheckRportal()
 //	} else if (flipflaglogic < 0) {
 //		flipflag = !flipflag;
 //	}
-//	if (flipflag && grid.isValid(pos) && tile.isMonster() && tile.dFlags & BFLAG_LIT) {
-//		int mi = tile.getMonster();
+//	if (flipflag && grid.isValid(pos) && tile.isActor() && tile.dFlags & BFLAG_LIT) {
+//		int mi = tile.getActor();
 //		if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
 //			cursm = pos;
 //			pcursmonst = mi;
@@ -213,7 +213,7 @@ void CheckCursMove()
 			} else {
 				mouse.x = 0;
 			}
-		} else if (invflag || sbookflag) {
+		} else if (gui.invflag || gui.sbookflag) {
 			if (mouse.x <= SCREEN_WIDTH / 2) {
 				mouse.x += SCREEN_WIDTH / 4;
 			} else {
@@ -280,9 +280,9 @@ void CheckCursMove()
 	pcurstemp = pcursmonst;
 	pcursmonst = -1;
 	pcursobj = -1;
-	pcursitem = -1;
+	pcursitem = 0;
 	if (pcursinvitem != -1) {
-		drawsbarflag = TRUE;
+		drawsbarflag = true;
 	}
 	pcursinvitem = -1;
 	pcursplr = -1;
@@ -303,11 +303,11 @@ void CheckCursMove()
 	if (doomflag) {
 		return;
 	}
-	if (invflag && Mouse.x > RIGHT_PANEL && Mouse.y <= SPANEL_HEIGHT) {
-		pcursinvitem = CheckInvHLight();
+	if (gui.invflag && Mouse.x > RIGHT_PANEL && Mouse.y <= SPANEL_HEIGHT) {
+		pcursinvitem = myplr().inv.CheckInvHLight();
 		return;
 	}
-	if (sbookflag && Mouse.x > RIGHT_PANEL && Mouse.y <= SPANEL_HEIGHT) {
+	if (gui.sbookflag && Mouse.x > RIGHT_PANEL && Mouse.y <= SPANEL_HEIGHT) {
 		return;
 	}
 	if ((chrflag || questlog) && Mouse.x < SPANEL_WIDTH && Mouse.y <= SPANEL_HEIGHT) {
@@ -321,8 +321,8 @@ void CheckCursMove()
 		} else if (flipflaglogic < 0) {
 			flipflag = !flipflag;
 		}
-		if (flipflag && grid.isValid(pos) && tile.isMonster() && tile.dFlags & BFLAG_LIT) {
-			int mi = tile.getMonster();
+		if (flipflag && grid.isValid(pos) && tile.isActor() && tile.dFlags & BFLAG_LIT) {
+			int mi = tile.getActor();
 			if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
 				cursm = pos;
 				pcursmonst = mi;
@@ -375,8 +375,8 @@ void CheckCursMove()
 			} else if (flipflaglogic < 0) {
 				flipflag = !flipflag;
 			}
-			if (flipflag && grid.isValid(pos) && grid.at(pos).isMonster()) {
-				pcursmonst = grid.at(pos).getMonster();
+			if (flipflag && grid.isValid(pos) && grid.at(pos).isActor()) {
+				pcursmonst = grid.at(pos).getActor();
 				cursm = { m.x + 1, m.y };
 			}
 		};
@@ -495,7 +495,7 @@ void CheckCursMove()
 	if (pcurs == CURSOR_IDENTIFY) {
 		pcursobj = -1;
 		pcursmonst = -1;
-		pcursitem = -1;
+		pcursitem = 0;
 		cursm = m;
 	}
 	if (pcursmonst != -1 && monsters[pcursmonst].data._mFlags & MFLAG_GOLEM) {

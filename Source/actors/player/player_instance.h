@@ -37,6 +37,7 @@ public:
 	const int id() const;
 	operator int() const;
 	bool isMyPlr();
+	Item * heldItem() const;
 
 	// Position control (and grid synchronization)
 	bool PosOkPlayer(V2Di pos);
@@ -157,56 +158,54 @@ public:
 	void ShieldDur();            // reduces shield dur
 	void ArmorDur();             // reduces armor dur
 
+	// Misc
+	ItemStruct *PlrHasItem(int item, int *i);
+	void ValidatePlayer();
+
+	// Not yet fixed
+	void CreateRndUseful(V2Di pos, bool sendmsg);
+	void CheckIdentify(int cii);
+	void DoRepair(int cii);
+	void DoRecharge(int cii);
+
 	PlayerStruct data;
 	PlayerInventory inv;
+
+	// Misc data
+
+	static const char ArmourChar[4];
+	static const char WepChar[10];
+	static const char CharChar[];
+	static V2Di plroff[9];
+	static V2Di plroff2[9];
+	static int ExpLvlsTbl[MAXCHARLEVEL];
+	static uint8_t fix[9];
+
+	int plr_lframe_size;
+	int plr_wframe_size;
+	uint8_t plr_gfx_flag = 0;
+	int plr_aframe_size;
+	int plr_fframe_size;
+	int plr_qframe_size;
+	bool deathflag;
+	int plr_hframe_size;
+	int plr_bframe_size;
+	uint8_t plr_gfx_bflag = 0;
+	int plr_sframe_size;
+	int deathdelay;
+	int plr_dframe_size;
 private:
 	int pnum;
 };
 
-Player & myplr();
-
-bool PosOkPlayer(int pnum, V2Di pos);
-bool PlrDeathModeOK(int p);
-
-extern int plr_lframe_size;
-extern int plr_wframe_size;
-extern uint8_t plr_gfx_flag;
-extern int plr_aframe_size;
-extern int plr_fframe_size;
-extern int plr_qframe_size;
-extern bool deathflag;
-extern int plr_hframe_size;
-extern int plr_bframe_size;
-extern uint8_t plr_gfx_bflag;
-extern int plr_sframe_size;
-extern int deathdelay;
-extern int plr_dframe_size;
-
-void SetPlayerGPtrs(uint8_t *pData, uint8_t **pAnim);
-DWORD GetPlrGFXSize(char *szCel);
-void AddPlrMonstExper(int lvl, int exp, char pmask);
 void InitMultiView();
-void PlrClrTrans(V2Di pos);
-void PlrDoTrans(V2Di pos);
-void RespawnDeadItem(ItemID, V2Di pos);
-void ValidatePlayer();
-void ProcessPlayers();
 void CheckPlrSpell();
+bool PlrDeathModeOK(int p);
 void PlayDungMsgs();
 
-/* rdata */
 
-extern const char ArmourChar[4];
-extern const char WepChar[10];
-extern const char CharChar[];
 
-/* data */
-
-extern V2Di plroff[9];
-extern V2Di plroff2[9];
-
-extern int ExpLvlsTbl[MAXCHARLEVEL];
-extern uint8_t fix[9];
+Player & myplr();
 
 DEVILUTION_END_NAMESPACE
 

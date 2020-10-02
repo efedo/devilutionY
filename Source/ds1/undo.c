@@ -152,7 +152,7 @@ void undo_start_seg_in_tile_buffer(int ds1_idx, UBYTE x, UBYTE y)
    }
 
    // start new seg
-   u->in_seg = TRUE;
+   u->in_seg = true;
    u->seg_num++;
    
    // starting cell
@@ -198,7 +198,7 @@ void undo_close_seg_in_tile_buffer(int ds1_idx)
          ds1edit_error(tmp);
       }
 
-      // end the segment, write the TRUE cell number
+      // end the segment, write the true cell number
       old_ptr = ftell(u->fptr);
       fseek(u->fptr, u->cell_offset, SEEK_SET);
       fwrite(&u->cell_num, sizeof(u->cell_num), 1, u->fptr);

@@ -773,7 +773,7 @@ void ds1edit_load_palettes(void)
    
    for (i=0; i<ACT_MAX; i++)
    {
-      glb_ds1edit.pal_loaded[i] = TRUE;
+      glb_ds1edit.pal_loaded[i] = true;
       // first checking on disk
       if (misc_load_pal_from_disk(i) == false)
       {
@@ -789,7 +789,7 @@ void ds1edit_load_palettes(void)
                     palname,
                     (char **) & glb_ds1edit.d2_pal[i],
                     & glb_ds1edit.pal_size[i],
-                    TRUE
+                    true
                  );
          if (entry == -1)
          {
@@ -886,7 +886,7 @@ int main(int argc, char * argv[])
    }
    printf("os_version          = %i\n", os_version);
    printf("os_revision         = %i\n", os_revision);
-   printf("os_multitasking     = %s\n", os_multitasking ? "TRUE" : "false");
+   printf("os_multitasking     = %s\n", os_multitasking ? "true" : "false");
    printf("cpu_vendor          = %s\n", cpu_vendor);
    printf("cpu_family          = ");
    switch(cpu_family)
@@ -1151,7 +1151,7 @@ int main(int argc, char * argv[])
       ds1edit_error("main(), error.\nProblem in the command line.");
 
    // create debug directory if necessary
-   if (glb_ds1edit.cmd_line.debug_mode == TRUE)
+   if (glb_ds1edit.cmd_line.debug_mode == true)
       mkdir("Debug");
 
    // objects.txt
@@ -1192,7 +1192,7 @@ int main(int argc, char * argv[])
       // .ini
 
       // 2nd row of infos
-      glb_ds1edit.show_2nd_row = TRUE;
+      glb_ds1edit.show_2nd_row = true;
 
       // list of ds1 to open
       misc_open_several_ds1(argv[1]);
@@ -1242,7 +1242,7 @@ int main(int argc, char * argv[])
    fflush(stdout);
    fflush(stderr);
 
-   anim_update_gfx(TRUE); // TRUE is for "show dot progression"
+   anim_update_gfx(true); // true is for "show dot progression"
 
    printf("\n");
    fprintf(stderr, "\n");
@@ -1278,7 +1278,7 @@ int main(int argc, char * argv[])
    set_color_depth(glb_config.screen.depth);
 
    request_refresh_rate(glb_config.screen.refresh);
-   if (glb_config.fullscreen == TRUE)
+   if (glb_config.fullscreen == true)
    {
       if (set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, glb_config.screen.width,
              glb_config.screen.height, 0, 0) != 0)

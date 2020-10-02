@@ -69,7 +69,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield)
 	pki = &pPack->InvBody[0];
 	pi = &pPlayer->InvBody[0];
 
-	for (i = 0; i < NUM_INVLOC; i++) {
+	for (i = 0; i < MAXINVITEMS; i++) {
 		PackItem(pki, pi);
 		pki++;
 		pi++;
@@ -78,13 +78,13 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield)
 	pki = &pPack->InvList[0];
 	pi = &pPlayer->InvList[0];
 
-	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
+	for (i = 0; i < MAXINVITEMS; i++) {
 		PackItem(pki, pi);
 		pki++;
 		pi++;
 	}
 
-	for (i = 0; i < NUM_INV_GRID_ELEM; i++)
+	for (i = 0; i < MAXINVITEMS; i++)
 		pPack->InvGrid[i] = pPlayer->InvGrid[i];
 
 	pPack->_pNumInv = pPlayer->_pNumInv;
@@ -181,7 +181,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 	pPlayer->destAction = ACTION_NONE;
 	strcpy(pPlayer->_pName, pPack->pName);
 	pPlayer->_pClass = pPack->pClass;
-	plr[pnum].InitPlayer(TRUE);
+	plr[pnum].InitPlayer(true);
 	pPlayer->_pBaseStr = pPack->pBaseStr;
 	pPlayer->_pStrength = pPack->pBaseStr;
 	pPlayer->_pBaseMag = pPack->pBaseMag;
@@ -210,7 +210,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 	pki = &pPack->InvBody[0];
 	pi = &pPlayer->InvBody[0];
 
-	for (i = 0; i < NUM_INVLOC; i++) {
+	for (i = 0; i < MAXINVITEMS; i++) {
 		UnPackItem(pki, pi);
 		pki++;
 		pi++;
@@ -219,13 +219,13 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 	pki = &pPack->InvList[0];
 	pi = &pPlayer->InvList[0];
 
-	for (i = 0; i < NUM_INV_GRID_ELEM; i++) {
+	for (i = 0; i < MAXINVITEMS; i++) {
 		UnPackItem(pki, pi);
 		pki++;
 		pi++;
 	}
 
-	for (i = 0; i < NUM_INV_GRID_ELEM; i++)
+	for (i = 0; i < MAXINVITEMS; i++)
 		pPlayer->InvGrid[i] = pPack->InvGrid[i];
 
 	pPlayer->_pNumInv = pPack->_pNumInv;

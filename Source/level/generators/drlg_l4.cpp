@@ -377,16 +377,16 @@ static void DRLG_L4Shadows()
 		for (x = 1; x < DMAXY; x++) {
 			okflag = false;
 			if (dgrid[x][y].dungeon == 3) {
-				okflag = TRUE;
+				okflag = true;
 			}
 			if (dgrid[x][y].dungeon == 4) {
-				okflag = TRUE;
+				okflag = true;
 			}
 			if (dgrid[x][y].dungeon == 8) {
-				okflag = TRUE;
+				okflag = true;
 			}
 			if (dgrid[x][y].dungeon == 15) {
-				okflag = TRUE;
+				okflag = true;
 			}
 			if (!okflag) {
 				continue;
@@ -421,11 +421,11 @@ void DRLG_LoadL4SP()
 	setloadflag = false;
 	if (QuestStatus(Q_WARLORD)) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-		setloadflag = TRUE;
+		setloadflag = true;
 	}
 	if (lvl.currlevel == 15 && plr.isMultiplayer()) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
-		setloadflag = TRUE;
+		setloadflag = true;
 	}
 }
 
@@ -493,25 +493,25 @@ static int L4HWallOk(int i, int j)
 	wallok = false;
 
 	if (dgrid[i + x][j].dungeon == 10) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i + x][j].dungeon == 12) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i + x][j].dungeon == 13) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i + x][j].dungeon == 15) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i + x][j].dungeon == 16) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i + x][j].dungeon == 21) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i + x][j].dungeon == 22) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (x <= 3) {
 		wallok = false;
@@ -544,28 +544,28 @@ static int L4VWallOk(int i, int j)
 	wallok = false;
 
 	if (dgrid[i][j + y].dungeon == 8) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 9) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 11) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 14) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 15) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 16) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 21) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (dgrid[i][j + y].dungeon == 23) {
-		wallok = TRUE;
+		wallok = true;
 	}
 	if (y <= 3) {
 		wallok = false;
@@ -1214,7 +1214,7 @@ static void uShape()
 				// BUGFIX: check that i + 1 < 20 and j + 1 < 20 (fixed)
 				if (i + 1 < 20 && j + 1 < 20
 				    && dung[i][j + 1] == 1 && dung[i + 1][j + 1] == 0) {
-					hallok[j] = TRUE;
+					hallok[j] = true;
 				} else {
 					hallok[j] = false;
 				}
@@ -1252,7 +1252,7 @@ static void uShape()
 				// BUGFIX: check that i + 1 < 20 and j + 1 < 20 (fixed)
 				if (i + 1 < 20 && j + 1 < 20
 				    && dung[i + 1][j] == 1 && dung[i + 1][j + 1] == 0) {
-					hallok[i] = TRUE;
+					hallok[i] = true;
 				} else {
 					hallok[i] = false;
 				}
@@ -1330,7 +1330,7 @@ static bool L4checkRoom(int x, int y, int width, int height)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 static void L4roomGen(int x, int y, int w, int h, int dir)
@@ -1354,18 +1354,18 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 			num++;
 		} while (ran == false && num < 20);
 
-		if (ran == TRUE)
+		if (ran == true)
 			L4drawRoom(cx1, cy1, cw, ch);
 		cx2 = x + w;
 		ran2 = L4checkRoom(cx2, cy1 - 1, cw + 1, ch + 2);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L4drawRoom(cx2, cy1, cw, ch);
-		if (ran == TRUE)
+		if (ran == true)
 			L4roomGen(cx1, cy1, cw, ch, 1);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L4roomGen(cx2, cy1, cw, ch, 1);
 		break;
-	case TRUE:
+	case true:
 		num = 0;
 		do {
 			width = (random_(0, 5) + 2) & ~1;
@@ -1376,15 +1376,15 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 			num++;
 		} while (ran == false && num < 20);
 
-		if (ran == TRUE)
+		if (ran == true)
 			L4drawRoom(rx, ry, width, height);
 		ry2 = y + h;
 		ran2 = L4checkRoom(rx - 1, ry2, width + 2, height + 1);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L4drawRoom(rx, ry2, width, height);
-		if (ran == TRUE)
+		if (ran == true)
 			L4roomGen(rx, ry, width, height, 0);
-		if (ran2 == TRUE)
+		if (ran2 == true)
 			L4roomGen(rx, ry2, width, height, 0);
 		break;
 	}
@@ -1549,7 +1549,7 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 		sy = random_(0, DMAXY - sh);
 		found = false;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
-			found = TRUE;
+			found = true;
 			if (sx >= SP4x1 && sx <= SP4x2 && sy >= SP4y1 && sy <= SP4y2) {
 				found = false;
 			}
@@ -1564,8 +1564,8 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 				found = false;
 			}
 			ii = 2;
-			for (yy = 0; yy < sh && found == TRUE; yy++) {
-				for (xx = 0; xx < sw && found == TRUE; xx++) {
+			for (yy = 0; yy < sh && found == true; yy++) {
+				for (xx = 0; xx < sw && found == true; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = false;
 					}
@@ -1605,7 +1605,7 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 		quests[Q_BETRAYER]._qt.x = sx + 1;
 		quests[Q_BETRAYER]._qt.y = sy + 1;
 	}
-	if (setview == TRUE) {
+	if (setview == true) {
 		View.x = 2 * sx + 21;
 		View.y = 2 * sy + 22;
 	}
@@ -1614,7 +1614,7 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 		LvlView.y = 2 * sy + 22;
 	}
 
-	return TRUE;
+	return true;
 }
 
 static void DRLG_L4FTVR(int i, int j, int x, int y, int d)
@@ -1685,13 +1685,13 @@ static void DRLG_L4FloodTVal()
 bool IsDURWall(char d)
 {
 	if (d == 25) {
-		return TRUE;
+		return true;
 	}
 	if (d == 28) {
-		return TRUE;
+		return true;
 	}
 	if (d == 23) {
-		return TRUE;
+		return true;
 	}
 
 	return false;
@@ -1700,13 +1700,13 @@ bool IsDURWall(char d)
 bool IsDLLWall(char dd)
 {
 	if (dd == 27) {
-		return TRUE;
+		return true;
 	}
 	if (dd == 26) {
-		return TRUE;
+		return true;
 	}
 	if (dd == 22) {
-		return TRUE;
+		return true;
 	}
 
 	return false;
@@ -1833,7 +1833,7 @@ static void DRLG_L4(int entry)
 			DRLG_L4SetSPRoom(SP4x1, SP4y1);
 		}
 		if (lvl.currlevel == 16) {
-			DRLG_LoadDiabQuads(TRUE);
+			DRLG_LoadDiabQuads(true);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			if (entry == 0) {

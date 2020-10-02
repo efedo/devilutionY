@@ -96,7 +96,7 @@ bool TFit_Shrine(int i)
 	themex = xp;
 	themey = yp;
 	themeVar1 = found;
-	return TRUE;
+	return true;
 }
 
 bool TFit_Obj5(int t)
@@ -112,7 +112,7 @@ bool TFit_Obj5(int t)
 	while (r > 0) {
 		found = false;
 		if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
-			found = TRUE;
+			found = true;
 			for (i = 0; found && i < 25; i++) {
 				if (grid[xp + trm5x[i]][yp + trm5y[i]].isSolid()) {
 					found = false;
@@ -144,7 +144,7 @@ bool TFit_Obj5(int t)
 	themex = xp;
 	themey = yp;
 
-	return TRUE;
+	return true;
 }
 
 bool TFit_SkelRoom(int t)
@@ -194,7 +194,7 @@ bool CheckThemeObj3(int xp, int yp, int t, int f)
 		if (f != -1 && !random_(0, f))
 			return false;
 	}
-	return TRUE;
+	return true;
 }
 
 bool TFit_Obj3(int t)
@@ -205,7 +205,7 @@ bool TFit_Obj3(int t)
 			if (CheckThemeObj3(xp, yp, t, objrnd[int(lvl.type()) - 1])) {
 				themex = xp;
 				themey = yp;
-				return TRUE;
+				return true;
 			}
 		}
 	}
@@ -214,7 +214,7 @@ bool TFit_Obj3(int t)
 
 bool CheckThemeReqs(int t)
 {
-	bool rv = TRUE;
+	bool rv = true;
 	switch (t) {
 	case THEME_SHRINE:
 	case THEME_SKELROOM:
@@ -379,7 +379,7 @@ bool CheckThemeRoom(int tv)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void InitThemes()
@@ -388,15 +388,15 @@ void InitThemes()
 
 	zharlib = -1;
 	numthemes = 0;
-	armorFlag = TRUE;
-	bFountainFlag = TRUE;
-	cauldronFlag = TRUE;
-	mFountainFlag = TRUE;
-	pFountainFlag = TRUE;
-	tFountainFlag = TRUE;
-	treasureFlag = TRUE;
+	armorFlag = true;
+	bFountainFlag = true;
+	cauldronFlag = true;
+	mFountainFlag = true;
+	pFountainFlag = true;
+	tFountainFlag = true;
+	treasureFlag = true;
 	bCrossFlag = false;
-	weaponFlag = TRUE;
+	weaponFlag = true;
 
 	if (lvl.currlevel == 16)
 		return;
@@ -496,7 +496,7 @@ void PlaceThemeMonsts(int t, int f)
 		for (p.x = 0; p.x < MAXDUNX; p.x++) {
 			if (grid.at(p).dTransVal == themes[t].ttval && !grid.at(p).isSolid() && !grid.at(p).isItem() && !grid.at(p).isObject()) {
 				if (random_(0, f) == 0) {
-					AddMonster(p , Dir(random_(0, 8)), mtype, TRUE);
+					AddMonster(p , Dir(random_(0, 8)), mtype, true);
 				}
 			}
 		}
@@ -568,7 +568,7 @@ void Theme_MonstPit(int t)
 	ixp = 0;
 	iyp = 0;
 	if (r > 0) {
-		while (TRUE) {
+		while (true) {
 			if (grid[ixp][iyp].dTransVal == themes[t].ttval && !grid[ixp][iyp].isSolid()) {
 				--r;
 			}
@@ -585,7 +585,7 @@ void Theme_MonstPit(int t)
 			}
 		}
 	}
-	CreateRndItem({ ixp, iyp }, TRUE, false, TRUE);
+	CreateRndItem({ ixp, iyp }, true, false, true);
 	ItemNoFlippy();
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
@@ -679,11 +679,11 @@ void Theme_Treasure(int t)
 				int rv = random_(0, treasrnd[int(lvl.type()) - 1]);
 				// BUGFIX: the `2*` in `2*random_(0, treasrnd...) == 0` has no effect, should probably be `random_(0, 2*treasrnd...) == 0`
 				if ((2 * random_(0, treasrnd[int(lvl.type()) - 1])) == 0) {
-					CreateTypeItem({ xp, yp }, false, ITYPE_GOLD, IMISC_NONE, false, TRUE);
+					CreateTypeItem({ xp, yp }, false, ITYPE_GOLD, IMISC_NONE, false, true);
 					ItemNoFlippy();
 				}
 				if (rv == 0) {
-					CreateRndItem({ xp, yp }, false, false, TRUE);
+					CreateRndItem({ xp, yp }, false, false, true);
 					ItemNoFlippy();
 				}
 				if (rv == 0 || rv >= treasrnd[int(lvl.type()) - 1] - 2) {
@@ -723,7 +723,7 @@ void Theme_Library(int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (CheckThemeObj3(xp, yp, t, -1) && grid[xp][yp].getMonster() == 0 && random_(0, librnd[int(lvl.type()) - 1]) == 0) {
+			if (CheckThemeObj3(xp, yp, t, -1) && grid[xp][yp].getActor() == 0 && random_(0, librnd[int(lvl.type()) - 1]) == 0) {
 				AddObject(OBJ_BOOKSTAND, xp, yp);
 				if (random_(0, 2 * librnd[int(lvl.type()) - 1]) != 0 && grid[xp][yp].isObject()) { /// BUGFIX: check grid[xp][yp].dObject was populated by AddObject (fixed)
 					oi = grid[xp][yp].getObject();
@@ -865,7 +865,7 @@ void Theme_GoatShrine(int t)
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
 			if (grid[xx][yy].dTransVal == themes[t].ttval && !grid[xx][yy].isSolid() && (xx != themex || yy != themey)) {
-				AddMonster({ xx, yy }, Dir::SW, themeVar1, TRUE);
+				AddMonster({ xx, yy }, Dir::SW, themeVar1, true);
 			}
 		}
 	}
@@ -936,7 +936,7 @@ void Theme_BrnCross(int t)
 		}
 	}
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
-	bCrossFlag = TRUE;
+	bCrossFlag = true;
 }
 
 /**
@@ -995,7 +995,7 @@ void CreateThemeRooms()
 	if (lvl.currlevel == 16) {
 		return;
 	}
-	InitObjFlag = TRUE;
+	InitObjFlag = true;
 	for (i = 0; i < numthemes; i++) {
 		themex = 0;
 		themey = 0;

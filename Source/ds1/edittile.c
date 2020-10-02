@@ -209,13 +209,13 @@ void edittile_paste_preview(int ds1_idx, int dx, int dy, PASTE_POS_S * p)
 
 
    // if tiles are 'cut' instead of 'copy', then delete the source tiles
-   if (p->is_cut == TRUE)
+   if (p->is_cut == true)
    {
       if (p->cut_saved == false)
       {
          // with UNDO
          edittile_delete_selected_tiles(p->src_ds1_idx);
-         p->cut_saved = TRUE;
+         p->cut_saved = true;
       }
       else
       {
@@ -402,7 +402,7 @@ void edittile_paste_final(int ds1_idx)
                u->dat_flg.f[i] |= DF_FL;
                   
             if (u->dat_flg.f[i])
-               make_undo = TRUE;
+               make_undo = true;
          }
          for (i=0; i<glb_ds1[ds1_idx].shadow_num; i++)
          {
@@ -432,7 +432,7 @@ void edittile_paste_final(int ds1_idx)
                u->dat_flg.s[i] |= DF_FL;
                   
             if (u->dat_flg.s[i])
-               make_undo = TRUE;
+               make_undo = true;
          }
          for (i=0; i<glb_ds1[ds1_idx].wall_num; i++)
          {
@@ -465,7 +465,7 @@ void edittile_paste_final(int ds1_idx)
                u->dat_flg.w[i] |= DF_FL;
                   
             if (u->dat_flg.w[i])
-               make_undo = TRUE;
+               make_undo = true;
          }
          if (make_undo)
             undo_add_this_tile_to_buffer(ds1_idx, x, y, f2, w2, s2);
@@ -533,7 +533,7 @@ void edittile_delete_selected_tiles(int ds1_idx)
                   u->dat_flg.f[i] |= DF_FL;
                   
                if (u->dat_flg.f[i])
-                  make_undo = TRUE;
+                  make_undo = true;
             }
          }
          for (i=0; i<glb_ds1[ds1_idx].shadow_num; i++)
@@ -559,7 +559,7 @@ void edittile_delete_selected_tiles(int ds1_idx)
                   u->dat_flg.s[i] |= DF_FL;
                   
                if (u->dat_flg.s[i])
-                  make_undo = TRUE;
+                  make_undo = true;
             }
          }
          for (i=0; i<glb_ds1[ds1_idx].wall_num; i++)
@@ -588,7 +588,7 @@ void edittile_delete_selected_tiles(int ds1_idx)
                   u->dat_flg.w[i] |= DF_FL;
                   
                if (u->dat_flg.w[i])
-                  make_undo = TRUE;
+                  make_undo = true;
             }
          }
          if (make_undo)
@@ -746,7 +746,7 @@ void edittile_deselect_one(int ds1_idx, int x, int y)
          if (IS_SELECTED(f_ptr[n].flags))
          {
             u->dat_flg.f[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -757,7 +757,7 @@ void edittile_deselect_one(int ds1_idx, int x, int y)
          if (IS_SELECTED(s_ptr[n].flags))
          {
             u->dat_flg.s[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -768,7 +768,7 @@ void edittile_deselect_one(int ds1_idx, int x, int y)
          if (IS_SELECTED(w_ptr[n].flags))
          {
             u->dat_flg.w[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -816,7 +816,7 @@ void edittile_deselect_one_completly(int ds1_idx, int x, int y)
       if (IS_SELECTED(f_ptr[n].flags))
       {
          u->dat_flg.f[n] |= DF_FL;
-         make_undo = TRUE;
+         make_undo = true;
       }
    }
    for (n=0; n<glb_ds1[ds1_idx].shadow_num; n++)
@@ -824,7 +824,7 @@ void edittile_deselect_one_completly(int ds1_idx, int x, int y)
       if (IS_SELECTED(s_ptr[n].flags))
       {
          u->dat_flg.s[n] |= DF_FL;
-         make_undo = TRUE;
+         make_undo = true;
       }
    }
    for (n=0; n<glb_ds1[ds1_idx].wall_num; n++)
@@ -832,7 +832,7 @@ void edittile_deselect_one_completly(int ds1_idx, int x, int y)
       if (IS_SELECTED(w_ptr[n].flags))
       {
          u->dat_flg.w[n] |= DF_FL;
-         make_undo = TRUE;
+         make_undo = true;
       }
    }
    if (make_undo)
@@ -878,7 +878,7 @@ void edittile_select_one(int ds1_idx, int x, int y)
          if ( ! IS_SELECTED(f_ptr[n].flags))
          {
             u->dat_flg.f[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -889,7 +889,7 @@ void edittile_select_one(int ds1_idx, int x, int y)
          if ( ! IS_SELECTED(s_ptr[n].flags))
          {
             u->dat_flg.s[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -900,7 +900,7 @@ void edittile_select_one(int ds1_idx, int x, int y)
          if ( ! IS_SELECTED(w_ptr[n].flags))
          {
             u->dat_flg.w[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -952,7 +952,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
          {
             // save the non-selected state of this cell layer
             u->dat_flg.f[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
       else
@@ -962,7 +962,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
          {
             // save the selected state of this cell layer
             u->dat_flg.f[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -973,7 +973,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
          if ( ! IS_SELECTED(s_ptr[n].flags))
          {
             u->dat_flg.s[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
       else
@@ -981,7 +981,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
          if ( IS_SELECTED(s_ptr[n].flags))
          {
             u->dat_flg.s[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -992,7 +992,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
          if ( ! IS_SELECTED(w_ptr[n].flags))
          {
             u->dat_flg.w[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
       else
@@ -1000,7 +1000,7 @@ void edittile_select_new_one(int ds1_idx, int x, int y)
          if ( IS_SELECTED(w_ptr[n].flags))
          {
             u->dat_flg.w[n] |= DF_FL;
-            make_undo = TRUE;
+            make_undo = true;
          }
       }
    }
@@ -1128,7 +1128,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   if (fl_ref[n] == f_ptr->bt_idx)
                   {
                      // same
-                     is_same = TRUE;
+                     is_same = true;
 
                      if ((itype == IT_NEW) || (itype == IT_ADD))
                      {
@@ -1143,7 +1143,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                         {
                            // flag it for the undo
                            u->dat_flg.f[i] |= DF_FL;
-                           make_undo = TRUE;
+                           make_undo = true;
 
                            // select it
                            SET_SELECTED(f_ptr->flags);
@@ -1162,7 +1162,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                         {
                            // flag it for the undo
                            u->dat_flg.f[i] |= DF_FL;
-                           make_undo = TRUE;
+                           make_undo = true;
 
                            // DEselect it
                            DEL_SELECTED(f_ptr->flags);
@@ -1188,7 +1188,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   {
                      // flag it for the undo
                      u->dat_flg.f[i] |= DF_FL;
-                     make_undo = TRUE;
+                     make_undo = true;
 
                      // DEselect it
                      DEL_SELECTED(f_ptr->flags);
@@ -1213,7 +1213,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   if (sh_ref[n] == s_ptr->bt_idx)
                   {
                      // same
-                     is_same = TRUE;
+                     is_same = true;
 
                      if ((itype == IT_NEW) || (itype == IT_ADD))
                      {
@@ -1228,7 +1228,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                         {
                            // flag it for the undo
                            u->dat_flg.s[i] |= DF_FL;
-                           make_undo = TRUE;
+                           make_undo = true;
 
                            // select it
                            SET_SELECTED(s_ptr->flags);
@@ -1247,7 +1247,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                         {
                            // flag it for the undo
                            u->dat_flg.s[i] |= DF_FL;
-                           make_undo = TRUE;
+                           make_undo = true;
 
                            // DEselect it
                            DEL_SELECTED(s_ptr->flags);
@@ -1273,7 +1273,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   {
                      // flag it for the undo
                      u->dat_flg.s[i] |= DF_FL;
-                     make_undo = TRUE;
+                     make_undo = true;
 
                      // DEselect it
                      DEL_SELECTED(s_ptr->flags);
@@ -1298,7 +1298,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   if (wa_ref[n] == w_ptr->bt_idx)
                   {
                      // same
-                     is_same = TRUE;
+                     is_same = true;
 
                      if ((itype == IT_NEW) || (itype == IT_ADD))
                      {
@@ -1313,7 +1313,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                         {
                            // flag it for the undo
                            u->dat_flg.w[i] |= DF_FL;
-                           make_undo = TRUE;
+                           make_undo = true;
 
                            // select it
                            SET_SELECTED(w_ptr->flags);
@@ -1332,7 +1332,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                         {
                            // flag it for the undo
                            u->dat_flg.w[i] |= DF_FL;
-                           make_undo = TRUE;
+                           make_undo = true;
 
                            // DEselect it
                            DEL_SELECTED(w_ptr->flags);
@@ -1358,7 +1358,7 @@ void edittile_identical(int ds1_idx, IT_ENUM itype, int tx, int ty)
                   {
                      // flag it for the undo
                      u->dat_flg.w[i] |= DF_FL;
-                     make_undo = TRUE;
+                     make_undo = true;
 
                      // DEselect it
                      DEL_SELECTED(w_ptr->flags);

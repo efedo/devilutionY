@@ -119,7 +119,7 @@ void gmenu_set_items(TMenuItem *pItem, void (*gmFunc)(TMenuItem *))
 	}
 	// BUGFIX: OOB access when sgCurrentMenuIdx is 0; should be set to NULL instead. (fixed)
 	sgpCurrItem = sgCurrentMenuIdx > 0 ? &sgpCurrentMenu[sgCurrentMenuIdx - 1] : NULL;
-	gmenu_up_down(TRUE);
+	gmenu_up_down(true);
 }
 
 void gmenu_up_down(bool isDown)
@@ -243,7 +243,7 @@ bool gmenu_presskeys(int vkey)
 	case DVL_VK_RETURN:
 		if ((sgpCurrItem->dwFlags & GMENU_ENABLED) != 0) {
 			PlaySFX(IS_TITLEMOV);
-			sgpCurrItem->fnMenu(TRUE);
+			sgpCurrItem->fnMenu(true);
 		}
 		break;
 	case DVL_VK_ESCAPE:
@@ -256,16 +256,16 @@ bool gmenu_presskeys(int vkey)
 		gmenu_left_right(false);
 		break;
 	case DVL_VK_RIGHT:
-		gmenu_left_right(TRUE);
+		gmenu_left_right(true);
 		break;
 	case DVL_VK_UP:
 		gmenu_up_down(false);
 		break;
 	case DVL_VK_DOWN:
-		gmenu_up_down(TRUE);
+		gmenu_up_down(true);
 		break;
 	}
-	return TRUE;
+	return true;
 }
 
 void gmenu_left_right(bool isRight)
@@ -303,7 +303,7 @@ bool gmenu_on_mouse_move()
 	sgpCurrItem->dwFlags &= 0xFFFFF000;
 	sgpCurrItem->dwFlags |= step;
 	sgpCurrItem->fnMenu(false);
-	return TRUE;
+	return true;
 }
 
 bool gmenu_get_mouse_slider(int *plOffset)
@@ -318,7 +318,7 @@ bool gmenu_get_mouse_slider(int *plOffset)
 		return false;
 	}
 	*plOffset = Mouse.x - 282 - PANEL_LEFT;
-	return TRUE;
+	return true;
 }
 
 bool gmenu_left_mouse(bool isDown)
@@ -330,7 +330,7 @@ bool gmenu_left_mouse(bool isDown)
 	if (!isDown) {
 		if (mouseNavigation) {
 			mouseNavigation = false;
-			return TRUE;
+			return true;
 		} else {
 			return false;
 		}
@@ -343,22 +343,22 @@ bool gmenu_left_mouse(bool isDown)
 		return false;
 	}
 	if (Mouse.y - 117 < 0) {
-		return TRUE;
+		return true;
 	}
 	i = (Mouse.y - 117) / 45;
 	if (i >= sgCurrentMenuIdx) {
-		return TRUE;
+		return true;
 	}
 	pItem = &sgpCurrentMenu[i];
 	if (!(sgpCurrentMenu[i].dwFlags & GMENU_ENABLED)) {
-		return TRUE;
+		return true;
 	}
 	w = gmenu_get_lfont(pItem);
 	if (Mouse.x < SCREEN_WIDTH / 2 - w / 2) {
-		return TRUE;
+		return true;
 	}
 	if (Mouse.x > SCREEN_WIDTH / 2 + w / 2) {
-		return TRUE;
+		return true;
 	}
 	sgpCurrItem = pItem;
 	PlaySFX(IS_TITLEMOV);
@@ -366,9 +366,9 @@ bool gmenu_left_mouse(bool isDown)
 		mouseNavigation = gmenu_get_mouse_slider(&dummy);
 		gmenu_on_mouse_move();
 	} else {
-		sgpCurrItem->fnMenu(TRUE);
+		sgpCurrItem->fnMenu(true);
 	}
-	return TRUE;
+	return true;
 }
 
 void gmenu_enable(TMenuItem *pMenuItem, bool enable)

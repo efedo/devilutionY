@@ -75,14 +75,14 @@ void ShowProgress(unsigned int uMsg)
 	WNDPROC saveProc;
 
 	gbSomebodyWonGameKludge = false;
-	plrmsg_delay(TRUE);
+	plrmsg_delay(true);
 
 	assert(ghMainWnd);
 	saveProc = SetWindowProc(DisableInputWndProc);
 
 	interface_msg_pump();
 	ClearScreenBuffer();
-	scrollrt_draw_game_screen(TRUE);
+	scrollrt_draw_game_screen(true);
 	InitCutscene(uMsg);
 	BlackPalette();
 	DrawCutscene();
@@ -95,7 +95,7 @@ void ShowProgress(unsigned int uMsg)
 	case WM_DIABLOADGAME:
 		IncProgress();
 		IncProgress();
-		LoadGame(TRUE);
+		LoadGame(true);
 		IncProgress();
 		IncProgress();
 		break;
@@ -105,7 +105,7 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		pfile_remove_temp_files();
 		IncProgress();
-		LoadGameLevel(TRUE, 0);
+		LoadGameLevel(true, 0);
 		IncProgress();
 		break;
 	case WM_DIABNEXTLVL:
@@ -149,7 +149,7 @@ void ShowProgress(unsigned int uMsg)
 			DeltaSaveLevel();
 		}
 		IncProgress();
-		lvl.setlevel = TRUE;
+		lvl.setlevel = true;
 		lvl.setType(lvl.setlvltype);
 		FreeGameMem();
 		IncProgress();
@@ -243,7 +243,7 @@ void ShowProgress(unsigned int uMsg)
 	saveProc = SetWindowProc(saveProc);
 	assert(saveProc == DisableInputWndProc);
 
-	NetSendCmdLocParam1(TRUE, CMD_PLAYER_JOINLEVEL, myplr().pos(), myplr().data.plrlevel);
+	NetSendCmdLocParam1(true, CMD_PLAYER_JOINLEVEL, myplr().pos(), myplr().data.plrlevel);
 	plrmsg_delay(false);
 	ResetPal();
 

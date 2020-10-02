@@ -193,6 +193,7 @@ add_library(devilution STATIC
   Source/actors/player/character.cpp
   Source/actors/player/inv.cpp
   Source/actors/player/inv_draw.cpp
+  Source/actors/player/inv_slotaccess.cpp
   Source/actors/player/player_instance.cpp
   Source/actors/player/player_items.cpp
   Source/actors/player/player_manager.cpp
@@ -203,15 +204,23 @@ add_library(devilution STATIC
   Source/graphics/codec.cpp
   Source/graphics/effects.cpp
   Source/graphics/lighting.cpp
-  Source/graphics/minitext.cpp
+  "Source/gui/minitext.cpp"
   Source/graphics/palette.cpp
   Source/graphics/render.cpp
   Source/graphics/scrollrt.cpp
+  Source/gui/dialog.cpp
   Source/gui/gamemenu.cpp
   Source/gui/gmenu.cpp
+  Source/gui/gui.cpp
   Source/gui/help.cpp
   Source/gui/interfac.cpp
   Source/gui/mainmenu.cpp
+  "Source/items/stores/store_base_interface.cpp"
+  Source/items/stores/store_boy.cpp
+  Source/items/stores/store_healer.cpp
+  Source/items/stores/store_misc.cpp
+  Source/items/stores/store_smith.cpp
+  Source/items/stores/store_witch.cpp
   Source/items/itemdat.cpp
   Source/items/item_id.cpp
   Source/items/item_instance.cpp

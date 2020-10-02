@@ -471,7 +471,7 @@ bool mpqapi_write_file(const char *pszName, const uint8_t *pbData, DWORD dwLen)
 		mpqapi_remove_hash_entry(pszName);
 		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 _BLOCKENTRY *mpqapi_add_file(const char *pszName, _BLOCKENTRY *pBlk, int block_index)
@@ -583,7 +583,7 @@ bool mpqapi_write_file_contents(const char *pszName, const uint8_t *pbData, DWOR
 			mpqapi_alloc_block(pBlk->sizealloc + pBlk->offset, block_size);
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 int mpqapi_find_free_block(uint32_t size, uint32_t *block_size)
@@ -687,7 +687,7 @@ bool OpenMPQ(const char *pszArchive, DWORD dwChar)
 			cur_archive.WriteHeaderAndTables();
 #endif
 	}
-	return TRUE;
+	return true;
 on_error:
 	cur_archive.Close(/*clear_tables=*/true);
 	return false;

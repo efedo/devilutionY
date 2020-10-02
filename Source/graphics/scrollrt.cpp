@@ -138,7 +138,7 @@ static void scrollrt_draw_cursor_item()
 		return;
 	}
 
-	if (sgbControllerActive && pcurs != CURSOR_TELEPORT && !invflag && (!chrflag || myplr().data._pStatPts <= 0)) {
+	if (sgbControllerActive && pcurs != CURSOR_TELEPORT && !gui.invflag && (!chrflag || myplr().data._pStatPts <= 0)) {
 		return;
 	}
 
@@ -188,10 +188,10 @@ static void scrollrt_draw_cursor_item()
 
 	if (pcurs >= CURSOR_FIRSTITEM) {
 		col = PAL16_YELLOW + 5;
-		if (myplr().data.HoldItem._iMagical != 0) {
+		if (!myplr().heldItem() || myplr().heldItem()->_iMagical != 0) {
 			col = PAL16_BLUE + 5;
 		}
-		if (!myplr().data.HoldItem._iStatFlag) {
+		if (myplr().heldItem() && !myplr().heldItem()->_iStatFlag) {
 			col = PAL16_RED + 5;
 		}
 		CelBlitOutline(col, { mx + SCREEN_X, my + cursH + SCREEN_Y - 1 }, pCursCels, pcurs, cursW);
@@ -576,16 +576,16 @@ static void drawFloor(int x, int y, int sx, int sy)
 static void DrawItem(int x, int y, int sx, int sy, bool pre)
 {
 	if (!grid[x][y].isItem()) return;
-	char bItem = grid[x][y].getItem();
-	ItemStruct *pItem = &item[bItem];
-	if (pItem->_iPostDraw == pre) return;
-
-	assert((unsigned char)bItem <= MAXITEMS);
-	int px = sx - pItem->_iAnimWidth2;
-	if (bItem - 1 == pcursitem) {
-		CelBlitOutline(181, { px, sy }, pItem->_iAnimData, pItem->_iAnimFrame, pItem->_iAnimWidth);
+	Item * item = grid[x][y].getItem();
+	if (!item) return;
+	if (item->_iPostDraw == pre) return;
+	int px = sx - item->_iAnimWidth2;
+	if (item == pcursitem) {
+		CelBlitOutline(181, {px, sy}, item->_iAnimData, item->_iAnimFrame,
+		               item->_iAnimWidth);
 	}
-	CelClippedDrawLight({ px, sy }, pItem->_iAnimData, pItem->_iAnimFrame, pItem->_iAnimWidth);
+	CelClippedDrawLight({px, sy}, item->_iAnimData, item->_iAnimFrame,
+	                    item->_iAnimWidth);
 }
 
 /**
@@ -601,7 +601,7 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 	int px, py;
 	MonsterStruct *pMonster;
 
-	int mi = grid[x][y + oy].getMonster();
+	int mi = grid[x][y + oy].getActor();
 
 	//if (mi == 3) {
 	//	static int x_last;
@@ -695,14 +695,14 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	char bMap = grid[sx][sy].dTransVal;
 
 	bool negMon = false;
-	if (sy > 0) negMon = grid[sx][sy - 1].isMonster();
+	if (sy > 0) negMon = grid[sx][sy - 1].isActor();
 
 	if (visiondebug && bFlag & BFLAG_LIT) {
 		CelClippedDraw({ dx, dy }, pSquareCel, 1, 64);
 	}
 
 	if (MissilePreFlag) {
-		DrawMissile({ sx, sy }, { dx, dy }, TRUE);
+		DrawMissile({ sx, sy }, { dx, dy }, true);
 	}
 
 	int px, py;
@@ -735,7 +735,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	if (grid[sx][sy].isPlayerDraw()) {
 		DrawPlayerHelper(sx, sy, 0, dx, dy);
 	}
-	if (grid[sx][sy].isMonster()) {
+	if (grid[sx][sy].isActor()) {
 		DrawMonsterHelper(sx, sy, 0, dx, dy);
 	}
 	DrawMissile({ sx, sy }, { dx, dy }, false);
@@ -886,7 +886,7 @@ static void Zoom()
 		if (chrflag || questlog) {
 			wdt >>= 1;
 			nSrcOff -= wdt;
-		} else if (invflag || sbookflag) {
+		} else if (gui.invflag || sbookflag) {
 			wdt >>= 1;
 			nSrcOff -= wdt;
 			nDstOff -= SPANEL_WIDTH;
@@ -1031,7 +1031,7 @@ static void DrawGame(int x, int y)
 				columns -= 4;
 				sx += SPANEL_WIDTH - TILE_WIDTH / 2;
 			}
-			if (invflag || sbookflag) {
+			if (gui.invflag || sbookflag) {
 				ShiftGrid(&x, &y, 2, 0);
 				columns -= 4;
 				sx += -TILE_WIDTH / 2;
@@ -1209,64 +1209,64 @@ void ScrollView()
 		if (lvl.dmax.y - 1 <= View.y || lvl.dmin.x >= View.x) {
 			if (lvl.dmax.y - 1 > View.y) {
 				View.y++;
-				scroll = TRUE;
+				scroll = true;
 			}
 			if (lvl.dmin.x < View.x) {
 				View.x--;
-				scroll = TRUE;
+				scroll = true;
 			}
 		} else {
 			View.y++;
 			View.x--;
-			scroll = TRUE;
+			scroll = true;
 		}
 	}
 	if (Mouse.x > SCREEN_WIDTH - 20) {
 		if (lvl.dmax.x - 1 <= View.x || lvl.dmin.y >= View.y) {
 			if (lvl.dmax.x - 1 > View.x) {
 				View.x++;
-				scroll = TRUE;
+				scroll = true;
 			}
 			if (lvl.dmin.y < View.y) {
 				View.y--;
-				scroll = TRUE;
+				scroll = true;
 			}
 		} else {
 			View.y--;
 			View.x++;
-			scroll = TRUE;
+			scroll = true;
 		}
 	}
 	if (Mouse.y < 20) {
 		if (lvl.dmin.y >= View.y || lvl.dmin.x >= View.x) {
 			if (lvl.dmin.y < View.y) {
 				View.y--;
-				scroll = TRUE;
+				scroll = true;
 			}
 			if (lvl.dmin.x < View.x) {
 				View.x--;
-				scroll = TRUE;
+				scroll = true;
 			}
 		} else {
 			View.x--;
 			View.y--;
-			scroll = TRUE;
+			scroll = true;
 		}
 	}
 	if (Mouse.y > SCREEN_HEIGHT - 20) {
 		if (lvl.dmax.y - 1 <= View.y || lvl.dmax.x - 1 <= View.x) {
 			if (lvl.dmax.y - 1 > View.y) {
 				View.y++;
-				scroll = TRUE;
+				scroll = true;
 			}
 			if (lvl.dmax.x - 1 > View.x) {
 				View.x++;
-				scroll = TRUE;
+				scroll = true;
 			}
 		} else {
 			View.x++;
 			View.y++;
-			scroll = TRUE;
+			scroll = true;
 		}
 	}
 	if (scroll) ScrollInfo._sdir = ScrollDir::NONE;
@@ -1431,15 +1431,15 @@ void DrawAndBlit()
 	}
 
 	if (SCREEN_WIDTH > PANEL_WIDTH || SCREEN_HEIGHT > VIEWPORT_HEIGHT + PANEL_HEIGHT || force_redraw == 255) {
-		drawhpflag = TRUE;
-		drawmanaflag = TRUE;
-		drawbtnflag = TRUE;
-		drawsbarflag = TRUE;
+		drawhpflag = true;
+		drawmanaflag = true;
+		drawbtnflag = true;
+		drawsbarflag = true;
 		ddsdesc = false;
-		ctrlPan = TRUE;
+		ctrlPan = true;
 		hgt = SCREEN_HEIGHT;
 	} else {
-		ddsdesc = TRUE;
+		ddsdesc = true;
 		ctrlPan = false;
 		hgt = VIEWPORT_HEIGHT;
 	}

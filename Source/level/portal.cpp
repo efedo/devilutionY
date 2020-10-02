@@ -75,7 +75,7 @@ void AddInTownPortal(int i)
 
 void ActivatePortal(int i, V2Di p, int lvl, DunType lvltype, bool sp)
 {
-	portal[i].open = TRUE;
+	portal[i].open = true;
 
 	if (lvl != 0) {
 		portal[i].pos = p;
@@ -93,7 +93,7 @@ void DeactivatePortal(int i)
 bool PortalOnLevel(int i)
 {
 	if (portal[i].level == lvl.currlevel)
-		return TRUE;
+		return true;
 	else
 		return lvl.currlevel == 0;
 }
@@ -128,7 +128,7 @@ void GetPortalLevel()
 		lvl.setType(DunType::town);
 	} else {
 		if (portal[portalindex].setlvl) {
-			lvl.setlevel = TRUE;
+			lvl.setlevel = true;
 			lvl.setlvlnum = SetLvl(portal[portalindex].level);
 			lvl.currlevel = portal[portalindex].level;
 			myplr().data.plrlevel = int(lvl.setlvlnum);
@@ -140,7 +140,7 @@ void GetPortalLevel()
 			lvl.setType(portal[portalindex].ltype);
 		}
 		if (portalindex == myplr()) {
-			NetSendCmd(TRUE, CMD_DEACTIVATEPORTAL);
+			NetSendCmd(true, CMD_DEACTIVATEPORTAL);
 			DeactivatePortal(portalindex);
 		}
 	}
@@ -168,7 +168,7 @@ bool PosOkPortal(int lvl, V2Di p)
 	for (i = 0; i < MAXPORTAL; i++) {
 		if (portal[i].open && portal[i].level == lvl && ((portal[i].pos.x == p.x && portal[i].pos.y == p.y) ||
 			(portal[i].pos.x == p.x - 1 && portal[i].pos.y == p.y - 1)))
-			return TRUE;
+			return true;
 	}
 	return false;
 }

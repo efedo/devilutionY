@@ -18,8 +18,8 @@ void play_movie(char *pszMovie, bool user_can_close)
 {
 	HANDLE video_stream;
 
-	movie_playing = TRUE;
-	sound_disable_music(TRUE);
+	movie_playing = true;
+	sound_disable_music(true);
 	stream_stop();
 	effects_play_sound("Sfx\\Misc\\blank.wav");
 

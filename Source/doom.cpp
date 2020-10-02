@@ -66,7 +66,7 @@ void doom_load_graphics()
 
 void doom_init()
 {
-	doomflag = TRUE;
+	doomflag = true;
 	doom_alloc_cel();
 	doom_quest_time = doom_get_frame_from_time() == 31 ? 31 : 0;
 	doom_load_graphics();

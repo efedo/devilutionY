@@ -57,13 +57,6 @@ bool TranslateMessage(const MSG *lpMsg);
 LRESULT DispatchMessage(const MSG *lpMsg);
 bool PostMessage(UINT Msg, WPARAM wParam, LPARAM lParam);
 
-#ifndef TRUE
-#define TRUE true
-#endif
-#ifndef false
-#define false false
-#endif
-
 //
 // MSCVRT emulation
 //

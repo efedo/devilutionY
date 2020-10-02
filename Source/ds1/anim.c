@@ -359,7 +359,7 @@ COF_S * anim_load_cof(char * base, char * tok, char * mod, char * clas,
          lptr = (long *) sptr;
          if ( (* lptr) == id)
          {
-            done = TRUE;
+            done = true;
             line = i;
          }
          else
@@ -589,7 +589,7 @@ void anim_update_gfx(int progress)
          {
             if (glb_ds1edit.obj_desc[idx].cof != NULL)
             {
-               ds1_anim_used = TRUE;
+               ds1_anim_used = true;
                o = glb_ds1[d].obj_num; // stop the check of all objects
             }
          }

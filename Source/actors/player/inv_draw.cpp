@@ -13,7 +13,7 @@ void PlayerInventory::DrawBodySlot(BodyLoc bodyloc)
 	InvSlot &slot = getBodySlot(bodyloc);
 	RECT32 slotrect = slot.rect;
 
-	Item *item = getBodyItem(bodyloc);
+	Item *item = getBodySlot(bodyloc).item();
 	if (!item || item->_itype == ITYPE_NONE)
 		return;
 
@@ -42,28 +42,24 @@ void PlayerInventory::DrawBodySlot(BodyLoc bodyloc)
 
 void PlayerInventory::DrawInvSlots()
 {
-	bool invtest[NUM_INV_GRID_ELEM];
 	V2Di screen;
 	uint8_t *pBuff;
 
-	for (int i = 0; i < NUM_INV_GRID_ELEM; i++) {
-		invtest[i] = false;
-		DrawInvSlotBack(getBagSlot(i).rect);
+	for (InvSlot &i : getBagArray()) {
+		DrawInvSlotBack(i.rect);
 	}
 
 	Item *lastItem = 0;
-	for (int j = 0; j < NUM_INV_GRID_ELEM; j++) {
-		auto rect = getBagSlot(j).rect;
+	for (InvSlot &j : getBagArray()) {
+		auto rect = j.rect;
 		V2Di pos = { rect.x, rect.y };
-		Item *item = getBagItem(j);
+		Item *item = j.item();
 		if (item == lastItem)
 			continue; // Skip multiple slots of same item
 		lastItem = item;
-		invtest[j] = TRUE;
-
 		int frame = item->_iCurs + CURSOR_FIRSTITEM;
 		int frame_width = InvItemWidth[frame];
-		if (pcursinvitem == j + INVITEM_INV_FIRST) { // j may be incorrect
+		if (pcursinvitem == INVITEM_INV_FIRST) { // may be incorrect
 			int color = ICOL_WHITE;
 			if (item->_iMagical != ITEM_QUALITY_NORMAL) {
 				color = ICOL_BLUE;
@@ -93,13 +89,13 @@ void PlayerInventory::DrawInvBelt()
 	DrawPanelBox({ 205, 21, 232, 28 }, { PANEL_X + 205, PANEL_Y + 5 });
 
 	for (int i = 0; i < MAXBELTITEMS; i++) {
-		Item *item = getBeltItem(i);
+		Item *item = getBeltSlot(i).item();
 		if (!item)
 			continue;
 		if (item->_itype == ITYPE_NONE) {
 			continue;
 		}
-		auto rect = belt.slots[i].rect;
+		auto rect = _belt.slots[i].rect;
 		V2Di pos = { rect.x, rect.y };
 
 		DrawInvSlotBack(rect);
@@ -112,7 +108,7 @@ void PlayerInventory::DrawInvBelt()
 				color = ICOL_BLUE;
 			if (!item->_iStatFlag)
 				color = ICOL_RED;
-			if (!sgbControllerActive || invflag)
+			if (!sgbControllerActive || gui.invflag)
 				CelBlitOutline(color, pos, pCursCels, frame, frame_width);
 		}
 
@@ -162,9 +158,10 @@ char PlayerInventory::CheckInvHLight()
 {
 	InvSlot * slot = GetCursorInvSlot(Mouse);
 	if (!slot) return false;
+	Item *pi = 0;
+	if (!pi) return false;
 
 	infoclr = COL_WHITE;
-	ItemStruct * pi = 0;
 	PlayerStruct *p = &myplr().data;
 	ClearPanel();
 
@@ -182,9 +179,9 @@ char PlayerInventory::CheckInvHLight()
 		strcpy(infostr, pi->_iName);
 		if (pi->_iIdentified) {
 			strcpy(infostr, pi->_iIName);
-			PrintItemDetails(pi);
+			pi->PrintDetails();
 		} else {
-			PrintItemDur(pi);
+			pi->PrintDur();
 		}
 	}
 	return true;

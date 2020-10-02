@@ -21,6 +21,9 @@ public:
 	virtual void loadGFX();
 	virtual void DRLG_CreateThemeRoom(int themeIndex);
 	virtual void LoadSetMap();
+	void PlrClrTrans(V2Di pos);
+	void PlrDoTrans(V2Di pos);
+
 
 	void setType(DunType duntype);
 	void setpc(RECT32 newsetpc);
@@ -54,6 +57,10 @@ protected:
 	DunType _leveltype = DunType::town;
 	RECT32 _setpc;
 };
+
+void PlrClrTrans(V2Di pos);
+void PlrDoTrans(V2Di pos);
+
 
 extern Level lvl;
 

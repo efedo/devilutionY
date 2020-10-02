@@ -69,7 +69,7 @@ void dthread_start()
 		app_fatal("dthread:1\n%s", error_buf);
 	}
 
-	dthread_running = TRUE;
+	dthread_running = true;
 
 	sghThread = CreateThread(dthread_handler, &glpDThreadId);
 	if (sghThread == NULL) {

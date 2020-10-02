@@ -11,7 +11,7 @@ int editpath_mouse_in(int ds1_idx, int mx, int my)
    
    if ( (mx >= pwin->x0) && (mx <= pwin->x0 + pwin->w - 1) &&
         (my >= pwin->y0) && (my <= pwin->y0 + pwin->h - 1))
-     return TRUE;
+     return true;
   else
      return false;
 }
@@ -25,7 +25,7 @@ int editpath_mouse_cmdbut_in(int ds1_idx, int mx, int my)
    
    if ( (mx >= pwin->but_x0) && (mx <= pwin->but_x0 + pwin->but_w - 1) &&
         (my >= pwin->but_y0) && (my <= pwin->but_y0 + pwin->but_h - 1))
-     return TRUE;
+     return true;
   else
      return false;
 }
@@ -87,7 +87,7 @@ void editpath_init(int ds1_idx)
    pwin->button[PEB_CANCEL].col_off.border = pwin->c_green;
 
    // ALLNEW button
-   pwin->button[PEB_ALLNEW].show           = TRUE;
+   pwin->button[PEB_ALLNEW].show           = true;
    pwin->button[PEB_ALLNEW].text           = "ALL NEW";
    pwin->button[PEB_ALLNEW].text_x0        = 1 * 8 + 1;
    pwin->button[PEB_ALLNEW].x0             = 10;
@@ -117,7 +117,7 @@ void editpath_init(int ds1_idx)
    pwin->button[PEB_STOP].col_off.border = pwin->c_green;
 
    // SETACTION button
-   pwin->button[PEB_SETACTION].show           = TRUE;
+   pwin->button[PEB_SETACTION].show           = true;
    pwin->button[PEB_SETACTION].text           = "(Enter) SET ACTION";
    pwin->button[PEB_SETACTION].text_x0        = 1 * 8 + 1;
    pwin->button[PEB_SETACTION].x0             = 160;
@@ -180,7 +180,7 @@ void editpath_search_selected_obj(int ds1_idx)
       }
 
       // activate the ALLNEW button
-      pwin->button[PEB_ALLNEW].show = TRUE;
+      pwin->button[PEB_ALLNEW].show = true;
    }
    else
    {
@@ -245,14 +245,14 @@ void editpath_enter_action(int ds1_idx, long * paction)
       {
          while (key[KEY_ENTER] || key[KEY_ENTER_PAD])
          {}
-         done      = TRUE;
+         done      = true;
          * paction = lvalue;
       }
       else if (key[KEY_ESC])
       {
          while (key[KEY_ESC])
          {}
-         done = TRUE;
+         done = true;
       }
       else if (key[KEY_MINUS] || key[KEY_MINUS_PAD] || key[KEY_EQUALS])
       {
@@ -476,7 +476,7 @@ void editpath_draw(int ds1_idx, int mx, int my, int mb, long tx, long ty)
       {
          pbut = & pwin->button[i];
 
-         if (pbut->show != TRUE)
+         if (pbut->show != true)
             continue;
 
          x1 = pwin->but_x0 + pbut->x0;
@@ -502,10 +502,10 @@ void editpath_draw(int ds1_idx, int mx, int my, int mb, long tx, long ty)
                   // update button activation
                   pwin->button[PEB_OK].show     = false;
                   pwin->button[PEB_CANCEL].show = false;
-                  pwin->button[PEB_ALLNEW].show = TRUE;
+                  pwin->button[PEB_ALLNEW].show = true;
                   pwin->button[PEB_STOP].show   = false;
 
-                  done = TRUE;
+                  done = true;
                   pwin->mode = PEM_NONE;
                   pwin->obj_dirty = false;
                   break;
@@ -524,35 +524,35 @@ void editpath_draw(int ds1_idx, int mx, int my, int mb, long tx, long ty)
                   // update button activation
                   pwin->button[PEB_OK].show     = false;
                   pwin->button[PEB_CANCEL].show = false;
-                  pwin->button[PEB_ALLNEW].show = TRUE;
+                  pwin->button[PEB_ALLNEW].show = true;
                   pwin->button[PEB_STOP].show   = false;
 
-                  done = TRUE;
+                  done = true;
                   pwin->mode = PEM_NONE;
                   pwin->obj_dirty = false;
                   break;
 
                case PEB_ALLNEW :
                   // update button activation
-                  pwin->button[PEB_OK].show     = TRUE;
-                  pwin->button[PEB_CANCEL].show = TRUE;
+                  pwin->button[PEB_OK].show     = true;
+                  pwin->button[PEB_CANCEL].show = true;
                   pwin->button[PEB_ALLNEW].show = false;
-                  pwin->button[PEB_STOP].show   = TRUE;
+                  pwin->button[PEB_STOP].show   = true;
 
-                  done = TRUE;
+                  done = true;
                   pwin->mode = PEM_ALLNEW;
-                  pwin->obj_dirty = TRUE;
+                  pwin->obj_dirty = true;
                   pobj->path_num = 0;
                   break;
 
                case PEB_STOP :
                   // update button activation
-                  pwin->button[PEB_OK].show     = TRUE;
-                  pwin->button[PEB_CANCEL].show = TRUE;
-                  pwin->button[PEB_ALLNEW].show = TRUE;
+                  pwin->button[PEB_OK].show     = true;
+                  pwin->button[PEB_CANCEL].show = true;
+                  pwin->button[PEB_ALLNEW].show = true;
                   pwin->button[PEB_STOP].show   = false;
 
-                  done = TRUE;
+                  done = true;
                   pwin->mode = PEM_NONE;
                   break;
 
@@ -585,7 +585,7 @@ void editpath_draw(int ds1_idx, int mx, int my, int mb, long tx, long ty)
    {
       pbut = & pwin->button[i];
 
-      if (pbut->show != TRUE)
+      if (pbut->show != true)
          continue;
 
       x1 = pwin->but_x0 + pbut->x0;
@@ -682,7 +682,7 @@ textprintf(glb_ds1edit.screen_buff, font,
    ppath = & pobj->path[i];
 
    if (i >= pobj->path_num)
-      done = TRUE;
+      done = true;
 
    while ( ! done)
    {
@@ -700,11 +700,11 @@ textprintf(glb_ds1edit.screen_buff, font,
          );
          i++;
          if (i >= pobj->path_num)
-            done = TRUE;
+            done = true;
          y += 20;
          ppath++;
       }
       else
-         done = TRUE;
+         done = true;
    }
 }

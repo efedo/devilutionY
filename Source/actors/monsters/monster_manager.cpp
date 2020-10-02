@@ -48,7 +48,7 @@ MonsterInstance &MonsterManager::operator[](size_t n)
 
 void MonsterManager::PlaceMonster(int i, int mtype, V2Di pos)
 {
-	grid.at(pos).setMonster(i);
+	grid.at(pos).setActor(i);
 	Dir rd = Dir(random_(90, 8));
 	list[i] = MonsterInstance(i, rd, mtype, pos);
 }
@@ -110,9 +110,9 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 		p.y = 2 * lvl.getpc().y + 23;
 	}
 	if (uniqindex == UMT_ZHAR) {
-		zharflag = TRUE;
+		zharflag = true;
 		for (i = 0; i < lvl.themeCount; i++) {
-			if (i == zharlib && zharflag == TRUE) {
+			if (i == zharlib && zharflag == true) {
 				zharflag = false;
 				p.x = 2 * lvl.themeLoc[i].x + 20;
 				p.y = 2 * lvl.themeLoc[i].y + 20;

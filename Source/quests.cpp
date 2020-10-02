@@ -140,7 +140,7 @@ void CheckQuests()
 	if (QuestStatus(Q_BETRAYER) && plr.isMultiplayer() && quests[Q_BETRAYER]._qvar1 == 2) {
 		AddObject(OBJ_ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
 		quests[Q_BETRAYER]._qvar1 = 3;
-		NetSendCmdQuest(TRUE, Q_BETRAYER);
+		NetSendCmdQuest(true, Q_BETRAYER);
 	}
 
 	if (plr.isMultiplayer()) {
@@ -219,7 +219,7 @@ bool ForceQuests()
 				if (q + questoff[j] == cursm) {
 					sprintf(infostr, "To %s", questtrigstr[ql]);
 					cursm = q;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -256,7 +256,7 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE82;
 		}
 		if (sendmsg)
-			NetSendCmdQuest(TRUE, Q_SKELKING);
+			NetSendCmdQuest(true, Q_SKELKING);
 
 	} else if (monsters[m].data.MType->mtype == MT_CLEAVER) {
 		quests[Q_BUTCHER]._qactive = QUEST_DONE;
@@ -269,7 +269,7 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE80;
 		}
 		if (sendmsg)
-			NetSendCmdQuest(TRUE, Q_BUTCHER);
+			NetSendCmdQuest(true, Q_BUTCHER);
 	} else if (monsters[m].data.mName == UniqMonst[UMT_GARBUD].mName) { //"Gharbad the Weak"
 		quests[Q_GARBUD]._qactive = QUEST_DONE;
 		sfxdelay = 30;
@@ -314,8 +314,8 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE83;
 		}
 		if (sendmsg) {
-			NetSendCmdQuest(TRUE, Q_BETRAYER);
-			NetSendCmdQuest(TRUE, Q_DIABLO);
+			NetSendCmdQuest(true, Q_BETRAYER);
+			NetSendCmdQuest(true, Q_DIABLO);
 		}
 	} else if (monsters[m].data.mName == UniqMonst[UMT_LAZURUS].mName && plr.isSingleplayer()) { //"Arch-Bishop Lazarus"
 		quests[Q_BETRAYER]._qactive = QUEST_DONE;
@@ -572,17 +572,17 @@ void ResyncMPQuests()
 	    && lvl.currlevel >= quests[Q_SKELKING]._qlevel - 1
 	    && lvl.currlevel <= quests[Q_SKELKING]._qlevel + 1) {
 		quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
-		NetSendCmdQuest(TRUE, Q_SKELKING);
+		NetSendCmdQuest(true, Q_SKELKING);
 	}
 	if (quests[Q_BUTCHER]._qactive == QUEST_INIT
 	    && lvl.currlevel >= quests[Q_BUTCHER]._qlevel - 1
 	    && lvl.currlevel <= quests[Q_BUTCHER]._qlevel + 1) {
 		quests[Q_BUTCHER]._qactive = QUEST_ACTIVE;
-		NetSendCmdQuest(TRUE, Q_BUTCHER);
+		NetSendCmdQuest(true, Q_BUTCHER);
 	}
 	if (quests[Q_BETRAYER]._qactive == QUEST_INIT && lvl.currlevel == quests[Q_BETRAYER]._qlevel - 1) {
 		quests[Q_BETRAYER]._qactive = QUEST_ACTIVE;
-		NetSendCmdQuest(TRUE, Q_BETRAYER);
+		NetSendCmdQuest(true, Q_BETRAYER);
 	}
 	if (QuestStatus(Q_BETRAYER))
 		AddObject(OBJ_ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
@@ -710,14 +710,14 @@ void DrawQuestLog()
 {
 	int y, i;
 
-	PrintQLString(0, 2, TRUE, "Quest Log", 3);
+	PrintQLString(0, 2, true, "Quest Log", 3);
 	CelDraw(SCREEN_X, SCREEN_Y + 351, pQLogCel, 1, SPANEL_WIDTH);
 	y = qtopline;
 	for (i = 0; i < numqlines; i++) {
-		PrintQLString(0, y, TRUE, questlist[qlist[i]]._qlstr, 0);
+		PrintQLString(0, y, true, questlist[qlist[i]]._qlstr, 0);
 		y += 2;
 	}
-	PrintQLString(0, 22, TRUE, "Close Quest Log", 0);
+	PrintQLString(0, 22, true, "Close Quest Log", 0);
 	PentSpn2Spin();
 }
 
@@ -740,7 +740,7 @@ void StartQuestlog()
 	qline = 22;
 	if (numqlines != 0)
 		qline = qtopline;
-	questlog = TRUE;
+	questlog = true;
 	PentSpn2Frame = 1;
 }
 

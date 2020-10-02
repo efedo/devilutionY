@@ -204,8 +204,8 @@ bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 	int xCount, yCount;
 	bool yFlag, xFlag;
 
-	yFlag = TRUE;
-	xFlag = TRUE;
+	yFlag = true;
+	xFlag = true;
 	xCount = 0;
 	yCount = 0;
 
@@ -278,7 +278,7 @@ bool DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 
 	*width = xSmallest - 2;
 	*height = ySmallest - 2;
-	return TRUE;
+	return true;
 }
 
 void DRLG_CreateThemeRoom(int themeIndex)
@@ -355,7 +355,7 @@ bool SkipThemeRoom(int x, int y)
 			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 void InitLevels()

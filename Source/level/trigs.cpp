@@ -39,7 +39,7 @@ void InitTownTriggers()
 
 	if (plr.isMultiplayer()) {
 		for (i = 0; i < sizeof(townwarps) / sizeof(townwarps[0]); i++) {
-			townwarps[i] = TRUE;
+			townwarps[i] = true;
 		}
 		trigs[numtrigs]._t = { 49, 21 };
 		trigs[numtrigs]._tmsg = WM_DIABTOWNWARP;
@@ -62,17 +62,17 @@ void InitTownTriggers()
 			trigs[numtrigs]._tmsg = WM_DIABTOWNWARP;
 			trigs[numtrigs]._tlvl = 5;
 			numtrigs++;
-			townwarps[0] = TRUE;
+			townwarps[0] = true;
 		}
 		if (myplr().data.pTownWarps & 2) {
-			townwarps[1] = TRUE;
+			townwarps[1] = true;
 			trigs[numtrigs]._t = { 17, 69 };
 			trigs[numtrigs]._tmsg = WM_DIABTOWNWARP;
 			trigs[numtrigs]._tlvl = 9;
 			numtrigs++;
 		}
 		if (myplr().data.pTownWarps & 4) {
-			townwarps[2] = TRUE;
+			townwarps[2] = true;
 			trigs[numtrigs]._t = { 41, 80 };
 			trigs[numtrigs]._tmsg = WM_DIABTOWNWARP;
 			trigs[numtrigs]._tlvl = 13;
@@ -252,7 +252,7 @@ bool ForceTownTrig()
 		if (grid.at(cursm).getPiece() == TownDownList[i]) {
 			strcpy(infostr, "Down to dungeon");
 			cursm = { 25, 29 };
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -262,7 +262,7 @@ bool ForceTownTrig()
 			if (grid.at(cursm).getPiece() == TownWarp1List[j]) {
 				strcpy(infostr, "Down to catacombs");
 				cursm = { 49, 21 };
-				return TRUE;
+				return true;
 			}
 		}
 	}
@@ -273,7 +273,7 @@ bool ForceTownTrig()
 			if (grid.at(cursm).getPiece() == k) {
 				strcpy(infostr, "Down to caves");
 				cursm = { 17, 69 };
-				return TRUE;
+				return true;
 			}
 		}
 	}
@@ -284,7 +284,7 @@ bool ForceTownTrig()
 			if (grid.at(cursm).getPiece() == l) {
 				strcpy(infostr, "Down to hell");
 				cursm = { 41, 80 };
-				return TRUE;
+				return true;
 			}
 		}
 	}
@@ -305,7 +305,7 @@ bool ForceL1Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABPREVLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -317,7 +317,7 @@ bool ForceL1Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -337,7 +337,7 @@ bool ForceL2Trig()
 					if (dist < 4) {
 						sprintf(infostr, "Up to level %i", lvl.currlevel - 1);
 						cursm = trigs[j]._t;
-						return TRUE;
+						return true;
 					}
 				}
 			}
@@ -350,7 +350,7 @@ bool ForceL2Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -365,7 +365,7 @@ bool ForceL2Trig()
 						if (dist < 4) {
 							strcpy(infostr, "Up to town");
 							cursm = trigs[j]._t;
-							return TRUE;
+							return true;
 						}
 					}
 				}
@@ -385,7 +385,7 @@ bool ForceL3Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABPREVLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -399,7 +399,7 @@ bool ForceL3Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -414,7 +414,7 @@ bool ForceL3Trig()
 						if (dist < 4) {
 							strcpy(infostr, "Up to town");
 							cursm = trigs[j]._t;
-							return TRUE;
+							return true;
 						}
 					}
 				}
@@ -435,7 +435,7 @@ bool ForceL4Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABPREVLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -447,7 +447,7 @@ bool ForceL4Trig()
 			for (j = 0; j < numtrigs; j++) {
 				if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 					cursm = trigs[j]._t;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -462,7 +462,7 @@ bool ForceL4Trig()
 						if (dist < 4) {
 							strcpy(infostr, "Up to town");
 							cursm = trigs[j]._t;
-							return TRUE;
+							return true;
 						}
 					}
 				}
@@ -477,7 +477,7 @@ bool ForceL4Trig()
 				for (j = 0; j < numtrigs; j++) {
 					if (trigs[j]._tmsg == WM_DIABNEXTLVL) {
 						cursm = trigs[j]._t;
-						return TRUE;
+						return true;
 					}
 				}
 			}
@@ -509,7 +509,7 @@ bool ForceSKingTrig()
 		if (grid.at(cursm).getPiece() == L1UpList[i]) {
 			sprintf(infostr, "Back to Level %i", quests[Q_SKELKING]._qlevel);
 			cursm = trigs[0]._t;
-			return TRUE;
+			return true;
 		}
 	}
 	return false;
@@ -521,7 +521,7 @@ bool ForceSChambTrig()
 		if (grid.at(cursm).getPiece() == L2DownList[i]) {
 			sprintf(infostr, "Back to Level %i", quests[Q_SCHAMB]._qlevel);
 			cursm = trigs[0]._t;
-			return TRUE;
+			return true;
 		}
 	}
 	return false;
@@ -533,7 +533,7 @@ bool ForcePWaterTrig()
 		if (grid.at(cursm).getPiece() == L3DownList[i]) {
 			sprintf(infostr, "Back to Level %i", quests[Q_PWATER]._qlevel);
 			cursm = trigs[0]._t;
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -621,21 +621,21 @@ void CheckTriggers()
 				abort = false;
 
 				if (trigs[i]._tlvl == 5 && myplr().data._pLevel < 8) {
-					abort = TRUE;
+					abort = true;
 					x = myplr().pos().x;
 					y = myplr().pos().y + 1;
 					abortflag = EMSG_REQUIRES_LVL_8;
 				}
 
 				if (trigs[i]._tlvl == 9 && myplr().data._pLevel < 13) {
-					abort = TRUE;
+					abort = true;
 					x = myplr().pos().x + 1;
 					y = myplr().pos().y;
 					abortflag = EMSG_REQUIRES_LVL_13;
 				}
 
 				if (trigs[i]._tlvl == 13 && myplr().data._pLevel < 17) {
-					abort = TRUE;
+					abort = true;
 					x = myplr().pos().x;
 					y = myplr().pos().y + 1;
 					abortflag = EMSG_REQUIRES_LVL_17;
@@ -647,7 +647,7 @@ void CheckTriggers()
 					}
 
 					InitDiabloMsg(abortflag);
-					NetSendCmdLoc(TRUE, CMD_WALKXY, { x, y });
+					NetSendCmdLoc(true, CMD_WALKXY, { x, y });
 					return;
 				}
 			}

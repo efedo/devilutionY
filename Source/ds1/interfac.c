@@ -57,12 +57,12 @@ void interfac_user_handler(int start_ds1_idx)
    // main loop
    while (! done)
    {
-      can_swich_mode = TRUE;
+      can_swich_mode = true;
       if (glb_ds1edit.mode == MOD_P)
       {
          if (glb_ds1[ds1_idx].path_edit_win.mode != PEM_NONE)
             can_swich_mode = false;
-         else if (glb_ds1[ds1_idx].path_edit_win.obj_dirty == TRUE)
+         else if (glb_ds1[ds1_idx].path_edit_win.obj_dirty == true)
             can_swich_mode = false;
       }
 
@@ -139,9 +139,9 @@ void interfac_user_handler(int start_ds1_idx)
       // scroll UP / DOWN / LEFT / RIGHT
 
       // if the Object Editing Window is display
-      if (glb_ds1[ds1_idx].draw_edit_obj == TRUE)
+      if (glb_ds1[ds1_idx].draw_edit_obj == true)
       {
-         if (glb_config.winobj_scroll_keyb == TRUE)
+         if (glb_config.winobj_scroll_keyb == true)
          {
             // can scroll by keyboard
             if (key[KEY_UP])
@@ -162,7 +162,7 @@ void interfac_user_handler(int start_ds1_idx)
             }
          }
 
-         if (glb_config.winobj_scroll_mouse == TRUE)
+         if (glb_config.winobj_scroll_mouse == true)
          {
             // can scroll by mouse
             if (old_mouse_y == 0)
@@ -641,7 +641,7 @@ void interfac_user_handler(int start_ds1_idx)
             {
                case -1 :
                   // error
-                  done = TRUE;
+                  done = true;
                   break;
 
                case 0 :
@@ -678,7 +678,7 @@ void interfac_user_handler(int start_ds1_idx)
                   }
                   paste_pos.src_ds1_idx = ds1_idx;
                   paste_pos.old_ds1_idx = ds1_idx;
-                  paste_pos.start       = TRUE;
+                  paste_pos.start       = true;
                   paste_pos.is_cut      = false; // just a 'COPY'
                   paste_pos.cut_saved   = false;
                   paste_pos.old_x       = cx;
@@ -771,8 +771,8 @@ void interfac_user_handler(int start_ds1_idx)
                }
                paste_pos.src_ds1_idx = ds1_idx;
                paste_pos.old_ds1_idx = ds1_idx;
-               paste_pos.start       = TRUE;
-               paste_pos.is_cut      = TRUE; // copy with 'CUT'
+               paste_pos.start       = true;
+               paste_pos.is_cut      = true; // copy with 'CUT'
                paste_pos.cut_saved   = false;
                paste_pos.old_x       = cx;
                paste_pos.old_y       = cy;
@@ -857,7 +857,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 0;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_2])
             {
@@ -866,7 +866,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 1;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_3])
             {
@@ -875,7 +875,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 2;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_4])
             {
@@ -884,7 +884,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 3;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_5])
             {
@@ -893,7 +893,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 4;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_6])
             {
@@ -902,7 +902,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 5;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_7])
             {
@@ -911,7 +911,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 6;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_8])
             {
@@ -920,7 +920,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 7;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_9])
             {
@@ -929,7 +929,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 8;
-               group_changed = TRUE;
+               group_changed = true;
             }
             else if (key[KEY_0])
             {
@@ -938,11 +938,11 @@ void interfac_user_handler(int start_ds1_idx)
                   // wait
                }
                glb_ds1edit.ds1_group_idx = 9;
-               group_changed = TRUE;
+               group_changed = true;
             }
          }
 
-         if (group_changed == TRUE)
+         if (group_changed == true)
          {
             // try to swap to 1st ds1 of this group set
             found = false;
@@ -953,7 +953,7 @@ void interfac_user_handler(int start_ds1_idx)
                   // there's a ds1 open here
                   old_ds1_idx = ds1_idx;
                   ds1_idx = glb_ds1edit.ds1_group_idx * 10 + i;
-                  found = TRUE;
+                  found = true;
                   break;
                }
             }
@@ -1084,7 +1084,7 @@ void interfac_user_handler(int start_ds1_idx)
             // wait until TILDE is not pressed
          }
          if (glb_ds1edit.show_2nd_row == false)
-            glb_ds1edit.show_2nd_row = TRUE;
+            glb_ds1edit.show_2nd_row = true;
          else
             glb_ds1edit.show_2nd_row = false;
       }
@@ -1180,7 +1180,7 @@ void interfac_user_handler(int start_ds1_idx)
          // mouse button 1 is pressed
          if (glb_ds1edit.mode == MOD_T)
          {
-            if (paste_pos.start == TRUE)
+            if (paste_pos.start == true)
             {
                // end a paste
                edittile_paste_final(ds1_idx);
@@ -1223,7 +1223,7 @@ void interfac_user_handler(int start_ds1_idx)
                   old_identical_x = -1;
                   old_identical_y = -1;
                   
-                  tmp_sel.start = TRUE;
+                  tmp_sel.start = true;
                   tmp_sel.x1 = tmp_sel.x2 = tmp_sel.old_x2 = cx;
                   tmp_sel.y1 = tmp_sel.y2 = tmp_sel.old_y2 = cy;
                   edittile_delete_all_tmpsel(ds1_idx);
@@ -1248,7 +1248,7 @@ void interfac_user_handler(int start_ds1_idx)
          // mouse button 1 is not pressed
          if (glb_ds1edit.mode == MOD_T)
          {
-            if (tmp_sel.start == TRUE)
+            if (tmp_sel.start == true)
             {
                // end of tmp sel, process it
                if (key[KEY_H])
@@ -1298,7 +1298,7 @@ void interfac_user_handler(int start_ds1_idx)
                      break;
                }
             }
-            else if (paste_pos.start == TRUE)
+            else if (paste_pos.start == true)
             {
                if ((paste_pos.old_x != cx) ||
                    (paste_pos.old_y != cy) ||
@@ -1356,8 +1356,8 @@ void interfac_user_handler(int start_ds1_idx)
          {
             case -1 :
                // error
-               ds1_save(ds1_idx, TRUE); // save a .TMP map
-               done = TRUE;
+               ds1_save(ds1_idx, true); // save a .TMP map
+               done = true;
                break;
 
             case 0 :
@@ -1367,13 +1367,13 @@ void interfac_user_handler(int start_ds1_idx)
                   if (strlen(glb_ds1[ds1_idx].name))
                      ds1_save(i, false);
                }
-               done = TRUE;
+               done = true;
                break;
 
             case 1 :
                // quit
-               ds1_save(ds1_idx, TRUE); // save a .TMP map
-               done = TRUE;
+               ds1_save(ds1_idx, true); // save a .TMP map
+               done = true;
                break;
 
             case 2  :

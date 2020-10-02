@@ -342,7 +342,7 @@ static bool DRLG_L2PlaceMiniSet(uint8_t *miniset, int tmin, int tmax, int cx, in
 		sy = random_(0, DMAXY - sh);
 		found = false;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
-			found = TRUE;
+			found = true;
 			if (sx >= nSx1 && sx <= nSx2 && sy >= nSy1 && sy <= nSy2) {
 				found = false;
 			}
@@ -357,8 +357,8 @@ static bool DRLG_L2PlaceMiniSet(uint8_t *miniset, int tmin, int tmax, int cx, in
 				found = false;
 			}
 			ii = 2;
-			for (yy = 0; yy < sh && found == TRUE; yy++) {
-				for (xx = 0; xx < sw && found == TRUE; xx++) {
+			for (yy = 0; yy < sh && found == true; yy++) {
+				for (xx = 0; xx < sw && found == true; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = false;
 					}
@@ -393,7 +393,7 @@ static bool DRLG_L2PlaceMiniSet(uint8_t *miniset, int tmin, int tmax, int cx, in
 		}
 	}
 
-	if (setview == TRUE) {
+	if (setview == true) {
 		View.x = 2 * sx + 21;
 		View.y = 2 * sy + 22;
 	}
@@ -406,7 +406,7 @@ static bool DRLG_L2PlaceMiniSet(uint8_t *miniset, int tmin, int tmax, int cx, in
 		LvlView.y = 2 * sy + 22;
 	}
 
-	return TRUE;
+	return true;
 }
 
 static void DRLG_L2PlaceRndSet(uint8_t *miniset, int rndper)
@@ -419,13 +419,13 @@ static void DRLG_L2PlaceRndSet(uint8_t *miniset, int rndper)
 
 	for (sy = 0; sy < DMAXY - sh; sy++) {
 		for (sx = 0; sx < DMAXX - sw; sx++) {
-			found = TRUE;
+			found = true;
 			ii = 2;
 			if (sx >= nSx1 && sx <= nSx2 && sy >= nSy1 && sy <= nSy2) {
 				found = false;
 			}
-			for (yy = 0; yy < sh && found == TRUE; yy++) {
-				for (xx = 0; xx < sw && found == TRUE; xx++) {
+			for (yy = 0; yy < sh && found == true; yy++) {
+				for (xx = 0; xx < sw && found == true; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = false;
 					}
@@ -436,8 +436,8 @@ static void DRLG_L2PlaceRndSet(uint8_t *miniset, int rndper)
 				}
 			}
 			kk = sw * sh + 2;
-			if (found == TRUE) {
-				for (yy = std::max(sy - sh, 0); yy < std::min(sy + 2 * sh, DMAXY) && found == TRUE; yy++) {
+			if (found == true) {
+				for (yy = std::max(sy - sh, 0); yy < std::min(sy + 2 * sh, DMAXY) && found == true; yy++) {
 					for (xx = std::max(sx - sw, 0); xx < std::min(sx + 2 * sw, DMAXX); xx++) {
 						// BUGFIX: yy and xx can go out of bounds (fixed)
 						if (dgrid[xx][yy].dungeon == miniset[kk]) {
@@ -446,7 +446,7 @@ static void DRLG_L2PlaceRndSet(uint8_t *miniset, int rndper)
 					}
 				}
 			}
-			if (found == TRUE && random_(0, 100) < rndper) {
+			if (found == true && random_(0, 100) < rndper) {
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
@@ -512,7 +512,7 @@ static void DRLG_L2Shadows()
 			sd[1][1] = BSTYPESL2[dgrid[x - 1][y - 1].dungeon];
 			for (i = 0; i < 2; i++) {
 				if (SPATSL2[i].strig == sd[0][0]) {
-					patflag = TRUE;
+					patflag = true;
 					if (SPATSL2[i].s1 != 0 && SPATSL2[i].s1 != sd[1][1]) {
 						patflag = false;
 					}
@@ -522,7 +522,7 @@ static void DRLG_L2Shadows()
 					if (SPATSL2[i].s3 != 0 && SPATSL2[i].s3 != sd[1][0]) {
 						patflag = false;
 					}
-					if (patflag == TRUE) {
+					if (patflag == true) {
 						if (SPATSL2[i].nv1 != 0) {
 							dgrid[x - 1][y - 1].dungeon = SPATSL2[i].nv1;
 						}
@@ -557,13 +557,13 @@ static void DRLG_LoadL2SP()
 
 	if (QuestStatus(Q_BLIND)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-		setloadflag = TRUE;
+		setloadflag = true;
 	} else if (QuestStatus(Q_BLOOD)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Blood1.DUN", NULL);
-		setloadflag = TRUE;
+		setloadflag = true;
 	} else if (QuestStatus(Q_SCHAMB)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Bonestr2.DUN", NULL);
-		setloadflag = TRUE;
+		setloadflag = true;
 	}
 }
 
@@ -612,7 +612,7 @@ static void DefineRoom(int nX1, int nY1, int nX2, int nY2, bool ForceHW)
 	RoomList[nRoomCnt].nRoomy1 = nY1;
 	RoomList[nRoomCnt].nRoomy2 = nY2;
 
-	if (ForceHW == TRUE) {
+	if (ForceHW == true) {
 		for (i = nX1; i < nX2; i++) {
 			/// BUGFIX: Should loop j between nY1 and nY2 instead of always using nY1.
 			while (i < nY2) {
@@ -642,19 +642,19 @@ static void CreateDoorType(int nX, int nY)
 	fDoneflag = false;
 
 	if (predungeon[nX - 1][nY] == 68) {
-		fDoneflag = TRUE;
+		fDoneflag = true;
 	}
 	if (predungeon[nX + 1][nY] == 68) {
-		fDoneflag = TRUE;
+		fDoneflag = true;
 	}
 	if (predungeon[nX][nY - 1] == 68) {
-		fDoneflag = TRUE;
+		fDoneflag = true;
 	}
 	if (predungeon[nX][nY + 1] == 68) {
-		fDoneflag = TRUE;
+		fDoneflag = true;
 	}
 	if (predungeon[nX][nY] == 66 || predungeon[nX][nY] == 67 || predungeon[nX][nY] == 65 || predungeon[nX][nY] == 69) {
-		fDoneflag = TRUE;
+		fDoneflag = true;
 	}
 
 	if (!fDoneflag) {
@@ -738,7 +738,7 @@ static void CreateRoom(int nX1, int nY1, int nX2, int nY2, int nRDest, int nHDir
 		nRh = nAh;
 	}
 
-	if (ForceHW == TRUE) {
+	if (ForceHW == true) {
 		nRw = nW;
 		nRh = nH;
 	}
@@ -782,7 +782,7 @@ static void CreateRoom(int nX1, int nY1, int nX2, int nY2, int nRDest, int nHDir
 	}
 	DefineRoom(nRx1, nRy1, nRx2, nRy2, ForceHW);
 
-	if (ForceHW == TRUE) {
+	if (ForceHW == true) {
 		nSx1 = nRx1 + 2;
 		nSy1 = nRy1 + 2;
 		nSx2 = nRx2;
@@ -924,7 +924,7 @@ static void ConnectHall(int nX1, int nY1, int nX2, int nY2, int nHd)
 				CreateDoorType(nX1, nY1);
 			}
 			if (predungeon[nX1][nY1] != 44) {
-				fInroom = TRUE;
+				fInroom = true;
 			}
 		}
 		nDx = abs(nX2 - nX1);
@@ -997,7 +997,7 @@ static void ConnectHall(int nX1, int nY1, int nX2, int nY2, int nHd)
 			}
 		}
 		if (nX1 == nX2 && nY1 == nY2) {
-			fDoneflag = TRUE;
+			fDoneflag = true;
 		}
 	}
 }
@@ -1104,10 +1104,10 @@ static bool DL2_Cont(bool x1f, bool y1f, bool x2f, bool y2f)
 		return false;
 	}
 	if (x1f && x2f && (y1f || y2f)) {
-		return TRUE;
+		return true;
 	}
 	if (y1f && y2f && (x1f || x2f)) {
-		return TRUE;
+		return true;
 	}
 
 	return false;
@@ -1201,28 +1201,28 @@ static bool DL2_FillVoids()
 			    && predungeon[xx + 1][yy + 1] == 46
 			    && predungeon[xx - 1][yy - 1] == 32
 			    && predungeon[xx - 1][yy + 1] == 32) {
-				xf1 = yf1 = yf2 = TRUE;
+				xf1 = yf1 = yf2 = true;
 			}
 		} else if (predungeon[xx + 1][yy] == 32 && predungeon[xx - 1][yy] == 46) {
 			if (predungeon[xx - 1][yy - 1] == 46
 			    && predungeon[xx - 1][yy + 1] == 46
 			    && predungeon[xx + 1][yy - 1] == 32
 			    && predungeon[xx + 1][yy + 1] == 32) {
-				xf2 = yf1 = yf2 = TRUE;
+				xf2 = yf1 = yf2 = true;
 			}
 		} else if (predungeon[xx][yy - 1] == 32 && predungeon[xx][yy + 1] == 46) {
 			if (predungeon[xx - 1][yy + 1] == 46
 			    && predungeon[xx + 1][yy + 1] == 46
 			    && predungeon[xx - 1][yy - 1] == 32
 			    && predungeon[xx + 1][yy - 1] == 32) {
-				yf1 = xf1 = xf2 = TRUE;
+				yf1 = xf1 = xf2 = true;
 			}
 		} else if (predungeon[xx][yy + 1] == 32 && predungeon[xx][yy - 1] == 46) {
 			if (predungeon[xx - 1][yy - 1] == 46
 			    && predungeon[xx + 1][yy - 1] == 46
 			    && predungeon[xx - 1][yy + 1] == 32
 			    && predungeon[xx + 1][yy + 1] == 32) {
-				yf2 = xf1 = xf2 = TRUE;
+				yf2 = xf1 = xf2 = true;
 			}
 		}
 		if (DL2_Cont(xf1, yf1, xf2, yf2)) {
@@ -1466,21 +1466,21 @@ static bool CreateDungeon()
 	switch (lvl.currlevel) {
 	case 5:
 		if (quests[Q_BLOOD]._qactive) {
-			ForceHW = TRUE;
+			ForceHW = true;
 			ForceH = 20;
 			ForceW = 14;
 		}
 		break;
 	case 6:
 		if (quests[Q_SCHAMB]._qactive) {
-			ForceHW = TRUE;
+			ForceHW = true;
 			ForceW = 10;
 			ForceH = 10;
 		}
 		break;
 	case 7:
 		if (quests[Q_BLIND]._qactive) {
-			ForceHW = TRUE;
+			ForceHW = true;
 			ForceW = 15;
 			ForceH = 15;
 		}
@@ -1550,7 +1550,7 @@ static bool CreateDungeon()
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void LvlCatacombs::DRLG_L2Pass3()
@@ -1754,7 +1754,7 @@ void L2LockoutFix()
 						break;
 					}
 					if (dgrid[i][j].dungeon == 5) {
-						doorok = TRUE;
+						doorok = true;
 					}
 					i++;
 				}
@@ -1779,7 +1779,7 @@ void L2LockoutFix()
 						break;
 					}
 					if (dgrid[j][i].dungeon == 4) {
-						doorok = TRUE;
+						doorok = true;
 					}
 					i++;
 				}

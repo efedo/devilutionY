@@ -7,13 +7,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-int help_select_line;
-int dword_634494;
-bool helpflag;
-int displayinghelp[22]; /* check, does nothing? */
-int HelpTop;
-
-const char gszHelpText[] = {
+const char HelpDialog::gszHelpText[] = {
 	"$Keyboard Shortcuts:|"
 	"F1:    Open Help Screen|"
 	"Esc:   Display Main Menu|"
@@ -82,23 +76,23 @@ const char gszHelpText[] = {
 	"&"
 };
 
-void InitHelp()
+void HelpDialog::InitHelp()
 {
 	helpflag = false;
 	dword_634494 = 0;
 	displayinghelp[0] = 0;
 }
 
-void DrawHelp()
+void HelpDialog::DrawHelp()
 {
 	int i, c, w;
 	char col;
 	const char *s;
 
-	DrawSTextHelp();
-	DrawQTextBack();
-	PrintSString(0, 2, TRUE, "Diablo Help", COL_GOLD, 0);
-	DrawSLine(5);
+	dialog.DrawSTextHelp();
+	dialog.DrawQTextBack();
+	dialog.PrintSString(0, 2, true, "Diablo Help", COL_GOLD, 0);
+	dialog.DrawSLine(5);
 
 	s = &gszHelpText[0];
 
@@ -175,10 +169,11 @@ void DrawHelp()
 		}
 	}
 
-	PrintSString(0, 23, TRUE, "Press ESC to end or the arrow keys to scroll.", COL_GOLD, 0);
+	dialog.PrintSString(0, 23, true, "Press ESC to end or the arrow keys to scroll.", COL_GOLD, 0);
 }
 
-void DrawHelpLine(int always_0, int help_line_nr, char *text, char color)
+void HelpDialog::DrawHelpLine(int always_0, int help_line_nr, char *text,
+                              char color)
 {
 	uint8_t c;
 
@@ -197,20 +192,20 @@ void DrawHelpLine(int always_0, int help_line_nr, char *text, char color)
 	}
 }
 
-void DisplayHelp()
+void HelpDialog::DisplayHelp()
 {
 	help_select_line = 0;
-	helpflag = TRUE;
+	helpflag = true;
 	HelpTop = 5000;
 }
 
-void HelpScrollUp()
+void HelpDialog::HelpScrollUp()
 {
 	if (help_select_line > 0)
 		help_select_line--;
 }
 
-void HelpScrollDown()
+void HelpDialog::HelpScrollDown()
 {
 	if (help_select_line < HelpTop)
 		help_select_line++;

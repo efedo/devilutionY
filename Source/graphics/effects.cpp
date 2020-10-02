@@ -1013,7 +1013,7 @@ bool calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 
 	*plVolume = -volume;
 
-	return TRUE;
+	return true;
 }
 
 void PlaySFX(int psfx)
@@ -1123,7 +1123,7 @@ void PlaySfxLoc(int psfx, V2Di pos)
 			pSnd->start_tc = 0;
 	}
 
-	PlaySFX_priv(&sgSFX[psfx], TRUE, pos);
+	PlaySFX_priv(&sgSFX[psfx], true, pos);
 }
 
 void sound_stop()

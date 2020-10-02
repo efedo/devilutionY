@@ -213,7 +213,7 @@ static bool DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 static void DRLG_L3CreateBlock(int x, int y, int obs, int dir)
@@ -281,7 +281,7 @@ static void DRLG_L3CreateBlock(int x, int y, int obs, int dir)
 		y2 = y1 + blksizey;
 	}
 
-	if (DRLG_L3FillRoom(x1, y1, x2, y2) == TRUE) {
+	if (DRLG_L3FillRoom(x1, y1, x2, y2) == true) {
 		contflag = random_(0, 4);
 		if (contflag && dir != 2) {
 			DRLG_L3CreateBlock(x1, y1, blksizey, 0);
@@ -652,7 +652,7 @@ static void DRLG_L3River()
 				if (pdir == 3) {
 					river[2][riveramt - 1] = 21;
 				}
-				bail = TRUE;
+				bail = true;
 			}
 			// BUGFIX: Check `ry + 2 < DMAXY` (fixed)
 			if (dir == 1 && ry + 2 < DMAXY && dgrid[rx][ry + 1].dungeon == 2 && dgrid[rx][ry + 2].dungeon == 8) {
@@ -665,7 +665,7 @@ static void DRLG_L3River()
 				if (pdir == 3) {
 					river[2][riveramt - 1] = 19;
 				}
-				bail = TRUE;
+				bail = true;
 			}
 			// BUGFIX: Check `rx + 2 < DMAXX` (fixed)
 			if (dir == 2 && rx + 2 < DMAXX && dgrid[rx + 1][ry].dungeon == 4 && dgrid[rx + 2][ry].dungeon == 8) {
@@ -678,7 +678,7 @@ static void DRLG_L3River()
 				if (pdir == 1) {
 					river[2][riveramt - 1] = 21;
 				}
-				bail = TRUE;
+				bail = true;
 			}
 			// BUGFIX: Check `rx >= 2` (fixed)
 			if (dir == 3 && rx >= 2 && dgrid[rx - 1][ry].dungeon == 9 && dgrid[rx - 2][ry].dungeon == 8) {
@@ -691,13 +691,13 @@ static void DRLG_L3River()
 				if (pdir == 1) {
 					river[2][riveramt - 1] = 22;
 				}
-				bail = TRUE;
+				bail = true;
 			}
 		}
-		if (bail == TRUE && riveramt < 7) {
+		if (bail == true && riveramt < 7) {
 			bail = false;
 		}
-		if (bail == TRUE) {
+		if (bail == true) {
 			found = 0;
 			lpcnt = 0;
 			while (found == 0 && lpcnt < 30) {
@@ -751,45 +751,45 @@ static bool DRLG_L3SpawnEdge(int x, int y, int *totarea)
 	static uint8_t spawntable[15] = { 0, 0x0A, 0x43, 0x05, 0x2C, 0x06, 0x09, 0, 0, 0x1C, 0x83, 0x06, 0x09, 0x0A, 0x05 };
 
 	if (*totarea > 40) {
-		return TRUE;
+		return true;
 	}
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
-		return TRUE;
+		return true;
 	}
 	if (dgrid[x][y].dungeon & 0x80) {
 		return false;
 	}
 	if (dgrid[x][y].dungeon > 15) {
-		return TRUE;
+		return true;
 	}
 
 	i = dgrid[x][y].dungeon;
 	dgrid[x][y].dungeon |= 0x80;
 	*totarea += 1;
 
-	if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 4 && DRLG_L3SpawnEdge(x, y + 1, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 4 && DRLG_L3SpawnEdge(x, y + 1, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 2 && DRLG_L3SpawnEdge(x + 1, y, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 2 && DRLG_L3SpawnEdge(x + 1, y, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 1 && DRLG_L3SpawnEdge(x - 1, y, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 1 && DRLG_L3SpawnEdge(x - 1, y, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 0x80 && DRLG_L3Spawn(x, y - 1, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 0x80 && DRLG_L3Spawn(x, y - 1, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 0x40 && DRLG_L3Spawn(x, y + 1, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 0x40 && DRLG_L3Spawn(x, y + 1, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 0x20 && DRLG_L3Spawn(x + 1, y, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 0x20 && DRLG_L3Spawn(x + 1, y, totarea) == true) {
+		return true;
 	}
-	if (spawntable[i] & 0x10 && DRLG_L3Spawn(x - 1, y, totarea) == TRUE) {
-		return TRUE;
+	if (spawntable[i] & 0x10 && DRLG_L3Spawn(x - 1, y, totarea) == true) {
+		return true;
 	}
 
 	return false;
@@ -801,16 +801,16 @@ static bool DRLG_L3Spawn(int x, int y, int *totarea)
 	static uint8_t spawntable[15] = { 0, 0x0A, 0x03, 0x05, 0x0C, 0x06, 0x09, 0, 0, 0x012, 0x03, 0x06, 0x09, 0x0A, 0x05 };
 
 	if (*totarea > 40) {
-		return TRUE;
+		return true;
 	}
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
-		return TRUE;
+		return true;
 	}
 	if (dgrid[x][y].dungeon & 0x80) {
 		return false;
 	}
 	if (dgrid[x][y].dungeon > 15) {
-		return TRUE;
+		return true;
 	}
 
 	i = dgrid[x][y].dungeon;
@@ -818,30 +818,30 @@ static bool DRLG_L3Spawn(int x, int y, int *totarea)
 	*totarea += 1;
 
 	if (i != 8) {
-		if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == TRUE) {
-			return TRUE;
+		if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == true) {
+			return true;
 		}
-		if (spawntable[i] & 4 && DRLG_L3SpawnEdge(x, y + 1, totarea) == TRUE) {
-			return TRUE;
+		if (spawntable[i] & 4 && DRLG_L3SpawnEdge(x, y + 1, totarea) == true) {
+			return true;
 		}
-		if (spawntable[i] & 2 && DRLG_L3SpawnEdge(x + 1, y, totarea) == TRUE) {
-			return TRUE;
+		if (spawntable[i] & 2 && DRLG_L3SpawnEdge(x + 1, y, totarea) == true) {
+			return true;
 		}
-		if (spawntable[i] & 1 && DRLG_L3SpawnEdge(x - 1, y, totarea) == TRUE) {
-			return TRUE;
+		if (spawntable[i] & 1 && DRLG_L3SpawnEdge(x - 1, y, totarea) == true) {
+			return true;
 		}
 	} else {
-		if (DRLG_L3Spawn(x + 1, y, totarea) == TRUE) {
-			return TRUE;
+		if (DRLG_L3Spawn(x + 1, y, totarea) == true) {
+			return true;
 		}
-		if (DRLG_L3Spawn(x - 1, y, totarea) == TRUE) {
-			return TRUE;
+		if (DRLG_L3Spawn(x - 1, y, totarea) == true) {
+			return true;
 		}
-		if (DRLG_L3Spawn(x, y + 1, totarea) == TRUE) {
-			return TRUE;
+		if (DRLG_L3Spawn(x, y + 1, totarea) == true) {
+			return true;
 		}
-		if (DRLG_L3Spawn(x, y - 1, totarea) == TRUE) {
-			return TRUE;
+		if (DRLG_L3Spawn(x, y - 1, totarea) == true) {
+			return true;
 		}
 	}
 
@@ -851,7 +851,7 @@ static bool DRLG_L3Spawn(int x, int y, int *totarea)
 /**
  * Flood fills dirt and wall tiles looking for
  * an area of at most 40 tiles and disconnected from the map edge.
- * If it finds one, converts it to lava tiles and sets lavapool to TRUE.
+ * If it finds one, converts it to lava tiles and sets lavapool to true.
  */
 static void DRLG_L3Pool()
 {
@@ -870,22 +870,22 @@ static void DRLG_L3Pool()
 			if (dunx + 1 < DMAXX) {
 				found = DRLG_L3Spawn(dunx + 1, duny, &totarea);
 			} else {
-				found = TRUE;
+				found = true;
 			}
 			if (dunx - 1 > 0 && !found) {
 				found = DRLG_L3Spawn(dunx - 1, duny, &totarea);
 			} else {
-				found = TRUE;
+				found = true;
 			}
 			if (duny + 1 < DMAXY && !found) {
 				found = DRLG_L3Spawn(dunx, duny + 1, &totarea);
 			} else {
-				found = TRUE;
+				found = true;
 			}
 			if (duny - 1 > 0 && !found) {
 				found = DRLG_L3Spawn(dunx, duny - 1, &totarea);
 			} else {
-				found = TRUE;
+				found = true;
 			}
 			poolchance = random_(0, 100);
 			for (j = std::max(duny - totarea, 0); j < std::min(duny + totarea, DMAXY); j++) {
@@ -899,7 +899,7 @@ static void DRLG_L3Pool()
 							if (k != 0 && k <= 37) {
 								dgrid[i][j].dungeon = k;
 							}
-							lavapool = TRUE;
+							lavapool = true;
 						}
 					}
 				}
@@ -951,7 +951,7 @@ static bool DRLG_L3PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 		trys = 0;
 		while (!found && trys < 200) {
 			trys++;
-			found = TRUE;
+			found = true;
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
 				sx = random_(0, DMAXX - sw);
 				sy = random_(0, DMAXY - sh);
@@ -963,8 +963,8 @@ static bool DRLG_L3PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 				found = false;
 			}
 			ii = 2;
-			for (yy = 0; yy < sh && found == TRUE; yy++) {
-				for (xx = 0; xx < sw && found == TRUE; xx++) {
+			for (yy = 0; yy < sh && found == true; yy++) {
+				for (xx = 0; xx < sw && found == true; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = false;
 					}
@@ -986,7 +986,7 @@ static bool DRLG_L3PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 			}
 		}
 		if (trys >= 200) {
-			return TRUE;
+			return true;
 		}
 		ii = sw * sh + 2;
 		for (yy = 0; yy < sh; yy++) {
@@ -999,7 +999,7 @@ static bool DRLG_L3PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 		}
 	}
 
-	if (setview == TRUE) {
+	if (setview == true) {
 		View.x = 2 * sx + 17;
 		View.y = 2 * sy + 19;
 	}
@@ -1021,10 +1021,10 @@ static void DRLG_L3PlaceRndSet(const uint8_t *miniset, int rndper)
 
 	for (sy = 0; sy < DMAXX - sh; sy++) {
 		for (sx = 0; sx < DMAXY - sw; sx++) {
-			found = TRUE;
+			found = true;
 			ii = 2;
-			for (yy = 0; yy < sh && found == TRUE; yy++) {
-				for (xx = 0; xx < sw && found == TRUE; xx++) {
+			for (yy = 0; yy < sh && found == true; yy++) {
+				for (xx = 0; xx < sw && found == true; xx++) {
 					if (miniset[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != miniset[ii]) {
 						found = false;
 					}
@@ -1035,7 +1035,7 @@ static void DRLG_L3PlaceRndSet(const uint8_t *miniset, int rndper)
 				}
 			}
 			kk = sw * sh + 2;
-			if (miniset[kk] >= 84 && miniset[kk] <= 100 && found == TRUE) {
+			if (miniset[kk] >= 84 && miniset[kk] <= 100 && found == true) {
 				// BUGFIX: accesses to dungeon can go out of bounds (fixed)
 				// BUGFIX: Comparisons vs 100 should use same tile as comparisons vs 84.
 				if (sx - 1 >= 0 && dgrid[sx - 1][sy].dungeon >= 84 && dgrid[sx - 1][sy].dungeon <= 100) {
@@ -1051,7 +1051,7 @@ static void DRLG_L3PlaceRndSet(const uint8_t *miniset, int rndper)
 					found = false;
 				}
 			}
-			if (found == TRUE && random_(0, 100) < rndper) {
+			if (found == true && random_(0, 100) < rndper) {
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
@@ -1070,22 +1070,22 @@ static bool WoodVertU(int i, int y)
 	if ((dgrid[i + 1][y].dungeon > 152 || dgrid[i + 1][y].dungeon < 130)
 	    && (dgrid[i - 1][y].dungeon > 152 || dgrid[i - 1][y].dungeon < 130)) {
 		if (dgrid[i][y].dungeon == 7) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 10) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 126) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 129) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 134) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 136) {
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -1097,16 +1097,16 @@ static bool WoodVertD(int i, int y)
 	if ((dgrid[i + 1][y].dungeon > 152 || dgrid[i + 1][y].dungeon < 130)
 	    && (dgrid[i - 1][y].dungeon > 152 || dgrid[i - 1][y].dungeon < 130)) {
 		if (dgrid[i][y].dungeon == 7) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 2) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 134) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[i][y].dungeon == 136) {
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -1118,22 +1118,22 @@ static bool WoodHorizL(int x, int j)
 	if ((dgrid[x][j + 1].dungeon > 152 || dgrid[x][j + 1].dungeon < 130)
 	    && (dgrid[x][j - 1].dungeon > 152 || dgrid[x][j - 1].dungeon < 130)) {
 		if (dgrid[x][j].dungeon == 7) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 9) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 121) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 124) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 135) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 137) {
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -1145,16 +1145,16 @@ static bool WoodHorizR(int x, int j)
 	if ((dgrid[x][j + 1].dungeon > 152 || dgrid[x][j + 1].dungeon < 130)
 	    && (dgrid[x][j - 1].dungeon > 152 || dgrid[x][j - 1].dungeon < 130)) {
 		if (dgrid[x][j].dungeon == 7) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 4) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 135) {
-			return TRUE;
+			return true;
 		}
 		if (dgrid[x][j].dungeon == 137) {
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -1325,7 +1325,7 @@ static void DRLG_L3Wood()
 						y2++;
 					}
 					y2--;
-					skip = TRUE;
+					skip = true;
 					if (dgrid[i][y1].dungeon == 7) {
 						skip = false;
 					}
@@ -1379,7 +1379,7 @@ static void DRLG_L3Wood()
 						x2++;
 					}
 					x2--;
-					skip = TRUE;
+					skip = true;
 					if (dgrid[x1][j].dungeon == 7) {
 						skip = false;
 					}
@@ -1442,10 +1442,10 @@ bool DRLG_L3Anvil()
 	trys = 0;
 	while (!found && trys < 200) {
 		trys++;
-		found = TRUE;
+		found = true;
 		ii = 2;
-		for (yy = 0; yy < sh && found == TRUE; yy++) {
-			for (xx = 0; xx < sw && found == TRUE; xx++) {
+		for (yy = 0; yy < sh && found == true; yy++) {
+			for (xx = 0; xx < sw && found == true; xx++) {
 				if (L3ANVIL[ii] != 0 && dgrid[xx + sx][yy + sy].dungeon != L3ANVIL[ii]) {
 					found = false;
 				}
@@ -1467,7 +1467,7 @@ bool DRLG_L3Anvil()
 		}
 	}
 	if (trys >= 200) {
-		return TRUE;
+		return true;
 	}
 
 	ii = sw * sh + 2;
@@ -1554,7 +1554,7 @@ bool DRLG_L3Lockout()
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			if (dgrid[i][j].dungeon != 0) {
-				lockout[i][j] = TRUE;
+				lockout[i][j] = true;
 				fx = i;
 				fy = j;
 				t++;
@@ -1639,7 +1639,7 @@ static void DRLG_L3(int entry)
 			if (!genok && QuestStatus(Q_ANVIL)) {
 				genok = DRLG_L3Anvil();
 			}
-		} while (genok == TRUE);
+		} while (genok == true);
 		DRLG_L3Pool();
 	} while (!lavapool);
 

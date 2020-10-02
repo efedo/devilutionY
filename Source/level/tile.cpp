@@ -4,65 +4,45 @@
  * Implementation of general dungeon generation code.
  */
 #include "all.h"
+#include <functional>
 
 DEVILUTION_BEGIN_NAMESPACE
 
-void Tile::setPlayer(const int pnum)
+void Tile::setActor(Actor & nactor)
 {
-	assert(pnum >= 0 && pnum < UINT8_MAX);
-	assert(plr.isValidPlayer(pnum));
-	player = pnum; // Check that position is not blocked (or in player code?)
+	actor = &nactor;  // Check that position is not blocked (or in player code?)
 }
 
-void Tile::setPlayerUnsafe(const int pnum)
+void Tile::setActorDraw(Actor& nactor)
 {
-	assert(pnum >= 0 && pnum < UINT8_MAX);
-	player = pnum;
+	if (!this->drawActors) {
+		this->drawActors.reset(new std::set<Actor>);
+	}
+	this->drawActors->insert(nactor);
 }
 
-void Tile::clearPlayer()
+void Tile::clearActor(Actor& clactor)
 {
-	player = UINT8_MAX;
+	assert(&clactor == actor);
+	actor = 0;
 }
 
-void Tile::clearPlayer(const int pnum)
+void Tile::clearActorDraw(Actor& clactor)
 {
-	if (player != pnum) return;
-	player = UINT8_MAX;
+	if (!this->drawActors) return;
+
+	if (this->drawActors->count(clactor)) {
+		this->drawActors->erase(clactor);
+	}
+
+	if (this->drawActors->empty()) {
+		this->drawActors = 0;
+	}
 }
 
 void Tile::clearPiece()
 {
 	piece = UINT16_MAX;
-}
-
-void Tile::setPlayerDraw(const int pnum)
-{
-	assert(pnum >= 0 && pnum < UINT8_MAX);
-	assert(plr.isValidPlayer(pnum));
-	drawplayer = pnum; // Check that position is not blocked (or in player code?)
-}
-
-void Tile::setPlayerDrawUnsafe(const int pnum)
-{
-	assert(pnum >= 0 && pnum < UINT8_MAX);
-	drawplayer = pnum;
-}
-
-void Tile::clearPlayerDraw()
-{
-	drawplayer = UINT8_MAX;
-}
-
-void Tile::clearPlayerDraw(const int pnum)
-{
-	if (drawplayer != pnum) return;
-	drawplayer = UINT8_MAX;
-}
-
-void Tile::clearMonster()
-{
-	monster = UINT16_MAX;
 }
 
 void Tile::clearObject()
@@ -83,17 +63,30 @@ void Tile::clearMissile()
 
 [[nodiscard]] bool Tile::isPlayer() const
 {
-	return (player != UINT8_MAX);
-}
-
-[[nodiscard]] bool Tile::isPlayerDraw() const
-{
-	return (drawplayer != UINT8_MAX);
+	if (!actor) return false;
+	return (actor->type == ActorType::player);
 }
 
 [[nodiscard]] bool Tile::isMonster() const
 {
-	return (monster != UINT16_MAX);
+	if (!actor) return false;
+	return (actor->type == ActorType::monster);
+}
+
+[[nodiscard]] bool Tile::isTowner() const
+{
+	if (!actor) return false;
+	return (actor->type == ActorType::towner);
+}
+
+[[nodiscard]] bool Tile::isActorDraw() const
+{
+	return (this->drawActors != 0);
+}
+
+[[nodiscard]] bool Tile::isActor() const
+{
+	return actor;
 }
 
 [[nodiscard]] bool Tile::isObject() const
@@ -133,23 +126,9 @@ void Tile::setPiece(int pieceNum)
 	piece = pieceNum;
 }
 
-// Loads pieces in original format, where 0 is invalid, values can be positive or negative,
-// and 0 is invalid/empty (For loading from files etc.)
-void Tile::_setPieceNegFormat(int pieceNum)
+void Tile::setActor(Actor& nactor)
 {
-	assert(pieceNum >= 0 && pieceNum < UINT16_MAX);
-	if (pieceNum == 0) {
-		piece = UINT16_MAX;
-	} else {
-		piece = pieceNum - 1;
-	}
-}
-
-
-void Tile::setMonster(int monsterNum)
-{
-	assert(monsterNum >= 0 && monsterNum < UINT16_MAX);
-	monster = monsterNum;
+	actor = &nactor;
 }
 
 void Tile::setObject(int objectNum)
@@ -209,7 +188,7 @@ void Tile::setMissile(int missileNum)
 {
 	if (isItem()) return false;
 	if (isSolid()) return false;
-	if (isMonster()) return false;
+	if (isActor()) return false;
 	if (isObject()) {
 		int oi = getObject();
 		ObjectStruct & obj = ::dvl::object[oi];
@@ -230,23 +209,34 @@ void Tile::setMissile(int missileNum)
 	return piece;
 }
 
-[[nodiscard]] uint16_t Tile::getPlayer() const
+[[nodiscard]] Actor& Tile::getActor() const
 {
-	assert(player != UINT8_MAX);
-	return player;
+	assert(actor);
+	return *actor;
 }
 
-[[nodiscard]] uint16_t Tile::getPlayerDraw() const
+[[nodiscard]] Player & Tile::getPlayer() const
 {
-	assert(drawplayer != UINT8_MAX);
-	return drawplayer;
+	assert(actor && actor->type == ActorType::player);
+	return * static_cast<Player *>(actor);
 }
 
-
-[[nodiscard]] uint16_t Tile::getMonster() const
+[[nodiscard]] MonsterInstance& Tile::getMonster() const
 {
-	assert(monster != UINT16_MAX);
-	return monster;
+	assert(actor && actor->type == ActorType::monster);
+	return * static_cast<MonsterInstance *>(actor);
+}
+
+[[nodiscard]] Towner& Tile::getTowner() const
+{
+	assert(actor && actor->type == ActorType::towner);
+	return * static_cast<Towner*>(actor);
+}
+
+[[nodiscard]] std::set<Actor>& Tile::getActorDrawSet() const
+{
+	assert(drawActors);
+	return *drawActors;
 }
 
 [[nodiscard]] uint8_t Tile::getObject() const
@@ -255,27 +245,16 @@ void Tile::setMissile(int missileNum)
 	return object;
 }
 
-[[nodiscard]] uint64_t Tile::getItem() const
+[[nodiscard]] Item & Tile::getItem() const
 {
-	assert(item != UINT8_MAX);
-	return item;
+	assert(item);
+	return *item;
 }
 
 [[nodiscard]] uint8_t Tile::getMissile() const
 {
 	assert(missile != UINT8_MAX);
 	return missile;
-}
-
-[[nodiscard]] uint8_t Tile::getPlayerUnsafe() const
-{
-	return player;
-}
-
-
-[[nodiscard]] uint8_t Tile::getPlayerDrawUnsafe() const
-{
-	return drawplayer;
 }
 
 DEVILUTION_END_NAMESPACE

@@ -8,26 +8,20 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-class ActorType {
+enum class ActorType : uint8_t {
+	none = 0,
+	player = 1,
+	monster = 2,
+	towner = 3,
+	fauna = 4,
 };
 
 class Actor {
+   public:
+	Actor(ActorType newtype) : type(newtype) {}
+	V2Di _drawpos;
+	ActorType type = ActorType::none;
 };
-
-// class Player : public actor
-
-// Non-player actor
-class NpcType : public ActorType {
-};
-
-// Non-player actor
-class Npc : public Actor {
-};
-
-class Towner : public Npc {
-};
-
-// class Monster : public Npa
 
 DEVILUTION_END_NAMESPACE
 
