@@ -70,9 +70,9 @@ UiScrollBar *SELLIST_SCROLLBAR = &SELLIST_DIALOG[2].scrollbar;
 UiArtTextButton *SELLIST_DIALOG_DELETE_BUTTON = &SELLIST_DIALOG[4].art_text_button;
 
 UiListItem SELCLAS_DIALOG_ITEMS[] = {
-	{ "Warrior", UI_WARRIOR },
-	{ "Rogue", UI_ROGUE },
-	{ "Sorcerer", UI_SORCERER }
+	{ "Warrior", UiClass::warrior },
+	{ "Rogue", UiClass::rogue },
+	{ "Sorcerer", UiClass::sorceror }
 };
 UiItem SELCLASS_DIALOG[] = {
 	UiArtText("Choose Class", { PANEL_LEFT + 264, 211, 320, 33 }, UIS_CENTER | UIS_BIG),

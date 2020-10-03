@@ -250,13 +250,13 @@ bool StoreHealer::ItemOk(int i)
 	if (AllItemsList[i].itype != ItemType::misc) return false;
 
 	if (AllItemsList[i].iMiscId == MiscItemId::SCROLL &&
-	    AllItemsList[i].iSpell == SPL_HEAL)
+	    AllItemsList[i].iSpell == SpellId::HEAL)
 		result = true;
 	if (AllItemsList[i].iMiscId == MiscItemId::SCROLLT &&
-	    AllItemsList[i].iSpell == SPL_RESURRECT && plr.isMultiplayer())
+	    AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isMultiplayer())
 		result = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::SCROLLT &&
-	    AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isMultiplayer())
+	    AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isMultiplayer())
 		result = true;
 
 	if (plr.isSingleplayer()) {

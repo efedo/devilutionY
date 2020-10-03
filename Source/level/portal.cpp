@@ -106,7 +106,7 @@ void RemovePortalMissile(int id)
 	for (i = 0; i < nummissiles; i++) {
 		mi = missileactive[i];
 		if (missile[mi]._mitype == MissileType::TOWN && missile[mi]._misource == id) {
-			grid.at(missile[mi]._mi).dFlags &= ~BFLAG_MISSILE;
+			grid.at(missile[mi]._mi).dFlags &= ~DunTileFlag::MISSILE;
 			grid.at(missile[mi]._mi).clearMissile();
 			if (portal[id].level != 0) AddUnLight(missile[mi]._mlid);
 			DeleteMissile(mi, i);

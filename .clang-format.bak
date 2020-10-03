@@ -1,9 +1,11 @@
 BasedOnStyle: webkit
+AlignAfterOpenBracket: dontalign
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignTrailingComments: true
 AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: empty
 PointerAlignment: Right
 TabWidth: 4
 UseTab: ForIndentation

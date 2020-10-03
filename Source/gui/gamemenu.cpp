@@ -71,7 +71,7 @@ void gamemenu_update_single(TMenuItem *pMenuItems)
 	gmenu_enable(&sgSingleMenu[3], gbValidSaveFile);
 
 	enable = false;
-	if (myplr().data._pmode != PM_DEATH && !deathflag)
+	if (myplr().data._pmode != PlayerMode::DEATH && !deathflag)
 		enable = true;
 
 	gmenu_enable(&sgSingleMenu[0], enable);
@@ -106,7 +106,7 @@ void gamemenu_new_game(bool bActivate)
 
 	for (i = 0; i < plr.maxPlayers(); i++) {
 		if (plr.isValidPlayer(i)) {
-			plr[i].data._pmode = PM_QUIT;
+			plr[i].data._pmode = PlayerMode::QUIT;
 			plr[i].data._pInvincible = true;
 		}
 	}
@@ -150,7 +150,7 @@ void gamemenu_save_game(bool bActivate)
 		return;
 	}
 
-	if (myplr().data._pmode == PM_DEATH || deathflag) {
+	if (myplr().data._pmode == PlayerMode::DEATH || deathflag) {
 		gamemenu_off();
 		return;
 	}

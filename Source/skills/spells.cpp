@@ -16,16 +16,16 @@ int GetManaAmount(int id, int sn)
 		sl = 0;
 	}
 
-	if (sn == SPL_FIREBOLT) {
+	if (sn == SpellId::FIREBOLT) {
 		adj >>= 1;
-	} else if (sn == SPL_RESURRECT && sl > 0) {
-		adj = sl * (spelldata[SPL_RESURRECT].sManaCost / 8);
+	} else if (sn == SpellId::RESURRECT && sl > 0) {
+		adj = sl * (spelldata[SpellId::RESURRECT].sManaCost / 8);
 	} else if (sl > 0) {
 		adj = sl * spelldata[sn].sManaAdj;
 	}
 
-	if (sn == SPL_HEAL || sn == SPL_HEALOTHER) {
-		ma = (spelldata[SPL_HEAL].sManaCost + 2 * plr[id].data._pLevel - adj);
+	if (sn == SpellId::HEAL || sn == SpellId::HEALOTHER) {
+		ma = (spelldata[SpellId::HEAL].sManaCost + 2 * plr[id].data._pLevel - adj);
 	} else if (spelldata[sn].sManaCost == 255) {
 		ma = ((uint8_t)plr[id].data._pMaxManaBase - adj);
 	} else {
@@ -36,7 +36,7 @@ int GetManaAmount(int id, int sn)
 		ma = 0;
 	ma <<= 6;
 
-	if (plr[id].data._pClass == PC_ROGUE) {
+	if (plr[id].data._pClass == PlayerClass::rogue) {
 		ma -= ma >> 2;
 	}
 
@@ -53,16 +53,16 @@ void UseMana(int id, int sn)
 
 	if (id == myplr()) {
 		switch (plr[id].data._pSplType) {
-		case RSPLTYPE_SKILL:
-		case RSPLTYPE_INVALID:
+		case RSpellType::SKILL:
+		case RSpellType::INVALID:
 			break;
-		case RSPLTYPE_SCROLL:
+		case RSpellType::SCROLL:
 			plr[id].inv.UseScroll();
 			break;
-		case RSPLTYPE_CHARGES:
+		case RSpellType::CHARGES:
 			plr[id].inv.UseStaffCharge();
 			break;
-		case RSPLTYPE_SPELL:
+		case RSpellType::SPELL:
 #ifdef _DEBUG
 			if (!debug_mode_key_inverted_v) {
 #endif
@@ -91,7 +91,7 @@ bool CheckSpell(int id, int sn, char st, bool manaonly)
 	if (!manaonly && pcurs != CURSOR_HAND) {
 		result = false;
 	} else {
-		if (st != RSPLTYPE_SKILL) {
+		if (st != RSpellType::SKILL) {
 			if (GetSpellLevel(id, sn) <= 0) {
 				result = false;
 			} else {
@@ -118,7 +118,7 @@ void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 		caster = 0;
 		dir = plr[id].data._pdir;
 
-		if (spl == SPL_FIREWALL) {
+		if (spl == SpellId::FIREWALL) {
 			dir = Dir(plr[id].data._pVar3);
 		}
 		break;
@@ -129,10 +129,10 @@ void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
 	}
 
 	if (spelldata[spl].sMissiles[0] == MissileType::TOWN) {
-		UseMana(id, SPL_TOWN);
+		UseMana(id, SpellId::TOWN);
 	}
 	if (spelldata[spl].sMissiles[0] == MissileType::CBOLT) {
-		UseMana(id, SPL_CBOLT);
+		UseMana(id, SpellId::CBOLT);
 
 		for (i = (spllvl >> 1) + 3; i > 0; i--) {
 			AddMissile(s, d, dir, MissileType::CBOLT, caster, id, 0, spllvl);
@@ -202,7 +202,7 @@ void DoResurrect(int pnum, int rid)
 		}
 
 		plr[rid].ClrPlrPath();
-		plr[rid].data.destAction = ACTION_NONE;
+		plr[rid].data.destAction = DestinationAction::NONE;
 		plr[rid].data._pInvincible = false;
 		PlacePlayer(rid);
 
@@ -221,7 +221,7 @@ void DoResurrect(int pnum, int rid)
 		if (plr[rid].data.plrlevel == lvl.currlevel) {
 			plr[rid].StartStand(plr[rid].data._pdir);
 		} else {
-			plr[rid].data._pmode = PM_STAND;
+			plr[rid].data._pmode = PlayerMode::STAND;
 		}
 	}
 }
@@ -241,15 +241,15 @@ void DoHealOther(int pnum, int rid)
 			hp += (random_(57, 4) + 1) << 6;
 		}
 
-		for (j = 0; j < GetSpellLevel(pnum, SPL_HEALOTHER); ++j) {
+		for (j = 0; j < GetSpellLevel(pnum, SpellId::HEALOTHER); ++j) {
 			hp += (random_(57, 6) + 1) << 6;
 		}
 
-		if (plr[pnum].data._pClass == PC_WARRIOR) {
+		if (plr[pnum].data._pClass == PlayerClass::warrior) {
 			hp <<= 1;
 		}
 
-		if (plr[pnum].data._pClass == PC_ROGUE) {
+		if (plr[pnum].data._pClass == PlayerClass::rogue) {
 			hp += hp >> 1;
 		}
 

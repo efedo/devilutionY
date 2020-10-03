@@ -1534,9 +1534,9 @@ int misc_increase_ds1_objects_max(int ds1_idx, long nb_objects)
 	if (nb_objects < 0)
 		return 0;
 
-	nb_gran = 1 + (nb_objects / OBJ_MAX_GRANULARITY);
+	nb_gran = 1 + (nb_objects / ObjectType::MAX_GRANULARITY);
     old_max = glb_ds1[ds1_idx].current_obj_max;
-    new_max = old_max + (nb_gran * OBJ_MAX_GRANULARITY);
+    new_max = old_max + (nb_gran * ObjectType::MAX_GRANULARITY);
 
 	// drawing_order
 	old_size = old_max * sizeof(int);
@@ -1550,27 +1550,27 @@ int misc_increase_ds1_objects_max(int ds1_idx, long nb_objects)
 	glb_ds1[ds1_idx].drawing_order = (int *) new_buffer;
 
 	// obj
-	old_size = old_max * sizeof(OBJ_S);
-	new_size = new_max * sizeof(OBJ_S);
-	new_buffer = (OBJ_S *) malloc(new_size);
+	old_size = old_max * sizeof(ObjectType::S);
+	new_size = new_max * sizeof(ObjectType::S);
+	new_buffer = (ObjectType::S *) malloc(new_size);
 	if (new_buffer == NULL)
 		return -1;
 
 	memset(new_buffer, 0x00, new_size);
 	memcpy(new_buffer, glb_ds1[ds1_idx].obj, old_size);
 	free(glb_ds1[ds1_idx].obj);
-	glb_ds1[ds1_idx].obj = (OBJ_S *) new_buffer;
+	glb_ds1[ds1_idx].obj = (ObjectType::S *) new_buffer;
 
 	// obj_undo
-	old_size = old_max * sizeof(OBJ_S);
-	new_size = new_max * sizeof(OBJ_S);
-	new_buffer = (OBJ_S *) malloc(new_size);
+	old_size = old_max * sizeof(ObjectType::S);
+	new_size = new_max * sizeof(ObjectType::S);
+	new_buffer = (ObjectType::S *) malloc(new_size);
 	if (new_buffer == NULL)
 		return -1;
     memset(new_buffer, 0x00, new_size);
 	memcpy(new_buffer, glb_ds1[ds1_idx].obj_undo, old_size);
 	free(glb_ds1[ds1_idx].obj_undo);
-	glb_ds1[ds1_idx].obj_undo = (OBJ_S *) new_buffer;
+	glb_ds1[ds1_idx].obj_undo = (ObjectType::S *) new_buffer;
 
 	glb_ds1[ds1_idx].current_obj_max = new_max;
 	return 0;

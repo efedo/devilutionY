@@ -3,7 +3,6 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 int qtopline;
-bool questlog;
 uint8_t *pQLogCel;
 QuestStruct quests[MAXQUESTS];
 int qline;
@@ -138,7 +137,7 @@ void CheckQuests()
 	V2Di rport;
 
 	if (QuestStatus(Q_BETRAYER) && plr.isMultiplayer() && quests[Q_BETRAYER]._qvar1 == 2) {
-		AddObject(OBJ_ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
+		AddObject(ObjectType::ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
 		quests[Q_BETRAYER]._qvar1 = 3;
 		NetSendCmdQuest(true, Q_BETRAYER);
 	}
@@ -185,7 +184,7 @@ void CheckQuests()
 			palette_update_quest_palette(WaterDone);
 			WaterDone--;
 		}
-	} else if (myplr().data._pmode == PM_STAND) {
+	} else if (myplr().data._pmode == PlayerMode::STAND) {
 		for (i = 0; i < MAXQUESTS; i++) {
 			if (lvl.currlevel == quests[i]._qlevel
 			    && quests[i]._qslvl != SetLvl::None
@@ -248,11 +247,11 @@ void CheckQuestKill(int m, bool sendmsg)
 	if (monsters[m].data.MType->mtype == MonsterType::SKING) {
 		quests[Q_SKELKING]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR82;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE82;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE82;
 		}
 		if (sendmsg)
@@ -261,11 +260,11 @@ void CheckQuestKill(int m, bool sendmsg)
 	} else if (monsters[m].data.MType->mtype == MonsterType::CLEAVER) {
 		quests[Q_BUTCHER]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR80;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE80;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE80;
 		}
 		if (sendmsg)
@@ -273,21 +272,21 @@ void CheckQuestKill(int m, bool sendmsg)
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::GARBUD].mName) { //"Gharbad the Weak"
 		quests[Q_GARBUD]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR61;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE61;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE61;
 		}
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::ZHAR].mName) { //"Zhar the Mad"
 		quests[Q_ZHAR]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR62;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE62;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE62;
 		}
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::LAZURUS].mName && plr.isMultiplayer()) { //"Arch-Bishop Lazarus"
@@ -306,11 +305,11 @@ void CheckQuestKill(int m, bool sendmsg)
 				}
 			}
 		}
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR83;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE83;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE83;
 		}
 		if (sendmsg) {
@@ -325,21 +324,21 @@ void CheckQuestKill(int m, bool sendmsg)
 		quests[Q_BETRAYER]._qvar2 = 4;
 		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
 		AddMissile({ 35, 32 }, { 35, 32 }, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR83;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE83;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE83;
 		}
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::WARLORD].mName) { //"Warlord of Blood"
 		quests[Q_WARLORD]._qactive = QUEST_DONE;
 		sfxdelay = 30;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR94;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE94;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE94;
 		}
 	}
@@ -585,7 +584,7 @@ void ResyncMPQuests()
 		NetSendCmdQuest(true, Q_BETRAYER);
 	}
 	if (QuestStatus(Q_BETRAYER))
-		AddObject(OBJ_ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
+		AddObject(ObjectType::ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
 }
 
 void ResyncQuests()

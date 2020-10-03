@@ -25,16 +25,16 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 	sl = myplr().data._pSplLvl[i] + myplr().data._pISplLvlAdd;
 
 	switch (i) {
-	case SPL_FIREBOLT:
+	case SpellId::FIREBOLT:
 		*mind = (myplr().data._pMagic >> 3) + sl + 1;
 		*maxd = (myplr().data._pMagic >> 3) + sl + 10;
 		break;
-	case SPL_HEAL: /// BUGFIX: healing calculation is unused
+	case SpellId::HEAL: /// BUGFIX: healing calculation is unused
 		*mind = myplr().data._pLevel + sl + 1;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			*mind <<= 1;
 		}
-		if (myplr().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PlayerClass::rogue) {
 			*mind += *mind >> 1;
 		}
 		*maxd = 10;
@@ -44,20 +44,20 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		for (k = 0; k < sl; k++) {
 			*maxd += 6;
 		}
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			*maxd <<= 1;
 		}
-		if (myplr().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PlayerClass::rogue) {
 			*maxd += *maxd >> 1;
 		}
 		*mind = -1;
 		*maxd = -1;
 		break;
-	case SPL_LIGHTNING:
+	case SpellId::LIGHTNING:
 		*mind = 2;
 		*maxd = myplr().data._pLevel + 2;
 		break;
-	case SPL_FLASH:
+	case SpellId::FLASH:
 		*mind = myplr().data._pLevel;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
@@ -65,32 +65,32 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		*mind += *mind >> 1;
 		*maxd = *mind * 2;
 		break;
-	case SPL_IDENTIFY:
-	case SPL_TOWN:
-	case SPL_STONE:
-	case SPL_INFRA:
-	case SPL_RNDTELEPORT:
-	case SPL_MANASHIELD:
-	case SPL_DOOMSERP:
-	case SPL_BLODRIT:
-	case SPL_INVISIBIL:
-	case SPL_BLODBOIL:
-	case SPL_TELEPORT:
-	case SPL_ETHEREALIZE:
-	case SPL_REPAIR:
-	case SPL_RECHARGE:
-	case SPL_DISARM:
-	case SPL_RESURRECT:
-	case SPL_TELEKINESIS:
-	case SPL_BONESPIRIT:
+	case SpellId::IDENTIFY:
+	case SpellId::TOWN:
+	case SpellId::STONE:
+	case SpellId::INFRA:
+	case SpellId::RNDTELEPORT:
+	case SpellId::MANASHIELD:
+	case SpellId::DOOMSERP:
+	case SpellId::BLODRIT:
+	case SpellId::INVISIBIL:
+	case SpellId::BLODBOIL:
+	case SpellId::TELEPORT:
+	case SpellId::ETHEREALIZE:
+	case SpellId::REPAIR:
+	case SpellId::RECHARGE:
+	case SpellId::DISARM:
+	case SpellId::RESURRECT:
+	case SpellId::TELEKINESIS:
+	case SpellId::BONESPIRIT:
 		*mind = -1;
 		*maxd = -1;
 		break;
-	case SPL_FIREWALL:
+	case SpellId::FIREWALL:
 		*mind = (4 * myplr().data._pLevel + 8) >> 1;
 		*maxd = (4 * myplr().data._pLevel + 80) >> 1;
 		break;
-	case SPL_FIREBALL:
+	case SpellId::FIREBALL:
 		*mind = 2 * myplr().data._pLevel + 4;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
@@ -100,7 +100,7 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 			*maxd += *maxd >> 3;
 		}
 		break;
-	case SPL_GUARDIAN:
+	case SpellId::GUARDIAN:
 		*mind = (myplr().data._pLevel >> 1) + 1;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
@@ -110,15 +110,15 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 			*maxd += *maxd >> 3;
 		}
 		break;
-	case SPL_CHAIN:
+	case SpellId::CHAIN:
 		*mind = 4;
 		*maxd = 2 * myplr().data._pLevel + 4;
 		break;
-	case SPL_WAVE:
+	case SpellId::WAVE:
 		*mind = 6 * (myplr().data._pLevel + 1);
 		*maxd = 6 * (myplr().data._pLevel + 10);
 		break;
-	case SPL_NOVA:
+	case SpellId::NOVA:
 		*mind = (myplr().data._pLevel + 5) >> 1;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
@@ -130,16 +130,16 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		}
 		*maxd *= 5;
 		break;
-	case SPL_FLAME:
+	case SpellId::FLAME:
 		*mind = 3;
 		*maxd = myplr().data._pLevel + 4;
 		*maxd += *maxd >> 1;
 		break;
-	case SPL_GOLEM:
+	case SpellId::GOLEM:
 		*mind = 11;
 		*maxd = 17;
 		break;
-	case SPL_APOCA:
+	case SpellId::APOCA:
 		*mind = 0;
 		for (k = 0; k < myplr().data._pLevel; k++) {
 			*mind += 1;
@@ -149,7 +149,7 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 			*maxd += 6;
 		}
 		break;
-	case SPL_ELEMENT:
+	case SpellId::ELEMENT:
 		*mind = 2 * myplr().data._pLevel + 4;
 		for (k = 0; k < sl; k++) {
 			*mind += *mind >> 3;
@@ -161,20 +161,20 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		}
 		/// BUGFIX: add here '*maxd >>= 1;'
 		break;
-	case SPL_CBOLT:
+	case SpellId::CBOLT:
 		*mind = 1;
 		*maxd = (myplr().data._pMagic >> 2) + 1;
 		break;
-	case SPL_HBOLT:
+	case SpellId::HBOLT:
 		*mind = myplr().data._pLevel + 9;
 		*maxd = myplr().data._pLevel + 18;
 		break;
-	case SPL_HEALOTHER: /// BUGFIX: healing calculation is unused
+	case SpellId::HEALOTHER: /// BUGFIX: healing calculation is unused
 		*mind = myplr().data._pLevel + sl + 1;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			*mind <<= 1;
 		}
-		if (myplr().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PlayerClass::rogue) {
 			*mind += *mind >> 1;
 		}
 		*maxd = 10;
@@ -184,16 +184,16 @@ void GetDamageAmt(int i, int *mind, int *maxd)
 		for (k = 0; k < sl; k++) {
 			*maxd += 6;
 		}
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			*maxd <<= 1;
 		}
-		if (myplr().data._pClass == PC_ROGUE) {
+		if (myplr().data._pClass == PlayerClass::rogue) {
 			*maxd += *maxd >> 1;
 		}
 		*mind = -1;
 		*maxd = -1;
 		break;
-	case SPL_FLARE:
+	case SpellId::FLARE:
 		*mind = (myplr().data._pMagic >> 1) + 3 * sl - (myplr().data._pMagic >> 3);
 		*maxd = *mind;
 		break;
@@ -234,21 +234,6 @@ int FindClosest(V2Di s, int rad)
 		}
 	}
 	return -1;
-}
-
-int GetSpellLevel(int id, int sn)
-{
-	int result;
-
-	if (id == myplr())
-		result = plr[id].data._pISplLvlAdd + plr[id].data._pSplLvl[sn];
-	else
-		result = 1;
-
-	if (result < 0)
-		result = 0;
-
-	return result;
 }
 
 Dir GetDirection8(V2Di t1, V2Di t2)
@@ -381,7 +366,7 @@ void PutMissile(int i)
 	if (pos.x <= 0 || pos.y <= 0 || pos.x >= MAXDUNX || pos.y >= MAXDUNY)
 		missile[i]._miDelFlag = true;
 	if (!missile[i]._miDelFlag) {
-		grid.at(pos).dFlags |= BFLAG_MISSILE;
+		grid.at(pos).dFlags |= DunTileFlag::MISSILE;
 		grid.at(pos).setMissile(i);
 		if (missile[i]._miPreFlag)
 			MissilePreFlag = true;
@@ -555,13 +540,13 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 		    - (dist * dist >> 1)
 		    + plr[pnum].data._pIEnAc
 		    + 50;
-		if (plr[pnum].data._pClass == PC_ROGUE)
+		if (plr[pnum].data._pClass == PlayerClass::rogue)
 			hper += 20;
-		if (plr[pnum].data._pClass == PC_WARRIOR)
+		if (plr[pnum].data._pClass == PlayerClass::warrior)
 			hper += 10;
 	} else {
 		hper = plr[pnum].data._pMagic - (monsters[m].data.mLevel << 1) - dist + 50;
-		if (plr[pnum].data._pClass == PC_SORCERER)
+		if (plr[pnum].data._pClass == PlayerClass::sorceror)
 			hper += 20;
 	}
 	if (hper < 5)
@@ -586,7 +571,7 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 	}
 	if (!missiledata[t].mType) {
 		dam = plr[pnum].data._pIBonusDamMod + dam * plr[pnum].data._pIBonusDam / 100 + dam;
-		if (plr[pnum].data._pClass == PC_ROGUE)
+		if (plr[pnum].data._pClass == PlayerClass::rogue)
 			dam += plr[pnum].data._pDamageMod;
 		else
 			dam += (plr[pnum].data._pDamageMod >> 1);
@@ -681,7 +666,7 @@ bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, bool s
 		hper = 30;
 	}
 
-	if ((plr[pnum].data._pmode == PM_STAND || plr[pnum].data._pmode == PM_ATTACK) && plr[pnum].data._pBlockFlag) {
+	if ((plr[pnum].data._pmode == PlayerMode::STAND || plr[pnum].data._pmode == PlayerMode::ATTACK) && plr[pnum].data._pBlockFlag) {
 		blk = random_(73, 100);
 	} else {
 		blk = 100;
@@ -751,11 +736,11 @@ bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, bool s
 			if (plr[pnum].data._pHitPoints >> 6 <= 0) {
 				plr[pnum].SyncPlrKill(earflag);
 			} else {
-				if (plr[pnum].data._pClass == PC_WARRIOR) {
+				if (plr[pnum].data._pClass == PlayerClass::warrior) {
 					PlaySfxLoc(PS_WARR69, plr[pnum].pos());
-				} else if (plr[pnum].data._pClass == PC_ROGUE) {
+				} else if (plr[pnum].data._pClass == PlayerClass::rogue) {
 					PlaySfxLoc(PS_ROGUE69, plr[pnum].pos());
-				} else if (plr[pnum].data._pClass == PC_SORCERER) {
+				} else if (plr[pnum].data._pClass == PlayerClass::sorceror) {
 					PlaySfxLoc(PS_MAGE69, plr[pnum].pos());
 				}
 				drawhpflag = true;
@@ -830,16 +815,16 @@ bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, b
 		    - plr[p].data._pIBonusAC
 		    - plr[p].data._pIAC
 		    + plr[pnum].data._pDexterity + 50;
-		if (plr[pnum].data._pClass == PC_ROGUE)
+		if (plr[pnum].data._pClass == PlayerClass::rogue)
 			hit += 20;
-		if (plr[pnum].data._pClass == PC_WARRIOR)
+		if (plr[pnum].data._pClass == PlayerClass::warrior)
 			hit += 10;
 	} else {
 		hit = plr[pnum].data._pMagic
 		    - (plr[p].data._pLevel << 1)
 		    - dist
 		    + 50;
-		if (plr[pnum].data._pClass == PC_SORCERER)
+		if (plr[pnum].data._pClass == PlayerClass::sorceror)
 			hit += 20;
 	}
 	if (hit < 5)
@@ -847,7 +832,7 @@ bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, b
 	if (hit > 95)
 		hit = 95;
 	if (hper < hit) {
-		if ((plr[p].data._pmode == PM_STAND || plr[p].data._pmode == PM_ATTACK) && plr[p].data._pBlockFlag) {
+		if ((plr[p].data._pmode == PlayerMode::STAND || plr[p].data._pmode == PlayerMode::ATTACK) && plr[p].data._pBlockFlag) {
 			blkper = random_(73, 100);
 		} else {
 			blkper = 100;
@@ -877,11 +862,11 @@ bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, b
 		if (resper > 0) {
 			if (pnum == myplr())
 				NetSendCmdDamage(true, p, dam - resper * dam / 100);
-			if (plr[pnum].data._pClass == PC_WARRIOR) {
+			if (plr[pnum].data._pClass == PlayerClass::warrior) {
 				tac = PS_WARR69;
-			} else if (plr[pnum].data._pClass == PC_ROGUE) {
+			} else if (plr[pnum].data._pClass == PlayerClass::rogue) {
 				tac = PS_ROGUE69;
-			} else if (plr[pnum].data._pClass == PC_SORCERER) {
+			} else if (plr[pnum].data._pClass == PlayerClass::sorceror) {
 				tac = PS_MAGE69;
 			} else {
 				return true;
@@ -1151,7 +1136,7 @@ void InitMissiles()
 	}
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			grid[i][j].dFlags &= ~BFLAG_MISSILE;
+			grid[i][j].dFlags &= ~DunTileFlag::MISSILE;
 		}
 	}
 }
@@ -1160,9 +1145,9 @@ void AddLArrow(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	if (s == d) d += offset(midir);
 	if (!mienemy) {
-		if (plr[id].data._pClass == PC_ROGUE)
+		if (plr[id].data._pClass == PlayerClass::rogue)
 			GetMissileVel(mi, s, d, (plr[id].data._pLevel >> 2) + 31);
-		else if (plr[id].data._pClass == PC_WARRIOR)
+		else if (plr[id].data._pClass == PlayerClass::warrior)
 			GetMissileVel(mi, s, d, (plr[id].data._pLevel >> 3) + 31);
 		else
 			GetMissileVel(mi, s, d, 32);
@@ -1184,9 +1169,9 @@ void AddArrow(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 		if (plr[id].data._pIFlags & ItemSpecialEffect::RNDARROWVEL) {
 			av = random_(64, 32) + 16;
 		}
-		if (plr[id].data._pClass == PC_ROGUE)
+		if (plr[id].data._pClass == PlayerClass::rogue)
 			av += (plr[id].data._pLevel - 1) >> 2;
-		if (plr[id].data._pClass == PC_WARRIOR)
+		if (plr[id].data._pClass == PlayerClass::warrior)
 			av += (plr[id].data._pLevel - 1) >> 3;
 		GetMissileVel(mi, s, d, av);
 	} else {
@@ -1242,10 +1227,10 @@ void AddRndTeleport(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int
 	if (!lvl.setlevel || lvl.setlvlnum != SetLvl::VileBetrayer) {
 		missile[mi]._mi = { s.x + r1, s.y + r2 };
 		if (!mienemy)
-			UseMana(id, SPL_RNDTELEPORT);
+			UseMana(id, SpellId::RNDTELEPORT);
 	} else {
 		int pn = grid.at(d).getObject();
-		if (object[pn]._otype == OBJ_MCIRCLE1 || object[pn]._otype == OBJ_MCIRCLE2) {
+		if (object[pn]._otype == ObjectType::MCIRCLE1 || object[pn]._otype == ObjectType::MCIRCLE2) {
 			missile[mi]._mi = d;
 			if (!PosOkPlayer(myplr(), d))
 				GetVileMissPos(mi, d);
@@ -1267,7 +1252,7 @@ void AddFirebolt(int mi, V2Di s, V2Di d, Dir midir, char micaster, int id, int d
 				break;
 		}
 		if (i == nummissiles)
-			UseMana(id, SPL_FIREBOLT);
+			UseMana(id, SpellId::FIREBOLT);
 		if (id != -1) {
 			sp = 2 * missile[mi]._mispllvl + 16;
 			if (sp >= 63)
@@ -1334,7 +1319,7 @@ void AddTeleport(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 	}
 
 	if (!missile[mi]._miDelFlag) {
-		UseMana(id, SPL_TELEPORT);
+		UseMana(id, SpellId::TELEPORT);
 		missile[mi]._mirange = 2;
 	}
 }
@@ -1384,7 +1369,7 @@ void AddFireball(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 		i = 2 * missile[mi]._mispllvl + 16;
 		if (i > 50)
 			i = 50;
-		UseMana(id, SPL_FIREBALL);
+		UseMana(id, SpellId::FIREBALL);
 	} else {
 		i = 16;
 	}
@@ -1402,7 +1387,7 @@ void AddFireball(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 void AddLightctrl(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	if (!dam && !mienemy)
-		UseMana(id, SPL_LIGHTNING);
+		UseMana(id, SpellId::LIGHTNING);
 	missile[mi]._miVar1 = s.x;
 	missile[mi]._miVar2 = s.y;
 	GetMissileVel(mi, s, d, 32);
@@ -1546,7 +1531,7 @@ void AddFlash(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 				missile[mi]._midam += missile[mi]._midam >> 3;
 			}
 			missile[mi]._midam += missile[mi]._midam >> 1;
-			UseMana(id, SPL_FLASH);
+			UseMana(id, SpellId::FLASH);
 		} else {
 			missile[mi]._midam = lvl.currlevel >> 1;
 		}
@@ -1585,7 +1570,7 @@ void AddManashield(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int 
 	missile[mi]._miVar2 = plr[id].data._pHPBase;
 	missile[mi]._miVar8 = -1;
 	if (!mienemy)
-		UseMana(id, SPL_MANASHIELD);
+		UseMana(id, SpellId::MANASHIELD);
 	if (id == myplr())
 		NetSendCmd(true, CMD_SETSHIELD);
 	plr[id].data.pManaShield = true;
@@ -1627,7 +1612,7 @@ void AddGuardian(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 						missile[mi]._mi = t;
 						missile[mi]._mis = t;
 						missile[mi]._miDelFlag = false;
-						UseMana(id, SPL_GUARDIAN);
+						UseMana(id, SpellId::GUARDIAN);
 						i = 6;
 						break;
 					}
@@ -1660,7 +1645,7 @@ void AddChain(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miVar1 = d.x;
 	missile[mi]._miVar2 = d.y;
 	missile[mi]._mirange = 1;
-	UseMana(id, SPL_CHAIN);
+	UseMana(id, SpellId::CHAIN);
 }
 
 void miss_null_11(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -1761,7 +1746,7 @@ void AddFlare(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miVar2 = s.y;
 	missile[mi]._mlid = AddLight(s, 8);
 	if (!mienemy) {
-		UseMana(id, SPL_FLARE);
+		UseMana(id, SpellId::FLARE);
 		plr[id].data._pHitPoints -= 320;
 		plr[id].data._pHPBase -= 320;
 		drawhpflag = true;
@@ -1854,7 +1839,7 @@ void AddStone(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 		if (missile[mi]._mirange > 15)
 			missile[mi]._mirange = 15;
 		missile[mi]._mirange <<= 4;
-		UseMana(id, SPL_STONE);
+		UseMana(id, SpellId::STONE);
 	}
 }
 
@@ -1879,7 +1864,7 @@ void AddGolem(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miVar5 = d.y;
 	if ((monsters[id].data._m.x != 1 || monsters[id].data._m.y) && id == myplr())
 		monsters[id].M_StartKill(id);
-	UseMana(id, SPL_GOLEM);
+	UseMana(id, SpellId::GOLEM);
 }
 
 void AddEtherealize(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -1894,7 +1879,7 @@ void AddEtherealize(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int
 	missile[mi]._miVar1 = plr[id].data._pHitPoints;
 	missile[mi]._miVar2 = plr[id].data._pHPBase;
 	if (!mienemy)
-		UseMana(id, SPL_ETHEREALIZE);
+		UseMana(id, SpellId::ETHEREALIZE);
 }
 
 void miss_null_1F(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -1939,10 +1924,10 @@ void AddHeal(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 		HealAmount += (random_(57, 6) + 1) << 6;
 	}
 
-	if (plr[id].data._pClass == PC_WARRIOR)
+	if (plr[id].data._pClass == PlayerClass::warrior)
 		HealAmount <<= 1;
 
-	if (plr[id].data._pClass == PC_ROGUE)
+	if (plr[id].data._pClass == PlayerClass::rogue)
 		HealAmount += HealAmount >> 1;
 
 	plr[id].data._pHitPoints = std::min(
@@ -1953,7 +1938,7 @@ void AddHeal(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	    plr[id].data._pHPBase + HealAmount,
 	    plr[id].data._pMaxHPBase);
 
-	UseMana(id, SPL_HEAL);
+	UseMana(id, SpellId::HEAL);
 	missile[mi]._miDelFlag = true;
 	drawhpflag = true;
 }
@@ -1961,7 +1946,7 @@ void AddHeal(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 void AddHealOther(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = true;
-	UseMana(id, SPL_HEALOTHER);
+	UseMana(id, SpellId::HEALOTHER);
 	if (id == myplr()) {
 		SetCursor_(CURSOR_HEALOTHER);
 		if (sgbControllerActive)
@@ -1988,7 +1973,7 @@ void AddElement(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam
 	missile[mi]._miVar4 = d.x;
 	missile[mi]._miVar5 = d.y;
 	missile[mi]._mlid = AddLight(s, 8);
-	UseMana(id, SPL_ELEMENT);
+	UseMana(id, SpellId::ELEMENT);
 }
 
 extern void FocusOnInventory();
@@ -1996,7 +1981,7 @@ extern void FocusOnInventory();
 void AddIdentify(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = true;
-	UseMana(id, SPL_IDENTIFY);
+	UseMana(id, SpellId::IDENTIFY);
 	if (id == myplr()) {
 		if (sbookflag) sbookflag = false;
 		if (!invflag) {
@@ -2044,7 +2029,7 @@ void AddFirewallC(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int d
 		missile[mi]._miVar3 = int(rotate(midir, -2));
 		missile[mi]._miVar4 = int(rotate(midir, 2));
 		missile[mi]._mirange = 7;
-		UseMana(id, SPL_FIREWALL);
+		UseMana(id, SpellId::FIREWALL);
 	}
 }
 
@@ -2056,7 +2041,7 @@ void AddInfra(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	}
 	missile[mi]._mirange += missile[mi]._mirange * plr[id].data._pISplDur >> 7;
 	if (!mienemy)
-		UseMana(id, SPL_INFRA);
+		UseMana(id, SpellId::INFRA);
 }
 
 void AddWave(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -2067,7 +2052,7 @@ void AddWave(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miVar4 = 0;
 	missile[mi]._mirange = 1;
 	missile[mi]._miAnimFrame = 4;
-	UseMana(id, SPL_WAVE);
+	UseMana(id, SpellId::WAVE);
 }
 
 void AddNova(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -2082,7 +2067,7 @@ void AddNova(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 			missile[mi]._midam += missile[mi]._midam >> 3;
 		}
 		if (!mienemy)
-			UseMana(id, SPL_NOVA);
+			UseMana(id, SpellId::NOVA);
 	} else {
 		missile[mi]._midam = ((DWORD)lvl.currlevel >> 1) + random_(66, 3) + random_(66, 3) + random_(66, 3);
 	}
@@ -2097,7 +2082,7 @@ void AddBlodboil(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 void AddRepair(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = true;
-	UseMana(id, SPL_REPAIR);
+	UseMana(id, SpellId::REPAIR);
 	if (id == myplr()) {
 		if (sbookflag) sbookflag = false;
 		if (!invflag) {
@@ -2112,7 +2097,7 @@ void AddRepair(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 void AddRecharge(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = true;
-	UseMana(id, SPL_RECHARGE);
+	UseMana(id, SpellId::RECHARGE);
 	if (id == myplr()) {
 		if (sbookflag)
 			sbookflag = false;
@@ -2128,7 +2113,7 @@ void AddRecharge(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 void AddDisarm(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = true;
-	UseMana(id, SPL_DISARM);
+	UseMana(id, SpellId::DISARM);
 	if (id == myplr()) {
 		SetCursor_(CURSOR_DISARM);
 		if (sgbControllerActive) {
@@ -2161,7 +2146,7 @@ void AddApoca(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	}
 	missile[mi]._mirange = 255;
 	missile[mi]._miDelFlag = false;
-	UseMana(id, SPL_APOCA);
+	UseMana(id, SpellId::APOCA);
 }
 
 void AddFlame(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -2188,7 +2173,7 @@ void AddFlamec(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	if (s == d) d += offset(midir);
 	GetMissileVel(mi, s, d, 32);
-	if (!mienemy) UseMana(id, SPL_FLAME);
+	if (!mienemy) UseMana(id, SpellId::FLAME);
 	missile[mi]._miVar1 = s.x;
 	missile[mi]._miVar2 = s.y;
 	missile[mi]._miVar3 = 0;
@@ -2243,12 +2228,12 @@ void AddHbolt(int mi, V2Di s, V2Di d, Dir midir, char micaster, int id, int dam)
 	missile[mi]._miVar2 = s.y;
 	missile[mi]._mlid = AddLight(s, 8);
 	missile[mi]._midam = random_(69, 10) + plr[id].data._pLevel + 9;
-	UseMana(id, SPL_HBOLT);
+	UseMana(id, SpellId::HBOLT);
 }
 
 void AddResurrect(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
-	UseMana(id, SPL_RESURRECT);
+	UseMana(id, SpellId::RESURRECT);
 	if (id == myplr()) {
 		SetCursor_(CURSOR_RESURRECT);
 		if (sgbControllerActive)
@@ -2268,7 +2253,7 @@ void AddResurrectBeam(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, i
 void AddTelekinesis(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 {
 	missile[mi]._miDelFlag = true;
-	UseMana(id, SPL_TELEKINESIS);
+	UseMana(id, SpellId::TELEKINESIS);
 	if (id == myplr())
 		SetCursor_(CURSOR_TELEKINESIS);
 }
@@ -2287,7 +2272,7 @@ void AddBoneSpirit(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int 
 	missile[mi]._miVar5 = d.y;
 	missile[mi]._mlid = AddLight(s, 8);
 	if (!mienemy) {
-		UseMana(id, SPL_BONESPIRIT);
+		UseMana(id, SpellId::BONESPIRIT);
 		plr[id].data._pHitPoints -= 384;
 		plr[id].data._pHPBase -= 384;
 		drawhpflag = true;
@@ -2387,7 +2372,7 @@ int Sentfire(int i, V2Di s)
 		if (grid.at(s).getActor() > 0 && monsters[grid.at(s).getActor() - 1].data._mhitpoints >> 6 > 0 && grid.at(s).getActor() - 1 > 3) {
 			Dir dir = GetDirection(missile[i]._mi, s);
 			missile[i]._miVar3 = missileavail[0];
-			AddMissile(missile[i]._mi, s, dir, MissileType::FIREBOLT, 0, missile[i]._misource, missile[i]._midam, GetSpellLevel(missile[i]._misource, SPL_FIREBOLT));
+			AddMissile(missile[i]._mi, s, dir, MissileType::FIREBOLT, 0, missile[i]._misource, missile[i]._midam, GetSpellLevel(missile[i]._misource, SpellId::FIREBOLT));
 			ex = -1;
 		}
 	}
@@ -2642,7 +2627,7 @@ void MI_Lightball(int i)
 	obj = grid.at(t).getObject();
 	if (obj && t == missile[i]._mi) {
 
-		if (object[oi]._otype == OBJ_SHRINEL || object[oi]._otype == OBJ_SHRINER)
+		if (object[oi]._otype == ObjectType::SHRINEL || object[oi]._otype == ObjectType::SHRINER)
 			missile[i]._mirange = j;
 	}
 	if (!missile[i]._mirange)
@@ -2896,11 +2881,11 @@ void MI_Town(int i)
 	}
 
 	for (p = 0; p < MAX_PLRS; p++) {
-		if (plr[p].data.plractive && lvl.currlevel == plr[p].data.plrlevel && !plr[p].data._pLvlChanging && plr[p].data._pmode == PM_STAND && plr[p].pos().x == missile[i]._mi.x && plr[p].pos().y == missile[i]._mi.y) {
+		if (plr[p].data.plractive && lvl.currlevel == plr[p].data.plrlevel && !plr[p].data._pLvlChanging && plr[p].data._pmode == PlayerMode::STAND && plr[p].pos().x == missile[i]._mi.x && plr[p].pos().y == missile[i]._mi.y) {
 			plr[p].ClrPlrPath();
 			if (p == myplr()) {
 				NetSendCmdParam1(true, CMD_WARP, missile[i]._misource);
-				plr[p].data._pmode = PM_NEWLVL;
+				plr[p].data._pmode = PlayerMode::NEWLVL;
 			}
 		}
 	}
@@ -2963,13 +2948,13 @@ void MI_Manashield(int i)
 	missile[i]._mi = plr[id].pos();
 	missile[i]._mitoff.x = plr[id].data._poff.x << 16;
 	missile[i]._mitoff.y = plr[id].data._poff.y << 16;
-	if (plr[id].data._pmode == PM_WALK3) {
+	if (plr[id].data._pmode == PlayerMode::WALK3) {
 		missile[i]._mis = plr[id].futpos();
 	} else {
 		missile[i]._mis = plr[id].pos();
 	}
 	GetMissilePos(i);
-	if (plr[id].data._pmode == PM_WALK3) {
+	if (plr[id].data._pmode == PlayerMode::WALK3) {
 		if (plr[id].data._pdir == Dir::W)
 			missile[i]._mi.x++;
 		else
@@ -3012,7 +2997,7 @@ void MI_Manashield(int i)
 			}
 		}
 
-		if (id == myplr() && !plr[id].data._pHitPoints && !missile[i]._miVar1 && plr[id].data._pmode != PM_DEATH) {
+		if (id == myplr() && !plr[id].data._pHitPoints && !missile[i]._miVar1 && plr[id].data._pmode != PlayerMode::DEATH) {
 			missile[i]._mirange = 0;
 			missile[i]._miDelFlag = true;
 			plr[id].SyncPlrKill(-1);
@@ -3036,13 +3021,13 @@ void MI_Etherealize(int i)
 	missile[i]._mi = plr[src].pos();
 	missile[i]._mitoff.x = plr[src].data._poff.x << 16;
 	missile[i]._mitoff.y = plr[src].data._poff.y << 16;
-	if (plr[src].data._pmode == PM_WALK3) {
+	if (plr[src].data._pmode == PlayerMode::WALK3) {
 		missile[i]._mis = plr[src].futpos();
 	} else {
 		missile[i]._mis = plr[src].pos();
 	}
 	GetMissilePos(i);
-	if (plr[src].data._pmode == PM_WALK3) {
+	if (plr[src].data._pmode == PlayerMode::WALK3) {
 		if (plr[src].data._pdir == Dir::W)
 			missile[i]._mi.x++;
 		else
@@ -3859,7 +3844,7 @@ void ProcessMissiles()
 	int i, mi;
 
 	for (i = 0; i < nummissiles; i++) {
-		grid.at(missile[missileactive[i]]._mi).dFlags &= ~BFLAG_MISSILE;
+		grid.at(missile[missileactive[i]]._mi).dFlags &= ~DunTileFlag::MISSILE;
 		grid.at(missile[missileactive[i]]._mi).clearMissile();
 	}
 
@@ -3939,7 +3924,7 @@ void missiles_process_charge()
 
 void ClearMissileSpot(int mi)
 {
-	grid.at(missile[mi]._mi).dFlags &= ~BFLAG_MISSILE;
+	grid.at(missile[mi]._mi).dFlags &= ~DunTileFlag::MISSILE;
 	grid.at(missile[mi]._mi).clearMissile();
 }
 

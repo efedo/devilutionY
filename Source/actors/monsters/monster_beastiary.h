@@ -16,7 +16,8 @@ public:
 	int AddMonsterType(int type, int placeflag);
 	void GetLevelMTypes();
 	uint8_t GraphicTable[NUMLEVELS][MAX_LVLMTYPES]; // Stores all monster graphics
-private:
+	MonsterClass &getClass();
+   private:
 	MonsterClass types[MAX_LVLMTYPES];
 };
 

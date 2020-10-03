@@ -599,7 +599,7 @@ void DeltaLoadLevel()
 
 		for (i = 0; i < nobjects; i++) {
 			ot = object[objectactive[i]]._otype;
-			if (ot == OBJ_TRAPL || ot == OBJ_TRAPR)
+			if (ot == ObjectType::TRAPL || ot == ObjectType::TRAPR)
 				Obj_Trap(objectactive[i]);
 		}
 	}
@@ -1294,7 +1294,7 @@ DWORD On_WALKXY(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].ClrPlrPath();
 		plr[pnum].MakePlrPath({ p->x, p->y }, true);
-		plr[pnum].data.destAction = ACTION_NONE;
+		plr[pnum].data.destAction = DestinationAction::NONE;
 	}
 
 	return sizeof(*p);
@@ -1357,7 +1357,7 @@ DWORD On_SBSPELL(TCmd *pCmd, int pnum)
 			plr[pnum].data._pSpell = p->wParam1;
 			plr[pnum].data._pSplType = plr[pnum].data._pSBkSplType;
 			plr[pnum].data._pSplFrom = 1;
-			plr[pnum].data.destAction = ACTION_SPELL;
+			plr[pnum].data.destAction = DestinationAction::SPELL;
 		} else
 			msg_errorf("%s has cast an illegal spell.", plr[pnum].data._pName);
 	}
@@ -1388,7 +1388,7 @@ DWORD On_GOTOGETITEM(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].MakePlrPath({ p->x, p->y }, false);
-		plr[pnum].data.destAction = ACTION_PICKUPITEM;
+		plr[pnum].data.destAction = DestinationAction::PICKUPITEM;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1525,7 +1525,7 @@ DWORD On_GOTOAGETITEM(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].MakePlrPath({ p->x, p->y }, false);
-		plr[pnum].data.destAction = ACTION_PICKUPAITEM;
+		plr[pnum].data.destAction = DestinationAction::PICKUPAITEM;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1709,7 +1709,7 @@ DWORD On_ATTACKXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].MakePlrPath({ p->x, p->y }, false);
-		plr[pnum].data.destAction = ACTION_ATTACK;
+		plr[pnum].data.destAction = DestinationAction::ATTACK;
 		plr[pnum].data.destParam1 = p->x;
 		plr[pnum].data.destParam2 = p->y;
 	}
@@ -1723,7 +1723,7 @@ DWORD On_SATTACKXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].ClrPlrPath();
-		plr[pnum].data.destAction = ACTION_ATTACK;
+		plr[pnum].data.destAction = DestinationAction::ATTACK;
 		plr[pnum].data.destParam1 = p->x;
 		plr[pnum].data.destParam2 = p->y;
 	}
@@ -1737,7 +1737,7 @@ DWORD On_RATTACKXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].ClrPlrPath();
-		plr[pnum].data.destAction = ACTION_RATTACK;
+		plr[pnum].data.destAction = DestinationAction::RATTACK;
 		plr[pnum].data.destParam1 = p->x;
 		plr[pnum].data.destParam2 = p->y;
 	}
@@ -1752,7 +1752,7 @@ DWORD On_SPELLXYD(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam1].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELLWALL;
+			plr[pnum].data.destAction = DestinationAction::SPELLWALL;
 			plr[pnum].data.destParam1 = p->x;
 			plr[pnum].data.destParam2 = p->y;
 			plr[pnum].data.destParam3 = p->wParam2;
@@ -1774,7 +1774,7 @@ DWORD On_SPELLXY(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam1].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELL;
+			plr[pnum].data.destAction = DestinationAction::SPELL;
 			plr[pnum].data.destParam1 = p->x;
 			plr[pnum].data.destParam2 = p->y;
 			plr[pnum].data.destParam3 = p->wParam2;
@@ -1795,7 +1795,7 @@ DWORD On_TSPELLXY(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam1].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELL;
+			plr[pnum].data.destAction = DestinationAction::SPELL;
 			plr[pnum].data.destParam1 = p->x;
 			plr[pnum].data.destParam2 = p->y;
 			plr[pnum].data.destParam3 = p->wParam2;
@@ -1818,7 +1818,7 @@ DWORD On_OPOBJXY(TCmd *pCmd, int pnum)
 			plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		else
 			plr[pnum].MakePlrPath({ p->x, p->y }, true);
-		plr[pnum].data.destAction = ACTION_OPERATE;
+		plr[pnum].data.destAction = DestinationAction::OPERATE;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1834,7 +1834,7 @@ DWORD On_DISARMXY(TCmd *pCmd, int pnum)
 			plr[pnum].MakePlrPath({ p->x, p->y }, false);
 		else
 			plr[pnum].MakePlrPath({ p->x, p->y }, true);
-		plr[pnum].data.destAction = ACTION_DISARM;
+		plr[pnum].data.destAction = DestinationAction::DISARM;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1846,7 +1846,7 @@ DWORD On_OPOBJT(TCmd *pCmd, int pnum)
 	TCmdParam1 *p = (TCmdParam1 *)pCmd;
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
-		plr[pnum].data.destAction = ACTION_OPERATETK;
+		plr[pnum].data.destAction = DestinationAction::OPERATETK;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1862,7 +1862,7 @@ DWORD On_ATTACKID(TCmd *pCmd, int pnum)
 		int disty = abs(plr[pnum].pos().y - monsters[p->wParam1].data._mfut.y);
 		if (distx > 1 || disty > 1)
 			plr[pnum].MakePlrPath({ monsters[p->wParam1].data._mfut.x, monsters[p->wParam1].data._mfut.y }, false);
-		plr[pnum].data.destAction = ACTION_ATTACKMON;
+		plr[pnum].data.destAction = DestinationAction::ATTACKMON;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1875,7 +1875,7 @@ DWORD On_ATTACKPID(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].MakePlrPath(plr[p->wParam1].futpos(), false);
-		plr[pnum].data.destAction = ACTION_ATTACKPLR;
+		plr[pnum].data.destAction = DestinationAction::ATTACKPLR;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1888,7 +1888,7 @@ DWORD On_RATTACKID(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].ClrPlrPath();
-		plr[pnum].data.destAction = ACTION_RATTACKMON;
+		plr[pnum].data.destAction = DestinationAction::RATTACKMON;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1901,7 +1901,7 @@ DWORD On_RATTACKPID(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].ClrPlrPath();
-		plr[pnum].data.destAction = ACTION_RATTACKPLR;
+		plr[pnum].data.destAction = DestinationAction::RATTACKPLR;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -1915,7 +1915,7 @@ DWORD On_SPELLID(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam2].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELLMON;
+			plr[pnum].data.destAction = DestinationAction::SPELLMON;
 			plr[pnum].data.destParam1 = p->wParam1;
 			plr[pnum].data.destParam2 = p->wParam3;
 			plr[pnum].data._pSpell = p->wParam2;
@@ -1935,7 +1935,7 @@ DWORD On_SPELLPID(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam2].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELLPLR;
+			plr[pnum].data.destAction = DestinationAction::SPELLPLR;
 			plr[pnum].data.destParam1 = p->wParam1;
 			plr[pnum].data.destParam2 = p->wParam3;
 			plr[pnum].data._pSpell = p->wParam2;
@@ -1955,7 +1955,7 @@ DWORD On_TSPELLID(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam2].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELLMON;
+			plr[pnum].data.destAction = DestinationAction::SPELLMON;
 			plr[pnum].data.destParam1 = p->wParam1;
 			plr[pnum].data.destParam2 = p->wParam3;
 			plr[pnum].data._pSpell = p->wParam2;
@@ -1975,7 +1975,7 @@ DWORD On_TSPELLPID(TCmd *pCmd, int pnum)
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		if (lvl.currlevel != 0 || spelldata[p->wParam2].sTownSpell) {
 			plr[pnum].ClrPlrPath();
-			plr[pnum].data.destAction = ACTION_SPELLPLR;
+			plr[pnum].data.destAction = DestinationAction::SPELLPLR;
 			plr[pnum].data.destParam1 = p->wParam1;
 			plr[pnum].data.destParam2 = p->wParam3;
 			plr[pnum].data._pSpell = p->wParam2;
@@ -2030,7 +2030,7 @@ DWORD On_TALKXY(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel) {
 		plr[pnum].MakePlrPath({ p->x, p->y }, false);
-		plr[pnum].data.destAction = ACTION_TALK;
+		plr[pnum].data.destAction = DestinationAction::TALK;
 		plr[pnum].data.destParam1 = p->wParam1;
 	}
 
@@ -2348,18 +2348,18 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 			plr[pnum].data.plrlevel = p->wParam1;
 			plr[pnum].data._pGFXLoad = 0;
 			if (lvl.currlevel == plr[pnum].data.plrlevel) {
-				plr[pnum].LoadPlrGFX(PFILE_STAND);
+				plr[pnum].LoadPlrGFX(PlayerGraphicFile::STAND);
 				plr[pnum].SyncInitPlr();
 				if ((plr[pnum].data._pHitPoints >> 6) > 0)
 					plr[pnum].StartStand(Dir(0));
 				else {
 					plr[pnum].data._pgfxnum = 0;
-					plr[pnum].LoadPlrGFX(PFILE_DEATH);
-					plr[pnum].data._pmode = PM_DEATH;
+					plr[pnum].LoadPlrGFX(PlayerGraphicFile::DEATH);
+					plr[pnum].data._pmode = PlayerMode::DEATH;
 					plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
 					plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;
 					plr[pnum].data._pVar8 = plr[pnum].data._pAnimLen << 1;
-					grid.at(plr[pnum].pos()).dFlags |= BFLAG_DEAD_PLAYER;
+					grid.at(plr[pnum].pos()).dFlags |= DunTileFlag::DEAD_PLAYER;
 				}
 
 				plr[pnum].data._pvid = AddVision(plr[pnum].pos(), plr[pnum].data._pLightRad, pnum == myplr());
@@ -2573,10 +2573,10 @@ DWORD On_NOVA(TCmd *pCmd, int pnum)
 
 	if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel && pnum != myplr()) {
 		plr[pnum].ClrPlrPath();
-		plr[pnum].data._pSpell = SPL_NOVA;
-		plr[pnum].data._pSplType = RSPLTYPE_INVALID;
+		plr[pnum].data._pSpell = SpellId::NOVA;
+		plr[pnum].data._pSplType = RSpellType::INVALID;
 		plr[pnum].data._pSplFrom = 3;
-		plr[pnum].data.destAction = ACTION_SPELL;
+		plr[pnum].data.destAction = DestinationAction::SPELL;
 		plr[pnum].data.destParam1 = p->x;
 		plr[pnum].data.destParam2 = p->y;
 	}

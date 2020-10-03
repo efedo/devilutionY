@@ -11,8 +11,8 @@ DEVILUTION_BEGIN_NAMESPACE
 class MonsterClass {
 public:
 	MonsterClass(int new_monst = 0)
-	{
-	}
+	{}
+	int kills = 0;
 	void InitMonsterTRN(bool special);
 	void InitMonsterGFX();
 	CMonster data;

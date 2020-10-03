@@ -251,12 +251,12 @@ bool StoreWitch::ItemOk(int i)
 	if (AllItemsList[i].itype == ItemType::staff) rv = true;
 	if (AllItemsList[i].iMiscId == MiscItemId::MANA) rv = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::FULLMANA) rv = false;
-	if (AllItemsList[i].iSpell == SPL_TOWN) rv = false;
+	if (AllItemsList[i].iSpell == SpellId::TOWN) rv = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::FULLHEAL) rv = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::HEAL) rv = false;
-	if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
+	if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
 		rv = false;
-	if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
+	if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
 		rv = false;
 
 	return rv;

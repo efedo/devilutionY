@@ -122,6 +122,7 @@ enum class MonsterType {
 
 // this enum contains indexes from UniqMonst array for special unique monsters
 // (usually quest related)
+// matches position in UniqMonst data table
 enum class UniqueMonsterType {
 	GARBUD = 0,
 	SKELKING = 1,
@@ -135,23 +136,28 @@ enum class UniqueMonsterType {
 	BUTCHER = 9,
 };
 
-enum class MonsterFlag {
-	hidden = 0x01,
-	lock_animation = 0x02,
-	allow_special = 0x04,
-	noheal = 0x08,
-	targets_monster = 0x10,
-	golem = 0x20,
-	quest_complete = 0x40,
-	knockback = 0x80,
-	search = 0x100,
-	can_open_door = 0x200,
-	no_enemy = 0x400,
-	unused = 0x800,
-	nolifesteal = 0x1000
+using MonsterFlags = int;
+
+//enum class MonsterFlag {
+namespace MonsterFlag
+{
+	constexpr int hidden = 0x01;
+	constexpr int lock_animation = 0x02;
+    constexpr int allow_special = 0x04;
+    constexpr int noheal = 0x08;
+    constexpr int targets_monster = 0x10;
+    constexpr int golem = 0x20;
+    constexpr int quest_complete = 0x40;
+    constexpr int knockback = 0x80;
+    constexpr int search = 0x100;
+    constexpr int can_open_door = 0x200;
+    constexpr int no_enemy = 0x400;
+	constexpr int unused = 0x800;
+    constexpr int nolifesteal = 0x1000;
 };
 
 enum class MonsterGoal {
+	None = 0,
 	NORMAL = 1,
 	RETREAT = 2,
 	HEALING = 3,

@@ -560,7 +560,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_f[i][0][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_f[i].prop1 & (1 << b);
                      b2 = f_ptr->prop1 & (1 << b);
@@ -578,7 +578,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_f[i][1][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_f[i].prop2 & (1 << b);
                      b2 = f_ptr->prop2 & (1 << b);
@@ -596,7 +596,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_f[i][2][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_f[i].prop3 & (1 << b);
                      b2 = f_ptr->prop3 & (1 << b);
@@ -614,7 +614,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_f[i][3][b];
-                  if ((bt == WBITSTYPE_SAME))
+                  if ((bt == WBITMagicType::SAME))
                   {
                      b1 = ptr_wbitsdata->mix_f[i].prop4 & (1 << b);
                      b2 = f_ptr->prop4 & (1 << b);
@@ -643,7 +643,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_s[i][0][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_s[i].prop1 & (1 << b);
                      b2 = s_ptr->prop1 & (1 << b);
@@ -661,7 +661,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_s[i][1][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_s[i].prop2 & (1 << b);
                      b2 = s_ptr->prop2 & (1 << b);
@@ -679,7 +679,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_s[i][2][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_s[i].prop3 & (1 << b);
                      b2 = s_ptr->prop3 & (1 << b);
@@ -697,7 +697,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_s[i][3][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_s[i].prop4 & (1 << b);
                      b2 = s_ptr->prop4 & (1 << b);
@@ -726,7 +726,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_w[i][0][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_w[i].prop1 & (1 << b);
                      b2 = w_ptr->prop1 & (1 << b);
@@ -744,7 +744,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_w[i][1][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_w[i].prop2 & (1 << b);
                      b2 = w_ptr->prop2 & (1 << b);
@@ -762,7 +762,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_w[i][2][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_w[i].prop3 & (1 << b);
                      b2 = w_ptr->prop3 & (1 << b);
@@ -780,7 +780,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_w[i][3][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_w[i].prop4 & (1 << b);
                      b2 = w_ptr->prop4 & (1 << b);
@@ -798,7 +798,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 8; b++)
                {
                   bt = ptr_wbitsdata->bit_type_w[i][4][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_w[i].orientation & (1 << b);
                      b2 = w_ptr->orientation & (1 << b);
@@ -827,7 +827,7 @@ void wbits_apply_modification(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                for (b=0; b < 32; b++)
                {
                   bt = ptr_wbitsdata->bit_type_t[i][b];
-                  if (bt == WBITSTYPE_SAME)
+                  if (bt == WBITMagicType::SAME)
                   {
                      b1 = ptr_wbitsdata->mix_t[i].num & (1 << b);
                      b2 = t_ptr->num & (1 << b);
@@ -1014,15 +1014,15 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          {
             for (i=7; i >= 0; i--)
             {
-               if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITSTYPE_DIFFERENT)
+               if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITMagicType::DIFFERENT)
                   c = c_blue;
-               else if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITSTYPE_UNKNOWN)
+               else if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITMagicType::UNKNOWN)
                   c = c_unkn;
                else
                   c = c_white;
 
                if ((mx >= x) && (mx <= x+9) && (my >= y) && (my <= y+9) &&
-                   (ptr_wbitsdata->bit_type_f[n][b][i] != WBITSTYPE_UNKNOWN))
+                   (ptr_wbitsdata->bit_type_f[n][b][i] != WBITMagicType::UNKNOWN))
                {
                   c  = c_red;
                   if (mb & 1)
@@ -1049,11 +1049,11 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                         case 2 : ptr_wbitsdata->mix_f[n].prop3 = val[2]; break;
                         case 3 : ptr_wbitsdata->mix_f[n].prop4 = val[3]; break;
                      }
-                     if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITSTYPE_DIFFERENT)
-                        ptr_wbitsdata->bit_type_f[n][b][i] = WBITSTYPE_SAME;
+                     if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITMagicType::DIFFERENT)
+                        ptr_wbitsdata->bit_type_f[n][b][i] = WBITMagicType::SAME;
                   }
                }
-               if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITSTYPE_UNKNOWN)
+               if (ptr_wbitsdata->bit_type_f[n][b][i] == WBITMagicType::UNKNOWN)
                {
                   textout(glb_ds1edit.screen_buff, font, "-", x, y, c);
                }
@@ -1091,15 +1091,15 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          {
             for (i=7; i >= 0; i--)
             {
-               if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITSTYPE_DIFFERENT)
+               if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITMagicType::DIFFERENT)
                   c = c_blue;
-               else if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITSTYPE_UNKNOWN)
+               else if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITMagicType::UNKNOWN)
                   c = c_unkn;
                else
                   c = c_white;
 
                if ((mx >= x) && (mx <= x+9) && (my >= y) && (my <= y+9) &&
-                   (ptr_wbitsdata->bit_type_s[n][b][i] != WBITSTYPE_UNKNOWN))
+                   (ptr_wbitsdata->bit_type_s[n][b][i] != WBITMagicType::UNKNOWN))
                {
                   c  = c_red;
                   if (mb & 1)
@@ -1126,11 +1126,11 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                         case 2 : ptr_wbitsdata->mix_s[n].prop3 = shad[2]; break;
                         case 3 : ptr_wbitsdata->mix_s[n].prop4 = shad[3]; break;
                      }
-                     if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITSTYPE_DIFFERENT)
-                        ptr_wbitsdata->bit_type_s[n][b][i] = WBITSTYPE_SAME;
+                     if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITMagicType::DIFFERENT)
+                        ptr_wbitsdata->bit_type_s[n][b][i] = WBITMagicType::SAME;
                   }
                }
-               if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITSTYPE_UNKNOWN)
+               if (ptr_wbitsdata->bit_type_s[n][b][i] == WBITMagicType::UNKNOWN)
                {
                   textout(glb_ds1edit.screen_buff, font, "-", x, y, c);
                }
@@ -1169,15 +1169,15 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          {
             for (i=7; i >= 0; i--)
             {
-               if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITSTYPE_DIFFERENT)
+               if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITMagicType::DIFFERENT)
                   c = c_blue;
-               else if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITSTYPE_UNKNOWN)
+               else if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITMagicType::UNKNOWN)
                   c = c_unkn;
                else
                   c = c_white;
 
                if ((mx >= x) && (mx <= x+9) && (my >= y) && (my <= y+9) &&
-                   (ptr_wbitsdata->bit_type_w[n][b][i] != WBITSTYPE_UNKNOWN))
+                   (ptr_wbitsdata->bit_type_w[n][b][i] != WBITMagicType::UNKNOWN))
                {
                   c  = c_red;
                   if (mb & 1)
@@ -1204,11 +1204,11 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                         case 2 : ptr_wbitsdata->mix_w[n].prop3 = val[2]; break;
                         case 3 : ptr_wbitsdata->mix_w[n].prop4 = val[3]; break;
                      }
-                     if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITSTYPE_DIFFERENT)
-                        ptr_wbitsdata->bit_type_w[n][b][i] = WBITSTYPE_SAME;
+                     if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITMagicType::DIFFERENT)
+                        ptr_wbitsdata->bit_type_w[n][b][i] = WBITMagicType::SAME;
                   }
                }
-               if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITSTYPE_UNKNOWN)
+               if (ptr_wbitsdata->bit_type_w[n][b][i] == WBITMagicType::UNKNOWN)
                {
                   textout(glb_ds1edit.screen_buff, font, "-", x, y, c);
                }
@@ -1235,15 +1235,15 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          // orientation
          for (i=7; i >= 0; i--)
          {
-            if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITSTYPE_DIFFERENT)
+            if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITMagicType::DIFFERENT)
                c = c_blue;
-            else if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITSTYPE_UNKNOWN)
+            else if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITMagicType::UNKNOWN)
                c = c_unkn;
             else
                c = c_white;
 
             if ((mx >= x) && (mx <= x+9) && (my >= y) && (my <= y+9) &&
-                (ptr_wbitsdata->bit_type_w[n][4][i] != WBITSTYPE_UNKNOWN))
+                (ptr_wbitsdata->bit_type_w[n][4][i] != WBITMagicType::UNKNOWN))
             {
                c  = c_red;
                if (mb & 1)
@@ -1266,11 +1266,11 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
                      mb = mouse_b;
                   }
 
-                  if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITSTYPE_DIFFERENT)
-                     ptr_wbitsdata->bit_type_w[n][4][i] = WBITSTYPE_SAME;
+                  if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITMagicType::DIFFERENT)
+                     ptr_wbitsdata->bit_type_w[n][4][i] = WBITMagicType::SAME;
                }
             }
-            if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITSTYPE_UNKNOWN)
+            if (ptr_wbitsdata->bit_type_w[n][4][i] == WBITMagicType::UNKNOWN)
             {
                textout(glb_ds1edit.screen_buff, font, "-", x, y, c);
             }
@@ -1296,15 +1296,15 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
          x = w_x0 + 34;
          for (i=31; i >= 0; i--)
          {
-            if (ptr_wbitsdata->bit_type_t[n][i] == WBITSTYPE_DIFFERENT)
+            if (ptr_wbitsdata->bit_type_t[n][i] == WBITMagicType::DIFFERENT)
                c = c_blue;
-            else if (ptr_wbitsdata->bit_type_t[n][i] == WBITSTYPE_UNKNOWN)
+            else if (ptr_wbitsdata->bit_type_t[n][i] == WBITMagicType::UNKNOWN)
                c = c_unkn;
             else
                c = c_white;
 
             if ((mx >= x) && (mx <= x+9) && (my >= y) && (my <= y+9) &&
-                (ptr_wbitsdata->bit_type_t[n][i] != WBITSTYPE_UNKNOWN))
+                (ptr_wbitsdata->bit_type_t[n][i] != WBITMagicType::UNKNOWN))
             {
                c  = c_red;
                if (mb & 1)
@@ -1327,11 +1327,11 @@ void wbits_main_multiple_tiles(int ds1_idx, WBITSDATA_S * ptr_wbitsdata)
 
                   ptr_wbitsdata->mix_t[n].num = tag_dw;
 
-                  if (ptr_wbitsdata->bit_type_t[n][i] == WBITSTYPE_DIFFERENT)
-                     ptr_wbitsdata->bit_type_t[n][i] = WBITSTYPE_SAME;
+                  if (ptr_wbitsdata->bit_type_t[n][i] == WBITMagicType::DIFFERENT)
+                     ptr_wbitsdata->bit_type_t[n][i] = WBITMagicType::SAME;
                }
             }
-            if (ptr_wbitsdata->bit_type_t[n][i] == WBITSTYPE_UNKNOWN)
+            if (ptr_wbitsdata->bit_type_t[n][i] == WBITMagicType::UNKNOWN)
             {
                textout(glb_ds1edit.screen_buff, font, "-", x, y, c);
             }
@@ -1502,7 +1502,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_f[i].prop1 & (1 << b);
                         b2 = f_ptr->prop1 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_f[i][0][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_f[i][0][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop2
@@ -1511,7 +1511,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_f[i].prop2 & (1 << b);
                         b2 = f_ptr->prop2 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_f[i][1][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_f[i][1][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop3
@@ -1520,7 +1520,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_f[i].prop3 & (1 << b);
                         b2 = f_ptr->prop3 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_f[i][2][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_f[i][2][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop4
@@ -1529,7 +1529,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_f[i].prop4 & (1 << b);
                         b2 = f_ptr->prop4 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_f[i][3][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_f[i][3][b] = WBITMagicType::DIFFERENT;
                      }
                   }
                   else
@@ -1538,13 +1538,13 @@ void wbits_main(int ds1_idx, int tx, int ty)
 
                      // this is the 1st time we meet this layer
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_f[i][0][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_f[i][0][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_f[i][1][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_f[i][1][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_f[i][2][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_f[i][2][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_f[i][3][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_f[i][3][b] = WBITMagicType::SAME;
                   }
 
                   // mix the bits values
@@ -1574,7 +1574,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_s[i].prop1 & (1 << b);
                         b2 = s_ptr->prop1 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_s[i][0][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_s[i][0][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop2
@@ -1583,7 +1583,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_s[i].prop2 & (1 << b);
                         b2 = s_ptr->prop2 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_s[i][1][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_s[i][1][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop3
@@ -1592,7 +1592,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_s[i].prop3 & (1 << b);
                         b2 = s_ptr->prop3 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_s[i][2][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_s[i][2][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop4
@@ -1601,7 +1601,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_s[i].prop4 & (1 << b);
                         b2 = s_ptr->prop4 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_s[i][3][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_s[i][3][b] = WBITMagicType::DIFFERENT;
                      }
                   }
                   else
@@ -1610,13 +1610,13 @@ void wbits_main(int ds1_idx, int tx, int ty)
 
                      // this is the 1st time we meet this layer
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_s[i][0][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_s[i][0][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_s[i][1][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_s[i][1][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_s[i][2][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_s[i][2][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_s[i][3][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_s[i][3][b] = WBITMagicType::SAME;
                   }
 
                   // mix the bits values
@@ -1646,7 +1646,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_w[i].prop1 & (1 << b);
                         b2 = w_ptr->prop1 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_w[i][0][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_w[i][0][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop2
@@ -1655,7 +1655,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_w[i].prop2 & (1 << b);
                         b2 = w_ptr->prop2 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_w[i][1][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_w[i][1][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop3
@@ -1664,7 +1664,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_w[i].prop3 & (1 << b);
                         b2 = w_ptr->prop3 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_w[i][2][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_w[i][2][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of prop4
@@ -1673,7 +1673,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_w[i].prop4 & (1 << b);
                         b2 = w_ptr->prop4 & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_w[i][3][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_w[i][3][b] = WBITMagicType::DIFFERENT;
                      }
 
                      // for all bits of orientation
@@ -1682,7 +1682,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_w[i].orientation  & (1 << b);
                         b2 = w_ptr->orientation & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_w[i][4][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_w[i][4][b] = WBITMagicType::DIFFERENT;
                      }
                   }
                   else
@@ -1691,15 +1691,15 @@ void wbits_main(int ds1_idx, int tx, int ty)
 
                      // this is the 1st time we meet this layer
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_w[i][0][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_w[i][0][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_w[i][1][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_w[i][1][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_w[i][2][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_w[i][2][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_w[i][3][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_w[i][3][b] = WBITMagicType::SAME;
                      for (b=0; b < 8; b++)
-                        ptr_wbitsdata->bit_type_w[i][4][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_w[i][4][b] = WBITMagicType::SAME;
                   }
 
                   // mix the bits values
@@ -1730,7 +1730,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
                         b1 = ptr_wbitsdata->mix_t[i].num & (1 << b);
                         b2 = t_ptr->num & (1 << b);
                         if (b1 != b2)
-                           ptr_wbitsdata->bit_type_t[i][b] = WBITSTYPE_DIFFERENT;
+                           ptr_wbitsdata->bit_type_t[i][b] = WBITMagicType::DIFFERENT;
                      }
                   }
                   else
@@ -1739,7 +1739,7 @@ void wbits_main(int ds1_idx, int tx, int ty)
 
                      // this is the 1st time we meet this layer
                      for (b=0; b < 32; b++)
-                        ptr_wbitsdata->bit_type_t[i][b] = WBITSTYPE_SAME;
+                        ptr_wbitsdata->bit_type_t[i][b] = WBITMagicType::SAME;
                   }
 
                   // mix the bits values

@@ -326,7 +326,7 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
    CELL_T_S    * t_ptr[TAG_MAX_LAYER];
    CELL_W_S    * w_ptr[WALL_MAX_LAYER];
    CELL_W_S    * o_ptr[WALL_MAX_LAYER];
-   OBJ_LABEL_S * label;
+   ObjectType::LABEL_S * label;
    int         o, x, y, nb_layer, size, n, p, ds1_len, done, cx, cy, dx, dy,
                current_valid_obj_idx=0, max_subtile_width, max_subtile_height;
    long        w_num, f_num, s_num, t_num, * ptr, npc, path;
@@ -373,7 +373,7 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
    strcpy(glb_ds1[ds1_idx].name, ds1name);
 
    // initialise max number of objects
-   glb_ds1[ds1_idx].current_obj_max = OBJ_MAX_START;
+   glb_ds1[ds1_idx].current_obj_max = ObjectType::MAX_START;
 
    // drawing_order
    size = glb_ds1[ds1_idx].current_obj_max * sizeof(int);
@@ -385,8 +385,8 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
    }
 
    // obj
-   size = glb_ds1[ds1_idx].current_obj_max * sizeof(OBJ_S);
-   glb_ds1[ds1_idx].obj = (OBJ_S *) calloc(glb_ds1[ds1_idx].current_obj_max, sizeof(OBJ_S));
+   size = glb_ds1[ds1_idx].current_obj_max * sizeof(ObjectType::S);
+   glb_ds1[ds1_idx].obj = (ObjectType::S *) calloc(glb_ds1[ds1_idx].current_obj_max, sizeof(ObjectType::S));
    if (glb_ds1[ds1_idx].obj == NULL)
    {
       sprintf(tmp, "not enough mem (%i bytes) for glb_ds1[].obj of %s\n", size, ds1name);
@@ -394,7 +394,7 @@ int ds1_read(const char * ds1name, int ds1_idx, int new_width, int new_height)
    }
 
    // obj_undo
-   glb_ds1[ds1_idx].obj_undo = (OBJ_S *) calloc(glb_ds1[ds1_idx].current_obj_max, sizeof(OBJ_S));
+   glb_ds1[ds1_idx].obj_undo = (ObjectType::S *) calloc(glb_ds1[ds1_idx].current_obj_max, sizeof(ObjectType::S));
    if (glb_ds1[ds1_idx].obj_undo == NULL)
    {
       sprintf(tmp, "not enough mem (%i bytes) for glb_ds1[].obj_undo of %s\n", size, ds1name);

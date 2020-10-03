@@ -143,7 +143,7 @@ void Item::GetBookSpell(int lvl)
 		lvl = 1;
 	int rv = random_(14, MAX_SPELLS) + 1;
 
-	int s = SPL_FIREBOLT;
+	int s = SpellId::FIREBOLT;
 	while (rv > 0) {
 		if (spelldata[s].sBookLvl != -1 && lvl >= spelldata[s].sBookLvl) {
 			rv--;
@@ -151,12 +151,12 @@ void Item::GetBookSpell(int lvl)
 		}
 		s++;
 		if (plr.isSingleplayer()) {
-			if (s == SPL_RESURRECT)
-				s = SPL_TELEKINESIS;
+			if (s == SpellId::RESURRECT)
+				s = SpellId::TELEKINESIS;
 		}
 		if (plr.isSingleplayer()) {
-			if (s == SPL_HEALOTHER)
-				s = SPL_FLARE;
+			if (s == SpellId::HEALOTHER)
+				s = SpellId::FLARE;
 		}
 		if (s == MAX_SPELLS)
 			s = 1;
@@ -167,11 +167,11 @@ void Item::GetBookSpell(int lvl)
 	_iMinMag = spelldata[bs].sMinInt;
 	_ivalue += spelldata[bs].sBookCost;
 	_iIvalue += spelldata[bs].sBookCost;
-	if (spelldata[bs].sType == STYPE_FIRE)
+	if (spelldata[bs].sType == MagicType::FIRE)
 		_iCurs = ItemCursor::BOOK_RED;
-	if (spelldata[bs].sType == STYPE_LIGHTNING)
+	if (spelldata[bs].sType == MagicType::LIGHTNING)
 		_iCurs = ItemCursor::BOOK_BLUE;
-	if (spelldata[bs].sType == STYPE_MAGIC)
+	if (spelldata[bs].sType == MagicType::MAGIC)
 		_iCurs = ItemCursor::BOOK_GREY;
 }
 
@@ -243,19 +243,19 @@ void Item::GetStaffSpell(int lvl, bool onlygood)
 		if (l == 0)
 			l = 1;
 		rv = random_(18, MAX_SPELLS) + 1;
-		s = SPL_FIREBOLT;
+		s = SpellId::FIREBOLT;
 		while (rv > 0) {
 			if (spelldata[s].sStaffLvl != -1 && l >= spelldata[s].sStaffLvl) {
 				rv--;
 				bs = s;
 			}
 			s++;
-			if (plr.isSingleplayer() && s == SPL_RESURRECT)
-				s = SPL_TELEKINESIS;
-			if (plr.isSingleplayer() && s == SPL_HEALOTHER)
-				s = SPL_FLARE;
+			if (plr.isSingleplayer() && s == SpellId::RESURRECT)
+				s = SpellId::TELEKINESIS;
+			if (plr.isSingleplayer() && s == SpellId::HEALOTHER)
+				s = SpellId::FLARE;
 			if (s == MAX_SPELLS)
-				s = SPL_FIREBOLT;
+				s = SpellId::FIREBOLT;
 		}
 		sprintf(istr, "%s of %s", _iName, spelldata[bs].sNameText);
 		if (!control_WriteStringToBuffer((uint8_t *)istr))

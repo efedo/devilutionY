@@ -187,7 +187,7 @@ void CheckRportal()
 //	} else if (flipflaglogic < 0) {
 //		flipflag = !flipflag;
 //	}
-//	if (flipflag && grid.isValid(pos) && tile.isActor() && tile.dFlags & BFLAG_LIT) {
+//	if (flipflag && grid.isValid(pos) && tile.isActor() && tile.dFlags & DunTileFlag::LIT) {
 //		int mi = tile.getActor();
 //		if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
 //			cursm = pos;
@@ -321,7 +321,7 @@ void CheckCursMove()
 		} else if (flipflaglogic < 0) {
 			flipflag = !flipflag;
 		}
-		if (flipflag && grid.isValid(pos) && tile.isActor() && tile.dFlags & BFLAG_LIT) {
+		if (flipflag && grid.isValid(pos) && tile.isActor() && tile.dFlags & DunTileFlag::LIT) {
 			int mi = tile.getActor();
 			if (mi == pcurstemp && monsters[mi].data._mhitpoints >> 6 > 0 && monsters[mi].data.MData->mSelFlag & 4) {
 				cursm = pos;
@@ -413,7 +413,7 @@ void CheckCursMove()
 				pcursplr = bv;
 			}
 		}
-		if (grid.at(m).dFlags & BFLAG_DEAD_PLAYER) {
+		if (grid.at(m).dFlags & DunTileFlag::DEAD_PLAYER) {
 			for (i = 0; i < MAX_PLRS; i++) {
 				if (plr[i].pos() == m && i != myplr()) {
 					cursm = m;
@@ -425,7 +425,7 @@ void CheckCursMove()
 			V2Di n;
 			for (n.x = -1; n.x < 2; n.x++) {
 				for (n.y = -1; n.y < 2; n.y++) {
-					if (m.x + n.x < MAXDUNX && m.y + n.y < MAXDUNY && grid.at(m + n).dFlags & BFLAG_DEAD_PLAYER) {
+					if (m.x + n.x < MAXDUNX && m.y + n.y < MAXDUNY && grid.at(m + n).dFlags & DunTileFlag::DEAD_PLAYER) {
 						for (i = 0; i < MAX_PLRS; i++) {
 							if (plr[i].pos() == m + n && i != myplr()) {
 								cursm = m + n;

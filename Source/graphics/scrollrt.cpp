@@ -255,7 +255,7 @@ void DrawMissile(V2Di p, V2Di s, bool pre)
 	int i;
 	MissileStruct *m;
 
-	if (!(grid.at(p).dFlags & BFLAG_MISSILE))
+	if (!(grid.at(p).dFlags & DunTileFlag::MISSILE))
 		return;
 
 	if (grid.at(p).getMissile() != -1) {
@@ -316,7 +316,7 @@ static void DrawMonster(V2Di p, V2Di mv, int m)
 		return;
 	}
 
-	if (!(grid.at(p).dFlags & BFLAG_LIT)) {
+	if (!(grid.at(p).dFlags & DunTileFlag::LIT)) {
 		Cl2DrawLightTbl(mv, monsters[m].data._mAnimData, monsters[m].data._mAnimFrame, monsters[m].data.MType->width, 1);
 	} else {
 		trans = 0;
@@ -350,7 +350,7 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, uint8_t *pCelBuff, int nCel, in
 	int y = n.y;
 	int l, frames;
 
-	if (grid[x][y].dFlags & BFLAG_LIT || myplr().data._pInfraFlag || !lvl.setlevel && !lvl.currlevel) {
+	if (grid[x][y].dFlags & DunTileFlag::LIT || myplr().data._pInfraFlag || !lvl.setlevel && !lvl.currlevel) {
 		if (!pCelBuff) {
 			// app_fatal("Drawing player %d \"%s\": NULL Cel Buffer", pnum, plr[pnum].data._pName);
 			return;
@@ -359,7 +359,7 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, uint8_t *pCelBuff, int nCel, in
 		if (nCel < 1 || frames > 50 || nCel > frames) {
 			/*
 			const char *szMode = "unknown action";
-			if(plr[pnum].data._pmode <= PM_QUIT)
+			if(plr[pnum].data._pmode <= PlayerMode::QUIT)
 				szMode = szPlrModeAssert[plr[pnum].data._pmode];
 			app_fatal(
 				"Drawing player %d \"%s\" %s: facing %d, frame %d of %d",
@@ -381,7 +381,7 @@ static void DrawPlayer(int pnum, V2Di n, V2Di p, uint8_t *pCelBuff, int nCel, in
 				    { p.x + plr[pnum].data._pAnimWidth2 - misfiledata[MissileGraphic::MANASHLD].mAnimWidth2[0], p.y },
 				    misfiledata[MissileGraphic::MANASHLD].mAnimData[0], 1,
 				    misfiledata[MissileGraphic::MANASHLD].mAnimWidth[0]);
-		} else if (!(grid[x][y].dFlags & BFLAG_LIT) || myplr().data._pInfraFlag && light_table_index > 8) {
+		} else if (!(grid[x][y].dFlags & DunTileFlag::LIT) || myplr().data._pInfraFlag && light_table_index > 8) {
 			Cl2DrawLightTbl(p, pCelBuff, nCel, nWidth, 1);
 			if (plr[pnum].data.pManaShield)
 				Cl2DrawLightTbl(
@@ -419,7 +419,7 @@ void DrawDeadPlayer(V2Di pn, V2Di s)
 	PlayerStruct *p;
 	uint8_t *pCelBuff;
 
-	grid.at(pn).dFlags &= ~BFLAG_DEAD_PLAYER;
+	grid.at(pn).dFlags &= ~DunTileFlag::DEAD_PLAYER;
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i].data;
@@ -435,7 +435,7 @@ void DrawDeadPlayer(V2Di pn, V2Di s)
 				// app_fatal("Drawing dead player %d \"%s\": facing %d, frame %d of %d", i, p->_pName, p->_pdir, nCel, frame);
 				break;
 			}
-			grid.at(pn).dFlags |= BFLAG_DEAD_PLAYER;
+			grid.at(pn).dFlags |= DunTileFlag::DEAD_PLAYER;
 			pv.x = s.x + p->_poff.x - p->_pAnimWidth2;
 			pv.y = s.y + p->_poff.y;
 			DrawPlayer(i, pn, pv, p->_pAnimData, p->_pAnimFrame, p->_pAnimWidth);
@@ -625,7 +625,7 @@ static void DrawMonsterHelper(int x, int y, int oy, int sx, int sy)
 		return;
 	}
 
-	if (!(grid[x][y].dFlags & BFLAG_LIT) && !myplr().data._pInfraFlag)
+	if (!(grid[x][y].dFlags & DunTileFlag::LIT) && !myplr().data._pInfraFlag)
 		return;
 
 	if ((DWORD)mi >= MAXMONSTERS) {
@@ -697,7 +697,7 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	bool negMon = false;
 	if (sy > 0) negMon = grid[sx][sy - 1].isActor();
 
-	if (visiondebug && bFlag & BFLAG_LIT) {
+	if (visiondebug && bFlag & DunTileFlag::LIT) {
 		CelClippedDraw({ dx, dy }, pSquareCel, 1, 64);
 	}
 
@@ -722,14 +722,14 @@ static void scrollrt_draw_dungeon(int sx, int sy, int dx, int dy)
 	}
 	DrawObject(sx, sy, dx, dy, 1);
 	DrawItem(sx, sy, dx, dy, 1);
-	//if (bFlag & BFLAG_PLAYERLR) {
+	//if (bFlag & DunTileFlag::PLAYERLR) {
 	//	assert((DWORD)(sy - 1) < MAXDUNY);
 	//	DrawPlayerHelper(sx, sy, -1, dx, dy);
 	//}
-	//if (bFlag & BFLAG_MONSTLR && negMon < 0) {
+	//if (bFlag & DunTileFlag::MONSTLR && negMon < 0) {
 	//	DrawMonsterHelper(sx, sy, -1, dx, dy);
 	//}
-	if (bFlag & BFLAG_DEAD_PLAYER) {
+	if (bFlag & DunTileFlag::DEAD_PLAYER) {
 		DrawDeadPlayer({ sx, sy }, { dx, dy });
 	}
 	if (grid[sx][sy].isPlayerDraw()) {

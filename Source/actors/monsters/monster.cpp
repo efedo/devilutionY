@@ -16,8 +16,8 @@ int MissileFileFlag;
 Beastiary beastiary;
 MonsterManager monsters;
 
-int monstkills[MAXMONSTERS];
-int monstactive[MAXMONSTERS];
+//int monstkills[MAXMONSTERS];
+//int monstactive[MAXMONSTERS];
 int nummonsters;
 bool sgbSaveSoundOn;
 //MonsterStruct monster[MAXMONSTERS];
@@ -61,39 +61,39 @@ int MWVel[24][3] = {
 };
 char animletter[7] = "nwahds";
 
-void (MonsterInstance:: *AiProc[])() = {
-	&MonsterInstance::MMonstAi::Zombie,
-	&MonsterInstance::MMonstAi::Fat,
-	&MonsterInstance::MMonstAi::SkelSd,
-	&MonsterInstance::MMonstAi::SkelBow,
-	&MonsterInstance::MMonstAi::Scav,
-	&MonsterInstance::MMonstAi::Rhino,
-	&MonsterInstance::MMonstAi::GoatMc,
-	&MonsterInstance::MMonstAi::GoatBow,
-	&MonsterInstance::MMonstAi::Fallen,
-	&MonsterInstance::MMonstAi::Magma,
-	&MonsterInstance::MMonstAi::SkelKing,
-	&MonsterInstance::MMonstAi::Bat,
-	&MonsterInstance::MMonstAi::Garg,
-	&MonsterInstance::MMonstAi::Cleaver,
-	&MonsterInstance::MMonstAi::Succ,
-	&MonsterInstance::MMonstAi::Sneak,
-	&MonsterInstance::MMonstAi::Storm,
-	&MonsterInstance::MMonstAi::Fireman,
-	&MonsterInstance::MMonstAi::Garbud,
-	&MonsterInstance::MMonstAi::Acid,
-	&MonsterInstance::MMonstAi::AcidUniq,
-	&MonsterInstance::MMonstAi::Golum,
-	&MonsterInstance::MMonstAi::Zhar,
-	&MonsterInstance::MMonstAi::SnotSpil,
-	&MonsterInstance::MMonstAi::Snake,
-	&MonsterInstance::MMonstAi::Counselor,
-	&MonsterInstance::MMonstAi::Mega,
-	&MonsterInstance::MMonstAi::Diablo,
-	&MonsterInstance::MMonstAi::Lazurus,
-	&MonsterInstance::MMonstAi::Lazhelp,
-	&MonsterInstance::MMonstAi::Lachdanan,
-	&MonsterInstance::MMonstAi::Warlord,
+void (Monster:: *AiProc[])() = {
+	&Monster::MMonstAi::Zombie,
+	&Monster::MMonstAi::Fat,
+	&Monster::MMonstAi::SkelSd,
+	&Monster::MMonstAi::SkelBow,
+	&Monster::MMonstAi::Scav,
+	&Monster::MMonstAi::Rhino,
+	&Monster::MMonstAi::GoatMc,
+	&Monster::MMonstAi::GoatBow,
+	&Monster::MMonstAi::Fallen,
+	&Monster::MMonstAi::Magma,
+	&Monster::MMonstAi::SkelKing,
+	&Monster::MMonstAi::Bat,
+	&Monster::MMonstAi::Garg,
+	&Monster::MMonstAi::Cleaver,
+	&Monster::MMonstAi::Succ,
+	&Monster::MMonstAi::Sneak,
+	&Monster::MMonstAi::Storm,
+	&Monster::MMonstAi::Fireman,
+	&Monster::MMonstAi::Garbud,
+	&Monster::MMonstAi::Acid,
+	&Monster::MMonstAi::AcidUniq,
+	&Monster::MMonstAi::Golum,
+	&Monster::MMonstAi::Zhar,
+	&Monster::MMonstAi::SnotSpil,
+	&Monster::MMonstAi::Snake,
+	&Monster::MMonstAi::Counselor,
+	&Monster::MMonstAi::Mega,
+	&Monster::MMonstAi::Diablo,
+	&Monster::MMonstAi::Lazurus,
+	&Monster::MMonstAi::Lazhelp,
+	&Monster::MMonstAi::Lachdanan,
+	&Monster::MMonstAi::Warlord,
 };
 
 
@@ -110,8 +110,8 @@ bool MonstPlace(V2Di p)
 	}
 
 	char f = grid.at(p).dFlags;
-	if (f & BFLAG_VISIBLE) return false;
-	if (f & BFLAG_POPULATED) return false;
+	if (f & DunTileFlag::VISIBLE) return false;
+	if (f & DunTileFlag::POPULATED) return false;
 	return !grid.at(p).isSolid();
 }
 
@@ -277,7 +277,7 @@ int AddMonster(V2Di pos, Dir dir, int mtype, bool InMap)
 	if (nummonsters < MAXMONSTERS) {
 		int i = monstactive[nummonsters++];
 		if (InMap) grid.at(pos).setActor(i);
-		monsters[i] = MonsterInstance(i, dir, mtype, pos);
+		monsters[i] = Monster(i, dir, mtype, pos);
 		return i;
 	}
 	return -1;
@@ -320,7 +320,7 @@ void M2MStartHit(int mid, int i, int dam)
 
 
 
-void MonsterInstance::M_UpdateLeader()
+void Monster::M_UpdateLeader()
 {
 	int ma, j;
 	for (j = 0; j < nummonsters; j++) {
@@ -342,9 +342,9 @@ void DoEnding()
 
 	if (plr.isMultiplayer()) SDL_Delay(1000);
 
-	if (myplr().data._pClass == PC_WARRIOR) {
+	if (myplr().data._pClass == PlayerClass::warrior) {
 		play_movie("gendata\\DiabVic2.smk", false);
-	} else if (myplr().data._pClass == PC_SORCERER) {
+	} else if (myplr().data._pClass == PlayerClass::sorceror) {
 		play_movie("gendata\\DiabVic1.smk", false);
 	} else {
 		play_movie("gendata\\DiabVic3.smk", false);
@@ -384,7 +384,7 @@ void PrepDoEnding()
 	myplr().data.pDiabloKillLevel = newKillLevel;
 
 	for (i = 0; i < MAX_PLRS; i++) {
-		plr[i].data._pmode = PM_QUIT;
+		plr[i].data._pmode = PlayerMode::QUIT;
 		plr[i].data._pInvincible = true;
 		if (plr.isMultiplayer()) {
 			if (plr[i].data._pHitPoints >> 6 == 0)
@@ -446,7 +446,7 @@ void ProcessMonsters()
 			}
 		}
 		m = Monst->_m;
-		if (grid.at(m).dFlags & BFLAG_VISIBLE && Monst->_msquelch == 0) {
+		if (grid.at(m).dFlags & DunTileFlag::VISIBLE && Monst->_msquelch == 0) {
 			if (Monst->MType->mtype == MonsterType::CLEAVER) {
 				PlaySFX(USFX_CLEAVER);
 			}
@@ -464,7 +464,7 @@ void ProcessMonsters()
 				app_fatal("Illegal enemy player %d for monster \"%s\"", _menemy, Monst->mName);
 			}
 			Monst->_menemypos = plr[Monst->_menemy].futpos();
-			if (grid.at(m).dFlags & BFLAG_VISIBLE) {
+			if (grid.at(m).dFlags & DunTileFlag::VISIBLE) {
 				Monst->_msquelch = 255;
 				Monst->_last = plr[Monst->_menemy].futpos();
 			} else if (Monst->_msquelch != 0 && Monst->_mAi != MonsterType::DIABLO) { /// BUGFIX: change '_mAi' to 'MType->mtype'
@@ -578,7 +578,7 @@ void FreeMonsters()
 	FreeMissiles2();
 }
 
-bool MonsterInstance::DirOK(Dir mdir)
+bool Monster::DirOK(Dir mdir)
 {
 	V2Di p;
 	int mcount, mi;
@@ -586,11 +586,11 @@ bool MonsterInstance::DirOK(Dir mdir)
 	if (f.y < 0 || f.y >= MAXDUNY || f.x < 0 || f.x >= MAXDUNX || !PosOkMonst(i, f))
 		return false;
 	if (mdir == Dir::E) {
-		if (grid.at({ f.x, f.y + 1 }).isSolid() || grid[f.x][f.y + 1].dFlags & BFLAG_MONSTLR)
+		if (grid.at({ f.x, f.y + 1 }).isSolid() || grid[f.x][f.y + 1].dFlags & DunTileFlag::MONSTLR)
 			return false;
 	}
 	if (mdir == Dir::W) {
-		if (grid.at({ f.x + 1, f.y }).isSolid() || grid[f.x + 1][f.y].dFlags & BFLAG_MONSTLR)
+		if (grid.at({ f.x + 1, f.y }).isSolid() || grid[f.x + 1][f.y].dFlags & DunTileFlag::MONSTLR)
 			return false;
 	}
 	if (mdir == Dir::N) {
@@ -632,7 +632,7 @@ bool MonsterInstance::DirOK(Dir mdir)
 
 bool PosOkMissile(V2Di pos)
 {
-	return !grid.at(pos).blocksMissile() && !(grid.at(pos).dFlags & BFLAG_MONSTLR);
+	return !grid.at(pos).blocksMissile() && !(grid.at(pos).dFlags & DunTileFlag::MONSTLR);
 }
 
 bool CheckNoSolid(V2Di pos)
@@ -804,7 +804,7 @@ bool LineClearF1(bool (*Clear)(int, V2Di), int monst, V2Di p1, V2Di p2)
 	return p1.x == p2.x && p1.y == p2.y;
 }
 
-void MonsterInstance::SyncMonsterAnim()
+void Monster::SyncMonsterAnim()
 {
 	MonsterData *MData;
 	Dir _mdir;
@@ -1138,9 +1138,9 @@ bool PosOkMonst3(int i, V2Di pos)
 	if (ret && grid.at(pos).isObject()) {
 		oi = grid.at(pos).getObject();
 		objtype = object[oi]._otype;
-		isdoor = objtype == OBJ_L1LDOOR || objtype == OBJ_L1RDOOR
-		    || objtype == OBJ_L2LDOOR || objtype == OBJ_L2RDOOR
-		    || objtype == OBJ_L3LDOOR || objtype == OBJ_L3RDOOR;
+		isdoor = objtype == ObjectType::L1LDOOR || objtype == ObjectType::L1RDOOR
+		    || objtype == ObjectType::L2LDOOR || objtype == ObjectType::L2RDOOR
+		    || objtype == ObjectType::L3LDOOR || objtype == ObjectType::L3RDOOR;
 		if (object[oi]._oSolidFlag && !isdoor) {
 			ret = false;
 		}
@@ -1203,7 +1203,7 @@ int M_SpawnSkel(V2Di pos, Dir dir)
 	return -1;
 }
 
-void MonsterInstance::ActivateSpawn(V2Di pos, Dir dir)
+void Monster::ActivateSpawn(V2Di pos, Dir dir)
 {
 	grid.at(pos).setActor(i);
 	data._m = pos;
@@ -1290,7 +1290,7 @@ int PreSpawnSkeleton()
 	return -1;
 }
 
-void MonsterInstance::TalktoMonster()
+void Monster::TalktoMonster()
 {
 	int pnum, itm;
 	pnum = data._menemy;
@@ -1312,7 +1312,7 @@ void MonsterInstance::TalktoMonster()
 	}
 }
 
-void MonsterInstance::SpawnGolum(V2Di pos, int mi)
+void Monster::SpawnGolum(V2Di pos, int mi)
 {
 	grid.at(pos).setActor(i);
 	data._m = pos;

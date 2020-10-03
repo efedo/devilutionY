@@ -214,7 +214,7 @@ bool ItemPlace(V2Di pos)
 	if (grid.at(pos).isPlayer()) return false;
 	if (grid.at(pos).isItem()) return false;
 	if (grid.at(pos).isObject()) return false;
-	if (grid.at(pos).dFlags & BFLAG_POPULATED) return false;
+	if (grid.at(pos).dFlags & DunTileFlag::POPULATED) return false;
 	if (grid.at(pos).isSolid()) return false;
 	return true;
 }
@@ -435,9 +435,9 @@ int RndItem(int m)
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
 			ri--;
-		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
 			ri--;
 	}
 
@@ -473,9 +473,9 @@ int RndUItem(int m)
 			okflag = false;
 		if (AllItemsList[i].iMiscId == MiscItemId::BOOK)
 			okflag = true;
-		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
 			okflag = false;
-		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
 			okflag = false;
 		if (okflag) {
 			ril[ri] = i;
@@ -500,9 +500,9 @@ int RndAllItems()
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iSpell == SPL_RESURRECT && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
 			ri--;
-		if (AllItemsList[i].iSpell == SPL_HEALOTHER && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
 			ri--;
 	}
 
@@ -680,7 +680,7 @@ void SpawnRock()
 	int ostand = false;
 	for (int i = 0; i < nobjects && !ostand; i++) {
 		ii = objectactive[i];
-		ostand = object[ii]._otype == OBJ_STAND;
+		ostand = object[ii]._otype == ObjectType::STAND;
 	}
 	if (ostand) {
 		Item &item = items.createNewItem();

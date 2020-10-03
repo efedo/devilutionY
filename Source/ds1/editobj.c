@@ -13,7 +13,7 @@ int editobj_qsort_helper_drawing_order(const void * e1, const void * e2)
    int   ds1_idx = glb_ds1edit.obj_order_ds1_idx;
    int   i1      = * ((int *) e1),
          i2      = * ((int *) e2);
-   OBJ_S * o1, * o2;
+   ObjectType::S * o1, * o2;
 
 
    // primary order key  : tile position
@@ -43,7 +43,7 @@ int editobj_qsort_helper_drawing_order(const void * e1, const void * e2)
 // sort objects to prepare the drawing function
 void editobj_set_drawing_order(int ds1_idx)
 {
-   OBJ_S * obj;
+   ObjectType::S * obj;
    int   i;
 
 
@@ -80,7 +80,7 @@ void editobj_set_drawing_order(int ds1_idx)
 // make the 'label' windows of all objects of 1 ds1
 void editobj_make_obj_label(int ds1_idx)
 {
-   OBJ_LABEL_S * label;
+   ObjectType::LABEL_S * label;
    int         d, o, w, wtmp, h;
    long        type, id;
 
@@ -115,7 +115,7 @@ void editobj_make_obj_label(int ds1_idx)
 //   if is_shadow is true, only draw the ones which are moving (copy, move)
 void editobj_draw_obj_lab(int ds1_idx, int is_shadow)
 {
-   OBJ_LABEL_S * label;
+   ObjectType::LABEL_S * label;
    int         d, dx, dy, o, cx, cy, w, h, p, loop, f1, f2;
    long        type, id, x, y;
    int         ox0, oy0, lx0, ly0;
@@ -499,7 +499,7 @@ void editobj_clear_obj_lab_flags(int ds1_idx)
 int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
                          int cx, int cy, int mx, int my)
 {
-   OBJ_LABEL_S * label;
+   ObjectType::LABEL_S * label;
    int         loop, o, w, h, x, y, x0, y0, last_t=0, last_o = -1;
    int         redraw = false, o_idx;
 
@@ -612,8 +612,8 @@ int editobj_over_obj_lab(int ds1_idx, int * ptr_t, int * ptr_o,
 //    moving flags & starting position
 void editobj_prepare_moving(int ds1_idx)
 {
-   OBJ_LABEL_S * label;
-   OBJ_S       * ptr_obj;
+   ObjectType::LABEL_S * label;
+   ObjectType::S       * ptr_obj;
    int         o;
 
 
@@ -642,8 +642,8 @@ void editobj_prepare_moving(int ds1_idx)
 // handler of moving objects & labels
 int editobj_moving_obj_lab(int ds1_idx, int dcx, int dcy, int dmx, int dmy)
 {
-   OBJ_LABEL_S * label;
-   OBJ_S       * ptr_obj;
+   ObjectType::LABEL_S * label;
+   ObjectType::S       * ptr_obj;
    static      int old_dcx, old_dcy, old_dmx, old_dmy, old_ds1_idx = -1;
    int         o, redraw = false, save_old = false;
 
@@ -701,8 +701,8 @@ int editobj_moving_obj_lab(int ds1_idx, int dcx, int dcy, int dmx, int dmy)
 // end the move of objects & labels
 void editobj_end_move_obj_lab(int ds1_idx)
 {
-   OBJ_LABEL_S * label;
-   OBJ_S       * ptr_obj;
+   ObjectType::LABEL_S * label;
+   ObjectType::S       * ptr_obj;
    int         o;
 
 
@@ -721,7 +721,7 @@ void editobj_end_move_obj_lab(int ds1_idx)
 // prepare 1 step undo : full backup of objects & labels datas
 void editobj_prepare_undo(int ds1_idx)
 {
-   OBJ_S * ptr_s, * ptr_d;
+   ObjectType::S * ptr_s, * ptr_d;
    int   o;
 
 
@@ -729,7 +729,7 @@ void editobj_prepare_undo(int ds1_idx)
    {
       ptr_s = & glb_ds1[ds1_idx].obj[o];
       ptr_d = & glb_ds1[ds1_idx].obj_undo[o];
-      memcpy(ptr_d, ptr_s, sizeof (OBJ_S));
+      memcpy(ptr_d, ptr_s, sizeof (ObjectType::S));
    }
    glb_ds1[ds1_idx].obj_num_undo = glb_ds1[ds1_idx].obj_num;
    glb_ds1[ds1_idx].can_undo_obj = true;
@@ -740,7 +740,7 @@ void editobj_prepare_undo(int ds1_idx)
 // use the backup to restore the previous state of objects & labels
 void editobj_undo(int ds1_idx)
 {
-   OBJ_S * ptr_s, * ptr_d;
+   ObjectType::S * ptr_s, * ptr_d;
    int   o;
 
 
@@ -752,7 +752,7 @@ void editobj_undo(int ds1_idx)
    {
       ptr_s = & glb_ds1[ds1_idx].obj_undo[o];
       ptr_d = & glb_ds1[ds1_idx].obj[o];
-      memcpy(ptr_d, ptr_s, sizeof (OBJ_S));
+      memcpy(ptr_d, ptr_s, sizeof (ObjectType::S));
    }
    glb_ds1[ds1_idx].obj_num = glb_ds1[ds1_idx].obj_num_undo;
 }
@@ -763,7 +763,7 @@ void editobj_undo(int ds1_idx)
 // reorganize the objects table (no hole between them)
 void editobj_del_obj(int ds1_idx)
 {
-   OBJ_S * ptr_s, * ptr_d;
+   ObjectType::S * ptr_s, * ptr_d;
    int   s=0, d=0, n=0, max = glb_ds1[ds1_idx].obj_num, done = false;
 
 
@@ -780,7 +780,7 @@ void editobj_del_obj(int ds1_idx)
          {
             // copy this one
             ptr_s = & glb_ds1[ds1_idx].obj[s];
-            memcpy(ptr_d, ptr_s, sizeof (OBJ_S));
+            memcpy(ptr_d, ptr_s, sizeof (ObjectType::S));
             SET_SELECTED(ptr_s->flags);
          }
          else
@@ -798,7 +798,7 @@ void editobj_del_obj(int ds1_idx)
    
    // delete completly all the unused objects datas
    for (s=n; s < max; s++)
-      memset( & glb_ds1[ds1_idx].obj[s], 0, sizeof(OBJ_S));
+      memset( & glb_ds1[ds1_idx].obj[s], 0, sizeof(ObjectType::S));
       
    // end
    glb_ds1[ds1_idx].obj_num = n;
@@ -810,7 +810,7 @@ void editobj_del_obj(int ds1_idx)
 // create new objects at the end of the objects table, and flags handle
 void editobj_copy_obj(int ds1_idx)
 {
-   OBJ_S * ptr_s, * ptr_d;
+   ObjectType::S * ptr_s, * ptr_d;
    int   o, d, nb=0, max = glb_ds1[ds1_idx].obj_num;
    long  incr;
 
@@ -840,7 +840,7 @@ void editobj_copy_obj(int ds1_idx)
       {
          ptr_s = & glb_ds1[ds1_idx].obj[o];
          ptr_d = & glb_ds1[ds1_idx].obj[d];
-         memcpy(ptr_d, ptr_s, sizeof (OBJ_S));
+         memcpy(ptr_d, ptr_s, sizeof (ObjectType::S));
          DEL_SELECTED(ptr_s->flags);
          SET_MOUSE_OVER(ptr_s->flags); // to still see the original objects
 		 ptr_d->frame_delta = rand()%256;;
@@ -855,7 +855,7 @@ void editobj_copy_obj(int ds1_idx)
 /*
 void editobj_search_copy_center(int ds1_idx, int * cx, int * cy)
 {
-   OBJ_S * ptr_o;
+   ObjectType::S * ptr_o;
    int   x1=30000, y1=30000, x2 = -30000, y2 = -30000, x, y, o;
 
    for (o=0; o < glb_ds1[ds1_idx].obj_num; o++)
@@ -933,8 +933,8 @@ int editobj_count_sel_obj(int ds1_idx)
 //    set it to a default type & id, and prepare its label window
 int editobj_insert_obj(int ds1_idx, int cx, int cy)
 {
-   OBJ_LABEL_S * label;
-   OBJ_S       * ptr_o;
+   ObjectType::LABEL_S * label;
+   ObjectType::S       * ptr_o;
    int         d, id, type, obj, w, wtmp, h;
    long        incr;
 
@@ -988,8 +988,8 @@ int editobj_insert_obj(int ds1_idx, int cx, int cy)
 // prepare the objects list window (variable width, buttons, etc)
 void editobj_prepare_edit_obj_win(int ds1_idx, int obj_idx)
 {
-   WIN_EDT_OBJ_S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
-   OBJ_DESC_S    * ptr_d;
+   WIN_EDT_ObjectType::S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
+   ObjectType::DESC_S    * ptr_d;
    EDT_BUT_S     * b;
    int           act, w, h, desc_len = 0, len, n, d, i, x0, y0, typ;
    int           myborder = 2;
@@ -1147,8 +1147,8 @@ void editobj_prepare_edit_obj_win(int ds1_idx, int obj_idx)
 // draw the objects description list window
 void editobj_draw_edit_obj(int ds1_idx)
 {
-   WIN_EDT_OBJ_S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
-   OBJ_DESC_S    * ptr_d=NULL;
+   WIN_EDT_ObjectType::S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
+   ObjectType::DESC_S    * ptr_d=NULL;
    EDT_BUT_S     * b;
    int           x1, x2, y1, y2, x, y, d, line, bg_color, c, i, size;
    char          * minus_tmp, tmp[150];
@@ -1261,7 +1261,7 @@ void editobj_draw_edit_obj(int ds1_idx)
 // handler of the objects list window
 int editobj_edit_obj(int ds1_idx, int * edit_end, int mx, int my, int mb)
 {
-   WIN_EDT_OBJ_S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
+   WIN_EDT_ObjectType::S * ptr_w = & glb_ds1[ds1_idx].win_edt_obj;
    int           redraw = false, new_cur, end, w, wtmp;
    
 

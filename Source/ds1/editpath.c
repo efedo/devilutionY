@@ -148,7 +148,7 @@ void editpath_init(int ds1_idx)
 void editpath_search_selected_obj(int ds1_idx)
 {
    PATH_EDIT_WIN_S * pwin  = & glb_ds1[ds1_idx].path_edit_win;
-   OBJ_S           * pobj  = NULL;
+   ObjectType::S           * pobj  = NULL;
    int             o, nb=0, new_obj_idx=0, i;
 
 
@@ -399,7 +399,7 @@ void editpath_draw(int ds1_idx, int mx, int my, int mb, long tx, long ty)
 {
    PATH_EDIT_WIN_S * pwin  = & glb_ds1[ds1_idx].path_edit_win;
    PATH_EDIT_BUT_S * pbut  = NULL;
-   OBJ_S           * pobj  = NULL;
+   ObjectType::S           * pobj  = NULL;
    PATH_S          * ppath = NULL;
    int             x1, y1, x2, y2, i, done, y, xt;
 

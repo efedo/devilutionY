@@ -33,7 +33,7 @@ typedef struct PlayerStruct {
 	V2Di _pvel;
 	Dir _pdir;
 	// int _nextdir;
-	int _pgfxnum;
+	AnimWeaponId _pgfxnum;
 	unsigned char *_pAnimData;
 	int _pAnimDelay;
 	int _pAnimCnt;
@@ -73,7 +73,7 @@ typedef struct PlayerStruct {
 	// it could just be that the compiler optimized away all accesses to
 	// the higher bytes by using byte instructions, since all possible values
 	// of plr_class fit into one byte.
-	char _pClass;
+	PlayerClass _pClass;
 	int _pStrength;
 	int _pBaseStr;
 	int _pMagic;

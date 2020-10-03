@@ -159,12 +159,12 @@ void game_2_ui_player(const PlayerStruct *p, _uiheroinfo *heroinfo, bool bHasSav
 uint8_t game_2_ui_class(const PlayerStruct *p)
 {
 	uint8_t uiclass;
-	if (p->_pClass == PC_WARRIOR)
-		uiclass = UI_WARRIOR;
-	else if (p->_pClass == PC_ROGUE)
-		uiclass = UI_ROGUE;
+	if (p->_pClass == PlayerClass::warrior)
+		uiclass = UiClass::warrior;
+	else if (p->_pClass == PlayerClass::rogue)
+		uiclass = UiClass::rogue;
 	else
-		uiclass = UI_SORCERER;
+		uiclass = UiClass::sorceror;
 
 	return uiclass;
 }
@@ -279,12 +279,12 @@ char pfile_get_player_class(unsigned int player_class_nr)
 {
 	char pc_class;
 
-	if (player_class_nr == UI_WARRIOR)
-		pc_class = PC_WARRIOR;
-	else if (player_class_nr == UI_ROGUE)
-		pc_class = PC_ROGUE;
+	if (player_class_nr == UiClass::warrior)
+		pc_class = PlayerClass::warrior;
+	else if (player_class_nr == UiClass::rogue)
+		pc_class = PlayerClass::rogue;
 	else
-		pc_class = PC_SORCERER;
+		pc_class = PlayerClass::sorceror;
 	return pc_class;
 }
 

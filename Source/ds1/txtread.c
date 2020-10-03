@@ -901,8 +901,8 @@ int read_obj_txt(void)
 
    // malloc
    glb_ds1edit.obj_desc_num = txt->line_num;
-   size = glb_ds1edit.obj_desc_num * sizeof(OBJ_DESC_S);
-   glb_ds1edit.obj_desc = (OBJ_DESC_S *) malloc(size);
+   size = glb_ds1edit.obj_desc_num * sizeof(ObjectType::DESC_S);
+   glb_ds1edit.obj_desc = (ObjectType::DESC_S *) malloc(size);
    if (glb_ds1edit.obj_desc == NULL)
    {
       sprintf(tmp, "read_obj_txt() : not enough mem for %i bytes", size);

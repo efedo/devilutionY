@@ -497,7 +497,7 @@ void Freeupstairs()
 
 		for (yy = -2; yy <= 2; yy++) {
 			for (xx = -2; xx <= 2; xx++) {
-				grid[tx + xx][ty + yy].dFlags |= BFLAG_POPULATED;
+				grid[tx + xx][ty + yy].dFlags |= DunTileFlag::POPULATED;
 			}
 		}
 	}
@@ -594,7 +594,7 @@ void CheckTriggers()
 	bool abort;
 	char abortflag;
 
-	if (myplr().data._pmode != PM_STAND)
+	if (myplr().data._pmode != PlayerMode::STAND)
 		return;
 
 	for (i = 0; i < numtrigs; i++) {
@@ -642,7 +642,7 @@ void CheckTriggers()
 				}
 
 				if (abort) {
-					if (myplr().data._pClass == PC_WARRIOR) {
+					if (myplr().data._pClass == PlayerClass::warrior) {
 						PlaySFX(PS_WARR43);
 					}
 

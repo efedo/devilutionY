@@ -150,11 +150,11 @@ void PlayerInventory::FreeInvGFX()
 
 void PlayerInventory::InitInv()
 {
-	if (myplr().data._pClass == PC_WARRIOR) {
+	if (myplr().data._pClass == PlayerClass::warrior) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv.CEL", NULL);
-	} else if (myplr().data._pClass == PC_ROGUE) {
+	} else if (myplr().data._pClass == PlayerClass::rogue) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_rog.CEL", NULL);
-	} else if (myplr().data._pClass == PC_SORCERER) {
+	} else if (myplr().data._pClass == PlayerClass::sorceror) {
 		pInvCels = LoadFileInMem("Data\\Inv\\Inv_Sor.CEL", NULL);
 	}
 

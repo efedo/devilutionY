@@ -1851,7 +1851,7 @@ void wpreview_draw_an_object_shad(int ds1_idx, int o)
 // ==========================================================================
 void wpreview_draw_obj_tile_shad(int ds1_idx, int x, int y, int * cur_idx)
 {
-   OBJ_S * obj;
+   ObjectType::S * obj;
    int   o;
 
 
@@ -1908,7 +1908,7 @@ void wpreview_draw_obj_tile_shad(int ds1_idx, int x, int y, int * cur_idx)
 // ==========================================================================
 void wpreview_draw_obj_tile_0_2(int ds1_idx, int x, int y, int * cur_idx)
 {
-   OBJ_S * obj;
+   ObjectType::S * obj;
    int   o, d;
    COF_S * cof;
 
@@ -1978,7 +1978,7 @@ void wpreview_draw_obj_tile_0_2(int ds1_idx, int x, int y, int * cur_idx)
 // ==========================================================================
 void wpreview_draw_obj_tile_1(int ds1_idx, int x, int y, int * cur_idx)
 {
-   OBJ_S * obj;
+   ObjectType::S * obj;
    int   o, d;
    COF_S * cof;
 

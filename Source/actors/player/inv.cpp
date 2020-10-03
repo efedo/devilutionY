@@ -288,17 +288,17 @@ bool PlayerInventory::tryPaste(V2Di pos)
 		if (owner.isMyPlr()) PlaySFX(ItemInvSnds[ItemCAnimTbl[getHeldItem()->_iCurs]]);
 		return true;
 	}
-	if (owner.data._pClass == PC_WARRIOR)
+	if (owner.data._pClass == PlayerClass::warrior)
 		PlaySFX(PS_WARR13);
-	else if (owner.data._pClass == PC_ROGUE)
+	else if (owner.data._pClass == PlayerClass::rogue)
 		PlaySFX(PS_ROGUE13);
-	else if (owner.data._pClass == PC_SORCERER)
+	else if (owner.data._pClass == PlayerClass::sorceror)
 		PlaySFX(PS_MAGE13);
-	//if (owner.data._pClass == PC_WARRIOR) {
+	//if (owner.data._pClass == PlayerClass::warrior) {
 	//	PlaySFX(random_(0, 3) + PS_WARR14);
-	//} else if (owner.data._pClass == PC_ROGUE) {
+	//} else if (owner.data._pClass == PlayerClass::rogue) {
 	//	PlaySFX(random_(0, 3) + PS_ROGUE14);
-	//} else if (owner.data._pClass == PC_SORCERER) {
+	//} else if (owner.data._pClass == PlayerClass::sorceror) {
 	//	PlaySFX(random_(0, 3) + PS_MAGE14);
 	//}
 	return false;
@@ -306,7 +306,7 @@ bool PlayerInventory::tryPaste(V2Di pos)
 bool PlayerInventory::tryCut(V2Di pos)
 {
 	if (getHeldItem()) return false;                 // Already holding an item
-	if (owner.data._pmode > PM_WALK3) return false;  // Doing action, can't pick up
+	if (owner.data._pmode > PlayerMode::WALK3) return false;  // Doing action, can't pick up
 	InvSlot *slot = GetCursorInvSlot(pos);		  	 // Get cursor inventory slot
 	if (!slot) return false;                         // Not over a slot
 	tryCutSlot(*slot);
@@ -407,11 +407,11 @@ void PlayerInventory::CheckQuestItem()
 		quests[Q_BLIND]._qactive = QUEST_DONE;
 	if (getHeldItem()->IDidx == ItemIndex::MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
 		sfxdelay = 10;
-		if (owner.data._pClass == PC_WARRIOR) { // BUGFIX: Voice for this quest might be wrong in MP
+		if (owner.data._pClass == PlayerClass::warrior) { // BUGFIX: Voice for this quest might be wrong in MP
 			sfxdnum = PS_WARR95;
-		} else if (owner.data._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE95;
-		} else if (owner.data._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE95;
 		}
 		quests[Q_MUSHROOM]._qvar1 = QS_MUSHPICKED;
@@ -423,22 +423,22 @@ void PlayerInventory::CheckQuestItem()
 		}
 		if (quests[Q_ANVIL]._qlog == true) {
 			sfxdelay = 10;
-			if (myplr().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PlayerClass::warrior) {
 				sfxdnum = PS_WARR89;
-			} else if (myplr().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PlayerClass::rogue) {
 				sfxdnum = PS_ROGUE89;
-			} else if (myplr().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PlayerClass::sorceror) {
 				sfxdnum = PS_MAGE89;
 			}
 		}
 	}
 	if (getHeldItem()->IDidx == ItemIndex::GLDNELIX) {
 		sfxdelay = 30;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR88;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE88;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE88;
 		}
 	}
@@ -449,11 +449,11 @@ void PlayerInventory::CheckQuestItem()
 		}
 		if (quests[Q_ROCK]._qlog == true) {
 			sfxdelay = 10;
-			if (myplr().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PlayerClass::warrior) {
 				sfxdnum = PS_WARR87;
-			} else if (myplr().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PlayerClass::rogue) {
 				sfxdnum = PS_ROGUE87;
-			} else if (myplr().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PlayerClass::sorceror) {
 				sfxdnum = PS_MAGE87;
 			}
 		}
@@ -461,11 +461,11 @@ void PlayerInventory::CheckQuestItem()
 	if (getHeldItem()->IDidx == ItemIndex::ARMOFVAL) {
 		quests[Q_BLOOD]._qactive = QUEST_DONE;
 		sfxdelay = 20;
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR91;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE91;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE91;
 		}
 	}
@@ -672,22 +672,22 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 	switch (item->IDidx) {
 	case ItemIndex::MUSHROOM:
 		sfxdelay = 10;
-		if (owner.data._pClass == PC_WARRIOR) {
+		if (owner.data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR95;
-		} else if (owner.data._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE95;
-		} else if (owner.data._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE95;
 		}
 		return true;
 	case ItemIndex::FUNGALTM:
 		PlaySFX(IS_IBOOK);
 		sfxdelay = 10;
-		if (owner.data._pClass == PC_WARRIOR) {
+		if (owner.data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR29;
-		} else if (owner.data._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PlayerClass::rogue) {
 			sfxdnum = PS_ROGUE29;
-		} else if (owner.data._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE29;
 		}
 		return true;
@@ -697,11 +697,11 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 		return false;
 
 	if (!item->_iStatFlag) {
-		if (owner.data._pClass == PC_WARRIOR) {
+		if (owner.data._pClass == PlayerClass::warrior) {
 			PlaySFX(PS_WARR13);
-		} else if (owner.data._pClass == PC_ROGUE) {
+		} else if (owner.data._pClass == PlayerClass::rogue) {
 			PlaySFX(PS_ROGUE13);
-		} else if (owner.data._pClass == PC_SORCERER) {
+		} else if (owner.data._pClass == PlayerClass::sorceror) {
 			PlaySFX(PS_MAGE13);
 		}
 		return true;

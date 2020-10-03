@@ -135,7 +135,7 @@ bool RndLocOk(V2Di p)
 		return false;
 	if (grid.at(p).isObject())
 		return false;
-	if (grid.at(p).dFlags & BFLAG_POPULATED)
+	if (grid.at(p).dFlags & DunTileFlag::POPULATED)
 		return false;
 	if (grid.at(p).isSolid())
 		return false;
@@ -253,18 +253,18 @@ void AddTortures()
 	for (int oy = 0; oy < MAXDUNY; oy++) {
 		for (int ox = 0; ox < MAXDUNX; ox++) {
 			if (grid[ox][oy].getPiece() == 367) {
-				AddObject(OBJ_TORTURE1, ox, oy + 1);
-				AddObject(OBJ_TORTURE3, ox + 2, oy - 1);
-				AddObject(OBJ_TORTURE2, ox, oy + 3);
-				AddObject(OBJ_TORTURE4, ox + 4, oy - 1);
-				AddObject(OBJ_TORTURE5, ox, oy + 5);
-				AddObject(OBJ_TNUDEM1, ox + 1, oy + 3);
-				AddObject(OBJ_TNUDEM2, ox + 4, oy + 5);
-				AddObject(OBJ_TNUDEM3, ox + 2, oy);
-				AddObject(OBJ_TNUDEM4, ox + 3, oy + 2);
-				AddObject(OBJ_TNUDEW1, ox + 2, oy + 4);
-				AddObject(OBJ_TNUDEW2, ox + 2, oy + 1);
-				AddObject(OBJ_TNUDEW3, ox + 4, oy + 2);
+				AddObject(ObjectType::TORTURE1, ox, oy + 1);
+				AddObject(ObjectType::TORTURE3, ox + 2, oy - 1);
+				AddObject(ObjectType::TORTURE2, ox, oy + 3);
+				AddObject(ObjectType::TORTURE4, ox + 4, oy - 1);
+				AddObject(ObjectType::TORTURE5, ox, oy + 5);
+				AddObject(ObjectType::TNUDEM1, ox + 1, oy + 3);
+				AddObject(ObjectType::TNUDEM2, ox + 4, oy + 5);
+				AddObject(ObjectType::TNUDEM3, ox + 2, oy);
+				AddObject(ObjectType::TNUDEM4, ox + 3, oy + 2);
+				AddObject(ObjectType::TNUDEW1, ox + 2, oy + 4);
+				AddObject(ObjectType::TNUDEW2, ox + 2, oy + 1);
+				AddObject(ObjectType::TNUDEW3, ox + 4, oy + 2);
 			}
 		}
 	}
@@ -272,10 +272,10 @@ void AddTortures()
 void AddCandles()
 {
 	V2Di t = quests[Q_PWATER]._qt;
-	AddObject(OBJ_STORYCANDLE, t.x - 2, t.y + 1);
-	AddObject(OBJ_STORYCANDLE, t.x + 3, t.y + 1);
-	AddObject(OBJ_STORYCANDLE, t.x - 1, t.y + 2);
-	AddObject(OBJ_STORYCANDLE, t.x + 2, t.y + 2);
+	AddObject(ObjectType::STORYCANDLE, t.x - 2, t.y + 1);
+	AddObject(ObjectType::STORYCANDLE, t.x + 3, t.y + 1);
+	AddObject(ObjectType::STORYCANDLE, t.x - 1, t.y + 2);
+	AddObject(ObjectType::STORYCANDLE, t.x + 2, t.y + 2);
 }
 
 void AddBookLever(V2Di /*l1*/, V2Di /*l2*/, V2Di p1, V2Di p2, int msg)
@@ -301,13 +301,13 @@ void AddBookLever(V2Di /*l1*/, V2Di /*l2*/, V2Di p1, V2Di p2, int msg)
 	}
 
 	if (QuestStatus(Q_BLIND))
-		AddObject(OBJ_BLINDBOOK, xp, yp);
+		AddObject(ObjectType::BLINDBOOK, xp, yp);
 	if (QuestStatus(Q_WARLORD))
-		AddObject(OBJ_STEELTOME, xp, yp);
+		AddObject(ObjectType::STEELTOME, xp, yp);
 	if (QuestStatus(Q_BLOOD)) {
 		xp = 2 * lvl.getpc().x + 25;
 		yp = 2 * lvl.getpc().y + 40;
-		AddObject(OBJ_BLOODBOOK, xp, yp);
+		AddObject(ObjectType::BLOODBOOK, xp, yp);
 	}
 	ob = grid[xp][yp].getObject();
 	SetObjMapRange(ob, p1, p2, leverid);
@@ -332,7 +332,7 @@ void InitRndBarrels()
 			xp = random_(143, 80) + 16;
 			yp = random_(143, 80) + 16;
 		} while (!RndLocOk(xp, yp));
-		o = (random_(143, 4) != 0) ? OBJ_BARREL : OBJ_BARRELEX;
+		o = (random_(143, 4) != 0) ? ObjectType::BARREL : ObjectType::BARRELEX;
 		AddObject(o, xp, yp);
 		found = true;
 		p = 0;
@@ -352,7 +352,7 @@ void InitRndBarrels()
 					break;
 			}
 			if (found) {
-				o = (random_(143, 5) != 0) ? OBJ_BARREL : OBJ_BARRELEX;
+				o = (random_(143, 5) != 0) ? ObjectType::BARREL : ObjectType::BARRELEX;
 				AddObject(o, xp, yp);
 				c++;
 			}
@@ -367,11 +367,11 @@ void AddL1Objs(V2Di p1, V2Di p2)
 		for (int i = p1.x; i < p2.x; i++) {
 			int pn = grid[i][j].getPiece();
 			if (pn == 270)
-				AddObject(OBJ_L1LIGHT, i, j);
+				AddObject(ObjectType::L1LIGHT, i, j);
 			if (pn == 44 || pn == 51 || pn == 214)
-				AddObject(OBJ_L1LDOOR, i, j);
+				AddObject(ObjectType::L1LDOOR, i, j);
 			if (pn == 46 || pn == 56)
-				AddObject(OBJ_L1RDOOR, i, j);
+				AddObject(ObjectType::L1RDOOR, i, j);
 		}
 	}
 }
@@ -382,9 +382,9 @@ void AddL2Objs(V2Di p1, V2Di p2)
 		for (int i = p1.x; i < p2.x; i++) {
 			int pn = grid[i][j].getPiece();
 			if (pn == 13 || pn == 541)
-				AddObject(OBJ_L2LDOOR, i, j);
+				AddObject(ObjectType::L2LDOOR, i, j);
 			if (pn == 17 || pn == 542)
-				AddObject(OBJ_L2RDOOR, i, j);
+				AddObject(ObjectType::L2RDOOR, i, j);
 		}
 	}
 }
@@ -395,16 +395,16 @@ void AddL3Objs(V2Di p1, V2Di p2)
 		for (int i = p1.x; i < p2.x; i++) {
 			int pn = grid[i][j].getPiece();
 			if (pn == 531)
-				AddObject(OBJ_L3LDOOR, i, j);
+				AddObject(ObjectType::L3LDOOR, i, j);
 			if (pn == 534)
-				AddObject(OBJ_L3RDOOR, i, j);
+				AddObject(ObjectType::L3RDOOR, i, j);
 		}
 	}
 }
 
 bool WallTrapLocOk(V2Di p)
 {
-	if (grid.at(p).dFlags & BFLAG_POPULATED) return false;
+	if (grid.at(p).dFlags & DunTileFlag::POPULATED) return false;
 	return true;
 }
 
@@ -416,23 +416,23 @@ void AddL2Torches()
 
 			int pn = grid[i][j].getPiece();
 			if (pn == 1 && random_(145, 3) == 0)
-				AddObject(OBJ_TORCHL2, i, j);
+				AddObject(ObjectType::TORCHL2, i, j);
 
 			if (pn == 5 && random_(145, 3) == 0)
-				AddObject(OBJ_TORCHR2, i, j);
+				AddObject(ObjectType::TORCHR2, i, j);
 
 			if (pn == 37 && random_(145, 10) == 0 && !grid[i - 1][j].isObject())
-				AddObject(OBJ_TORCHL, i - 1, j);
+				AddObject(ObjectType::TORCHL, i - 1, j);
 
 			if (pn == 41 && random_(145, 10) == 0 && !grid[i][j - 1].isObject())
-				AddObject(OBJ_TORCHR, i, j - 1);
+				AddObject(ObjectType::TORCHR, i, j - 1);
 		}
 	}
 }
 
 bool TorchLocOK(V2Di p)
 {
-	if (grid.at(p).dFlags & BFLAG_POPULATED) return false;
+	if (grid.at(p).dFlags & DunTileFlag::POPULATED) return false;
 
 	if (pieces[grid.at(p).getPiece()].trap != false)
 		return true;
@@ -472,7 +472,7 @@ void AddObjTraps()
 				if (!TorchLocOK({ xp, j }) || i - xp <= 1)
 					continue;
 
-				AddObject(OBJ_TRAPL, xp, j);
+				AddObject(ObjectType::TRAPL, xp, j);
 				oi_trap = grid[xp][j].getObject();
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
@@ -488,7 +488,7 @@ void AddObjTraps()
 				if (!TorchLocOK({ i, yp }) || j - yp <= 1)
 					continue;
 
-				AddObject(OBJ_TRAPR, i, yp);
+				AddObject(ObjectType::TRAPR, i, yp);
 				oi_trap = grid[i][yp].getObject();
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
@@ -507,8 +507,8 @@ void AddChestTraps()
 		for (i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].isObject()) {
 				oi = grid[i][j].getObject();
-				if (object[oi]._otype >= OBJ_CHEST1 && object[oi]._otype <= OBJ_CHEST3 && !object[oi]._oTrapFlag && random_(0, 100) < 10) {
-					object[oi]._otype += OBJ_BOOKCASER;
+				if (object[oi]._otype >= ObjectType::CHEST1 && object[oi]._otype <= ObjectType::CHEST3 && !object[oi]._oTrapFlag && random_(0, 100) < 10) {
+					object[oi]._otype += ObjectType::BOOKCASER;
 					object[oi]._oTrapFlag = true;
 					if (lvl.type() == DunType::catacombs) {
 						object[oi]._oVar4 = random_(0, 2);
@@ -619,13 +619,13 @@ void AddStoryBooks()
 				return;
 		}
 	}
-	AddObject(OBJ_STORYBOOK, xp, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 2, yp + 1);
-	AddObject(OBJ_STORYCANDLE, xp - 2, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp - 1);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp - 1);
-	AddObject(OBJ_STORYCANDLE, xp + 2, yp);
-	AddObject(OBJ_STORYCANDLE, xp + 2, yp + 1);
+	AddObject(ObjectType::STORYBOOK, xp, yp);
+	AddObject(ObjectType::STORYCANDLE, xp - 2, yp + 1);
+	AddObject(ObjectType::STORYCANDLE, xp - 2, yp);
+	AddObject(ObjectType::STORYCANDLE, xp - 1, yp - 1);
+	AddObject(ObjectType::STORYCANDLE, xp + 1, yp - 1);
+	AddObject(ObjectType::STORYCANDLE, xp + 2, yp);
+	AddObject(ObjectType::STORYCANDLE, xp + 2, yp + 1);
 }
 
 void AddHookedBodies(int freq)
@@ -645,13 +645,13 @@ void AddHookedBodies(int freq)
 			if (dgrid[i][j].dungeon == 1 && dgrid[i + 1][j].dungeon == 6) {
 				switch (random_(0, 3)) {
 				case 0:
-					AddObject(OBJ_TORTURE1, ii + 1, jj);
+					AddObject(ObjectType::TORTURE1, ii + 1, jj);
 					break;
 				case 1:
-					AddObject(OBJ_TORTURE2, ii + 1, jj);
+					AddObject(ObjectType::TORTURE2, ii + 1, jj);
 					break;
 				case 2:
-					AddObject(OBJ_TORTURE5, ii + 1, jj);
+					AddObject(ObjectType::TORTURE5, ii + 1, jj);
 					break;
 				}
 				continue;
@@ -659,10 +659,10 @@ void AddHookedBodies(int freq)
 			if (dgrid[i][j].dungeon == 2 && dgrid[i][j + 1].dungeon == 6) {
 				switch (random_(0, 2)) {
 				case 0:
-					AddObject(OBJ_TORTURE3, ii, jj);
+					AddObject(ObjectType::TORTURE3, ii, jj);
 					break;
 				case 1:
-					AddObject(OBJ_TORTURE4, ii, jj);
+					AddObject(ObjectType::TORTURE4, ii, jj);
 					break;
 				}
 			}
@@ -673,15 +673,15 @@ void AddHookedBodies(int freq)
 void AddL4Goodies()
 {
 	AddHookedBodies(6);
-	InitRndLocObj(2, 6, OBJ_TNUDEM1);
-	InitRndLocObj(2, 6, OBJ_TNUDEM2);
-	InitRndLocObj(2, 6, OBJ_TNUDEM3);
-	InitRndLocObj(2, 6, OBJ_TNUDEM4);
-	InitRndLocObj(2, 6, OBJ_TNUDEW1);
-	InitRndLocObj(2, 6, OBJ_TNUDEW2);
-	InitRndLocObj(2, 6, OBJ_TNUDEW3);
-	InitRndLocObj(2, 6, OBJ_DECAP);
-	InitRndLocObj(1, 3, OBJ_CAULDRON);
+	InitRndLocObj(2, 6, ObjectType::TNUDEM1);
+	InitRndLocObj(2, 6, ObjectType::TNUDEM2);
+	InitRndLocObj(2, 6, ObjectType::TNUDEM3);
+	InitRndLocObj(2, 6, ObjectType::TNUDEM4);
+	InitRndLocObj(2, 6, ObjectType::TNUDEW1);
+	InitRndLocObj(2, 6, ObjectType::TNUDEW2);
+	InitRndLocObj(2, 6, ObjectType::TNUDEW3);
+	InitRndLocObj(2, 6, ObjectType::DECAP);
+	InitRndLocObj(1, 3, ObjectType::CAULDRON);
 }
 
 void AddLazStand()
@@ -705,21 +705,21 @@ void AddLazStand()
 		if (!found) {
 			cnt++;
 			if (cnt > 10000) {
-				InitRndLocObj(1, 1, OBJ_LAZSTAND);
+				InitRndLocObj(1, 1, ObjectType::LAZSTAND);
 				return;
 			}
 		}
 	}
-	AddObject(OBJ_LAZSTAND, xp, yp);
-	AddObject(OBJ_TNUDEM2, xp, yp + 2);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp + 2);
-	AddObject(OBJ_TNUDEM3, xp + 2, yp + 2);
-	AddObject(OBJ_TNUDEW1, xp, yp - 2);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp - 2);
-	AddObject(OBJ_TNUDEW2, xp + 2, yp - 2);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp - 1);
-	AddObject(OBJ_TNUDEW3, xp - 1, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp + 1);
+	AddObject(ObjectType::LAZSTAND, xp, yp);
+	AddObject(ObjectType::TNUDEM2, xp, yp + 2);
+	AddObject(ObjectType::STORYCANDLE, xp + 1, yp + 2);
+	AddObject(ObjectType::TNUDEM3, xp + 2, yp + 2);
+	AddObject(ObjectType::TNUDEW1, xp, yp - 2);
+	AddObject(ObjectType::STORYCANDLE, xp + 1, yp - 2);
+	AddObject(ObjectType::TNUDEW2, xp + 2, yp - 2);
+	AddObject(ObjectType::STORYCANDLE, xp - 1, yp - 1);
+	AddObject(ObjectType::TNUDEW3, xp - 1, yp);
+	AddObject(ObjectType::STORYCANDLE, xp - 1, yp + 1);
 }
 
 void InitObjects()
@@ -749,24 +749,24 @@ void InitObjects()
 			if (QuestStatus(Q_PWATER))
 				AddCandles();
 			if (QuestStatus(Q_LTBANNER))
-				AddObject(OBJ_SIGNCHEST, 2 * lvl.getpc().x + 26, 2 * lvl.getpc().y + 19);
-			InitRndLocBigObj(10, 15, OBJ_SARC);
+				AddObject(ObjectType::SIGNCHEST, 2 * lvl.getpc().x + 26, 2 * lvl.getpc().y + 19);
+			InitRndLocBigObj(10, 15, ObjectType::SARC);
 			AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			InitRndBarrels();
 		}
 		if (lvl.type() == DunType::catacombs) {
 			if (QuestStatus(Q_ROCK))
-				InitRndLocObj5x5(1, 1, OBJ_STAND);
+				InitRndLocObj5x5(1, 1, ObjectType::STAND);
 			if (QuestStatus(Q_SCHAMB))
-				InitRndLocObj5x5(1, 1, OBJ_BOOK2R);
+				InitRndLocObj5x5(1, 1, ObjectType::BOOK2R);
 			AddL2Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			AddL2Torches();
 			if (QuestStatus(Q_BLIND)) {
-				if (myplr().data._pClass == PC_WARRIOR) {
+				if (myplr().data._pClass == PlayerClass::warrior) {
 					sp_id = TEXT_BLINDING;
-				} else if (myplr().data._pClass == PC_ROGUE) {
+				} else if (myplr().data._pClass == PlayerClass::rogue) {
 					sp_id = TEXT_RBLINDING;
-				} else if (myplr().data._pClass == PC_SORCERER) {
+				} else if (myplr().data._pClass == PlayerClass::sorceror) {
 					sp_id = TEXT_MBLINDING;
 				}
 				quests[Q_BLIND]._qmsg = sp_id;
@@ -776,16 +776,16 @@ void InitObjects()
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BLOOD)) {
-				if (myplr().data._pClass == PC_WARRIOR) {
+				if (myplr().data._pClass == PlayerClass::warrior) {
 					sp_id = TEXT_BLOODY;
-				} else if (myplr().data._pClass == PC_ROGUE) {
+				} else if (myplr().data._pClass == PlayerClass::rogue) {
 					sp_id = TEXT_RBLOODY;
-				} else if (myplr().data._pClass == PC_SORCERER) {
+				} else if (myplr().data._pClass == PlayerClass::sorceror) {
 					sp_id = TEXT_MBLOODY;
 				}
 				quests[Q_BLOOD]._qmsg = sp_id;
 				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { lvl.getpc().x, lvl.getpc().y + 3 }, { lvl.getpc().x + 2, lvl.getpc().y + 7 }, sp_id);
-				AddObject(OBJ_PEDISTAL, 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 32);
+				AddObject(ObjectType::PEDISTAL, 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 32);
 			}
 			InitRndBarrels();
 		}
@@ -795,11 +795,11 @@ void InitObjects()
 		}
 		if (lvl.type() == DunType::hell) {
 			if (QuestStatus(Q_WARLORD)) {
-				if (myplr().data._pClass == PC_WARRIOR) {
+				if (myplr().data._pClass == PlayerClass::warrior) {
 					sp_id = TEXT_BLOODWAR;
-				} else if (myplr().data._pClass == PC_ROGUE) {
+				} else if (myplr().data._pClass == PlayerClass::rogue) {
 					sp_id = TEXT_RBLOODWAR;
-				} else if (myplr().data._pClass == PC_SORCERER) {
+				} else if (myplr().data._pClass == PlayerClass::sorceror) {
 					sp_id = TEXT_MBLOODWAR;
 				}
 				quests[Q_WARLORD]._qmsg = sp_id;
@@ -813,9 +813,9 @@ void InitObjects()
 			InitRndBarrels();
 			AddL4Goodies();
 		}
-		InitRndLocObj(5, 10, OBJ_CHEST1);
-		InitRndLocObj(3, 6, OBJ_CHEST2);
-		InitRndLocObj(1, 5, OBJ_CHEST3);
+		InitRndLocObj(5, 10, ObjectType::CHEST1);
+		InitRndLocObj(3, 6, ObjectType::CHEST2);
+		InitRndLocObj(1, 5, ObjectType::CHEST3);
 		if (lvl.type() != DunType::hell)
 			AddObjTraps();
 		if (lvl.type() > DunType::cathedral)
@@ -969,24 +969,24 @@ void AddChest(int i, int t)
 	if (!random_(147, 2)) object[i]._oAnimFrame += 3;
 	object[i]._oRndSeed = GetRndSeed();
 	switch (t) {
-	case OBJ_CHEST1:
-	case OBJ_TCHEST1:
+	case ObjectType::CHEST1:
+	case ObjectType::TCHEST1:
 		if (lvl.setlevel) {
 			object[i]._oVar1 = 1;
 			break;
 		}
 		object[i]._oVar1 = random_(147, 2);
 		break;
-	case OBJ_TCHEST2:
-	case OBJ_CHEST2:
+	case ObjectType::TCHEST2:
+	case ObjectType::CHEST2:
 		if (lvl.setlevel) {
 			object[i]._oVar1 = 2;
 			break;
 		}
 		object[i]._oVar1 = random_(147, 3);
 		break;
-	case OBJ_TCHEST3:
-	case OBJ_CHEST3:
+	case ObjectType::TCHEST3:
+	case ObjectType::CHEST3:
 		if (lvl.setlevel) {
 			object[i]._oVar1 = 3;
 			break;
@@ -1000,7 +1000,7 @@ void AddChest(int i, int t)
 void AddL2Door(int i, V2Di p, int ot)
 {
 	object[i]._oDoorFlag = true;
-	if (ot == OBJ_L2LDOOR)
+	if (ot == ObjectType::L2LDOOR)
 		ObjSetMicro(p, 538);
 	else
 		ObjSetMicro(p, 540);
@@ -1010,7 +1010,7 @@ void AddL2Door(int i, V2Di p, int ot)
 void AddL3Door(int i, V2Di p, int ot)
 {
 	object[i]._oDoorFlag = true;
-	if (ot == OBJ_L3LDOOR)
+	if (ot == ObjectType::L3LDOOR)
 		ObjSetMicro(p, 531);
 	else
 		ObjSetMicro(p, 534);
@@ -1067,7 +1067,7 @@ void AddBarrel(int i, int t)
 {
 	object[i]._oVar1 = 0;
 	object[i]._oRndSeed = GetRndSeed();
-	object[i]._oVar2 = (t == OBJ_BARRELEX) ? 0 : random_(149, 10);
+	object[i]._oVar2 = (t == ObjectType::BARRELEX) ? 0 : random_(149, 10);
 	object[i]._oVar3 = random_(149, 3);
 	if (object[i]._oVar2 >= 8) object[i]._oVar4 = PreSpawnSkeleton();
 }
@@ -1257,7 +1257,7 @@ void AddMushPatch()
 		grid[x + 1][y + 1].setObject(i);
 		grid[x + 2][y + 1].setObject(i);
 		grid[x + 1][y + 2].setObject(i);
-		AddObject(OBJ_MUSHPATCH, x + 2, y + 2);
+		AddObject(ObjectType::MUSHPATCH, x + 2, y + 2);
 	}
 }
 
@@ -1265,7 +1265,7 @@ void AddSlainHero()
 {
 	int x, y;
 	GetRndObjLoc(5, &x, &y);
-	AddObject(OBJ_SLAINHERO, x + 2, y + 2);
+	AddObject(ObjectType::SLAINHERO, x + 2, y + 2);
 }
 
 void AddObject(int ot, int ox, int oy)
@@ -1283,127 +1283,127 @@ void AddObject(int ot, V2Di o)
 	grid.at(o).setObject(oi);
 	SetupObject(oi, o, ot);
 	switch (ot) {
-	case OBJ_L1LIGHT:
+	case ObjectType::L1LIGHT:
 		AddObjLight(oi, 5);
 		break;
-	case OBJ_SKFIRE:
-	case OBJ_CANDLE1:
-	case OBJ_CANDLE2:
-	case OBJ_BOOKCANDLE:
+	case ObjectType::SKFIRE:
+	case ObjectType::CANDLE1:
+	case ObjectType::CANDLE2:
+	case ObjectType::BOOKCANDLE:
 		AddObjLight(oi, 5);
 		break;
-	case OBJ_STORYCANDLE:
+	case ObjectType::STORYCANDLE:
 		AddObjLight(oi, 3);
 		break;
-	case OBJ_TORCHL:
-	case OBJ_TORCHR:
-	case OBJ_TORCHL2:
-	case OBJ_TORCHR2:
+	case ObjectType::TORCHL:
+	case ObjectType::TORCHR:
+	case ObjectType::TORCHL2:
+	case ObjectType::TORCHR2:
 		AddObjLight(oi, 8);
 		break;
-	case OBJ_L1LDOOR:
-	case OBJ_L1RDOOR:
+	case ObjectType::L1LDOOR:
+	case ObjectType::L1RDOOR:
 		AddL1Door(oi, o, ot);
 		break;
-	case OBJ_L2LDOOR:
-	case OBJ_L2RDOOR:
+	case ObjectType::L2LDOOR:
+	case ObjectType::L2RDOOR:
 		AddL2Door(oi, o, ot);
 		break;
-	case OBJ_L3LDOOR:
-	case OBJ_L3RDOOR:
+	case ObjectType::L3LDOOR:
+	case ObjectType::L3RDOOR:
 		AddL3Door(oi, o, ot);
 		break;
-	case OBJ_BOOK2R:
+	case ObjectType::BOOK2R:
 		AddSCambBook(oi);
 		break;
-	case OBJ_CHEST1:
-	case OBJ_CHEST2:
-	case OBJ_CHEST3:
-	case OBJ_TCHEST1:
-	case OBJ_TCHEST2:
-	case OBJ_TCHEST3:
+	case ObjectType::CHEST1:
+	case ObjectType::CHEST2:
+	case ObjectType::CHEST3:
+	case ObjectType::TCHEST1:
+	case ObjectType::TCHEST2:
+	case ObjectType::TCHEST3:
 		AddChest(oi, ot);
 		break;
-	case OBJ_SARC:
+	case ObjectType::SARC:
 		AddSarc(oi);
 		break;
-	case OBJ_FLAMEHOLE:
+	case ObjectType::FLAMEHOLE:
 		AddFlameTrap(oi);
 		break;
-	case OBJ_FLAMELVR:
+	case ObjectType::FLAMELVR:
 		AddFlameLvr(oi);
 		break;
-	case OBJ_WATER:
+	case ObjectType::WATER:
 		object[oi]._oAnimFrame = 1;
 		break;
-	case OBJ_TRAPL:
-	case OBJ_TRAPR:
+	case ObjectType::TRAPL:
+	case ObjectType::TRAPR:
 		AddTrap(oi, ot);
 		break;
-	case OBJ_BARREL:
-	case OBJ_BARRELEX:
+	case ObjectType::BARREL:
+	case ObjectType::BARRELEX:
 		AddBarrel(oi, ot);
 		break;
-	case OBJ_SHRINEL:
-	case OBJ_SHRINER:
+	case ObjectType::SHRINEL:
+	case ObjectType::SHRINER:
 		AddShrine(oi);
 		break;
-	case OBJ_BOOKCASEL:
-	case OBJ_BOOKCASER:
+	case ObjectType::BOOKCASEL:
+	case ObjectType::BOOKCASER:
 		AddBookcase(oi);
 		break;
-	case OBJ_SKELBOOK:
-	case OBJ_BOOKSTAND:
+	case ObjectType::SKELBOOK:
+	case ObjectType::BOOKSTAND:
 		AddBookstand(oi);
 		break;
-	case OBJ_BLOODFTN:
+	case ObjectType::BLOODFTN:
 		AddBloodFtn(oi);
 		break;
-	case OBJ_DECAP:
+	case ObjectType::DECAP:
 		AddDecap(oi);
 		break;
-	case OBJ_PURIFYINGFTN:
+	case ObjectType::PURIFYINGFTN:
 		AddPurifyingFountain(oi);
 		break;
-	case OBJ_ARMORSTAND:
-	case OBJ_WARARMOR:
+	case ObjectType::ARMORSTAND:
+	case ObjectType::WARARMOR:
 		AddArmorStand(oi);
 		break;
-	case OBJ_GOATSHRINE:
+	case ObjectType::GOATSHRINE:
 		AddGoatShrine(oi);
 		break;
-	case OBJ_CAULDRON:
+	case ObjectType::CAULDRON:
 		AddCauldron(oi);
 		break;
-	case OBJ_MURKYFTN:
+	case ObjectType::MURKYFTN:
 		AddMurkyFountain(oi);
 		break;
-	case OBJ_TEARFTN:
+	case ObjectType::TEARFTN:
 		AddTearFountain(oi);
 		break;
-	case OBJ_BOOK2L:
+	case ObjectType::BOOK2L:
 		AddVilebook(oi);
 		break;
-	case OBJ_MCIRCLE1:
-	case OBJ_MCIRCLE2:
+	case ObjectType::MCIRCLE1:
+	case ObjectType::MCIRCLE2:
 		AddMagicCircle(oi);
 		break;
-	case OBJ_STORYBOOK:
+	case ObjectType::STORYBOOK:
 		AddStoryBook(oi);
 		break;
-	case OBJ_BCROSS:
-	case OBJ_TBCROSS:
+	case ObjectType::BCROSS:
+	case ObjectType::TBCROSS:
 		AddBrnCross(oi);
 		AddObjLight(oi, 5);
 		break;
-	case OBJ_PEDISTAL:
+	case ObjectType::PEDISTAL:
 		AddPedistal(oi);
 		break;
-	case OBJ_WARWEAP:
-	case OBJ_WEAPONRACK:
+	case ObjectType::WARWEAP:
+	case ObjectType::WEAPONRACK:
 		AddWeaponRack(oi);
 		break;
-	case OBJ_TNUDEM2:
+	case ObjectType::TNUDEM2:
 		AddTorturedBody(oi);
 		break;
 	}
@@ -1449,9 +1449,9 @@ void Obj_Circle(int i)
 	V2Di o = object[i]._o;
 	V2Di w = myplr().pos();
 	if (o == w) {
-		if (object[i]._otype == OBJ_MCIRCLE1)
+		if (object[i]._otype == ObjectType::MCIRCLE1)
 			object[i]._oAnimFrame = 2;
-		if (object[i]._otype == OBJ_MCIRCLE2)
+		if (object[i]._otype == ObjectType::MCIRCLE2)
 			object[i]._oAnimFrame = 4;
 		if (o.x == 45 && o.y == 47) {
 			object[i]._oVar6 = 2;
@@ -1472,9 +1472,9 @@ void Obj_Circle(int i)
 			myplr().StartStand(Dir(0));
 		}
 	} else {
-		if (object[i]._otype == OBJ_MCIRCLE1)
+		if (object[i]._otype == ObjectType::MCIRCLE1)
 			object[i]._oAnimFrame = 1;
-		if (object[i]._otype == OBJ_MCIRCLE2)
+		if (object[i]._otype == ObjectType::MCIRCLE2)
 			object[i]._oAnimFrame = 3;
 		object[i]._oVar6 = 0;
 	}
@@ -1580,21 +1580,21 @@ void Obj_Trap(int i)
 	if (!object[i]._oVar4) {
 		oti = grid[object[i]._oVar1][object[i]._oVar2].getObject();
 		switch (object[oti]._otype) {
-		case OBJ_L1LDOOR:
-		case OBJ_L1RDOOR:
-		case OBJ_L2LDOOR:
-		case OBJ_L2RDOOR:
-		case OBJ_L3LDOOR:
-		case OBJ_L3RDOOR:
+		case ObjectType::L1LDOOR:
+		case ObjectType::L1RDOOR:
+		case ObjectType::L2LDOOR:
+		case ObjectType::L2RDOOR:
+		case ObjectType::L3LDOOR:
+		case ObjectType::L3RDOOR:
 			if (object[oti]._oVar4)
 				otrig = true;
 			break;
-		case OBJ_LEVER:
-		case OBJ_CHEST1:
-		case OBJ_CHEST2:
-		case OBJ_CHEST3:
-		case OBJ_SWITCHSKL:
-		case OBJ_SARC:
+		case ObjectType::LEVER:
+		case ObjectType::CHEST1:
+		case ObjectType::CHEST2:
+		case ObjectType::CHEST3:
+		case ObjectType::SWITCHSKL:
+		case ObjectType::SARC:
 			if (object[oti]._oSelFlag == 0)
 				otrig = true;
 			break;
@@ -1625,7 +1625,7 @@ void Obj_BCrossDamage(int i)
 	int fire_resist;
 	int damage[4] = { 6, 8, 10, 12 };
 
-	if (myplr().data._pmode == PM_DEATH)
+	if (myplr().data._pmode == PlayerMode::DEATH)
 		return;
 
 	fire_resist = myplr().data._pFireResist;
@@ -1640,11 +1640,11 @@ void Obj_BCrossDamage(int i)
 	if (myplr().data._pHitPoints >> 6 <= 0) {
 		myplr().SyncPlrKill();
 	} else {
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			PlaySfxLoc(PS_WARR68, myplr().pos());
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			PlaySfxLoc(PS_ROGUE68, myplr().pos());
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			PlaySfxLoc(PS_MAGE68, myplr().pos());
 		}
 	}
@@ -1659,56 +1659,56 @@ void ProcessObjects()
 	for (i = 0; i < nobjects; ++i) {
 		oi = objectactive[i];
 		switch (object[oi]._otype) {
-		case OBJ_L1LIGHT:
+		case ObjectType::L1LIGHT:
 			Obj_Light(oi, 10);
 			break;
-		case OBJ_SKFIRE:
-		case OBJ_CANDLE2:
-		case OBJ_BOOKCANDLE:
+		case ObjectType::SKFIRE:
+		case ObjectType::CANDLE2:
+		case ObjectType::BOOKCANDLE:
 			Obj_Light(oi, 5);
 			break;
-		case OBJ_STORYCANDLE:
+		case ObjectType::STORYCANDLE:
 			Obj_Light(oi, 3);
 			break;
-		case OBJ_CRUX1:
-		case OBJ_CRUX2:
-		case OBJ_CRUX3:
-		case OBJ_BARREL:
-		case OBJ_BARRELEX:
-		case OBJ_SHRINEL:
-		case OBJ_SHRINER:
+		case ObjectType::CRUX1:
+		case ObjectType::CRUX2:
+		case ObjectType::CRUX3:
+		case ObjectType::BARREL:
+		case ObjectType::BARRELEX:
+		case ObjectType::SHRINEL:
+		case ObjectType::SHRINER:
 			Obj_StopAnim(oi);
 			break;
-		case OBJ_L1LDOOR:
-		case OBJ_L1RDOOR:
-		case OBJ_L2LDOOR:
-		case OBJ_L2RDOOR:
-		case OBJ_L3LDOOR:
-		case OBJ_L3RDOOR:
+		case ObjectType::L1LDOOR:
+		case ObjectType::L1RDOOR:
+		case ObjectType::L2LDOOR:
+		case ObjectType::L2RDOOR:
+		case ObjectType::L3LDOOR:
+		case ObjectType::L3RDOOR:
 			Obj_Door(oi);
 			break;
-		case OBJ_TORCHL:
-		case OBJ_TORCHR:
-		case OBJ_TORCHL2:
-		case OBJ_TORCHR2:
+		case ObjectType::TORCHL:
+		case ObjectType::TORCHR:
+		case ObjectType::TORCHL2:
+		case ObjectType::TORCHR2:
 			Obj_Light(oi, 8);
 			break;
-		case OBJ_SARC:
+		case ObjectType::SARC:
 			Obj_Sarc(oi);
 			break;
-		case OBJ_FLAMEHOLE:
+		case ObjectType::FLAMEHOLE:
 			Obj_FlameTrap(oi);
 			break;
-		case OBJ_TRAPL:
-		case OBJ_TRAPR:
+		case ObjectType::TRAPL:
+		case ObjectType::TRAPR:
 			Obj_Trap(oi);
 			break;
-		case OBJ_MCIRCLE1:
-		case OBJ_MCIRCLE2:
+		case ObjectType::MCIRCLE1:
+		case ObjectType::MCIRCLE2:
 			Obj_Circle(oi);
 			break;
-		case OBJ_BCROSS:
-		case OBJ_TBCROSS:
+		case ObjectType::BCROSS:
+		case ObjectType::TBCROSS:
 			Obj_Light(oi, 10);
 			Obj_BCrossDamage(oi);
 			break;
@@ -1874,9 +1874,9 @@ void DoorSet(int oi, V2Di d)
 		ObjSetMicro(d, 392);
 	if (pn == 45)
 		ObjSetMicro(d, 394);
-	if (pn == 50 && object[oi]._otype == OBJ_L1LDOOR)
+	if (pn == 50 && object[oi]._otype == ObjectType::L1LDOOR)
 		ObjSetMicro(d, 411);
-	if (pn == 50 && object[oi]._otype == OBJ_L1RDOOR)
+	if (pn == 50 && object[oi]._otype == ObjectType::L1RDOOR)
 		ObjSetMicro(d, 412);
 	if (pn == 54)
 		ObjSetMicro(d, 397);
@@ -2120,28 +2120,28 @@ void MonstCheckDoors(int n)
 	    || grid[m.x + 1][m.y + 1].isObject()) {
 		for (i = 0; i < nobjects; ++i) {
 			oi = objectactive[i];
-			if ((object[oi]._otype == OBJ_L1LDOOR || object[oi]._otype == OBJ_L1RDOOR) && !object[oi]._oVar4) {
+			if ((object[oi]._otype == ObjectType::L1LDOOR || object[oi]._otype == ObjectType::L1RDOOR) && !object[oi]._oVar4) {
 				dp.x = abs(object[oi]._o.x - m.x);
 				dp.y = abs(object[oi]._o.y - m.y);
-				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L1LDOOR)
+				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == ObjectType::L1LDOOR)
 					OperateL1LDoor(myplr(), oi, true);
-				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L1RDOOR)
+				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == ObjectType::L1RDOOR)
 					OperateL1RDoor(myplr(), oi, true);
 			}
-			if ((object[oi]._otype == OBJ_L2LDOOR || object[oi]._otype == OBJ_L2RDOOR) && !object[oi]._oVar4) {
+			if ((object[oi]._otype == ObjectType::L2LDOOR || object[oi]._otype == ObjectType::L2RDOOR) && !object[oi]._oVar4) {
 				dp.x = abs(object[oi]._o.x - m.x);
 				dp.y = abs(object[oi]._o.y - m.y);
-				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L2LDOOR)
+				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == ObjectType::L2LDOOR)
 					OperateL2LDoor(myplr(), oi, true);
-				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L2RDOOR)
+				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == ObjectType::L2RDOOR)
 					OperateL2RDoor(myplr(), oi, true);
 			}
-			if ((object[oi]._otype == OBJ_L3LDOOR || object[oi]._otype == OBJ_L3RDOOR) && !object[oi]._oVar4) {
+			if ((object[oi]._otype == ObjectType::L3LDOOR || object[oi]._otype == ObjectType::L3RDOOR) && !object[oi]._oVar4) {
 				dp.x = abs(object[oi]._o.x - m.x);
 				dp.y = abs(object[oi]._o.y - m.y);
-				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == OBJ_L3RDOOR)
+				if (dp.x == 1 && dp.y <= 1 && object[oi]._otype == ObjectType::L3RDOOR)
 					OperateL3RDoor(myplr(), oi, true);
-				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == OBJ_L3LDOOR)
+				if (dp.x <= 1 && dp.y == 1 && object[oi]._otype == ObjectType::L3LDOOR)
 					OperateL3LDoor(myplr(), oi, true);
 			}
 		}
@@ -2185,9 +2185,9 @@ void ObjChangeMapResync(V2Di p1, V2Di p2)
 void OperateL1Door(int pnum, int i, bool sendflag)
 {
 	V2Di dp = (object[i]._o - plr[pnum].pos()).abs();
-	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == OBJ_L1LDOOR)
+	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == ObjectType::L1LDOOR)
 		OperateL1LDoor(pnum, i, sendflag);
-	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == OBJ_L1RDOOR)
+	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == ObjectType::L1RDOOR)
 		OperateL1RDoor(pnum, i, sendflag);
 }
 
@@ -2204,7 +2204,7 @@ void OperateLever(int pnum, int i)
 		if (lvl.currlevel == 16) {
 			for (j = 0; j < nobjects; j++) {
 				oi = objectactive[j];
-				if (object[oi]._otype == OBJ_SWITCHSKL
+				if (object[oi]._otype == ObjectType::SWITCHSKL
 				    && object[i]._oVar8 == object[oi]._oVar8
 				    && object[oi]._oSelFlag != 0) {
 					mapflag = false;
@@ -2233,12 +2233,12 @@ void OperateBook(int pnum, int i)
 		for (j = 0; j < nobjects; j++) {
 			oi = objectactive[j];
 			otype = object[oi]._otype;
-			if (otype == OBJ_MCIRCLE2 && object[oi]._oVar6 == 1) {
+			if (otype == ObjectType::MCIRCLE2 && object[oi]._oVar6 == 1) {
 				d = { 27, 29 };
 				object[oi]._oVar6 = 4;
 				do_add_missile = true;
 			}
-			if (otype == OBJ_MCIRCLE2 && object[oi]._oVar6 == 2) {
+			if (otype == ObjectType::MCIRCLE2 && object[oi]._oVar6 == 2) {
 				d = { 43, 29 };
 				object[oi]._oVar6 = 4;
 				do_add_missile = true;
@@ -2259,9 +2259,9 @@ void OperateBook(int pnum, int i)
 		return;
 
 	if (lvl.setlvlnum == SetLvl::BoneChamb) {
-		myplr().data._pMemSpells |= ((__int64)1 << (SPL_GUARDIAN - 1));
-		if (plr[pnum].data._pSplLvl[SPL_GUARDIAN] < 15)
-			myplr().data._pSplLvl[SPL_GUARDIAN]++;
+		myplr().data._pMemSpells |= ((__int64)1 << (SpellId::GUARDIAN - 1));
+		if (plr[pnum].data._pSplLvl[SpellId::GUARDIAN] < 15)
+			myplr().data._pSplLvl[SpellId::GUARDIAN]++;
 		quests[Q_SCHAMB]._qactive = QUEST_DONE;
 		if (!deltaload)
 			PlaySfxLoc(IS_QUESTDN, object[i]._o);
@@ -2284,12 +2284,12 @@ void OperateBookLever(int pnum, int i)
 	p.x = 2 * lvl.getpc().x + 16;
 	p.y = 2 * lvl.getpc().y + 16;
 	if (object[i]._oSelFlag != 0 && !qtextflag) {
-		if (object[i]._otype == OBJ_BLINDBOOK && !quests[Q_BLIND]._qvar1) {
+		if (object[i]._otype == ObjectType::BLINDBOOK && !quests[Q_BLIND]._qvar1) {
 			quests[Q_BLIND]._qactive = QUEST_ACTIVE;
 			quests[Q_BLIND]._qlog = 1;
 			quests[Q_BLIND]._qvar1 = 1;
 		}
-		if (object[i]._otype == OBJ_BLOODBOOK && !quests[Q_BLOOD]._qvar1) {
+		if (object[i]._otype == ObjectType::BLOODBOOK && !quests[Q_BLOOD]._qvar1) {
 			quests[Q_BLOOD]._qactive = QUEST_ACTIVE;
 			quests[Q_BLOOD]._qlog = 1;
 			quests[Q_BLOOD]._qvar1 = 1;
@@ -2298,15 +2298,15 @@ void OperateBookLever(int pnum, int i)
 			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 33 }, 0, 1);
 		}
 		object[i]._otype = object[i]._otype;
-		if (object[i]._otype == OBJ_STEELTOME && !quests[Q_WARLORD]._qvar1) {
+		if (object[i]._otype == ObjectType::STEELTOME && !quests[Q_WARLORD]._qvar1) {
 			quests[Q_WARLORD]._qactive = QUEST_ACTIVE;
 			quests[Q_WARLORD]._qlog = 1;
 			quests[Q_WARLORD]._qvar1 = 1;
 		}
 		if (object[i]._oAnimFrame != object[i]._oVar6) {
-			if (object[i]._otype != OBJ_BLOODBOOK)
+			if (object[i]._otype != ObjectType::BLOODBOOK)
 				ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
-			if (object[i]._otype == OBJ_BLINDBOOK) {
+			if (object[i]._otype == ObjectType::BLINDBOOK) {
 				CreateItem(3, { p.x + 5, p.y + 5 });
 				tren = lvl.TransVal;
 				lvl.TransVal = 9;
@@ -2336,11 +2336,11 @@ void OperateSChambBk(int pnum, int i)
 			quests[Q_SCHAMB]._qactive = QUEST_ACTIVE;
 			quests[Q_SCHAMB]._qlog = 1;
 		}
-		if (myplr().data._pClass == PC_WARRIOR) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			textdef = TEXT_BONER;
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			textdef = TEXT_RBONER;
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			textdef = TEXT_MBONER;
 		}
 		quests[Q_SCHAMB]._qmsg = textdef;
@@ -2371,7 +2371,7 @@ void OperateChest(int pnum, int i, bool sendmsg)
 						CreateRndUseful(pnum, object[i]._o, sendmsg);
 				}
 			}
-			if (object[i]._oTrapFlag && object[i]._otype >= OBJ_TCHEST1 && object[i]._otype <= OBJ_TCHEST3) {
+			if (object[i]._oTrapFlag && object[i]._otype >= ObjectType::TCHEST1 && object[i]._otype <= ObjectType::TCHEST3) {
 				mdir = GetDirection(object[i]._o, plr[pnum].pos());
 				switch (object[i]._oVar4) {
 				case 0:
@@ -2399,11 +2399,11 @@ void OperateMushPatch(int pnum, int i)
 	V2Di p;
 	if (quests[Q_MUSHROOM]._qactive != QUEST_ACTIVE || quests[Q_MUSHROOM]._qvar1 < QS_TOMEGIVEN) {
 		if (!deltaload && pnum == myplr()) {
-			if (myplr().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PlayerClass::warrior) {
 				PlaySFX(PS_WARR13);
-			} else if (myplr().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PlayerClass::rogue) {
 				PlaySFX(PS_ROGUE13);
-			} else if (myplr().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PlayerClass::sorceror) {
 				PlaySFX(PS_MAGE13);
 			}
 		}
@@ -2427,11 +2427,11 @@ void OperateInnSignChest(int pnum, int i)
 	V2Di p;
 	if (quests[Q_LTBANNER]._qvar1 != 2) {
 		if (!deltaload && pnum == myplr()) {
-			if (myplr().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PlayerClass::warrior) {
 				PlaySFX(PS_WARR24);
-			} else if (myplr().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PlayerClass::rogue) {
 				PlaySFX(PS_ROGUE24);
-			} else if (myplr().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PlayerClass::sorceror) {
 				PlaySFX(PS_MAGE24);
 			}
 		}
@@ -2454,14 +2454,14 @@ void OperateSlainHero(int pnum, int i, bool sendmsg)
 	if (object[i]._oSelFlag != 0) {
 		object[i]._oSelFlag = 0;
 		if (!deltaload) {
-			if (plr[pnum].data._pClass == PC_WARRIOR) {
+			if (plr[pnum].data._pClass == PlayerClass::warrior) {
 				CreateMagicArmor(object[i]._o, ItemType::heavy_armor, ItemCursor::BREAST_PLATE, false, true);
 				PlaySfxLoc(PS_WARR9, myplr().pos());
-			} else if (plr[pnum].data._pClass == PC_ROGUE) {
+			} else if (plr[pnum].data._pClass == PlayerClass::rogue) {
 				CreateMagicWeapon(object[i]._o, ItemType::bow, ItemCursor::LONGBOW, false, true);
 				PlaySfxLoc(PS_ROGUE9, myplr().pos());
-			} else if (plr[pnum].data._pClass == PC_SORCERER) {
-				CreateSpellBook(object[i]._o, SPL_LIGHTNING, false, true);
+			} else if (plr[pnum].data._pClass == PlayerClass::sorceror) {
+				CreateSpellBook(object[i]._o, SpellId::LIGHTNING, false, true);
 				PlaySfxLoc(PS_MAGE9, myplr().pos());
 			}
 			if (pnum == myplr())
@@ -2525,18 +2525,18 @@ void OperateSarc(int pnum, int i, bool sendmsg)
 void OperateL2Door(int pnum, int i, bool sendflag)
 {
 	V2Di dp = (object[i]._o - plr[pnum].pos()).abs();
-	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == OBJ_L2LDOOR)
+	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == ObjectType::L2LDOOR)
 		OperateL2LDoor(pnum, i, sendflag);
-	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == OBJ_L2RDOOR)
+	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == ObjectType::L2RDOOR)
 		OperateL2RDoor(pnum, i, sendflag);
 }
 
 void OperateL3Door(int pnum, int i, bool sendflag)
 {
 	V2Di dp = (object[i]._o - plr[pnum].pos()).abs();
-	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == OBJ_L3RDOOR)
+	if (dp.x == 1 && dp.y <= 1 && object[i]._otype == ObjectType::L3RDOOR)
 		OperateL3RDoor(pnum, i, sendflag);
-	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == OBJ_L3LDOOR)
+	if (dp.x <= 1 && dp.y == 1 && object[i]._otype == ObjectType::L3LDOOR)
 		OperateL3LDoor(pnum, i, sendflag);
 }
 
@@ -2587,9 +2587,9 @@ void TryDisarm(int pnum, int i)
 				checkflag = false;
 				oi = objectactive[j];
 				oti = object[oi]._otype;
-				if (oti == OBJ_TRAPL)
+				if (oti == ObjectType::TRAPL)
 					checkflag = true;
-				if (oti == OBJ_TRAPR)
+				if (oti == ObjectType::TRAPR)
 					checkflag = true;
 				if (checkflag && grid[object[oi]._oVar1][object[oi]._oVar2].getObject() == i) {
 					object[oi]._oVar4 = 1;
@@ -2597,7 +2597,7 @@ void TryDisarm(int pnum, int i)
 				}
 			}
 			oti = object[i]._otype;
-			if (oti >= OBJ_TCHEST1 && oti <= OBJ_TCHEST3)
+			if (oti >= ObjectType::TCHEST1 && oti <= ObjectType::TCHEST3)
 				object[i]._oTrapFlag = false;
 		}
 	}
@@ -2875,9 +2875,9 @@ void OperateShrine(int pnum, int i, int sType)
 		for (j = 0; j < nobjects; j++) {
 			v1 = objectactive[j];
 			assert((DWORD)v1 < MAXOBJECTS);
-			if ((object[v1]._otype == OBJ_CHEST1
-			        || object[v1]._otype == OBJ_CHEST2
-			        || object[v1]._otype == OBJ_CHEST3)
+			if ((object[v1]._otype == ObjectType::CHEST1
+			        || object[v1]._otype == ObjectType::CHEST2
+			        || object[v1]._otype == ObjectType::CHEST3)
 			    && object[v1]._oSelFlag == 0) {
 				object[v1]._oRndSeed = GetRndSeed();
 				object[v1]._oAnimFrame -= 2;
@@ -2894,11 +2894,11 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		plr[pnum].data._pMemSpells |= (__int64)1 << (SPL_FIREBOLT - 1);
-		if (plr[pnum].data._pSplLvl[SPL_FIREBOLT] < 15)
-			plr[pnum].data._pSplLvl[SPL_FIREBOLT]++;
-		if (plr[pnum].data._pSplLvl[SPL_FIREBOLT] < 15)
-			plr[pnum].data._pSplLvl[SPL_FIREBOLT]++;
+		plr[pnum].data._pMemSpells |= (__int64)1 << (SpellId::FIREBOLT - 1);
+		if (plr[pnum].data._pSplLvl[SpellId::FIREBOLT] < 15)
+			plr[pnum].data._pSplLvl[SpellId::FIREBOLT]++;
+		if (plr[pnum].data._pSplLvl[SpellId::FIREBOLT] < 15)
+			plr[pnum].data._pSplLvl[SpellId::FIREBOLT]++;
 		t = plr[pnum].data._pMaxManaBase / 10;
 		v1 = plr[pnum].data._pMana - plr[pnum].data._pManaBase;
 		v2 = plr[pnum].data._pMaxMana - plr[pnum].data._pMaxManaBase;
@@ -3025,11 +3025,11 @@ void OperateShrine(int pnum, int i, int sType)
 	case SHRINE_SACRED:
 		if (deltaload || pnum != myplr())
 			return;
-		plr[pnum].data._pMemSpells |= (__int64)1 << (SPL_CBOLT - 1);
-		if (plr[pnum].data._pSplLvl[SPL_CBOLT] < 15)
-			plr[pnum].data._pSplLvl[SPL_CBOLT]++;
-		if (plr[pnum].data._pSplLvl[SPL_CBOLT] < 15)
-			plr[pnum].data._pSplLvl[SPL_CBOLT]++;
+		plr[pnum].data._pMemSpells |= (__int64)1 << (SpellId::CBOLT - 1);
+		if (plr[pnum].data._pSplLvl[SpellId::CBOLT] < 15)
+			plr[pnum].data._pSplLvl[SpellId::CBOLT]++;
+		if (plr[pnum].data._pSplLvl[SpellId::CBOLT] < 15)
+			plr[pnum].data._pSplLvl[SpellId::CBOLT]++;
 		t = plr[pnum].data._pMaxManaBase / 10;
 		v1 = plr[pnum].data._pMana - plr[pnum].data._pManaBase;
 		v2 = plr[pnum].data._pMaxMana - plr[pnum].data._pMaxManaBase;
@@ -3128,11 +3128,11 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		plr[pnum].data._pMemSpells |= (__int64)1 << (SPL_HBOLT - 1);
-		if (plr[pnum].data._pSplLvl[SPL_HBOLT] < 15)
-			plr[pnum].data._pSplLvl[SPL_HBOLT]++;
-		if (plr[pnum].data._pSplLvl[SPL_HBOLT] < 15)
-			plr[pnum].data._pSplLvl[SPL_HBOLT]++;
+		plr[pnum].data._pMemSpells |= (__int64)1 << (SpellId::HBOLT - 1);
+		if (plr[pnum].data._pSplLvl[SpellId::HBOLT] < 15)
+			plr[pnum].data._pSplLvl[SpellId::HBOLT]++;
+		if (plr[pnum].data._pSplLvl[SpellId::HBOLT] < 15)
+			plr[pnum].data._pSplLvl[SpellId::HBOLT]++;
 		t = plr[pnum].data._pMaxManaBase / 10;
 		v1 = plr[pnum].data._pMana - plr[pnum].data._pManaBase;
 		v2 = plr[pnum].data._pMaxMana - plr[pnum].data._pMaxManaBase;
@@ -3348,7 +3348,7 @@ bool OperateFountains(int pnum, int i)
 	applied = false;
 	SetRndSeed(object[i]._oRndSeed);
 	switch (object[i]._otype) {
-	case OBJ_BLOODFTN:
+	case ObjectType::BLOODFTN:
 		if (deltaload)
 			return false;
 		if (pnum != myplr())
@@ -3366,7 +3366,7 @@ bool OperateFountains(int pnum, int i)
 		} else
 			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		break;
-	case OBJ_PURIFYINGFTN:
+	case ObjectType::PURIFYINGFTN:
 		if (deltaload)
 			return false;
 		if (pnum != myplr())
@@ -3386,7 +3386,7 @@ bool OperateFountains(int pnum, int i)
 		} else
 			PlaySfxLoc(LS_FOUNTAIN, object[i]._o);
 		break;
-	case OBJ_MURKYFTN:
+	case ObjectType::MURKYFTN:
 		if (object[i]._oSelFlag == 0)
 			break;
 		if (!deltaload)
@@ -3407,7 +3407,7 @@ bool OperateFountains(int pnum, int i)
 		if (pnum == myplr())
 			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
 		break;
-	case OBJ_TEARFTN:
+	case ObjectType::TEARFTN:
 		if (object[i]._oSelFlag == 0)
 			break;
 		prev = -1;
@@ -3519,122 +3519,122 @@ void OperateObject(int pnum, int i, bool TeleFlag)
 	bool sendmsg;
 	sendmsg = (pnum == myplr());
 	switch (object[i]._otype) {
-	case OBJ_L1LDOOR:
-	case OBJ_L1RDOOR:
+	case ObjectType::L1LDOOR:
+	case ObjectType::L1RDOOR:
 		if (TeleFlag) {
-			if (object[i]._otype == OBJ_L1LDOOR)
+			if (object[i]._otype == ObjectType::L1LDOOR)
 				OperateL1LDoor(pnum, i, true);
-			if (object[i]._otype == OBJ_L1RDOOR)
+			if (object[i]._otype == ObjectType::L1RDOOR)
 				OperateL1RDoor(pnum, i, true);
 			break;
 		}
 		if (pnum == myplr())
 			OperateL1Door(pnum, i, true);
 		break;
-	case OBJ_L2LDOOR:
-	case OBJ_L2RDOOR:
+	case ObjectType::L2LDOOR:
+	case ObjectType::L2RDOOR:
 		if (TeleFlag) {
-			if (object[i]._otype == OBJ_L2LDOOR)
+			if (object[i]._otype == ObjectType::L2LDOOR)
 				OperateL2LDoor(pnum, i, true);
-			if (object[i]._otype == OBJ_L2RDOOR)
+			if (object[i]._otype == ObjectType::L2RDOOR)
 				OperateL2RDoor(pnum, i, true);
 			break;
 		}
 		if (pnum == myplr())
 			OperateL2Door(pnum, i, true);
 		break;
-	case OBJ_L3LDOOR:
-	case OBJ_L3RDOOR:
+	case ObjectType::L3LDOOR:
+	case ObjectType::L3RDOOR:
 		if (TeleFlag) {
-			if (object[i]._otype == OBJ_L3LDOOR)
+			if (object[i]._otype == ObjectType::L3LDOOR)
 				OperateL3LDoor(pnum, i, true);
-			if (object[i]._otype == OBJ_L3RDOOR)
+			if (object[i]._otype == ObjectType::L3RDOOR)
 				OperateL3RDoor(pnum, i, true);
 			break;
 		}
 		if (pnum == myplr())
 			OperateL3Door(pnum, i, true);
 		break;
-	case OBJ_LEVER:
-	case OBJ_SWITCHSKL:
+	case ObjectType::LEVER:
+	case ObjectType::SWITCHSKL:
 		OperateLever(pnum, i);
 		break;
-	case OBJ_BOOK2L:
+	case ObjectType::BOOK2L:
 		OperateBook(pnum, i);
 		break;
-	case OBJ_BOOK2R:
+	case ObjectType::BOOK2R:
 		OperateSChambBk(pnum, i);
 		break;
-	case OBJ_CHEST1:
-	case OBJ_CHEST2:
-	case OBJ_CHEST3:
-	case OBJ_TCHEST1:
-	case OBJ_TCHEST2:
-	case OBJ_TCHEST3:
+	case ObjectType::CHEST1:
+	case ObjectType::CHEST2:
+	case ObjectType::CHEST3:
+	case ObjectType::TCHEST1:
+	case ObjectType::TCHEST2:
+	case ObjectType::TCHEST3:
 		OperateChest(pnum, i, sendmsg);
 		break;
-	case OBJ_SARC:
+	case ObjectType::SARC:
 		OperateSarc(pnum, i, sendmsg);
 		break;
-	case OBJ_FLAMELVR:
+	case ObjectType::FLAMELVR:
 		OperateTrapLvr(i);
 		break;
-	case OBJ_BLINDBOOK:
-	case OBJ_BLOODBOOK:
-	case OBJ_STEELTOME:
+	case ObjectType::BLINDBOOK:
+	case ObjectType::BLOODBOOK:
+	case ObjectType::STEELTOME:
 		OperateBookLever(pnum, i);
 		break;
-	case OBJ_SHRINEL:
-	case OBJ_SHRINER:
+	case ObjectType::SHRINEL:
+	case ObjectType::SHRINER:
 		OperateShrine(pnum, i, IS_MAGIC);
 		break;
-	case OBJ_SKELBOOK:
-	case OBJ_BOOKSTAND:
+	case ObjectType::SKELBOOK:
+	case ObjectType::BOOKSTAND:
 		OperateSkelBook(pnum, i, sendmsg);
 		break;
-	case OBJ_BOOKCASEL:
-	case OBJ_BOOKCASER:
+	case ObjectType::BOOKCASEL:
+	case ObjectType::BOOKCASER:
 		OperateBookCase(pnum, i, sendmsg);
 		break;
-	case OBJ_DECAP:
+	case ObjectType::DECAP:
 		OperateDecap(pnum, i, sendmsg);
 		break;
-	case OBJ_ARMORSTAND:
-	case OBJ_WARARMOR:
+	case ObjectType::ARMORSTAND:
+	case ObjectType::WARARMOR:
 		OperateArmorStand(pnum, i, sendmsg);
 		break;
-	case OBJ_GOATSHRINE:
+	case ObjectType::GOATSHRINE:
 		OperateGoatShrine(pnum, i, LS_GSHRINE);
 		break;
-	case OBJ_CAULDRON:
+	case ObjectType::CAULDRON:
 		OperateCauldron(pnum, i, LS_CALDRON);
 		break;
-	case OBJ_BLOODFTN:
-	case OBJ_PURIFYINGFTN:
-	case OBJ_MURKYFTN:
-	case OBJ_TEARFTN:
+	case ObjectType::BLOODFTN:
+	case ObjectType::PURIFYINGFTN:
+	case ObjectType::MURKYFTN:
+	case ObjectType::TEARFTN:
 		OperateFountains(pnum, i);
 		break;
-	case OBJ_STORYBOOK:
+	case ObjectType::STORYBOOK:
 		OperateStoryBook(pnum, i);
 		break;
-	case OBJ_PEDISTAL:
+	case ObjectType::PEDISTAL:
 		OperatePedistal(pnum, i);
 		break;
-	case OBJ_WARWEAP:
-	case OBJ_WEAPONRACK:
+	case ObjectType::WARWEAP:
+	case ObjectType::WEAPONRACK:
 		OperateWeaponRack(pnum, i, sendmsg);
 		break;
-	case OBJ_MUSHPATCH:
+	case ObjectType::MUSHPATCH:
 		OperateMushPatch(pnum, i);
 		break;
-	case OBJ_LAZSTAND:
+	case ObjectType::LAZSTAND:
 		OperateLazStand(pnum, i);
 		break;
-	case OBJ_SLAINHERO:
+	case ObjectType::SLAINHERO:
 		OperateSlainHero(pnum, i, sendmsg);
 		break;
-	case OBJ_SIGNCHEST:
+	case ObjectType::SIGNCHEST:
 		OperateInnSignChest(pnum, i);
 		break;
 	}
@@ -3654,9 +3654,9 @@ void SyncOpL1Door(int pnum, int cmd, int i)
 	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
 		do_sync = true;
 	if (do_sync) {
-		if (object[i]._otype == OBJ_L1LDOOR)
+		if (object[i]._otype == ObjectType::L1LDOOR)
 			OperateL1LDoor(-1, i, false);
-		if (object[i]._otype == OBJ_L1RDOOR)
+		if (object[i]._otype == ObjectType::L1RDOOR)
 			OperateL1RDoor(-1, i, false);
 	}
 }
@@ -3675,9 +3675,9 @@ void SyncOpL2Door(int pnum, int cmd, int i)
 	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
 		do_sync = true;
 	if (do_sync) {
-		if (object[i]._otype == OBJ_L2LDOOR)
+		if (object[i]._otype == ObjectType::L2LDOOR)
 			OperateL2LDoor(-1, i, false);
-		if (object[i]._otype == OBJ_L2RDOOR)
+		if (object[i]._otype == ObjectType::L2RDOOR)
 			OperateL2RDoor(-1, i, false);
 	}
 }
@@ -3696,9 +3696,9 @@ void SyncOpL3Door(int pnum, int cmd, int i)
 	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
 		do_sync = true;
 	if (do_sync) {
-		if (object[i]._otype == OBJ_L3LDOOR)
+		if (object[i]._otype == ObjectType::L3LDOOR)
 			OperateL2LDoor(-1, i, false);
-		if (object[i]._otype == OBJ_L3RDOOR)
+		if (object[i]._otype == ObjectType::L3RDOOR)
 			OperateL2RDoor(-1, i, false);
 	}
 }
@@ -3706,84 +3706,84 @@ void SyncOpL3Door(int pnum, int cmd, int i)
 void SyncOpObject(int pnum, int cmd, int i)
 {
 	switch (object[i]._otype) {
-	case OBJ_L1LDOOR:
-	case OBJ_L1RDOOR:
+	case ObjectType::L1LDOOR:
+	case ObjectType::L1RDOOR:
 		SyncOpL1Door(pnum, cmd, i);
 		break;
-	case OBJ_L2LDOOR:
-	case OBJ_L2RDOOR:
+	case ObjectType::L2LDOOR:
+	case ObjectType::L2RDOOR:
 		SyncOpL2Door(pnum, cmd, i);
 		break;
-	case OBJ_L3LDOOR:
-	case OBJ_L3RDOOR:
+	case ObjectType::L3LDOOR:
+	case ObjectType::L3RDOOR:
 		SyncOpL3Door(pnum, cmd, i);
 		break;
-	case OBJ_LEVER:
-	case OBJ_SWITCHSKL:
+	case ObjectType::LEVER:
+	case ObjectType::SWITCHSKL:
 		OperateLever(pnum, i);
 		break;
-	case OBJ_CHEST1:
-	case OBJ_CHEST2:
-	case OBJ_CHEST3:
-	case OBJ_TCHEST1:
-	case OBJ_TCHEST2:
-	case OBJ_TCHEST3:
+	case ObjectType::CHEST1:
+	case ObjectType::CHEST2:
+	case ObjectType::CHEST3:
+	case ObjectType::TCHEST1:
+	case ObjectType::TCHEST2:
+	case ObjectType::TCHEST3:
 		OperateChest(pnum, i, false);
 		break;
-	case OBJ_SARC:
+	case ObjectType::SARC:
 		OperateSarc(pnum, i, false);
 		break;
-	case OBJ_BLINDBOOK:
-	case OBJ_BLOODBOOK:
-	case OBJ_STEELTOME:
+	case ObjectType::BLINDBOOK:
+	case ObjectType::BLOODBOOK:
+	case ObjectType::STEELTOME:
 		OperateBookLever(pnum, i);
 		break;
-	case OBJ_SHRINEL:
-	case OBJ_SHRINER:
+	case ObjectType::SHRINEL:
+	case ObjectType::SHRINER:
 		OperateShrine(pnum, i, IS_MAGIC);
 		break;
-	case OBJ_SKELBOOK:
-	case OBJ_BOOKSTAND:
+	case ObjectType::SKELBOOK:
+	case ObjectType::BOOKSTAND:
 		OperateSkelBook(pnum, i, false);
 		break;
-	case OBJ_BOOKCASEL:
-	case OBJ_BOOKCASER:
+	case ObjectType::BOOKCASEL:
+	case ObjectType::BOOKCASER:
 		OperateBookCase(pnum, i, false);
 		break;
-	case OBJ_DECAP:
+	case ObjectType::DECAP:
 		OperateDecap(pnum, i, false);
 		break;
-	case OBJ_ARMORSTAND:
-	case OBJ_WARARMOR:
+	case ObjectType::ARMORSTAND:
+	case ObjectType::WARARMOR:
 		OperateArmorStand(pnum, i, false);
 		break;
-	case OBJ_GOATSHRINE:
+	case ObjectType::GOATSHRINE:
 		OperateGoatShrine(pnum, i, LS_GSHRINE);
 		break;
-	case OBJ_CAULDRON:
+	case ObjectType::CAULDRON:
 		OperateCauldron(pnum, i, LS_CALDRON);
 		break;
-	case OBJ_MURKYFTN:
-	case OBJ_TEARFTN:
+	case ObjectType::MURKYFTN:
+	case ObjectType::TEARFTN:
 		OperateFountains(pnum, i);
 		break;
-	case OBJ_STORYBOOK:
+	case ObjectType::STORYBOOK:
 		OperateStoryBook(pnum, i);
 		break;
-	case OBJ_PEDISTAL:
+	case ObjectType::PEDISTAL:
 		OperatePedistal(pnum, i);
 		break;
-	case OBJ_WARWEAP:
-	case OBJ_WEAPONRACK:
+	case ObjectType::WARWEAP:
+	case ObjectType::WEAPONRACK:
 		OperateWeaponRack(pnum, i, false);
 		break;
-	case OBJ_MUSHPATCH:
+	case ObjectType::MUSHPATCH:
 		OperateMushPatch(pnum, i);
 		break;
-	case OBJ_SLAINHERO:
+	case ObjectType::SLAINHERO:
 		OperateSlainHero(pnum, i, false);
 		break;
-	case OBJ_SIGNCHEST:
+	case ObjectType::SIGNCHEST:
 		OperateInnSignChest(pnum, i);
 		break;
 	}
@@ -3804,7 +3804,7 @@ void BreakCrux(int i)
 	triggered = true;
 	for (j = 0; j < nobjects; j++) {
 		oi = objectactive[j];
-		if (object[oi]._otype != OBJ_CRUX1 && object[oi]._otype != OBJ_CRUX2 && object[oi]._otype != OBJ_CRUX3)
+		if (object[oi]._otype != ObjectType::CRUX1 && object[oi]._otype != ObjectType::CRUX2 && object[oi]._otype != ObjectType::CRUX3)
 			continue;
 		if (object[i]._oVar8 != object[oi]._oVar8 || object[oi]._oBreak == -1)
 			continue;
@@ -3855,7 +3855,7 @@ void BreakBarrel(int pnum, int i, int dam, bool forcebreak, bool sendmsg)
 		return;
 	}
 
-	if (object[i]._otype == OBJ_BARRELEX) {
+	if (object[i]._otype == ObjectType::BARRELEX) {
 		PlaySfxLoc(IS_BARLFIRE, object[i]._o);
 		for (yp = object[i]._o.y - 1; yp <= object[i]._o.y + 1; yp++) {
 			for (xp = object[i]._o.x - 1; xp <= object[i]._o.x + 1; xp++) {
@@ -3865,7 +3865,7 @@ void BreakBarrel(int pnum, int i, int dam, bool forcebreak, bool sendmsg)
 					PlayerMHit(grid[xp][yp].getPlayer(), -1, 0, 8, 16, 1, false, 0);
 				if (grid[xp][yp].isObject()) {
 					oi = grid[xp][yp].getObject();
-					if (object[oi]._otype == OBJ_BARRELEX && object[oi]._oBreak != -1)
+					if (object[oi]._otype == ObjectType::BARRELEX && object[oi]._oBreak != -1)
 						BreakBarrel(pnum, oi, dam, true, sendmsg);
 				}
 			}
@@ -3899,13 +3899,13 @@ void BreakObject(int pnum, int oi)
 		objdam = 10;
 	}
 	switch (object[oi]._otype) {
-	case OBJ_CRUX1:
-	case OBJ_CRUX2:
-	case OBJ_CRUX3:
+	case ObjectType::CRUX1:
+	case ObjectType::CRUX2:
+	case ObjectType::CRUX3:
 		BreakCrux(oi);
 		break;
-	case OBJ_BARREL:
-	case OBJ_BARRELEX:
+	case ObjectType::BARREL:
+	case ObjectType::BARRELEX:
 		BreakBarrel(pnum, oi, objdam, false, true);
 		break;
 	}
@@ -3913,7 +3913,7 @@ void BreakObject(int pnum, int oi)
 
 void SyncBreakObj(int pnum, int oi)
 {
-	if (object[oi]._otype >= OBJ_BARREL && object[oi]._otype <= OBJ_BARRELEX)
+	if (object[oi]._otype >= ObjectType::BARREL && object[oi]._otype <= ObjectType::BARRELEX)
 		BreakBarrel(pnum, oi, 0, true, false);
 }
 
@@ -3926,7 +3926,7 @@ void SyncL1Doors(int i)
 	V2Di p = object[i]._o;
 	object[i]._oMissFlag = true;
 	object[i]._oSelFlag = 2;
-	if (object[i]._otype == OBJ_L1LDOOR) {
+	if (object[i]._otype == ObjectType::L1LDOOR) {
 		if (object[i]._oVar1 == 214)
 			ObjSetMicro(p, 408);
 		else
@@ -3951,7 +3951,7 @@ void SyncCrux(int i)
 	for (j = 0; j < nobjects; j++) {
 		oi = objectactive[j];
 		type = object[oi]._otype;
-		if (type != OBJ_CRUX1 && type != OBJ_CRUX2 && type != OBJ_CRUX3)
+		if (type != ObjectType::CRUX1 && type != ObjectType::CRUX2 && type != ObjectType::CRUX3)
 			continue;
 		if (object[i]._oVar8 != object[oi]._oVar8 || object[oi]._oBreak == -1)
 			continue;
@@ -3973,7 +3973,7 @@ void SyncQSTLever(int i)
 
 	if (object[i]._oAnimFrame == object[i]._oVar6) {
 		ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
-		if (object[i]._otype == OBJ_BLINDBOOK) {
+		if (object[i]._otype == ObjectType::BLINDBOOK) {
 			tren = lvl.TransVal;
 			lvl.TransVal = 9;
 			DRLG_MRectTrans( object[i]._oVar1, object[i]._oVar2 , object[i]._oVar3, object[i]._oVar4 );
@@ -4008,13 +4008,13 @@ void SyncL2Doors(int i)
 		object[i]._oMissFlag = true;
 	V2Di p = object[i]._o;
 	object[i]._oSelFlag = 2;
-	if (object[i]._otype == OBJ_L2LDOOR && object[i]._oVar4 == 0) {
+	if (object[i]._otype == ObjectType::L2LDOOR && object[i]._oVar4 == 0) {
 		ObjSetMicro(p, 538);
-	} else if (object[i]._otype == OBJ_L2LDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
+	} else if (object[i]._otype == ObjectType::L2LDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
 		ObjSetMicro(p, 13);
-	} else if (object[i]._otype == OBJ_L2RDOOR && object[i]._oVar4 == 0) {
+	} else if (object[i]._otype == ObjectType::L2RDOOR && object[i]._oVar4 == 0) {
 		ObjSetMicro(p, 540);
-	} else if (object[i]._otype == OBJ_L2RDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
+	} else if (object[i]._otype == ObjectType::L2RDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
 		ObjSetMicro(p, 17);
 	}
 }
@@ -4024,13 +4024,13 @@ void SyncL3Doors(int i)
 	object[i]._oMissFlag = true;
 	V2Di p = object[i]._o;
 	object[i]._oSelFlag = 2;
-	if (object[i]._otype == OBJ_L3LDOOR && object[i]._oVar4 == 0) {
+	if (object[i]._otype == ObjectType::L3LDOOR && object[i]._oVar4 == 0) {
 		ObjSetMicro(p, 531);
-	} else if (object[i]._otype == OBJ_L3LDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
+	} else if (object[i]._otype == ObjectType::L3LDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
 		ObjSetMicro(p, 538);
-	} else if (object[i]._otype == OBJ_L3RDOOR && object[i]._oVar4 == 0) {
+	} else if (object[i]._otype == ObjectType::L3RDOOR && object[i]._oVar4 == 0) {
 		ObjSetMicro(p, 534);
-	} else if (object[i]._otype == OBJ_L3RDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
+	} else if (object[i]._otype == ObjectType::L3RDOOR && (object[i]._oVar4 == 1 || object[i]._oVar4 == 2)) {
 		ObjSetMicro(p, 541);
 	}
 }
@@ -4050,36 +4050,36 @@ void SyncObjectAnim(int o)
 	}
 	object[o]._oAnimData = pObjCels[i];
 	switch (object[o]._otype) {
-	case OBJ_BOOK2R:
-	case OBJ_BLINDBOOK:
-	case OBJ_STEELTOME:
+	case ObjectType::BOOK2R:
+	case ObjectType::BLINDBOOK:
+	case ObjectType::STEELTOME:
 		SyncQSTLever(o);
 		break;
-	case OBJ_L1LIGHT:
+	case ObjectType::L1LIGHT:
 		break;
-	case OBJ_L1LDOOR:
-	case OBJ_L1RDOOR:
+	case ObjectType::L1LDOOR:
+	case ObjectType::L1RDOOR:
 		SyncL1Doors(o);
 		break;
-	case OBJ_L2LDOOR:
-	case OBJ_L2RDOOR:
+	case ObjectType::L2LDOOR:
+	case ObjectType::L2RDOOR:
 		SyncL2Doors(o);
 		break;
-	case OBJ_L3LDOOR:
-	case OBJ_L3RDOOR:
+	case ObjectType::L3LDOOR:
+	case ObjectType::L3RDOOR:
 		SyncL3Doors(o);
 		break;
-	case OBJ_LEVER:
-	case OBJ_BOOK2L:
-	case OBJ_SWITCHSKL:
+	case ObjectType::LEVER:
+	case ObjectType::BOOK2L:
+	case ObjectType::SWITCHSKL:
 		SyncLever(o);
 		break;
-	case OBJ_CRUX1:
-	case OBJ_CRUX2:
-	case OBJ_CRUX3:
+	case ObjectType::CRUX1:
+	case ObjectType::CRUX2:
+	case ObjectType::CRUX3:
 		SyncCrux(o);
 		break;
-	case OBJ_PEDISTAL:
+	case ObjectType::PEDISTAL:
 		SyncPedistal(o);
 		break;
 	}
@@ -4088,20 +4088,20 @@ void SyncObjectAnim(int o)
 void GetObjectStr(int i)
 {
 	switch (object[i]._otype) {
-	case OBJ_LEVER:
-	case OBJ_FLAMELVR:
+	case ObjectType::LEVER:
+	case ObjectType::FLAMELVR:
 		strcpy(infostr, "Lever");
 		break;
-	case OBJ_CHEST1:
-	case OBJ_TCHEST1:
+	case ObjectType::CHEST1:
+	case ObjectType::TCHEST1:
 		strcpy(infostr, "Small Chest");
 		break;
-	case OBJ_L1LDOOR:
-	case OBJ_L1RDOOR:
-	case OBJ_L2LDOOR:
-	case OBJ_L2RDOOR:
-	case OBJ_L3LDOOR:
-	case OBJ_L3RDOOR:
+	case ObjectType::L1LDOOR:
+	case ObjectType::L1RDOOR:
+	case ObjectType::L2LDOOR:
+	case ObjectType::L2RDOOR:
+	case ObjectType::L3LDOOR:
+	case ObjectType::L3RDOOR:
 		if (object[i]._oVar4 == 1)
 			strcpy(infostr, "Open Door");
 		if (object[i]._oVar4 == 0)
@@ -4109,7 +4109,7 @@ void GetObjectStr(int i)
 		if (object[i]._oVar4 == 2)
 			strcpy(infostr, "Blocked Door");
 		break;
-	case OBJ_BOOK2L:
+	case ObjectType::BOOK2L:
 		if (lvl.setlevel) {
 			if (lvl.setlvlnum == SetLvl::BoneChamb) {
 				strcpy(infostr, "Ancient Tome");
@@ -4118,107 +4118,107 @@ void GetObjectStr(int i)
 			}
 		}
 		break;
-	case OBJ_SWITCHSKL:
+	case ObjectType::SWITCHSKL:
 		strcpy(infostr, "Skull Lever");
 		break;
-	case OBJ_BOOK2R:
+	case ObjectType::BOOK2R:
 		strcpy(infostr, "Mythical Book");
 		break;
 
-	case OBJ_CHEST2:
-	case OBJ_TCHEST2:
+	case ObjectType::CHEST2:
+	case ObjectType::TCHEST2:
 		strcpy(infostr, "Chest");
 		break;
-	case OBJ_CHEST3:
-	case OBJ_TCHEST3:
-	case OBJ_SIGNCHEST:
+	case ObjectType::CHEST3:
+	case ObjectType::TCHEST3:
+	case ObjectType::SIGNCHEST:
 		strcpy(infostr, "Large Chest");
 		break;
-	case OBJ_CRUX1:
-	case OBJ_CRUX2:
-	case OBJ_CRUX3:
+	case ObjectType::CRUX1:
+	case ObjectType::CRUX2:
+	case ObjectType::CRUX3:
 		strcpy(infostr, "Crucified Skeleton");
 		break;
-	case OBJ_SARC:
+	case ObjectType::SARC:
 		strcpy(infostr, "Sarcophagus");
 		break;
-	case OBJ_BOOKSHELF:
+	case ObjectType::BOOKSHELF:
 		strcpy(infostr, "Bookshelf");
 		break;
-	case OBJ_BARREL:
-	case OBJ_BARRELEX:
+	case ObjectType::BARREL:
+	case ObjectType::BARRELEX:
 		strcpy(infostr, "Barrel");
 		break;
-	case OBJ_SKELBOOK:
+	case ObjectType::SKELBOOK:
 		strcpy(infostr, "Skeleton Tome");
 		break;
-	case OBJ_SHRINEL:
-	case OBJ_SHRINER:
+	case ObjectType::SHRINEL:
+	case ObjectType::SHRINER:
 		sprintf(tempstr, "%s Shrine", shrinestrs[object[i]._oVar1]);
 		strcpy(infostr, tempstr);
 		break;
-	case OBJ_BOOKCASEL:
-	case OBJ_BOOKCASER:
+	case ObjectType::BOOKCASEL:
+	case ObjectType::BOOKCASER:
 		strcpy(infostr, "Bookcase");
 		break;
-	case OBJ_BOOKSTAND:
+	case ObjectType::BOOKSTAND:
 		strcpy(infostr, "Library Book");
 		break;
-	case OBJ_BLOODFTN:
+	case ObjectType::BLOODFTN:
 		strcpy(infostr, "Blood Fountain");
 		break;
-	case OBJ_DECAP:
+	case ObjectType::DECAP:
 		strcpy(infostr, "Decapitated Body");
 		break;
-	case OBJ_BLINDBOOK:
+	case ObjectType::BLINDBOOK:
 		strcpy(infostr, "Book of the Blind");
 		break;
-	case OBJ_BLOODBOOK:
+	case ObjectType::BLOODBOOK:
 		strcpy(infostr, "Book of Blood");
 		break;
-	case OBJ_PEDISTAL:
+	case ObjectType::PEDISTAL:
 		strcpy(infostr, "Pedestal of Blood");
 		break;
-	case OBJ_PURIFYINGFTN:
+	case ObjectType::PURIFYINGFTN:
 		strcpy(infostr, "Purifying Spring");
 		break;
-	case OBJ_ARMORSTAND:
-	case OBJ_WARARMOR:
+	case ObjectType::ARMORSTAND:
+	case ObjectType::WARARMOR:
 		strcpy(infostr, "Armor");
 		break;
-	case OBJ_GOATSHRINE:
+	case ObjectType::GOATSHRINE:
 		strcpy(infostr, "Goat Shrine");
 		break;
-	case OBJ_CAULDRON:
+	case ObjectType::CAULDRON:
 		strcpy(infostr, "Cauldron");
 		break;
-	case OBJ_MURKYFTN:
+	case ObjectType::MURKYFTN:
 		strcpy(infostr, "Murky Pool");
 		break;
-	case OBJ_TEARFTN:
+	case ObjectType::TEARFTN:
 		strcpy(infostr, "Fountain of Tears");
 		break;
-	case OBJ_STEELTOME:
+	case ObjectType::STEELTOME:
 		strcpy(infostr, "Steel Tome");
 		break;
-	case OBJ_STORYBOOK:
+	case ObjectType::STORYBOOK:
 		strcpy(infostr, StoryBookName[object[i]._oVar3]);
 		break;
-	case OBJ_WARWEAP:
-	case OBJ_WEAPONRACK:
+	case ObjectType::WARWEAP:
+	case ObjectType::WEAPONRACK:
 		strcpy(infostr, "Weapon Rack");
 		break;
-	case OBJ_MUSHPATCH:
+	case ObjectType::MUSHPATCH:
 		strcpy(infostr, "Mushroom Patch");
 		break;
-	case OBJ_LAZSTAND:
+	case ObjectType::LAZSTAND:
 		strcpy(infostr, "Vile Stand");
 		break;
-	case OBJ_SLAINHERO:
+	case ObjectType::SLAINHERO:
 		strcpy(infostr, "Slain Hero");
 		break;
 	}
-	if (myplr().data._pClass == PC_ROGUE) {
+	if (myplr().data._pClass == PlayerClass::rogue) {
 		if (object[i]._oTrapFlag) {
 			sprintf(tempstr, "Trapped %s", infostr);
 			strcpy(infostr, tempstr);

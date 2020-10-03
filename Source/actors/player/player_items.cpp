@@ -62,7 +62,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 			mind += itm->_iMinDam;
 			maxd += itm->_iMaxDam;
 
-			if (itm->_iSpell != SPL_NULL) {
+			if (itm->_iSpell != SpellId::NULL) {
 				spl |= (unsigned __int64)1 << (itm->_iSpell - 1);
 			}
 
@@ -163,7 +163,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		myplr().data._pVitality = 0;
 	}
 
-	if (data._pClass == PC_ROGUE) {
+	if (data._pClass == PlayerClass::rogue) {
 		data._pDamageMod = data._pLevel * (data._pStrength + data._pDexterity) / 200;
 	} else {
 		data._pDamageMod = data._pLevel * data._pStrength / 100;
@@ -172,10 +172,10 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pISpells = spl;
 
 	// check if the current RSplType is a valid/allowed spell
-	if (data._pRSplType == RSPLTYPE_CHARGES
+	if (data._pRSplType == RSpellType::CHARGES
 	    && !(spl & ((unsigned __int64)1 << (data._pRSpell - 1)))) {
-		data._pRSpell = SPL_INVALID;
-		data._pRSplType = RSPLTYPE_INVALID;
+		data._pRSpell = SpellId::INVALID;
+		data._pRSplType = RSpellType::INVALID;
 		force_redraw = 255;
 	}
 
@@ -201,18 +201,18 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		lr = MAXRESIST;
 	data._pLghtResist = lr;
 
-	if (data._pClass == PC_WARRIOR) {
+	if (data._pClass == PlayerClass::warrior) {
 		vadd *= 2;
 	}
-	if (data._pClass == PC_ROGUE) {
+	if (data._pClass == PlayerClass::rogue) {
 		vadd += vadd >> 1;
 	}
 	ihp += (vadd << 6);
 
-	if (data._pClass == PC_SORCERER) {
+	if (data._pClass == PlayerClass::sorceror) {
 		madd *= 2;
 	}
-	if (data._pClass == PC_ROGUE) {
+	if (data._pClass == PlayerClass::rogue) {
 		madd += madd >> 1;
 	}
 	imana += (madd << 6);
@@ -239,7 +239,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	}
 
 	data._pBlockFlag = false;
-	data._pwtype = WT_MELEE;
+	data._pwtype = PlayerWeaponType::melee;
 
 	g = 0;
 
@@ -261,7 +261,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 		g = AnimWeaponId::axe;
 		break;
 	case ItemType::bow:
-		data._pwtype = WT_RANGED;
+		data._pwtype = PlayerWeaponType::ranged;
 		g = AnimWeaponId::bow;
 		break;
 	case ItemType::mace:
@@ -293,7 +293,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	if (data._pgfxnum != g && Loadgfx) {
 		data._pgfxnum = g;
 		data._pGFXLoad = 0;
-		LoadPlrGFX(PFILE_STAND);
+		LoadPlrGFX(PlayerGraphicFile::STAND);
 		SetPlrAnims();
 		d = data._pdir;
 		assert(data._pNAnim[size_t(d)]);
@@ -342,10 +342,10 @@ void Player::CalcPlrScrolls()
 				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
 	}
-	if (data._pRSplType == RSPLTYPE_SCROLL) {
+	if (data._pRSplType == RSpellType::SCROLL) {
 		if (!(data._pScrlSpells & 1 << (data._pRSpell - 1))) {
-			data._pRSpell = SPL_INVALID;
-			data._pRSplType = RSPLTYPE_INVALID;
+			data._pRSpell = SpellId::INVALID;
+			data._pRSplType = RSpellType::INVALID;
 			force_redraw = 255;
 		}
 	}
@@ -363,7 +363,7 @@ void Player::CalcPlrStaff()
 
 	if (left->_itype == ItemType::staff && left->_iSpell != 0 && left->_iCharges > 0) {
 		data._pRSpell = left->_iSpell;
-		data._pRSplType = RSPLTYPE_CHARGES;
+		data._pRSplType = RSpellType::CHARGES;
 		force_redraw = 255;
 	}
 }
@@ -496,7 +496,7 @@ void Player::CreatePlrItems()
 	}
 
 	switch (data._pClass) {
-	case PC_WARRIOR:
+	case PlayerClass::warrior:
 		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], ItemIndex::WARRIOR);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_LEFT]);
 
@@ -519,7 +519,7 @@ void Player::CreatePlrItems()
 		SetPlrHandItem(&data.SpdList[1], ItemIndex::HEAL);
 		GetPlrHandSeed(&data.SpdList[1]);
 		break;
-	case PC_ROGUE:
+	case PlayerClass::rogue:
 		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], ItemIndex::ROGUE);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_LEFT]);
 
@@ -529,7 +529,7 @@ void Player::CreatePlrItems()
 		SetPlrHandItem(&data.SpdList[1], ItemIndex::HEAL);
 		GetPlrHandSeed(&data.SpdList[1]);
 		break;
-	case PC_SORCERER:
+	case PlayerClass::sorceror:
 		SetPlrHandItem(&data.InvBody[INVLOC_HAND_LEFT], ItemIndex::SORCEROR);
 		GetPlrHandSeed(&data.InvBody[INVLOC_HAND_LEFT]);
 
@@ -577,9 +577,9 @@ void Player::UseItem(int Mid, int spl)
 	case MiscItemId::MEAT:
 		j = data._pMaxHP >> 8;
 		l = ((j >> 1) + random_(39, j)) << 6;
-		if (data._pClass == PC_WARRIOR)
+		if (data._pClass == PlayerClass::warrior)
 			l *= 2;
-		if (data._pClass == PC_ROGUE)
+		if (data._pClass == PlayerClass::rogue)
 			l += l >> 1;
 		data._pHitPoints += l;
 		if (data._pHitPoints > data._pMaxHP)
@@ -597,9 +597,9 @@ void Player::UseItem(int Mid, int spl)
 	case MiscItemId::MANA:
 		j = data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
-		if (data._pClass == PC_SORCERER)
+		if (data._pClass == PlayerClass::sorceror)
 			l *= 2;
-		if (data._pClass == PC_ROGUE)
+		if (data._pClass == PlayerClass::rogue)
 			l += l >> 1;
 		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana += l;
@@ -633,9 +633,9 @@ void Player::UseItem(int Mid, int spl)
 	case MiscItemId::REJUV:
 		j = data._pMaxHP >> 8;
 		l = ((j >> 1) + random_(39, j)) << 6;
-		if (data._pClass == PC_WARRIOR)
+		if (data._pClass == PlayerClass::warrior)
 			l *= 2;
-		if (data._pClass == PC_ROGUE)
+		if (data._pClass == PlayerClass::rogue)
 			l += l >> 1;
 		data._pHitPoints += l;
 		if (data._pHitPoints > data._pMaxHP)
@@ -646,9 +646,9 @@ void Player::UseItem(int Mid, int spl)
 		drawhpflag = true;
 		j = data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
-		if (data._pClass == PC_SORCERER)
+		if (data._pClass == PlayerClass::sorceror)
 			l *= 2;
-		if (data._pClass == PC_ROGUE)
+		if (data._pClass == PlayerClass::rogue)
 			l += l >> 1;
 		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana += l;
@@ -673,33 +673,33 @@ void Player::UseItem(int Mid, int spl)
 	case MiscItemId::SCROLL:
 		if (spelldata[spl].sTargeted) {
 			data._pTSpell = spl;
-			data._pTSplType = RSPLTYPE_INVALID;
+			data._pTSplType = RSpellType::INVALID;
 			if (pnum == myplr())
 				NewCursor(CURSOR_TELEPORT);
 		} else {
 			ClrPlrPath();
 			data._pSpell = spl;
-			data._pSplType = RSPLTYPE_INVALID;
+			data._pSplType = RSpellType::INVALID;
 			data._pSplFrom = 3;
-			data.destAction = ACTION_SPELL;
+			data.destAction = DestinationAction::SPELL;
 			data.destParam1 = cursm.x;
 			data.destParam2 = cursm.y;
-			if (pnum == myplr() && spl == SPL_NOVA)
+			if (pnum == myplr() && spl == SpellId::NOVA)
 				NetSendCmdLoc(true, CMD_NOVA, cursm);
 		}
 		break;
 	case MiscItemId::SCROLLT:
 		if (spelldata[spl].sTargeted) {
 			data._pTSpell = spl;
-			data._pTSplType = RSPLTYPE_INVALID;
+			data._pTSplType = RSpellType::INVALID;
 			if (pnum == myplr())
 				NewCursor(CURSOR_TELEPORT);
 		} else {
 			ClrPlrPath();
 			data._pSpell = spl;
-			data._pSplType = RSPLTYPE_INVALID;
+			data._pSplType = RSpellType::INVALID;
 			data._pSplFrom = 3;
-			data.destAction = ACTION_SPELL;
+			data.destAction = DestinationAction::SPELL;
 			data.destParam1 = cursm.x;
 			data.destParam2 = cursm.y;
 		}

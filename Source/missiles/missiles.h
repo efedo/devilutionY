@@ -20,7 +20,6 @@ extern int numchains;
 void GetDamageAmt(int i, int *mind, int *maxd);
 bool CheckBlock(V2Di f, V2Di t);
 int FindClosest(V2Di s, int rad);
-int GetSpellLevel(int id, int sn);
 Dir GetDirection8(V2Di t1, V2Di t2);
 Dir16 GetDirection16(V2Di t1, V2Di t2);
 void DeleteMissile(int mi, int i);

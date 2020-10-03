@@ -51,20 +51,20 @@ void FocusOnCharInfo()
 	int stat = -1;
 	for (int i = 4; i >= 0; --i) {
 		switch (i) {
-		case ATTRIB_STR:
-			if (myplr().data._pBaseStr >= classes[pc].MaxStats[ATTRIB_STR])
+		case AttributeId::STR:
+			if (myplr().data._pBaseStr >= classes[pc].MaxStats[AttributeId::STR])
 				continue;
 			break;
-		case ATTRIB_MAG:
-			if (myplr().data._pBaseMag >= classes[pc].MaxStats[ATTRIB_MAG])
+		case AttributeId::MAG:
+			if (myplr().data._pBaseMag >= classes[pc].MaxStats[AttributeId::MAG])
 				continue;
 			break;
-		case ATTRIB_DEX:
-			if (myplr().data._pBaseDex >= classes[pc].MaxStats[ATTRIB_DEX])
+		case AttributeId::DEX:
+			if (myplr().data._pBaseDex >= classes[pc].MaxStats[AttributeId::DEX])
 				continue;
 			break;
-		case ATTRIB_VIT:
-			if (myplr().data._pBaseVit >= classes[pc].MaxStats[ATTRIB_VIT])
+		case AttributeId::VIT:
+			if (myplr().data._pBaseVit >= classes[pc].MaxStats[AttributeId::VIT])
 				continue;
 			break;
 		default:
@@ -275,16 +275,16 @@ void StoreSpellCoords()
 	for (int i = 0; i < 4; i++) {
 		std::uint64_t spells;
 		switch (i) {
-		case RSPLTYPE_SKILL:
+		case RSpellType::SKILL:
 			spells = myplr().data._pAblSpells;
 			break;
-		case RSPLTYPE_SPELL:
+		case RSpellType::SPELL:
 			spells = myplr().data._pMemSpells;
 			break;
-		case RSPLTYPE_SCROLL:
+		case RSpellType::SCROLL:
 			spells = myplr().data._pScrlSpells;
 			break;
-		case RSPLTYPE_CHARGES:
+		case RSpellType::CHARGES:
 			spells = myplr().data._pISpells;
 			break;
 		default:
@@ -322,11 +322,11 @@ bool BlurInventory()
 {
 	if (pcurs >= CURSOR_FIRSTITEM) {
 		if (!TryDropItem()) {
-			if (myplr().data._pClass == PC_WARRIOR) {
+			if (myplr().data._pClass == PlayerClass::warrior) {
 				PlaySFX(PS_WARR16); // "Where would I put this?"
-			} else if (myplr().data._pClass == PC_ROGUE) {
+			} else if (myplr().data._pClass == PlayerClass::rogue) {
 				PlaySFX(PS_ROGUE16);
-			} else if (myplr().data._pClass == PC_SORCERER) {
+			} else if (myplr().data._pClass == PlayerClass::sorceror) {
 				PlaySFX(PS_MAGE16);
 			}
 			return false;

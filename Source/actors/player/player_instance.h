@@ -1,6 +1,6 @@
 //HEADER_GOES_HERE
-#ifndef __PLAYER_INSTANCE_H__
-#define __PLAYER_INSTANCE_H__
+#ifndef __PLAYER_MANAGER_H__
+#define __PLAYER_MANAGER_H__
 
 #include <string>
 #include <array>
@@ -28,16 +28,15 @@ private:
 class Player : public Actor {
 public:
 	// Init
-	Player(int newpnum);
+	Player(ActorId);
 	~Player();
-	void CreatePlayer(char c);
+	void CreatePlayer(PlayerClass c);
 	void InitPlayer(bool FirstTime);
 
 	// Misc
-	const int id() const;
-	operator int() const;
 	bool isMyPlr();
 	Item * heldItem() const;
+	DWORD GetPlrGFXSize(char *szCel);
 
 	// Position control (and grid synchronization)
 	bool PosOkPlayer(V2Di pos);
@@ -89,7 +88,6 @@ public:
 
 	void AddPlrExperience(int lvl, int exp);
 	void NextPlrLevel();
-	void ValidatePlayer(); // New
 	void ProcessPlayer(); // New
 	void CheckEFlag(bool flag);
 	void PM_ChangeLightOff();
@@ -161,6 +159,9 @@ public:
 	// Misc
 	Item *HasItem(int item);
 	void ValidatePlayer();
+	int GetSpellLevel(int sn);
+	void CheckPlrSpell();
+	bool PlrDeathModeOK();
 
 	// Not yet fixed
 	void CreateRndUseful(V2Di pos, bool sendmsg);
@@ -194,19 +195,13 @@ public:
 	int plr_sframe_size;
 	int deathdelay;
 	int plr_dframe_size;
-private:
-	int pnum;
 };
 
 void InitMultiView();
-void CheckPlrSpell();
-bool PlrDeathModeOK(int p);
 void PlayDungMsgs();
-
-
 
 Player & myplr();
 
 DEVILUTION_END_NAMESPACE
 
-#endif /* __PLAYER_INSTANCE_H__ */
+#endif /* __PLAYER_MANAGER_H__ */

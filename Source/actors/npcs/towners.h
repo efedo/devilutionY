@@ -3,6 +3,8 @@
 #define __TOWNERS_H__
 
 #include "npc.h"
+#include "towner_defs.h"
+#include "towner_enums.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -17,7 +19,7 @@ class Towner : public Npc, public TownerStruct
 	virtual void Init();
 	void NewTownerAnim(uint8_t *pAnim, int numFrames,
 	                           int Delay);
-	void InitTownerInfo(int w, int sel, int t, int x, int y,
+	void InitTownerInfo(int w, int sel, TownerId t, int x, int y,
 	                            int ao, int tp);
 	void InitQstSnds();
 	virtual void TalkToTowner(Player &player);

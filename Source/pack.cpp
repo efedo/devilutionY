@@ -178,7 +178,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 	pPlayer->_pathtarg = pPack->targ;
 	pPlayer->plrlevel = pPack->plrlevel;
 	plr[pnum].ClrPlrPath();
-	pPlayer->destAction = ACTION_NONE;
+	pPlayer->destAction = DestinationAction::NONE;
 	strcpy(pPlayer->_pName, pPack->pName);
 	pPlayer->_pClass = pPack->pClass;
 	plr[pnum].InitPlayer(true);

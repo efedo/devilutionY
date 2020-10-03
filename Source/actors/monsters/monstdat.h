@@ -6,11 +6,10 @@
 #ifndef __MONSTDAT_H__
 #define __MONSTDAT_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+#include "monster_defs.h"
+#include "monster_enums.h"
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+DEVILUTION_BEGIN_NAMESPACE
 
 extern MonsterData monsterdata[];
 extern uint8_t MonstConvTbl[];

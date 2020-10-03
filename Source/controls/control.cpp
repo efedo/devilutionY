@@ -201,10 +201,10 @@ RECT32 ChrBtnsRect[4] = {
 
 /** Maps from spellbook page number and position to spell_id. */
 int SpellPages[6][7] = {
-	{ SPL_NULL, SPL_FIREBOLT, SPL_CBOLT, SPL_HBOLT, SPL_HEAL, SPL_HEALOTHER, SPL_FLAME },
-	{ SPL_RESURRECT, SPL_FIREWALL, SPL_TELEKINESIS, SPL_LIGHTNING, SPL_TOWN, SPL_FLASH, SPL_STONE },
-	{ SPL_RNDTELEPORT, SPL_MANASHIELD, SPL_ELEMENT, SPL_FIREBALL, SPL_WAVE, SPL_CHAIN, SPL_GUARDIAN },
-	{ SPL_NOVA, SPL_GOLEM, SPL_TELEPORT, SPL_APOCA, SPL_BONESPIRIT, SPL_FLARE, SPL_ETHEREALIZE },
+	{ SpellId::NULL, SpellId::FIREBOLT, SpellId::CBOLT, SpellId::HBOLT, SpellId::HEAL, SpellId::HEALOTHER, SpellId::FLAME },
+	{ SpellId::RESURRECT, SpellId::FIREWALL, SpellId::TELEKINESIS, SpellId::LIGHTNING, SpellId::TOWN, SpellId::FLASH, SpellId::STONE },
+	{ SpellId::RNDTELEPORT, SpellId::MANASHIELD, SpellId::ELEMENT, SpellId::FIREBALL, SpellId::WAVE, SpellId::CHAIN, SpellId::GUARDIAN },
+	{ SpellId::NOVA, SpellId::GOLEM, SpellId::TELEPORT, SpellId::APOCA, SpellId::BONESPIRIT, SpellId::FLARE, SpellId::ETHEREALIZE },
 	{ -1, -1, -1, -1, -1, -1, -1 },
 	{ -1, -1, -1, -1, -1, -1, -1 }
 };
@@ -235,7 +235,7 @@ void SetSpellTrans(char t)
 {
 	int i;
 
-	if (t == RSPLTYPE_SKILL) {
+	if (t == RSpellType::SKILL) {
 		for (i = 0; i < 128; i++)
 			SplTransTbl[i] = i;
 	}
@@ -244,7 +244,7 @@ void SetSpellTrans(char t)
 	SplTransTbl[255] = 0;
 
 	switch (t) {
-	case RSPLTYPE_SPELL:
+	case RSpellType::SPELL:
 		SplTransTbl[PAL8_YELLOW] = PAL16_BLUE + 1;
 		SplTransTbl[PAL8_YELLOW + 1] = PAL16_BLUE + 3;
 		SplTransTbl[PAL8_YELLOW + 2] = PAL16_BLUE + 5;
@@ -254,7 +254,7 @@ void SetSpellTrans(char t)
 			SplTransTbl[PAL16_ORANGE - PAL16_BLUE + i] = i;
 		}
 		break;
-	case RSPLTYPE_SCROLL:
+	case RSpellType::SCROLL:
 		SplTransTbl[PAL8_YELLOW] = PAL16_BEIGE + 1;
 		SplTransTbl[PAL8_YELLOW + 1] = PAL16_BEIGE + 3;
 		SplTransTbl[PAL8_YELLOW + 2] = PAL16_BEIGE + 5;
@@ -263,7 +263,7 @@ void SetSpellTrans(char t)
 			SplTransTbl[PAL16_ORANGE - PAL16_BEIGE + i] = i;
 		}
 		break;
-	case RSPLTYPE_CHARGES:
+	case RSpellType::CHARGES:
 		SplTransTbl[PAL8_YELLOW] = PAL16_ORANGE + 1;
 		SplTransTbl[PAL8_YELLOW + 1] = PAL16_ORANGE + 3;
 		SplTransTbl[PAL8_YELLOW + 2] = PAL16_ORANGE + 5;
@@ -272,7 +272,7 @@ void SetSpellTrans(char t)
 			SplTransTbl[PAL16_YELLOW - PAL16_ORANGE + i] = i;
 		}
 		break;
-	case RSPLTYPE_INVALID:
+	case RSpellType::INVALID:
 		SplTransTbl[PAL8_YELLOW] = PAL16_GRAY + 1;
 		SplTransTbl[PAL8_YELLOW + 1] = PAL16_GRAY + 3;
 		SplTransTbl[PAL8_YELLOW + 2] = PAL16_GRAY + 5;
@@ -299,20 +299,20 @@ void DrawSpell()
 	spl = myplr().data._pRSpell;
 	st = myplr().data._pRSplType;
 
-	// BUGFIX: Move the next line into the if statement to avoid OOB (SPL_INVALID is -1) (fixed)
-	if (st == RSPLTYPE_SPELL && spl != SPL_INVALID) {
+	// BUGFIX: Move the next line into the if statement to avoid OOB (SpellId::INVALID is -1) (fixed)
+	if (st == RSpellType::SPELL && spl != SpellId::INVALID) {
 		tlvl = myplr().data._pISplLvlAdd + myplr().data._pSplLvl[spl];
-		if (!CheckSpell(myplr(), spl, RSPLTYPE_SPELL, true))
-			st = RSPLTYPE_INVALID;
+		if (!CheckSpell(myplr(), spl, RSpellType::SPELL, true))
+			st = RSpellType::INVALID;
 		if (tlvl <= 0)
-			st = RSPLTYPE_INVALID;
+			st = RSpellType::INVALID;
 	}
-	if (lvl.currlevel == 0 && st != RSPLTYPE_INVALID && !spelldata[spl].sTownSpell)
-		st = RSPLTYPE_INVALID;
+	if (lvl.currlevel == 0 && st != RSpellType::INVALID && !spelldata[spl].sTownSpell)
+		st = RSpellType::INVALID;
 	if (myplr().data._pRSpell < 0)
-		st = RSPLTYPE_INVALID;
+		st = RSpellType::INVALID;
 	SetSpellTrans(st);
-	if (spl != SPL_INVALID)
+	if (spl != SpellId::INVALID)
 		DrawSpellCel(PANEL_X + 565, PANEL_Y + 119, pSpellCels, SpellITbl[spl], SPLICONLENGTH);
 	else
 		DrawSpellCel(PANEL_X + 565, PANEL_Y + 119, pSpellCels, 27, SPLICONLENGTH);
@@ -323,29 +323,29 @@ void DrawSpellList()
 	int i, j, x, y, c, s, t, v, lx, ly, trans;
 	unsigned __int64 mask, spl;
 
-	pSpell = SPL_INVALID;
+	pSpell = SpellId::INVALID;
 	infostr[0] = '\0';
 	x = PANEL_X + 12 + SPLICONLENGTH * SPLROWICONLS;
 	y = PANEL_Y - 17;
 	ClearPanel();
 	for (i = 0; i < 4; i++) {
 		switch ((spell_type)i) {
-		case RSPLTYPE_SKILL:
-			SetSpellTrans(RSPLTYPE_SKILL);
+		case RSpellType::SKILL:
+			SetSpellTrans(RSpellType::SKILL);
 			c = SPLICONLAST + 3;
 			mask = myplr().data._pAblSpells;
 			break;
-		case RSPLTYPE_SPELL:
+		case RSpellType::SPELL:
 			c = SPLICONLAST + 4;
 			mask = myplr().data._pMemSpells;
 			break;
-		case RSPLTYPE_SCROLL:
-			SetSpellTrans(RSPLTYPE_SCROLL);
+		case RSpellType::SCROLL:
+			SetSpellTrans(RSpellType::SCROLL);
 			c = SPLICONLAST + 1;
 			mask = myplr().data._pScrlSpells;
 			break;
-		case RSPLTYPE_CHARGES:
-			SetSpellTrans(RSPLTYPE_CHARGES);
+		case RSpellType::CHARGES:
+			SetSpellTrans(RSpellType::CHARGES);
 			c = SPLICONLAST + 2;
 			mask = myplr().data._pISpells;
 			break;
@@ -353,18 +353,18 @@ void DrawSpellList()
 		for (spl = 1, j = 1; j < MAX_SPELLS; spl <<= 1, j++) {
 			if (!(mask & spl))
 				continue;
-			if (i == RSPLTYPE_SPELL) {
+			if (i == RSpellType::SPELL) {
 				s = myplr().data._pISplLvlAdd + myplr().data._pSplLvl[j];
 				if (s < 0)
 					s = 0;
 				if (s > 0)
-					trans = RSPLTYPE_SPELL;
+					trans = RSpellType::SPELL;
 				else
-					trans = RSPLTYPE_INVALID;
+					trans = RSpellType::INVALID;
 				SetSpellTrans(trans);
 			}
 			if (lvl.currlevel == 0 && !spelldata[j].sTownSpell)
-				SetSpellTrans(RSPLTYPE_INVALID);
+				SetSpellTrans(RSpellType::INVALID);
 			DrawSpellCel(x, y, pSpellCels, SpellITbl[j], SPLICONLENGTH);
 			lx = x - BORDER_LEFT;
 			ly = y - BORDER_TOP - SPLICONLENGTH;
@@ -373,12 +373,12 @@ void DrawSpellList()
 				pSplType = i;
 				DrawSpellCel(x, y, pSpellCels, c, SPLICONLENGTH);
 				switch (i) {
-				case RSPLTYPE_SKILL:
+				case RSpellType::SKILL:
 					sprintf(infostr, "%s Skill", spelldata[pSpell].sSkillText);
 					break;
-				case RSPLTYPE_SPELL:
+				case RSpellType::SPELL:
 					sprintf(infostr, "%s Spell", spelldata[pSpell].sNameText);
-					if (pSpell == SPL_HBOLT) {
+					if (pSpell == SpellId::HBOLT) {
 						sprintf(tempstr, "Damages undead only");
 						AddPanelString(tempstr, true);
 					}
@@ -388,7 +388,7 @@ void DrawSpellList()
 						sprintf(tempstr, "Spell Level %i", s);
 					AddPanelString(tempstr, true);
 					break;
-				case RSPLTYPE_SCROLL:
+				case RSpellType::SCROLL:
 					sprintf(infostr, "Scroll of %s", spelldata[pSpell].sNameText);
 					v = 0;
 					for (t = 0; t < myplr().data._pNumInv; t++) {
@@ -411,7 +411,7 @@ void DrawSpellList()
 						sprintf(tempstr, "%i Scrolls", v);
 					AddPanelString(tempstr, true);
 					break;
-				case RSPLTYPE_CHARGES:
+				case RSpellType::CHARGES:
 					sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
 					if (myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
 						strcpy(tempstr, "1 Charge");
@@ -446,7 +446,7 @@ void DrawSpellList()
 void SetSpell()
 {
 	spselflag = false;
-	if (pSpell != SPL_INVALID) {
+	if (pSpell != SpellId::INVALID) {
 		ClearPanel();
 		myplr().data._pRSpell = pSpell;
 		myplr().data._pRSplType = pSplType;
@@ -458,10 +458,10 @@ void SetSpeedSpell(int slot)
 {
 	int i;
 
-	if (pSpell != SPL_INVALID) {
+	if (pSpell != SpellId::INVALID) {
 		for (i = 0; i < 4; ++i) {
 			if (myplr().data._pSplHotKey[i] == pSpell && myplr().data._pSplTHotKey[i] == pSplType)
-				myplr().data._pSplHotKey[i] = SPL_INVALID;
+				myplr().data._pSplHotKey[i] = SpellId::INVALID;
 		}
 		myplr().data._pSplHotKey[slot] = pSpell;
 		myplr().data._pSplTHotKey[slot] = pSplType;
@@ -477,16 +477,16 @@ void ToggleSpell(int slot)
 	}
 
 	switch (myplr().data._pSplTHotKey[slot]) {
-	case RSPLTYPE_SKILL:
+	case RSpellType::SKILL:
 		spells = myplr().data._pAblSpells;
 		break;
-	case RSPLTYPE_SPELL:
+	case RSpellType::SPELL:
 		spells = myplr().data._pMemSpells;
 		break;
-	case RSPLTYPE_SCROLL:
+	case RSpellType::SCROLL:
 		spells = myplr().data._pScrlSpells;
 		break;
-	case RSPLTYPE_CHARGES:
+	case RSpellType::CHARGES:
 		spells = myplr().data._pISpells;
 		break;
 	}
@@ -772,7 +772,7 @@ void InitControlPan()
 	pPanelText = LoadFileInMem("CtrlPan\\SmalText.CEL", NULL);
 	pChrPanel = LoadFileInMem("Data\\Char.CEL", NULL);
 	pSpellCels = LoadFileInMem("CtrlPan\\SpelIcon.CEL", NULL);
-	SetSpellTrans(RSPLTYPE_SKILL);
+	SetSpellTrans(RSpellType::SKILL);
 	pStatusPanel = LoadFileInMem("CtrlPan\\Panel8.CEL", NULL);
 	CelBlitWidth(pBtmBuff, { 0, (PANEL_HEIGHT + 16) - 1 }, PANEL_WIDTH, pStatusPanel, 1, PANEL_WIDTH);
 	MemFreeDbg(pStatusPanel);
@@ -820,12 +820,12 @@ void InitControlPan()
 	pSBkIconCels = LoadFileInMem("Data\\SpellI2.CEL", NULL);
 	sbooktab = 0;
 	sbookflag = false;
-	if (myplr().data._pClass == PC_WARRIOR) {
-		SpellPages[0][0] = SPL_REPAIR;
-	} else if (myplr().data._pClass == PC_ROGUE) {
-		SpellPages[0][0] = SPL_DISARM;
-	} else if (myplr().data._pClass == PC_SORCERER) {
-		SpellPages[0][0] = SPL_RECHARGE;
+	if (myplr().data._pClass == PlayerClass::warrior) {
+		SpellPages[0][0] = SpellId::REPAIR;
+	} else if (myplr().data._pClass == PlayerClass::rogue) {
+		SpellPages[0][0] = SpellId::DISARM;
+	} else if (myplr().data._pClass == PlayerClass::sorceror) {
+		SpellPages[0][0] = SpellId::RECHARGE;
 	}
 	pQLogCel = LoadFileInMem("Data\\Quest.CEL", NULL);
 	pGBoxBuff = LoadFileInMem("CtrlPan\\Golddrop.cel", NULL);
@@ -879,19 +879,19 @@ void DoSpeedBook()
 	yo = PANEL_Y - 17;
 	X = xo - (BORDER_LEFT - SPLICONLENGTH / 2);
 	Y = yo - (BORDER_TOP + SPLICONLENGTH / 2);
-	if (myplr().data._pRSpell != SPL_INVALID) {
+	if (myplr().data._pRSpell != SpellId::INVALID) {
 		for (i = 0; i < 4; i++) {
 			switch (i) {
-			case RSPLTYPE_SKILL:
+			case RSpellType::SKILL:
 				spells = myplr().data._pAblSpells;
 				break;
-			case RSPLTYPE_SPELL:
+			case RSpellType::SPELL:
 				spells = myplr().data._pMemSpells;
 				break;
-			case RSPLTYPE_SCROLL:
+			case RSpellType::SCROLL:
 				spells = myplr().data._pScrlSpells;
 				break;
-			case RSPLTYPE_CHARGES:
+			case RSpellType::CHARGES:
 				spells = myplr().data._pISpells;
 				break;
 			}
@@ -1018,13 +1018,13 @@ void CheckPanelInfo()
 		strcpy(tempstr, "Hotkey : 's'");
 		AddPanelString(tempstr, true);
 		v = myplr().data._pRSpell;
-		if (v != SPL_INVALID) {
+		if (v != SpellId::INVALID) {
 			switch (myplr().data._pRSplType) {
-			case RSPLTYPE_SKILL:
+			case RSpellType::SKILL:
 				sprintf(tempstr, "%s Skill", spelldata[v].sSkillText);
 				AddPanelString(tempstr, true);
 				break;
-			case RSPLTYPE_SPELL:
+			case RSpellType::SPELL:
 				sprintf(tempstr, "%s Spell", spelldata[v].sNameText);
 				AddPanelString(tempstr, true);
 				c = myplr().data._pISplLvlAdd + myplr().data._pSplLvl[v];
@@ -1036,7 +1036,7 @@ void CheckPanelInfo()
 					sprintf(tempstr, "Spell Level %i", c);
 				AddPanelString(tempstr, true);
 				break;
-			case RSPLTYPE_SCROLL:
+			case RSpellType::SCROLL:
 				sprintf(tempstr, "Scroll of %s", spelldata[v].sNameText);
 				AddPanelString(tempstr, true);
 				s = 0;
@@ -1060,7 +1060,7 @@ void CheckPanelInfo()
 					sprintf(tempstr, "%i Scrolls", s);
 				AddPanelString(tempstr, true);
 				break;
-			case RSPLTYPE_CHARGES:
+			case RSpellType::CHARGES:
 				sprintf(tempstr, "Staff of %s", spelldata[v].sNameText);
 				AddPanelString(tempstr, true);
 				if (myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
@@ -1336,11 +1336,11 @@ void DrawChr()
 	CelDraw(SCREEN_X, 351 + SCREEN_Y, pChrPanel, 1, SPANEL_WIDTH);
 	ADD_PlrStringXY(20, 32, 151, myplr().data._pName, COL_WHITE);
 
-	if (myplr().data._pClass == PC_WARRIOR) {
+	if (myplr().data._pClass == PlayerClass::warrior) {
 		ADD_PlrStringXY(168, 32, 299, "Warrior", COL_WHITE);
-	} else if (myplr().data._pClass == PC_ROGUE) {
+	} else if (myplr().data._pClass == PlayerClass::rogue) {
 		ADD_PlrStringXY(168, 32, 299, "Rogue", COL_WHITE);
-	} else if (myplr().data._pClass == PC_SORCERER) {
+	} else if (myplr().data._pClass == PlayerClass::sorceror) {
 		ADD_PlrStringXY(168, 32, 299, "Sorceror", COL_WHITE);
 	}
 
@@ -1387,7 +1387,7 @@ void DrawChr()
 	mindam += myplr().data._pIBonusDam * mindam / 100;
 	mindam += myplr().data._pIBonusDamMod;
 	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::bow) {
-		if (myplr().data._pClass == PC_ROGUE)
+		if (myplr().data._pClass == PlayerClass::rogue)
 			mindam += myplr().data._pDamageMod;
 		else
 			mindam += myplr().data._pDamageMod >> 1;
@@ -1398,7 +1398,7 @@ void DrawChr()
 	maxdam += myplr().data._pIBonusDam * maxdam / 100;
 	maxdam += myplr().data._pIBonusDamMod;
 	if (myplr().data.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::bow) {
-		if (myplr().data._pClass == PC_ROGUE)
+		if (myplr().data._pClass == PlayerClass::rogue)
 			maxdam += myplr().data._pDamageMod;
 		else
 			maxdam += myplr().data._pDamageMod >> 1;
@@ -1440,25 +1440,25 @@ void DrawChr()
 
 	col = COL_WHITE;
 	sprintf(chrstr, "%i", myplr().data._pBaseStr);
-	if (classes[myplr().data._pClass].MaxStats[ATTRIB_STR] == myplr().data._pBaseStr)
+	if (classes[myplr().data._pClass].MaxStats[AttributeId::STR] == myplr().data._pBaseStr)
 		col = COL_GOLD;
 	ADD_PlrStringXY(95, 155, 126, chrstr, col);
 
 	col = COL_WHITE;
 	sprintf(chrstr, "%i", myplr().data._pBaseMag);
-	if (classes[myplr().data._pClass].MaxStats[ATTRIB_MAG] == myplr().data._pBaseMag)
+	if (classes[myplr().data._pClass].MaxStats[AttributeId::MAG] == myplr().data._pBaseMag)
 		col = COL_GOLD;
 	ADD_PlrStringXY(95, 183, 126, chrstr, col);
 
 	col = COL_WHITE;
 	sprintf(chrstr, "%i", myplr().data._pBaseDex);
-	if (classes[myplr().data._pClass].MaxStats[ATTRIB_DEX] == myplr().data._pBaseDex)
+	if (classes[myplr().data._pClass].MaxStats[AttributeId::DEX] == myplr().data._pBaseDex)
 		col = COL_GOLD;
 	ADD_PlrStringXY(95, 211, 126, chrstr, col);
 
 	col = COL_WHITE;
 	sprintf(chrstr, "%i", myplr().data._pBaseVit);
-	if (classes[myplr().data._pClass].MaxStats[ATTRIB_VIT] == myplr().data._pBaseVit)
+	if (classes[myplr().data._pClass].MaxStats[AttributeId::VIT] == myplr().data._pBaseVit)
 		col = COL_GOLD;
 	ADD_PlrStringXY(95, 239, 126, chrstr, col);
 
@@ -1503,14 +1503,14 @@ void DrawChr()
 		sprintf(chrstr, "%i", myplr().data._pStatPts);
 		ADD_PlrStringXY(95, 266, 126, chrstr, COL_RED);
 		pc = myplr().data._pClass;
-		if (myplr().data._pBaseStr < classes[pc].MaxStats[ATTRIB_STR])
-			CelDraw(137 + SCREEN_X, 159 + SCREEN_Y, pChrButtons, chrbtn[ATTRIB_STR] + 2, 41);
-		if (myplr().data._pBaseMag < classes[pc].MaxStats[ATTRIB_MAG])
-			CelDraw(137 + SCREEN_X, 187 + SCREEN_Y, pChrButtons, chrbtn[ATTRIB_MAG] + 4, 41);
-		if (myplr().data._pBaseDex < classes[pc].MaxStats[ATTRIB_DEX])
-			CelDraw(137 + SCREEN_X, 216 + SCREEN_Y, pChrButtons, chrbtn[ATTRIB_DEX] + 6, 41);
-		if (myplr().data._pBaseVit < classes[pc].MaxStats[ATTRIB_VIT])
-			CelDraw(137 + SCREEN_X, 244 + SCREEN_Y, pChrButtons, chrbtn[ATTRIB_VIT] + 8, 41);
+		if (myplr().data._pBaseStr < classes[pc].MaxStats[AttributeId::STR])
+			CelDraw(137 + SCREEN_X, 159 + SCREEN_Y, pChrButtons, chrbtn[AttributeId::STR] + 2, 41);
+		if (myplr().data._pBaseMag < classes[pc].MaxStats[AttributeId::MAG])
+			CelDraw(137 + SCREEN_X, 187 + SCREEN_Y, pChrButtons, chrbtn[AttributeId::MAG] + 4, 41);
+		if (myplr().data._pBaseDex < classes[pc].MaxStats[AttributeId::DEX])
+			CelDraw(137 + SCREEN_X, 216 + SCREEN_Y, pChrButtons, chrbtn[AttributeId::DEX] + 6, 41);
+		if (myplr().data._pBaseVit < classes[pc].MaxStats[AttributeId::VIT])
+			CelDraw(137 + SCREEN_X, 244 + SCREEN_Y, pChrButtons, chrbtn[AttributeId::VIT] + 8, 41);
 	}
 
 	col = myplr().data._pMaxHP <= myplr().data._pMaxHPBase ? COL_WHITE : COL_BLUE;
@@ -1609,20 +1609,20 @@ void CheckChrBtns()
 		pc = myplr().data._pClass;
 		for (i = 0; i < 4; i++) {
 			switch (i) {
-			case ATTRIB_STR:
-				if (myplr().data._pBaseStr >= classes[pc].MaxStats[ATTRIB_STR])
+			case AttributeId::STR:
+				if (myplr().data._pBaseStr >= classes[pc].MaxStats[AttributeId::STR])
 					continue;
 				break;
-			case ATTRIB_MAG:
-				if (myplr().data._pBaseMag >= classes[pc].MaxStats[ATTRIB_MAG])
+			case AttributeId::MAG:
+				if (myplr().data._pBaseMag >= classes[pc].MaxStats[AttributeId::MAG])
 					continue;
 				break;
-			case ATTRIB_DEX:
-				if (myplr().data._pBaseDex >= classes[pc].MaxStats[ATTRIB_DEX])
+			case AttributeId::DEX:
+				if (myplr().data._pBaseDex >= classes[pc].MaxStats[AttributeId::DEX])
 					continue;
 				break;
-			case ATTRIB_VIT:
-				if (myplr().data._pBaseVit >= classes[pc].MaxStats[ATTRIB_VIT])
+			case AttributeId::VIT:
+				if (myplr().data._pBaseVit >= classes[pc].MaxStats[AttributeId::VIT])
 					continue;
 				break;
 			default:
@@ -1763,23 +1763,23 @@ char GetSBookTrans(int ii, bool townok)
 {
 	char st;
 
-	st = RSPLTYPE_SPELL;
+	st = RSpellType::SPELL;
 	if (myplr().data._pISpells & (__int64)1 << (ii - 1)) {
-		st = RSPLTYPE_CHARGES;
+		st = RSpellType::CHARGES;
 	}
 	if (myplr().data._pAblSpells & (__int64)1 << (ii - 1)) { /// BUGFIX: missing (__int64) (fixed)
-		st = RSPLTYPE_SKILL;
+		st = RSpellType::SKILL;
 	}
-	if (st == RSPLTYPE_SPELL) {
-		if (!CheckSpell(myplr(), ii, RSPLTYPE_SPELL, true)) {
-			st = RSPLTYPE_INVALID;
+	if (st == RSpellType::SPELL) {
+		if (!CheckSpell(myplr(), ii, RSpellType::SPELL, true)) {
+			st = RSpellType::INVALID;
 		}
 		if ((char)(myplr().data._pSplLvl[ii] + myplr().data._pISplLvlAdd) <= 0) {
-			st = RSPLTYPE_INVALID;
+			st = RSpellType::INVALID;
 		}
 	}
-	if (townok && lvl.currlevel == 0 && st != RSPLTYPE_INVALID && !spelldata[ii].sTownSpell) {
-		st = RSPLTYPE_INVALID;
+	if (townok && lvl.currlevel == 0 && st != RSpellType::INVALID && !spelldata[ii].sTownSpell) {
+		st = RSpellType::INVALID;
 	}
 
 	return st;
@@ -1804,15 +1804,15 @@ void DrawSpellBook()
 			SetSpellTrans(st);
 			DrawSpellCel(RIGHT_PANEL + 75, yp, pSBkIconCels, SpellITbl[sn], 37);
 			if (sn == myplr().data._pRSpell && st == myplr().data._pRSplType) {
-				SetSpellTrans(RSPLTYPE_SKILL);
+				SetSpellTrans(RSpellType::SKILL);
 				DrawSpellCel(RIGHT_PANEL + 75, yp, pSBkIconCels, SPLICONLAST, 37);
 			}
 			PrintSBookStr({ 10, yp - 23 }, false, spelldata[sn].sNameText, COL_WHITE);
 			switch (GetSBookTrans(sn, false)) {
-			case RSPLTYPE_SKILL:
+			case RSpellType::SKILL:
 				strcpy(tempstr, "Skill");
 				break;
-			case RSPLTYPE_CHARGES:
+			case RSpellType::CHARGES:
 				sprintf(tempstr, "Staff (%i charges)", myplr().data.InvBody[INVLOC_HAND_LEFT]._iCharges);
 				break;
 			default:
@@ -1823,7 +1823,7 @@ void DrawSpellBook()
 				} else {
 					sprintf(tempstr, "Mana: %i   Dam: n/a", mana);
 				}
-				if (sn == SPL_BONESPIRIT) {
+				if (sn == SpellId::BONESPIRIT) {
 					sprintf(tempstr, "Mana: %i  Dam: 1/3 tgt hp", mana);
 				}
 				PrintSBookStr({ 10, yp - 1 }, false, tempstr, COL_WHITE);
@@ -1885,12 +1885,12 @@ void CheckSBook()
 		spl = myplr().data._pMemSpells | myplr().data._pISpells | myplr().data._pAblSpells;
 		sn = SpellPages[sbooktab][(Mouse.y - 18) / 43];
 		if (sn != -1 && spl & (__int64)1 << (sn - 1)) {
-			st = RSPLTYPE_SPELL;
+			st = RSpellType::SPELL;
 			if (myplr().data._pISpells & (__int64)1 << (sn - 1)) {
-				st = RSPLTYPE_CHARGES;
+				st = RSpellType::CHARGES;
 			}
 			if (myplr().data._pAblSpells & (__int64)1 << (sn - 1)) {
-				st = RSPLTYPE_SKILL;
+				st = RSpellType::SKILL;
 			}
 			myplr().data._pRSpell = sn;
 			myplr().data._pRSplType = st;

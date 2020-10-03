@@ -72,7 +72,7 @@ void Automap::init()
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++)
-			grid[x][y].dFlags &= ~BFLAG_EXPLORED;
+			grid[x][y].dFlags &= ~DunTileFlag::EXPLORED;
 	}
 }
 
@@ -445,7 +445,7 @@ void Automap::drawPlayer()
 	int px, py;
 	int x, y;
 
-	if (myplr().data._pmode == PM_WALK3) {
+	if (myplr().data._pmode == PlayerMode::WALK3) {
 		x = myplr().futpos().x;
 		y = myplr().futpos().y;
 		if (myplr().data._pdir == Dir::W)

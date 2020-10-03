@@ -13,7 +13,8 @@ class GameGui
 {
    public:
 	bool invflag = false;  // Inventory is open flag???
-	bool sbookflag;
+	bool sbookflag; // is book showing?
+	bool questlog; // is quest log showing?
 };
 
 extern GameGui gui;

@@ -40,7 +40,7 @@ public:
 	[[nodiscard]] uint8_t					getPiece() const;
 	[[nodiscard]] Actor &					getActor() const;
 	[[nodiscard]] Player &					getPlayer() const;
-	[[nodiscard]] MonsterInstance &			getMonster() const;
+	[[nodiscard]] Monster &			getMonster() const;
 	[[nodiscard]] Towner &					getTowner() const;
 	[[nodiscard]] std::set<Actor> &			getActorDrawSet() const;
 	[[nodiscard]] uint8_t					getObject() const;

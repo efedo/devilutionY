@@ -8,52 +8,25 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-void MonsterManager::ClrAllMonsters()
+void ActorManager::clearAllMonsters()
 {
-	int i;
-	MonsterStruct *Monst;
-
-	for (i = 0; i < MAXMONSTERS; i++) {
-		Monst = &list[i].data;
-		list[i].ClearMVars();
-		Monst->mName = "Invalid Monster";
-		Monst->_mgoal = 0;
-		Monst->_mmode = MonsterMode::STAND;
-		Monst->_mVar1 = 0;
-		Monst->_mVar2 = 0;
-		Monst->_m = { 0, 0 };
-		Monst->_mfut = { 0, 0 };
-		Monst->_mold = { 0, 0 };
-		Monst->_mdir = Dir(random_(89, 8));
-		Monst->_mvel = { 0, 0 };
-		Monst->_mAnimData = NULL;
-		Monst->_mAnimDelay = 0;
-		Monst->_mAnimCnt = 0;
-		Monst->_mAnimLen = 0;
-		Monst->_mAnimFrame = 0;
-		Monst->_mFlags = 0;
-		Monst->_mDelFlag = false;
-		Monst->_menemy = random_(89, gbActivePlayers);
-		Monst->_menemypos = plr[Monst->_menemy].futpos();
+	for (size_t i = 0, end = _actors.size(); i != end; ++i ) {
+		if (_actors[i].get() && _actors[i].get()->type == ActorType::monster) {
+			_actors[i].reset();
+		}
 	}
+	_monsters.clear();
 }
 
-MonsterInstance &MonsterManager::operator[](size_t n)
-{
-	if ((DWORD)n >= MAXMONSTERS) {
-		app_fatal("Invalid monster %d selection", n);
-	}
-	return list[n];
-}
-
-void MonsterManager::PlaceMonster(int i, int mtype, V2Di pos)
+void ActorManager::PlaceMonster(Monster &monst, int mtype, V2Di pos)
 {
 	grid.at(pos).setActor(i);
 	Dir rd = Dir(random_(90, 8));
-	list[i] = MonsterInstance(i, rd, mtype, pos);
+	list[i] = Monster(i, rd, mtype, pos);
 }
 
-void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpackfilesize)
+void ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqindex,
+                                      int miniontype, int unpackfilesize)
 {
 	V2Di p, n;
 	int i;
@@ -68,7 +41,7 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	//Monst = monster + nummonsters;
 	Monst = &monsters[nummonsters].data;
 	count = 0;
-	Uniq = UniqMonst + uniqindex;
+	Uniq = &UniqMonst[int(uniqindex)];
 
 	if ((uniquetrans + 19) << 8 >= LIGHTSIZE)
 		return;
@@ -241,14 +214,14 @@ void MonsterManager::PlaceUniqueMonster(int uniqindex, int miniontype, int unpac
 	}
 
 	if (Monst->_mAi != MonstAi::GARG) {
-		Monst->_mAnimData = Monst->MType->Anims[MonstAnim::STAND].Data[int(Monst->_mdir)];
+		Monst->_mAnimData = Monst->MType->getAnim(MonstAnim::STAND).Data[int(Monst->_mdir)];
 		Monst->_mAnimFrame = random_(88, Monst->_mAnimLen - 1) + 1;
 		Monst->_mFlags &= ~MonsterFlag::allow_special;
 		Monst->_mmode = MonsterMode::STAND;
 	}
 }
 
-void MonsterManager::PlaceQuestMonsters()
+void ActorManager::PlaceQuestMonsters()
 {
 	int skeltype;
 	uint8_t *setp;
@@ -318,7 +291,7 @@ void MonsterManager::PlaceQuestMonsters()
 	}
 }
 
-void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
+void ActorManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 {
 	int j;
 	V2Di p, v;
@@ -386,16 +359,6 @@ void MonsterManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 	if (leaderf & 2) {
 		list[leader].data.packsize = placed;
 	}
-}
-
-void MonsterManager::DeleteMonster(int i)
-{
-	int temp;
-
-	nummonsters--;
-	temp = monstactive[nummonsters];
-	monstactive[nummonsters] = monstactive[i];
-	monstactive[i] = temp;
 }
 
 DEVILUTION_END_NAMESPACE

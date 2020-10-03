@@ -656,7 +656,7 @@ void DoUnVision(V2Di pos, int nRadius)
 
 	for (i = x1; i < x2; i++) {
 		for (j = y1; j < y2; j++) {
-			grid[i][j].dFlags &= ~(BFLAG_VISIBLE | BFLAG_LIT);
+			grid[i][j].dFlags &= ~(DunTileFlag::VISIBLE | DunTileFlag::LIT);
 		}
 	}
 }
@@ -672,12 +672,12 @@ void DoVision(V2Di pos, int nRadius, bool doautomap, bool visible)
 			if (grid[pos.x][pos.y].dFlags >= 0) {
 				automap.SetAutomapView(pos); // Is this an error? Should be y?
 			}
-			grid.at(pos).dFlags |= BFLAG_EXPLORED;
+			grid.at(pos).dFlags |= DunTileFlag::EXPLORED;
 		}
 		if (visible) {
-			grid.at(pos).dFlags |= BFLAG_LIT;
+			grid.at(pos).dFlags |= DunTileFlag::LIT;
 		}
-		grid.at(pos).dFlags |= BFLAG_VISIBLE;
+		grid.at(pos).dFlags |= DunTileFlag::VISIBLE;
 	}
 
 	for (v = 0; v < 4; v++) {
@@ -733,12 +733,12 @@ void DoVision(V2Di pos, int nRadius, bool doautomap, bool visible)
 							if (grid[nCrawlX][nCrawlY].dFlags >= 0) {
 								automap.SetAutomapView({ nCrawlX, nCrawlY });
 							}
-							grid[nCrawlX][nCrawlY].dFlags |= BFLAG_EXPLORED;
+							grid[nCrawlX][nCrawlY].dFlags |= DunTileFlag::EXPLORED;
 						}
 						if (visible) {
-							grid[nCrawlX][nCrawlY].dFlags |= BFLAG_LIT;
+							grid[nCrawlX][nCrawlY].dFlags |= DunTileFlag::LIT;
 						}
-						grid[nCrawlX][nCrawlY].dFlags |= BFLAG_VISIBLE;
+						grid[nCrawlX][nCrawlY].dFlags |= DunTileFlag::VISIBLE;
 						if (!nBlockerFlag) {
 							nTrans = grid[nCrawlX][nCrawlY].dTransVal;
 							if (nTrans != 0) {

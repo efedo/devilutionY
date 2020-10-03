@@ -5,7 +5,6 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 extern int qtopline;
-extern bool questlog;
 extern uint8_t *pQLogCel;
 extern QuestStruct quests[MAXQUESTS];
 extern int qline;

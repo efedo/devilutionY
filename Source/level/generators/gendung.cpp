@@ -175,7 +175,7 @@ void DRLG_SetPC()
 
 	for (j = 0; j < h; j++) {
 		for (i = 0; i < w; i++) {
-			grid[i + x][j + y].dFlags |= BFLAG_POPULATED;
+			grid[i + x][j + y].dFlags |= DunTileFlag::POPULATED;
 		}
 	}
 }
@@ -191,7 +191,7 @@ void Make_SetPC(int x, int y, int w, int h)
 
 	for (j = 0; j < dh; j++) {
 		for (i = 0; i < dw; i++) {
-			grid[i + dx][j + dy].dFlags |= BFLAG_POPULATED;
+			grid[i + dx][j + dy].dFlags |= DunTileFlag::POPULATED;
 		}
 	}
 }
@@ -336,10 +336,10 @@ void DRLG_HoldThemeRooms()
 			for (x = lvl.themeLoc[i].x; x < lvl.themeLoc[i].x + lvl.themeLoc[i].width - 1; x++) {
 				xx = 2 * x + 16;
 				yy = 2 * y + 16;
-				grid[xx][yy].dFlags |= BFLAG_POPULATED;
-				grid[xx + 1][yy].dFlags |= BFLAG_POPULATED;
-				grid[xx][yy + 1].dFlags |= BFLAG_POPULATED;
-				grid[xx + 1][yy + 1].dFlags |= BFLAG_POPULATED;
+				grid[xx][yy].dFlags |= DunTileFlag::POPULATED;
+				grid[xx + 1][yy].dFlags |= DunTileFlag::POPULATED;
+				grid[xx][yy + 1].dFlags |= DunTileFlag::POPULATED;
+				grid[xx + 1][yy + 1].dFlags |= DunTileFlag::POPULATED;
 			}
 		}
 	}

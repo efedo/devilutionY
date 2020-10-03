@@ -14,7 +14,7 @@ void track_process()
 	if (cursm.x < 0 || cursm.x >= MAXDUNX - 1 || cursm.y < 0 || cursm.y >= MAXDUNY - 1)
 		return;
 
-	if (myplr().data._pVar8 <= 6 && myplr().data._pmode != PM_STAND)
+	if (myplr().data._pVar8 <= 6 && myplr().data._pmode != PlayerMode::STAND)
 		return;
 
 	if (cursm != myplr().data._pathtarg) {

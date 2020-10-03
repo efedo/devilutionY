@@ -21,8 +21,8 @@
 #define SHADOW_MAX_LAYER       1
 #define TAG_MAX_LAYER          1
 #define WALL_MAX_LAYER         4
-#define OBJ_MAX_START        100
-#define OBJ_MAX_GRANULARITY   50
+#define ObjectType::MAX_START        100
+#define ObjectType::MAX_GRANULARITY   50
 #define WINDS1EDIT_PATH_MAX  100
 
 #define TXT_COL_NAME_LENGTH   30
@@ -322,7 +322,7 @@ typedef struct COF_S
    long      orderflag; // from data\global\excel\objects.txt, 0 1 or 2
 } COF_S;
 
-typedef struct OBJ_DESC_S
+typedef struct ObjectType::DESC_S
 {
    int   act;
    int   type;
@@ -332,7 +332,7 @@ typedef struct OBJ_DESC_S
    int   objects_line;
    int   monstats_line;
    int   usage_count;
-} OBJ_DESC_S;
+} ObjectType::DESC_S;
 
 // struct for convenience, for undo
 // if bit is set, indicate that this data of this layer is to be save
@@ -478,7 +478,7 @@ typedef struct GLB_DS1EDIT_S
    volatile int  ticks_elapsed;
    int           screenshot_num;
    COLOR_MAP     cmap[CM_MAX][ACT_MAX];
-   OBJ_DESC_S    * obj_desc;
+   ObjectType::DESC_S    * obj_desc;
    int           obj_desc_num; // # of objects's description
    MODE_E        mode;
    RLE_SPRITE    * subtile_flag[9][ZM_MAX][25];
@@ -550,7 +550,7 @@ typedef struct PATH_S
    int  flags;
 } PATH_S;
 
-typedef struct OBJ_LABEL_S
+typedef struct ObjectType::LABEL_S
 {
    int rx, ry; // upper/left corner of the label, relative to the sub-cell
                // (in pixels, at zoom of 1:1)
@@ -562,9 +562,9 @@ typedef struct OBJ_LABEL_S
    int old_rx;
    int old_ry;
        
-} OBJ_LABEL_S;
+} ObjectType::LABEL_S;
 
-typedef struct OBJ_S
+typedef struct ObjectType::S
 {
    long        type;
    long        id;
@@ -576,7 +576,7 @@ typedef struct OBJ_S
    long        path_num;
    int         desc_idx;
    int         flags;
-   OBJ_LABEL_S label;
+   ObjectType::LABEL_S label;
 
    // for moving
    long         old_x;
@@ -590,7 +590,7 @@ typedef struct OBJ_S
 
    // random starting animation frame
    UBYTE       frame_delta;
-} OBJ_S;
+} ObjectType::S;
 
 typedef struct BOX_S
 {
@@ -612,7 +612,7 @@ typedef enum EDT_BUT_E
    EB_MAX
 } EDT_BUT_E; // edit obj buttons
               
-typedef struct WIN_EDT_OBJ_S
+typedef struct WIN_EDT_ObjectType::S
 {
    // window itself
    int x0, y0;
@@ -635,7 +635,7 @@ typedef struct WIN_EDT_OBJ_S
    int desc_num;   // number of description for this act
    int desc_end;   // ending index
    int desc_cur;   // curent selected index (the object's one before editing)
-} WIN_EDT_OBJ_S;
+} WIN_EDT_ObjectType::S;
 
 typedef struct CELL_W_S
 {
@@ -850,13 +850,13 @@ typedef struct DS1_S
    
    // objects and npc paths (paths are in obj struct)
    int           * drawing_order;
-   OBJ_S         * obj;
-   OBJ_S         * obj_undo;
+   ObjectType::S         * obj;
+   ObjectType::S         * obj_undo;
    long          obj_num;
    long          obj_num_undo;
    int           can_undo_obj;
    int           draw_edit_obj; // edit Type-Id of objects, false / true
-   WIN_EDT_OBJ_S win_edt_obj;
+   WIN_EDT_ObjectType::S win_edt_obj;
 
    // current animated floor frame
    int           cur_anim_floor_frame;
@@ -1028,12 +1028,12 @@ typedef enum DS1ERR_ENUM
    DS1ERR_OTHER     = 255
 } DS1ERR_ENUM;
 
-typedef enum WBITSTYPE_ENUM
+typedef enum WBITMagicType::ENUM
 {
-   WBITSTYPE_UNKNOWN = 0,
-   WBITSTYPE_SAME,
-   WBITSTYPE_DIFFERENT
-} WBITSTYPE_ENUM;
+   WBITMagicType::UNKNOWN = 0,
+   WBITMagicType::SAME,
+   WBITMagicType::DIFFERENT
+} WBITMagicType::ENUM;
 
 typedef struct WBITSDATA_S
 {
@@ -1044,10 +1044,10 @@ typedef struct WBITSDATA_S
    CELL_T_S mix_t[TAG_MAX_LAYER];
 
    // are each bit always the same for the entire selection of tiles ?
-   WBITSTYPE_ENUM bit_type_f[FLOOR_MAX_LAYER ][ 4][8];
-   WBITSTYPE_ENUM bit_type_s[SHADOW_MAX_LAYER][ 4][8];
-   WBITSTYPE_ENUM bit_type_w[WALL_MAX_LAYER  ][ 5][8];
-   WBITSTYPE_ENUM bit_type_t[TAG_MAX_LAYER   ][32];
+   WBITMagicType::ENUM bit_type_f[FLOOR_MAX_LAYER ][ 4][8];
+   WBITMagicType::ENUM bit_type_s[SHADOW_MAX_LAYER][ 4][8];
+   WBITMagicType::ENUM bit_type_w[WALL_MAX_LAYER  ][ 5][8];
+   WBITMagicType::ENUM bit_type_t[TAG_MAX_LAYER   ][32];
 } WBITSDATA_S;
 
 // workspace datas saved in .ds1

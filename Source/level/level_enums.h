@@ -1,0 +1,98 @@
+// HEADER_GOES_HERE
+#ifndef __LEVEL_ENUMS_H__
+#define __LEVEL_ENUMS_H__
+
+DEVILUTION_BEGIN_NAMESPACE
+
+enum class SetLvl {
+	None = 0,
+	// SL_BUTCHCHAMB = 0x0,
+	SkelKing = 0x1,
+	BoneChamb = 0x2,
+	Maze = 0x3,
+	PoisonWater = 0x4,
+	VileBetrayer = 0x5,
+};
+
+enum class DunType {
+	town = 0x0,
+	cathedral = 0x1,
+	catacombs = 0x2,
+	caves = 0x3,
+	hell = 0x4,
+	none = 0xFF,
+};
+
+typedef enum shrine_type {
+	SHRINE_MYSTERIOUS = 0,
+	SHRINE_HIDDEN = 1,
+	SHRINE_GLOOMY = 2,
+	SHRINE_WEIRD = 3,
+	SHRINE_MAGICAL = 4,
+	SHRINE_STONE = 5,
+	SHRINE_RELIGIOUS = 6,
+	SHRINE_ENCHANTED = 7,
+	SHRINE_THAUMATURGIC = 8,
+	SHRINE_FASCINATING = 9,
+	SHRINE_CRYPTIC = 10,
+	SHRINE_MAGICAL2 = 11,
+	SHRINE_ELDRITCH = 12,
+	SHRINE_EERIE = 13,
+	SHRINE_DIVINE = 14,
+	SHRINE_HOLY = 15,
+	SHRINE_SACRED = 16,
+	SHRINE_SPIRITUAL = 17,
+	SHRINE_SPOOKY = 18,
+	SHRINE_ABANDONED = 19,
+	SHRINE_CREEPY = 20,
+	SHRINE_QUIET = 21,
+	SHRINE_SECLUDED = 22,
+	SHRINE_ORNATE = 23,
+	SHRINE_GLIMMERING = 24,
+	SHRINE_TAINTED = 25,
+	NUM_SHRINETYPE
+} shrine_type;
+
+typedef enum dlrg_flag {
+	DLRG_HDOOR = 0x01,
+	DLRG_VDOOR = 0x02,
+	DLRG_CHAMBER = 0x40,
+	DLRG_PROTECTED = 0x80,
+} dlrg_flag;
+
+typedef enum theme_id {
+	THEME_BARREL = 0x0,
+	THEME_SHRINE = 0x1,
+	THEME_MONSTPIT = 0x2,
+	THEME_SKELROOM = 0x3,
+	THEME_TREASURE = 0x4,
+	THEME_LIBRARY = 0x5,
+	THEME_TORTURE = 0x6,
+	THEME_BLOODFOUNTAIN = 0x7,
+	THEME_DECAPITATED = 0x8,
+	THEME_PURIFYINGFOUNTAIN = 0x9,
+	THEME_ARMORSTAND = 0xA,
+	THEME_GOATSHRINE = 0xB,
+	THEME_CAULDRON = 0xC,
+	THEME_MURKYFOUNTAIN = 0xD,
+	THEME_TEARFOUNTAIN = 0xE,
+	THEME_BRNCROSS = 0xF,
+	THEME_WEAPONRACK = 0x10,
+	THEME_NONE = -1,
+} theme_id;
+
+using DunTileFlags = int;
+namespace DunTileFlag {
+	constexpr int MISSILE = 0x01;
+	constexpr int VISIBLE = 0x02;
+	constexpr int DEAD_PLAYER = 0x04;
+	constexpr int POPULATED = 0x08;
+	constexpr int MONSTLR = 0x10;
+	constexpr int PLAYERLR = 0x20;
+	constexpr int LIT = 0x40;
+	constexpr int EXPLORED = 0x80;
+};
+
+DEVILUTION_END_NAMESPACE
+
+#endif /* __LEVEL_ENUMS_H__ */

@@ -154,9 +154,9 @@ bool HasRangedSpell()
 {
 	int spl = myplr().data._pRSpell;
 
-	return spl != SPL_INVALID
-	    && spl != SPL_TOWN
-	    && spl != SPL_TELEPORT
+	return spl != SpellId::INVALID
+	    && spl != SpellId::TOWN
+	    && spl != SpellId::TELEPORT
 	    && spelldata[spl].sTargeted
 	    && !spelldata[spl].sTownSpell;
 }
@@ -171,7 +171,7 @@ bool CanTargetMonster(int mi)
 		return false;
 
 	const V2Di m = monst._m;
-	if (!(grid.at(m).dFlags & BFLAG_LIT)) // not visable
+	if (!(grid.at(m).dFlags & DunTileFlag::LIT)) // not visable
 		return false;
 	if (grid.at(m).getActor() == 0)
 		return false;
@@ -276,7 +276,7 @@ void FindMeleeTarget()
 
 void CheckMonstersNearby()
 {
-	if (myplr().data._pwtype == WT_RANGED || HasRangedSpell()) {
+	if (myplr().data._pwtype == PlayerWeaponType::ranged || HasRangedSpell()) {
 		FindRangedTarget();
 		return;
 	}
@@ -292,18 +292,18 @@ void CheckPlayerNearby()
 		return;
 
 	int spl = myplr().data._pRSpell;
-	if (FriendlyMode && spl != SPL_RESURRECT && spl != SPL_HEALOTHER)
+	if (FriendlyMode && spl != SpellId::RESURRECT && spl != SpellId::HEALOTHER)
 		return;
 
 	for (int i = 0; i < MAX_PLRS; i++) {
 		if (i == myplr()) continue;
 		const V2Di m = plr[i].futpos();
 		if (grid.at(m).isPlayer()
-		    || !(grid.at(m).dFlags & BFLAG_LIT)
-		    || (plr[i].data._pHitPoints == 0 && spl != SPL_RESURRECT))
+		    || !(grid.at(m).dFlags & DunTileFlag::LIT)
+		    || (plr[i].data._pHitPoints == 0 && spl != SpellId::RESURRECT))
 			continue;
 
-		if (myplr().data._pwtype == WT_RANGED || HasRangedSpell() || spl == SPL_HEALOTHER) {
+		if (myplr().data._pwtype == PlayerWeaponType::ranged || HasRangedSpell() || spl == SpellId::HEALOTHER) {
 			newDdistance = GetDistanceRanged(m);
 		} else {
 			newDdistance = GetDistance(m, distance);
@@ -401,13 +401,13 @@ void Interact()
 	if (lvl.type() == DunType::town && pcursmonst != -1) {
 		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._t, pcursmonst);
 	} else if (pcursmonst != -1) {
-		if (myplr().data._pwtype != WT_RANGED || CanTalkToMonst(pcursmonst)) {
+		if (myplr().data._pwtype != PlayerWeaponType::ranged || CanTalkToMonst(pcursmonst)) {
 			NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
 		} else {
 			NetSendCmdParam1(true, CMD_RATTACKID, pcursmonst);
 		}
 	} else if (lvl.type() != DunType::town && pcursplr != -1 && !FriendlyMode) {
-		NetSendCmdParam1(true, myplr().data._pwtype == WT_RANGED ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
+		NetSendCmdParam1(true, myplr().data._pwtype == PlayerWeaponType::ranged ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
 	}
 }
 
@@ -773,7 +773,7 @@ void WalkInDir(MoveDirection dir)
 	V2Di pos = myplr().futpos();
 
 	if (dir.x == MoveDirectionX_NONE && dir.y == MoveDirectionY_NONE) {
-		if (sgbControllerActive && !myplr().data.wkpath.empty() && myplr().data.destAction == ACTION_NONE)
+		if (sgbControllerActive && !myplr().data.wkpath.empty() && myplr().data.destAction == DestinationAction::NONE)
 			NetSendCmdLoc(true, CMD_WALKXY, pos); // Stop walking
 		return;
 	}
@@ -923,7 +923,7 @@ void UseBeltItem(int type)
 	for (int i = 0; i < MAXBELTITEMS; i++) {
 		const int id = AllItemsList[myplr().data.SpdList[i].IDidx].iMiscId;
 		const int spellId = AllItemsList[myplr().data.SpdList[i].IDidx].iSpell;
-		if ((type == BLT_HEALING && (id == MiscItemId::HEAL || id == MiscItemId::FULLHEAL || (id == MiscItemId::SCROLL && spellId == SPL_HEAL)))
+		if ((type == BLT_HEALING && (id == MiscItemId::HEAL || id == MiscItemId::FULLHEAL || (id == MiscItemId::SCROLL && spellId == SpellId::HEAL)))
 		    || (type == BLT_MANA && (id == MiscItemId::MANA || id == MiscItemId::FULLMANA))
 		    || id == MiscItemId::REJUV || id == MiscItemId::FULLREJUV) {
 			if (myplr().data.SpdList[i]._itype > -1) {
@@ -972,10 +972,10 @@ void PerformPrimaryAction()
 bool SpellHasActorTarget()
 {
 	int spl = myplr().data._pRSpell;
-	if (spl == SPL_TOWN || spl == SPL_TELEPORT)
+	if (spl == SpellId::TOWN || spl == SpellId::TELEPORT)
 		return false;
 
-	if (spl == SPL_FIREWALL && pcursmonst != -1) {
+	if (spl == SpellId::FIREWALL && pcursmonst != -1) {
 		cursm = monsters[pcursmonst].data._m;
 	}
 
@@ -988,7 +988,7 @@ void UpdateSpellTarget()
 	pcursplr = -1;
 	pcursmonst = -1;
 	int range = 1;
-	if (myplr().data._pRSpell == SPL_TELEPORT) range = 4;
+	if (myplr().data._pRSpell == SpellId::TELEPORT) range = 4;
 	cursm = myplr().futpos() + kOffsets[int(myplr().data._pdir)] * range;
 }
 
@@ -1034,13 +1034,13 @@ void PerformSpellAction()
 	}
 
 	int spl = myplr().data._pRSpell;
-	if ((pcursplr == -1 && (spl == SPL_RESURRECT || spl == SPL_HEALOTHER))
-	    || (pcursobj == -1 && spl == SPL_DISARM)) {
-		if (myplr().data._pClass == PC_WARRIOR) {
+	if ((pcursplr == -1 && (spl == SpellId::RESURRECT || spl == SpellId::HEALOTHER))
+	    || (pcursobj == -1 && spl == SpellId::DISARM)) {
+		if (myplr().data._pClass == PlayerClass::warrior) {
 			PlaySFX(PS_WARR27);
-		} else if (myplr().data._pClass == PC_ROGUE) {
+		} else if (myplr().data._pClass == PlayerClass::rogue) {
 			PlaySFX(PS_ROGUE27);
-		} else if (myplr().data._pClass == PC_SORCERER) {
+		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			PlaySFX(PS_MAGE27);
 		}
 		return;
@@ -1087,13 +1087,13 @@ void PerformSecondaryAction()
 		NetSendCmdLocParam1(true, CMD_OPOBJXY, cursm, pcursobj);
 	} else if (pcursmissile != -1) {
 		myplr().MakePlrPath(missile[pcursmissile]._mi, true);
-		myplr().data.destAction = ACTION_WALK;
+		myplr().data.destAction = DestinationAction::WALK;
 	} else if (pcurstrig != -1) {
 		myplr().MakePlrPath(trigs[pcurstrig]._t, true);
-		myplr().data.destAction = ACTION_WALK;
+		myplr().data.destAction = DestinationAction::WALK;
 	} else if (pcursquest != -1) {
 		myplr().MakePlrPath(quests[pcursquest]._qt, true);
-		myplr().data.destAction = ACTION_WALK;
+		myplr().data.destAction = DestinationAction::WALK;
 	}
 }
 

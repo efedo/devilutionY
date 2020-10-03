@@ -25,17 +25,6 @@ typedef enum _artfonts {
 	AF_HUGEGRAY  = 7,
 } _artfonts;
 
-typedef enum dflag {
-	BFLAG_MISSILE     = 0x01,
-	BFLAG_VISIBLE     = 0x02,
-	BFLAG_DEAD_PLAYER = 0x04,
-	BFLAG_POPULATED   = 0x08,
-	BFLAG_MONSTLR     = 0x10,
-	BFLAG_PLAYERLR    = 0x20,
-	BFLAG_LIT         = 0x40,
-	BFLAG_EXPLORED    = 0x80,
-} dflag;
-
 typedef enum dungeon_message {
 	DMSG_CATHEDRAL = 1 << 0,
 	DMSG_CATACOMBS = 1 << 1,
@@ -43,15 +32,6 @@ typedef enum dungeon_message {
 	DMSG_HELL      = 1 << 3,
 	DMSG_DIABLO    = 1 << 4,
 } dungeon_message;
-
-enum class DunType {
-	town = 0x0,
-	cathedral = 0x1,
-	catacombs = 0x2,
-	caves = 0x3,
-	hell = 0x4,
-	none = 0xFF,
-};
 
 typedef enum diablo_message {
 	EMSG_NONE                   = 0,
@@ -100,33 +80,6 @@ typedef enum diablo_message {
 	EMSG_BONECHAMB              = 43,
 } diablo_message;
 
-typedef enum magic_type {
-	STYPE_FIRE      = 0x0,
-	STYPE_LIGHTNING = 0x1,
-	STYPE_MAGIC     = 0x2,
-} magic_type;
-
-typedef enum theme_id {
-	THEME_BARREL            = 0x0,
-	THEME_SHRINE            = 0x1,
-	THEME_MONSTPIT          = 0x2,
-	THEME_SKELROOM          = 0x3,
-	THEME_TREASURE          = 0x4,
-	THEME_LIBRARY           = 0x5,
-	THEME_TORTURE           = 0x6,
-	THEME_BLOODFOUNTAIN     = 0x7,
-	THEME_DECAPITATED       = 0x8,
-	THEME_PURIFYINGFOUNTAIN = 0x9,
-	THEME_ARMORSTAND        = 0xA,
-	THEME_GOATSHRINE        = 0xB,
-	THEME_CAULDRON          = 0xC,
-	THEME_MURKYFOUNTAIN     = 0xD,
-	THEME_TEARFOUNTAIN      = 0xE,
-	THEME_BRNCROSS          = 0xF,
-	THEME_WEAPONRACK        = 0x10,
-	THEME_NONE              = -1,
-} theme_id;
-
 typedef enum event_type {
 	EVENT_TYPE_PLAYER_CREATE_GAME = 1,
 	EVENT_TYPE_2                  = 2,
@@ -170,29 +123,6 @@ typedef enum _difficulty {
 	NUM_DIFFICULTIES = 0x3,
 } _difficulty;
 
-typedef enum PLR_MODE {
-	PM_STAND   = 0,
-	PM_WALK    = 1,
-	PM_WALK2   = 2,
-	PM_WALK3   = 3,
-	PM_ATTACK  = 4,
-	PM_RATTACK = 5,
-	PM_BLOCK   = 6,
-	PM_GOTHIT  = 7,
-	PM_DEATH   = 8,
-	PM_SPELL   = 9,
-	PM_NEWLVL  = 10,
-	PM_QUIT    = 11,
-} PLR_MODE;
-
-typedef enum spell_type {
-	RSPLTYPE_SKILL   = 0x0,
-	RSPLTYPE_SPELL   = 0x1,
-	RSPLTYPE_SCROLL  = 0x2,
-	RSPLTYPE_CHARGES = 0x3,
-	RSPLTYPE_INVALID = 0x4,
-} spell_type;
-
 typedef enum cursor_id {
 	CURSOR_NONE        = 0x0,
 	CURSOR_HAND        = 0x1,
@@ -232,47 +162,6 @@ typedef enum game_info {
 	GAMEINFO_GAMETEMPLATE = 5,
 	GAMEINFO_PLAYERS      = 6,
 } game_info;
-
-typedef enum spell_id {
-	SPL_NULL        = 0x0,
-	SPL_FIREBOLT    = 0x1,
-	SPL_HEAL        = 0x2,
-	SPL_LIGHTNING   = 0x3,
-	SPL_FLASH       = 0x4,
-	SPL_IDENTIFY    = 0x5,
-	SPL_FIREWALL    = 0x6,
-	SPL_TOWN        = 0x7,
-	SPL_STONE       = 0x8,
-	SPL_INFRA       = 0x9,
-	SPL_RNDTELEPORT = 0xA,
-	SPL_MANASHIELD  = 0xB,
-	SPL_FIREBALL    = 0xC,
-	SPL_GUARDIAN    = 0xD,
-	SPL_CHAIN       = 0xE,
-	SPL_WAVE        = 0xF,
-	SPL_DOOMSERP    = 0x10,
-	SPL_BLODRIT     = 0x11,
-	SPL_NOVA        = 0x12,
-	SPL_INVISIBIL   = 0x13,
-	SPL_FLAME       = 0x14,
-	SPL_GOLEM       = 0x15,
-	SPL_BLODBOIL    = 0x16,
-	SPL_TELEPORT    = 0x17,
-	SPL_APOCA       = 0x18,
-	SPL_ETHEREALIZE = 0x19,
-	SPL_REPAIR      = 0x1A,
-	SPL_RECHARGE    = 0x1B,
-	SPL_DISARM      = 0x1C,
-	SPL_ELEMENT     = 0x1D,
-	SPL_CBOLT       = 0x1E,
-	SPL_HBOLT       = 0x1F,
-	SPL_RESURRECT   = 0x20,
-	SPL_TELEKINESIS = 0x21,
-	SPL_HEALOTHER   = 0x22,
-	SPL_FLARE       = 0x23,
-	SPL_BONESPIRIT  = 0x24,
-	SPL_INVALID     = -1,
-} spell_id;
 
 typedef enum _cmd_id {
 	CMD_STAND,
@@ -411,22 +300,6 @@ typedef enum panel_button_id {
 	PANBTN_FRIENDLY  = 7,
 } panel_button_id;
 
-typedef enum attribute_id {
-	ATTRIB_STR = 0,
-	ATTRIB_MAG = 1,
-	ATTRIB_DEX = 2,
-	ATTRIB_VIT = 3,
-} attribute_id;
-
-enum class SetLvl {
-	None		 = 0,
-	//SL_BUTCHCHAMB = 0x0, 
-	SkelKing     = 0x1,
-	BoneChamb    = 0x2,
-	Maze         = 0x3,
-	PoisonWater  = 0x4,
-	VileBetrayer = 0x5,
-};
 
 typedef enum quest_id {
 	Q_ROCK     = 0x0,
@@ -466,118 +339,13 @@ typedef enum quest_mush_state {
 	QS_BRAINGIVEN   = 7,
 } quest_mush_state;
 
-typedef enum plr_class {
-	PC_WARRIOR  = 0x0,
-	PC_ROGUE    = 0x1,
-	PC_SORCERER = 0x2,
-	NUM_CLASSES
-} plr_class;
-
-typedef enum _ui_classes {
-	UI_WARRIOR  = 0x0,
-	UI_ROGUE    = 0x1,
-	UI_SORCERER = 0x2,
-	UI_NUM_CLASSES,
-} _ui_classes;
-
-//typedef enum _walk_path {
-//	WALK_NE   = 0x1,
-//	WALK_NW   = 0x2,
-//	WALK_SE   = 0x3,
-//	WALK_SW   = 0x4,
-//	WALK_N    = 0x5,
-//	WALK_E    = 0x6,
-//	WALK_S    = 0x7,
-//	WALK_W    = 0x8,
-////	WALK_NONE = -1,
-//} _walk_path;
-
-typedef enum player_weapon_type {
-	WT_MELEE  = 0,
-	WT_RANGED = 1,
-} player_weapon_type;
-
-
-typedef enum player_graphic {
-	PFILE_STAND     = 1 << 0,
-	PFILE_WALK      = 1 << 1,
-	PFILE_ATTACK    = 1 << 2,
-	PFILE_HIT       = 1 << 3,
-	PFILE_LIGHTNING = 1 << 4,
-	PFILE_FIRE      = 1 << 5,
-	PFILE_MAGIC     = 1 << 6,
-	PFILE_DEATH     = 1 << 7,
-	PFILE_BLOCK     = 1 << 8,
-	// everything except PFILE_DEATH
-	// 0b1_0111_1111
-	PFILE_NONDEATH = 0x17F
-} player_graphic;
-
-typedef enum shrine_type {
-	SHRINE_MYSTERIOUS   = 0,
-	SHRINE_HIDDEN       = 1,
-	SHRINE_GLOOMY       = 2,
-	SHRINE_WEIRD        = 3,
-	SHRINE_MAGICAL      = 4,
-	SHRINE_STONE        = 5,
-	SHRINE_RELIGIOUS    = 6,
-	SHRINE_ENCHANTED    = 7,
-	SHRINE_THAUMATURGIC = 8,
-	SHRINE_FASCINATING  = 9,
-	SHRINE_CRYPTIC      = 10,
-	SHRINE_MAGICAL2     = 11,
-	SHRINE_ELDRITCH     = 12,
-	SHRINE_EERIE        = 13,
-	SHRINE_DIVINE       = 14,
-	SHRINE_HOLY         = 15,
-	SHRINE_SACRED       = 16,
-	SHRINE_SPIRITUAL    = 17,
-	SHRINE_SPOOKY       = 18,
-	SHRINE_ABANDONED    = 19,
-	SHRINE_CREEPY       = 20,
-	SHRINE_QUIET        = 21,
-	SHRINE_SECLUDED     = 22,
-	SHRINE_ORNATE       = 23,
-	SHRINE_GLIMMERING   = 24,
-	SHRINE_TAINTED      = 25,
-	NUM_SHRINETYPE
-} shrine_type;
-
-typedef enum action_id {
-	ACTION_WALK        = -2, // Automatic walk when using gamepad
-	ACTION_NONE        = -1,
-	ACTION_ATTACK      = 9,
-	ACTION_RATTACK     = 10,
-	ACTION_SPELL       = 12,
-	ACTION_OPERATE     = 13,
-	ACTION_DISARM      = 14,
-	ACTION_PICKUPITEM  = 15, // put item in hand (inventory screen open)
-	ACTION_PICKUPAITEM = 16, // put item in inventory
-	ACTION_TALK        = 17,
-	ACTION_OPERATETK   = 18, // operate via telekinesis
-	ACTION_ATTACKMON   = 20,
-	ACTION_ATTACKPLR   = 21,
-	ACTION_RATTACKMON  = 22,
-	ACTION_RATTACKPLR  = 23,
-	ACTION_SPELLMON    = 24,
-	ACTION_SPELLPLR    = 25,
-	ACTION_SPELLWALL   = 26,
-} action_id;
-
-typedef enum dlrg_flag {
-	DLRG_HDOOR     = 0x01,
-	DLRG_VDOOR     = 0x02,
-	DLRG_CHAMBER   = 0x40,
-	DLRG_PROTECTED = 0x80,
-} dlrg_flag;
-
 typedef enum conn_type {
-#ifndef NONET
+	#ifndef NONET
 	SELCONN_TCP,
-#ifdef BUGGY
+	#ifdef BUGGY
 	SELCONN_UDP,
-#endif
-#endif
+	#endif
+	#endif
 	SELCONN_LOOPBACK,
 } conn_type;
 

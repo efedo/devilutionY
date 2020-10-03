@@ -1168,11 +1168,11 @@ void sound_init()
 	uint8_t mask = 0;
 	if (plr.isMultiplayer()) {
 		mask = PLRSFXS;
-	} else if (!plr.maxPlayers() ||	myplr().data._pClass == PC_WARRIOR) {
+	} else if (!plr.maxPlayers() ||	myplr().data._pClass == PlayerClass::warrior) {
 		mask = sfx_WARRIOR;
-	} else if (myplr().data._pClass == PC_ROGUE) {
+	} else if (myplr().data._pClass == PlayerClass::rogue) {
 		mask = sfx_ROGUE;
-	} else if (myplr().data._pClass == PC_SORCERER) {
+	} else if (myplr().data._pClass == PlayerClass::sorceror) {
 		mask = sfx_SORCEROR;
 	} else {
 		app_fatal("effects:1");

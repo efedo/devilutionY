@@ -355,7 +355,7 @@ bool CheckThemeRoom(int tv)
 		for (int i = 0; i < MAXDUNX; i++) {
 			if (grid[i][j].dTransVal != tv)
 				continue;
-			if (grid[i][j].dFlags & BFLAG_POPULATED)
+			if (grid[i][j].dFlags & DunTileFlag::POPULATED)
 				return false;
 			tarea++;
 		}
@@ -461,7 +461,7 @@ void HoldThemeRooms()
 				for (y = 0; y < MAXDUNY; y++) {
 					for (x = 0; x < MAXDUNX; x++) {
 						if (grid[x][y].dTransVal == v) {
-							grid[x][y].dFlags |= BFLAG_POPULATED;
+							grid[x][y].dFlags |= DunTileFlag::POPULATED;
 						}
 					}
 				}
@@ -519,9 +519,9 @@ void Theme_Barrel(int t)
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (random_(0, barrnd[int(lvl.type()) - 1]) == 0) {
 					if (random_(0, barrnd[int(lvl.type()) - 1]) == 0) {
-						r = OBJ_BARREL;
+						r = ObjectType::BARREL;
 					} else {
-						r = OBJ_BARRELEX;
+						r = ObjectType::BARRELEX;
 					}
 					AddObject(r, xp, yp);
 				}
@@ -542,13 +542,13 @@ void Theme_Shrine(int t)
 
 	TFit_Shrine(t);
 	if (themeVar1 == 1) {
-		AddObject(OBJ_CANDLE2, themex - 1, themey);
-		AddObject(OBJ_SHRINER, themex, themey);
-		AddObject(OBJ_CANDLE2, themex + 1, themey);
+		AddObject(ObjectType::CANDLE2, themex - 1, themey);
+		AddObject(ObjectType::SHRINER, themex, themey);
+		AddObject(ObjectType::CANDLE2, themex + 1, themey);
 	} else {
-		AddObject(OBJ_CANDLE2, themex, themey - 1);
-		AddObject(OBJ_SHRINEL, themex, themey);
-		AddObject(OBJ_CANDLE2, themex, themey + 1);
+		AddObject(ObjectType::CANDLE2, themex, themey - 1);
+		AddObject(ObjectType::SHRINEL, themex, themey);
+		AddObject(ObjectType::CANDLE2, themex, themey + 1);
 	}
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
@@ -605,13 +605,13 @@ void Theme_SkelRoom(int t)
 	xp = themex;
 	yp = themey;
 
-	AddObject(OBJ_SKFIRE, xp, yp);
+	AddObject(ObjectType::SKFIRE, xp, yp);
 
 	if (random_(0, monstrnd[int(lvl.type()) - 1]) != 0) {
 		i = PreSpawnSkeleton();
 		SpawnSkeleton(i, { xp - 1, yp - 1 });
 	} else {
-		AddObject(OBJ_BANNERL, xp - 1, yp - 1);
+		AddObject(ObjectType::BANNERL, xp - 1, yp - 1);
 	}
 
 	i = PreSpawnSkeleton();
@@ -621,25 +621,25 @@ void Theme_SkelRoom(int t)
 		i = PreSpawnSkeleton();
 		SpawnSkeleton(i, { xp + 1, yp - 1 });
 	} else {
-		AddObject(OBJ_BANNERR, xp + 1, yp - 1);
+		AddObject(ObjectType::BANNERR, xp + 1, yp - 1);
 	}
 	if (random_(0, monstrnd[int(lvl.type()) - 1]) != 0) {
 		i = PreSpawnSkeleton();
 		SpawnSkeleton(i, { xp - 1, yp });
 	} else {
-		AddObject(OBJ_BANNERM, xp - 1, yp);
+		AddObject(ObjectType::BANNERM, xp - 1, yp);
 	}
 	if (random_(0, monstrnd[int(lvl.type()) - 1]) != 0) {
 		i = PreSpawnSkeleton();
 		SpawnSkeleton(i, { xp + 1, yp });
 	} else {
-		AddObject(OBJ_BANNERM, xp + 1, yp);
+		AddObject(ObjectType::BANNERM, xp + 1, yp);
 	}
 	if (random_(0, monstrnd[int(lvl.type()) - 1]) != 0) {
 		i = PreSpawnSkeleton();
 		SpawnSkeleton(i, { xp - 1, yp + 1 });
 	} else {
-		AddObject(OBJ_BANNERR, xp - 1, yp + 1);
+		AddObject(ObjectType::BANNERR, xp - 1, yp + 1);
 	}
 
 	i = PreSpawnSkeleton();
@@ -649,14 +649,14 @@ void Theme_SkelRoom(int t)
 		i = PreSpawnSkeleton();
 		SpawnSkeleton(i, { xp + 1, yp + 1 });
 	} else {
-		AddObject(OBJ_BANNERL, xp + 1, yp + 1);
+		AddObject(ObjectType::BANNERL, xp + 1, yp + 1);
 	}
 
 	if (!grid[xp][yp - 3].isObject()) {
-		AddObject(OBJ_SKELBOOK, xp, yp - 2);
+		AddObject(ObjectType::SKELBOOK, xp, yp - 2);
 	}
 	if (!grid[xp][yp + 3].isObject()) {
-		AddObject(OBJ_SKELBOOK, xp, yp + 2);
+		AddObject(ObjectType::SKELBOOK, xp, yp + 2);
 	}
 }
 
@@ -712,19 +712,19 @@ void Theme_Library(int t)
 	TFit_Shrine(t);
 
 	if (themeVar1 == 1) {
-		AddObject(OBJ_BOOKCANDLE, themex - 1, themey);
-		AddObject(OBJ_BOOKCASER, themex, themey);
-		AddObject(OBJ_BOOKCANDLE, themex + 1, themey);
+		AddObject(ObjectType::BOOKCANDLE, themex - 1, themey);
+		AddObject(ObjectType::BOOKCASER, themex, themey);
+		AddObject(ObjectType::BOOKCANDLE, themex + 1, themey);
 	} else {
-		AddObject(OBJ_BOOKCANDLE, themex, themey - 1);
-		AddObject(OBJ_BOOKCASEL, themex, themey);
-		AddObject(OBJ_BOOKCANDLE, themex, themey + 1);
+		AddObject(ObjectType::BOOKCANDLE, themex, themey - 1);
+		AddObject(ObjectType::BOOKCASEL, themex, themey);
+		AddObject(ObjectType::BOOKCANDLE, themex, themey + 1);
 	}
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
 			if (CheckThemeObj3(xp, yp, t, -1) && grid[xp][yp].getActor() == 0 && random_(0, librnd[int(lvl.type()) - 1]) == 0) {
-				AddObject(OBJ_BOOKSTAND, xp, yp);
+				AddObject(ObjectType::BOOKSTAND, xp, yp);
 				if (random_(0, 2 * librnd[int(lvl.type()) - 1]) != 0 && grid[xp][yp].isObject()) { /// BUGFIX: check grid[xp][yp].dObject was populated by AddObject (fixed)
 					oi = grid[xp][yp].getObject();
 					object[oi]._oSelFlag = 0;
@@ -760,7 +760,7 @@ void Theme_Torture(int t)
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, tortrnd[int(lvl.type()) - 1]) == 0) {
-						AddObject(OBJ_TNUDEM2, xp, yp);
+						AddObject(ObjectType::TNUDEM2, xp, yp);
 					}
 				}
 			}
@@ -778,7 +778,7 @@ void Theme_BloodFountain(int t)
 	char monstrnd[4] = { 6, 8, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_BLOODFTN, themex, themey);
+	AddObject(ObjectType::BLOODFTN, themex, themey);
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
 
@@ -798,7 +798,7 @@ void Theme_Decap(int t)
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, decaprnd[int(lvl.type()) - 1]) == 0) {
-						AddObject(OBJ_DECAP, xp, yp);
+						AddObject(ObjectType::DECAP, xp, yp);
 					}
 				}
 			}
@@ -817,7 +817,7 @@ void Theme_PurifyingFountain(int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_PURIFYINGFTN, themex, themey);
+	AddObject(ObjectType::PURIFYINGFTN, themex, themey);
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
 
@@ -834,14 +834,14 @@ void Theme_ArmorStand(int t)
 
 	if (armorFlag) {
 		TFit_Obj3(t);
-		AddObject(OBJ_ARMORSTAND, themex, themey);
+		AddObject(ObjectType::ARMORSTAND, themex, themey);
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, armorrnd[int(lvl.type()) - 1]) == 0) {
-						AddObject(OBJ_ARMORSTANDN, xp, yp);
+						AddObject(ObjectType::ARMORSTANDN, xp, yp);
 					}
 				}
 			}
@@ -861,7 +861,7 @@ void Theme_GoatShrine(int t)
 	int xx, yy;
 
 	TFit_GoatShrine(t);
-	AddObject(OBJ_GOATSHRINE, themex, themey);
+	AddObject(ObjectType::GOATSHRINE, themex, themey);
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
 			if (grid[xx][yy].dTransVal == themes[t].ttval && !grid[xx][yy].isSolid() && (xx != themex || yy != themey)) {
@@ -881,7 +881,7 @@ void Theme_Cauldron(int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_CAULDRON, themex, themey);
+	AddObject(ObjectType::CAULDRON, themex, themey);
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
 
@@ -895,7 +895,7 @@ void Theme_MurkyFountain(int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_MURKYFTN, themex, themey);
+	AddObject(ObjectType::MURKYFTN, themex, themey);
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
 
@@ -909,7 +909,7 @@ void Theme_TearFountain(int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_TEARFTN, themex, themey);
+	AddObject(ObjectType::TEARFTN, themex, themey);
 	PlaceThemeMonsts(t, monstrnd[int(lvl.type()) - 1]);
 }
 
@@ -929,7 +929,7 @@ void Theme_BrnCross(int t)
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, bcrossrnd[int(lvl.type()) - 1]) == 0) {
-						AddObject(OBJ_TBCROSS, xp, yp);
+						AddObject(ObjectType::TBCROSS, xp, yp);
 					}
 				}
 			}
@@ -952,14 +952,14 @@ void Theme_WeaponRack(int t)
 
 	if (weaponFlag) {
 		TFit_Obj3(t);
-		AddObject(OBJ_WEAPONRACK, themex, themey);
+		AddObject(ObjectType::WEAPONRACK, themex, themey);
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
 			if (grid[xp][yp].dTransVal == themes[t].ttval && !grid[xp][yp].isSolid()) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, weaponrnd[int(lvl.type()) - 1]) == 0) {
-						AddObject(OBJ_WEAPONRACKN, xp, yp);
+						AddObject(ObjectType::WEAPONRACKN, xp, yp);
 					}
 				}
 			}

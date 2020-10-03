@@ -415,7 +415,8 @@ enum class ItemIndex {
 	RESURRECT,
 };
 
-enum class UniqueItemType {
+// Only used three times???
+enum class UniqueItemId {
 	CLEAVER = 0x0,
 	SKCROWN = 0x1,
 	INFRARING = 0x2,

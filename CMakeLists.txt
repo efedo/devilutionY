@@ -187,7 +187,7 @@ add_library(devilution STATIC
   Source/actors/monsters/monster.cpp
   Source/actors/monsters/monster_beastiary.cpp
   Source/actors/monsters/monster_instance.cpp
-  Source/actors/monsters/monster_manager.cpp
+  "Source/actors/actor_manager_monsters.cpp"
   Source/actors/monsters/monster_type.cpp
   Source/actors/npcs/npc.cpp
   Source/actors/npcs/npc_manager.cpp
@@ -198,10 +198,13 @@ add_library(devilution STATIC
   Source/actors/player/inv_slotaccess.cpp
   Source/actors/player/player_instance.cpp
   Source/actors/player/player_items.cpp
-  Source/actors/player/player_manager.cpp
+  "Source/actors/actor_manager_players.cpp"
+  "Source/actors/actor_manager_monsters.cpp"
+  "Source/actors/actor_manager.cpp"
   Source/actors/actor.cpp
   Source/controls/control.cpp
   Source/controls/cursor.cpp
+  Source/controls/game_instance.cpp
   Source/graphics/capture.cpp
   Source/graphics/codec.cpp
   Source/graphics/effects.cpp
@@ -676,7 +679,7 @@ if(CPACK)
     set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 
     # -G RPM
-    set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
+    set(CPACK_RPlayerMode::FILE_NAME RPM-DEFAULT)
 
     find_program(RPMBUILD rpmbuild)
     if(RPMBUILD)

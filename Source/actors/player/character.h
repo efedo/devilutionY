@@ -62,9 +62,9 @@ public:
 		list[2].MaxStats = { 45, 250, 85, 80 };
 	}
 
-	auto &operator[](size_t n)
+	CharType get(PlayerClass &pclass)
 	{
-		return list[n];
+		return list[int(pclass)];
 	}
 
 private:

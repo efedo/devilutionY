@@ -11,10 +11,10 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-class MonsterInstance : public Actor {
+class Monster : public Actor {
 public:
-	MonsterInstance() : Actor(ActorType::monster) {};
-	MonsterInstance(int i, Dir rd, int mtype, V2Di pos);
+	Monster() : Actor(ActorType::monster){};
+	Monster(int i, Dir rd, int mtype, V2Di pos);
 	void NewMonsterAnim(AnimStruct *anim, Dir md);
 	void PlantInPosition(Dir dir = Dir::NONE, V2Di *pos = 0);
 	void ClearMVars();
@@ -81,48 +81,50 @@ public:
 	bool M_CallWalk2(Dir md);
 	bool M_DumbWalk(Dir md);
 	bool M_RoundWalk(Dir md, int *dir);
-	void MMonstAi::Zombie();
-	void MMonstAi::SkelSd();
-	bool MMonstAi::Path();
-	void MMonstAi::Snake();
-	void MMonstAi::Bat();
-	void MMonstAi::SkelBow();
-	void MMonstAi::Fat();
-	void MMonstAi::Sneak();
-	void MMonstAi::Fireman();
-	void MMonstAi::Fallen();
-	void MMonstAi::Cleaver();
-	void MMonstAi::Round(bool special);
-	void MMonstAi::GoatMc();
-	void MMonstAi::Ranged(int missile_type, bool special);
-	void MMonstAi::GoatBow();
-	void MMonstAi::Succ();
-	void MMonstAi::AcidUniq();
-	void MMonstAi::Scav();
-	void MMonstAi::Garg();
-	void MMonstAi::RoundRanged(int missile_type, bool checkdoors, int dam, int lessmissiles);
-	void MMonstAi::Magma();
-	void MMonstAi::Storm();
-	void MMonstAi::Acid();
-	void MMonstAi::Diablo();
-	void MAI_RR2(int mistype, int dam);
-	void MMonstAi::Mega();
-	void MMonstAi::Golum();
-	void MMonstAi::SkelKing();
-	void MMonstAi::Rhino();
-	void MMonstAi::Counselor();
-	void MMonstAi::Garbud();
-	void MMonstAi::Zhar();
-	void MMonstAi::SnotSpil();
-	void MMonstAi::Lazurus();
-	void MMonstAi::Lazhelp();
-	void MMonstAi::Lachdanan();
-	void MMonstAi::Warlord();
 
+	struct MAI {
+		void Zombie();
+		void SkelSd();
+		bool Path();
+		void Snake();
+		void Bat();
+		void SkelBow();
+		void Fat();
+		void Sneak();
+		void Fireman();
+		void Fallen();
+		void Cleaver();
+		void Round(bool special);
+		void GoatMc();
+		void Ranged(int missile_type, bool special);
+		void GoatBow();
+		void Succ();
+		void AcidUniq();
+		void Scav();
+		void Garg();
+		void RoundRanged(int missile_type, bool checkdoors, int dam,
+		                           int lessmissiles);
+		void Magma();
+		void Storm();
+		void Acid();
+		void Diablo();
+		void RR2(int mistype, int dam);
+		void Mega();
+		void Golum();
+		void SkelKing();
+		void Rhino();
+		void Counselor();
+		void Garbud();
+		void Zhar();
+		void SnotSpil();
+		void Lazurus();
+		void Lazhelp();
+		void Lachdanan();
+		void Warlord();
+	} ai;  // namespace Ai
 	MonsterStruct data;
-
 private:
-	int i;
+	uint64_t ActorId;
 };
 
 DEVILUTION_END_NAMESPACE

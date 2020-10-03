@@ -10,10 +10,10 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-class MonsterInstance;
+class Monster;
 
 extern int monstkills[MAXMONSTERS];
-extern int monstactive[MAXMONSTERS];
+//extern int monstactive[MAXMONSTERS]; // list of active monsters
 extern int MissileFileFlag;
 extern int nummonsters;
 extern bool sgbSaveSoundOn;
@@ -71,7 +71,7 @@ extern const uint8_t counsmiss[4];
 extern int MWVel[24][3];
 extern char animletter[7];
 
-extern void (MonsterInstance:: *AiProc[])();
+extern void (Monster:: *AiProc[])();
 
 DEVILUTION_END_NAMESPACE
 

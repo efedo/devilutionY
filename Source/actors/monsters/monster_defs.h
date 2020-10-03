@@ -2,20 +2,22 @@
 #ifndef __MONSTER_DEFS_H__
 #define __MONSTER_DEFS_H__
 
+#include "monster_enums.h"
+
 DEVILUTION_BEGIN_NAMESPACE
 
 //////////////////////////////////////////////////
 // monster
 //////////////////////////////////////////////////
 
-typedef struct AnimStruct {
+struct AnimStruct {
 	uint8_t *CMem;
 	uint8_t *Data[8];
 	int Frames;
 	int Rate;
-} AnimStruct;
+};
 
-typedef struct MonsterData {
+struct MonsterData {
 	int width;
 	int mImage;
 	char *GraphicType;
@@ -52,13 +54,12 @@ typedef struct MonsterData {
 	unsigned short mTreasure;
 	char mSelFlag;
 	unsigned short mExp;
-} MonsterData;
+};
 
-typedef struct CMonster {
-	unsigned char mtype;
+struct CMonster {
+	MonsterType mtype;
 	// TODO: Add enum for place flags
 	unsigned char mPlaceFlags;
-	AnimStruct Anims[6];
 	TSnd *Snds[4][2];
 	int width;
 	int width2;
@@ -71,12 +72,15 @@ typedef struct CMonster {
 	// A TRN file contains a sequence of colour transitions, represented
 	// as indexes into a palette. (a 256 byte array of palette indices)
 	uint8_t *trans_file;
-} CMonster;
+	AnimStruct &getAnim(MonstAnim anm) { return Anims[int(anm)]; }
+   private:
+	AnimStruct Anims[6];
+};
 
-typedef struct MonsterStruct {  // note: missing field _mAFNum
+struct MonsterStruct {  // note: missing field _mAFNum
 	int _mMTidx;
-	int _mmode; /* MON_MODE */
-	unsigned char _mgoal;
+	MonsterMode _mmode = MonsterMode::STAND; /* MON_MODE */
+	MonsterGoal _mgoal = MonsterGoal::None;
 	int _mgoalvar1;
 	int _mgoalvar2;
 	int _mgoalvar3;
@@ -87,31 +91,31 @@ typedef struct MonsterStruct {  // note: missing field _mAFNum
 	V2Di _mold;
 	V2Di _moff;
 	V2Di _mvel;
-	Dir _mdir;
-	int _menemy;
-	V2Di _menemypos;
+	Dir _mdir = Dir(random_(89, 8));
+	int _menemy = random_(89, gbActivePlayers);
+	V2Di _menemypos = plr[Monst->_menemy].futpos();
 	short falign_52;  // probably _mAFNum (unused)
-	unsigned char *_mAnimData;
-	int _mAnimDelay;
-	int _mAnimCnt;
-	int _mAnimLen;
-	int _mAnimFrame;
+	unsigned char *_mAnimData = 0;
+	int _mAnimDelay = 0;
+	int _mAnimCnt = 0;
+	int _mAnimLen = 0;
+	int _mAnimFrame = 0;
 	bool _meflag;
-	bool _mDelFlag;
-	int _mVar1;
-	int _mVar2;
-	int _mVar3;
-	int _mVar4;
-	int _mVar5;
-	int _mVar6;
-	int _mVar7;
-	int _mVar8;
+	bool _mDelFlag = false;
+	int _mVar1 = 0;
+	int _mVar2 = 0;
+	int _mVar3 = 0;
+	int _mVar4 = 0;
+	int _mVar5 = 0;
+	int _mVar6 = 0;
+	int _mVar7 = 0;
+	int _mVar8 = 0;
 	int _mmaxhp;
 	int _mhitpoints;
-	unsigned char _mAi;
+	MonstAi _mAi;
 	unsigned char _mint;
 	short falign_9A;
-	int _mFlags;
+	MonsterFlags _mFlags = 0;
 	uint8_t _msquelch;
 	int falign_A4;
 	V2Di _last;
@@ -138,18 +142,18 @@ typedef struct MonsterStruct {  // note: missing field _mAFNum
 	unsigned char leaderflag;
 	unsigned char packsize;
 	unsigned char mlid;
-	char *mName;
+	char *mName = "Invalid Monster";
 	CMonster *MType;
 	MonsterData *MData;
-} MonsterStruct;
+};
 
-typedef struct UniqMonstStruct {
-	char mtype;
+struct UniqMonstStruct {
+	MonsterType mtype;
 	char *mName;
 	char *mTrnName;
 	unsigned char mlevel;
 	unsigned short mmaxhp;
-	unsigned char mAi;
+	MonstAi mAi;
 	unsigned char mint;
 	unsigned char mMinDamage;
 	unsigned char mMaxDamage;
@@ -158,7 +162,7 @@ typedef struct UniqMonstStruct {
 	unsigned char mUnqVar1;
 	unsigned char mUnqVar2;
 	int mtalkmsg;
-} UniqMonstStruct;
+};
 
 
 DEVILUTION_END_NAMESPACE

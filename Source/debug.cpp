@@ -41,8 +41,8 @@ void CheckDungeonClear()
 			if (grid.at(n).isPlayer())
 				app_fatal("Players not cleared");
 
-			dMonsDbg[lvl.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_VISIBLE;
-			dFlagDbg[lvl.currlevel][n.x][n.y] = grid.at(n).dFlags & BFLAG_POPULATED;
+			dMonsDbg[lvl.currlevel][n.x][n.y] = grid.at(n).dFlags & DunTileFlag::VISIBLE;
+			dFlagDbg[lvl.currlevel][n.x][n.y] = grid.at(n).dFlags & DunTileFlag::POPULATED;
 		}
 	}
 }
@@ -121,28 +121,28 @@ void SetSpellLevelCheat(char spl, int spllvl)
 
 void SetAllSpellsCheat()
 {
-	SetSpellLevelCheat(SPL_FIREBOLT, 8);
-	SetSpellLevelCheat(SPL_CBOLT, 11);
-	SetSpellLevelCheat(SPL_HBOLT, 10);
-	SetSpellLevelCheat(SPL_HEAL, 7);
-	SetSpellLevelCheat(SPL_HEALOTHER, 5);
-	SetSpellLevelCheat(SPL_LIGHTNING, 9);
-	SetSpellLevelCheat(SPL_FIREWALL, 5);
-	SetSpellLevelCheat(SPL_TELEKINESIS, 3);
-	SetSpellLevelCheat(SPL_TOWN, 3);
-	SetSpellLevelCheat(SPL_FLASH, 3);
-	SetSpellLevelCheat(SPL_RNDTELEPORT, 2);
-	SetSpellLevelCheat(SPL_MANASHIELD, 2);
-	SetSpellLevelCheat(SPL_WAVE, 4);
-	SetSpellLevelCheat(SPL_FIREBALL, 3);
-	SetSpellLevelCheat(SPL_STONE, 1);
-	SetSpellLevelCheat(SPL_CHAIN, 1);
-	SetSpellLevelCheat(SPL_GUARDIAN, 4);
-	SetSpellLevelCheat(SPL_ELEMENT, 3);
-	SetSpellLevelCheat(SPL_NOVA, 1);
-	SetSpellLevelCheat(SPL_GOLEM, 2);
-	SetSpellLevelCheat(SPL_FLARE, 1);
-	SetSpellLevelCheat(SPL_BONESPIRIT, 1);
+	SetSpellLevelCheat(SpellId::FIREBOLT, 8);
+	SetSpellLevelCheat(SpellId::CBOLT, 11);
+	SetSpellLevelCheat(SpellId::HBOLT, 10);
+	SetSpellLevelCheat(SpellId::HEAL, 7);
+	SetSpellLevelCheat(SpellId::HEALOTHER, 5);
+	SetSpellLevelCheat(SpellId::LIGHTNING, 9);
+	SetSpellLevelCheat(SpellId::FIREWALL, 5);
+	SetSpellLevelCheat(SpellId::TELEKINESIS, 3);
+	SetSpellLevelCheat(SpellId::TOWN, 3);
+	SetSpellLevelCheat(SpellId::FLASH, 3);
+	SetSpellLevelCheat(SpellId::RNDTELEPORT, 2);
+	SetSpellLevelCheat(SpellId::MANASHIELD, 2);
+	SetSpellLevelCheat(SpellId::WAVE, 4);
+	SetSpellLevelCheat(SpellId::FIREBALL, 3);
+	SetSpellLevelCheat(SpellId::STONE, 1);
+	SetSpellLevelCheat(SpellId::CHAIN, 1);
+	SetSpellLevelCheat(SpellId::GUARDIAN, 4);
+	SetSpellLevelCheat(SpellId::ELEMENT, 3);
+	SetSpellLevelCheat(SpellId::NOVA, 1);
+	SetSpellLevelCheat(SpellId::GOLEM, 2);
+	SetSpellLevelCheat(SpellId::FLARE, 1);
+	SetSpellLevelCheat(SpellId::BONESPIRIT, 1);
 }
 
 void PrintDebugPlayer(bool bNextPlayer)

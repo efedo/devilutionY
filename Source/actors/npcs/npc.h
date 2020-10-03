@@ -10,7 +10,7 @@ DEVILUTION_BEGIN_NAMESPACE
 class Npc : public Actor
 {
    public:
-	Npc() : Actor(ActorType::towner)
+	Npc() : Actor(ActorType::npc)
 	{
 	}
 };

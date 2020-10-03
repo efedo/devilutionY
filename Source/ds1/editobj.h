@@ -1,6 +1,6 @@
-#ifndef _EDITOBJ_H_
+#ifndef _EDITObjectType::H_
 
-#define _EDITOBJ_H_                                                           
+#define _EDITObjectType::H_                                                           
 
 int  editobj_qsort_helper_drawing_order (const void * e1, const void * e2);
 void editobj_set_drawing_order          (int ds1_idx);

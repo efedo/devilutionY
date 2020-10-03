@@ -57,7 +57,7 @@ void Tile::destroyItem()
 
 void Tile::clearMissile()
 {
-	//grid.at(missile[mi]._mi).dFlags &= ~BFLAG_MISSILE;
+	//grid.at(missile[mi]._mi).dFlags &= ~DunTileFlag::MISSILE;
 	missile = UINT8_MAX;
 }
 
@@ -221,10 +221,10 @@ void Tile::setMissile(int missileNum)
 	return * static_cast<Player *>(actor);
 }
 
-[[nodiscard]] MonsterInstance& Tile::getMonster() const
+[[nodiscard]] Monster& Tile::getMonster() const
 {
 	assert(actor && actor->type == ActorType::monster);
-	return * static_cast<MonsterInstance *>(actor);
+	return * static_cast<Monster *>(actor);
 }
 
 [[nodiscard]] Towner& Tile::getTowner() const

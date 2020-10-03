@@ -93,7 +93,7 @@ QuestTalkData Qtalklist[] = {
 	// clang-format on
 };
 
-Towner::Towner(int i) : mytnum(i)
+Towner::Towner(int i) : Npc(), mytnum(i)
 {
 	assert(numInstances >= 0);
 	++numInstances;
@@ -412,7 +412,7 @@ void BarOwner::TalkToTowner(Player &player)
 				quests[Q_LTBANNER]._qactive = QUEST_DONE;
 				quests[Q_LTBANNER]._qvar1 = 3;
 				player.RemoveInvItem(i);
-				CreateItem(UniqueItemType::HARCREST,
+				CreateItem(UniqueItemId::HARCREST,
 					        {_t.x, _t.y + 1});
 				_tbtcnt = 150;
 				_tVar1 = p;
@@ -435,12 +435,12 @@ void DeadGuy::TalkToTowner(Player &player)
 		_tbtcnt = 150;
 		_tVar1 = &player;
 		quests[Q_BUTCHER]._qvar1 = 1;
-		if (player.data._pClass == PC_WARRIOR && !effect_is_playing(PS_WARR8)) {
+		if (player.data._pClass == PlayerClass::warrior && !effect_is_playing(PS_WARR8)) {
 			PlaySFX(PS_WARR8);
-		} else if (player.data._pClass == PC_ROGUE &&
+		} else if (player.data._pClass == PlayerClass::rogue &&
 		           !effect_is_playing(PS_ROGUE8)) {
 			PlaySFX(PS_ROGUE8);
-		} else if (player.data._pClass == PC_SORCERER &&
+		} else if (player.data._pClass == PlayerClass::sorceror &&
 		           !effect_is_playing(PS_MAGE8)) {
 			PlaySFX(PS_MAGE8);
 		}
@@ -492,7 +492,7 @@ void Smith::TalkToTowner(Player &player)
 					quests[Q_ROCK]._qvar2 = 2;
 					quests[Q_ROCK]._qvar1 = 2;
 					player.RemoveInvItem(i);
-					CreateItem(UniqueItemType::INFRARING,
+					CreateItem(UniqueItemId::INFRARING,
 					           {_t.x, _t.y + 1});
 					_tbtcnt = 150;
 					_tVar1 = &player;
@@ -528,7 +528,7 @@ void Smith::TalkToTowner(Player &player)
 					quests[Q_ANVIL]._qvar2 = 2;
 					quests[Q_ANVIL]._qvar1 = 2;
 					player.RemoveInvItem(i);
-					CreateItem(UniqueItemType::GRISWOLD,
+					CreateItem(UniqueItemId::GRISWOLD,
 					           {_t.x, _t.y + 1});
 					_tbtcnt = 150;
 					_tVar1 = p;
@@ -642,7 +642,7 @@ void Healer::TalkToTowner(Player &player)
 				_tbtcnt = 150;
 				_tVar1 = &player;
 				dialog.InitQTextMsg(TEXT_POISON5);
-				CreateItem(UniqueItemType::TRING, {_t.x, _t.y + 1});
+				CreateItem(UniqueItemId::TRING, {_t.x, _t.y + 1});
 				_tMsgSaid = true;
 			}
 		}

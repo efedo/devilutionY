@@ -698,7 +698,7 @@ bool LeftMouseCmd(bool bShift)
 			NetSendCmdLocParam1(true, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
 			NetSendCmdLocParam1(true, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursm, pcursobj);
-		} else if (myplr().data._pwtype == WT_RANGED) {
+		} else if (myplr().data._pwtype == PlayerWeaponType::ranged) {
 			if (bShift) {
 				NetSendCmdLoc(true, CMD_RATTACKXY, cursm);
 			} else if (pcursmonst != -1) {
@@ -1292,7 +1292,7 @@ void PressChar(int vkey)
 		return;
 	case 'a':
 		if (debug_mode_key_inverted_v) {
-			spelldata[SPL_TELEPORT].sTownSpell = 1;
+			spelldata[SpellId::TELEPORT].sTownSpell = 1;
 			myplr().data._pSplLvl[myplr().data._pSpell]++;
 		}
 		return;
@@ -1497,7 +1497,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		} else {
 			for (i = 0; i < MAXDUNX; i++) {
 				for (j = 0; j < MAXDUNY; j++)
-					grid[i][j].dFlags |= BFLAG_LIT;
+					grid[i][j].dFlags |= DunTileFlag::LIT;
 			}
 
 			InitTowners();
@@ -1568,7 +1568,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 				else
 					plr[i].SyncInitPlrPos();
 			} else {
-				grid.at(plr[i].pos()).dFlags |= BFLAG_DEAD_PLAYER;
+				grid.at(plr[i].pos()).dFlags |= DunTileFlag::DEAD_PLAYER;
 			}
 		}
 	}
