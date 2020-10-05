@@ -661,7 +661,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 	Item *item = slot.item();
 	if (!item) return;
 
-	if (owner.data._pInvincible && !owner.data._pHitPoints && owner.isMyPlr())
+	if (owner._pInvincible && owner._hp <= 0 && owner.isMyPlr())
 		return true;
 	if (pcurs != CURSOR_HAND)
 		return true;

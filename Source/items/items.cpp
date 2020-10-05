@@ -637,7 +637,7 @@ void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg,
 	if (delta) DeltaAddItem(item);
 }
 
-void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag)
+void SpawnQuestItem(ItemIndex itemid, V2Di pos, int randarea, int selflag)
 {
 	bool failed;
 	int i, j, tries;

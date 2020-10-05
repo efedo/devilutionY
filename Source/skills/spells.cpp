@@ -78,7 +78,7 @@ void UseMana(int id, int sn)
 	}
 }
 
-bool CheckSpell(int id, int sn, char st, bool manaonly)
+bool CheckSpell(SpellId id, RSpellType sn, char st, bool manaonly)
 {
 	bool result;
 
@@ -197,7 +197,7 @@ void DoResurrect(int pnum, int rid)
 		if (rid == myplr()) {
 			deathflag = false;
 			gamemenu_off();
-			drawhpflag = true;
+			redrawhpflag = true;
 			drawmanaflag = true;
 		}
 
@@ -265,7 +265,7 @@ void DoHealOther(int pnum, int rid)
 			plr[rid].data._pHPBase = plr[rid].data._pMaxHPBase;
 		}
 
-		drawhpflag = true;
+		redrawhpflag = true;
 	}
 }
 

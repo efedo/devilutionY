@@ -18,11 +18,11 @@ void ActorManager::clearAllMonsters()
 	_monsters.clear();
 }
 
-void ActorManager::PlaceMonster(Monster &monst, int mtype, V2Di pos)
+void ActorManager::PlaceMonster(int mtype, V2Di pos)
 {
-	grid.at(pos).setActor(i);
 	Dir rd = Dir(random_(90, 8));
-	list[i] = Monster(i, rd, mtype, pos);
+	Monster * monster = new Monster(rd, mtype, pos);
+	grid.at(pos).setActor(*monster);
 }
 
 void ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqindex,

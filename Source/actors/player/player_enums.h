@@ -34,7 +34,7 @@ enum class UiClass {
 	sorceror = 0x2,
 };
 
-typedef enum DestinationAction {
+enum class DestinationAction {
 	WALK = -2,  // Automatic walk when using gamepad
 	NONE = -1,
 	ATTACK = 9,
@@ -60,19 +60,21 @@ enum class PlayerWeaponType {
 	ranged = 1,
 };
 
-enum class PlayerGraphicFile {
-	STAND = 1 << 0,
-	WALK = 1 << 1,
-	ATTACK = 1 << 2,
-	HIT = 1 << 3,
-	LIGHTNING = 1 << 4,
-	FIRE = 1 << 5,
-	MAGIC = 1 << 6,
-	DEATH = 1 << 7,
-	BLOCK = 1 << 8,
+using PlayerGraphicFileFlags = int;
+
+namespace PlayerGraphicFileFlag {
+	constexpr int STAND = 1 << 0;
+	constexpr int WALK = 1 << 1;
+	constexpr int ATTACK = 1 << 2;
+	constexpr int HIT = 1 << 3;
+	constexpr int LIGHTNING = 1 << 4;
+	constexpr int FIRE = 1 << 5;
+	constexpr int MAGIC = 1 << 6;
+	constexpr int DEATH = 1 << 7;
+	constexpr int BLOCK = 1 << 8;
 	// everything except DEATH
 	// 0b1_0111_1111
-	NONDEATH = 0x17F
+	constexpr int NONDEATH = 0x17F;
 };
 
 enum class PlayerMode {

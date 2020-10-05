@@ -10,14 +10,12 @@ DEVILUTION_BEGIN_NAMESPACE
 
 extern uint8_t *pDurIcons;
 extern uint8_t *pChrButtons;
-extern bool drawhpflag;
 extern bool panbtn[8];
 extern bool chrbtn[4];
 extern uint8_t *pMultiBtns;
 extern uint8_t *pPanelButtons;
 extern uint8_t *pChrPanel;
 extern bool lvlbtndown;
-extern bool drawmanaflag;
 extern bool chrbtnactive;
 extern uint8_t *pPanelText;
 extern uint8_t *pLifeBuff;
@@ -39,7 +37,6 @@ extern int pSplType;
 extern int initialDropGoldIndex;
 extern bool talkflag;
 extern uint8_t *pSBkIconCels;
-extern bool chrflag;
 extern bool drawbtnflag;
 extern uint8_t *pSpellBkCel;
 extern char infostr[256];

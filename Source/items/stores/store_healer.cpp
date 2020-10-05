@@ -33,7 +33,7 @@ void StoreHealer::S_Enter()
 		case 14:
 			if (myplr().data._pHitPoints != myplr().data._pMaxHP)
 				PlaySFX(IS_CAST8);
-			drawhpflag = true;
+			redrawhpflag = true;
 			myplr().data._pHitPoints = myplr().data._pMaxHP;
 			myplr().data._pHPBase = myplr().data._pMaxHPBase;
 			break;

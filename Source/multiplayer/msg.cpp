@@ -689,6 +689,7 @@ void NetSendCmdLocParam3(bool bHiPri, uint8_t bCmd, V2Di pos, WORD wParam1, WORD
 		NetSendLoPri((uint8_t *)&cmd, sizeof(cmd));
 }
 
+// wParam 1 : attribute BASE value
 void NetSendCmdParam1(bool bHiPri, uint8_t bCmd, WORD wParam1)
 {
 	ALIGN_BY_1 TCmdParam1 cmd;
@@ -2165,7 +2166,7 @@ DWORD On_PLRDAMAGE(TCmd *pCmd, int pnum)
 	if (p->bPlr == myplr() && lvl.currlevel != 0) {
 		if (gbBufferMsgs != 1 && lvl.currlevel == plr[pnum].data.plrlevel && p->dwDam <= 192000) {
 			if ((myplr().data._pHitPoints >> 6) > 0) {
-				drawhpflag = true;
+				redrawhpflag = true;
 				myplr().data._pHitPoints -= p->dwDam;
 				myplr().data._pHPBase -= p->dwDam;
 				if (myplr().data._pHitPoints > myplr().data._pMaxHP) {
@@ -2348,13 +2349,13 @@ DWORD On_PLAYER_JOINLEVEL(TCmd *pCmd, int pnum)
 			plr[pnum].data.plrlevel = p->wParam1;
 			plr[pnum].data._pGFXLoad = 0;
 			if (lvl.currlevel == plr[pnum].data.plrlevel) {
-				plr[pnum].LoadPlrGFX(PlayerGraphicFile::STAND);
+				plr[pnum].LoadPlrGFX(PlayerGraphicFileFlag::STAND);
 				plr[pnum].SyncInitPlr();
 				if ((plr[pnum].data._pHitPoints >> 6) > 0)
 					plr[pnum].StartStand(Dir(0));
 				else {
 					plr[pnum].data._pgfxnum = 0;
-					plr[pnum].LoadPlrGFX(PlayerGraphicFile::DEATH);
+					plr[pnum].LoadPlrGFX(PlayerGraphicFileFlag::DEATH);
 					plr[pnum].data._pmode = PlayerMode::DEATH;
 					plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
 					plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;

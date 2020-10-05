@@ -565,12 +565,10 @@ void S_StartDrunk()
 	storenumh = 20;
 }
 
-void StartStore(char s)
+void StartStore(StoreTalkId s)
 {
-	char t;
 	int i;
-
-	for (t = s;; t = StoreTalkId::SMITH) {
+	for (char t = s;; t = StoreTalkId::SMITH) {
 		sbookflag = false;
 		invflag = false;
 		chrflag = false;
@@ -709,7 +707,7 @@ void TakePlrsMoney(int cost)
 			if (myplr().data.SpdList[i]._itype == ItemType::gold) {
 				if (cost < myplr().data.SpdList[i]._ivalue) {
 					myplr().data.SpdList[i]._ivalue -= cost;
-					SetSpdbarGoldCurs(myplr(), i);
+					myplr().SetSpdbarGoldCurs(i);
 					cost = 0;
 				} else {
 					cost -= myplr().data.SpdList[i]._ivalue;

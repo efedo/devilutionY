@@ -62,7 +62,7 @@ int MWVel[24][3] = {
 char animletter[7] = "nwahds";
 
 void (Monster:: *AiProc[])() = {
-	&Monster::MMonstAi::Zombie,
+	&Monster::ai::Zombie,
 	&Monster::MMonstAi::Fat,
 	&Monster::MMonstAi::SkelSd,
 	&Monster::MMonstAi::SkelBow,
@@ -386,12 +386,6 @@ void PrepDoEnding()
 	for (i = 0; i < MAX_PLRS; i++) {
 		plr[i].data._pmode = PlayerMode::QUIT;
 		plr[i].data._pInvincible = true;
-		if (plr.isMultiplayer()) {
-			if (plr[i].data._pHitPoints >> 6 == 0)
-				plr[i].data._pHitPoints = 64;
-			if (plr[i].data._pMana >> 6 == 0)
-				plr[i].data._pMana = 64;
-		}
 	}
 }
 

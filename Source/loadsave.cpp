@@ -331,9 +331,9 @@ void LoadPlayer(int i)
 	CopyChar(tbuff, &pPlayer->_pSBkSplType);
 	CopyBytes(tbuff, 64, &pPlayer->_pSplLvl);
 	tbuff += 7; // Alignment
-	CopyInt64(tbuff, &pPlayer->_pMemSpells);
-	CopyInt64(tbuff, &pPlayer->_pAblSpells);
-	CopyInt64(tbuff, &pPlayer->_pScrlSpells);
+	CopyInt64(tbuff, &pPlayer->_pMemorySpells);
+	CopyInt64(tbuff, &pPlayer->_pAbilitySpells);
+	CopyInt64(tbuff, &pPlayer->_pScrollSpells);
 	CopyChar(tbuff, &pPlayer->_pSpellFlags);
 	tbuff += 3; // Alignment
 	CopyInts(tbuff, 4, &pPlayer->_pSplHotKey);
@@ -1056,9 +1056,9 @@ void SavePlayer(int i)
 	CopyChar(&pPlayer->_pSBkSplType, tbuff);
 	CopyBytes(&pPlayer->_pSplLvl, 64, tbuff);
 	tbuff += 7; // Alignment
-	CopyInt64(&pPlayer->_pMemSpells, tbuff);
-	CopyInt64(&pPlayer->_pAblSpells, tbuff);
-	CopyInt64(&pPlayer->_pScrlSpells, tbuff);
+	CopyInt64(&pPlayer->_pMemorySpells, tbuff);
+	CopyInt64(&pPlayer->_pAbilitySpells, tbuff);
+	CopyInt64(&pPlayer->_pScrollSpells, tbuff);
 	CopyChar(&pPlayer->_pSpellFlags, tbuff);
 	tbuff += 3; // Alignment
 	CopyInts(&pPlayer->_pSplHotKey, 4, tbuff);

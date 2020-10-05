@@ -743,7 +743,7 @@ bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, bool s
 				} else if (plr[pnum].data._pClass == PlayerClass::sorceror) {
 					PlaySfxLoc(PS_MAGE69, plr[pnum].pos());
 				}
-				drawhpflag = true;
+				redrawhpflag = true;
 			}
 		} else {
 			if (blk < blkper) {
@@ -1749,7 +1749,7 @@ void AddFlare(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 		UseMana(id, SpellId::FLARE);
 		plr[id].data._pHitPoints -= 320;
 		plr[id].data._pHPBase -= 320;
-		drawhpflag = true;
+		redrawhpflag = true;
 		if (plr[id].data._pHitPoints <= 0)
 			plr[id].SyncPlrKill(0);
 	} else {
@@ -1940,7 +1940,7 @@ void AddHeal(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 
 	UseMana(id, SpellId::HEAL);
 	missile[mi]._miDelFlag = true;
-	drawhpflag = true;
+	redrawhpflag = true;
 }
 
 void AddHealOther(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -2275,7 +2275,7 @@ void AddBoneSpirit(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int 
 		UseMana(id, SpellId::BONESPIRIT);
 		plr[id].data._pHitPoints -= 384;
 		plr[id].data._pHPBase -= 384;
-		drawhpflag = true;
+		redrawhpflag = true;
 		if (plr[id].data._pHitPoints <= 0)
 			plr[id].SyncPlrKill(0);
 	}
@@ -2975,7 +2975,7 @@ void MI_Manashield(int i)
 			if (diff < 0)
 				diff = 0;
 			drawmanaflag = true;
-			drawhpflag = true;
+			redrawhpflag = true;
 
 			if (plr[id].data._pMana >= diff) {
 				plr[id].data._pHitPoints = missile[i]._miVar1;

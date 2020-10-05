@@ -40,7 +40,7 @@ void PentSpn2Spin();
 void SetupTownStores();
 void FreeStoreMem();
 
-void StartStore(char s);
+void StartStore(StoreTalkId s);
 
 void StoreAutoPlace();
 void AddStoreHoldRepair(ItemStruct *itm, int i);

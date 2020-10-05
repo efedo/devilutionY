@@ -11,7 +11,6 @@ uint8_t sgbNextTalkSave;
 uint8_t sgbTalkSavePos;
 uint8_t *pDurIcons;
 uint8_t *pChrButtons;
-bool drawhpflag;
 bool dropGoldFlag;
 bool panbtn[8];
 bool chrbtn[4];
@@ -21,7 +20,6 @@ uint8_t *pChrPanel;
 bool lvlbtndown;
 char sgszTalkSave[8][80];
 int dropGoldValue;
-bool drawmanaflag;
 bool chrbtnactive;
 char sgszTalkMsg[MAX_SEND_STR_LEN];
 uint8_t *pPanelText;
@@ -45,7 +43,6 @@ int pSplType;
 int initialDropGoldIndex;
 bool talkflag;
 uint8_t *pSBkIconCels;
-bool chrflag;
 bool drawbtnflag;
 uint8_t *pSpellBkCel;
 char infostr[256];
@@ -333,16 +330,16 @@ void DrawSpellList()
 		case RSpellType::SKILL:
 			SetSpellTrans(RSpellType::SKILL);
 			c = SPLICONLAST + 3;
-			mask = myplr().data._pAblSpells;
+			mask = myplr().data._pAbilitySpells;
 			break;
 		case RSpellType::SPELL:
 			c = SPLICONLAST + 4;
-			mask = myplr().data._pMemSpells;
+			mask = myplr().data._pMemorySpells;
 			break;
 		case RSpellType::SCROLL:
 			SetSpellTrans(RSpellType::SCROLL);
 			c = SPLICONLAST + 1;
-			mask = myplr().data._pScrlSpells;
+			mask = myplr().data._pScrollSpells;
 			break;
 		case RSpellType::CHARGES:
 			SetSpellTrans(RSpellType::CHARGES);
@@ -478,13 +475,13 @@ void ToggleSpell(int slot)
 
 	switch (myplr().data._pSplTHotKey[slot]) {
 	case RSpellType::SKILL:
-		spells = myplr().data._pAblSpells;
+		spells = myplr().data._pAbilitySpells;
 		break;
 	case RSpellType::SPELL:
-		spells = myplr().data._pMemSpells;
+		spells = myplr().data._pMemorySpells;
 		break;
 	case RSpellType::SCROLL:
-		spells = myplr().data._pScrlSpells;
+		spells = myplr().data._pScrollSpells;
 		break;
 	case RSpellType::CHARGES:
 		spells = myplr().data._pISpells;
@@ -811,7 +808,7 @@ void InitControlPan()
 	pDurIcons = LoadFileInMem("Items\\DurIcons.CEL", NULL);
 	strcpy(infostr, "");
 	ClearPanel();
-	drawhpflag = true;
+	redrawhpflag = true;
 	drawmanaflag = true;
 	chrflag = false;
 	spselflag = false;
@@ -883,13 +880,13 @@ void DoSpeedBook()
 		for (i = 0; i < 4; i++) {
 			switch (i) {
 			case RSpellType::SKILL:
-				spells = myplr().data._pAblSpells;
+				spells = myplr().data._pAbilitySpells;
 				break;
 			case RSpellType::SPELL:
-				spells = myplr().data._pMemSpells;
+				spells = myplr().data._pMemorySpells;
 				break;
 			case RSpellType::SCROLL:
-				spells = myplr().data._pScrlSpells;
+				spells = myplr().data._pScrollSpells;
 				break;
 			case RSpellType::CHARGES:
 				spells = myplr().data._pISpells;
@@ -1767,7 +1764,7 @@ char GetSBookTrans(int ii, bool townok)
 	if (myplr().data._pISpells & (__int64)1 << (ii - 1)) {
 		st = RSpellType::CHARGES;
 	}
-	if (myplr().data._pAblSpells & (__int64)1 << (ii - 1)) { /// BUGFIX: missing (__int64) (fixed)
+	if (myplr().data._pAbilitySpells & (__int64)1 << (ii - 1)) { /// BUGFIX: missing (__int64) (fixed)
 		st = RSpellType::SKILL;
 	}
 	if (st == RSpellType::SPELL) {
@@ -1794,7 +1791,7 @@ void DrawSpellBook()
 	CelDraw(RIGHT_PANEL_X, 351 + SCREEN_Y, pSpellBkCel, 1, SPANEL_WIDTH);
 	CelDraw(RIGHT_PANEL_X + 76 * sbooktab + 7, 348 + SCREEN_Y, pSBkBtnCel, sbooktab + 1, 76);
 
-	spl = myplr().data._pMemSpells | myplr().data._pISpells | myplr().data._pAblSpells;
+	spl = myplr().data._pMemorySpells | myplr().data._pISpells | myplr().data._pAbilitySpells;
 
 	yp = 215;
 	for (i = 1; i < 8; i++) {
@@ -1882,14 +1879,14 @@ void CheckSBook()
 	unsigned __int64 spl;
 
 	if (Mouse.x >= RIGHT_PANEL + 11 && Mouse.x < RIGHT_PANEL + 48 && Mouse.y >= 18 && Mouse.y < 314) {
-		spl = myplr().data._pMemSpells | myplr().data._pISpells | myplr().data._pAblSpells;
+		spl = myplr().data._pMemorySpells | myplr().data._pISpells | myplr().data._pAbilitySpells;
 		sn = SpellPages[sbooktab][(Mouse.y - 18) / 43];
 		if (sn != -1 && spl & (__int64)1 << (sn - 1)) {
 			st = RSpellType::SPELL;
 			if (myplr().data._pISpells & (__int64)1 << (sn - 1)) {
 				st = RSpellType::CHARGES;
 			}
-			if (myplr().data._pAblSpells & (__int64)1 << (sn - 1)) {
+			if (myplr().data._pAbilitySpells & (__int64)1 << (sn - 1)) {
 				st = RSpellType::SKILL;
 			}
 			myplr().data._pRSpell = sn;

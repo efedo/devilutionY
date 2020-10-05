@@ -3,21 +3,42 @@
  *
  * Description.
  */
-#ifndef __TEMPLATE_H__
-#define __TEMPLATE_H__
+#ifndef __PLAYER_DEFS__
+#define __PLAYER_DEFS__
+
+#include "vectordvl.h"
+#include "player_enums.h"
+#include "player_attribute.h"
+#include <queue>
 
 DEVILUTION_BEGIN_NAMESPACE
+
+struct SpellBookEntry {
+	//SpellId id = SpellId::INVALID;
+	uint8_t ability_level = 0;
+	uint8_t memory_level = 0;
+	uint8_t scroll_level = 0;
+
+	//RSpellType _pRSplType = RSpellType::INVALID; // Just look this up from spell table
+};
+
+class SpellBook {
+public:
+	SpellBookEntry & entry(SpellId spell_id);
+private:
+	SpellBookEntry _spells[MAX_SPELLS];
+};
 
 //////////////////////////////////////////////////
 // player
 //////////////////////////////////////////////////
 
 typedef struct PlayerStruct {
-	int _pmode;
+	PlayerMode _pmode;
 	// char walkpath = -1;
 	std::queue<PathNode> wkpath;
 	bool plractive;
-	int destAction;
+	DestinationAction destAction;
 	int destParam1;
 	int destParam2;
 	int destParam3;
@@ -44,66 +65,57 @@ typedef struct PlayerStruct {
 	int _peflag;
 	int _plid;
 	int _pvid;
-	int _pSpell;
-	char _pSplType;
+
+	SpellBook _spellBook;
+
+	SpellId _pSpell;
+	RSpellType _pSplType;
 	char _pSplFrom;
-	int _pTSpell;
-	char _pTSplType;
-	int _pRSpell;
-	// enum spell_type
-	char _pRSplType;
-	int _pSBkSpell;
-	char _pSBkSplType;
-	char _pSplLvl[64];
-	uint64_t _pMemSpells;
-	uint64_t _pAblSpells;
-	uint64_t _pScrlSpells;
+	SpellId _pTSpell;
+	RSpellType _pTSplType;
+	SpellId _pRSpell;
+	RSpellType _pRSplType;
+	SpellId _pSBkSpell;
+	RSpellType _pSBkSplType;
+//	char _pSplLvl[64];
+
+	//uint64_t _pMemorySpells;
+	//SpellId _pAbilitySpells; // very odd shifting goes on during assigment
+	//uint64_t _pScrollSpells;
+
 	uint8_t _pSpellFlags;
 	int _pSplHotKey[4];
 	char _pSplTHotKey[4];
 	int _pwtype;
 	bool _pBlockFlag;
-	bool _pInvincible;
+	bool _pInvincible; // this appears to be inversed (i.e. 0 = invincible, 1 = mortal)
 	char _pLightRad;
 	bool _pLvlChanging;
 	char _pName[PLR_NAME_LEN];
-	// plr_class enum value.
-	// TODO: this could very well be `enum plr_class _pClass`
-	// since there are 3 bytes of alingment after this field.
-	// it could just be that the compiler optimized away all accesses to
-	// the higher bytes by using byte instructions, since all possible values
-	// of plr_class fit into one byte.
 	PlayerClass _pClass;
-	int _pStrength;
-	int _pBaseStr;
-	int _pMagic;
-	int _pBaseMag;
-	int _pDexterity;
-	int _pBaseDex;
-	int _pVitality;
-	int _pBaseVit;
+
+	PAttribute _strength;
+	PAttribute _magic;
+	PAttribute _dexterity;
+	PAttribute _vitality;
+	PAttribute _hp;
+	PAttribute _mana;
+
 	int _pStatPts;
 	int _pDamageMod;
 	int _pBaseToBlk;
-	int _pHPBase;
-	int _pMaxHPBase;
-	int _pHitPoints;
-	int _pMaxHP;
-	int _pHPPer;
-	int _pManaBase;
-	int _pMaxManaBase;
-	int _pMana;
-	int _pMaxMana;
-	int _pManaPer;
+
 	char _pLevel;
 	char _pMaxLvl;
 	int _pExperience;
 	int _pMaxExp;
 	int _pNextExper;
+
 	char _pArmorClass;
 	char _pMagResist;
 	char _pFireResist;
 	char _pLghtResist;
+
 	int _pGold;
 	bool _pInfraFlag;
 	int _pVar1;
@@ -114,32 +126,51 @@ typedef struct PlayerStruct {
 	int _pVar6;
 	int _pVar7;
 	int _pVar8;
-	bool _pLvlVisited[NUMLEVELS];
-	bool _pSetLvlVisited[NUMLEVELS];  // only 10 used
+	bool _pLvlVisited[NUMLEVELS]; // Dungeon levels visited
+	bool _pSetLvlVisited[NUMLEVELS];  // Set levels visited
 	int _pGFXLoad;
+
 	unsigned char *_pNAnim[8];
+	unsigned char* _pNData;
 	int _pNFrames;
 	int _pNWidth;
+
 	unsigned char *_pWAnim[8];
+	unsigned char* _pWData;
 	int _pWFrames;
 	int _pWWidth;
+
 	unsigned char *_pAAnim[8];
+	unsigned char* _pAData;
 	int _pAFrames;
 	int _pAWidth;
 	int _pAFNum;
+
 	unsigned char *_pLAnim[8];
+	unsigned char* _pLData;
+
 	unsigned char *_pFAnim[8];
+	unsigned char* _pFData;
+
 	unsigned char *_pTAnim[8];
+	unsigned char* _pTData;
+
 	int _pSFrames;
 	int _pSWidth;
 	int _pSFNum;
+
 	unsigned char *_pHAnim[8];
+	unsigned char* _pHData;
 	int _pHFrames;
 	int _pHWidth;
+
 	unsigned char *_pDAnim[8];
+	unsigned char* _pDData;
 	int _pDFrames;
 	int _pDWidth;
+
 	unsigned char *_pBAnim[8];
+	unsigned char* _pBData;
 	int _pBFrames;
 	int _pBWidth;
 
@@ -171,19 +202,11 @@ typedef struct PlayerStruct {
 	short wReserved[8];
 	uint32_t pDiabloKillLevel;
 	int dwReserved[7];
-	unsigned char *_pNData;
-	unsigned char *_pWData;
-	unsigned char *_pAData;
-	unsigned char *_pLData;
-	unsigned char *_pFData;
-	unsigned char *_pTData;
-	unsigned char *_pHData;
-	unsigned char *_pDData;
-	unsigned char *_pBData;
+
 	void *pReserved;
 } PlayerStruct;
 
 
 DEVILUTION_END_NAMESPACE
 
-#endif  // __TEMPLATE_H__
+#endif  // __PLAYER_DEFS__

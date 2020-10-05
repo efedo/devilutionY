@@ -62,7 +62,7 @@ public:
 		list[2].MaxStats = { 45, 250, 85, 80 };
 	}
 
-	CharType get(PlayerClass &pclass)
+	CharType get(PlayerClass pclass)
 	{
 		return list[int(pclass)];
 	}

@@ -10,3 +10,14 @@ Change to item pointers/numbers:
 
 Replace almost all instances of  MAXINVITEMS and MAXBELTITEMS with range loops
 	for (auto &i : inv.getBagArray()) {
+
+	BFLAG_(?<char>[A-Z]{3})
+DunTileFlag::${char}
+
+Replace all:
+_pHitPoints
+_pIGetHit
+
+Check for other values that are bit-shifted
+(probably to reduce calculation errors)
+>> 6

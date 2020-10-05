@@ -43,7 +43,7 @@ typedef struct ChainStruct {
 } ChainStruct;
 
 typedef struct MissileStruct {
-	int _mitype;
+	MissileType _mitype;
 	V2Di _mi;
 	V2Di _mioff;
 	V2Di _mivel;
@@ -67,7 +67,7 @@ typedef struct MissileStruct {
 	bool _miPreFlag;
 	int _miUniqTrans;
 	int _mirange;
-	int _misource;
+	ActorId _misource;
 	int _micaster;
 	int _midam;
 	bool _miHitFlag;

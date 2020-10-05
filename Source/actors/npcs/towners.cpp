@@ -125,7 +125,7 @@ void Towner::NewTownerAnim(uint8_t *pAnim, int numFrames, int Delay)
 	_tAnimDelay = Delay;
 }
 
-void Towner::InitTownerInfo(int w, int sel, int t, int x, int y, int ao, int tp)
+void Towner::InitTownerInfo(int w, int sel, TownerId t, int x, int y, int ao, int tp)
 {
 	_tSelFlag = sel;
 	_tAnimWidth = w;
@@ -338,9 +338,6 @@ void Towner::TownerTalk(int first)
 
 void Towner::TalkToTowner(Player &player)
 {
-	int i, dx, dy, rv1, rv2, rv3;
-	ItemStruct *Item;
-
 	int dist = (player.pos() - _t).maxabs();
 	#ifdef _DEBUG
 	if (!debug_mode_key_d && (dist >= 2)) { return; }
@@ -349,7 +346,6 @@ void Towner::TalkToTowner(Player &player)
 	#endif
 
 	if (dialog.qtextflag) { return; }
-
 	_tMsgSaid = false;
 
 	if (pcurs >= CURSOR_FIRSTITEM && !DropItemBeforeTrig()) { return; }
@@ -374,7 +370,7 @@ void BarOwner::TalkToTowner(Player &player)
 				quests[Q_SKELKING]._qvar1 = 1;
 			}
 			_tbtcnt = 150;
-			_tVar1 = p;
+			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_KING2);
 			_tMsgSaid = true;
 			NetSendCmdQuest(true, Q_SKELKING);
@@ -470,7 +466,7 @@ void DeadGuy::TalkToTowner(Player &player)
 void Smith::TalkToTowner(Player &player)
 {
 	Towner::TalkToTowner(player);
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (player.data._pLvlVisited[4] &&
 		    quests[Q_ROCK]._qactive != QUEST_NOTAVAIL) {
 			if (quests[Q_ROCK]._qvar2 == 0) {

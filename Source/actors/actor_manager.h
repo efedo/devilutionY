@@ -30,7 +30,7 @@ public:
 	void _getFirstEmpty();
 
 	// Monster functions
-	void PlaceMonster(ActorId id, int mtype, V2Di pos);
+	void PlaceMonster(int mtype, V2Di pos);
 	void PlaceUniqueMonster(UniqueMonsterType uniqindex, int miniontype,
 	                     int unpackfilesize);
 	void PlaceQuestMonsters();
@@ -43,6 +43,8 @@ public:
 	void SetPlayerGPtrs(uint8_t *pData, uint8_t **pAnim);
 	void AddPlrMonstExper(int lvl, int exp,
 	                      char pmask);  // Distributes to party
+	Player* getRandomPlayer();
+
    private:
 	friend class Actor;
 	ActorId _registerActor(Actor *);
@@ -57,7 +59,7 @@ public:
 	// player specific
 	friend Player &myplr();
 	Player &_localPlr();
-	ActorId myplr;
+	ActorId _myplr;
 };
 
 extern ActorManager actors;

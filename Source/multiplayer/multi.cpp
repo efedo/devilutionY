@@ -898,7 +898,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv)
 	}
 	EventPlrMsg(szEvent, plr[pnum].data._pName, plr[pnum].data._pLevel);
 
-	plr[pnum].LoadPlrGFX(PlayerGraphicFile::STAND);
+	plr[pnum].LoadPlrGFX(PlayerGraphicFileFlag::STAND);
 	plr[pnum].SyncInitPlr();
 
 	if (plr[pnum].data.plrlevel == lvl.currlevel) {
@@ -906,7 +906,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv)
 			plr[pnum].StartStand(Dir(0));
 		} else {
 			plr[pnum].data._pgfxnum = 0;
-			plr[pnum].LoadPlrGFX(PlayerGraphicFile::DEATH);
+			plr[pnum].LoadPlrGFX(PlayerGraphicFileFlag::DEATH);
 			plr[pnum].data._pmode = PlayerMode::DEATH;
 			plr[pnum].NewPlrAnim(plr[pnum].data._pDAnim[0], plr[pnum].data._pDFrames, 1, plr[pnum].data._pDWidth);
 			plr[pnum].data._pAnimFrame = plr[pnum].data._pAnimLen - 1;

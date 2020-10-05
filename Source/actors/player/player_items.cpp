@@ -293,7 +293,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	if (data._pgfxnum != g && Loadgfx) {
 		data._pgfxnum = g;
 		data._pGFXLoad = 0;
-		LoadPlrGFX(PlayerGraphicFile::STAND);
+		LoadPlrGFX(PlayerGraphicFileFlag::STAND);
 		SetPlrAnims();
 		d = data._pdir;
 		assert(data._pNAnim[size_t(d)]);
@@ -317,19 +317,19 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	}
 
 	drawmanaflag = true;
-	drawhpflag = true;
+	redrawhpflag = true;
 }
 
 void Player::CalcPlrScrolls()
 {
-	data._pScrlSpells = 0;
+	data._pScrollSpells = 0;
 	for (InvSlot &i : inv.getBagArray()) {
 		Item *item = i.item();
 		if (item && item->_itype != ItemType::none &&
 		    (item->_iMiscId == MiscItemId::SCROLL ||
 		     item->_iMiscId == MiscItemId::SCROLLT)) {
 			if (item->_iStatFlag)
-				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
+				data._pScrollSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
 	}
 
@@ -339,11 +339,11 @@ void Player::CalcPlrScrolls()
 		    (item->_iMiscId == MiscItemId::SCROLL ||
 		     item->_iMiscId == MiscItemId::SCROLLT)) {
 			if (item->_iStatFlag)
-				data._pScrlSpells |= (__int64)1 << (item->_iSpell - 1);
+				data._pScrollSpells |= (__int64)1 << (item->_iSpell - 1);
 		}
 	}
 	if (data._pRSplType == RSpellType::SCROLL) {
-		if (!(data._pScrlSpells & 1 << (data._pRSpell - 1))) {
+		if (!(data._pScrollSpells & 1 << (data._pRSpell - 1))) {
 			data._pRSpell = SpellId::INVALID;
 			data._pRSplType = RSpellType::INVALID;
 			force_redraw = 255;
@@ -587,12 +587,12 @@ void Player::UseItem(int Mid, int spl)
 		data._pHPBase += l;
 		if (data._pHPBase > data._pMaxHPBase)
 			data._pHPBase = data._pMaxHPBase;
-		drawhpflag = true;
+		redrawhpflag = true;
 		break;
 	case MiscItemId::FULLHEAL:
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
-		drawhpflag = true;
+		redrawhpflag = true;
 		break;
 	case MiscItemId::MANA:
 		j = data._pMaxMana >> 8;
@@ -643,7 +643,7 @@ void Player::UseItem(int Mid, int spl)
 		data._pHPBase += l;
 		if (data._pHPBase > data._pMaxHPBase)
 			data._pHPBase = data._pMaxHPBase;
-		drawhpflag = true;
+		redrawhpflag = true;
 		j = data._pMaxMana >> 8;
 		l = ((j >> 1) + random_(40, j)) << 6;
 		if (data._pClass == PlayerClass::sorceror)
@@ -663,7 +663,7 @@ void Player::UseItem(int Mid, int spl)
 	case MiscItemId::FULLREJUV:
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
-		drawhpflag = true;
+		redrawhpflag = true;
 		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
@@ -705,7 +705,7 @@ void Player::UseItem(int Mid, int spl)
 		}
 		break;
 	case MiscItemId::BOOK:
-		data._pMemSpells |= (__int64)1 << (spl - 1);
+		data._pMemorySpells |= (__int64)1 << (spl - 1);
 		if (data._pSplLvl[spl] < 15)
 			data._pSplLvl[spl]++;
 		data._pMana += spelldata[spl].sManaCost << 6;

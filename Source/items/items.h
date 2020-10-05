@@ -55,7 +55,7 @@ void CreateItem(int uid, V2Di pos);
 
 void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta);
 void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg, bool delta);
-void SpawnQuestItem(int itemid, V2Di pos, int randarea, int selflag);
+void SpawnQuestItem(ItemIndex itemid, V2Di pos, int randarea, int selflag);
 void CreateSpellBook(V2Di pos, int ispell, bool sendmsg, bool delta);
 void CreateMagicArmor(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta);
 void CreateMagicWeapon(V2Di pos, int imisc, int icurs, bool sendmsg,

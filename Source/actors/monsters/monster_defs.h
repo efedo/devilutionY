@@ -34,7 +34,7 @@ struct MonsterData {
 	char mLevel;
 	int mMinHP;
 	int mMaxHP;
-	char mAi;
+	MonstAi mAi;
 	int mFlags;
 	unsigned char mInt;
 	unsigned char

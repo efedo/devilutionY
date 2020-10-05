@@ -276,13 +276,13 @@ void StoreSpellCoords()
 		std::uint64_t spells;
 		switch (i) {
 		case RSpellType::SKILL:
-			spells = myplr().data._pAblSpells;
+			spells = myplr().data._pAbilitySpells;
 			break;
 		case RSpellType::SPELL:
-			spells = myplr().data._pMemSpells;
+			spells = myplr().data._pMemorySpells;
 			break;
 		case RSpellType::SCROLL:
-			spells = myplr().data._pScrlSpells;
+			spells = myplr().data._pScrollSpells;
 			break;
 		case RSpellType::CHARGES:
 			spells = myplr().data._pISpells;

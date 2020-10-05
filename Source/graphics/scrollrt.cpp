@@ -1431,7 +1431,7 @@ void DrawAndBlit()
 	}
 
 	if (SCREEN_WIDTH > PANEL_WIDTH || SCREEN_HEIGHT > VIEWPORT_HEIGHT + PANEL_HEIGHT || force_redraw == 255) {
-		drawhpflag = true;
+		redrawhpflag = true;
 		drawmanaflag = true;
 		drawbtnflag = true;
 		drawsbarflag = true;
@@ -1451,7 +1451,7 @@ void DrawAndBlit()
 	if (ctrlPan) {
 		DrawCtrlPan();
 	}
-	if (drawhpflag) {
+	if (redrawhpflag) {
 		UpdateLifeFlask();
 	}
 	if (drawmanaflag) {
@@ -1473,14 +1473,14 @@ void DrawAndBlit()
 
 	unlock_buf(0);
 
-	DrawMain(hgt, ddsdesc, drawhpflag, drawmanaflag, true, drawbtnflag);
+	DrawMain(hgt, ddsdesc, redrawhpflag, drawmanaflag, true, drawbtnflag);
 
 	lock_buf(0);
 	scrollrt_draw_cursor_back_buffer();
 	unlock_buf(0);
 	RenderPresent();
 
-	drawhpflag = false;
+	redrawhpflag = false;
 	drawmanaflag = false;
 	drawbtnflag = false;
 	drawsbarflag = false;

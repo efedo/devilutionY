@@ -61,7 +61,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield)
 	pPack->pMaxHPBase = SwapLE32(pPlayer->_pMaxHPBase);
 	pPack->pManaBase = SwapLE32(pPlayer->_pManaBase);
 	pPack->pMaxManaBase = SwapLE32(pPlayer->_pMaxManaBase);
-	pPack->pMemSpells = SDL_SwapLE64(pPlayer->_pMemSpells);
+	pPack->pMemSpells = SDL_SwapLE64(pPlayer->_pMemorySpells);
 
 	for (i = 0; i < MAX_SPELLS; i++)
 		pPack->pSplLvl[i] = pPlayer->_pSplLvl[i];
@@ -202,7 +202,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 
 	pPlayer->_pMaxManaBase = SwapLE32(pPack->pMaxManaBase);
 	pPlayer->_pManaBase = SwapLE32(pPack->pManaBase);
-	pPlayer->_pMemSpells = SDL_SwapLE64(pPack->pMemSpells);
+	pPlayer->_pMemorySpells = SDL_SwapLE64(pPack->pMemSpells);
 
 	for (i = 0; i < MAX_SPELLS; i++)
 		pPlayer->_pSplLvl[i] = pPack->pSplLvl[i];

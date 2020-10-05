@@ -11,10 +11,12 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-class Monster : public Actor {
+class ActorId;
+
+class Monster : public Actor, public MonsterStruct {
 public:
 	Monster() : Actor(ActorType::monster){};
-	Monster(int i, Dir rd, int mtype, V2Di pos);
+	Monster(Dir rd, int mtype, V2Di pos);
 	void NewMonsterAnim(AnimStruct *anim, Dir md);
 	void PlantInPosition(Dir dir = Dir::NONE, V2Di *pos = 0);
 	void ClearMVars();
@@ -58,7 +60,7 @@ public:
 	bool M_DoWalk2();
 	bool M_DoWalk3();
 	void M_TryM2MHit(int mid, int hper, int mind, int maxd);
-	void M_TryH2HHit(int pnum, int Hit, int MinDam, int MaxDam);
+	void M_TryH2HHit(ActorId pnum, int Hit, int MinDam, int MaxDam);
 	bool M_DoAttack();
 	bool M_DoRAttack();
 	int M_DoRSpAttack();
@@ -122,9 +124,8 @@ public:
 		void Lachdanan();
 		void Warlord();
 	} ai;  // namespace Ai
-	MonsterStruct data;
 private:
-	uint64_t ActorId;
+	uint64_t _id;
 };
 
 DEVILUTION_END_NAMESPACE

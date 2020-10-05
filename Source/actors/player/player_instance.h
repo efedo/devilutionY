@@ -13,19 +13,7 @@ DEVILUTION_BEGIN_NAMESPACE
 class ItemID;
 class Item;
 
-template <class T>
-class Stat {
-	T get();
-	void set(T);
-	void setMin(T);
-	void setMax(T);
-private:
-	T val;
-	T min;
-	T max;
-};
-
-class Player : public Actor {
+class Player : public Actor, public PlayerStruct {
 public:
 	// Init
 	Player(ActorId);
@@ -56,7 +44,7 @@ public:
 	void PlantInPlace(Dir bDir);
 
 	// Graphics storage/setup
-	void LoadPlrGFX(player_graphic gfxflag);
+	void LoadPlrGFX(PlayerGraphicFileFlags gfxflag);
 	void InitPlayerGFX();
 	void InitPlrGFXMem();
 	void FreePlayerGFX();
@@ -81,7 +69,7 @@ public:
 	bool PM_DoGotHit();
 	bool PM_DoDeath();
 	bool PlrHitMonst(int m);
-	bool PlrHitPlr(char p);
+	bool PlrHitPlr(Player & target);
 	bool PlrHitObj(V2Di m);
 	void j_StartPlayerKill();
 	void RemovePlrMissiles();
@@ -100,8 +88,6 @@ public:
 	void InitLevelChange();
 	void StartNewLvl(int fom, int lvl);
 	void StartWarpLvl(int pidx);
-
-
 
 	void SyncPlrKill();
 	void SyncPlrAnim();
@@ -129,6 +115,11 @@ public:
 	// Stats functions
 	void CheckStats();
 	void CheckCheatStats();
+
+	void damage(int);
+	void heal(int);
+	void useMana(int);
+	void restoreMana(int);
 	void ModifyPlrStr(int l);
 	void ModifyPlrMag(int l);
 	void ModifyPlrDex(int l);
@@ -139,7 +130,6 @@ public:
 	void SetPlrVit(int v);
 	void SetPlayerHitPoints(int val);
 	int CalcStatDiff();
-
 
 	// 'Item' functions
 	void CalcPlrItemVals(bool Loadgfx);
@@ -159,9 +149,10 @@ public:
 	// Misc
 	Item *HasItem(int item);
 	void ValidatePlayer();
-	int GetSpellLevel(int sn);
+	int GetSpellLevel(SpellId sn);
 	void CheckPlrSpell();
 	bool PlrDeathModeOK();
+	void InitMultiView();
 
 	// Not yet fixed
 	void CreateRndUseful(V2Di pos, bool sendmsg);
@@ -169,7 +160,6 @@ public:
 	void DoRepair(int cii);
 	void DoRecharge(int cii);
 
-	PlayerStruct data;
 	PlayerInventory inv;
 
 	// Misc data
@@ -182,22 +172,29 @@ public:
 	static int ExpLvlsTbl[MAXCHARLEVEL];
 	static uint8_t fix[9];
 
+	bool deathflag;
+	int deathdelay;
+
+	uint8_t plr_gfx_flag = 0;
+	uint8_t plr_gfx_bflag = 0;
+
 	int plr_lframe_size;
 	int plr_wframe_size;
-	uint8_t plr_gfx_flag = 0;
 	int plr_aframe_size;
 	int plr_fframe_size;
 	int plr_qframe_size;
-	bool deathflag;
 	int plr_hframe_size;
 	int plr_bframe_size;
-	uint8_t plr_gfx_bflag = 0;
 	int plr_sframe_size;
-	int deathdelay;
 	int plr_dframe_size;
+
+private:
+	void _updateBaseHp();
+	void _updateBaseMana();
+	void _updateBaseDmgMod();
+	bool _checkDie();
 };
 
-void InitMultiView();
 void PlayDungMsgs();
 
 Player & myplr();

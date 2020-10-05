@@ -45,7 +45,7 @@ enum class SpellId {
 	INVALID = -1,
 };
 
-enum clas MagicType {
+enum class MagicType {
 	FIRE = 0x0,
 	LIGHTNING = 0x1,
 	MAGIC = 0x2,

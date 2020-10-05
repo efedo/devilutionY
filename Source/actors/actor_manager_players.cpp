@@ -4,7 +4,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 void ActorManager::setLocal(ActorId newlocal)
 {
-	myplr = newlocal;
+	_myplr = newlocal;
 }
 
 bool ActorManager::isValidPlayer(ActorId id)
@@ -18,7 +18,7 @@ bool ActorManager::isValidPlayer(ActorId id)
 Player & ActorManager::_localPlr()
 {
 	try {
-		return *static_cast<Player *>(_actors[myplr].get());
+		return *static_cast<Player *>(_actors[_myplr].get());
 	} catch (...) {
 		std::cerr << "Could not obtain myplr";
 	}
@@ -41,8 +41,12 @@ void ActorManager::AddPlrMonstExper(int lvl, int exp, char pmask)
 
 	if (totplrs) {
 		e = exp / totplrs;
-		if (pmask & (1 << myplr())) myplr().AddPlrExperience(lvl, e);
+		if (pmask & (1 << myplr().id())) myplr().AddPlrExperience(lvl, e);
 	}
+}
+
+Player* ActorManager::getRandomPlayer() {
+
 }
 
 

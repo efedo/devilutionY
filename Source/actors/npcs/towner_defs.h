@@ -16,12 +16,12 @@ typedef struct TNQ {
 } TNQ;
 
 typedef struct TownerStruct {
-	int _tmode = 0;
-	int _ttype = 0;
+	//int _tmode = 0;
+	TownerId _ttype = TownerId::SMITH;
 	V2Di _t;
 	V2Di _toff;
 	V2Di _tvel;
-	int _tdir = 0;
+	//int _tdir = 0;
 	unsigned char *_tAnimData = 0;
 	int _tAnimDelay = 0;
 	int _tAnimCnt = 0;
@@ -38,7 +38,7 @@ typedef struct TownerStruct {
 	bool _tMsgSaid = 0;
 	TNQ qsts[MAXQUESTS];
 	int _tSeed = 0;
-	Player *_tVar1 = 0;
+	Player * _tVar1 = 0;
 	int _tVar2 = 0;
 	int _tVar3 = 0;
 	int _tVar4 = 0;

@@ -401,7 +401,7 @@ void CheckCursMove()
 		}
 		if (flipflag && m.y + 1 < MAXDUNY && grid[m.x][m.y + 1].isPlayer()) {
 			bv = grid[m.x][m.y + 1].getPlayer();
-			if (bv != myplr() && plr[bv].data._pHitPoints != 0) {
+			if (bv != myplr() && plr[bv]._hp >= 0) {
 				cursm = { m.x, m.y + 1 };
 				pcursplr = bv;
 			}

@@ -1648,7 +1648,7 @@ void Obj_BCrossDamage(int i)
 			PlaySfxLoc(PS_MAGE68, myplr().pos());
 		}
 	}
-	drawhpflag = true;
+	redrawhpflag = true;
 }
 
 void ProcessObjects()
@@ -2259,7 +2259,7 @@ void OperateBook(int pnum, int i)
 		return;
 
 	if (lvl.setlvlnum == SetLvl::BoneChamb) {
-		myplr().data._pMemSpells |= ((__int64)1 << (SpellId::GUARDIAN - 1));
+		myplr().data._pMemorySpells |= ((__int64)1 << (SpellId::GUARDIAN - 1));
 		if (plr[pnum].data._pSplLvl[SpellId::GUARDIAN] < 15)
 			myplr().data._pSplLvl[SpellId::GUARDIAN]++;
 		quests[Q_SCHAMB]._qactive = QUEST_DONE;
@@ -2846,7 +2846,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		cnt = 0;
 		spell = 1;
-		spells = plr[pnum].data._pMemSpells;
+		spells = plr[pnum].data._pMemorySpells;
 		for (j = 0; j < MAX_SPELLS; j++) {
 			if (spell & spells)
 				cnt++;
@@ -2855,7 +2855,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (cnt > 1) {
 			spell = 1;
 			for (j = 1; j <= MAX_SPELLS; j++) {
-				if (plr[pnum].data._pMemSpells & spell) {
+				if (plr[pnum].data._pMemorySpells & spell) {
 					if (plr[pnum].data._pSplLvl[j] < 15)
 						plr[pnum].data._pSplLvl[j]++;
 				}
@@ -2863,7 +2863,7 @@ void OperateShrine(int pnum, int i, int sType)
 			}
 			do {
 				r = random_(0, 37);
-			} while (!(plr[pnum].data._pMemSpells & ((__int64)1 << r)));
+			} while (!(plr[pnum].data._pMemorySpells & ((__int64)1 << r)));
 			if (plr[pnum].data._pSplLvl[r] >= 2)
 				plr[pnum].data._pSplLvl[r] -= 2;
 			else
@@ -2894,7 +2894,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		plr[pnum].data._pMemSpells |= (__int64)1 << (SpellId::FIREBOLT - 1);
+		plr[pnum].data._pMemorySpells |= (__int64)1 << (SpellId::FIREBOLT - 1);
 		if (plr[pnum].data._pSplLvl[SpellId::FIREBOLT] < 15)
 			plr[pnum].data._pSplLvl[SpellId::FIREBOLT]++;
 		if (plr[pnum].data._pSplLvl[SpellId::FIREBOLT] < 15)
@@ -3025,7 +3025,7 @@ void OperateShrine(int pnum, int i, int sType)
 	case SHRINE_SACRED:
 		if (deltaload || pnum != myplr())
 			return;
-		plr[pnum].data._pMemSpells |= (__int64)1 << (SpellId::CBOLT - 1);
+		plr[pnum].data._pMemorySpells |= (__int64)1 << (SpellId::CBOLT - 1);
 		if (plr[pnum].data._pSplLvl[SpellId::CBOLT] < 15)
 			plr[pnum].data._pSplLvl[SpellId::CBOLT]++;
 		if (plr[pnum].data._pSplLvl[SpellId::CBOLT] < 15)
@@ -3128,7 +3128,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		if (pnum != myplr())
 			return;
-		plr[pnum].data._pMemSpells |= (__int64)1 << (SpellId::HBOLT - 1);
+		plr[pnum].data._pMemorySpells |= (__int64)1 << (SpellId::HBOLT - 1);
 		if (plr[pnum].data._pSplLvl[SpellId::HBOLT] < 15)
 			plr[pnum].data._pSplLvl[SpellId::HBOLT]++;
 		if (plr[pnum].data._pSplLvl[SpellId::HBOLT] < 15)

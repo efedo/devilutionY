@@ -6,7 +6,7 @@ DEVILUTION_BEGIN_NAMESPACE
 
 int GetManaAmount(int id, int sn);
 void UseMana(int id, int sn);
-bool CheckSpell(int id, int sn, char st, bool manaonly);
+bool CheckSpell(SpellId id, RSpellType sn, char st, bool manaonly);
 void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl);
 void DoResurrect(int pnum, int rid);
 void DoHealOther(int pnum, int rid);

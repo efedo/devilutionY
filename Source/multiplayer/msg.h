@@ -8,13 +8,10 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
 extern bool deltaload;
 extern uint8_t gbBufferMsgs;
 extern int dwRecCount;
+enum class SpellId;
 
 void msg_send_drop_pkt(int pnum, int reason);
 void msg_send_packet(int pnum, const void *packet, DWORD dwSize);

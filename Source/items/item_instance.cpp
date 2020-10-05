@@ -585,7 +585,7 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 			_iFlags |= ItemSpecialEffect::STEALLIFE_3;
 		if (param1 == 5)
 			_iFlags |= ItemSpecialEffect::STEALLIFE_5;
-		drawhpflag = true;
+		redrawhpflag = true;
 		break;
 	case ItemEffectType::TARGAC:
 		_iPLEnAc += r;
