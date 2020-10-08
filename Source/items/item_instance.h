@@ -8,7 +8,7 @@
 
 #include "item_id.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Item : public ItemStruct {
 public:
@@ -23,11 +23,11 @@ public:
 
 	// Init
 	void SetupItem();
-	void SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood,
+	void SetupAllItems(ItemIndex idx, int iseed, int lvl, int uper, int onlygood,
 	                   bool recreate, bool pregen);
 	void SetupAllUseful(int iseed, int lvl);
-	void loadPresetAttributes(int idata, int lvl);
-	void GetUniqueItem(int uid);
+	void loadPresetAttributes(ItemIndex idata, int lvl);
+	void GetUniqueItem(UniqueItemType uid);
 	void ItemRndDur();  // Generate random durability
 
 	// Basic
@@ -42,13 +42,13 @@ public:
 	void RespawnItem(bool FlipFlag);
 
 	// Re-create item based on seed
-	void RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue);
-	void RecreateTownItem(int idx, WORD icreateinfo, int iseed, int ivalue);
-	void RecreateSmithItem(int idx, int lvl, int iseed);
-	void RecreatePremiumItem(int idx, int plvl, int iseed);
-	void RecreateBoyItem(int idx, int lvl, int iseed);
-	void RecreateWitchItem(int idx, int lvl, int iseed);
-	void RecreateHealerItem(int idx, int lvl, int iseed);
+	void RecreateItem(ItemIndex idx, WORD icreateinfo, int iseed, int ivalue);
+	void RecreateTownItem(ItemIndex idx, WORD icreateinfo, int iseed, int ivalue);
+	void RecreateSmithItem(ItemIndex idx, int lvl, int iseed);
+	void RecreatePremiumItem(ItemIndex idx, int plvl, int iseed);
+	void RecreateBoyItem(ItemIndex idx, int lvl, int iseed);
+	void RecreateWitchItem(ItemIndex idx, int lvl, int iseed);
+	void RecreateHealerItem(ItemIndex idx, int lvl, int iseed);
 
 	// Item maintenance
 	void Repair(int lvl);
@@ -59,7 +59,7 @@ public:
 	void PrintMisc();
 	void PrintDetails();
 	void PrintDur();
-	void PrintPower(char plidx);
+	void PrintPower(ItemEffectType plidx);
 	void PrintOil();
 
 	bool StoreStatOk();
@@ -69,11 +69,11 @@ public:
 	void GetBookSpell(int lvl);
 	void GetStaffPower(int lvl, int bs, bool onlygood);
 	void GetStaffSpell(int lvl, bool onlygood);
-	void SaveItemPower(int power, int param1, int param2, int minval,
+	void SaveItemPower(ItemEffectType power, int param1, int param2, int minval,
 	                   int maxval, int multval);
-	void GetItemPower(int minlvl, int maxlvl, int flgs, bool onlygood);
-	void GetItemBonus(int idata, int minlvl, int maxlvl, bool onlygood);
-	int CheckUnique(int lvl, int uper, bool recreate);
+	void GetItemPower(int minlvl, int maxlvl, ItemAffixFlags flgs, bool onlygood);
+	void GetItemBonus(ItemIndex idata, int minlvl, int maxlvl, bool onlygood);
+	UniqueItemType CheckUnique(int lvl, int uper, bool recreate);
 
    private:
 	Player *_owner = 0;
@@ -85,6 +85,6 @@ void BubbleSwapItem(ItemStruct *a, ItemStruct *b);
 bool StoreStatOk(ItemStruct *h);
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __ITEM_INSTANCE_H__ */

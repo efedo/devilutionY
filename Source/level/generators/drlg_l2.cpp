@@ -8,7 +8,7 @@
 
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int nSx1;
 int nSy1;
@@ -555,13 +555,13 @@ static void DRLG_LoadL2SP()
 {
 	setloadflag = false;
 
-	if (QuestStatus(Q_BLIND)) {
+	if (QuestStatus(QuestId::blind)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
 		setloadflag = true;
-	} else if (QuestStatus(Q_BLOOD)) {
+	} else if (QuestStatus(QuestId::blood)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Blood1.DUN", NULL);
 		setloadflag = true;
-	} else if (QuestStatus(Q_SCHAMB)) {
+	} else if (QuestStatus(QuestId::schamb)) {
 		pSetPiece = LoadFileInMem("Levels\\L2Data\\Bonestr2.DUN", NULL);
 		setloadflag = true;
 	}
@@ -1465,21 +1465,21 @@ static bool CreateDungeon()
 
 	switch (lvl.currlevel) {
 	case 5:
-		if (quests[Q_BLOOD]._qactive) {
+		if (quests[QuestId::blood]._qactive) {
 			ForceHW = true;
 			ForceH = 20;
 			ForceW = 14;
 		}
 		break;
 	case 6:
-		if (quests[Q_SCHAMB]._qactive) {
+		if (quests[QuestId::schamb]._qactive) {
 			ForceHW = true;
 			ForceW = 10;
 			ForceH = 10;
 		}
 		break;
 	case 7:
-		if (quests[Q_BLIND]._qactive) {
+		if (quests[QuestId::blind]._qactive) {
 			ForceHW = true;
 			ForceW = 15;
 			ForceH = 15;
@@ -2162,14 +2162,14 @@ void LoadPreL2Dungeon(char *sFileName, int vx, int vy)
 
 void LvlCatacombs::CreateL2Dungeon(DWORD rseed, int entry)
 {
-	if (plr.isSingleplayer()) {
-		if (lvl.currlevel == 7 && !quests[Q_BLIND]._qactive) {
+	if (game.isSingleplayer()) {
+		if (lvl.currlevel == 7 && !quests[QuestId::blind]._qactive) {
 			lvl.currlevel = 6;
 			CreateL2Dungeon(glSeedTbl[6], 4);
 			lvl.currlevel = 7;
 		}
 		if (lvl.currlevel == 8) {
-			if (!quests[Q_BLIND]._qactive) {
+			if (!quests[QuestId::blind]._qactive) {
 				lvl.currlevel = 6;
 				CreateL2Dungeon(glSeedTbl[6], 4);
 				lvl.currlevel = 8;
@@ -2196,4 +2196,4 @@ void LvlCatacombs::CreateL2Dungeon(DWORD rseed, int entry)
 	DRLG_SetPC();
 }
 
-DEVILUTION_END_NAMESPACE
+}

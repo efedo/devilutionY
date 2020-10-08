@@ -2,7 +2,7 @@
 #ifndef __RESTRICT_H__
 #define __RESTRICT_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -14,6 +14,6 @@ void ReadOnlyTest();
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __RESTRICT_H__ */

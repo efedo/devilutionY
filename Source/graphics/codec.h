@@ -6,7 +6,7 @@
 #ifndef __CODEC_H__
 #define __CODEC_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -21,6 +21,6 @@ void codec_encode(uint8_t *pbSrcDst, DWORD size, int size_64, char *pszPassword)
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __CODEC_H__ */

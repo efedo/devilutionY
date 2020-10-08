@@ -1,12 +1,12 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /** Data related to each spell ID. */
 SpellData spelldata[] = {
 	// clang-format off
 	// sName,    sManaCost, sType,           sNameText,         sSkillText, sBookLvl, sStaffLvl, sTargeted, sTownSpell, sMinInt, sSFX,     sMissiles[3],                         sManaAdj, sMinMana, sStaffMin, sStaffMax, sBookCost, sStaffCost
-	{ SpellId::NULL,          0, 0,               NULL,              NULL,              0,         0, false,     false,            0, 0,        { 0,                 0,          0 },        0,        0,        40,        80,         0,          0 },
+	{ SpellId::none,          0, 0,               NULL,              NULL,              0,         0, false,     false,            0, 0,        { 0,                 0,          0 },        0,        0,        40,        80,         0,          0 },
 	{ SpellId::FIREBOLT,      6, MagicType::FIRE,      "Firebolt",        "Firebolt",        1,         1, true,      false,           15, IS_CAST2, { MissileType::FIREBOLT,      0,          0 },        1,        3,        40,        80,      1000,         50 },
 	{ SpellId::HEAL,          5, MagicType::MAGIC,     "Healing",         NULL,              1,         1, false,     true,            17, IS_CAST8, { MissileType::HEAL,          0,          0 },        3,        1,        20,        40,      1000,         50 },
 	{ SpellId::LIGHTNING,    10, MagicType::LIGHTNING, "Lightning",       NULL,              4,         3, true,      false,           20, IS_CAST4, { MissileType::LIGHTCTRL,     0,          0 },        1,        6,        20,        60,      3000,        150 },
@@ -46,4 +46,4 @@ SpellData spelldata[] = {
 	// clang-format on
 };
 
-DEVILUTION_END_NAMESPACE
+}

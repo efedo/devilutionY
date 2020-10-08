@@ -6,7 +6,7 @@
 #ifndef __LIGHTING_H__
 #define __LIGHTING_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern LightListStruct VisionList[MAXVISION];
 extern uint8_t lightactive[MAXLIGHTS];
@@ -58,6 +58,6 @@ extern uint8_t vCrawlTable[23][30];
 extern uint8_t byte_49463C[18][18];
 extern uint8_t RadiusAdj[23];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __LIGHTING_H__ */

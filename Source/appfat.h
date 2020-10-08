@@ -6,11 +6,9 @@
 #ifndef __APPFAT_H__
 #define __APPFAT_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+#include <string>
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+namespace dvl {
 
 extern char sz_error_buf[256];
 extern bool terminating;
@@ -31,15 +29,11 @@ void DSErrMsg(DWORD error_code, int log_line_nr, char *log_file_path);
 void center_window(HWND hDlg);
 void ErrDlg(const char *title, const char *error, char *log_file_path, int log_line_nr);
 void TextDlg(HWND hDlg, char *text);
-void FileErrDlg(const char *error);
+void FileErrDlg(const std::string error);
 void DiskFreeDlg(char *error);
 void InsertCDDlg(const char *fileName);
 void DirErrorDlg(char *error);
 
-//#ifdef __cplusplus
-//}
-//#endif
-
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __APPFAT_H__ */

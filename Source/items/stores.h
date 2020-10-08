@@ -4,7 +4,7 @@
 
 #include <vector>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern int stextup;
 extern int storenumh;
@@ -33,7 +33,7 @@ extern uint8_t PentSpn2Frame;
 extern int stextsval;
 extern int stextdown;
 extern char stextscrlubtn;
-extern char stextflag;
+extern StoreTalkId stextflag;
 
 void InitStores();
 void PentSpn2Spin();
@@ -65,6 +65,6 @@ void StoryIdItem();
 
 extern char *talkname[9];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __STORES_H__ */

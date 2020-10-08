@@ -8,7 +8,7 @@
 
 #include <unordered_map>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class ItemManager {
 public:
@@ -25,6 +25,6 @@ private:
 
 extern ItemManager items;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __ITEM_MANAGER_H__ */

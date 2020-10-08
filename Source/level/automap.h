@@ -6,7 +6,7 @@
 #ifndef __AUTOMAP_H__
 #define __AUTOMAP_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Automap {
 public:
@@ -57,6 +57,6 @@ private:
 
 extern Automap automap;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __AUTOMAP_H__ */

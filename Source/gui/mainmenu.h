@@ -6,7 +6,7 @@
 #ifndef __MAINMENU_H__
 #define __MAINMENU_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -41,6 +41,6 @@ extern int menu_music_track_id;
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MAINMENU_H__ */

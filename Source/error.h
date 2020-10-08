@@ -6,7 +6,7 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -28,6 +28,6 @@ extern char *MsgStrings[];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __ERROR_H__ */

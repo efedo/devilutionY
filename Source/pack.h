@@ -2,7 +2,7 @@
 #ifndef __PACK_H__
 #define __PACK_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -17,6 +17,6 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PACK_H__ */

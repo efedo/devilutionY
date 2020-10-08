@@ -2,10 +2,10 @@
 #ifndef __SKILL_ENUMS_H__
 #define __SKILL_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 enum class SpellId {
-	NULL = 0x0,
+	none = 0x0,
 	FIREBOLT = 0x1,
 	HEAL = 0x2,
 	LIGHTNING = 0x3,
@@ -51,7 +51,6 @@ enum class MagicType {
 	MAGIC = 0x2,
 };
 
-
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __SKILL_ENUMS_H__ */

@@ -7,7 +7,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 char gszHero[16];
 
@@ -44,7 +44,7 @@ bool mainmenu_select_hero_dialog(
 {
 	bool hero_is_created = true;
 	int dlgresult = 0;
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (!UiSelHeroSingDialog(
 		        pfile_ui_set_hero_infos,
 		        pfile_ui_save_create,
@@ -162,4 +162,4 @@ void mainmenu_play_intro()
 	mainmenu_refresh_music();
 }
 
-DEVILUTION_END_NAMESPACE
+}

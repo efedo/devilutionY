@@ -2,7 +2,7 @@
 #ifndef __PLAYER_ENUMS_H__
 #define __PLAYER_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 enum class AnimWeaponId {
 	unarmed = 0x00,
@@ -107,6 +107,6 @@ enum class RSpellType {
 	INVALID = 0x4,
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PLAYER_ENUMS_H__ */

@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int doom_quest_time;
 int doom_stars_drawn;
@@ -101,4 +101,4 @@ void doom_draw()
 	CelDraw(SCREEN_X, PANEL_Y - 1, pDoomCel, 1, SCREEN_WIDTH);
 }
 
-DEVILUTION_END_NAMESPACE
+}

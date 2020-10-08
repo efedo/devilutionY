@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int numthemes;
 bool armorFlag;
@@ -421,7 +421,7 @@ void InitThemes()
 	if (lvl.type() == DunType::catacombs || lvl.type() == DunType::caves || lvl.type() == DunType::hell) {
 		for (i = 0; i < lvl.themeCount; i++)
 			themes[i].ttype = THEME_NONE;
-		if (QuestStatus(Q_ZHAR)) {
+		if (QuestStatus(QuestId::zhar)) {
 			for (j = 0; j < lvl.themeCount; j++) {
 				themes[j].ttval = lvl.themeLoc[j].ttval;
 				if (SpecialThemeFit(j, THEME_LIBRARY)) {
@@ -734,7 +734,7 @@ void Theme_Library(int t)
 		}
 	}
 
-	if (QuestStatus(Q_ZHAR)) {
+	if (QuestStatus(QuestId::zhar)) {
 		if (t == zharlib) {
 			return;
 		}
@@ -1059,4 +1059,4 @@ void CreateThemeRooms()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

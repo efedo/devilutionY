@@ -2,7 +2,7 @@
 #ifndef __PORTAL_H__
 #define __PORTAL_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -33,6 +33,6 @@ extern int WarpDropY[MAXPORTAL];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PORTAL_H__ */

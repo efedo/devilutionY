@@ -6,7 +6,7 @@
 #ifndef __DX_H__
 #define __DX_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -32,6 +32,6 @@ void PaletteSetEntries(DWORD dwCount, SDL_Color *lpEntries);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DX_H__ */

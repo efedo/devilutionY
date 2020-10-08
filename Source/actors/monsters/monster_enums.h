@@ -2,9 +2,10 @@
 #ifndef __MONSTER_ENUMS_H__
 #define __MONSTER_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 enum class MonsterType {
+	INVALID = -1,
 	NZOMBIE = 0x0,
 	BZOMBIE = 0x1,
 	GZOMBIE = 0x2,
@@ -124,6 +125,7 @@ enum class MonsterType {
 // (usually quest related)
 // matches position in UniqMonst data table
 enum class UniqueMonsterType {
+	INVALID = -1,
 	GARBUD = 0,
 	SKELKING = 1,
 	ZHAR = 2,
@@ -167,15 +169,16 @@ enum class MonsterGoal {
 	TALKING = 7,
 };
 
-enum class MonsterResist {
-	resist_magic = 0x01,
-	resist_fire = 0x02,
-	resist_lightning = 0x04,
-	imune_magic = 0x08,
-	imune_fire = 0x10,
-	imune_lightning = 0x20,
-	null_40 = 0x40,
-	imune_acid = 0x80,
+using MonsterResistFlags = int;
+namespace MonsterResistFlag {
+	constexpr int resist_magic = 0x01;
+	constexpr int resist_fire = 0x02;
+	constexpr int resist_lightning = 0x04;
+	constexpr int imune_magic = 0x08;
+	constexpr int imune_fire = 0x10;
+	constexpr int imune_lightning = 0x20;
+	constexpr int null_40 = 0x40;
+	constexpr int imune_acid = 0x80;
 };
 
 enum class MonsterMode {
@@ -207,8 +210,6 @@ enum class MonstAnim {
 	DEATH = 4,
 	SPECIAL = 5,
 };
-
-
 
 enum class MonstAi {
 	ZOMBIE = 0,
@@ -253,6 +254,6 @@ enum class MonstClassId {
 
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MONSTER_ENUMS_H__ */

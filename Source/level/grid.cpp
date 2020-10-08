@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 Grid grid;
 
@@ -98,4 +98,4 @@ void Grid::initTown() // (Dung)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

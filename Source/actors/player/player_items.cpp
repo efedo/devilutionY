@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 void Player::CalcPlrItemVals(bool Loadgfx)
 {
@@ -24,7 +24,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	int btohit = 0; // bonus chance to hit
 	int bac = 0;    // bonus accuracy
 
-	int iflgs = ItemSpecialEffect::NONE; // item_special_effect flags
+	int iflgs = ItemSpecialEffectFlag::NONE; // item_special_effect flags
 
 	int sadd = 0; // added strength
 	int madd = 0; // added magic
@@ -62,7 +62,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 			mind += itm->_iMinDam;
 			maxd += itm->_iMaxDam;
 
-			if (itm->_iSpell != SpellId::NULL) {
+			if (itm->_iSpell != SpellId::none) {
 				spl |= (unsigned __int64)1 << (itm->_iSpell - 1);
 			}
 
@@ -182,7 +182,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pISplLvlAdd = spllvladd;
 	data._pIEnAc = enac;
 
-	if (iflgs & ItemSpecialEffect::ALLRESZERO) {
+	if (iflgs & ItemSpecialEffectFlag::ALLRESZERO) {
 		// reset resistances to zero if the respective special effect is active
 		mr = 0;
 		fr = 0;
@@ -232,7 +232,7 @@ void Player::CalcPlrItemVals(bool Loadgfx)
 	data._pILMinDam = lmin;
 	data._pILMaxDam = lmax;
 
-	if (iflgs & ItemSpecialEffect::INFRAVISION) {
+	if (iflgs & ItemSpecialEffectFlag::INFRAVISION) {
 		data._pInfraFlag = true;
 	} else {
 		data._pInfraFlag = false;
@@ -601,7 +601,7 @@ void Player::UseItem(int Mid, int spl)
 			l *= 2;
 		if (data._pClass == PlayerClass::rogue)
 			l += l >> 1;
-		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffectFlag::NOMANA)) {
 			data._pMana += l;
 			if (data._pMana > data._pMaxMana)
 				data._pMana = data._pMaxMana;
@@ -612,7 +612,7 @@ void Player::UseItem(int Mid, int spl)
 		}
 		break;
 	case MiscItemId::FULLMANA:
-		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffectFlag::NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
 			drawmanaflag = true;
@@ -650,7 +650,7 @@ void Player::UseItem(int Mid, int spl)
 			l *= 2;
 		if (data._pClass == PlayerClass::rogue)
 			l += l >> 1;
-		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffectFlag::NOMANA)) {
 			data._pMana += l;
 			if (data._pMana > data._pMaxMana)
 				data._pMana = data._pMaxMana;
@@ -664,7 +664,7 @@ void Player::UseItem(int Mid, int spl)
 		data._pHitPoints = data._pMaxHP;
 		data._pHPBase = data._pMaxHPBase;
 		redrawhpflag = true;
-		if (!(data._pIFlags & ItemSpecialEffect::NOMANA)) {
+		if (!(data._pIFlags & ItemSpecialEffectFlag::NOMANA)) {
 			data._pMana = data._pMaxMana;
 			data._pManaBase = data._pMaxManaBase;
 			drawmanaflag = true;
@@ -675,7 +675,7 @@ void Player::UseItem(int Mid, int spl)
 			data._pTSpell = spl;
 			data._pTSplType = RSpellType::INVALID;
 			if (pnum == myplr())
-				NewCursor(CURSOR_TELEPORT);
+				NewCursor(Cursor::TELEPORT);
 		} else {
 			ClrPlrPath();
 			data._pSpell = spl;
@@ -685,7 +685,7 @@ void Player::UseItem(int Mid, int spl)
 			data.destParam1 = cursm.x;
 			data.destParam2 = cursm.y;
 			if (pnum == myplr() && spl == SpellId::NOVA)
-				NetSendCmdLoc(true, CMD_NOVA, cursm);
+				NetSendCmdLoc(true, Cmd::NOVA, cursm);
 		}
 		break;
 	case MiscItemId::SCROLLT:
@@ -693,7 +693,7 @@ void Player::UseItem(int Mid, int spl)
 			data._pTSpell = spl;
 			data._pTSplType = RSpellType::INVALID;
 			if (pnum == myplr())
-				NewCursor(CURSOR_TELEPORT);
+				NewCursor(Cursor::TELEPORT);
 		} else {
 			ClrPlrPath();
 			data._pSpell = spl;
@@ -799,7 +799,7 @@ void Player::CheckIdentify(int cii)
 	pi->_iIdentified = true;
 	CalcPlrInv(pnum, true);
 
-	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
+	if (pnum == myplr()) SetCursor_(Cursor::HAND);
 }
 
 void Player::DoRepair(int cii)
@@ -817,7 +817,7 @@ void Player::DoRepair(int cii)
 	RepairItem(pi, p.data._pLevel);
 	CalcPlrInv(pnum, true);
 
-	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
+	if (pnum == myplr()) SetCursor_(Cursor::HAND);
 }
 
 void Player::DoRecharge(int cii)
@@ -839,7 +839,7 @@ void Player::DoRecharge(int cii)
 		CalcPlrInv(pnum, true);
 	}
 
-	if (pnum == myplr()) SetCursor_(CURSOR_HAND);
+	if (pnum == myplr()) SetCursor_(Cursor::HAND);
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -6,7 +6,7 @@
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class GameDialog
 {
@@ -82,6 +82,6 @@ class GameDialog
 
 extern GameDialog dialog;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __DIALOG_H__

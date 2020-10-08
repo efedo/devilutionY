@@ -6,7 +6,7 @@
 #ifndef __INTERFAC_H__
 #define __INTERFAC_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern int progress_id;
 
@@ -23,6 +23,6 @@ void InitCutscene(unsigned int uMsg);
 extern const uint8_t BarColor[3];
 extern const int BarPos[3][2];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __INTERFAC_H__ */

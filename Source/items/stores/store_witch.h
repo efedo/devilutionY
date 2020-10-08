@@ -2,7 +2,7 @@
 #ifndef __StoreTalkId::WITCH_H__
 #define __StoreTalkId::WITCH_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class StoreWitch : public Store
 {
@@ -41,6 +41,6 @@ extern StoreWitch witchStore;
 
 void WitchBookLevel(int ii);
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __StoreTalkId::WITCH_H__ */

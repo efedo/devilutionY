@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /** In-game state of portals. */
 PortalStruct portal[MAXPORTAL];
@@ -140,7 +140,7 @@ void GetPortalLevel()
 			lvl.setType(portal[portalindex].ltype);
 		}
 		if (portalindex == myplr()) {
-			NetSendCmd(true, CMD_DEACTIVATEPORTAL);
+			NetSendCmd(true, Cmd::DEACTIVATEPORTAL);
 			DeactivatePortal(portalindex);
 		}
 	}
@@ -173,4 +173,4 @@ bool PosOkPortal(int lvl, V2Di p)
 	return false;
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 
 LvlTown::LvlTown()
@@ -132,7 +132,7 @@ void T_Pass3()
 	T_FillSector(P3Tiles, pSector, 0, 0, 23, 23);
 	mem_free_dbg(pSector);
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (!(myplr().data.pTownWarps & 1)) {
 			T_FillTile(P3Tiles, 48, 20, 320);
 		}
@@ -147,7 +147,7 @@ void T_Pass3()
 		}
 	}
 
-	if (quests[Q_PWATER]._qactive != QUEST_DONE && quests[Q_PWATER]._qactive) {
+	if (quests[QuestId::pwater]._qactive != QuestState::done && quests[QuestId::pwater]._qactive) {
 		T_FillTile(P3Tiles, 60, 70, 342);
 	} else {
 		T_FillTile(P3Tiles, 60, 70, 71);
@@ -227,4 +227,4 @@ void CreateTown(int entry)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

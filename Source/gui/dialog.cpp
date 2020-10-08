@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 GameDialog dialog;
 
@@ -516,4 +516,4 @@ void GameDialog::DrawQText()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

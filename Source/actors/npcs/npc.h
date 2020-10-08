@@ -4,7 +4,7 @@
 
 #include "../actor.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Non-player actor
 class Npc : public Actor
@@ -15,6 +15,6 @@ class Npc : public Actor
 	}
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif __NPC_H__

@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern StoreBoy boyStore;
 
@@ -135,7 +135,7 @@ void StoreBoy::S_BuyEnter()
 			myplr().data.HoldItem = boyitem;
 			myplr().data.HoldItem._iIvalue +=
 			    myplr().data.HoldItem._iIvalue >> 1;
-			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(myplr().data.HoldItem._iCurs + Cursor::FIRSTITEM);
 			done = false;
 			for (i = 0; i < 40 && !done; i++) {
 				done = myplr().inv.AutoPlace(i, {cursW / 28, cursH / 28},
@@ -145,11 +145,11 @@ void StoreBoy::S_BuyEnter()
 				StartStore(StoreTalkId::CONFIRM);
 			else
 				StartStore(StoreTalkId::NOROOM);
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		}
 	} else {
 		stextflag = StoreTalkId::NONE;
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

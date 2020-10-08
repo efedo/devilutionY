@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 static uint8_t plr_msg_slot;
 _plrmsg plr_msgs[PMSG_COUNT];
@@ -152,4 +152,4 @@ void PrintPlrMsg(DWORD x, DWORD y, DWORD width, const char *str, uint8_t col)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

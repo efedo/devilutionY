@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 static void PackItem(PkItemStruct *id, ItemStruct *is)
 {
@@ -99,7 +99,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, bool manashield)
 
 	pPack->pDiabloKillLevel = SwapLE32(pPlayer->pDiabloKillLevel);
 
-	if (plr.isSingleplayer() || manashield)
+	if (game.isSingleplayer() || manashield)
 		pPack->pManaShield = SwapLE32(pPlayer->pManaShield);
 	else
 		pPack->pManaShield = false;
@@ -254,4 +254,4 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, bool killok)
 	pPlayer->pManaShield = SwapLE32(pPack->pManaShield);
 }
 
-DEVILUTION_END_NAMESPACE
+}

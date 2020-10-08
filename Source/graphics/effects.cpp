@@ -7,7 +7,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include <SDL_mixer.h>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int sfxdelay;
 int sfxdnum;
@@ -916,82 +916,6 @@ void stream_stop()
 	}
 }
 
-void InitMonsterSND(int monst)
-{
-	TSnd *pSnd;
-	char name[MAX_PATH];
-	char *path;
-	int mtype, i, j;
-
-	if (!gbSndInited) {
-		return;
-	}
-
-	mtype = beastiary[monst].data.mtype;
-	for (i = 0; i < 4; i++) {
-		if (MonstSndChar[i] != 's' || monsterdata[mtype].snd_special) {
-			for (j = 0; j < 2; j++) {
-				sprintf(name, monsterdata[mtype].sndfile, MonstSndChar[i], j + 1);
-				path = (char *)DiabloAllocPtr(strlen(name) + 1);
-				strcpy(path, name);
-				pSnd = sound_file_load(path);
-				beastiary[monst].data.Snds[i][j] = pSnd;
-				if (!pSnd)
-					mem_free_dbg(path);
-			}
-		}
-	}
-}
-
-void FreeMonsterSnd()
-{
-	int mtype, i, j, k;
-	char *file;
-	TSnd *pSnd;
-
-	for (i = 0; i < nummtypes; i++) {
-		mtype = beastiary[i].data.mtype;
-		for (j = 0; j < 4; ++j) {
-			for (k = 0; k < 2; ++k) {
-				pSnd = beastiary[i].data.Snds[j][k];
-				if (pSnd) {
-					beastiary[i].data.Snds[j][k] = NULL;
-					file = pSnd->sound_path;
-					pSnd->sound_path = NULL;
-					sound_file_cleanup(pSnd);
-					mem_free_dbg(file);
-				}
-			}
-		}
-	}
-}
-
-void PlayEffect(int i, int mode)
-{
-	int sndIdx, mi, lVolume, lPan;
-	TSnd *snd;
-
-	if (myplr().data.pLvlLoad) {
-		return;
-	}
-
-	sndIdx = random_(164, 2);
-	if (!gbSndInited || !gbSoundOn || gbBufferMsgs) {
-		return;
-	}
-
-	mi = monsters[i].data._mMTidx;
-	snd = beastiary[mi].data.Snds[mode][sndIdx];
-	if (!snd || snd_playing(snd)) {
-		return;
-	}
-
-	if (!calc_snd_position(monsters[i].data._m, &lVolume, &lPan))
-		return;
-
-	snd_play_snd(snd, lVolume, lPan);
-}
-
 bool calc_snd_position(V2Di pos, int *plVolume, int *plPan)
 {
 	int pan, volume;
@@ -1026,7 +950,7 @@ void PlaySFX_priv(TSFX *pSFX, bool loc, V2Di pos)
 {
 	int lPan, lVolume;
 
-	if (myplr().data.pLvlLoad && plr.isMultiplayer()) {
+	if (myplr().data.pLvlLoad && game.isMultiplayer()) {
 		return;
 	}
 	if (!gbSndInited || !gbSoundOn || gbBufferMsgs) {
@@ -1166,7 +1090,7 @@ void effects_cleanup_sfx()
 void sound_init()
 {
 	uint8_t mask = 0;
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		mask = PLRSFXS;
 	} else if (!plr.maxPlayers() ||	myplr().data._pClass == PlayerClass::warrior) {
 		mask = sfx_WARRIOR;
@@ -1237,4 +1161,4 @@ void effects_play_sound(char *snd_file)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

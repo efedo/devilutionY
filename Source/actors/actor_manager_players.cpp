@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 void ActorManager::setLocal(ActorId newlocal)
 {
@@ -50,4 +50,4 @@ Player* ActorManager::getRandomPlayer() {
 }
 
 
-DEVILUTION_END_NAMESPACE
+}

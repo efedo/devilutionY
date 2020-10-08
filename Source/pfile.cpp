@@ -3,7 +3,7 @@
 #include "../DiabloUI/diabloui.h"
 #include "file_util.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 #define PASSWORD_SINGLE "xrgyrkj1"
 #define PASSWORD_MULTI "szqnlsk1"
@@ -19,9 +19,9 @@ void pfile_write_hero()
 
 	save_num = pfile_get_save_num_from_name(myplr().data._pName);
 	if (pfile_open_archive(true, save_num)) {
-		PackPlayer(&pkplr, myplr(), plr.isSingleplayer());
+		PackPlayer(&pkplr, myplr(), game.isSingleplayer());
 		pfile_encode_hero(&pkplr);
-		pfile_flush(plr.isSingleplayer(), save_num);
+		pfile_flush(game.isSingleplayer(), save_num);
 	}
 }
 
@@ -43,7 +43,7 @@ void pfile_encode_hero(const PkPlayerStruct *pPack)
 	DWORD packed_len;
 	char password[16] = PASSWORD_SINGLE;
 
-	if (plr.isMultiplayer())
+	if (game.isMultiplayer())
 		strcpy(password, PASSWORD_MULTI);
 
 	packed_len = codec_get_encoded_len(sizeof(*pPack));
@@ -70,7 +70,7 @@ void pfile_get_save_path(char *pszBuf, DWORD dwBufSize, DWORD save_num)
 	char path[MAX_PATH];
 	const char *fmt = "%smulti_%d.sv";
 
-	if (plr.isSingleplayer())
+	if (game.isSingleplayer())
 		fmt = "%ssingle_%d.sv";
 	GetPrefPath(path, MAX_PATH);
 	snprintf(pszBuf, MAX_PATH, fmt, path, save_num);
@@ -208,7 +208,7 @@ bool pfile_read_hero(HANDLE archive, PkPlayerStruct *pPack)
 		char password[16] = PASSWORD_SINGLE;
 		nSize = 16;
 
-		if (plr.isMultiplayer())
+		if (game.isMultiplayer())
 			strcpy(password, PASSWORD_MULTI);
 
 		dwlen = SFileGetFileSize(file, NULL);
@@ -253,7 +253,7 @@ bool pfile_archive_contains_game(HANDLE hsArchive, DWORD save_num)
 {
 	HANDLE file;
 
-	if (plr.isMultiplayer())
+	if (game.isMultiplayer())
 		return false;
 
 	if (!SFileOpenFileEx(hsArchive, "game", 0, &file))
@@ -324,7 +324,7 @@ bool pfile_get_file_name(DWORD lvl, char *dst)
 {
 	const char *fmt;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		if (lvl)
 			return false;
 		fmt = "hero";
@@ -416,7 +416,7 @@ void pfile_get_game_name(char *dst)
 
 void pfile_remove_temp_files()
 {
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		DWORD save_num = pfile_get_save_num_from_name(myplr().data._pName);
 		if (!pfile_open_archive(false, save_num))
 			app_fatal("Unable to write to save file archive");
@@ -450,7 +450,7 @@ void pfile_rename_temp_to_perm()
 
 	dwChar = pfile_get_save_num_from_name(myplr().data._pName);
 	assert(dwChar < MAX_CHARACTERS);
-	assert(plr.isSingleplayer());
+	assert(game.isSingleplayer());
 	if (!pfile_open_archive(false, dwChar))
 		app_fatal("Unable to write to save file archive");
 
@@ -494,7 +494,7 @@ void pfile_write_save_file(const char *pszName, uint8_t *pbData, DWORD dwLen, DW
 	save_num = pfile_get_save_num_from_name(myplr().data._pName);
 	{
 		char password[16] = PASSWORD_SINGLE;
-		if (plr.isMultiplayer())
+		if (game.isMultiplayer())
 			strcpy(password, PASSWORD_MULTI);
 
 		codec_encode(pbData, dwLen, qwLen, password);
@@ -540,7 +540,7 @@ uint8_t *pfile_read(const char *pszName, DWORD *pdwLen)
 		char password[16] = PASSWORD_SINGLE;
 		DWORD nSize = 16;
 
-		if (plr.isMultiplayer())
+		if (game.isMultiplayer())
 			strcpy(password, PASSWORD_MULTI);
 
 		*pdwLen = codec_decode(buf, *pdwLen, password);
@@ -556,7 +556,7 @@ void pfile_update(bool force_save)
 	// BUGFIX: these tick values should be treated as unsigned to handle overflows correctly
 	static int save_prev_tc;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		int tick = SDL_GetTicks();
 		if (force_save || tick - save_prev_tc > 60000) {
 			save_prev_tc = tick;
@@ -565,4 +565,4 @@ void pfile_update(bool force_save)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

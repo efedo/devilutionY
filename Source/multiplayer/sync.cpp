@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 WORD sync_word_6AA708[MAXMONSTERS];
 int sgnMonsters;
@@ -25,7 +25,7 @@ DWORD sync_all_monsters(const uint8_t *pbBuf, DWORD dwMaxLen)
 	pbBuf += sizeof(*pHdr);
 	dwMaxLen -= sizeof(*pHdr);
 
-	pHdr->bCmd = CMD_SYNCDATA;
+	pHdr->bCmd = Cmd::SYNCDATA;
 	pHdr->bLevel = lvl.currlevel;
 	pHdr->wLen = 0;
 	SyncPlrInv(pHdr);
@@ -196,7 +196,7 @@ DWORD sync_update(int pnum, const uint8_t *pbBuf)
 	pHdr = (TSyncHeader *)pbBuf;
 	pbBuf += sizeof(*pHdr);
 
-	if (pHdr->bCmd != CMD_SYNCDATA) {
+	if (pHdr->bCmd != Cmd::SYNCDATA) {
 		app_fatal("bad sync command");
 	}
 
@@ -286,4 +286,4 @@ void sync_init()
 	memset(sgwLRU, 255, sizeof(sgwLRU));
 }
 
-DEVILUTION_END_NAMESPACE
+}

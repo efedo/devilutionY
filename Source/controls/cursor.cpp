@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int cursW;
 int cursH;
@@ -116,7 +116,7 @@ void NewCursor(int i)
 
 void InitLevelCursor()
 {
-	SetCursor_(CURSOR_HAND);
+	SetCursor_(Cursor::HAND);
 	cursm = View;
 	pcurstemp = -1;
 	pcursmonst = -1;
@@ -292,7 +292,7 @@ void CheckCursMove()
 
 	if (myplr().data._pInvincible) return;
 
-	if (pcurs >= CURSOR_FIRSTITEM || spselflag) {
+	if (pcurs >= Cursor::FIRSTITEM || spselflag) {
 		cursm = m;
 		return;
 	}
@@ -421,7 +421,7 @@ void CheckCursMove()
 				}
 			}
 		}
-		if (pcurs == CURSOR_RESURRECT) {
+		if (pcurs == Cursor::RESURRECT) {
 			V2Di n;
 			for (n.x = -1; n.x < 2; n.x++) {
 				for (n.y = -1; n.y < 2; n.y++) {
@@ -492,7 +492,7 @@ void CheckCursMove()
 		}
 	}
 
-	if (pcurs == CURSOR_IDENTIFY) {
+	if (pcurs == Cursor::IDENTIFY) {
 		pcursobj = -1;
 		pcursmonst = -1;
 		pcursitem = 0;
@@ -503,4 +503,4 @@ void CheckCursMove()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

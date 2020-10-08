@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t *pSetPiece;
 bool setloadflag;
@@ -20,7 +20,7 @@ WORD level_frame_types[MAXTILES];
 int level_frame_sizes[MAXTILES];
 int nlevel_frames;
 
-int gnDifficulty;
+Difficulty gnDifficulty;
 
 V2Di View;
 V2Di ViewB;
@@ -367,4 +367,4 @@ void InitLevels()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

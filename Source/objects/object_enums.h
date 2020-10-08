@@ -2,7 +2,7 @@
 #ifndef __OBJECT_ENUMS_H__
 #define __OBJECT_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 enum class ObjectGraphic {
 	L1BRAZ = 0x0,
@@ -166,6 +166,6 @@ enum class ObjectType {
 };
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __OBJECT_ENUMS_H__ */

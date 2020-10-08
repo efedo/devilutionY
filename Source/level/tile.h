@@ -9,7 +9,7 @@
 #include <numeric>
 #include <set>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Piece;
 
@@ -40,9 +40,9 @@ public:
 	[[nodiscard]] uint8_t					getPiece() const;
 	[[nodiscard]] Actor &					getActor() const;
 	[[nodiscard]] Player &					getPlayer() const;
-	[[nodiscard]] Monster &			getMonster() const;
+	[[nodiscard]] Monster &					getMonster() const;
 	[[nodiscard]] Towner &					getTowner() const;
-	[[nodiscard]] std::set<Actor> &			getActorDrawSet() const;
+	[[nodiscard]] const std::set<ActorId> &	getActorDrawSet() const;
 	[[nodiscard]] uint8_t					getObject() const;
 	[[nodiscard]] Item &					getItem() const;
 	[[nodiscard]] uint8_t					getMissile() const;
@@ -51,23 +51,23 @@ public:
 	[[nodiscard]] uint8_t getPieceUnsafe() const;
 
 	// Clear content
-	void clearActor(Actor &);
-	void clearActorDraw(Actor &);
+	void clearActor(ActorId id);
+	void clearActorDraw(ActorId id);
 	void clearPiece();
 	void clearObject();
 	void destroyItem();
 	void clearMissile();
 
 	// Change content
-	void setActor(Actor &);
-	void setActorDraw(Actor &);
+	void setActor(ActorId id);
+	void setActorDraw(ActorId id);
 	void setPiece(int pieceNum);
 	void setObject(int objectNum);
 	void swapItem(std::unique_ptr<Item> &nitem);
 	void setMissile(int missileNum);
 
 	// For rendering
-	std::unique_ptr<std::set<Actor>> drawActors = 0; // list of actors whose rendering is deferred TO this tile
+	std::unique_ptr<std::set<ActorId>> drawActors = 0; // list of actors whose rendering is deferred TO this tile
 
 	MICROS dpiece_defs_map_2;
 	char dTransVal;
@@ -84,12 +84,12 @@ private:
 	uint16_t piece = UINT16_MAX;
 	uint8_t object = UINT8_MAX;
 	uint8_t missile = UINT8_MAX;
-	Actor * actor = 0;
-	Actor * drawactor = 0;
+	ActorId actor = ActorId::getInvalid();
+	ActorId drawactor = ActorId::getInvalid();
 	std::unique_ptr<Item> item;
 };
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __TILE_H__ */

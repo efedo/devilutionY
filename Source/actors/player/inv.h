@@ -10,7 +10,7 @@
 #include "inv_enums.h"
 #include "inv_slot.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Player;
 class ItemID;
@@ -137,6 +137,6 @@ private:
 	} _hand;
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __INV_H__ */

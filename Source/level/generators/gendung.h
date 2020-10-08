@@ -6,7 +6,7 @@
 #ifndef __GENDUNG_H__
 #define __GENDUNG_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 
 
@@ -22,7 +22,7 @@ extern WORD level_frame_types[MAXTILES];
 extern int level_frame_sizes[MAXTILES];
 extern int nlevel_frames;
 
-extern int gnDifficulty;
+extern Difficulty gnDifficulty;
 
 extern V2Di View;
 extern V2Di ViewB;
@@ -51,6 +51,6 @@ void DRLG_HoldThemeRooms();
 bool SkipThemeRoom(int x, int y);
 void InitLevels();
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __GENDUNG_H__ */

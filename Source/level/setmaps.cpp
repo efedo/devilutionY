@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // BUGFIX: constant data should be const
 uint8_t SkelKingTrans1[] = {
@@ -135,4 +135,4 @@ void LoadSetMap()
 	lvl.LoadSetMap();
 }
 
-DEVILUTION_END_NAMESPACE
+}

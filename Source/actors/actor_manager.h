@@ -9,7 +9,7 @@
 #include <vector>
 #include <set>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Actor;
 class Player;
@@ -21,21 +21,34 @@ class ActorManager {
 public:
 	~ActorManager();
 	void clearAll();
+	void clearAllPlayers();
+	void clearAllMonsters();
 
-	Actor *getActor(ActorId &);
-	Player *getPlayer(ActorId &);
-	Monster *getMonster(ActorId &);
-	Npc *getNpc(ActorId &);
+	bool isActor(ActorId) const;
+	bool isPlayer(ActorId) const;
+	bool isMonster(ActorId) const;
+	bool isNpc(ActorId) const;
+
+	Actor & getActor(ActorId) const;
+	Player & getPlayer(ActorId) const;
+	Monster & getMonster(ActorId) const;
+	Npc & getNpc(ActorId) const;
 
 	void _getFirstEmpty();
 
 	// Monster functions
-	void PlaceMonster(int mtype, V2Di pos);
-	void PlaceUniqueMonster(UniqueMonsterType uniqindex, int miniontype,
+	Monster & PlaceMonster(MonsterType mtype, V2Di pos);
+	Monster & AddMonster(MonsterType mtype, V2Di pos, Dir dir, bool InMap);
+	Monster & PlaceUniqueMonster(UniqueMonsterType uniqindex, MonsterType miniontype,
 	                     int unpackfilesize);
 	void PlaceQuestMonsters();
-	void PlaceGroup(int mtype, int num, int leaderf, int leader);
-	void clearAllMonsters();
+	void PlaceGroup(MonsterType mtype, int num, int leaderf, Monster & leader);
+
+	Monster * M_SpawnSkel(V2Di pos, Dir dir);
+	bool SpawnSkeleton(int ii, V2Di pos);
+	Monster * PreSpawnSkeleton();
+	void DeleteMonsterList();
+	void ProcessMonsters();
 
 	// Player functions
 	void setLocal(ActorId newlocal);
@@ -44,6 +57,14 @@ public:
 	void AddPlrMonstExper(int lvl, int exp,
 	                      char pmask);  // Distributes to party
 	Player* getRandomPlayer();
+
+	auto& getPlayerList() { return _players; };
+	auto& getMonsterList() { return _monsters; };
+	auto& getNpcList() { return _npcs; };
+
+	int numPlayers() { return _players.size(); };
+	int numMonsters() { return _monsters.size(); };
+	int numNpcs() { return _npcs.size(); };
 
    private:
 	friend class Actor;
@@ -64,6 +85,6 @@ public:
 
 extern ActorManager actors;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __ACTOR_MANAGER_H__

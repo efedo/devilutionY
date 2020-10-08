@@ -6,7 +6,7 @@
 #ifndef __DGRID_H__
 #define __DGRID_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class DTile {
 public:
@@ -26,6 +26,6 @@ private:
 
 extern DGrid dgrid;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DGRID_H__ */

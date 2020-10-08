@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /**
  * Specifies the current light entry.
@@ -134,11 +134,11 @@ static void scrollrt_draw_cursor_item()
 
 	assert(!sgdwCursWdt);
 
-	if (pcurs <= CURSOR_NONE || cursW == 0 || cursH == 0) {
+	if (pcurs <= Cursor::NONE || cursW == 0 || cursH == 0) {
 		return;
 	}
 
-	if (sgbControllerActive && pcurs != CURSOR_TELEPORT && !gui.invflag && (!chrflag || myplr().data._pStatPts <= 0)) {
+	if (sgbControllerActive && pcurs != Cursor::TELEPORT && !gui.invflag && (!chrflag || myplr().data._pStatPts <= 0)) {
 		return;
 	}
 
@@ -186,7 +186,7 @@ static void scrollrt_draw_cursor_item()
 	my++;
 	gpBufEnd = &gpBuffer[BUFFER_WIDTH * (SCREEN_HEIGHT + SCREEN_Y) - cursW - 2];
 
-	if (pcurs >= CURSOR_FIRSTITEM) {
+	if (pcurs >= Cursor::FIRSTITEM) {
 		col = PAL16_YELLOW + 5;
 		if (!myplr().heldItem() || myplr().heldItem()->_iMagical != 0) {
 			col = PAL16_BLUE + 5;
@@ -423,7 +423,7 @@ void DrawDeadPlayer(V2Di pn, V2Di s)
 
 	for (i = 0; i < MAX_PLRS; i++) {
 		p = &plr[i].data;
-		if (p->plractive && !p->_pHitPoints && p->plrlevel == (uint8_t)lvl.currlevel && plr[i].pos() == pn) {
+		if (p->plractive && p->_hp <= 0 && p->plrlevel == (uint8_t)lvl.currlevel && plr[i].pos() == pn) {
 			pCelBuff = p->_pAnimData;
 			if (!pCelBuff) {
 				// app_fatal("Drawing dead player %d \"%s\": NULL Cel Buffer", i, p->_pName);
@@ -1200,7 +1200,7 @@ void ScrollView()
 {
 	bool scroll;
 
-	if (pcurs >= CURSOR_FIRSTITEM)
+	if (pcurs >= Cursor::FIRSTITEM)
 		return;
 
 	scroll = false;
@@ -1373,7 +1373,7 @@ static void DrawMain(int dwHgt, bool draw_desc, bool draw_hp, bool draw_mana, bo
 		if (draw_btn) {
 			DoBlitScreen(PANEL_LEFT + 8, PANEL_TOP + 5, 72, 119);
 			DoBlitScreen(PANEL_LEFT + 556, PANEL_TOP + 5, 72, 48);
-			if (plr.isMultiplayer()) {
+			if (game.isMultiplayer()) {
 				DoBlitScreen(PANEL_LEFT + 84, PANEL_TOP + 91, 36, 32);
 				DoBlitScreen(PANEL_LEFT + 524, PANEL_TOP + 91, 36, 32);
 			}
@@ -1486,4 +1486,4 @@ void DrawAndBlit()
 	drawsbarflag = false;
 }
 
-DEVILUTION_END_NAMESPACE
+}

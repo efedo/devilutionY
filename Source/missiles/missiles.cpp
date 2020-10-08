@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int missileactive[MAXMISSILES];
 int missileavail[MAXMISSILES];
@@ -334,7 +334,7 @@ void DeleteMissile(int mi, int i)
 	if (missile[mi]._mitype == MissileType::MANASHIELD) {
 		src = missile[mi]._misource;
 		if (src == myplr())
-			NetSendCmd(true, CMD_REMSHIELD);
+			NetSendCmd(true, Cmd::REMSHIELD);
 		plr[src].data.pManaShield = false;
 	}
 	missileavail[MAXMISSILES - nummissiles] = mi;
@@ -439,15 +439,15 @@ bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, bool shift)
 
 	mir = missiledata[t].mResist;
 	mor = monsters[m].data.mMagicRes;
-	if (mor & MonsterResist::imune_magic && mir == MissileResistance::MAGIC
-	    || mor & MonsterResist::imune_fire && mir == MissileResistance::FIRE
-	    || mor & MonsterResist::imune_lightning && mir == MissileResistance::LIGHTNING) {
+	if (mor & MonsterResistFlag::imune_magic && mir == MissileResistance::MAGIC
+	    || mor & MonsterResistFlag::imune_fire && mir == MissileResistance::FIRE
+	    || mor & MonsterResistFlag::imune_lightning && mir == MissileResistance::LIGHTNING) {
 		return false;
 	}
 
-	if ((mor & MonsterResist::resist_magic && mir == MissileResistance::MAGIC)
-	    || (mor & MonsterResist::resist_fire && mir == MissileResistance::FIRE)
-	    || (mor & MonsterResist::resist_lightning && mir == MissileResistance::LIGHTNING)) {
+	if ((mor & MonsterResistFlag::resist_magic && mir == MissileResistance::MAGIC)
+	    || (mor & MonsterResistFlag::resist_fire && mir == MissileResistance::FIRE)
+	    || (mor & MonsterResistFlag::resist_lightning && mir == MissileResistance::LIGHTNING)) {
 		resist = true;
 	}
 
@@ -478,21 +478,21 @@ bool MonsterTrapHit(int m, int mindam, int maxdam, int dist, int t, bool shift)
 		#endif
 		if (monsters[m].data._mhitpoints >> 6 <= 0) {
 			if (monsters[m].data._mmode == MonsterMode::STONE) {
-				monsters[m].M_StartKill(-1);
+				monsters[m].startKillByPlayer(-1);
 				monsters[m].data._mmode = MonsterMode::STONE;
 			} else {
-				monsters[m].M_StartKill(-1);
+				monsters[m].startKillByPlayer(-1);
 			}
 		} else {
 			if (resist) {
 				PlayEffect(m, 1);
 			} else if (monsters[m].data._mmode == MonsterMode::STONE) {
 				if (m > 3)
-					monsters[m].M_StartHit(-1, dam);
+					monsters[m].startHitByPlayer(-1, dam);
 				monsters[m].data._mmode = MonsterMode::STONE;
 			} else {
 				if (m > 3)
-					monsters[m].M_StartHit(-1, dam);
+					monsters[m].startHitByPlayer(-1, dam);
 			}
 		}
 		return true;
@@ -520,15 +520,15 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 	mor = monsters[m].data.mMagicRes;
 	mir = missiledata[t].mResist;
 
-	if (mor & MonsterResist::imune_magic && mir == MissileResistance::MAGIC
-	    || mor & MonsterResist::imune_fire && mir == MissileResistance::FIRE
-	    || mor & MonsterResist::imune_lightning && mir == MissileResistance::LIGHTNING
-	    || (mor & MonsterResist::imune_acid) && mir == MissileResistance::ACID)
+	if (mor & MonsterResistFlag::imune_magic && mir == MissileResistance::MAGIC
+	    || mor & MonsterResistFlag::imune_fire && mir == MissileResistance::FIRE
+	    || mor & MonsterResistFlag::imune_lightning && mir == MissileResistance::LIGHTNING
+	    || (mor & MonsterResistFlag::imune_acid) && mir == MissileResistance::ACID)
 		return false;
 
-	if (mor & MonsterResist::resist_magic && mir == MissileResistance::MAGIC
-	    || mor & MonsterResist::resist_fire && mir == MissileResistance::FIRE
-	    || mor & MonsterResist::resist_lightning && mir == MissileResistance::LIGHTNING)
+	if (mor & MonsterResistFlag::resist_magic && mir == MissileResistance::MAGIC
+	    || mor & MonsterResistFlag::resist_fire && mir == MissileResistance::FIRE
+	    || mor & MonsterResistFlag::resist_lightning && mir == MissileResistance::LIGHTNING)
 		resist = true;
 
 	hit = random_(69, 100);
@@ -582,29 +582,29 @@ bool MonsterMHit(int pnum, int m, int mindam, int maxdam, int dist, int t, bool 
 		dam >>= 2;
 	if (pnum == myplr())
 		monsters[m].data._mhitpoints -= dam;
-	if (plr[pnum].data._pIFlags & ItemSpecialEffect::FIRE_ARROWS)
+	if (plr[pnum].data._pIFlags & ItemSpecialEffectFlag::FIRE_ARROWS)
 		monsters[m].data._mFlags |= MonsterFlag::noheal;
 
 	if (monsters[m].data._mhitpoints >> 6 <= 0) {
 		if (monsters[m].data._mmode == MonsterMode::STONE) {
-			monsters[m].M_StartKill(pnum);
+			monsters[m].startKillByPlayer(pnum);
 			monsters[m].data._mmode = MonsterMode::STONE;
 		} else {
-			monsters[m].M_StartKill(pnum);
+			monsters[m].startKillByPlayer(pnum);
 		}
 	} else {
 		if (resist) {
 			PlayEffect(m, 1);
 		} else if (monsters[m].data._mmode == MonsterMode::STONE) {
 			if (m > 3)
-				monsters[m].M_StartHit(pnum, dam);
+				monsters[m].startHitByPlayer(pnum, dam);
 			monsters[m].data._mmode = MonsterMode::STONE;
 		} else {
-			if (!missiledata[t].mType && plr[pnum].data._pIFlags & ItemSpecialEffect::KNOCKBACK) {
+			if (!missiledata[t].mType && plr[pnum].data._pIFlags & ItemSpecialEffectFlag::KNOCKBACK) {
 				monsters[m].M_GetKnockback();
 			}
 			if (m > 3)
-				monsters[m].M_StartHit(pnum, dam);
+				monsters[m].startHitByPlayer(pnum, dam);
 		}
 	}
 
@@ -708,12 +708,12 @@ bool PlayerMHit(int pnum, int m, int dist, int mind, int maxd, int mtype, bool s
 			if (shift == false) {
 
 				dam = (mind << 6) + random_(75, (maxd - mind + 1) << 6);
-				if (m == -1 && plr[pnum].data._pIFlags & ItemSpecialEffect::ABSHALFTRAP)
+				if (m == -1 && plr[pnum].data._pIFlags & ItemSpecialEffectFlag::ABSHALFTRAP)
 					dam >>= 1;
 				dam += (plr[pnum].data._pIGetHit * 64);
 			} else {
 				dam = mind + random_(75, maxd - mind + 1);
-				if (m == -1 && plr[pnum].data._pIFlags & ItemSpecialEffect::ABSHALFTRAP)
+				if (m == -1 && plr[pnum].data._pIFlags & ItemSpecialEffectFlag::ABSHALFTRAP)
 					dam >>= 1;
 				dam += plr[pnum].data._pIGetHit;
 			}
@@ -1028,14 +1028,14 @@ void SetMissDir(int mi, Dir dir)
 	SetMissDir(mi, dir);
 }
 
-void LoadMissileGFX(uint8_t mi)
+void LoadMissileGFX(MissileGraphic mi)
 {
 	char pszName[256];
 	int i;
 	uint8_t *file;
 	MisFileData *mfd;
 
-	mfd = &misfiledata[mi];
+	mfd = &misfiledata[int(mi)];
 	if (mfd->mFlags & MonsterFlag::allow_special) {
 		sprintf(pszName, "Missiles\\%s.CL2", mfd->mName);
 		file = LoadFileInMem(pszName, NULL);
@@ -1166,7 +1166,7 @@ void AddArrow(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	if (s == d) d += offset(midir);
 	if (!mienemy) {
 		int av = 32;
-		if (plr[id].data._pIFlags & ItemSpecialEffect::RNDARROWVEL) {
+		if (plr[id].data._pIFlags & ItemSpecialEffectFlag::RNDARROWVEL) {
 			av = random_(64, 32) + 16;
 		}
 		if (plr[id].data._pClass == PlayerClass::rogue)
@@ -1510,9 +1510,9 @@ void AddTown(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	PutMissile(mi);
 	if (id == myplr() && !missile[mi]._miDelFlag && lvl.currlevel) {
 		if (!lvl.setlevel) {
-			NetSendCmdLocParam3(true, CMD_ACTIVATEPORTAL, t, lvl.currlevel, int(lvl.type()), 0);
+			NetSendCmdLocParam3(true, Cmd::ACTIVATEPORTAL, t, lvl.currlevel, int(lvl.type()), 0);
 		} else {
-			NetSendCmdLocParam3(true, CMD_ACTIVATEPORTAL, t, int(lvl.setlvlnum), int(lvl.type()), 1);
+			NetSendCmdLocParam3(true, Cmd::ACTIVATEPORTAL, t, int(lvl.setlvlnum), int(lvl.type()), 1);
 		}
 	}
 }
@@ -1572,7 +1572,7 @@ void AddManashield(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int 
 	if (!mienemy)
 		UseMana(id, SpellId::MANASHIELD);
 	if (id == myplr())
-		NetSendCmd(true, CMD_SETSHIELD);
+		NetSendCmd(true, Cmd::SETSHIELD);
 	plr[id].data.pManaShield = true;
 }
 
@@ -1863,7 +1863,7 @@ void AddGolem(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miVar4 = d.x;
 	missile[mi]._miVar5 = d.y;
 	if ((monsters[id].data._m.x != 1 || monsters[id].data._m.y) && id == myplr())
-		monsters[id].M_StartKill(id);
+		monsters[id].startKillByPlayer(id);
 	UseMana(id, SpellId::GOLEM);
 }
 
@@ -1948,7 +1948,7 @@ void AddHealOther(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int d
 	missile[mi]._miDelFlag = true;
 	UseMana(id, SpellId::HEALOTHER);
 	if (id == myplr()) {
-		SetCursor_(CURSOR_HEALOTHER);
+		SetCursor_(Cursor::HEALOTHER);
 		if (sgbControllerActive)
 			TryIconCurs();
 	}
@@ -1989,7 +1989,7 @@ void AddIdentify(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 			if (sgbControllerActive)
 				FocusOnInventory();
 		}
-		SetCursor_(CURSOR_IDENTIFY);
+		SetCursor_(Cursor::IDENTIFY);
 	}
 }
 
@@ -2090,7 +2090,7 @@ void AddRepair(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 			if (sgbControllerActive)
 				FocusOnInventory();
 		}
-		SetCursor_(CURSOR_REPAIR);
+		SetCursor_(Cursor::REPAIR);
 	}
 }
 
@@ -2106,7 +2106,7 @@ void AddRecharge(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int da
 			if (sgbControllerActive)
 				FocusOnInventory();
 		}
-		SetCursor_(CURSOR_RECHARGE);
+		SetCursor_(Cursor::RECHARGE);
 	}
 }
 
@@ -2115,12 +2115,12 @@ void AddDisarm(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
 	missile[mi]._miDelFlag = true;
 	UseMana(id, SpellId::DISARM);
 	if (id == myplr()) {
-		SetCursor_(CURSOR_DISARM);
+		SetCursor_(Cursor::DISARM);
 		if (sgbControllerActive) {
 			if (pcursobj != -1)
-				NetSendCmdLocParam1(true, CMD_DISARMXY, cursm, pcursobj);
+				NetSendCmdLocParam1(true, Cmd::DISARMXY, cursm, pcursobj);
 			else
-				SetCursor_(CURSOR_HAND);
+				SetCursor_(Cursor::HAND);
 		}
 	}
 }
@@ -2235,7 +2235,7 @@ void AddResurrect(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int d
 {
 	UseMana(id, SpellId::RESURRECT);
 	if (id == myplr()) {
-		SetCursor_(CURSOR_RESURRECT);
+		SetCursor_(Cursor::RESURRECT);
 		if (sgbControllerActive)
 			TryIconCurs();
 	}
@@ -2255,7 +2255,7 @@ void AddTelekinesis(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int
 	missile[mi]._miDelFlag = true;
 	UseMana(id, SpellId::TELEKINESIS);
 	if (id == myplr())
-		SetCursor_(CURSOR_TELEKINESIS);
+		SetCursor_(Cursor::TELEKINESIS);
 }
 
 void AddBoneSpirit(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam)
@@ -2304,7 +2304,7 @@ void AddDiabApoca(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int d
 	missile[mi]._miDelFlag = true;
 }
 
-int AddMissile(V2Di s, V2Di d, Dir midir, int mitype, char micaster, int id, int midam, int spllvl)
+int AddMissile(V2Di s, V2Di d, Dir midir, MissileType mitype, char micaster, ActorId id, int midam, int spllvl)
 {
 	int i, mi;
 
@@ -2884,7 +2884,7 @@ void MI_Town(int i)
 		if (plr[p].data.plractive && lvl.currlevel == plr[p].data.plrlevel && !plr[p].data._pLvlChanging && plr[p].data._pmode == PlayerMode::STAND && plr[p].pos().x == missile[i]._mi.x && plr[p].pos().y == missile[i]._mi.y) {
 			plr[p].ClrPlrPath();
 			if (p == myplr()) {
-				NetSendCmdParam1(true, CMD_WARP, missile[i]._misource);
+				NetSendCmdParam1(true, Cmd::WARP, missile[i]._misource);
 				plr[p].data._pmode = PlayerMode::NEWLVL;
 			}
 		}
@@ -3006,7 +3006,7 @@ void MI_Manashield(int i)
 		missile[i]._miVar2 = plr[id].data._pHPBase;
 		if (missile[i]._mirange == 0) {
 			missile[i]._miDelFlag = true;
-			NetSendCmd(true, CMD_ENDSHIELD);
+			NetSendCmd(true, Cmd::ENDSHIELD);
 		}
 	}
 	PutMissile(i);
@@ -3928,4 +3928,4 @@ void ClearMissileSpot(int mi)
 	grid.at(missile[mi]._mi).clearMissile();
 }
 
-DEVILUTION_END_NAMESPACE
+}

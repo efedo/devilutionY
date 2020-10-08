@@ -690,7 +690,7 @@ void ds1edit_debug(void)
    printf("obj_edit_scroll         = %i\n", glb_config.scroll.obj_edit);
    printf("mouse_speed_x           = %i\n", glb_config.mouse_speed.x);
    printf("mouse_speed_y           = %i\n", glb_config.mouse_speed.y);
-   printf("gamMonstAnim::correction        = %s\n", glb_gamma_str[glb_config.gamma].str);
+   printf("gamma_correction        = %s\n", glb_gamma_str[glb_config.gamma].str);
    printf("only_normal_type2       = %s\n", glb_config.normal_type2        ? "YES" : "NO");
    printf("always_max_layers       = %s\n", glb_config.always_max_layers   ? "YES" : "NO");
    printf("stretch_sprites         = %s\n", glb_config.stretch_sprites     ? "YES" : "NO");

@@ -8,7 +8,7 @@
 
 #include "inv.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class ItemID;
 class Item;
@@ -27,7 +27,7 @@ public:
 	DWORD GetPlrGFXSize(char *szCel);
 
 	// Position control (and grid synchronization)
-	bool PosOkPlayer(V2Di pos);
+	virtual bool posOk(V2Di pos) final;
 	bool PlrDirOK(Dir dir);
 	V2Di pos() const;
 	V2Di futpos() const;
@@ -68,7 +68,7 @@ public:
 	bool PM_DoSpell();
 	bool PM_DoGotHit();
 	bool PM_DoDeath();
-	bool PlrHitMonst(int m);
+	bool PlrHitMonst(Monster & m);
 	bool PlrHitPlr(Player & target);
 	bool PlrHitObj(V2Di m);
 	void j_StartPlayerKill();
@@ -118,6 +118,7 @@ public:
 
 	void damage(int);
 	void heal(int);
+	void setNoHp();
 	void useMana(int);
 	void restoreMana(int);
 	void ModifyPlrStr(int l);
@@ -199,6 +200,6 @@ void PlayDungMsgs();
 
 Player & myplr();
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PLAYER_MANAGER_H__ */

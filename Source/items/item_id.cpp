@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 ItemID::ItemID(uint64_t newid)
     : id(newid);
@@ -40,4 +40,4 @@ bool operator<(const ItemID &lhs, const ItemID &rhs)
 	return (lhs.id < rhs.id);
 }
 
-DEVILUTION_END_NAMESPACE
+}

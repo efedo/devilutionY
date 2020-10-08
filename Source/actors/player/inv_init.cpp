@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 
 /**
@@ -162,4 +162,4 @@ void PlayerInventory::InitInv()
 }
 
 
-DEVILUTION_END_NAMESPACE
+}

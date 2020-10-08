@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /** unused, this was probably for blood boil/burn */
 int spurtndx;
@@ -94,4 +94,4 @@ void SetDead()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

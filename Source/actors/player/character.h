@@ -8,7 +8,7 @@
 #include <array>
 #include <vector>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 // These are all character class templates
 
 class CharType {
@@ -21,6 +21,7 @@ public:
 	int dexterity = 0;
 	int vitality = 0;
 	int block = 0;
+	int getMax(AttributeId id) { return MaxStats[int(id)]; }
 	std::array<int, 4> MaxStats = { 0, 0, 0, 0 };
 	std::string name = "unnamed";
 };
@@ -73,6 +74,6 @@ private:
 
 extern CharacterTypes classes;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PLAYER_H__ */

@@ -6,8 +6,12 @@
 #ifndef __ITEMS_H__
 #define __ITEMS_H__
 
+#include "items/item_defs.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
+
+extern TestMeStruct testmestruct;
+extern ItemStruct curruitem; // current unique item (for info. display)
 
 class Player;
 
@@ -26,7 +30,6 @@ extern ItemGetRecordStruct itemrecord[MAXITEMS];
 extern bool itemhold[3][3];
 
 extern bool uitemflag; // flags if a unique item is currently highlighted
-extern ItemStruct curruitem; // current unique item (for info. display)
 
 void InitItemGFX();
 bool ItemPlace(V2Di pos);
@@ -47,14 +50,14 @@ int PLVal(int pv, int p1, int p2, int minv, int maxv);
 int RndItem(int m);
 int RndUItem(int m);
 int RndAllItems();
-int RndTypeItems(int itype, int imid);
+int RndTypeItems(ItemType itype, int imid);
 
 void SpawnUnique(int uid, V2Di pos);
 void SpawnItem(int m, V2Di pos, bool sendmsg);
 void CreateItem(int uid, V2Di pos);
 
 void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta);
-void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg, bool delta);
+void CreateTypeItem(V2Di pos, bool onlygood, ItemType itype, MiscItemId imisc, bool sendmsg, bool delta);
 void SpawnQuestItem(ItemIndex itemid, V2Di pos, int randarea, int selflag);
 void CreateSpellBook(V2Di pos, int ispell, bool sendmsg, bool delta);
 void CreateMagicArmor(V2Di pos, int imisc, int icurs, bool sendmsg, bool delta);
@@ -90,6 +93,6 @@ extern int ItemInvSnds[];
 extern int idoppely;
 extern int premiumlvladd[6];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __ITEMS_H__ */

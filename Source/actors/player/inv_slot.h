@@ -9,7 +9,7 @@
 
 #include "inv_enums.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class InvSlot {
 public:
@@ -24,6 +24,6 @@ protected:
 	std::unique_ptr<Item> _item = 0;
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __INV_RECT_H__ */

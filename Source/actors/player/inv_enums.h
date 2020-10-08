@@ -7,7 +7,7 @@
 #ifndef __INV_ENUMS_H__
 #define __INV_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Logical equipment locations
 enum class BodyLoc {
@@ -65,6 +65,6 @@ typedef enum inv_xy_slot {
 	NUM_XY_SLOTS = 73
 } inv_xy_slot;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __INV_ENUMS_H__ */

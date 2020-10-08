@@ -6,7 +6,7 @@
 #ifndef __MOVIE_H__
 #define __MOVIE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -24,6 +24,6 @@ LRESULT MovieWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MOVIE_H__ */

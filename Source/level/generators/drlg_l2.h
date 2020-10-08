@@ -6,7 +6,7 @@
 #ifndef __DRLG_L2_H__
 #define __DRLG_L2_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class LvlCatacombs : public Level {
 	LvlCatacombs();
@@ -161,6 +161,6 @@ extern int Patterns[100][10];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DRLG_L2_H__ */

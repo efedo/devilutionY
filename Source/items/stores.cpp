@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int stextup;
 int storenumh;
@@ -35,7 +35,7 @@ int stextsval;
 
 int stextdown;
 char stextscrlubtn;
-char stextflag;
+StoreTalkId stextflag;
 
 /** Maps from towner IDs to NPC names. */
 char *talkname[9] = {
@@ -86,7 +86,7 @@ void SetupTownStores()
 	int i, l;
 
 	SetRndSeed(glSeedTbl[lvl.currlevel] * SDL_GetTicks());
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		l = 0;
 		for (i = 0; i < NUMLEVELS; i++) {
 			if (myplr().data._pLvlVisited[i])
@@ -119,7 +119,7 @@ void StoreAutoPlace()
 {
 	int i, w, h, idx;
 
-	SetICursor(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+	SetICursor(myplr().data.HoldItem._iCurs + Cursor::FIRSTITEM);
 	w = icursW28;
 	h = icursH28;
 	bool done = false;
@@ -504,7 +504,7 @@ void S_StartTalk()
 	AddSLine(5);
 	sn = 0;
 	for (i = 0; i < MAXQUESTS; i++) {
-		if (quests[i]._qactive == QUEST_ACTIVE && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog)
+		if (quests[i]._qactive == QuestState::active && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog)
 			sn++;
 	}
 
@@ -519,7 +519,7 @@ void S_StartTalk()
 	sn2 = sn - 2;
 
 	for (i = 0; i < MAXQUESTS; i++) {
-		if (quests[i]._qactive == QUEST_ACTIVE && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog) {
+		if (quests[i]._qactive == QuestState::active && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog) {
 			AddSText(0, sn, true, questlist[i]._qlstr, COL_WHITE, true);
 			sn += la;
 		}
@@ -760,9 +760,9 @@ bool StoreGoldFit(int idx)
 	if (cost % GOLD_MAX_LIMIT)
 		sz++;
 
-	SetCursor_(storehold[idx]._iCurs + CURSOR_FIRSTITEM);
+	SetCursor_(storehold[idx]._iCurs + Cursor::FIRSTITEM);
 	numsqrs = cursW / 28 * (cursH / 28);
-	SetCursor_(CURSOR_HAND);
+	SetCursor_(Cursor::HAND);
 
 	if (numsqrs >= sz)
 		return true;
@@ -981,7 +981,7 @@ void S_TalkEnter()
 
 	sn = 0;
 	for (i = 0; i < MAXQUESTS; i++) {
-		if (quests[i]._qactive == QUEST_ACTIVE && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog)
+		if (quests[i]._qactive == QuestState::active && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog)
 			sn++;
 	}
 	if (sn > 6) {
@@ -1000,7 +1000,7 @@ void S_TalkEnter()
 	}
 
 	for (i = 0; i < MAXQUESTS; i++) {
-		if (quests[i]._qactive == QUEST_ACTIVE && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog) {
+		if (quests[i]._qactive == QuestState::active && ((DWORD *)&Qtalklist[talker])[i] != -1 && quests[i]._qlog) {
 			if (sn == stextsel) {
 				InitQTextMsg(((DWORD *)&Qtalklist[talker])[i]);
 			}
@@ -1200,4 +1200,4 @@ void ReleaseStoreBtn()
 	stextscrldbtn = -1;
 }
 
-DEVILUTION_END_NAMESPACE
+}

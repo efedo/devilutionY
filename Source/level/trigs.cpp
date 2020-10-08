@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 bool townwarps[3];
 bool trigflag;
@@ -37,7 +37,7 @@ void InitTownTriggers()
 	trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 	numtrigs++;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		for (i = 0; i < sizeof(townwarps) / sizeof(townwarps[0]); i++) {
 			townwarps[i] = true;
 		}
@@ -116,7 +116,7 @@ void InitL2Triggers()
 		for (p.x = 0; p.x < MAXDUNX; p.x++) {
 			if (!grid.at(p).isPiece()) continue;
 
-			if (grid.at(p).getPiece() == 267 && (p != quests[Q_SCHAMB]._qt)) {
+			if (grid.at(p).getPiece() == 267 && (p != quests[QuestId::schamb]._qt)) {
 				trigs[numtrigs]._t = p;
 				trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 				numtrigs++;
@@ -201,7 +201,7 @@ void InitL4Triggers()
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			if (!grid[i][j].isPiece()) continue;
-			if (grid[i][j].getPiece() == 370 && quests[Q_BETRAYER]._qactive == QUEST_DONE) {
+			if (grid[i][j].getPiece() == 370 && quests[QuestId::betrayer]._qactive == QuestState::done) {
 				trigs[numtrigs]._t = { i, j };
 				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 				numtrigs++;
@@ -507,7 +507,7 @@ bool ForceSKingTrig()
 {
 	for (int i = 0; L1UpList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L1UpList[i]) {
-			sprintf(infostr, "Back to Level %i", quests[Q_SKELKING]._qlevel);
+			sprintf(infostr, "Back to Level %i", quests[QuestId::skelking]._qlevel);
 			cursm = trigs[0]._t;
 			return true;
 		}
@@ -519,7 +519,7 @@ bool ForceSChambTrig()
 {
 	for (int i = 0; L2DownList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L2DownList[i]) {
-			sprintf(infostr, "Back to Level %i", quests[Q_SCHAMB]._qlevel);
+			sprintf(infostr, "Back to Level %i", quests[QuestId::schamb]._qlevel);
 			cursm = trigs[0]._t;
 			return true;
 		}
@@ -531,7 +531,7 @@ bool ForcePWaterTrig()
 {
 	for (int i = 0; L3DownList[i] != -1; i++) {
 		if (grid.at(cursm).getPiece() == L3DownList[i]) {
-			sprintf(infostr, "Back to Level %i", quests[Q_PWATER]._qlevel);
+			sprintf(infostr, "Back to Level %i", quests[QuestId::pwater]._qlevel);
 			cursm = trigs[0]._t;
 			return true;
 		}
@@ -604,12 +604,12 @@ void CheckTriggers()
 
 		switch (trigs[i]._tmsg) {
 		case WM_DIABNEXTLVL:
-				if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
+				if (pcurs >= Cursor::FIRSTITEM && DropItemBeforeTrig())
 					return;
 				myplr().StartNewLvl(trigs[i]._tmsg, lvl.currlevel + 1);
 			break;
 		case WM_DIABPREVLVL:
-			if (pcurs >= CURSOR_FIRSTITEM && DropItemBeforeTrig())
+			if (pcurs >= Cursor::FIRSTITEM && DropItemBeforeTrig())
 				return;
 			myplr().StartNewLvl(trigs[i]._tmsg, lvl.currlevel - 1);
 			break;
@@ -617,7 +617,7 @@ void CheckTriggers()
 			myplr().StartNewLvl(trigs[i]._tmsg, ReturnLvl);
 			break;
 		case WM_DIABTOWNWARP:
-			if (plr.isMultiplayer()) {
+			if (game.isMultiplayer()) {
 				abort = false;
 
 				if (trigs[i]._tlvl == 5 && myplr().data._pLevel < 8) {
@@ -647,7 +647,7 @@ void CheckTriggers()
 					}
 
 					InitDiabloMsg(abortflag);
-					NetSendCmdLoc(true, CMD_WALKXY, { x, y });
+					NetSendCmdLoc(true, Cmd::WALKXY, { x, y });
 					return;
 				}
 			}
@@ -665,4 +665,4 @@ void CheckTriggers()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 const char HelpDialog::gszHelpText[] = {
 	"$Keyboard Shortcuts:|"
@@ -211,4 +211,4 @@ void HelpDialog::HelpScrollDown()
 		help_select_line++;
 }
 
-DEVILUTION_END_NAMESPACE
+}

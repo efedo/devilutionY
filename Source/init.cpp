@@ -10,7 +10,7 @@
 #include <SDL.h>
 #include <config.h>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 _SNETVERSIONDATA fileinfo;
 int gbActive;
@@ -134,4 +134,4 @@ WNDPROC SetWindowProc(WNDPROC NewProc)
 	return OldProc;
 }
 
-DEVILUTION_END_NAMESPACE
+}

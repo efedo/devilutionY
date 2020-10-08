@@ -9,14 +9,16 @@
 #include "../actor.h"
 #include <numeric>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
+enum class MissileType;
+enum class MonsterType;
 class ActorId;
 
-class Monster : public Actor, public MonsterStruct {
+class Monster : public Actor {
 public:
 	Monster() : Actor(ActorType::monster){};
-	Monster(Dir rd, int mtype, V2Di pos);
+	Monster(Dir rd, MonsterType mtype, V2Di pos);
 	void NewMonsterAnim(AnimStruct *anim, Dir md);
 	void PlantInPosition(Dir dir = Dir::NONE, V2Di *pos = 0);
 	void ClearMVars();
@@ -25,12 +27,26 @@ public:
 	void SpawnGolum(V2Di pos, int mi);
 	void TalktoMonster();
 	bool DirOK(Dir mdir);
+
+	void PlayEffect(int mode);
+	bool PosOkMonst(V2Di pos);
+	bool PosOkMonst2(V2Di pos);
+	bool PosOkMonst3(V2Di pos);
+	bool CanTalkToMonst();
+	bool CheckMonsterHit(bool* ret);
+	int encode_enemy();
+	void decode_enemy(int enemy);
+
+	MonsterStruct data;
+
 	bool M_Ranged();
 	bool M_Talker();
 	void M_Enemy();
 	Dir M_GetDir();
 	void GetTargetLoc(V2Di &pos, int &dist, Dir &dir);
 	void M_CheckEFlag();
+
+
 	void M_StartStand(Dir md);
 	void M_StartDelay(int len);
 	void M_StartSpStand(Dir md);
@@ -38,19 +54,25 @@ public:
 	void M_StartWalk2(V2Di vel, V2Di off, V2Di add, Dir EndDir);
 	void M_StartWalk3(V2Di vel, V2Di off, V2Di add, V2Di map, Dir EndDir);
 	void M_StartAttack();
-	void M_StartRAttack(int missile_type, int dam);
-	void M_StartRSpAttack(int missile_type, int dam);
+	void M_StartRAttack(MissileType missile_type, int dam);
+	void M_StartRSpAttack(MissileType missile_type, int dam);
 	void M_StartSpAttack();
 	void M_StartEat();
 	void M_ClearSquares();
 	void M_GetKnockback();
-	void M_StartHit(int pnum, int dam);
+
+
 	void M_DiabloDeath(bool sendmsg);
 	//void M2MStartHit(int mid, int i, int dam);
-	void MonstStartKill(int pnum, bool sendmsg);
-	void M2MStartKill(int mid);
-	void M_StartKill(int pnum);
-	void M_SyncStartKill(V2Di pos, int pnum);
+
+
+
+	void MonstStartKill(ActorId pnum, bool sendmsg);
+	void M2MStartKill(ActorId killed);
+	void startHitByPlayer(ActorId pnum, int dam);
+	void startKillByPlayer(ActorId pnum);
+
+	void M_SyncStartKill(V2Di pos, ActorId pnum);
 	void M_StartFadein(Dir md, bool backwards);
 	void M_StartFadeout(Dir md, bool backwards);
 	void M_StartHeal();
@@ -84,50 +106,48 @@ public:
 	bool M_DumbWalk(Dir md);
 	bool M_RoundWalk(Dir md, int *dir);
 
-	struct MAI {
-		void Zombie();
-		void SkelSd();
-		bool Path();
-		void Snake();
-		void Bat();
-		void SkelBow();
-		void Fat();
-		void Sneak();
-		void Fireman();
-		void Fallen();
-		void Cleaver();
-		void Round(bool special);
-		void GoatMc();
-		void Ranged(int missile_type, bool special);
-		void GoatBow();
-		void Succ();
-		void AcidUniq();
-		void Scav();
-		void Garg();
-		void RoundRanged(int missile_type, bool checkdoors, int dam,
-		                           int lessmissiles);
-		void Magma();
-		void Storm();
-		void Acid();
-		void Diablo();
-		void RR2(int mistype, int dam);
-		void Mega();
-		void Golum();
-		void SkelKing();
-		void Rhino();
-		void Counselor();
-		void Garbud();
-		void Zhar();
-		void SnotSpil();
-		void Lazurus();
-		void Lazhelp();
-		void Lachdanan();
-		void Warlord();
-	} ai;  // namespace Ai
+	void ai_Zombie();
+	void ai_SkelSd();
+	bool ai_Path();
+	void ai_Snake();
+	void ai_Bat();
+	void ai_SkelBow();
+	void ai_Fat();
+	void ai_Sneak();
+	void ai_Fireman();
+	void ai_Fallen();
+	void ai_Cleaver();
+	void ai_Round(bool special);
+	void ai_GoatMc();
+	void ai_Ranged(MissileType missile_type, bool special);
+	void ai_GoatBow();
+	void ai_Succ();
+	void ai_AcidUniq();
+	void ai_Scav();
+	void ai_Garg();
+	void ai_RoundRanged(MissileType missile_type, bool checkdoors, int dam,
+		                        int lessmissiles);
+	void ai_Magma();
+	void ai_Storm();
+	void ai_Acid();
+	void ai_Diablo();
+	void ai_RR2(MissileType mistype, int dam);
+	void ai_Mega();
+	void ai_Golum();
+	void ai_SkelKing();
+	void ai_Rhino();
+	void ai_Counselor();
+	void ai_Garbud();
+	void ai_Zhar();
+	void ai_SnotSpil();
+	void ai_Lazurus();
+	void ai_Lazhelp();
+	void ai_Lachdanan();
+	void ai_Warlord();
 private:
 	uint64_t _id;
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __MONSTER_INSTANCE_H__

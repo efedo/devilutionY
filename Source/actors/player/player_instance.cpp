@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 const char Player::ArmourChar[4] = { 'L', 'M', 'H', 0 };
 const char Player::WepChar[10] = { 'N', 'U', 'S', 'D', 'B', 'A', 'M', 'H', 'T', 0 };
@@ -143,7 +143,7 @@ void Player::_changeFutPosOffMap(const V2Di newpos)
 void Player::changeFutPos(const V2Di newpos)
 {
 	if (newpos == _posfut) return;
-	assert(PosOkPlayer(newpos));
+	assert(posOk(newpos));
 
 	// remove from old future position unless same as current position
 	if (_posfut != _pos)
@@ -209,83 +209,60 @@ void Player::LoadPlrGFX(PlayerGraphicFileFlags gfxflag)
 	std::string &cs = classes.get(_pClass).name;
 
 	for (i = 1; i <= PlayerGraphicFileFlag::NONDEATH; i <<= 1) {
-		if (!(i & gfxflag)) {
-			continue;
-		}
+		if (!(i & gfxflag)) continue;
 
 		switch (gfxflag) {
 		case PlayerGraphicFileFlag::STAND:
 			szCel = "AS";
-			if (lvl.type() == DunType::town) {
-				szCel = "ST";
-			}
+			if (lvl.type() == DunType::town) szCel = "ST";
 			pData = _pNData;
 			pAnim = (uint8_t *)_pNAnim;
 			break;
 		case PlayerGraphicFileFlag::WALK:
 			szCel = "AW";
-			if (lvl.type() == DunType::town) {
-				szCel = "WL";
-			}
+			if (lvl.type() == DunType::town) szCel = "WL";
 			pData = _pWData;
 			pAnim = (uint8_t *)_pWAnim;
 			break;
 		case PlayerGraphicFileFlag::ATTACK:
-			if (lvl.type() == DunType::town) {
-				continue;
-			}
+			if (lvl.type() == DunType::town) continue;
 			szCel = "AT";
 			pData = _pAData;
 			pAnim = (uint8_t *)_pAAnim;
 			break;
 		case PlayerGraphicFileFlag::HIT:
-			if (lvl.type() == DunType::town) {
-				continue;
-			}
+			if (lvl.type() == DunType::town) continue;
 			szCel = "HT";
 			pData = _pHData;
 			pAnim = (uint8_t *)_pHAnim;
 			break;
 		case PlayerGraphicFileFlag::LIGHTNING:
-			if (lvl.type() == DunType::town) {
-				continue;
-			}
+			if (lvl.type() == DunType::town) continue;
 			szCel = "LM";
 			pData = _pLData;
 			pAnim = (uint8_t *)_pLAnim;
 			break;
 		case PlayerGraphicFileFlag::FIRE:
-			if (lvl.type() == DunType::town) {
-				continue;
-			}
+			if (lvl.type() == DunType::town) continue;
 			szCel = "FM";
 			pData = _pFData;
 			pAnim = (uint8_t *)_pFAnim;
 			break;
 		case PlayerGraphicFileFlag::MAGIC:
-			if (lvl.type() == DunType::town) {
-				continue;
-			}
+			if (lvl.type() == DunType::town) continue;
 			szCel = "QM";
 			pData = _pTData;
 			pAnim = (uint8_t *)_pTAnim;
 			break;
-		case PlayerGraphicFileFlag::DEATH:
-			if (_pgfxnum & 0xF) {
-				continue;
-			}
+		case PlayerGraphicFileFlag::DEATH:		
+			if (_pgfxnum != AnimWeaponId::unarmed) continue; //(_pgfxnum & 0xF) {
 			szCel = "DT";
 			pData = _pDData;
 			pAnim = (uint8_t *)_pDAnim;
 			break;
 		case PlayerGraphicFileFlag::BLOCK:
-			if (lvl.type() == DunType::town) {
-				continue;
-			}
-			if (!_pBlockFlag) {
-				continue;
-			}
-
+			if (lvl.type() == DunType::town) continue;
+			if (!_pBlockFlag) continue;
 			szCel = "BL";
 			pData = _pBData;
 			pAnim = (uint8_t *)_pBAnim;
@@ -381,16 +358,13 @@ void Player::InitPlrGFXMem()
 
 DWORD Player::GetPlrGFXSize(char *szCel)
 {
-	int c;
 	const char *a, *w;
 	DWORD dwSize, dwMaxSize;
 	HANDLE hsFile;
 	char pszName[256];
 	char Type[16];
-
 	dwMaxSize = 0;
-
-	for (c = 0; c < classes.numclasses; c++) {
+	for (int c = 0; c < classes.numclasses; c++) {
 		for (a = &ArmourChar[0]; *a; a++) {
 			for (w = &WepChar[0]; *w; w++) {
 				if (szCel[0] == 'D' && szCel[1] == 'T' && *w != 'N') {
@@ -412,7 +386,6 @@ DWORD Player::GetPlrGFXSize(char *szCel)
 			}
 		}
 	}
-
 	return dwMaxSize;
 }
 
@@ -483,12 +456,10 @@ void Player::SetPlrAnims()
 	}
 	_pSFNum = classes.get(pc).PlrGFXAnimLens[10];
 
-	AnimWeaponId gn = AnimWeaponId(_pgfxnum & 0xF);
+	AnimWeaponId gn = _pgfxnum;
 	if (pc == PlayerClass::warrior) {
 		if (gn == AnimWeaponId::bow) {
-			if (lvl.type() != DunType::town) {
-				_pNFrames = 8;
-			}
+			if (lvl.type() != DunType::town) _pNFrames = 8;
 			_pAWidth = 96;
 			_pAFNum = 11;
 		} else if (gn == AnimWeaponId::axe) {
@@ -599,7 +570,7 @@ void Player::CreatePlayer(PlayerClass c)
 
 	// interestingly, only the first three hotkeys are reset
 	// TODO: BUGFIX: clear all 4 hotkeys instead of 3 (demo leftover)
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		_pSplHotKey[i] = -1;
 	}
 
@@ -702,7 +673,7 @@ void Player::AddPlrExperience(int lvl, int exp)
 		}
 	}
 
-	NetSendCmdParam1(false, CMD_PLRLEVEL, _pLevel);
+	NetSendCmdParam1(false, Cmd::PLRLEVEL, _pLevel);
 }
 
 
@@ -718,7 +689,7 @@ void Player::InitPlayer(bool FirstTime)
 		_pSBkSpell = SpellId::INVALID;
 		_pSpell = _pRSpell;
 		_pSplType = _pRSplType;
-		if (AnimWeaponId(_pgfxnum & 0xF) == AnimWeaponId::bow) {
+		if (_pgfxnum == AnimWeaponId::bow) {
 			_pwtype = PlayerWeaponType::ranged;
 		} else {
 			_pwtype = PlayerWeaponType::melee;
@@ -727,9 +698,7 @@ void Player::InitPlayer(bool FirstTime)
 	}
 
 	if (plrlevel == lvl.currlevel || leveldebug) {
-
 		SetPlrAnims();
-
 		_poff = { 0, 0 };
 		_pvel = { 0, 0 };
 		ClearPlrPVars();
@@ -748,48 +717,41 @@ void Player::InitPlayer(bool FirstTime)
 
 		_pdir = Dir::S;
 
-		if (pnum == myplr()) {
-			if (!FirstTime || lvl.currlevel != 0) {
-				changePos(View);
-			}
+		if (isMyPlr()) {
+			if (!FirstTime || lvl.currlevel != 0) changePos(View);
 			_pathtarg = pos();
 		} else {
 			_pathtarg = pos();
-
-			for (i = 0; i < 8 && !PosOkPlayer(plroff2[i] + pos()); i++)
-				;
-			changePos(pos() + plroff2[i]);
+			for (i = 0; i < 8 && !posOk(plroff2[i] + pos()); i++) {
+				changePos(pos() + plroff2[i]);
+			}
 		}
 
 		changeFutPos(pos());
 		ClrPlrPath();
 		destAction = DestinationAction::NONE;
 
-		if (pnum == myplr()) {
+		if (isMyPlr()) {
 			_plid = AddLight(pos(), _pLightRad);
 		} else {
 			_plid = -1;
 		}
-		_pvid = AddVision(pos(), _pLightRad, pnum == myplr());
+		_pvid = AddVision(pos(), _pLightRad, isMyPlr());
 	}
 
 	if (_pClass == PlayerClass::warrior) {
-		_pAbilitySpells = SpellId::REPAIR;
+		_spellBook.entry(SpellId::REPAIR).ability_level = 1;
 	} else if (_pClass == PlayerClass::rogue) {
-		_pAbilitySpells = SpellId::DISARM;
+		_spellBook.entry(SpellId::DISARM).ability_level = 1;
 	} else if (_pClass == PlayerClass::sorceror) {
-		_pAbilitySpells = SpellId::RECHARGE;
+		_spellBook.entry(SpellId::RECHARGE).ability_level = 1;
 	}
 
 	#ifdef _DEBUG
 	if (debug_mode_dollar_sign && FirstTime) {
-		_pMemorySpells |= 1 << (SpellId::TELEPORT - 1);
-		if (!_pSplLvl[SpellId::TELEPORT]) {
-			_pSplLvl[SpellId::TELEPORT] = 1;
+		if (_spellBook.entry(SpellId::RECHARGE).memory_level == 0) {
+			_spellBook.entry(SpellId::RECHARGE).memory_level = 1;
 		}
-	}
-	if (debug_mode_key_inverted_v && FirstTime) {
-		_pMemorySpells = SpellId::INVALID;
 	}
 	#endif
 
@@ -1144,7 +1106,7 @@ void Player::StartSpell(Dir d, V2Di c)
 	if (_checkDie()) return;
 
 	if (lvl.type() != DunType::town) {
-		switch (spelldata[_pSpell].sType) {
+		switch (_spellBook.getMagicType(_pSpell)) {
 		case MagicType::FIRE:
 			if (!(_pGFXLoad & PlayerGraphicFileFlag::FIRE)) {
 				LoadPlrGFX(PlayerGraphicFileFlag::FIRE);
@@ -1166,7 +1128,7 @@ void Player::StartSpell(Dir d, V2Di c)
 		}
 	}
 
-	PlaySfxLoc(spelldata[_pSpell].sSFX, pos());
+	PlaySfxLoc(_spellBook.getSfx(_pSpell), pos());
 
 	_pmode = PlayerMode::SPELL;
 
@@ -1175,24 +1137,13 @@ void Player::StartSpell(Dir d, V2Di c)
 
 	_pVar1 = c.x;
 	_pVar2 = c.y;
-	_pVar4 = GetSpellLevel(pnum, _pSpell);
+	_pVar4 = GetSpellLevel(_pSpell);
 	_pVar8 = 1;
 }
 
 void Player::FixPlrWalkTags()
 {
 	V2Di d = _pold;
-
-	//// Covers 9-squares around player position
-	//V2Di i;
-	//for (i.y = d.y - 1; i.y <= d.y + 1; i.y++) {
-	//	for (i.x = d.x - 1; i.x <= d.x + 1; i.x++) {
-	//		if (grid.isValid(i) && grid.at(i).isPlayer() && grid.at(i).getPlayer() == pnum) {
-	//			throw; // Should have made it so that you no longer have errant player positions
-	//		}
-	//	}
-	//}
-
 	if (grid.isValid(d)) {
 		grid[d.x + 1][d.y].dFlags &= ~DunTileFlag::PLAYERLR;
 		grid[d.x][d.y + 1].dFlags &= ~DunTileFlag::PLAYERLR;
@@ -1201,44 +1152,13 @@ void Player::FixPlrWalkTags()
 
 void Player::RemoveFromMap()
 {
-	// Check if at pos and remove
-	if (grid.at(pos()).isPlayer()) {
-		if (grid.at(pos()).getPlayer() == pnum) {
-			grid.at(pos()).clearActor(*this);
-		}
-	}
-
-	// Check if futpos and remove
-	if (grid.at(futpos()).isPlayer()) {
-		if (grid.at(futpos()).getPlayer() == pnum) {
-			grid.at(futpos()).clearActor(*this);
-		}
-	}
-
-	// Check if drawpos is set and remove
-	if (grid.at(drawpos()).isPlayerDraw()) {
-		if (grid.at(drawpos()).getPlayer() == pnum) {
-			grid.at(drawpos()).clearActor(*this);
-		}
-	}
-
-	//V2Di i;
-	//for (i.y = 1; i.y < MAXDUNY; i.y++)
-	//	for (i.x = 1; i.x < MAXDUNX; i.x++)
-	//		if (grid.at(i).isPlayer() && grid.at(i).getPlayer() == pnum)
-	//			if (grid.at(i).dFlags & DunTileFlag::PLAYERLR)
-	//				grid.at(i).dFlags &= ~DunTileFlag::PLAYERLR;
-
-	//for (i.y = 0; i.y < MAXDUNY; i.y++)
-	//	for (i.x = 0; i.x < MAXDUNX; i.x++)
-	//		if (grid.at(i).isPlayer() && grid.at(i).getPlayer() == pnum)
-	//			throw; // Should have made it so that you no longer have errant player positions
+	grid.at(pos()).clearActor(*this);
+	grid.at(futpos()).clearActor(*this);
+	grid.at(drawpos()).clearActor(*this);
 }
 
 void Player::StartPlrHit(int dam, bool forcehit)
 {
-	Dir pd;
-
 	if (_checkDie()) return;
 
 	if (_pClass == PlayerClass::warrior) {
@@ -1251,7 +1171,7 @@ void Player::StartPlrHit(int dam, bool forcehit)
 
 	gui.setRedrawHp();
 	if (dam >> 6 >= _pLevel || forcehit) {
-		pd = _pdir;
+		Dir pd = _pdir;
 
 		if (!(_pGFXLoad & PlayerGraphicFileFlag::HIT)) {
 			LoadPlrGFX(PlayerGraphicFileFlag::HIT);
@@ -1286,7 +1206,7 @@ void Player::StartPlayerKill()
 
 	if (isMyPlr()) {
 		bool earflag = false;
-		NetSendCmdParam1(true, CMD_PLRDEAD, earflag);
+		NetSendCmdParam1(true, Cmd::PLRDEAD, earflag);
 	}
 
 	bool diablolevel = game.isMultiplayer() && plrlevel == 16;
@@ -1299,8 +1219,8 @@ void Player::StartPlayerKill()
 		PlaySfxLoc(PS_MAGE71, pos());
 	}
 
-	if (_pgfxnum) {
-		_pgfxnum = 0;
+	if (_pgfxnum != AnimWeaponId::unarmed) {
+		_pgfxnum = AnimWeaponId::unarmed;
 		_pGFXLoad = 0;
 		SetPlrAnims();
 	}
@@ -1314,10 +1234,10 @@ void Player::StartPlayerKill()
 	_pBlockFlag = false;
 	_pmode = PlayerMode::DEATH;
 	_pInvincible = true;
-	SetPlayerHitPoints(0);
+	setNoHp();
 	_pVar8 = 1;
 
-	if (pnum != myplr() && !diablolevel) {
+	if (!isMyPlr() && !diablolevel) {
 		for (InvSlot &i : inv.getBagArray()) {
 			if (!i.item()) continue;
 			i.item()->_itype = ItemType::none;
@@ -1331,14 +1251,14 @@ void Player::StartPlayerKill()
 		grid.at(pos()).dFlags |= DunTileFlag::DEAD_PLAYER;
 		SetPlayerOld();
 
-		if (pnum == myplr()) {
-			redrawhpflag = true;
+		if (isMyPlr()) {
+			gui.setRedrawHp();
 			deathdelay = 30;
 
-			if (pcurs >= CURSOR_FIRSTITEM) {
+			if (pcurs >= Cursor::FIRSTITEM) {
 				assert(HoldItem);
 				PlrDeadItem(*HoldItem, { 0, 0 });
-				SetCursor_(CURSOR_HAND);
+				SetCursor_(Cursor::HAND);
 			}
 
 			if (!diablolevel) {
@@ -1351,11 +1271,11 @@ void Player::StartPlayerKill()
 					PlrDeadItem(*pi, offset(pdd));
 					pi++;
 				}
-				CalcPlrInv(pnum, false);
+				CalcPlrInv(false);
 			}
 		}
 	}
-	SetPlayerHitPoints(0);
+	setNoHp();
 }
 
 void Player::PlrDeadItem(Item & item, V2Di n)
@@ -1366,7 +1286,7 @@ void Player::PlrDeadItem(Item & item, V2Di n)
 	if ((n.x || n.y) && ItemSpaceOk(p.x, p.y)) {
 		RespawnDeadItem(item, p);
 		HoldItem = &item;
-		NetSendCmdPItem(false, CMD_RESPAWNITEM, p.x, p.y);
+		NetSendCmdPItem(false, Cmd::RESPAWNITEM, p.x, p.y);
 		return;
 	}
 
@@ -1378,7 +1298,7 @@ void Player::PlrDeadItem(Item & item, V2Di n)
 				if (ItemSpaceOk(p.x, p.y)) {
 					RespawnDeadItem(item, p);
 					HoldItem = &item;
-					NetSendCmdPItem(false, CMD_RESPAWNITEM, p.x, p.y);
+					NetSendCmdPItem(false, Cmd::RESPAWNITEM, p.x, p.y);
 					return;
 				}
 			}
@@ -1402,34 +1322,32 @@ void Player::SyncPlrKill()
 		}
 	}
 
-	SetPlayerHitPoints(0);
+	setNoHp();
 	StartPlayerKill();
 }
 
 void Player::RemovePlrMissiles()
 {
-	int i, am;
-	V2Di m;
+	//V2Di m;
+	//if (lvl.currlevel != 0 && isMyPlr() && (monsters[myplr()]._m.x != 1 || monsters[myplr()]._m.y != 0)) {
+	//	monsters[myplr()].startKillByPlayer(myplr());
+	//	AddDead(monsters[myplr()]._m, (monsters[myplr()].MType)->mdeadval, monsters[myplr()]._mdir);
+	//	m = monsters[myplr()]._m;
+	//	grid.at(m).clearMonster();
+	//	monsters[myplr()]._mDelFlag = true;
+	//	DeleteMonsterList();
+	//}
 
-	if (lvl.currlevel != 0 && pnum == myplr() && (monsters[myplr()]._m.x != 1 || monsters[myplr()]._m.y != 0)) {
-		monsters[myplr()].M_StartKill(myplr());
-		AddDead(monsters[myplr()]._m, (monsters[myplr()].MType)->mdeadval, monsters[myplr()]._mdir);
-		m = monsters[myplr()]._m;
-		grid.at(m).clearMonster();
-		monsters[myplr()]._mDelFlag = true;
-		DeleteMonsterList();
-	}
-
-	for (i = 0; i < nummissiles; i++) {
-		am = missileactive[i];
-		if (missile[am]._mitype == MissileType::STONE && missile[am]._misource == pnum) {
+	for (int i = 0; i < nummissiles; i++) {
+		int am = missileactive[i];
+		if (missile[am]._mitype == MissileType::STONE && missile[am]._misource == id()) {
 			monsters[missile[am]._miVar2]._mmode = missile[am]._miVar1;
 		}
-		if (missile[am]._mitype == MissileType::MANASHIELD && missile[am]._misource == pnum) {
+		if (missile[am]._mitype == MissileType::MANASHIELD && missile[am]._misource == id()) {
 			ClearMissileSpot(am);
 			DeleteMissile(am, i);
 		}
-		if (missile[am]._mitype == MissileType::ETHEREALIZE && missile[am]._misource == pnum) {
+		if (missile[am]._mitype == MissileType::ETHEREALIZE && missile[am]._misource == id()) {
 			ClearMissileSpot(am);
 			DeleteMissile(am, i);
 		}
@@ -1439,14 +1357,14 @@ void Player::RemovePlrMissiles()
 void Player::InitLevelChange()
 {
 	RemovePlrMissiles();
-	if (pnum == myplr() && qtextflag) {
+	if (isMyPlr() && qtextflag) {
 		qtextflag = false;
 		stream_stop();
 	}
 
 	RemoveFromMap();
 	SetPlayerOld();
-	if (pnum == myplr()) {
+	if (isMyPlr()) {
 		addToMap();
 	} else {
 		_pLvlVisited[plrlevel] = true;
@@ -1456,7 +1374,7 @@ void Player::InitLevelChange()
 	destAction = DestinationAction::NONE;
 	_pLvlChanging = true;
 
-	if (pnum == myplr()) {
+	if (isMyPlr()) {
 		pLvlLoad = 10;
 	}
 }
@@ -1491,12 +1409,12 @@ void Player::StartNewLvl(int fom, int curlvl)
 		break;
 	}
 
-	if (pnum == myplr()) {
+	if (isMyPlr()) {
 		_pmode = PlayerMode::NEWLVL;
 		_pInvincible = true;
 		PostMessage(fom, 0, 0);
-		if (plr.isMultiplayer()) {
-			NetSendCmdParam2(true, CMD_NEWLVL, fom, curlvl);
+		if (game.isMultiplayer()) {
+			NetSendCmdParam2(true, Cmd::NEWLVL, fom, curlvl);
 		}
 	}
 }
@@ -1507,14 +1425,9 @@ void Player::RestartTownLvl()
 	plrlevel = 0;
 	_pInvincible = false;
 
-	SetPlayerHitPoints(64);
-
-	_pMana = 0;
-	_pManaBase = _pMana - (_pMaxMana - _pMaxManaBase);
-
 	CalcPlrInv(false);
 
-	if (pnum == myplr()) {
+	if (isMyPlr()) {
 		_pmode = PlayerMode::NEWLVL;
 		_pInvincible = true;
 		PostMessage(WM_DIABRETOWN, 0, 0);
@@ -1551,9 +1464,9 @@ void Player::StartWalk(Dir walkdir)
 	int xvel3;
 	V2Di vel;
 	if (lvl.currlevel != 0) {
-		xvel3 = classes[_pClass].PWVel[0];
-		vel.x = classes[_pClass].PWVel[1];
-		vel.y = classes[_pClass].PWVel[2];
+		xvel3 = classes.get(_pClass).PWVel[0];
+		vel.x = classes.get(_pClass).PWVel[1];
+		vel.y = classes.get(_pClass).PWVel[2];
 	} else {
 		xvel3 = 2048;
 		vel = { 1024, 512 };
@@ -1598,7 +1511,7 @@ bool Player::PM_DoWalk()
 
 	int anim_len = 8;
 	if (lvl.currlevel != 0) {
-		anim_len = classes[_pClass].AnimLenFromClass;
+		anim_len = classes.get(_pClass).AnimLenFromClass;
 	}
 
 	if (_pVar8 == anim_len) { // end of anim
@@ -1641,7 +1554,7 @@ bool Player::PM_DoWalk2()
 
 	int anim_len = 8;
 	if (lvl.currlevel != 0) {
-		anim_len = classes[_pClass].AnimLenFromClass;
+		anim_len = classes.get(_pClass).AnimLenFromClass;
 	}
 
 	if (_pVar8 == anim_len) { // end of anim
@@ -1683,7 +1596,7 @@ bool Player::PM_DoWalk3()
 
 	int anim_len = 8;
 	if (lvl.currlevel != 0) {
-		anim_len = classes[_pClass].AnimLenFromClass;
+		anim_len = classes.get(_pClass).AnimLenFromClass;
 	}
 
 	if (_pVar8 == anim_len) { // end of anim
@@ -1717,31 +1630,30 @@ bool Player::PM_DoWalk3()
 	}
 }
 
-bool Player::PlrHitMonst(int m)
+bool Player::PlrHitMonst(Monster & m)
 {
 	bool rv, ret;
 	int hit, hper, mind, maxd, ddp, dam, phanditype, tmac;
+	ItemType phanditype;
 
-	if ((monsters[m]._mhitpoints >> 6) <= 0) {
+	if (m._mhitpoints <= 0) return false;
+
+	if (m.MType->mtype == MonsterType::ILLWEAV && m._mgoal == MonsterGoal::RETREAT) {
 		return false;
 	}
 
-	if (monsters[m].MType->mtype == MonsterType::ILLWEAV && monsters[m]._mgoal == MonsterGoal::RETREAT) {
-		return false;
-	}
-
-	if (monsters[m]._mmode == MonsterMode::CHARGE) {
+	if (m._mmode == MonsterMode::CHARGE) {
 		return false;
 	}
 
 	rv = false;
 
 	hit = random_(4, 100);
-	if (monsters[m]._mmode == MonsterMode::STONE) {
+	if (m._mmode == MonsterMode::STONE) {
 		hit = 0;
 	}
 
-	tmac = monsters[m].mArmorClass - _pIEnAc;
+	tmac = m.mArmorClass - _pIEnAc;
 	hper = (_dexterity >> 1) + _pLevel + 50 - tmac;
 	if (_pClass == PlayerClass::warrior) {
 		hper += 20;
@@ -1782,7 +1694,7 @@ bool Player::PlrHitMonst(int m)
 			phanditype = ItemType::mace;
 		}
 
-		switch (monsters[m].MData->mMonstClass) {
+		switch (m.MData->mMonstClass) {
 		case MonstClassId::undead:
 			if (phanditype == ItemType::sword) {
 				dam -= dam >> 1;
@@ -1801,61 +1713,61 @@ bool Player::PlrHitMonst(int m)
 			break;
 		}
 
-		if (_pIFlags & ItemSpecialEffect::T3XDAMVDEM && monsters[m].MData->mMonstClass == MonstClassId::demon) {
+		if (_pIFlags & ItemSpecialEffectFlag::T3XDAMVDEM && m.MData->mMonstClass == MonstClassId::demon) {
 			dam *= 3;
 		}
 
 		if (isMyPlr()) {
-			monsters[m]._mhitpoints -= dam;
+			m._mhitpoints -= dam;
 		}
 
 		int skdam;
-		if (_pIFlags & ItemSpecialEffect::RNDSTEALLIFE) {
+		if (_pIFlags & ItemSpecialEffectFlag::RNDSTEALLIFE) {
 			skdam = random_(7, dam >> 3);
 			this->heal(skdam);
 		}
-		if (_pIFlags & (ItemSpecialEffect::STEALMANA_3 | ItemSpecialEffect::STEALMANA_5) && !(_pIFlags & ItemSpecialEffect::NOMANA)) {
-			if (_pIFlags & ItemSpecialEffect::STEALMANA_3) {
+		if (_pIFlags & (ItemSpecialEffectFlag::STEALMANA_3 | ItemSpecialEffectFlag::STEALMANA_5) && !(_pIFlags & ItemSpecialEffectFlag::NOMANA)) {
+			if (_pIFlags & ItemSpecialEffectFlag::STEALMANA_3) {
 				skdam = 3 * dam / 100;
 			}
-			if (_pIFlags & ItemSpecialEffect::STEALMANA_5) {
+			if (_pIFlags & ItemSpecialEffectFlag::STEALMANA_5) {
 				skdam = 5 * dam / 100;
 			}
 			this->restoreMana(skdam);
 		}
-		if (_pIFlags & (ItemSpecialEffect::STEALLIFE_3 | ItemSpecialEffect::STEALLIFE_5)) {
-			if (_pIFlags & ItemSpecialEffect::STEALLIFE_3) {
+		if (_pIFlags & (ItemSpecialEffectFlag::STEALLIFE_3 | ItemSpecialEffectFlag::STEALLIFE_5)) {
+			if (_pIFlags & ItemSpecialEffectFlag::STEALLIFE_3) {
 				skdam = 3 * dam / 100;
 			}
-			if (_pIFlags & ItemSpecialEffect::STEALLIFE_5) {
+			if (_pIFlags & ItemSpecialEffectFlag::STEALLIFE_5) {
 				skdam = 5 * dam / 100;
 			}
 			this->heal(skdam);
 		}
-		if (_pIFlags & ItemSpecialEffect::NOHEALPLR) {
-			monsters[m]._mFlags |= MonsterFlag::noheal;
+		if (_pIFlags & ItemSpecialEffectFlag::NOHEALPLR) {
+			m._mFlags |= MonsterFlag::noheal;
 		}
 #ifdef _DEBUG
 		if (debug_mode_dollar_sign || debug_mode_key_inverted_v) {
-			monsters[m]._mhitpoints = 0; /* double check */
+			m._mhitpoints = 0; /* double check */
 		}
 #endif
-		if ((monsters[m]._mhitpoints >> 6) <= 0) {
-			if (monsters[m]._mmode == MonsterMode::STONE) {
-				monsters[m].M_StartKill(pnum);
-				monsters[m]._mmode = MonsterMode::STONE;
+		if ((m._mhitpoints >> 6) <= 0) {
+			if (m._mmode == MonsterMode::STONE) {
+				m.startKillByPlayer(pnum);
+				m._mmode = MonsterMode::STONE;
 			} else {
-				monsters[m].M_StartKill(pnum);
+				m.startKillByPlayer(pnum);
 			}
 		} else {
-			if (monsters[m]._mmode == MonsterMode::STONE) {
-				monsters[m].M_StartHit(pnum, dam);
-				monsters[m]._mmode = MonsterMode::STONE;
+			if (m._mmode == MonsterMode::STONE) {
+				m.startHitByPlayer(pnum, dam);
+				m._mmode = MonsterMode::STONE;
 			} else {
-				if (_pIFlags & ItemSpecialEffect::KNOCKBACK) {
-					monsters[m].M_GetKnockback();
+				if (_pIFlags & ItemSpecialEffectFlag::KNOCKBACK) {
+					m.M_GetKnockback();
 				}
-				monsters[m].M_StartHit(pnum, dam);
+				m.startHitByPlayer(pnum, dam);
 			}
 		}
 		rv = true;
@@ -1909,7 +1821,7 @@ bool Player::PlrHitPlr(Player & target)
 				}
 			}
 			skdam = dam;// << 6;
-			if (_pIFlags & ItemSpecialEffect::RNDSTEALLIFE) {
+			if (_pIFlags & ItemSpecialEffectFlag::RNDSTEALLIFE) {
 				tac = random_(7, skdam >> 3);
 				this->heal(tac);
 			}
@@ -1933,21 +1845,17 @@ bool Player::PlrHitObj(V2Di m)
 
 bool Player::PM_DoAttack()
 {
-	Dir dir;
-	int frame, m;
-	bool didhit;
-	V2Di d;
-	frame = _pAnimFrame;
-	if (_pIFlags & ItemSpecialEffect::QUICKATTACK && frame == 1) {
+	int frame = _pAnimFrame;
+	if (_pIFlags & ItemSpecialEffectFlag::QUICKATTACK && frame == 1) {
 		_pAnimFrame++;
 	}
-	if (_pIFlags & ItemSpecialEffect::FASTATTACK && (frame == 1 || frame == 3)) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTATTACK && (frame == 1 || frame == 3)) {
 		_pAnimFrame++;
 	}
-	if (_pIFlags & ItemSpecialEffect::FASTERATTACK && (frame == 1 || frame == 3 || frame == 5)) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTERATTACK && (frame == 1 || frame == 3 || frame == 5)) {
 		_pAnimFrame++;
 	}
-	if (_pIFlags & ItemSpecialEffect::FASTESTATTACK && (frame == 1 || frame == 4)) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTESTATTACK && (frame == 1 || frame == 4)) {
 		_pAnimFrame += 2;
 	}
 	if (_pAnimFrame == _pAFNum - 1) {
@@ -1955,38 +1863,28 @@ bool Player::PM_DoAttack()
 	}
 
 	if (_pAnimFrame == _pAFNum) {
-		dir = _pdir;
-		d = pos() + offset(dir);
-		if (grid.at(d).getActor()) {
-			if (grid.at(d).getActor() > 0) {
-				m = grid.at(d).getActor() - 1;
-			} else {
-				m = -(grid.at(d).getActor() + 1);
-			}
+		Dir dir = _pdir;
+		V2Di d = pos() + offset(dir);
+		if (grid.at(d).isActor()) {
 			if (CanTalkToMonst(m)) {
 				_pVar1 = 0;
 				return false;
 			}
 		}
 
-		if (_pIFlags & ItemSpecialEffect::FIREDAM) {
-			AddMissile(d, { 1, 0 }, Dir(0), MissileType::WEAPEXP, 0, pnum, 0, 0);
+		if (_pIFlags & ItemSpecialEffectFlag::FIREDAM) {
+			AddMissile(d, { 1, 0 }, Dir(0), MissileType::WEAPEXP, 0, id(), 0, 0);
 		}
-		if (_pIFlags & ItemSpecialEffect::LIGHTDAM) {
-			AddMissile(d, { 2, 0 }, Dir(0), MissileType::WEAPEXP, 0, pnum, 0, 0);
+		if (_pIFlags & ItemSpecialEffectFlag::LIGHTDAM) {
+			AddMissile(d, { 2, 0 }, Dir(0), MissileType::WEAPEXP, 0, id(), 0, 0);
 		}
 
-		didhit = false;
-		if (grid.at(d).getActor()) {
-			m = grid.at(d).getActor();
-			if (grid.at(d).getActor() > 0) {
-				m = grid.at(d).getActor() - 1;
-			} else {
-				m = -(grid.at(d).getActor() + 1);
-			}
+		bool didhit  = false;
+		if (grid.at(d).isMonster()) {
+			Monster & m = grid.at(d).getMonster();
 			didhit = PlrHitMonst(m);
 		} else if (grid.at(d).isPlayer() && !FriendlyMode) {
-			uint8_t p = grid.at(d).getPlayer();
+			Player & p = grid.at(d).getPlayer();
 			didhit = PlrHitPlr(p);
 		} else if (grid.at(d).isObject()) {
 			didhit = PlrHitObj(d);
@@ -2014,19 +1912,19 @@ bool Player::PM_DoRangeAttack()
 	MissileType mistype;
 
 	origFrame = _pAnimFrame;
-	if (_pIFlags & ItemSpecialEffect::QUICKATTACK && origFrame == 1) {
+	if (_pIFlags & ItemSpecialEffectFlag::QUICKATTACK && origFrame == 1) {
 		_pAnimFrame++;
 	}
-	if (_pIFlags & ItemSpecialEffect::FASTATTACK && (origFrame == 1 || origFrame == 3)) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTATTACK && (origFrame == 1 || origFrame == 3)) {
 		_pAnimFrame++;
 	}
 
 	if (_pAnimFrame == _pAFNum) {
 		mistype = MissileType::ARROW;
-		if (_pIFlags & ItemSpecialEffect::FIRE_ARROWS) {
+		if (_pIFlags & ItemSpecialEffectFlag::FIRE_ARROWS) {
 			mistype = MissileType::FARROW;
 		}
-		if (_pIFlags & ItemSpecialEffect::LIGHT_ARROWS) {
+		if (_pIFlags & ItemSpecialEffectFlag::LIGHT_ARROWS) {
 			mistype = MissileType::LARROW;
 		}
 		AddMissile(
@@ -2035,7 +1933,7 @@ bool Player::PM_DoRangeAttack()
 		    _pdir,
 		    mistype,
 		    0,
-		    pnum,
+		    id(),
 		    4,
 		    0);
 
@@ -2059,7 +1957,7 @@ bool Player::PM_DoRangeAttack()
 
 bool Player::PM_DoBlock()
 {
-	if (_pIFlags & ItemSpecialEffect::FASTBLOCK && _pAnimFrame != 1) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTBLOCK && _pAnimFrame != 1) {
 		_pAnimFrame = _pBFrames;
 	}
 
@@ -2079,7 +1977,7 @@ bool Player::PM_DoSpell()
 {
 	if (_pVar8 == _pSFNum) {
 		CastSpell(
-		    pnum,
+		    id(),
 		    _pSpell,
 		    pos(),
 		    { _pVar1, _pVar2 },
@@ -2129,13 +2027,13 @@ bool Player::PM_DoGotHit()
 	int frame;
 
 	frame = _pAnimFrame;
-	if (_pIFlags & ItemSpecialEffect::FASTRECOVER && frame == 3) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTRECOVER && frame == 3) {
 		_pAnimFrame++;
 	}
-	if (_pIFlags & ItemSpecialEffect::FASTERRECOVER && (frame == 3 || frame == 5)) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTERRECOVER && (frame == 3 || frame == 5)) {
 		_pAnimFrame++;
 	}
-	if (_pIFlags & ItemSpecialEffect::FASTESTRECOVER && (frame == 1 || frame == 3 || frame == 5)) {
+	if (_pIFlags & ItemSpecialEffectFlag::FASTESTRECOVER && (frame == 1 || frame == 3 || frame == 5)) {
 		_pAnimFrame++;
 	}
 
@@ -2161,7 +2059,7 @@ bool Player::PM_DoDeath()
 			deathdelay--;
 			if (deathdelay == 1) {
 				deathflag = true;
-				if (actors.isSingleplayer()) {
+				if (game.isSingleplayer()) {
 					gamemenu_on();
 				}
 			}
@@ -2337,7 +2235,7 @@ void Player::CheckNewPath()
 					d = GetDirection(pos(), object[i]._o);
 					StartAttack(d);
 				} else {
-					TryDisarm(pnum, i);
+					TryDisarm(id(), i);
 					OperateObject(pnum, i, false);
 				}
 			}
@@ -2349,28 +2247,28 @@ void Player::CheckNewPath()
 			}
 			break;
 		case DestinationAction::PICKUPITEM:
-			if (pnum == myplr()) {
+			if (isMyPlr()) {
 				i = destParam1;
 				n = (pos() - item[i]._i).abs();
-				if (n.x <= 1 && n.y <= 1 && pcurs == CURSOR_HAND && !item[i]._iRequest) {
-					NetSendCmdGItem(true, CMD_REQUESTGITEM, myplr(), myplr(), i);
+				if (n.x <= 1 && n.y <= 1 && pcurs == Cursor::HAND && !item[i]._iRequest) {
+					NetSendCmdGItem(true, Cmd::REQUESTGITEM, myplr(), myplr(), i);
 					item[i]._iRequest = true;
 				}
 			}
 			break;
 		case DestinationAction::PICKUPAITEM:
-			if (pnum == myplr()) {
+			if (isMyPlr()) {
 				i = destParam1;
 				n = (pos() - item[i]._i).abs();
-				if (n.x <= 1 && n.y <= 1 && pcurs == CURSOR_HAND) {
-					NetSendCmdGItem(true, CMD_REQUESTAGITEM, myplr(), myplr(), i);
+				if (n.x <= 1 && n.y <= 1 && pcurs == Cursor::HAND) {
+					NetSendCmdGItem(true, Cmd::REQUESTAGITEM, myplr(), myplr(), i);
 				}
 			}
 			break;
 		case DestinationAction::TALK:
-			if (pnum == myplr()) {
-				TalkToTowner(pnum, destParam1);
-			}
+			if (isMyPlr())
+				// Need to figure out who you are talking to
+				TalkToTowner(destParam1);
 			break;
 		}
 
@@ -2487,32 +2385,20 @@ void Player::ValidatePlayer()
 			gt += InvList[i]._ivalue;
 		}
 	}
-	if (gt != _pGold)
-		_pGold = gt;
+	if (gt != _pGold) _pGold = gt;
 
-	pc = _pClass;
-	if (_pBaseStr > classes[pc].MaxStats[AttributeId::STR]) {
-		_pBaseStr = classes[pc].MaxStats[AttributeId::STR];
-	}
-	if (_pBaseMag > classes[pc].MaxStats[AttributeId::MAG]) {
-		_pBaseMag = classes[pc].MaxStats[AttributeId::MAG];
-	}
-	if (_pBaseDex > classes[pc].MaxStats[AttributeId::DEX]) {
-		_pBaseDex = classes[pc].MaxStats[AttributeId::DEX];
-	}
-	if (_pBaseVit > classes[pc].MaxStats[AttributeId::VIT]) {
-		_pBaseVit = classes[pc].MaxStats[AttributeId::VIT];
-	}
+	CharType myclass = classes.get(_pClass);
+	_strength.setBaseMax(myclass.getMax(AttributeId::STR));
+	_dexterity.setBaseMax(myclass.getMax(AttributeId::DEX));
+	_magic.setBaseMax(myclass.getMax(AttributeId::MAG));
+	_vitality.setBaseMax(myclass.getMax(AttributeId::VIT));
+	CheckStats();
 
 	for (b = 1; b < MAX_SPELLS; b++) {
-		if (spelldata[b].sBookLvl != -1) {
-			msk |= (__int64)1 << (b - 1);
-			if (_pSplLvl[b] > 15)
-				_pSplLvl[b] = 15;
+		if (_spellBook.entry(SpellId(b)).memory_level > 15) {
+			_spellBook.entry(SpellId(b)).memory_level = 15;
 		}
 	}
-
-	_pMemorySpells &= msk;
 }
 
 void Player::ProcessPlayer()
@@ -2537,16 +2423,16 @@ void Player::ProcessPlayer()
 		if (plractive && lvl.currlevel == plrlevel && (isMyPlr() || !_pLvlChanging)) {
 			CheckCheatStats();
 
-			if (!PlrDeathModeOK(pnum) && (_pHitPoints >> 6) <= 0) {
+			if (!PlrDeathModeOK() && _hp <= 0) {
 				SyncPlrKill();
 			}
 
 			if (isMyPlr()) {
-				if ((_pIFlags & ItemSpecialEffect::DRAINLIFE) && lvl.currlevel != 0) {
+				if ((_pIFlags & ItemSpecialEffectFlag::DRAINLIFE) && lvl.currlevel != 0) {
 					this->damage(4);
 					this->_checkDie();
 				}
-				if (_pIFlags & ItemSpecialEffect::NOMANA && _mana > 0) {
+				if (_pIFlags & ItemSpecialEffectFlag::NOMANA && _mana > 0) {
 					this->useMana(_mana - 0);
 				}
 			}
@@ -2614,7 +2500,8 @@ void Player::ClrPlrPath()
 	wkpath = std::queue<PathNode>();
 }
 
-bool Player::PosOkPlayer(V2Di pos)
+
+bool Player::posOk(V2Di pos)
 {
 	if (!grid.isValid(pos)) return false;
 	if (!grid.at(pos).isPiece()) return false;
@@ -2639,9 +2526,10 @@ bool Player::PosOkPlayer(V2Di pos)
 
 void Player::MakePlrPath(V2Di p, bool endspace)
 {
+	PosOkPlayer(p);
 	_pathtarg = p;
 	if (futpos() == p) return; // already moving there
-	int dist = pathfinder.FindPath(::dvl::PosOkPlayer, pnum, futpos(), p, wkpath);
+	int dist = pathfinder.FindPath(*this, futpos(), p, wkpath);
 	if (!wkpath.empty()) {
 		_pathtarg = wkpath.front().pos();
 		wkpath.pop(); // pops the front, which should be the starting location
@@ -2650,10 +2538,6 @@ void Player::MakePlrPath(V2Di p, bool endspace)
 
 void Player::CheckPlrSpell()
 {
-	bool addflag;
-	int sl;
-	Dir sd;
-
 	if (!isMyPlr()) return;
 
 	SpellId rspell = _pRSpell;
@@ -2680,7 +2564,7 @@ void Player::CheckPlrSpell()
 	}
 
 	if (!sgbControllerActive) {
-		if (pcurs != CURSOR_HAND
+		if (pcurs != Cursor::HAND
 		    || (Mouse.y >= PANEL_TOP && Mouse.x >= PANEL_LEFT && Mouse.x <= RIGHT_PANEL)     // inside main panel
 		    || ((gui.panels.characterUp() || gui.panels.questLogUp()) && Mouse.x < SPANEL_WIDTH && Mouse.y < SPANEL_HEIGHT) // inside left panel
 		    || ((gui.panels.inventoryUp() || gui.panels.spellBookUp()) && Mouse.x > RIGHT_PANEL && Mouse.y < SPANEL_HEIGHT) // inside right panel
@@ -2693,7 +2577,7 @@ void Player::CheckPlrSpell()
 		}
 	}
 
-	addflag = false;
+	bool addflag = false;
 	switch (_pRSplType) {
 	case RSpellType::SKILL:
 	case RSpellType::SPELL:
@@ -2707,20 +2591,22 @@ void Player::CheckPlrSpell()
 		break;
 	}
 
+	int sl;
+	Dir sd;
 	if (addflag) {
 		if (_pRSpell == SpellId::FIREWALL) {
 			sd = GetDirection(pos(), cursm);
 			sl = GetSpellLevel(_pRSpell);
-			NetSendCmdLocParam3(true, CMD_SPELLXYD, cursm, WORD(_pRSpell), int(sd), sl);
+			NetSendCmdLocParam3(true, Cmd::SPELLXYD, cursm, WORD(_pRSpell), int(sd), sl);
 		} else if (pcursmonst != -1) {
 			sl = GetSpellLevel(_pRSpell);
-			NetSendCmdParam3(true, CMD_SPELLID, pcursmonst, WORD(_pRSpell), sl);
+			NetSendCmdParam3(true, Cmd::SPELLID, pcursmonst, WORD(_pRSpell), sl);
 		} else if (pcursplr != -1) {
 			sl = GetSpellLevel(_pRSpell);
-			NetSendCmdParam3(true, CMD_SPELLPID, pcursplr, WORD(_pRSpell), sl);
+			NetSendCmdParam3(true, Cmd::SPELLPID, pcursplr, WORD(_pRSpell), sl);
 		} else { //145
 			sl = GetSpellLevel(_pRSpell);
-			NetSendCmdLocParam2(true, CMD_SPELLXY, cursm, WORD(_pRSpell), sl);
+			NetSendCmdLocParam2(true, Cmd::SPELLXY, cursm, WORD(_pRSpell), sl);
 		}
 		return;
 	}
@@ -2740,7 +2626,7 @@ int Player::GetSpellLevel(SpellId sn)
 {
 	int result;
 	if (isMyPlr())
-		result = _pISplLvlAdd + _pSplLvl[sn];
+		result = _pISplLvlAdd + _spellBook.entry(sn).memory_level;
 	else
 		result = 1;
 	if (result < 0) result = 0;
@@ -2885,6 +2771,10 @@ void Player::heal(int pts) {
 	damage(-pts);
 }
 
+void Player::setNoHp() {
+	damage(_hp);
+}
+
 void Player::useMana(int pts) {
 	_mana.changeBase(-pts);
 	if (isMyPlr()) gui.setRedrawMana();
@@ -2906,7 +2796,7 @@ void Player::SetPlrStr(int v)
 	_strength.setBase(v);
 	_updateBaseDmgMod();
 	CalcPlrInv(true);
-	if (isMyPlr()) NetSendCmdParam1(false, CMD_SETSTR, _strength.getBase()); //60
+	if (isMyPlr()) NetSendCmdParam1(false, Cmd::SETSTR, _strength.getBase()); //60
 }
 
 void Player::ModifyPlrStr(int l)
@@ -2919,7 +2809,7 @@ void Player::SetPlrMag(int v)
 	_magic.setBase(v);
 	_updateBaseMana();
 	CalcPlrInv(true);
-	if (isMyPlr()) NetSendCmdParam1(false, CMD_SETMAG, _magic.getBase());
+	if (isMyPlr()) NetSendCmdParam1(false, Cmd::SETMAG, _magic.getBase());
 }
 
 void Player::ModifyPlrMag(int l)
@@ -2932,7 +2822,7 @@ void Player::SetPlrDex(int v)
 	_dexterity.setBase(v);
 	_updateBaseDmgMod();
 	CalcPlrInv(true);
-	if (isMyPlr()) NetSendCmdParam1(false, CMD_SETDEX, _dexterity.getBase());
+	if (isMyPlr()) NetSendCmdParam1(false, Cmd::SETDEX, _dexterity.getBase());
 }
 
 void Player::ModifyPlrDex(int l)
@@ -2945,7 +2835,7 @@ void Player::SetPlrVit(int v)
 	_vitality.setBase(v);
 	_updateBaseHp();
 	CalcPlrInv(true);
-	if (isMyPlr()) NetSendCmdParam1(false, CMD_SETVIT, _vitality.getBase());
+	if (isMyPlr()) NetSendCmdParam1(false, Cmd::SETVIT, _vitality.getBase());
 }
 
 void Player::ModifyPlrVit(int l)
@@ -2980,7 +2870,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE96;
 		}
 		myplr().pDungMsgs |= DMSG_CATACOMBS;
-	} else if (lvl.currlevel == 9 && !myplr()._pLvlVisited[9] && plr.isSingleplayer() && !(myplr().pDungMsgs & DMSG_CAVES)) {
+	} else if (lvl.currlevel == 9 && !myplr()._pLvlVisited[9] && game.isSingleplayer() && !(myplr().pDungMsgs & DMSG_CAVES)) {
 		sfxdelay = 40;
 		if (myplr()._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR98;
@@ -2990,7 +2880,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE98;
 		}
 		myplr().pDungMsgs |= DMSG_CAVES;
-	} else if (lvl.currlevel == 13 && !myplr()._pLvlVisited[13] && plr.isSingleplayer() && !(myplr().pDungMsgs & DMSG_HELL)) {
+	} else if (lvl.currlevel == 13 && !myplr()._pLvlVisited[13] && game.isSingleplayer() && !(myplr().pDungMsgs & DMSG_HELL)) {
 		sfxdelay = 40;
 		if (myplr()._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR99;
@@ -3000,7 +2890,7 @@ void PlayDungMsgs()
 			sfxdnum = PS_MAGE99;
 		}
 		myplr().pDungMsgs |= DMSG_HELL;
-	} else if (lvl.currlevel == 16 && !myplr()._pLvlVisited[15] && plr.isSingleplayer() && !(myplr().pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
+	} else if (lvl.currlevel == 16 && !myplr()._pLvlVisited[15] && game.isSingleplayer() && !(myplr().pDungMsgs & DMSG_DIABLO)) { // BUGFIX: _pLvlVisited should check 16 or this message will never play
 		sfxdelay = 40;
 		if (myplr()._pClass == PlayerClass::warrior || myplr()._pClass == PlayerClass::rogue || myplr()._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_DIABLVLINT;
@@ -3020,4 +2910,4 @@ Item *Player::HasItem(int item) // takes IDI enum, e.g. ItemIndex::LAZSTAFF
 	return 0;
 }
 
-DEVILUTION_END_NAMESPACE
+}

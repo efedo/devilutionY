@@ -6,7 +6,7 @@
 #ifndef __MSG_H__
 #define __MSG_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern bool deltaload;
 extern uint8_t gbBufferMsgs;
@@ -28,7 +28,7 @@ uint8_t *DeltaExportMonster(uint8_t *dst, DMonsterStr *src);
 uint8_t *DeltaExportJunk(uint8_t *dst);
 int msg_comp_level(uint8_t *buffer, uint8_t *end);
 void delta_init();
-void delta_kill_monster(int mi, V2Di pos, uint8_t bLevel);
+void delta_kill_monster(ActorId mi, V2Di pos, uint8_t bLevel);
 void delta_monster_hp(int mi, int hp, uint8_t bLevel);
 void delta_sync_monster(const TSyncMonster *pSync, uint8_t bLevel);
 void delta_sync_golem(TCmdGolem *pG, int pnum, uint8_t bLevel);
@@ -38,21 +38,21 @@ bool delta_quest_inited(int i);
 void DeltaAddItem(Item &item);
 void DeltaSaveLevel();
 void DeltaLoadLevel();
-void NetSendCmd(bool bHiPri, uint8_t bCmd);
+void NetSendCmd(bool bHiPri, Cmd bCmd);
 void NetSendCmdGolem(V2Di pos, uint8_t dir, uint8_t menemy, int hp, uint8_t cl);
-void NetSendCmdLoc(bool bHiPri, uint8_t bCmd, V2Di pos);
-void NetSendCmdLocParam1(bool bHiPri, uint8_t bCmd, V2Di pos, WORD wParam1);
-void NetSendCmdLocParam2(bool bHiPri, uint8_t bCmd, V2Di pos, WORD wParam1, WORD wParam2);
-void NetSendCmdLocParam3(bool bHiPri, uint8_t bCmd, V2Di pos, WORD wParam1, WORD wParam2, WORD wParam3);
-void NetSendCmdParam1(bool bHiPri, uint8_t bCmd, WORD wParam1);
-void NetSendCmdParam2(bool bHiPri, uint8_t bCmd, WORD wParam1, WORD wParam2);
-void NetSendCmdParam3(bool bHiPri, uint8_t bCmd, WORD wParam1, WORD wParam2, WORD wParam3);
-void NetSendCmdQuest(bool bHiPri, uint8_t q);
-void NetSendCmdGItem(bool bHiPri, uint8_t bCmd, uint8_t mast, uint8_t pnum, Item &item);
-void NetSendCmdGItem2(bool usonly, uint8_t bCmd, uint8_t mast, uint8_t pnum, TCmdGItem *p);
-bool NetSendCmdReq2(uint8_t bCmd, uint8_t mast, uint8_t pnum, TCmdGItem *p);
+void NetSendCmdLoc(bool bHiPri, Cmd bCmd, V2Di pos);
+void NetSendCmdLocParam1(bool bHiPri, Cmd bCmd, V2Di pos, WORD wParam1);
+void NetSendCmdLocParam2(bool bHiPri, Cmd bCmd, V2Di pos, WORD wParam1, WORD wParam2);
+void NetSendCmdLocParam3(bool bHiPri, Cmd bCmd, V2Di pos, WORD wParam1, WORD wParam2, WORD wParam3);
+void NetSendCmdParam1(bool bHiPri, Cmd bCmd, WORD wParam1);
+void NetSendCmdParam2(bool bHiPri, Cmd bCmd, WORD wParam1, WORD wParam2);
+void NetSendCmdParam3(bool bHiPri, Cmd bCmd, WORD wParam1, WORD wParam2, WORD wParam3);
+void NetSendCmdQuest(bool bHiPri, QuestId q);
+void NetSendCmdGItem(bool bHiPri, Cmd bCmd, uint8_t mast, uint8_t pnum, Item &item);
+void NetSendCmdGItem2(bool usonly, Cmd bCmd, uint8_t mast, uint8_t pnum, TCmdGItem *p);
+bool NetSendCmdReq2(Cmd bCmd, uint8_t mast, uint8_t pnum, TCmdGItem *p);
 void NetSendCmdExtra(TCmdGItem *p);
-void NetSendCmdPItem(bool bHiPri, uint8_t bCmd, uint8_t x, uint8_t y);
+void NetSendCmdPItem(bool bHiPri, Cmd bCmd, uint8_t x, uint8_t y);
 void NetSendCmdChItem(bool bHiPri, BodyLoc bLoc);
 void NetSendCmdDelItem(bool bHiPri, BodyLoc bLoc);
 void NetSendCmdDItem(bool bHiPri, Item &item);
@@ -118,7 +118,7 @@ DWORD On_MONSTDAMAGE(TCmd *pCmd, int pnum);
 DWORD On_PLRDEAD(TCmd *pCmd, int pnum);
 DWORD On_PLRDAMAGE(TCmd *pCmd, int pnum);
 DWORD On_OPENDOOR(TCmd *pCmd, int pnum);
-void delta_sync_object(int oi, uint8_t bCmd, uint8_t bLevel);
+void delta_sync_object(int oi, Cmd bCmd, uint8_t bLevel);
 DWORD On_CLOSEDOOR(TCmd *pCmd, int pnum);
 DWORD On_OPERATEOBJ(TCmd *pCmd, int pnum);
 DWORD On_PLROPOBJ(TCmd *pCmd, int pnum);
@@ -153,6 +153,6 @@ DWORD On_REMSHIELD(TCmd *pCmd, int pnum);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MSG_H__ */

@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 StoreHealer healerStore;
 
@@ -31,11 +31,9 @@ void StoreHealer::S_Enter()
 			StartStore(StoreTalkId::GOSSIP);
 			break;
 		case 14:
-			if (myplr().data._pHitPoints != myplr().data._pMaxHP)
+			if (myplr()._hp.statRoom())
 				PlaySFX(IS_CAST8);
-			redrawhpflag = true;
-			myplr().data._pHitPoints = myplr().data._pMaxHP;
-			myplr().data._pHPBase = myplr().data._pMaxHPBase;
+			myplr().heal(myplr()._hp.statRoom());
 			break;
 		case 16:
 			StartStore(StoreTalkId::HBUY);
@@ -60,7 +58,7 @@ void StoreHealer::Spawn(int lvl)
 	healitem[1]._iCreateInfo = lvl;
 	healitem[1]._iStatFlag = true;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		loadPresetAttributes(0, ItemIndex::RESURRECT, 1);
 		healitem[2] = item[0];
 		healitem[2]._iCreateInfo = lvl;
@@ -110,7 +108,7 @@ void StoreHealer::BuyItem()
 	idx = stextvhold + ((stextlhold - stextup) >> 2);
 
 	ok = false;
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (idx < 2) ok = true;
 	} else {
 		if (idx < 3) ok = true;
@@ -123,7 +121,7 @@ void StoreHealer::BuyItem()
 	StoreAutoPlace();
 
 	ok = false;
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (idx >= 2) ok = true;
 	} else {
 		if (idx >= 3) ok = true;
@@ -182,7 +180,7 @@ void StoreHealer::S_BuyEnter()
 			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = healitem[idx];
-			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(myplr().data.HoldItem._iCurs + Cursor::FIRSTITEM);
 			done = false;
 			i = 0;
 			for (i = 0; i < 40 && !done; i++) {
@@ -193,7 +191,7 @@ void StoreHealer::S_BuyEnter()
 				StartStore(StoreTalkId::CONFIRM);
 			else
 				StartStore(StoreTalkId::NOROOM);
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		}
 	}
 }
@@ -253,13 +251,13 @@ bool StoreHealer::ItemOk(int i)
 	    AllItemsList[i].iSpell == SpellId::HEAL)
 		result = true;
 	if (AllItemsList[i].iMiscId == MiscItemId::SCROLLT &&
-	    AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isMultiplayer())
+	    AllItemsList[i].iSpell == SpellId::RESURRECT && game.isMultiplayer())
 		result = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::SCROLLT &&
-	    AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isMultiplayer())
+	    AllItemsList[i].iSpell == SpellId::HEALOTHER && game.isMultiplayer())
 		result = true;
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (AllItemsList[i].iMiscId == MiscItemId::ELIXSTR) result = true;
 		if (AllItemsList[i].iMiscId == MiscItemId::ELIXMAG) result = true;
 		if (AllItemsList[i].iMiscId == MiscItemId::ELIXDEX) result = true;
@@ -281,4 +279,4 @@ bool StoreHealer::ItemOk(int i)
 }
 
 
-DEVILUTION_END_NAMESPACE
+}

@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 char msgtable[MAX_SEND_STR_LEN];
 DWORD msgdelay;
@@ -154,4 +154,4 @@ void DrawDiabloMsg()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

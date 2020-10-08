@@ -2,7 +2,7 @@
 #ifndef __QUESTS_H__
 #define __QUESTS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern int qtopline;
 extern uint8_t *pQLogCel;
@@ -19,7 +19,7 @@ extern int ReturnLvl;
 void InitQuests();
 void CheckQuests();
 bool ForceQuests();
-bool QuestStatus(int i);
+bool QuestStatus(QuestId i);
 void CheckQuestKill(int m, bool sendmsg);
 void DrawButcher();
 void DrawSkelKing(int q, int x, int y);
@@ -52,6 +52,6 @@ extern int QuestGroup2[3];
 extern int QuestGroup3[3];
 extern int QuestGroup4[2];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __QUESTS_H__ */

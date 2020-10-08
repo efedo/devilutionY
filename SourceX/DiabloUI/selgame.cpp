@@ -32,10 +32,11 @@ namespace {
 
 char title[32];
 UiListItem SELDIFF_DIALOG_ITEMS[] = {
-	{ "Normal", DIFF_NORMAL },
-	{ "Nightmare", DIFF_NIGHTMARE },
-	{ "Hell", DIFF_HELL }
+	{ "Normal", int(Difficulty::NORMAL) },
+	{ "Nightmare", int(Difficulty::NIGHTMARE) },
+	{ "Hell", int(Difficulty::HELL) }
 };
+
 UiItem SELDIFF_DIALOG[] = {
 	MAINMENU_BACKGROUND,
 	MAINMENU_LOGO,
@@ -151,7 +152,7 @@ void selgame_GameSelection_Select(int value)
 	switch (value) {
 	case 0:
 		strcpy(title, "Create Game");
-		UiInitList(0, NUM_DIFFICULTIES - 1, selgame_Diff_Focus, selgame_Diff_Select, selgame_Diff_Esc, SELDIFF_DIALOG, size(SELDIFF_DIALOG));
+		UiInitList(0, int(Difficulty::NUM_DIFFICULTIES) - 1, selgame_Diff_Focus, selgame_Diff_Select, selgame_Diff_Esc, SELDIFF_DIALOG, size(SELDIFF_DIALOG));
 		break;
 	case 1:
 		strcpy(title, "Join TCP Games");
@@ -167,18 +168,18 @@ void selgame_GameSelection_Esc()
 	selgame_endMenu = true;
 }
 
-void selgame_Diff_Focus(int value)
+void selgame_Diff_Focus(Difficulty value)
 {
 	switch (value) {
-	case DIFF_NORMAL:
+	case Difficulty::NORMAL:
 		strcpy(selgame_Label, "Normal");
 		strcpy(selgame_Description, "Normal Difficulty\nThis is where a starting character should begin the quest to defeat Diablo.");
 		break;
-	case DIFF_NIGHTMARE:
+	case Difficulty::NIGHTMARE:
 		strcpy(selgame_Label, "Nightmare");
 		strcpy(selgame_Description, "Nightmare Difficulty\nThe denizens of the Labyrinth have been bolstered and will prove to be a greater challenge. This is recommended for experienced characters only.");
 		break;
-	case DIFF_HELL:
+	case Difficulty::HELL:
 		strcpy(selgame_Label, "Hell");
 		strcpy(selgame_Description, "Hell Difficulty\nThe most powerful of the underworld's creatures lurk at the gateway into Hell. Only the most experienced characters should venture in this realm.");
 		break;

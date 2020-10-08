@@ -1,0 +1,38 @@
+//HEADER_GOES_HERE
+#ifndef __GENDUNG_ENUMS_H__
+#define __GENDUNG_ENUMS_H__
+
+namespace dvl {
+
+
+	typedef enum dlrg_flag {
+		DLRG_HDOOR = 0x01,
+		DLRG_VDOOR = 0x02,
+		DLRG_CHAMBER = 0x40,
+		DLRG_PROTECTED = 0x80,
+	} dlrg_flag;
+
+	typedef enum theme_id {
+		THEME_BARREL = 0x0,
+		THEME_SHRINE = 0x1,
+		THEME_MONSTPIT = 0x2,
+		THEME_SKELROOM = 0x3,
+		THEME_TREASURE = 0x4,
+		THEME_LIBRARY = 0x5,
+		THEME_TORTURE = 0x6,
+		THEME_BLOODFOUNTAIN = 0x7,
+		THEME_DECAPITATED = 0x8,
+		THEME_PURIFYINGFOUNTAIN = 0x9,
+		THEME_ARMORSTAND = 0xA,
+		THEME_GOATSHRINE = 0xB,
+		THEME_CAULDRON = 0xC,
+		THEME_MURKYFOUNTAIN = 0xD,
+		THEME_TEARFOUNTAIN = 0xE,
+		THEME_BRNCROSS = 0xF,
+		THEME_WEAPONRACK = 0x10,
+		THEME_NONE = -1,
+	} theme_id;
+
+}
+
+#endif /* __GENDUNG_ENUMS_H__ */

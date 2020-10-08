@@ -6,7 +6,7 @@
 
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 ItemManager::ItemManager()
 {
@@ -39,4 +39,4 @@ void ItemManager::destroyItem(const ItemID id)
 	list.erase(id);
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 
 void PlayerInventory::DrawBodySlot(BodyLoc bodyloc)
@@ -20,16 +20,16 @@ void PlayerInventory::DrawBodySlot(BodyLoc bodyloc)
 	V2Di slotpos = { slotrect.x, slotrect.y };
 	DrawInvSlotBack(slotrect);
 
-	int frame = item->_iCurs + CURSOR_FIRSTITEM;
+	int frame = item->_iCurs + Cursor::FIRSTITEM;
 	int frame_width = InvItemWidth[frame];
 	int color;
 
 	if (pcursinvitem == INVITEM_HEAD) {
-		color = ICOL_WHITE;
+		color = ItemColor::white;
 		if (item->_iMagical != ItemQuality::normal)
-			color = ICOL_BLUE;
+			color = ItemColor::blue;
 		if (!item->_iStatFlag)
-			color = ICOL_RED;
+			color = ItemColor::red;
 		CelBlitOutline(color, slotpos, pCursCels, frame, frame_width);
 	}
 
@@ -57,15 +57,15 @@ void PlayerInventory::DrawInvSlots()
 		if (item == lastItem)
 			continue; // Skip multiple slots of same item
 		lastItem = item;
-		int frame = item->_iCurs + CURSOR_FIRSTITEM;
+		int frame = item->_iCurs + Cursor::FIRSTITEM;
 		int frame_width = InvItemWidth[frame];
 		if (pcursinvitem == INVITEM_INV_FIRST) { // may be incorrect
-			int color = ICOL_WHITE;
+			int color = ItemColor::white;
 			if (item->_iMagical != ItemQuality::normal) {
-				color = ICOL_BLUE;
+				color = ItemColor::blue;
 			}
 			if (!item->_iStatFlag) {
-				color = ICOL_RED;
+				color = ItemColor::red;
 			}
 			CelBlitOutline(color, pos, pCursCels, frame, frame_width);
 		}
@@ -99,15 +99,15 @@ void PlayerInventory::DrawInvBelt()
 		V2Di pos = { rect.x, rect.y };
 
 		DrawInvSlotBack(rect);
-		frame = item->_iCurs + CURSOR_FIRSTITEM;
+		frame = item->_iCurs + Cursor::FIRSTITEM;
 		frame_width = InvItemWidth[frame];
 
 		if (pcursinvitem == i + INVITEM_BELT_FIRST) {
-			color = ICOL_WHITE;
+			color = ItemColor::white;
 			if (item->_iMagical)
-				color = ICOL_BLUE;
+				color = ItemColor::blue;
 			if (!item->_iStatFlag)
-				color = ICOL_RED;
+				color = ItemColor::red;
 			if (!sgbControllerActive || gui.invflag)
 				CelBlitOutline(color, pos, pCursCels, frame, frame_width);
 		}
@@ -209,4 +209,4 @@ void PlayerInventory::DrawInvSlotBack(RECT32 r)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

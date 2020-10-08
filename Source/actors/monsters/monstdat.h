@@ -9,17 +9,15 @@
 #include "monster_defs.h"
 #include "monster_enums.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
-extern MonsterData monsterdata[];
-extern uint8_t MonstConvTbl[];
-extern uint8_t MonstAvailTbl[];
-extern UniqMonstStruct UniqMonst[];
+// moved to beastiary
 
-//#ifdef __cplusplus
-//}
-//#endif
+//extern MonsterData monsterdata[];
+//extern MonsterType MonstConvTbl[];
+//extern uint8_t MonstAvailTbl[];
+//extern UniqMonstStruct UniqMonst[];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MONSTDAT_H__ */

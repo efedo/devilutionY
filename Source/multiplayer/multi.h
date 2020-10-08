@@ -6,7 +6,7 @@
 #ifndef __MULTI_H__
 #define __MULTI_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -70,6 +70,6 @@ extern const int event_types[3];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MULTI_H__ */

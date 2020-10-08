@@ -6,7 +6,9 @@
 #ifndef __ACTOR_H__
 #define __ACTOR_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+#include <numeric>
+
+namespace dvl {
 
 enum class ActorType : uint8_t {
 	none = 0,
@@ -18,9 +20,28 @@ enum class ActorType : uint8_t {
 
 struct ActorId
 {
+	using BaseT = uint8_t; // limited to uint8_t until you fix networking
+	[[nodiscard]] bool isValid() const { return id != std::numeric_limits<BaseT>::max(); };
+	[[nodiscard]] static constexpr ActorId getInvalid() {
+		return ActorId{std::numeric_limits<BaseT>::max() };
+	}
+	[[nodiscard]] ActorId setInvalid() {
+		id = std::numeric_limits<BaseT>::max();
+	}
 	// No conversion constructor, only actor manager should ever create these
-	uint16_t id;
-	operator uint16_t() { return id; }
+	BaseT id = std::numeric_limits<BaseT>::max();
+	explicit operator uint8_t() {
+		assert(id <= std::numeric_limits<uint8_t>::max());
+		return id;
+	}
+	explicit operator uint16_t() { return id; }
+	explicit operator size_t() { return id; }
+	friend bool operator==(const ActorId& lhs, const ActorId& rhs) {
+		return (lhs.id == rhs.id);
+	}
+	friend bool operator!=(const ActorId& lhs, const ActorId& rhs) {
+		return (lhs.id != rhs.id);
+	}
 };
 
 class Actor {
@@ -30,10 +51,12 @@ class Actor {
 	ActorId id() const { return _id; }
 	V2Di _drawpos;
 	ActorType type = ActorType::none;
+	operator ActorId() { return _id; }
+	virtual bool posOk() { return false; }
    private:
 	ActorId _id;
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __ACTOR_H__

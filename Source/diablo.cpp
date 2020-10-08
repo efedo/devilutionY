@@ -8,7 +8,7 @@
 #include "../DiabloUI/diabloui.h"
 #include <config.h>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 SDL_Window *ghMainWnd;
 DWORD glSeedTbl[NUMLEVELS];
@@ -24,7 +24,7 @@ bool gbRunGameResult;
 bool zoomflag;
 bool gbProcessPlayers;
 bool gbLoadGame;
-int DebugMonsters[10];
+
 bool cineflag;
 int force_redraw;
 bool visiondebug;
@@ -144,12 +144,12 @@ static bool ProcessInput()
 	if (PauseMode == 2) {
 		return false;
 	}
-	if (plr.isSingleplayer() && gmenu_is_active()) {
+	if (game.isSingleplayer() && gmenu_is_active()) {
 		force_redraw |= 1;
 		return false;
 	}
 
-	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE) {
+	if (!gmenu_is_active() && sgnTimeoutCurs == Cursor::NONE) {
 #ifndef USE_SDL1
 		finish_simulated_mouse_clicks(Mouse.x, Mouse.y);
 #endif
@@ -207,13 +207,13 @@ void run_game_loop(unsigned int uMsg)
 		DrawAndBlit();
 	}
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		pfile_write_hero();
 	}
 
 	pfile_flush_W();
 	PaletteFadeOut(8);
-	NewCursor(CURSOR_NONE);
+	NewCursor(Cursor::NONE);
 	ClearScreenBuffer();
 	force_redraw = 255;
 	scrollrt_draw_game_screen(true);
@@ -239,7 +239,7 @@ void start_game(unsigned int uMsg)
 	ShowProgress(uMsg);
 	gmenu_init_menu();
 	InitLevelCursor();
-	sgnTimeoutCurs = CURSOR_NONE;
+	sgnTimeoutCurs = Cursor::NONE;
 	sgbMouseDown = 0;
 	track_repeat_walk(false);
 }
@@ -607,7 +607,7 @@ LRESULT GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DIABTOWNWARP:
 	case WM_DIABTWARPUP:
 	case WM_DIABRETOWN:
-		if (plr.isMultiplayer())
+		if (game.isMultiplayer())
 			pfile_write_hero();
 		nthread_ignore_mutex(true);
 		PaletteFadeOut(8);
@@ -630,7 +630,7 @@ LRESULT GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 bool LeftMouseDown(int wParam)
 {
-	if (!gmenu_left_mouse(true) && !control_check_talk_btn() && sgnTimeoutCurs == CURSOR_NONE) {
+	if (!gmenu_left_mouse(true) && !control_check_talk_btn() && sgnTimeoutCurs == Cursor::NONE) {
 		if (deathflag) {
 			control_check_btn_press();
 		} else if (PauseMode != 2) {
@@ -654,10 +654,10 @@ bool LeftMouseDown(int wParam)
 							CheckInvItem();
 					} else if (sbookflag && Mouse.x > RIGHT_PANEL && Mouse.y < SPANEL_HEIGHT) {
 						CheckSBook();
-					} else if (pcurs >= CURSOR_FIRSTITEM) {
+					} else if (pcurs >= Cursor::FIRSTITEM) {
 						if (CanDropAdjacent()) {
-							NetSendCmdPItem(true, CMD_PUTITEM, cursm.x, cursm.y);
-							NewCursor(CURSOR_HAND);
+							NetSendCmdPItem(true, Cmd::PUTITEM, cursm.x, cursm.y);
+							NewCursor(Cursor::HAND);
 						}
 					} else {
 						if (myplr().data._pStatPts != 0 && !spselflag)
@@ -670,8 +670,8 @@ bool LeftMouseDown(int wParam)
 				if (!talkflag && !dropGoldFlag && !gmenu_is_active())
 					CheckInvScrn();
 				DoPanBtn();
-				if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM)
-					NewCursor(CURSOR_HAND);
+				if (pcurs > Cursor::HAND && pcurs < Cursor::FIRSTITEM)
+					NewCursor(Cursor::HAND);
 			}
 		}
 	}
@@ -686,45 +686,45 @@ bool LeftMouseCmd(bool bShift)
 	assert(Mouse.y < PANEL_TOP || Mouse.x < PANEL_LEFT || Mouse.x >= PANEL_LEFT + PANEL_WIDTH);
 
 	if (lvl.type() == DunType::town) {
-		if (pcursitem != -1 && pcurs == CURSOR_HAND)
-			NetSendCmdLocParam1(true, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
+		if (pcursitem != -1 && pcurs == Cursor::HAND)
+			NetSendCmdLocParam1(true, invflag ? Cmd::GOTOGETITEM : Cmd::GOTOAGETITEM, cursm, pcursitem);
 		if (pcursmonst != -1)
-			NetSendCmdLocParam1(true, CMD_TALKXY, cursm, pcursmonst);
+			NetSendCmdLocParam1(true, Cmd::TALKXY, cursm, pcursmonst);
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return true;
 	} else {
 		bNear = (myplr().pos() - cursm).abs().maxdim() < 2;
-		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
-			NetSendCmdLocParam1(true, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursm, pcursitem);
+		if (pcursitem != -1 && pcurs == Cursor::HAND && !bShift) {
+			NetSendCmdLocParam1(true, invflag ? Cmd::GOTOGETITEM : Cmd::GOTOAGETITEM, cursm, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
-			NetSendCmdLocParam1(true, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursm, pcursobj);
+			NetSendCmdLocParam1(true, pcurs == Cursor::DISARM ? Cmd::DISARMXY : Cmd::OPOBJXY, cursm, pcursobj);
 		} else if (myplr().data._pwtype == PlayerWeaponType::ranged) {
 			if (bShift) {
-				NetSendCmdLoc(true, CMD_RATTACKXY, cursm);
+				NetSendCmdLoc(true, Cmd::RATTACKXY, cursm);
 			} else if (pcursmonst != -1) {
 				if (CanTalkToMonst(pcursmonst)) {
-					NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
+					NetSendCmdParam1(true, Cmd::ATTACKID, pcursmonst);
 				} else {
-					NetSendCmdParam1(true, CMD_RATTACKID, pcursmonst);
+					NetSendCmdParam1(true, Cmd::RATTACKID, pcursmonst);
 				}
 			} else if (pcursplr != -1 && !FriendlyMode) {
-				NetSendCmdParam1(true, CMD_RATTACKPID, pcursplr);
+				NetSendCmdParam1(true, Cmd::RATTACKPID, pcursplr);
 			}
 		} else {
 			if (bShift) {
 				if (pcursmonst != -1) {
 					if (CanTalkToMonst(pcursmonst)) {
-						NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
+						NetSendCmdParam1(true, Cmd::ATTACKID, pcursmonst);
 					} else {
-						NetSendCmdLoc(true, CMD_SATTACKXY, cursm);
+						NetSendCmdLoc(true, Cmd::SATTACKXY, cursm);
 					}
 				} else {
-					NetSendCmdLoc(true, CMD_SATTACKXY, cursm);
+					NetSendCmdLoc(true, Cmd::SATTACKXY, cursm);
 				}
 			} else if (pcursmonst != -1) {
-				NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
+				NetSendCmdParam1(true, Cmd::ATTACKID, pcursmonst);
 			} else if (pcursplr != -1 && !FriendlyMode) {
-				NetSendCmdParam1(true, CMD_ATTACKPID, pcursplr);
+				NetSendCmdParam1(true, Cmd::ATTACKPID, pcursplr);
 			}
 		}
 		if (!bShift && pcursitem == -1 && pcursobj == -1 && pcursmonst == -1 && pcursplr == -1)
@@ -736,48 +736,48 @@ bool LeftMouseCmd(bool bShift)
 
 bool TryIconCurs()
 {
-	if (pcurs == CURSOR_RESURRECT) {
-		NetSendCmdParam1(true, CMD_RESURRECT, pcursplr);
+	if (pcurs == Cursor::RESURRECT) {
+		NetSendCmdParam1(true, Cmd::RESURRECT, pcursplr);
 		return true;
-	} else if (pcurs == CURSOR_HEALOTHER) {
-		NetSendCmdParam1(true, CMD_HEALOTHER, pcursplr);
+	} else if (pcurs == Cursor::HEALOTHER) {
+		NetSendCmdParam1(true, Cmd::HEALOTHER, pcursplr);
 		return true;
-	} else if (pcurs == CURSOR_TELEKINESIS) {
+	} else if (pcurs == Cursor::TELEKINESIS) {
 		DoTelekinesis();
 		return true;
-	} else if (pcurs == CURSOR_IDENTIFY) {
+	} else if (pcurs == Cursor::IDENTIFY) {
 		if (pcursinvitem != -1) {
 			CheckIdentify(myplr(), pcursinvitem);
 		} else {
-			NewCursor(CURSOR_HAND);
+			NewCursor(Cursor::HAND);
 		}
 		return true;
-	} else if (pcurs == CURSOR_REPAIR) {
+	} else if (pcurs == Cursor::REPAIR) {
 		if (pcursinvitem != -1) {
 			DoRepair(myplr(), pcursinvitem);
 		} else {
-			NewCursor(CURSOR_HAND);
+			NewCursor(Cursor::HAND);
 		}
 		return true;
-	} else if (pcurs == CURSOR_RECHARGE) {
+	} else if (pcurs == Cursor::RECHARGE) {
 		if (pcursinvitem != -1) {
 			DoRecharge(myplr(), pcursinvitem);
 		} else {
-			NewCursor(CURSOR_HAND);
+			NewCursor(Cursor::HAND);
 		}
 		return true;
-	} else if (pcurs == CURSOR_TELEPORT) {
+	} else if (pcurs == Cursor::TELEPORT) {
 		if (pcursmonst != -1) {
-			NetSendCmdParam3(true, CMD_TSPELLID, pcursmonst, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
+			NetSendCmdParam3(true, Cmd::TSPELLID, pcursmonst, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		} else if (pcursplr != -1) {
-			NetSendCmdParam3(true, CMD_TSPELLPID, pcursplr, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
+			NetSendCmdParam3(true, Cmd::TSPELLPID, pcursplr, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		} else {
-			NetSendCmdLocParam2(true, CMD_TSPELLXY, cursm, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
+			NetSendCmdLocParam2(true, Cmd::TSPELLXY, cursm, myplr().data._pTSpell, GetSpellLevel(myplr(), myplr().data._pTSpell));
 		}
-		NewCursor(CURSOR_HAND);
+		NewCursor(Cursor::HAND);
 		return true;
-	} else if (pcurs == CURSOR_DISARM && pcursobj == -1) {
-		NewCursor(CURSOR_HAND);
+	} else if (pcurs == Cursor::DISARM && pcursobj == -1) {
+		NewCursor(Cursor::HAND);
 		return true;
 	}
 
@@ -800,7 +800,7 @@ void LeftMouseUp()
 
 void RightMouseDown()
 {
-	if (!gmenu_is_active() && sgnTimeoutCurs == CURSOR_NONE && PauseMode != 2 && !myplr().data._pInvincible) {
+	if (!gmenu_is_active() && sgnTimeoutCurs == Cursor::NONE && PauseMode != 2 && !myplr().data._pInvincible) {
 		if (doomflag) {
 			doom_close();
 		} else if (stextflag == StoreTalkId::NONE) {
@@ -810,11 +810,11 @@ void RightMouseDown()
 			    || (!sbookflag || Mouse.x <= RIGHT_PANEL)
 			        && !TryIconCurs()
 			        && (pcursinvitem == -1 || !myplr().inventory.UseInvItem(pcursinvitem))) {
-				if (pcurs == CURSOR_HAND) {
+				if (pcurs == Cursor::HAND) {
 					if (pcursinvitem == -1 || !myplr().inventory.UseInvItem(pcursinvitem))
 						CheckPlrSpell();
-				} else if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM) {
-					NewCursor(CURSOR_HAND);
+				} else if (pcurs > Cursor::HAND && pcurs < Cursor::FIRSTITEM) {
+					NewCursor(Cursor::HAND);
 				}
 			}
 		}
@@ -833,7 +833,7 @@ void diablo_hotkey_msg(DWORD dwMsg)
 {
 	char szMsg[MAX_SEND_STR_LEN];
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		return;
 	}
 
@@ -859,7 +859,7 @@ void PressKey(int vkey)
 	}
 
 	if (deathflag) {
-		if (sgnTimeoutCurs != CURSOR_NONE) {
+		if (sgnTimeoutCurs != Cursor::NONE) {
 			return;
 		}
 		if (vkey == DVL_VK_F9) {
@@ -892,7 +892,7 @@ void PressKey(int vkey)
 		return;
 	}
 
-	if (sgnTimeoutCurs != CURSOR_NONE || dropGoldFlag) {
+	if (sgnTimeoutCurs != Cursor::NONE || dropGoldFlag) {
 		return;
 	}
 	if (vkey == DVL_VK_PAUSE) {
@@ -1072,7 +1072,7 @@ void PressKey(int vkey)
 
 void diablo_pause_game()
 {
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (PauseMode) {
 			PauseMode = 0;
 		} else {
@@ -1089,7 +1089,7 @@ void diablo_pause_game()
  */
 void PressChar(int vkey)
 {
-	if (gmenu_is_active() || control_talk_last_key(vkey) || sgnTimeoutCurs != CURSOR_NONE || deathflag) {
+	if (gmenu_is_active() || control_talk_last_key(vkey) || sgnTimeoutCurs != Cursor::NONE || deathflag) {
 		return;
 	}
 	if ((char)vkey == 'p' || (char)vkey == 'P') {
@@ -1247,7 +1247,7 @@ void PressChar(int vkey)
 	case '8':
 #ifdef _DEBUG
 		if (debug_mode_key_inverted_v || debug_mode_key_w) {
-			NetSendCmd(true, CMD_CHEAT_EXPERIENCE);
+			NetSendCmd(true, Cmd::CHEAT_EXPERIENCE);
 			return;
 		}
 #endif
@@ -1263,14 +1263,14 @@ void PressChar(int vkey)
 				arrowdebug = 0;
 			}
 			if (arrowdebug == 0) {
-				myplr().data._pIFlags &= ~ItemSpecialEffect::FIRE_ARROWS;
-				myplr().data._pIFlags &= ~ItemSpecialEffect::LIGHT_ARROWS;
+				myplr().data._pIFlags &= ~ItemSpecialEffectFlag::FIRE_ARROWS;
+				myplr().data._pIFlags &= ~ItemSpecialEffectFlag::LIGHT_ARROWS;
 			}
 			if (arrowdebug == 1) {
-				myplr().data._pIFlags |= ItemSpecialEffect::FIRE_ARROWS;
+				myplr().data._pIFlags |= ItemSpecialEffectFlag::FIRE_ARROWS;
 			}
 			if (arrowdebug == 2) {
-				myplr().data._pIFlags |= ItemSpecialEffect::LIGHT_ARROWS;
+				myplr().data._pIFlags |= ItemSpecialEffectFlag::LIGHT_ARROWS;
 			}
 			arrowdebug++;
 		}
@@ -1378,7 +1378,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		glSeedTbl[lvl.currlevel] = setseed;
 
 	music_stop();
-	NewCursor(CURSOR_HAND);
+	NewCursor(Cursor::HAND);
 	SetRndSeed(glSeedTbl[lvl.currlevel]);
 	IncProgress();
 	MakeLightTable();
@@ -1466,7 +1466,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 		SetRndSeed(glSeedTbl[lvl.currlevel]);
 
 		if (lvl.type() != DunType::town) {
-			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[lvl.currlevel] || plr.isMultiplayer()) {
+			if (firstflag || lvldir == 4 || !myplr().data._pLvlVisited[lvl.currlevel] || game.isMultiplayer()) {
 				HoldThemeRooms();
 				glMid1Seed[lvl.currlevel] = GetRndSeed();
 				InitMonsters();
@@ -1481,7 +1481,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 				InitDead();
 				glEndSeed[lvl.currlevel] = GetRndSeed();
 
-				if (plr.isMultiplayer())
+				if (game.isMultiplayer())
 					DeltaLoadLevel();
 
 				IncProgress();
@@ -1505,14 +1505,14 @@ void LoadGameLevel(bool firstflag, int lvldir)
 			InitMissiles();
 			IncProgress();
 
-			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[lvl.currlevel] && plr.isSingleplayer())
+			if (!firstflag && lvldir != 4 && myplr().data._pLvlVisited[lvl.currlevel] && game.isSingleplayer())
 				LoadLevel();
-			if (plr.isMultiplayer())
+			if (game.isMultiplayer())
 				DeltaLoadLevel();
 
 			IncProgress();
 		}
-		if (plr.isSingleplayer())
+		if (game.isSingleplayer())
 			ResyncQuests();
 		else
 			ResyncMPQuests();
@@ -1562,8 +1562,8 @@ void LoadGameLevel(bool firstflag, int lvldir)
 	for (i = 0; i < MAX_PLRS; i++) {
 		if (!plr.isValidPlayer(i)) continue;
 		if (plr[i].data.plractive && plr[i].data.plrlevel == lvl.currlevel && (!plr[i].data._pLvlChanging || i == myplr())) {
-			if (plr[i].data._pHitPoints > 0) {
-				if (plr.isSingleplayer())
+			if (plr[i]._hp > 0) {
+				if (game.isSingleplayer())
 					plr[i].addToMap();
 				else
 					plr[i].SyncInitPlrPos();
@@ -1593,7 +1593,7 @@ void LoadGameLevel(bool firstflag, int lvldir)
 	while (!IncProgress())
 		;
 
-	if (lvl.setlevel && lvl.setlvlnum == SetLvl::SkelKing && quests[Q_SKELKING]._qactive == QUEST_ACTIVE)
+	if (lvl.setlevel && lvl.setlvlnum == SetLvl::SkelKing && quests[QuestId::skelking]._qactive == QuestState::active)
 		PlaySFX(USFX_SKING1);
 }
 
@@ -1611,7 +1611,7 @@ void game_loop(bool bStartup)
 			timeout_cursor(false);
 			game_logic();
 		}
-		if (!gbRunGame || plr.isSingleplayer() || !nthread_has_500ms_passed(true))
+		if (!gbRunGame || game.isSingleplayer() || !nthread_has_500ms_passed(true))
 			break;
 	}
 }
@@ -1660,19 +1660,19 @@ void game_logic()
 void timeout_cursor(bool bTimeout)
 {
 	if (bTimeout) {
-		if (sgnTimeoutCurs == CURSOR_NONE && !sgbMouseDown) {
+		if (sgnTimeoutCurs == Cursor::NONE && !sgbMouseDown) {
 			sgnTimeoutCurs = pcurs;
 			multi_net_ping();
 			ClearPanel();
 			AddPanelString("-- Network timeout --", true);
 			AddPanelString("-- Waiting for players --", true);
-			NewCursor(CURSOR_HOURGLASS);
+			NewCursor(Cursor::HOURGLASS);
 			force_redraw = 255;
 		}
 		scrollrt_draw_game_screen(true);
-	} else if (sgnTimeoutCurs != CURSOR_NONE) {
+	} else if (sgnTimeoutCurs != Cursor::NONE) {
 		NewCursor(sgnTimeoutCurs);
-		sgnTimeoutCurs = CURSOR_NONE;
+		sgnTimeoutCurs = Cursor::NONE;
 		ClearPanel();
 		force_redraw = 255;
 	}
@@ -1690,4 +1690,4 @@ void diablo_color_cyc_logic()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

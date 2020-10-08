@@ -409,7 +409,7 @@ typedef struct ANIM_DATA_S
 } ANIM_DATA_S;
 
 // command-line parameters
-typedef struct CMD_LINE_S
+typedef struct Cmd::LINE_S
 {
    // ptr to ds1 filename, NULL if not used
    char * ds1_filename;
@@ -446,7 +446,7 @@ typedef struct CMD_LINE_S
 
    // -no_vis_debug : desactivate debug infos on Vis Tiles that have graphics
    int  no_vis_debug;
-} CMD_LINE_S;
+} Cmd::LINE_S;
 
 // Tile Grid states
 typedef enum TILEGRID_ENUM
@@ -505,7 +505,7 @@ typedef struct GLB_DS1EDIT_S
    int           col_frame_delta[8];
    int           col_orderflag[8];
    ANIM_DATA_S   anim_data;
-   CMD_LINE_S    cmd_line;
+   Cmd::LINE_S    cmd_line;
    int           ds1_group_idx;
    int           show_2nd_row;
    char          strtmp[512];

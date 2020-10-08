@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 Actor::Actor(ActorType newtype)
     : type(newtype)
@@ -18,4 +18,4 @@ Actor::~Actor()
 	actors._unregisterActor(_id);
 }
 
-DEVILUTION_END_NAMESPACE
+}

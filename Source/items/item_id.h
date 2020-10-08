@@ -7,7 +7,7 @@
 #ifndef __ITEM_ID_H__
 #define __ITEM_ID_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class ItemID {
 public:
@@ -21,6 +21,6 @@ private:
 	uint64_t id = 0;
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __ITEM_ID_H__ */

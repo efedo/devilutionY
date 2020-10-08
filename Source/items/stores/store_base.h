@@ -2,7 +2,7 @@
 #ifndef __StoreTalkId::BASE_H__
 #define __StoreTalkId::BASE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Store
 {
@@ -45,6 +45,6 @@ void STextEnter();
 
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __StoreTalkId::BASE_H__ */

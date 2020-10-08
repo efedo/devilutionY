@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 static uint8_t sgbIsScrolling;
 static DWORD sgdwLastWalk;
@@ -21,7 +21,7 @@ void track_process()
 		DWORD tick = SDL_GetTicks();
 		if ((int)(tick - sgdwLastWalk) >= 300) {
 			sgdwLastWalk = tick;
-			NetSendCmdLoc(true, CMD_WALKXY, cursm);
+			NetSendCmdLoc(true, Cmd::WALKXY, cursm);
 			if (!sgbIsScrolling)
 				sgbIsScrolling = true;
 		}
@@ -37,7 +37,7 @@ void track_repeat_walk(bool rep)
 	if (rep) {
 		sgbIsScrolling = false;
 		sgdwLastWalk = SDL_GetTicks() - 50;
-		NetSendCmdLoc(true, CMD_WALKXY, cursm);
+		NetSendCmdLoc(true, Cmd::WALKXY, cursm);
 	} else if (sgbIsScrolling) {
 		sgbIsScrolling = false;
 	}
@@ -48,4 +48,4 @@ bool track_isscrolling()
 	return sgbIsScrolling;
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -2,7 +2,7 @@
 #ifndef __StoreTalkId::BOY_H__
 #define __StoreTalkId::BOY_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class StoreBoy : public Store
 {
@@ -23,6 +23,6 @@ class StoreBoy : public Store
 
 extern StoreBoy boyStore;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __StoreTalkId::BOY_H__ */

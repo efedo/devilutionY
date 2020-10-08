@@ -2,7 +2,7 @@
 #ifndef __OBJECT_DEFS_H__
 #define __OBJECT_DEFS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 
 //////////////////////////////////////////////////
@@ -30,7 +30,7 @@ typedef struct ObjDataStruct {
 } ObjDataStruct;
 
 typedef struct ObjectStruct {
-	int _otype;
+	ObjectType _otype;
 	V2Di _o;
 	int _oLight;
 	int _oAnimFlag;
@@ -62,6 +62,6 @@ typedef struct ObjectStruct {
 } ObjectStruct;
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __OBJECT_DEFS_H__ */

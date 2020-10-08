@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int GetManaAmount(int id, int sn)
 {
@@ -88,7 +88,7 @@ bool CheckSpell(SpellId id, RSpellType sn, char st, bool manaonly)
 #endif
 
 	result = true;
-	if (!manaonly && pcurs != CURSOR_HAND) {
+	if (!manaonly && pcurs != Cursor::HAND) {
 		result = false;
 	} else {
 		if (st != RSpellType::SKILL) {
@@ -103,7 +103,7 @@ bool CheckSpell(SpellId id, RSpellType sn, char st, bool manaonly)
 	return result;
 }
 
-void CastSpell(int id, int spl, V2Di s, V2Di d, int caster, int spllvl)
+void CastSpell(ActorId id, SpellId spl, V2Di s, V2Di d, int caster, int spllvl)
 {
 	int i;
 	Dir dir; // missile direction
@@ -190,7 +190,7 @@ void DoResurrect(int pnum, int rid)
 	}
 
 	if (pnum == myplr()) {
-		NewCursor(CURSOR_HAND);
+		NewCursor(Cursor::HAND);
 	}
 
 	if ((char)rid != -1 && plr[rid].data._pHitPoints == 0) {
@@ -231,7 +231,7 @@ void DoHealOther(int pnum, int rid)
 	int i, j, hp;
 
 	if (pnum == myplr()) {
-		NewCursor(CURSOR_HAND);
+		NewCursor(Cursor::HAND);
 	}
 
 	if ((char)rid != -1 && (plr[rid].data._pHitPoints >> 6) > 0) {
@@ -269,4 +269,4 @@ void DoHealOther(int pnum, int rid)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

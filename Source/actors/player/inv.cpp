@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t *pInvCels = 0;
 int users = 0;
@@ -344,7 +344,7 @@ bool PlayerInventory::tryCutSlot(InvSlot &slot)
 		CheckItemStats();
 		if (owner.isMyPlr()) {
 			PlaySFX(IS_IGRAB);
-			SetCursor_(getHeldItem()->_iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(getHeldItem()->_iCurs + Cursor::FIRSTITEM);
 			//SetCursorPos(pos.x - (cursW >> 1), Mouse.y - (cursH >> 1));
 		}
 	}
@@ -352,7 +352,7 @@ bool PlayerInventory::tryCutSlot(InvSlot &slot)
 
 void PlayerInventory::CheckInvItem()
 {
-	if (pcurs >= CURSOR_FIRSTITEM) {
+	if (pcurs >= Cursor::FIRSTITEM) {
 		tryPaste(Mouse);
 	} else {
 		tryCut(Mouse);
@@ -404,8 +404,8 @@ void PlayerInventory::CheckBookLevel()
 void PlayerInventory::CheckQuestItem()
 {
 	if (getHeldItem()->IDidx == ItemIndex::OPTAMULET)
-		quests[Q_BLIND]._qactive = QUEST_DONE;
-	if (getHeldItem()->IDidx == ItemIndex::MUSHROOM && quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
+		quests[QuestId::blind]._qactive = QuestState::done;
+	if (getHeldItem()->IDidx == ItemIndex::MUSHROOM && quests[QuestId::mushroom]._qactive == QuestState::active && quests[QuestId::mushroom]._qvar1 == QuestMushState::mushspawned) {
 		sfxdelay = 10;
 		if (owner.data._pClass == PlayerClass::warrior) { // BUGFIX: Voice for this quest might be wrong in MP
 			sfxdnum = PS_WARR95;
@@ -414,14 +414,14 @@ void PlayerInventory::CheckQuestItem()
 		} else if (owner.data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE95;
 		}
-		quests[Q_MUSHROOM]._qvar1 = QS_MUSHPICKED;
+		quests[QuestId::mushroom]._qvar1 = QuestMushState::mushpicked;
 	}
 	if (getHeldItem()->IDidx == ItemIndex::ANVIL) {
-		if (quests[Q_ANVIL]._qactive == QUEST_INIT) {
-			quests[Q_ANVIL]._qactive = QUEST_ACTIVE;
-			quests[Q_ANVIL]._qvar1 = 1;
+		if (quests[QuestId::anvil]._qactive == QuestState::init) {
+			quests[QuestId::anvil]._qactive = QuestState::active;
+			quests[QuestId::anvil]._qvar1 = 1;
 		}
-		if (quests[Q_ANVIL]._qlog == true) {
+		if (quests[QuestId::anvil]._qlog == true) {
 			sfxdelay = 10;
 			if (myplr().data._pClass == PlayerClass::warrior) {
 				sfxdnum = PS_WARR89;
@@ -443,11 +443,11 @@ void PlayerInventory::CheckQuestItem()
 		}
 	}
 	if (getHeldItem()->IDidx == ItemIndex::ROCK) {
-		if (quests[Q_ROCK]._qactive == QUEST_INIT) {
-			quests[Q_ROCK]._qactive = QUEST_ACTIVE;
-			quests[Q_ROCK]._qvar1 = 1;
+		if (quests[QuestId::rock]._qactive == QuestState::init) {
+			quests[QuestId::rock]._qactive = QuestState::active;
+			quests[QuestId::rock]._qvar1 = 1;
 		}
-		if (quests[Q_ROCK]._qlog == true) {
+		if (quests[QuestId::rock]._qlog == true) {
 			sfxdelay = 10;
 			if (myplr().data._pClass == PlayerClass::warrior) {
 				sfxdnum = PS_WARR87;
@@ -459,7 +459,7 @@ void PlayerInventory::CheckQuestItem()
 		}
 	}
 	if (getHeldItem()->IDidx == ItemIndex::ARMOFVAL) {
-		quests[Q_BLOOD]._qactive = QUEST_DONE;
+		quests[QuestId::blood]._qactive = QuestState::done;
 		sfxdelay = 20;
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR91;
@@ -475,12 +475,12 @@ void PlayerInventory::CheckQuestItem()
 void PlayerInventory::PickupItem(V2Di pos)
 {
 	if (grid.at(pos).isItem()) {
-		if (owner.isMyPlr() && pcurs >= CURSOR_FIRSTITEM)
-			NetSendCmdPItem(true, CMD_SYNCPUTITEM, myplr().pos().x, myplr().pos().y); //CmdPItem = player-held item?
+		if (owner.isMyPlr() && pcurs >= Cursor::FIRSTITEM)
+			NetSendCmdPItem(true, Cmd::SYNCPUTITEM, myplr().pos().x, myplr().pos().y); //CmdPItem = player-held item?
 		grid.at(pos).getItem()->_iCreateInfo &= ~0x8000;
 		SwapHeldItem(grid.at(pos)._getItemPtr());
 		pcursitem = 0;
-		SetCursor_(getHeldItem()->_iCurs + CURSOR_FIRSTITEM);
+		SetCursor_(getHeldItem()->_iCurs + Cursor::FIRSTITEM);
 	}
 }
 
@@ -489,7 +489,7 @@ void PlayerInventory::PickupAndStashItem(V2Di pos)
 {
 	PickupItem(pos);
 	stashHeld(false);
-	// NetSendCmdPItem(true, CMD_RESPAWNITEM, item._i.x, item._i.y);
+	// NetSendCmdPItem(true, Cmd::RESPAWNITEM, item._i.x, item._i.y);
 }
 
 //int PlayerInventory::FindGetItem(int idx, WORD ci, int iseed)
@@ -577,7 +577,7 @@ Item * PlayerInventory::DropItem(V2Di pos)
 	held->_i = pos;
 	held->RespawnItem(true);
 	SwapHeldItem(grid.at(pos)._getItemPtr());
-	NewCursor(CURSOR_HAND);
+	NewCursor(Cursor::HAND);
 	return held;
 	// Should release at some point?
 }
@@ -602,7 +602,7 @@ Item * PlayerInventory::DropItemSync(V2Di pos, int idx, WORD icreateinfo, int is
 
 bool PlayerInventory::UseScroll(bool checkOnly)
 {
-	if (pcurs != CURSOR_HAND) return false;
+	if (pcurs != Cursor::HAND) return false;
 	if (lvl.type() == DunType::town && !spelldata[myplr().data._pRSpell].sTownSpell)
 		return false;
 
@@ -639,7 +639,7 @@ bool PlayerInventory::UseScroll(bool checkOnly)
 
 bool PlayerInventory::UseStaff(bool checkOnly)
 {
-	if (pcurs == CURSOR_HAND) {
+	if (pcurs == Cursor::HAND) {
 		Item * item = getBodySlot(BodyLoc::HandLeft).item();
 		if (item
 			&& item->_itype != ItemType::none
@@ -663,7 +663,7 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 
 	if (owner._pInvincible && owner._hp <= 0 && owner.isMyPlr())
 		return true;
-	if (pcurs != CURSOR_HAND)
+	if (pcurs != Cursor::HAND)
 		return true;
 	if (stextflag != StoreTalkId::NONE)
 		return true;
@@ -729,12 +729,12 @@ bool PlayerInventory::UseInvItem(InvSlot & slot)
 void PlayerInventory::DoTelekinesis()
 {
 	if (pcursobj != -1)
-		NetSendCmdParam1(true, CMD_OPOBJT, pcursobj);
+		NetSendCmdParam1(true, Cmd::OPOBJT, pcursobj);
 	if (pcursitem)
-		NetSendCmdGItem(true, CMD_REQUESTAGITEM, myplr(), myplr(), *pcursitem);
+		NetSendCmdGItem(true, Cmd::REQUESTAGITEM, myplr(), myplr(), *pcursitem);
 	if (pcursmonst != -1 && !monsters[pcursmonst].M_Talker() && monsters[pcursmonst].data.mtalkmsg == 0)
-		NetSendCmdParam1(true, CMD_KNOCKBACK, pcursmonst);
-	NewCursor(CURSOR_HAND);
+		NetSendCmdParam1(true, Cmd::KNOCKBACK, pcursmonst);
+	NewCursor(Cursor::HAND);
 }
 
 int PlayerInventory::CalculateGold()
@@ -753,11 +753,11 @@ bool PlayerInventory::DropItemBeforeTrig()
 {
 	if (GetDropPos(owner.pos()))
 	{
-		NetSendCmdPItem(true, CMD_PUTITEM, cursm.x, cursm.y);
-		NewCursor(CURSOR_HAND);
+		NetSendCmdPItem(true, Cmd::PUTITEM, cursm.x, cursm.y);
+		NewCursor(Cursor::HAND);
 		return true;
 	}
 	return false;
 }
 
-DEVILUTION_END_NAMESPACE
+}

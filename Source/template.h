@@ -2,8 +2,8 @@
 #ifndef __TEMPLATE_H__
 #define __TEMPLATE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __TEMPLATE_H__ */

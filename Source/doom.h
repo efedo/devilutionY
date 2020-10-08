@@ -6,7 +6,7 @@
 #ifndef __DOOM_H__
 #define __DOOM_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -34,6 +34,6 @@ void doom_draw();
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DOOM_H__ */

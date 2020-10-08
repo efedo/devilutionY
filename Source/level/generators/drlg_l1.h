@@ -8,7 +8,7 @@
 
 #include "level/level.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class LvlCathedral : public Level {
 	LvlCathedral();
@@ -57,6 +57,6 @@ extern uint8_t L5ConvTbl[16];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DRLG_L1_H__ */

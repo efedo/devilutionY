@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int qtopline;
 uint8_t *pQLogCel;
@@ -17,22 +17,22 @@ int ReturnLvl;
 QuestData questlist[MAXQUESTS] = {
 	// clang-format off
 	// _qdlvl, _qdmultlvl, _qlvlt,          _qdtype,   _qdrnd, _qslvl, _qflags, _qdmsg,         _qlstr
-	{       5,         -1, DunType::none,      Q_ROCK,  100,      SetLvl::None,       0, TEXT_INFRA5,   "The Magic Rock"           },
-	{       9,         -1, DunType::none,      Q_MUSHROOM,   100,      SetLvl::None,       0, TEXT_MUSH8,    "Black Mushroom"           },
-	{       4,         -1, DunType::none,      Q_GARBUD,   100,      SetLvl::None,       0, TEXT_GARBUD1,  "Gharbad The Weak"         },
-	{       8,         -1, DunType::none,      Q_ZHAR,   100,      SetLvl::None,       0, TEXT_ZHAR1,    "Zhar the Mad"             },
-	{      14,         -1, DunType::none,      Q_VEIL,   100,      SetLvl::None,       0, TEXT_VEIL9,    "Lachdanan"                },
-	{      15,         -1, DunType::none,      Q_DIABLO,    100,      SetLvl::None,       1, TEXT_VILE3,    "Diablo"                   },
-	{       2,          2, DunType::none,      Q_BUTCHER,  100,      SetLvl::None,       1, TEXT_BUTCH9,   "The Butcher"              },
-	{       4,         -1, DunType::none,      Q_LTBANNER,    100,      SetLvl::None,       0, TEXT_BANNER2,  "Ogden's Sign"             },
-	{       7,         -1, DunType::none,      Q_BLIND,  100,      SetLvl::None,       0, TEXT_BLINDING, "Halls of the Blind"       },
-	{       5,         -1, DunType::none,      Q_BLOOD,  100,      SetLvl::None,       0, TEXT_BLOODY,   "Valor"                    },
-	{      10,         -1, DunType::none,      Q_ANVIL,  100,      SetLvl::None,       0, TEXT_ANVIL5,   "Anvil of Fury"            },
-	{      13,         -1, DunType::none,      Q_WARLORD, 100,      SetLvl::None,       0, TEXT_BLOODWAR, "Warlord of Blood"         },
-	{       3,          3, DunType::cathedral, Q_SKELKING,   100,      SetLvl::SkelKing,       1, TEXT_KING2,    "The Curse of King Leoric" },
-	{       2,         -1, DunType::caves,     Q_PWATER,     100,      SetLvl::PoisonWater,       0, TEXT_POISON3,  "Poisoned Water Supply"    },
-	{       6,         -1, DunType::catacombs, Q_SCHAMB,   100,      SetLvl::BoneChamb,       0, TEXT_BONER,    "The Chamber of Bone"      },
-	{      15,         15, DunType::cathedral, Q_BETRAYER,     100,      SetLvl::VileBetrayer,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
+	{       5,         -1, DunType::none,      QuestId::rock,  100,      SetLvl::None,       0, TEXT_INFRA5,   "The Magic Rock"           },
+	{       9,         -1, DunType::none,      QuestId::mushroom,   100,      SetLvl::None,       0, TEXT_MUSH8,    "Black Mushroom"           },
+	{       4,         -1, DunType::none,      QuestId::garbud,   100,      SetLvl::None,       0, TEXT_GARBUD1,  "Gharbad The Weak"         },
+	{       8,         -1, DunType::none,      QuestId::zhar,   100,      SetLvl::None,       0, TEXT_ZHAR1,    "Zhar the Mad"             },
+	{      14,         -1, DunType::none,      QuestId::veil,   100,      SetLvl::None,       0, TEXT_VEIL9,    "Lachdanan"                },
+	{      15,         -1, DunType::none,      QuestId::diablo,    100,      SetLvl::None,       1, TEXT_VILE3,    "Diablo"                   },
+	{       2,          2, DunType::none,      QuestId::butcher,  100,      SetLvl::None,       1, TEXT_BUTCH9,   "The Butcher"              },
+	{       4,         -1, DunType::none,      QuestId::ltbanner,    100,      SetLvl::None,       0, TEXT_BANNER2,  "Ogden's Sign"             },
+	{       7,         -1, DunType::none,      QuestId::blind,  100,      SetLvl::None,       0, TEXT_BLINDING, "Halls of the Blind"       },
+	{       5,         -1, DunType::none,      QuestId::blood,  100,      SetLvl::None,       0, TEXT_BLOODY,   "Valor"                    },
+	{      10,         -1, DunType::none,      QuestId::anvil,  100,      SetLvl::None,       0, TEXT_ANVIL5,   "Anvil of Fury"            },
+	{      13,         -1, DunType::none,      QuestId::warlord, 100,      SetLvl::None,       0, TEXT_BLOODWAR, "Warlord of Blood"         },
+	{       3,          3, DunType::cathedral, QuestId::skelking,   100,      SetLvl::SkelKing,       1, TEXT_KING2,    "The Curse of King Leoric" },
+	{       2,         -1, DunType::caves,     QuestId::pwater,     100,      SetLvl::PoisonWater,       0, TEXT_POISON3,  "Poisoned Water Supply"    },
+	{       6,         -1, DunType::catacombs, QuestId::schamb,   100,      SetLvl::BoneChamb,       0, TEXT_BONER,    "The Chamber of Bone"      },
+	{      15,         15, DunType::cathedral, QuestId::betrayer,     100,      SetLvl::VileBetrayer,       1, TEXT_VILE1,    "Archbishop Lazarus"       },
 	// clang-format on
 };
 V2Di questoff[7] = {
@@ -52,24 +52,24 @@ char *questtrigstr[5] = {
 	"A Dark Passage",
 	"Unholy Altar"
 };
-int QuestGroup1[3] = { Q_BUTCHER, Q_LTBANNER, Q_GARBUD };
-int QuestGroup2[3] = { Q_BLIND, Q_ROCK, Q_BLOOD };
-int QuestGroup3[3] = { Q_MUSHROOM, Q_ZHAR, Q_ANVIL };
-int QuestGroup4[2] = { Q_VEIL, Q_WARLORD };
+int QuestGroup1[3] = { QuestId::butcher, QuestId::ltbanner, QuestId::garbud };
+int QuestGroup2[3] = { QuestId::blind, QuestId::rock, QuestId::blood };
+int QuestGroup3[3] = { QuestId::mushroom, QuestId::zhar, QuestId::anvil };
+int QuestGroup4[2] = { QuestId::veil, QuestId::warlord };
 
 void InitQuests()
 {
 	int i, initiatedQuests;
 	DWORD z;
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		for (i = 0; i < MAXQUESTS; i++) {
-			quests[i]._qactive = QUEST_NOTAVAIL;
+			quests[i]._qactive = QuestState::not_available;
 		}
 	} else {
 		for (i = 0; i < MAXQUESTS; i++) {
 			if (!(questlist[i]._qflags & 1)) {
-				quests[i]._qactive = QUEST_NOTAVAIL;
+				quests[i]._qactive = QuestState::not_available;
 			}
 		}
 	}
@@ -80,18 +80,18 @@ void InitQuests()
 	initiatedQuests = 0;
 
 	for (z = 0; z < MAXQUESTS; z++) {
-		if (plr.isSingleplayer() || questlist[z]._qflags & 1) {
+		if (game.isSingleplayer() || questlist[z]._qflags & 1) {
 			quests[z]._qtype = questlist[z]._qdtype;
-			if (plr.isMultiplayer()) {
+			if (game.isMultiplayer()) {
 				quests[z]._qlevel = questlist[z]._qdmultlvl;
 				if (!delta_quest_inited(initiatedQuests)) {
-					quests[z]._qactive = QUEST_INIT;
+					quests[z]._qactive = QuestState::init;
 					quests[z]._qvar1 = 0;
 					quests[z]._qlog = 0;
 				}
 				initiatedQuests++;
 			} else {
-				quests[z]._qactive = QUEST_INIT;
+				quests[z]._qactive = QuestState::init;
 				quests[z]._qlevel = questlist[z]._qdlvl;
 				quests[z]._qvar1 = 0;
 				quests[z]._qlog = 0;
@@ -106,29 +106,29 @@ void InitQuests()
 		}
 	}
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		SetRndSeed(glSeedTbl[15]);
 		if (random_(0, 2))
-			quests[Q_PWATER]._qactive = QUEST_NOTAVAIL;
+			quests[QuestId::pwater]._qactive = QuestState::not_available;
 		else
-			quests[Q_SKELKING]._qactive = QUEST_NOTAVAIL;
+			quests[QuestId::skelking]._qactive = QuestState::not_available;
 
-		quests[QuestGroup1[random_(0, sizeof(QuestGroup1) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
-		quests[QuestGroup2[random_(0, sizeof(QuestGroup2) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
-		quests[QuestGroup3[random_(0, sizeof(QuestGroup3) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
-		quests[QuestGroup4[random_(0, sizeof(QuestGroup4) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
+		quests[QuestGroup1[random_(0, sizeof(QuestGroup1) / sizeof(int))]]._qactive = QuestState::not_available;
+		quests[QuestGroup2[random_(0, sizeof(QuestGroup2) / sizeof(int))]]._qactive = QuestState::not_available;
+		quests[QuestGroup3[random_(0, sizeof(QuestGroup3) / sizeof(int))]]._qactive = QuestState::not_available;
+		quests[QuestGroup4[random_(0, sizeof(QuestGroup4) / sizeof(int))]]._qactive = QuestState::not_available;
 	}
 #ifdef _DEBUG
 	if (questdebug != -1)
-		quests[questdebug]._qactive = QUEST_ACTIVE;
+		quests[questdebug]._qactive = QuestState::active;
 #endif
-	if (!quests[Q_SKELKING]._qactive)
-		quests[Q_SKELKING]._qvar2 = 2;
-	if (!quests[Q_ROCK]._qactive)
-		quests[Q_ROCK]._qvar2 = 2;
-	quests[Q_LTBANNER]._qvar1 = 1;
-	if (plr.isMultiplayer())
-		quests[Q_BETRAYER]._qvar1 = 2;
+	if (!quests[QuestId::skelking]._qactive)
+		quests[QuestId::skelking]._qvar2 = 2;
+	if (!quests[QuestId::rock]._qactive)
+		quests[QuestId::rock]._qvar2 = 2;
+	quests[QuestId::ltbanner]._qvar1 = 1;
+	if (game.isMultiplayer())
+		quests[QuestId::betrayer]._qvar1 = 2;
 }
 
 void CheckQuests()
@@ -136,46 +136,46 @@ void CheckQuests()
 	int i;
 	V2Di rport;
 
-	if (QuestStatus(Q_BETRAYER) && plr.isMultiplayer() && quests[Q_BETRAYER]._qvar1 == 2) {
+	if (QuestStatus(QuestId::betrayer) && game.isMultiplayer() && quests[QuestId::betrayer]._qvar1 == 2) {
 		AddObject(ObjectType::ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
-		quests[Q_BETRAYER]._qvar1 = 3;
-		NetSendCmdQuest(true, Q_BETRAYER);
+		quests[QuestId::betrayer]._qvar1 = 3;
+		NetSendCmdQuest(true, QuestId::betrayer);
 	}
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		return;
 	}
 
-	if (lvl.currlevel == quests[Q_BETRAYER]._qlevel
+	if (lvl.currlevel == quests[QuestId::betrayer]._qlevel
 	    && !lvl.setlevel
-	    && quests[Q_BETRAYER]._qvar1 >= 2
-	    && (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE || quests[Q_BETRAYER]._qactive == QUEST_DONE)
-	    && (quests[Q_BETRAYER]._qvar2 == 0 || quests[Q_BETRAYER]._qvar2 == 2)) {
-		quests[Q_BETRAYER]._qt = 2 * quests[Q_BETRAYER]._qt + V2Di(16, 16);
-		rport = quests[Q_BETRAYER]._qt;
+	    && quests[QuestId::betrayer]._qvar1 >= 2
+	    && (quests[QuestId::betrayer]._qactive == QuestState::active || quests[QuestId::betrayer]._qactive == QuestState::done)
+	    && (quests[QuestId::betrayer]._qvar2 == 0 || quests[QuestId::betrayer]._qvar2 == 2)) {
+		quests[QuestId::betrayer]._qt = 2 * quests[QuestId::betrayer]._qt + V2Di(16, 16);
+		rport = quests[QuestId::betrayer]._qt;
 		AddMissile(rport, rport, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
-		quests[Q_BETRAYER]._qvar2 = 1;
-		if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
-			quests[Q_BETRAYER]._qvar1 = 3;
+		quests[QuestId::betrayer]._qvar2 = 1;
+		if (quests[QuestId::betrayer]._qactive == QuestState::active) {
+			quests[QuestId::betrayer]._qvar1 = 3;
 		}
 	}
 
-	if (quests[Q_BETRAYER]._qactive == QUEST_DONE
+	if (quests[QuestId::betrayer]._qactive == QuestState::done
 	    && lvl.setlevel
 	    && lvl.setlvlnum == SetLvl::VileBetrayer
-	    && quests[Q_BETRAYER]._qvar2 == 4) {
+	    && quests[QuestId::betrayer]._qvar2 == 4) {
 		rport = { 35, 32 };
 		AddMissile(rport, rport, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
-		quests[Q_BETRAYER]._qvar2 = 3;
+		quests[QuestId::betrayer]._qvar2 = 3;
 	}
 
 	if (lvl.setlevel) {
-		if (lvl.setlvlnum == quests[Q_PWATER]._qslvl
-		    && quests[Q_PWATER]._qactive != QUEST_INIT
-		    && lvl.type() == quests[Q_PWATER]._qlvltype
+		if (lvl.setlvlnum == quests[QuestId::pwater]._qslvl
+		    && quests[QuestId::pwater]._qactive != QuestState::init
+		    && lvl.type() == quests[QuestId::pwater]._qlvltype
 		    && nummonsters == 4
-		    && quests[Q_PWATER]._qactive != QUEST_DONE) {
-			quests[Q_PWATER]._qactive = QUEST_DONE;
+		    && quests[QuestId::pwater]._qactive != QuestState::done) {
+			quests[QuestId::pwater]._qactive = QuestState::done;
 			PlaySfxLoc(IS_QUESTDN, myplr().pos());
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
 			WaterDone = 32;
@@ -188,7 +188,7 @@ void CheckQuests()
 		for (i = 0; i < MAXQUESTS; i++) {
 			if (lvl.currlevel == quests[i]._qlevel
 			    && quests[i]._qslvl != SetLvl::None
-			    && quests[i]._qactive != QUEST_NOTAVAIL
+			    && quests[i]._qactive != QuestState::not_available
 			    && myplr().pos() == quests[i]._qt) {
 				if (quests[i]._qlvltype != DunType::none) {
 					lvl.setlvltype = quests[i]._qlvltype;
@@ -204,13 +204,13 @@ bool ForceQuests()
 	int i, j, ql;
 	V2Di q;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		return false;
 	}
 
 	for (i = 0; i < MAXQUESTS; i++) {
 
-		if (i != Q_BETRAYER && lvl.currlevel == quests[i]._qlevel && quests[i]._qslvl != SetLvl::None) {
+		if (i != QuestId::betrayer && lvl.currlevel == quests[i]._qlevel && quests[i]._qslvl != SetLvl::None) {
 			ql = int(quests[quests[i]._qidx]._qslvl) - 1;
 			q = quests[i]._qt;
 
@@ -227,14 +227,14 @@ bool ForceQuests()
 	return false;
 }
 
-bool QuestStatus(int i)
+bool QuestStatus(QuestId i)
 {
 	bool result;
 
 	if (lvl.setlevel
 	    || lvl.currlevel != quests[i]._qlevel
 	    || !quests[i]._qactive
-	    || (result = 1, plr.isMultiplayer()) && !(questlist[i]._qflags & 1)) {
+	    || (result = 1, game.isMultiplayer()) && !(questlist[i]._qflags & 1)) {
 		result = false;
 	}
 	return result;
@@ -245,7 +245,7 @@ void CheckQuestKill(int m, bool sendmsg)
 	int i, j;
 
 	if (monsters[m].data.MType->mtype == MonsterType::SKING) {
-		quests[Q_SKELKING]._qactive = QUEST_DONE;
+		quests[QuestId::skelking]._qactive = QuestState::done;
 		sfxdelay = 30;
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR82;
@@ -255,10 +255,10 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE82;
 		}
 		if (sendmsg)
-			NetSendCmdQuest(true, Q_SKELKING);
+			NetSendCmdQuest(true, QuestId::skelking);
 
 	} else if (monsters[m].data.MType->mtype == MonsterType::CLEAVER) {
-		quests[Q_BUTCHER]._qactive = QUEST_DONE;
+		quests[QuestId::butcher]._qactive = QuestState::done;
 		sfxdelay = 30;
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR80;
@@ -268,9 +268,9 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE80;
 		}
 		if (sendmsg)
-			NetSendCmdQuest(true, Q_BUTCHER);
+			NetSendCmdQuest(true, QuestId::butcher);
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::GARBUD].mName) { //"Gharbad the Weak"
-		quests[Q_GARBUD]._qactive = QUEST_DONE;
+		quests[QuestId::garbud]._qactive = QuestState::done;
 		sfxdelay = 30;
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR61;
@@ -280,7 +280,7 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE61;
 		}
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::ZHAR].mName) { //"Zhar the Mad"
-		quests[Q_ZHAR]._qactive = QUEST_DONE;
+		quests[QuestId::zhar]._qactive = QuestState::done;
 		sfxdelay = 30;
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR62;
@@ -289,11 +289,11 @@ void CheckQuestKill(int m, bool sendmsg)
 		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			sfxdnum = PS_MAGE62;
 		}
-	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::LAZURUS].mName && plr.isMultiplayer()) { //"Arch-Bishop Lazarus"
-		quests[Q_BETRAYER]._qactive = QUEST_DONE;
-		quests[Q_BETRAYER]._qvar1 = 7;
+	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::LAZURUS].mName && game.isMultiplayer()) { //"Arch-Bishop Lazarus"
+		quests[QuestId::betrayer]._qactive = QuestState::done;
+		quests[QuestId::betrayer]._qvar1 = 7;
 		sfxdelay = 30;
-		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
+		quests[QuestId::diablo]._qactive = QuestState::active;
 
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
@@ -313,16 +313,16 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE83;
 		}
 		if (sendmsg) {
-			NetSendCmdQuest(true, Q_BETRAYER);
-			NetSendCmdQuest(true, Q_DIABLO);
+			NetSendCmdQuest(true, QuestId::betrayer);
+			NetSendCmdQuest(true, QuestId::diablo);
 		}
-	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::LAZURUS].mName && plr.isSingleplayer()) { //"Arch-Bishop Lazarus"
-		quests[Q_BETRAYER]._qactive = QUEST_DONE;
+	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::LAZURUS].mName && game.isSingleplayer()) { //"Arch-Bishop Lazarus"
+		quests[QuestId::betrayer]._qactive = QuestState::done;
 		sfxdelay = 30;
 		InitVPTriggers();
-		quests[Q_BETRAYER]._qvar1 = 7;
-		quests[Q_BETRAYER]._qvar2 = 4;
-		quests[Q_DIABLO]._qactive = QUEST_ACTIVE;
+		quests[QuestId::betrayer]._qvar1 = 7;
+		quests[QuestId::betrayer]._qvar2 = 4;
+		quests[QuestId::diablo]._qactive = QuestState::active;
 		AddMissile({ 35, 32 }, { 35, 32 }, Dir(0), MissileType::RPORTAL, 0, myplr(), 0, 0);
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR83;
@@ -332,7 +332,7 @@ void CheckQuestKill(int m, bool sendmsg)
 			sfxdnum = PS_MAGE83;
 		}
 	} else if (monsters[m].data.mName == UniqMonst[UniqueMonsterType::WARLORD].mName) { //"Warlord of Blood"
-		quests[Q_WARLORD]._qactive = QUEST_DONE;
+		quests[QuestId::warlord]._qactive = QuestState::done;
 		sfxdelay = 30;
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			sfxdnum = PS_WARR94;
@@ -499,25 +499,25 @@ void DRLG_CheckQuests(int x, int y)
 	for (i = 0; i < MAXQUESTS; i++) {
 		if (QuestStatus(i)) {
 			switch (quests[i]._qtype) {
-			case Q_BUTCHER:
+			case QuestId::butcher:
 				DrawButcher();
 				break;
-			case Q_LTBANNER:
+			case QuestId::ltbanner:
 				DrawLTBanner(x, y);
 				break;
-			case Q_BLIND:
+			case QuestId::blind:
 				DrawBlind(x, y);
 				break;
-			case Q_BLOOD:
+			case QuestId::blood:
 				DrawBlood(x, y);
 				break;
-			case Q_WARLORD:
+			case QuestId::warlord:
 				DrawWarLord(x, y);
 				break;
-			case Q_SKELKING:
+			case QuestId::skelking:
 				DrawSkelKing(i, x, y);
 				break;
-			case Q_SCHAMB:
+			case QuestId::schamb:
 				DrawSChamber(i, x, y);
 				break;
 			}
@@ -529,27 +529,27 @@ void SetReturnLvlPos()
 {
 	switch (lvl.setlvlnum) {
 	case SetLvl::SkelKing:
-		ReturnLvlX = quests[Q_SKELKING]._qt.x + 1;
-		ReturnLvlY = quests[Q_SKELKING]._qt.y;
-		ReturnLvl = quests[Q_SKELKING]._qlevel;
+		ReturnLvlX = quests[QuestId::skelking]._qt.x + 1;
+		ReturnLvlY = quests[QuestId::skelking]._qt.y;
+		ReturnLvl = quests[QuestId::skelking]._qlevel;
 		ReturnLvlT = DunType::cathedral;
 		break;
 	case SetLvl::BoneChamb:
-		ReturnLvlX = quests[Q_SCHAMB]._qt.x + 1;
-		ReturnLvlY = quests[Q_SCHAMB]._qt.y;
-		ReturnLvl = quests[Q_SCHAMB]._qlevel;
+		ReturnLvlX = quests[QuestId::schamb]._qt.x + 1;
+		ReturnLvlY = quests[QuestId::schamb]._qt.y;
+		ReturnLvl = quests[QuestId::schamb]._qlevel;
 		ReturnLvlT = DunType::catacombs;
 		break;
 	case SetLvl::PoisonWater:
-		ReturnLvlX = quests[Q_PWATER]._qt.x;
-		ReturnLvlY = quests[Q_PWATER]._qt.y + 1;
-		ReturnLvl = quests[Q_PWATER]._qlevel;
+		ReturnLvlX = quests[QuestId::pwater]._qt.x;
+		ReturnLvlY = quests[QuestId::pwater]._qt.y + 1;
+		ReturnLvl = quests[QuestId::pwater]._qlevel;
 		ReturnLvlT = DunType::cathedral;
 		break;
 	case SetLvl::VileBetrayer:
-		ReturnLvlX = quests[Q_BETRAYER]._qt.x + 1;
-		ReturnLvlY = quests[Q_BETRAYER]._qt.y - 1;
-		ReturnLvl = quests[Q_BETRAYER]._qlevel;
+		ReturnLvlX = quests[QuestId::betrayer]._qt.x + 1;
+		ReturnLvlY = quests[QuestId::betrayer]._qt.y - 1;
+		ReturnLvl = quests[QuestId::betrayer]._qlevel;
 		ReturnLvlT = DunType::hell;
 		break;
 	}
@@ -557,8 +557,8 @@ void SetReturnLvlPos()
 
 void GetReturnLvlPos()
 {
-	if (quests[Q_BETRAYER]._qactive == QUEST_DONE)
-		quests[Q_BETRAYER]._qvar2 = 2;
+	if (quests[QuestId::betrayer]._qactive == QuestState::done)
+		quests[QuestId::betrayer]._qvar2 = 2;
 	View.x = ReturnLvlX;
 	View.y = ReturnLvlY;
 	lvl.currlevel = ReturnLvl;
@@ -567,23 +567,23 @@ void GetReturnLvlPos()
 
 void ResyncMPQuests()
 {
-	if (quests[Q_SKELKING]._qactive == QUEST_INIT
-	    && lvl.currlevel >= quests[Q_SKELKING]._qlevel - 1
-	    && lvl.currlevel <= quests[Q_SKELKING]._qlevel + 1) {
-		quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
-		NetSendCmdQuest(true, Q_SKELKING);
+	if (quests[QuestId::skelking]._qactive == QuestState::init
+	    && lvl.currlevel >= quests[QuestId::skelking]._qlevel - 1
+	    && lvl.currlevel <= quests[QuestId::skelking]._qlevel + 1) {
+		quests[QuestId::skelking]._qactive = QuestState::active;
+		NetSendCmdQuest(true, QuestId::skelking);
 	}
-	if (quests[Q_BUTCHER]._qactive == QUEST_INIT
-	    && lvl.currlevel >= quests[Q_BUTCHER]._qlevel - 1
-	    && lvl.currlevel <= quests[Q_BUTCHER]._qlevel + 1) {
-		quests[Q_BUTCHER]._qactive = QUEST_ACTIVE;
-		NetSendCmdQuest(true, Q_BUTCHER);
+	if (quests[QuestId::butcher]._qactive == QuestState::init
+	    && lvl.currlevel >= quests[QuestId::butcher]._qlevel - 1
+	    && lvl.currlevel <= quests[QuestId::butcher]._qlevel + 1) {
+		quests[QuestId::butcher]._qactive = QuestState::active;
+		NetSendCmdQuest(true, QuestId::butcher);
 	}
-	if (quests[Q_BETRAYER]._qactive == QUEST_INIT && lvl.currlevel == quests[Q_BETRAYER]._qlevel - 1) {
-		quests[Q_BETRAYER]._qactive = QUEST_ACTIVE;
-		NetSendCmdQuest(true, Q_BETRAYER);
+	if (quests[QuestId::betrayer]._qactive == QuestState::init && lvl.currlevel == quests[QuestId::betrayer]._qlevel - 1) {
+		quests[QuestId::betrayer]._qactive = QuestState::active;
+		NetSendCmdQuest(true, QuestId::betrayer);
 	}
-	if (QuestStatus(Q_BETRAYER))
+	if (QuestStatus(QuestId::betrayer))
 		AddObject(ObjectType::ALTBOY, 2 * lvl.getpc().x + 20, 2 * lvl.getpc().y + 22);
 }
 
@@ -591,9 +591,9 @@ void ResyncQuests()
 {
 	int i, tren, x, y;
 
-	if (lvl.setlevel && lvl.setlvlnum == quests[Q_PWATER]._qslvl && quests[Q_PWATER]._qactive != QUEST_INIT && lvl.type() == quests[Q_PWATER]._qlvltype) {
+	if (lvl.setlevel && lvl.setlvlnum == quests[QuestId::pwater]._qslvl && quests[QuestId::pwater]._qactive != QuestState::init && lvl.type() == quests[QuestId::pwater]._qlvltype) {
 
-		if (quests[Q_PWATER]._qactive == QUEST_DONE)
+		if (quests[QuestId::pwater]._qactive == QuestState::done)
 			LoadPalette("Levels\\L3Data\\L3pwater.pal");
 		else
 			LoadPalette("Levels\\L3Data\\L3pfoul.pal");
@@ -602,14 +602,14 @@ void ResyncQuests()
 			palette_update_quest_palette(i);
 	}
 
-	if (QuestStatus(Q_LTBANNER)) {
-		if (quests[Q_LTBANNER]._qvar1 == 1)
+	if (QuestStatus(QuestId::ltbanner)) {
+		if (quests[QuestId::ltbanner]._qvar1 == 1)
 			ObjChangeMapResync(
 			    { lvl.getpc().w + lvl.getpc().x - 2,
 			        lvl.getpc().h + lvl.getpc().y - 2 },
 			    { lvl.getpc().w + lvl.getpc().x + 1,
 			        lvl.getpc().h + lvl.getpc().y + 1 });
-		if (quests[Q_LTBANNER]._qvar1 == 2) {
+		if (quests[QuestId::ltbanner]._qvar1 == 2) {
 			ObjChangeMapResync(
 			    { lvl.getpc().w + lvl.getpc().x - 2,
 			        lvl.getpc().h + lvl.getpc().y - 2 },
@@ -623,7 +623,7 @@ void ResyncQuests()
 			DRLG_MRectTrans(lvl.getpc().x, lvl.getpc().y, (lvl.getpc().w >> 1) + lvl.getpc().x + 4, lvl.getpc().y + (lvl.getpc().h >> 1));
 			lvl.TransVal = tren;
 		}
-		if (quests[Q_LTBANNER]._qvar1 == 3) {
+		if (quests[QuestId::ltbanner]._qvar1 == 3) {
 			x = lvl.getpc().x;
 			y = lvl.getpc().y;
 			ObjChangeMapResync({ x, y }, { x + lvl.getpc().w + 1, y + lvl.getpc().h + 1 });
@@ -635,40 +635,40 @@ void ResyncQuests()
 			lvl.TransVal = tren;
 		}
 	}
-	if (lvl.currlevel == quests[Q_MUSHROOM]._qlevel) {
-		if (quests[Q_MUSHROOM]._qactive == QUEST_INIT && !quests[Q_MUSHROOM]._qvar1) {
+	if (lvl.currlevel == quests[QuestId::mushroom]._qlevel) {
+		if (quests[QuestId::mushroom]._qactive == QuestState::init && !quests[QuestId::mushroom]._qvar1) {
 			SpawnQuestItem(ItemIndex::FUNGALTM, { 0, 0 }, 5, 1);
-			quests[Q_MUSHROOM]._qvar1 = QS_TOMESPAWNED;
+			quests[QuestId::mushroom]._qvar1 = QuestMushState::tomespawned;
 		} else {
-			if (quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE) {
-				if (quests[Q_MUSHROOM]._qvar1 >= QS_MUSHGIVEN) {
+			if (quests[QuestId::mushroom]._qactive == QuestState::active) {
+				if (quests[QuestId::mushroom]._qvar1 >= QuestMushState::mushgiven) {
 					Qtalklist[TownerId::WITCH]._qblkm = -1;
 					Qtalklist[TownerId::HEALER]._qblkm = TEXT_MUSH3;
-				} else if (quests[Q_MUSHROOM]._qvar1 >= QS_BRAINGIVEN) {
+				} else if (quests[QuestId::mushroom]._qvar1 >= QuestMushState::braingiven) {
 					Qtalklist[TownerId::HEALER]._qblkm = -1;
 				}
 			}
 		}
 	}
-	if (lvl.currlevel == quests[Q_VEIL]._qlevel + 1 && quests[Q_VEIL]._qactive == QUEST_ACTIVE && !quests[Q_VEIL]._qvar1) {
-		quests[Q_VEIL]._qvar1 = 1;
+	if (lvl.currlevel == quests[QuestId::veil]._qlevel + 1 && quests[QuestId::veil]._qactive == QuestState::active && !quests[QuestId::veil]._qvar1) {
+		quests[QuestId::veil]._qvar1 = 1;
 		SpawnQuestItem(ItemIndex::GLDNELIX, { 0, 0 }, 5, 1);
 	}
 	if (lvl.setlevel && lvl.setlvlnum == SetLvl::VileBetrayer) {
-		if (quests[Q_BETRAYER]._qvar1 >= 4)
+		if (quests[QuestId::betrayer]._qvar1 >= 4)
 			ObjChangeMapResync({ 1, 11 }, { 20, 18 });
-		if (quests[Q_BETRAYER]._qvar1 >= 6)
+		if (quests[QuestId::betrayer]._qvar1 >= 6)
 			ObjChangeMapResync({ 1, 18 }, { 20, 24 });
-		if (quests[Q_BETRAYER]._qvar1 >= 7)
+		if (quests[QuestId::betrayer]._qvar1 >= 7)
 			InitVPTriggers();
 		for (i = 0; i < nobjects; i++)
 			SyncObjectAnim(objectactive[i]);
 	}
-	if (lvl.currlevel == quests[Q_BETRAYER]._qlevel
+	if (lvl.currlevel == quests[QuestId::betrayer]._qlevel
 	    && !lvl.setlevel
-	    && (quests[Q_BETRAYER]._qvar2 == 1 || quests[Q_BETRAYER]._qvar2 >= 3)
-	    && (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE || quests[Q_BETRAYER]._qactive == QUEST_DONE)) {
-		quests[Q_BETRAYER]._qvar2 = 2;
+	    && (quests[QuestId::betrayer]._qvar2 == 1 || quests[QuestId::betrayer]._qvar2 >= 3)
+	    && (quests[QuestId::betrayer]._qactive == QuestState::active || quests[QuestId::betrayer]._qactive == QuestState::done)) {
+		quests[QuestId::betrayer]._qvar2 = 2;
 	}
 }
 
@@ -726,7 +726,7 @@ void StartQuestlog()
 
 	numqlines = 0;
 	for (i = 0; i < MAXQUESTS; i++) {
-		if (quests[i]._qactive == QUEST_ACTIVE && quests[i]._qlog) {
+		if (quests[i]._qactive == QuestState::active && quests[i]._qlog) {
 			qlist[numqlines] = i;
 			numqlines++;
 		}
@@ -800,7 +800,7 @@ void QuestlogESC()
 
 void SetMultiQuest(int q, int s, int l, int v1)
 {
-	if (quests[q]._qactive != QUEST_DONE) {
+	if (quests[q]._qactive != QuestState::done) {
 		if (s > quests[q]._qactive)
 			quests[q]._qactive = s;
 		quests[q]._qlog |= l;
@@ -809,4 +809,4 @@ void SetMultiQuest(int q, int s, int l, int v1)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

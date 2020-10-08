@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 #define NO_OVERDRAW
 
@@ -369,4 +369,4 @@ void trans_rect(int sx, int sy, int width, int height)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

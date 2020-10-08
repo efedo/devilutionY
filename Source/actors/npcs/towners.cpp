@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 const int snSFX[3][NUM_CLASSES] = {
 	{ PS_WARR52, PS_ROGUE52, PS_MAGE52 },
@@ -294,16 +294,16 @@ void DeadGuy::TownCtrlMsg()
 {
 	Towner::TownCtrlMsg();
 	if (!dialog.qtextflag) {
-		if (quests[Q_BUTCHER]._qactive == QUEST_ACTIVE && quests[Q_BUTCHER]._qlog == 0) {
+		if (quests[QuestId::butcher]._qactive == QuestState::active && quests[QuestId::butcher]._qlog == 0) {
 			return;
 		}
-		if (quests[Q_BUTCHER]._qactive != QUEST_INIT) {
+		if (quests[QuestId::butcher]._qactive != QuestState::init) {
 			_tAnimDelay = 1000;
 			_tAnimFrame = 1;
 			strcpy(_tName, "Slain Townsman");
 		}
 	}
-	if (quests[Q_BUTCHER]._qactive != QUEST_INIT)
+	if (quests[QuestId::butcher]._qactive != QuestState::init)
 		_tAnimCnt = 0;
 }
 
@@ -348,7 +348,7 @@ void Towner::TalkToTowner(Player &player)
 	if (dialog.qtextflag) { return; }
 	_tMsgSaid = false;
 
-	if (pcurs >= CURSOR_FIRSTITEM && !DropItemBeforeTrig()) { return; }
+	if (pcurs >= Cursor::FIRSTITEM && !DropItemBeforeTrig()) { return; }
 }
 
 void BarOwner::TalkToTowner(Player &player)
@@ -361,52 +361,52 @@ void BarOwner::TalkToTowner(Player &player)
 		_tMsgSaid = true;
 	}
 	if ((player.data._pLvlVisited[2] || player.data._pLvlVisited[4]) &&
-		quests[Q_SKELKING]._qactive != QUEST_NOTAVAIL) {
-		if (quests[Q_SKELKING]._qvar2 == 0 && !_tMsgSaid) {
-			quests[Q_SKELKING]._qvar2 = 1;
-			quests[Q_SKELKING]._qlog = true;
-			if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
-				quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
-				quests[Q_SKELKING]._qvar1 = 1;
+		quests[QuestId::skelking]._qactive != QuestState::not_available) {
+		if (quests[QuestId::skelking]._qvar2 == 0 && !_tMsgSaid) {
+			quests[QuestId::skelking]._qvar2 = 1;
+			quests[QuestId::skelking]._qlog = true;
+			if (quests[QuestId::skelking]._qactive == QuestState::init) {
+				quests[QuestId::skelking]._qactive = QuestState::active;
+				quests[QuestId::skelking]._qvar1 = 1;
 			}
 			_tbtcnt = 150;
 			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_KING2);
 			_tMsgSaid = true;
-			NetSendCmdQuest(true, Q_SKELKING);
+			NetSendCmdQuest(true, QuestId::skelking);
 		}
-		if (quests[Q_SKELKING]._qactive == QUEST_DONE &&
-			quests[Q_SKELKING]._qvar2 == 1 && !_tMsgSaid) {
-			quests[Q_SKELKING]._qvar2 = 2;
-			quests[Q_SKELKING]._qvar1 = 2;
+		if (quests[QuestId::skelking]._qactive == QuestState::done &&
+			quests[QuestId::skelking]._qvar2 == 1 && !_tMsgSaid) {
+			quests[QuestId::skelking]._qvar2 = 2;
+			quests[QuestId::skelking]._qvar1 = 2;
 			_tbtcnt = 150;
 			_tVar1 = p;
 			dialog.InitQTextMsg(TEXT_KING4);
 			_tMsgSaid = true;
-			NetSendCmdQuest(true, Q_SKELKING);
+			NetSendCmdQuest(true, QuestId::skelking);
 		}
 	}
-	if (plr.isSingleplayer() && plr[p].data._pLvlVisited[3] &&
-		quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
-		if ((quests[Q_LTBANNER]._qactive == QUEST_INIT ||
-			    quests[Q_LTBANNER]._qactive == QUEST_ACTIVE) &&
-			quests[Q_LTBANNER]._qvar2 == 0 && !_tMsgSaid) {
-			quests[Q_LTBANNER]._qvar2 = 1;
-			if (quests[Q_LTBANNER]._qactive == QUEST_INIT) {
-				quests[Q_LTBANNER]._qvar1 = 1;
-				quests[Q_LTBANNER]._qactive = QUEST_ACTIVE;
+	if (game.isSingleplayer() && plr[p].data._pLvlVisited[3] &&
+		quests[QuestId::ltbanner]._qactive != QuestState::not_available) {
+		if ((quests[QuestId::ltbanner]._qactive == QuestState::init ||
+			    quests[QuestId::ltbanner]._qactive == QuestState::active) &&
+			quests[QuestId::ltbanner]._qvar2 == 0 && !_tMsgSaid) {
+			quests[QuestId::ltbanner]._qvar2 = 1;
+			if (quests[QuestId::ltbanner]._qactive == QuestState::init) {
+				quests[QuestId::ltbanner]._qvar1 = 1;
+				quests[QuestId::ltbanner]._qactive = QuestState::active;
 			}
-			quests[Q_LTBANNER]._qlog = true;
+			quests[QuestId::ltbanner]._qlog = true;
 			_tbtcnt = 150;
 			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_BANNER2);
 			_tMsgSaid = true;
 		}
-		if (quests[Q_LTBANNER]._qvar2 == 1 &&
+		if (quests[QuestId::ltbanner]._qvar2 == 1 &&
 			player.HasItem(ItemIndex::BANNER) != NULL) {
 			if (!_tMsgSaid) {
-				quests[Q_LTBANNER]._qactive = QUEST_DONE;
-				quests[Q_LTBANNER]._qvar1 = 3;
+				quests[QuestId::ltbanner]._qactive = QuestState::done;
+				quests[QuestId::ltbanner]._qvar1 = 3;
 				player.RemoveInvItem(i);
 				CreateItem(UniqueItemId::HARCREST,
 					        {_t.x, _t.y + 1});
@@ -426,11 +426,11 @@ void BarOwner::TalkToTowner(Player &player)
 void DeadGuy::TalkToTowner(Player &player)
 {
 	Towner::TalkToTowner(player);
-	if (quests[Q_BUTCHER]._qactive == QUEST_ACTIVE &&
-	    quests[Q_BUTCHER]._qvar1 == 1) {
+	if (quests[QuestId::butcher]._qactive == QuestState::active &&
+	    quests[QuestId::butcher]._qvar1 == 1) {
 		_tbtcnt = 150;
 		_tVar1 = &player;
-		quests[Q_BUTCHER]._qvar1 = 1;
+		quests[QuestId::butcher]._qvar1 = 1;
 		if (player.data._pClass == PlayerClass::warrior && !effect_is_playing(PS_WARR8)) {
 			PlaySFX(PS_WARR8);
 		} else if (player.data._pClass == PlayerClass::rogue &&
@@ -441,25 +441,25 @@ void DeadGuy::TalkToTowner(Player &player)
 			PlaySFX(PS_MAGE8);
 		}
 		_tMsgSaid = true;
-	} else if (quests[Q_BUTCHER]._qactive == QUEST_DONE &&
-	           quests[Q_BUTCHER]._qvar1 == 1) {
-		quests[Q_BUTCHER]._qvar1 = 1;
+	} else if (quests[QuestId::butcher]._qactive == QuestState::done &&
+	           quests[QuestId::butcher]._qvar1 == 1) {
+		quests[QuestId::butcher]._qvar1 = 1;
 		_tbtcnt = 150;
 		_tVar1 = &player;
 		_tMsgSaid = true;
-	} else if (quests[Q_BUTCHER]._qactive == QUEST_INIT ||
-	           quests[Q_BUTCHER]._qactive == QUEST_ACTIVE &&
-	               quests[Q_BUTCHER]._qvar1 == 0) {
-		quests[Q_BUTCHER]._qactive = QUEST_ACTIVE;
-		quests[Q_BUTCHER]._qlog = true;
-		quests[Q_BUTCHER]._qmsg = TEXT_BUTCH9;
-		quests[Q_BUTCHER]._qvar1 = 1;
+	} else if (quests[QuestId::butcher]._qactive == QuestState::init ||
+	           quests[QuestId::butcher]._qactive == QuestState::active &&
+	               quests[QuestId::butcher]._qvar1 == 0) {
+		quests[QuestId::butcher]._qactive = QuestState::active;
+		quests[QuestId::butcher]._qlog = true;
+		quests[QuestId::butcher]._qmsg = TEXT_BUTCH9;
+		quests[QuestId::butcher]._qvar1 = 1;
 		_tbtcnt = 50;
 		_tVar1 = &player;
 		_tVar2 = 3;
 		dialog.InitQTextMsg(TEXT_BUTCH9);
 		_tMsgSaid = true;
-		NetSendCmdQuest(true, Q_BUTCHER);
+		NetSendCmdQuest(true, QuestId::butcher);
 	}
 }
 
@@ -468,25 +468,25 @@ void Smith::TalkToTowner(Player &player)
 	Towner::TalkToTowner(player);
 	if (game.isSingleplayer()) {
 		if (player.data._pLvlVisited[4] &&
-		    quests[Q_ROCK]._qactive != QUEST_NOTAVAIL) {
-			if (quests[Q_ROCK]._qvar2 == 0) {
-				quests[Q_ROCK]._qvar2 = 1;
-				quests[Q_ROCK]._qlog = true;
-				if (quests[Q_ROCK]._qactive == QUEST_INIT) {
-					quests[Q_ROCK]._qactive = QUEST_ACTIVE;
-					quests[Q_ROCK]._qvar1 = 1;
+		    quests[QuestId::rock]._qactive != QuestState::not_available) {
+			if (quests[QuestId::rock]._qvar2 == 0) {
+				quests[QuestId::rock]._qvar2 = 1;
+				quests[QuestId::rock]._qlog = true;
+				if (quests[QuestId::rock]._qactive == QuestState::init) {
+					quests[QuestId::rock]._qactive = QuestState::active;
+					quests[QuestId::rock]._qvar1 = 1;
 				}
 				_tbtcnt = 150;
 				_tVar1 = &player;
 				dialog.InitQTextMsg(TEXT_INFRA5);
 				_tMsgSaid = true;
 			}
-			if (quests[Q_ROCK]._qvar2 == 1 &&
+			if (quests[QuestId::rock]._qvar2 == 1 &&
 			    player.HasItem(ItemIndex::ROCK) != NULL) {
 				if (!_tMsgSaid) {
-					quests[Q_ROCK]._qactive = QUEST_DONE;
-					quests[Q_ROCK]._qvar2 = 2;
-					quests[Q_ROCK]._qvar1 = 2;
+					quests[QuestId::rock]._qactive = QuestState::done;
+					quests[QuestId::rock]._qvar2 = 2;
+					quests[QuestId::rock]._qvar1 = 2;
 					player.RemoveInvItem(i);
 					CreateItem(UniqueItemId::INFRARING,
 					           {_t.x, _t.y + 1});
@@ -498,18 +498,18 @@ void Smith::TalkToTowner(Player &player)
 			}
 		}
 		if (plr[p].data._pLvlVisited[9] &&
-		    quests[Q_ANVIL]._qactive != QUEST_NOTAVAIL) {
-			if ((quests[Q_ANVIL]._qactive == QUEST_INIT ||
-			     quests[Q_ANVIL]._qactive == QUEST_ACTIVE) &&
-			    quests[Q_ANVIL]._qvar2 == 0 && !_tMsgSaid) {
-				if (quests[Q_ROCK]._qvar2 == 2 ||
-				    quests[Q_ROCK]._qactive == QUEST_ACTIVE &&
-				        quests[Q_ROCK]._qvar2 == 1) {
-					quests[Q_ANVIL]._qvar2 = 1;
-					quests[Q_ANVIL]._qlog = true;
-					if (quests[Q_ANVIL]._qactive == QUEST_INIT) {
-						quests[Q_ANVIL]._qactive = QUEST_ACTIVE;
-						quests[Q_ANVIL]._qvar1 = 1;
+		    quests[QuestId::anvil]._qactive != QuestState::not_available) {
+			if ((quests[QuestId::anvil]._qactive == QuestState::init ||
+			     quests[QuestId::anvil]._qactive == QuestState::active) &&
+			    quests[QuestId::anvil]._qvar2 == 0 && !_tMsgSaid) {
+				if (quests[QuestId::rock]._qvar2 == 2 ||
+				    quests[QuestId::rock]._qactive == QuestState::active &&
+				        quests[QuestId::rock]._qvar2 == 1) {
+					quests[QuestId::anvil]._qvar2 = 1;
+					quests[QuestId::anvil]._qlog = true;
+					if (quests[QuestId::anvil]._qactive == QuestState::init) {
+						quests[QuestId::anvil]._qactive = QuestState::active;
+						quests[QuestId::anvil]._qvar1 = 1;
 					}
 					_tbtcnt = 150;
 					_tVar1 = &player;
@@ -517,12 +517,12 @@ void Smith::TalkToTowner(Player &player)
 					_tMsgSaid = true;
 				}
 			}
-			if (quests[Q_ANVIL]._qvar2 == 1 &&
+			if (quests[QuestId::anvil]._qvar2 == 1 &&
 			    player.HasItem(ItemIndex::ANVIL) != NULL) {
 				if (!_tMsgSaid) {
-					quests[Q_ANVIL]._qactive = QUEST_DONE;
-					quests[Q_ANVIL]._qvar2 = 2;
-					quests[Q_ANVIL]._qvar1 = 2;
+					quests[QuestId::anvil]._qactive = QuestState::done;
+					quests[QuestId::anvil]._qvar2 = 2;
+					quests[QuestId::anvil]._qvar1 = 2;
 					player.RemoveInvItem(i);
 					CreateItem(UniqueItemId::GRISWOLD,
 					           {_t.x, _t.y + 1});
@@ -543,33 +543,33 @@ void Smith::TalkToTowner(Player &player)
 void Witch::TalkToTowner(Player &player)
 {
 	Towner::TalkToTowner(player);
-	if (quests[Q_MUSHROOM]._qactive == QUEST_INIT &&
+	if (quests[QuestId::mushroom]._qactive == QuestState::init &&
 	    player.HasItem(ItemIndex::FUNGALTM) != NULL) {
 		player.RemoveInvItem(i);
-		quests[Q_MUSHROOM]._qactive = QUEST_ACTIVE;
-		quests[Q_MUSHROOM]._qlog = true;
-		quests[Q_MUSHROOM]._qvar1 = QS_TOMEGIVEN;
+		quests[QuestId::mushroom]._qactive = QuestState::active;
+		quests[QuestId::mushroom]._qlog = true;
+		quests[QuestId::mushroom]._qvar1 = QuestMushState::tomegiven;
 		_tbtcnt = 150;
 		_tVar1 = &player;
 		dialog.InitQTextMsg(TEXT_MUSH8);
 		_tMsgSaid = true;
-	} else if (quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE) {
-		if (quests[Q_MUSHROOM]._qvar1 >= QS_TOMEGIVEN &&
-		    quests[Q_MUSHROOM]._qvar1 <= QS_MUSHPICKED) {
+	} else if (quests[QuestId::mushroom]._qactive == QuestState::active) {
+		if (quests[QuestId::mushroom]._qvar1 >= QuestMushState::tomegiven &&
+		    quests[QuestId::mushroom]._qvar1 <= QuestMushState::mushpicked) {
 			if (player.HasItem(ItemIndex::MUSHROOM) != NULL) {
 				player.RemoveInvItem(i);
-				quests[Q_MUSHROOM]._qvar1 = 5;
+				quests[QuestId::mushroom]._qvar1 = 5;
 				Qtalklist[TownerId::HEALER]._qblkm = TEXT_MUSH3;
 				Qtalklist[TownerId::WITCH]._qblkm = -1;
 				_tbtcnt = 150;
 				_tVar1 = &player;
-				quests[Q_MUSHROOM]._qmsg = TEXT_MUSH10;
+				quests[QuestId::mushroom]._qmsg = TEXT_MUSH10;
 				dialog.InitQTextMsg(TEXT_MUSH10);
 				_tMsgSaid = true;
-			} else if (quests[Q_MUSHROOM]._qmsg != TEXT_MUSH9) {
+			} else if (quests[QuestId::mushroom]._qmsg != TEXT_MUSH9) {
 				_tbtcnt = 150;
 				_tVar1 = &player;
-				quests[Q_MUSHROOM]._qmsg = TEXT_MUSH9;
+				quests[QuestId::mushroom]._qmsg = TEXT_MUSH9;
 				dialog.InitQTextMsg(TEXT_MUSH9);
 				_tMsgSaid = true;
 			}
@@ -579,14 +579,14 @@ void Witch::TalkToTowner(Player &player)
 				_tbtcnt = 150;
 				_tVar1 = &player;
 				dialog.InitQTextMsg(TEXT_MUSH12);
-				quests[Q_MUSHROOM]._qactive = QUEST_DONE;
+				quests[QuestId::mushroom]._qactive = QuestState::done;
 				_tMsgSaid = true;
 				AllItemsList[item->IDidx].iUsable = true;
 			} else if (player.HasItem(ItemIndex::BRAIN) != NULL &&
-			           quests[Q_MUSHROOM]._qvar2 != TEXT_MUSH11) {
+			           quests[QuestId::mushroom]._qvar2 != TEXT_MUSH11) {
 				_tbtcnt = 150;
 				_tVar1 = &player;
-				quests[Q_MUSHROOM]._qvar2 = TEXT_MUSH11;
+				quests[QuestId::mushroom]._qvar2 = TEXT_MUSH11;
 				dialog.InitQTextMsg(TEXT_MUSH11);
 				_tMsgSaid = true;
 			}
@@ -621,20 +621,20 @@ void Drunk::TalkToTowner(Player &player)
 void Healer::TalkToTowner(Player &player)
 {
 	Towner::TalkToTowner(player);
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		if (player.data._pLvlVisited[1] && !_tMsgSaid) {
-			if (quests[Q_PWATER]._qactive == QUEST_INIT) {
-				quests[Q_PWATER]._qactive = QUEST_ACTIVE;
-				quests[Q_PWATER]._qlog = true;
-				quests[Q_PWATER]._qmsg = TEXT_POISON3;
-				quests[Q_PWATER]._qvar1 = 1;
+			if (quests[QuestId::pwater]._qactive == QuestState::init) {
+				quests[QuestId::pwater]._qactive = QuestState::active;
+				quests[QuestId::pwater]._qlog = true;
+				quests[QuestId::pwater]._qmsg = TEXT_POISON3;
+				quests[QuestId::pwater]._qvar1 = 1;
 				_tbtcnt = 150;
 				_tVar1 = &player;
 				dialog.InitQTextMsg(TEXT_POISON3);
 				_tMsgSaid = true;
-			} else if (quests[Q_PWATER]._qactive == QUEST_DONE &&
-			           quests[Q_PWATER]._qvar1 != 2) {
-				quests[Q_PWATER]._qvar1 = 2;
+			} else if (quests[QuestId::pwater]._qactive == QuestState::done &&
+			           quests[QuestId::pwater]._qvar1 != 2) {
+				quests[QuestId::pwater]._qvar1 = 2;
 				_tbtcnt = 150;
 				_tVar1 = &player;
 				dialog.InitQTextMsg(TEXT_POISON5);
@@ -642,14 +642,14 @@ void Healer::TalkToTowner(Player &player)
 				_tMsgSaid = true;
 			}
 		}
-		if (quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE &&
-		    quests[Q_MUSHROOM]._qmsg == TEXT_MUSH10 &&
+		if (quests[QuestId::mushroom]._qactive == QuestState::active &&
+		    quests[QuestId::mushroom]._qmsg == TEXT_MUSH10 &&
 		    player.HasItem(ItemIndex::BRAIN) != NULL) {
 			player.RemoveInvItem(i);
 			SpawnQuestItem(ItemIndex::SPECELIX, {_t.x, _t.y + 1},
 			               0, 0);
 			dialog.InitQTextMsg(TEXT_MUSH4);
-			quests[Q_MUSHROOM]._qvar1 = QS_BRAINGIVEN;
+			quests[QuestId::mushroom]._qvar1 = QuestMushState::braingiven;
 			Qtalklist[TownerId::HEALER]._qblkm = -1;
 		}
 	}
@@ -679,46 +679,46 @@ void Cow::TalkToTowner(Player &player)
 void Story::TalkToTowner(Player &player)
 {
 	Towner::TalkToTowner(player);
-	if (plr.isSingleplayer()) {
-		if (quests[Q_BETRAYER]._qactive == QUEST_INIT &&
+	if (game.isSingleplayer()) {
+		if (quests[QuestId::betrayer]._qactive == QuestState::init &&
 		    player.HasItem(ItemIndex::LAZSTAFF) != NULL) {
 			player.RemoveInvItem(i);
-			quests[Q_BETRAYER]._qvar1 = 2;
+			quests[QuestId::betrayer]._qvar1 = 2;
 			_tbtcnt = 150;
 			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_VILE1);
 			_tMsgSaid = true;
-			quests[Q_BETRAYER]._qactive = QUEST_ACTIVE;
-			quests[Q_BETRAYER]._qlog = true;
-		} else if (quests[Q_BETRAYER]._qactive == QUEST_DONE &&
-		           quests[Q_BETRAYER]._qvar1 == 7) {
-			quests[Q_BETRAYER]._qvar1 = 8;
+			quests[QuestId::betrayer]._qactive = QuestState::active;
+			quests[QuestId::betrayer]._qlog = true;
+		} else if (quests[QuestId::betrayer]._qactive == QuestState::done &&
+		           quests[QuestId::betrayer]._qvar1 == 7) {
+			quests[QuestId::betrayer]._qvar1 = 8;
 			_tbtcnt = 150;
 			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_VILE3);
 			_tMsgSaid = true;
-			quests[Q_DIABLO]._qlog = true;
+			quests[QuestId::diablo]._qlog = true;
 		}
 	}
-	if (plr.isMultiplayer()) {
-		if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE &&
-		    !quests[Q_BETRAYER]._qlog) {
+	if (game.isMultiplayer()) {
+		if (quests[QuestId::betrayer]._qactive == QuestState::active &&
+		    !quests[QuestId::betrayer]._qlog) {
 			_tbtcnt = 150;
 			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_VILE1);
 			_tMsgSaid = true;
-			quests[Q_BETRAYER]._qlog = true;
-			NetSendCmdQuest(true, Q_BETRAYER);
-		} else if (quests[Q_BETRAYER]._qactive == QUEST_DONE &&
-		           quests[Q_BETRAYER]._qvar1 == 7) {
-			quests[Q_BETRAYER]._qvar1 = 8;
+			quests[QuestId::betrayer]._qlog = true;
+			NetSendCmdQuest(true, QuestId::betrayer);
+		} else if (quests[QuestId::betrayer]._qactive == QuestState::done &&
+		           quests[QuestId::betrayer]._qvar1 == 7) {
+			quests[QuestId::betrayer]._qvar1 = 8;
 			_tbtcnt = 150;
 			_tVar1 = &player;
 			dialog.InitQTextMsg(TEXT_VILE3);
 			_tMsgSaid = true;
-			NetSendCmdQuest(true, Q_BETRAYER);
-			quests[Q_DIABLO]._qlog = true;
-			NetSendCmdQuest(true, Q_DIABLO);
+			NetSendCmdQuest(true, QuestId::betrayer);
+			quests[QuestId::diablo]._qlog = true;
+			NetSendCmdQuest(true, QuestId::diablo);
 		}
 	}
 	if (!dialog.qtextflag) {
@@ -744,4 +744,4 @@ void Cow::CowSFX(Player &player)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -121,7 +121,7 @@ if(PIE)
   set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
@@ -187,8 +187,9 @@ add_library(devilution STATIC
   Source/actors/monsters/monster.cpp
   Source/actors/monsters/monster_beastiary.cpp
   Source/actors/monsters/monster_instance.cpp
+  Source/actors/monsters/monster_instance_ai.cpp
   "Source/actors/actor_manager_monsters.cpp"
-  Source/actors/monsters/monster_type.cpp
+  "Source/actors/monsters/monster_class.cpp"
   Source/actors/npcs/npc.cpp
   Source/actors/npcs/npc_manager.cpp
   Source/actors/npcs/towners.cpp
@@ -196,6 +197,7 @@ add_library(devilution STATIC
   Source/actors/player/inv.cpp
   Source/actors/player/inv_draw.cpp
   Source/actors/player/inv_slotaccess.cpp
+  Source/actors/player/player_attribute.cpp
   Source/actors/player/player_instance.cpp
   Source/actors/player/player_items.cpp
   "Source/actors/actor_manager_players.cpp"
@@ -263,6 +265,7 @@ add_library(devilution STATIC
   Source/pathfinding/micropather.cpp
   Source/pathfinding/path.cpp
   Source/pathfinding/pathfinder.cpp
+  Source/skills/spellbook.cpp
   Source/skills/spelldat.cpp
   Source/skills/spells.cpp
   Source/appfat.cpp

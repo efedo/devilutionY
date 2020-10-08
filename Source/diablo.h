@@ -6,7 +6,7 @@
 #ifndef __DIABLO_H__
 #define __DIABLO_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 #include <string>
 
@@ -25,7 +25,6 @@ extern bool zoomflag;
 extern bool gbProcessPlayers;
 extern bool gbLoadGame;
 extern HINSTANCE ghInst;
-extern int DebugMonsters[10];
 extern bool cineflag;
 extern int force_redraw;
 extern bool visiondebug;
@@ -106,6 +105,6 @@ extern bool FriendlyMode;
 extern char *spszMsgTbl[4];
 extern char *spszMsgHotKeyTbl[4];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DIABLO_H__ */

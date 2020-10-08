@@ -5,53 +5,56 @@
  */
 #include "all.h"
 #include "../3rdParty/Storm/Source/storm.h"
+#include <string>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
+
+void ActorManager::clearAllPlayers()
+{
+	for (auto & i : _actors) {
+		if (i.get() && i.get()->type == ActorType::player) {
+			i.reset();
+		}
+	}
+	_players.clear();
+}
 
 void ActorManager::clearAllMonsters()
 {
-	for (size_t i = 0, end = _actors.size(); i != end; ++i ) {
-		if (_actors[i].get() && _actors[i].get()->type == ActorType::monster) {
-			_actors[i].reset();
+	for (auto& i : _actors) {
+		if (i.get() && i.get()->type == ActorType::monster) {
+			i.reset();
 		}
 	}
 	_monsters.clear();
 }
 
-void ActorManager::PlaceMonster(int mtype, V2Di pos)
+Monster& ActorManager::AddMonster(MonsterType mtype, V2Di pos, Dir dir, bool InMap)
 {
-	Dir rd = Dir(random_(90, 8));
-	Monster * monster = new Monster(rd, mtype, pos);
-	grid.at(pos).setActor(*monster);
+	Monster* monster = new Monster(dir, mtype, pos);
+	if (InMap) grid.at(pos).setActor(*monster);
+	return *monster;
 }
 
-void ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqindex,
-                                      int miniontype, int unpackfilesize)
+Monster & ActorManager::PlaceMonster(MonsterType mtype, V2Di pos)
 {
-	V2Di p, n;
+	Dir rd = Dir(random_(90, 8));
+	return AddMonster(mtype, pos, rd, true);
+}
+
+Monster & ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqtype,
+	MonsterType miniontype, int unpackfilesize)
+{
 	int i;
-	int uniqtype;
-	int count2;
-	char filestr[64];
 	bool zharflag, done;
-	UniqMonstStruct *Uniq;
-	MonsterStruct *Monst;
-	int count;
 
-	//Monst = monster + nummonsters;
-	Monst = &monsters[nummonsters].data;
-	count = 0;
-	Uniq = &UniqMonst[int(uniqindex)];
+	const UniqMonstStruct & uniq = beastiary.getUnique(uniqtype);
 
-	if ((uniquetrans + 19) << 8 >= LIGHTSIZE)
-		return;
+	if ((uniquetrans + 19) << 8 >= LIGHTSIZE) return;
 
-	for (uniqtype = 0; uniqtype < nummtypes; uniqtype++) {
-		if (beastiary[uniqtype].data.mtype == UniqMonst[uniqindex].mtype) {
-			break;
-		}
-	}
-
+	// Appears to check that there is room to place?
+	int count, count2;
+	V2Di p, n;
 	while (1) {
 		p.x = random_(91, 80) + 16;
 		p.y = random_(91, 80) + 16;
@@ -66,23 +69,21 @@ void ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqindex,
 
 		if (count2 < 9) {
 			count++;
-			if (count < 1000)
-				continue;
+			if (count < 1000) continue;
 		}
 
-		if (MonstPlace(p))
-			break;
+		if (MonstPlace(p)) break;
 	}
 
-	if (uniqindex == UniqueMonsterType::SNOTSPIL) {
+	if (uniqtype == UniqueMonsterType::SNOTSPIL) {
 		p.x = 2 * lvl.getpc().x + 24;
 		p.y = 2 * lvl.getpc().y + 28;
 	}
-	if (uniqindex == UniqueMonsterType::WARLORD) {
+	if (uniqtype == UniqueMonsterType::WARLORD) {
 		p.x = 2 * lvl.getpc().x + 22;
 		p.y = 2 * lvl.getpc().y + 23;
 	}
-	if (uniqindex == UniqueMonsterType::ZHAR) {
+	if (uniqtype == UniqueMonsterType::ZHAR) {
 		zharflag = true;
 		for (i = 0; i < lvl.themeCount; i++) {
 			if (i == zharlib && zharflag == true) {
@@ -92,34 +93,34 @@ void ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqindex,
 			}
 		}
 	}
-	if (plr.isSingleplayer()) {
-		if (uniqindex == UniqueMonsterType::LAZURUS) {
+	if (game.isSingleplayer()) {
+		if (uniqtype == UniqueMonsterType::LAZURUS) {
 			p = { 32, 46 };
 		}
-		if (uniqindex == UniqueMonsterType::RED_VEX) {
+		if (uniqtype == UniqueMonsterType::RED_VEX) {
 			p = { 40, 45 };
 		}
-		if (uniqindex == UniqueMonsterType::BLACKJADE) {
+		if (uniqtype == UniqueMonsterType::BLACKJADE) {
 			p = { 38, 49 };
 		}
-		if (uniqindex == UniqueMonsterType::SKELKING) {
+		if (uniqtype == UniqueMonsterType::SKELKING) {
 			p = { 35, 47 };
 		}
 	} else {
-		if (uniqindex == UniqueMonsterType::LAZURUS) {
+		if (uniqtype == UniqueMonsterType::LAZURUS) {
 			p.x = 2 * lvl.getpc().x + 19;
 			p.y = 2 * lvl.getpc().y + 22;
 		}
-		if (uniqindex == UniqueMonsterType::RED_VEX) {
+		if (uniqtype == UniqueMonsterType::RED_VEX) {
 			p.x = 2 * lvl.getpc().x + 21;
 			p.y = 2 * lvl.getpc().y + 19;
 		}
-		if (uniqindex == UniqueMonsterType::BLACKJADE) {
+		if (uniqtype == UniqueMonsterType::BLACKJADE) {
 			p.x = 2 * lvl.getpc().x + 21;
 			p.y = 2 * lvl.getpc().y + 25;
 		}
 	}
-	if (uniqindex == UniqueMonsterType::BUTCHER) {
+	if (uniqtype == UniqueMonsterType::BUTCHER) {
 		done = false;
 		for (p.y = 0; p.y < MAXDUNY && !done; p.y++) {
 			for (p.x = 0; p.x < MAXDUNX && !done; p.x++) {
@@ -128,96 +129,94 @@ void ActorManager::PlaceUniqueMonster(UniqueMonsterType uniqindex,
 		}
 	}
 
-	PlaceMonster(nummonsters, uniqtype, p);
-	Monst->_uniqtype = uniqindex + 1;
+	const MonsterType mtype = uniq.mtype;
+	Monster & monster = PlaceMonster(mtype, p);
+	monster.data._uniqtype = uniqtype;
 
-	if (Uniq->mlevel) {
-		Monst->mLevel = 2 * Uniq->mlevel;
+	if (uniq.mlevel) {
+		monster.data.mLevel = 2 * uniq.mlevel;
 	} else {
-		Monst->mLevel += 5;
+		monster.data.mLevel += 5;
 	}
 
-	Monst->mExp *= 2;
-	Monst->mName = Uniq->mName;
-	Monst->_mmaxhp = Uniq->mmaxhp << 6;
+	monster.data.mExp *= 2;
+	monster.data.mName = uniq.mName;
+	monster.data._mmaxhp = uniq.mmaxhp << 6;
 
-	if (plr.isSingleplayer()) {
-		Monst->_mmaxhp = Monst->_mmaxhp >> 1;
-		if (Monst->_mmaxhp < 64) {
-			Monst->_mmaxhp = 64;
+	if (game.isSingleplayer()) {
+		monster.data._mmaxhp = monster.data._mmaxhp >> 1;
+		if (monster.data._mmaxhp < 64) {
+			monster.data._mmaxhp = 64;
 		}
 	}
 
-	Monst->_mhitpoints = Monst->_mmaxhp;
-	Monst->_mAi = Uniq->mAi;
-	Monst->_mint = Uniq->mint;
-	Monst->mMinDamage = Uniq->mMinDamage;
-	Monst->mMaxDamage = Uniq->mMaxDamage;
-	Monst->mMinDamage2 = Uniq->mMinDamage;
-	Monst->mMaxDamage2 = Uniq->mMaxDamage;
-	Monst->mMagicRes = Uniq->mMagicRes;
-	Monst->mtalkmsg = Uniq->mtalkmsg;
-	Monst->mlid = AddLight(Monst->_m, 3);
+	monster.data._mhitpoints = monster.data._mmaxhp;
+	monster.data._mAi = uniq.mAi;
+	monster.data._mint = uniq.mint;
+	monster.data.mMinDamage = uniq.mMinDamage;
+	monster.data.mMaxDamage = uniq.mMaxDamage;
+	monster.data.mMinDamage2 = uniq.mMinDamage;
+	monster.data.mMaxDamage2 = uniq.mMaxDamage;
+	monster.data.mMagicRes = uniq.mMagicRes;
+	monster.data.mtalkmsg = uniq.mtalkmsg;
+	monster.data.mlid = AddLight(monster.data._m, 3);
 
-	if (plr.isMultiplayer()) {
-		if (Monst->_mAi == MonstAi::LAZHELP)
-			Monst->mtalkmsg = 0;
-		if (Monst->_mAi != MonstAi::LAZURUS || quests[Q_BETRAYER]._qvar1 <= 3) {
-			if (Monst->mtalkmsg) {
-				Monst->_mgoal = MonsterGoal::INQUIRING;
+	if (game.isMultiplayer()) {
+		if (monster.data._mAi == MonstAi::LAZHELP)
+			monster.data.mtalkmsg = 0;
+		if (monster.data._mAi != MonstAi::LAZURUS || quests[QuestId::betrayer]._qvar1 <= 3) {
+			if (monster.data.mtalkmsg) {
+				monster.data._mgoal = MonsterGoal::INQUIRING;
 			}
 		} else {
-			Monst->_mgoal = MonsterGoal::NORMAL;
+			monster.data._mgoal = MonsterGoal::NORMAL;
 		}
-	} else if (Monst->mtalkmsg)
-		Monst->_mgoal = MonsterGoal::INQUIRING;
+	} else if (monster.data.mtalkmsg)
+		monster.data._mgoal = MonsterGoal::INQUIRING;
 
-	if (gnDifficulty == DIFF_NIGHTMARE) {
-		Monst->_mmaxhp = 3 * Monst->_mmaxhp + 64;
-		Monst->mLevel += 15;
-		Monst->_mhitpoints = Monst->_mmaxhp;
-		Monst->mExp = 2 * (Monst->mExp + 1000);
-		Monst->mMinDamage = 2 * (Monst->mMinDamage + 2);
-		Monst->mMaxDamage = 2 * (Monst->mMaxDamage + 2);
-		Monst->mMinDamage2 = 2 * (Monst->mMinDamage2 + 2);
-		Monst->mMaxDamage2 = 2 * (Monst->mMaxDamage2 + 2);
+	if (gnDifficulty == Difficulty::NIGHTMARE) {
+		monster.data._mmaxhp = 3 * monster.data._mmaxhp + 64;
+		monster.data.mLevel += 15;
+		monster.data._mhitpoints = monster.data._mmaxhp;
+		monster.data.mExp = 2 * (monster.data.mExp + 1000);
+		monster.data.mMinDamage = 2 * (monster.data.mMinDamage + 2);
+		monster.data.mMaxDamage = 2 * (monster.data.mMaxDamage + 2);
+		monster.data.mMinDamage2 = 2 * (monster.data.mMinDamage2 + 2);
+		monster.data.mMaxDamage2 = 2 * (monster.data.mMaxDamage2 + 2);
 	}
 
-	if (gnDifficulty == DIFF_HELL) {
-		Monst->_mmaxhp = 4 * Monst->_mmaxhp + 192;
-		Monst->mLevel += 30;
-		Monst->_mhitpoints = Monst->_mmaxhp;
-		Monst->mExp = 4 * (Monst->mExp + 1000);
-		Monst->mMinDamage = 4 * Monst->mMinDamage + 6;
-		Monst->mMaxDamage = 4 * Monst->mMaxDamage + 6;
-		Monst->mMinDamage2 = 4 * Monst->mMinDamage2 + 6;
-		Monst->mMaxDamage2 = 4 * Monst->mMaxDamage2 + 6;
+	if (gnDifficulty == Difficulty::HELL) {
+		monster.data._mmaxhp = 4 * monster.data._mmaxhp + 192;
+		monster.data.mLevel += 30;
+		monster.data._mhitpoints = monster.data._mmaxhp;
+		monster.data.mExp = 4 * (monster.data.mExp + 1000);
+		monster.data.mMinDamage = 4 * monster.data.mMinDamage + 6;
+		monster.data.mMaxDamage = 4 * monster.data.mMaxDamage + 6;
+		monster.data.mMinDamage2 = 4 * monster.data.mMinDamage2 + 6;
+		monster.data.mMaxDamage2 = 4 * monster.data.mMaxDamage2 + 6;
 	}
-
-	sprintf(filestr, "monsttypes\\monsttypes\\%s.TRN", Uniq->mTrnName);
+	std::string filestr = "monsttypes\\monsttypes\\" + uniq.mTrnName + ".TRN";
 	LoadFileWithMem(filestr, &pLightTbl[256 * (uniquetrans + 19)]);
 
-	Monst->_uniqtrans = uniquetrans++;
+	monster.data._uniqtrans = uniquetrans++;
 
-	if (Uniq->mUnqAttr & 4) {
-		Monst->mHit = Uniq->mUnqVar1;
-		Monst->mHit2 = Uniq->mUnqVar1;
+	if (uniq.mUnqAttr & 4) {
+		monster.data.mHit = uniq.mUnqVar1;
+		monster.data.mHit2 = uniq.mUnqVar1;
 	}
-	if (Uniq->mUnqAttr & 8) {
-		Monst->mArmorClass = Uniq->mUnqVar1;
-	}
-
-	nummonsters++;
-
-	if (Uniq->mUnqAttr & 1) {
-		PlaceGroup(miniontype, unpackfilesize, Uniq->mUnqAttr, nummonsters - 1);
+	if (uniq.mUnqAttr & 8) {
+		monster.data.mArmorClass = uniq.mUnqVar1;
 	}
 
-	if (Monst->_mAi != MonstAi::GARG) {
-		Monst->_mAnimData = Monst->MType->getAnim(MonstAnim::STAND).Data[int(Monst->_mdir)];
-		Monst->_mAnimFrame = random_(88, Monst->_mAnimLen - 1) + 1;
-		Monst->_mFlags &= ~MonsterFlag::allow_special;
-		Monst->_mmode = MonsterMode::STAND;
+	if (uniq.mUnqAttr & 1) {
+		PlaceGroup(miniontype, unpackfilesize, uniq.mUnqAttr, monster);
+	}
+
+	if (monster.data._mAi != MonstAi::GARG) {
+		monster.data._mAnimData = monster.data.MType->getAnim(MonstAnim::STAND).Data[int(monster.data._mdir)];
+		monster.data._mAnimFrame = random_(88, monster.data._mAnimLen - 1) + 1;
+		monster.data._mFlags &= ~MonsterFlag::allow_special;
+		monster.data._mmode = MonsterMode::STAND;
 	}
 }
 
@@ -227,56 +226,50 @@ void ActorManager::PlaceQuestMonsters()
 	uint8_t *setp;
 
 	if (!lvl.setlevel) {
-		if (QuestStatus(Q_BUTCHER)) {
-			PlaceUniqueMonster(UniqueMonsterType::BUTCHER, 0, 0);
+		if (QuestStatus(QuestId::butcher)) {
+			PlaceUniqueMonster(UniqueMonsterType::BUTCHER, MonsterType::INVALID, 0);
 		}
 
-		if (lvl.currlevel == quests[Q_SKELKING]._qlevel && plr.isMultiplayer()) {
-			skeltype = 0;
-
-			for (skeltype = 0; skeltype < nummtypes; skeltype++) {
-				if (IsSkel(beastiary[skeltype].data.mtype)) {
-					break;
-				}
-			}
-
+		if (lvl.currlevel == quests[QuestId::skelking]._qlevel && game.isMultiplayer()) {
+			MonsterType skeltype = beastiary.getRandomActiveSkelType();
+			if (skeltype == MonsterType::INVALID) app_fatal("No valid skeleton type for skeleton king creation ");
 			PlaceUniqueMonster(UniqueMonsterType::SKELKING, skeltype, 30);
 		}
 
-		if (QuestStatus(Q_LTBANNER)) {
+		if (QuestStatus(QuestId::ltbanner)) {
 			setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
-		if (QuestStatus(Q_BLOOD)) {
+		if (QuestStatus(QuestId::blood)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
-		if (QuestStatus(Q_BLIND)) {
+		if (QuestStatus(QuestId::blind)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 		}
-		if (QuestStatus(Q_ANVIL)) {
+		if (QuestStatus(QuestId::anvil)) {
 			setp = LoadFileInMem("Levels\\L3Data\\Anvil.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x + 2, 2 * lvl.getpc().y + 2 });
 			mem_free_dbg(setp);
 		}
-		if (QuestStatus(Q_WARLORD)) {
+		if (QuestStatus(QuestId::warlord)) {
 			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 			SetMapMonsters(setp, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 			mem_free_dbg(setp);
 			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::WARLORD].mtype, 1);
 		}
-		if (QuestStatus(Q_VEIL)) {
+		if (QuestStatus(QuestId::veil)) {
 			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::LACHDAN].mtype, 1);
 		}
-		if (QuestStatus(Q_ZHAR) && zharlib == -1) {
-			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
+		if (QuestStatus(QuestId::zhar) && zharlib == -1) {
+			quests[QuestId::zhar]._qactive = QuestState::not_available;
 		}
 
-		if (lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+		if (lvl.currlevel == quests[QuestId::betrayer]._qlevel && game.isMultiplayer()) {
 			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::LAZURUS].mtype, 4);
 			beastiary.AddMonsterType(UniqMonst[UniqueMonsterType::RED_VEX].mtype, 4);
 			PlaceUniqueMonster(UniqueMonsterType::LAZURUS, 0, 0);
@@ -291,31 +284,21 @@ void ActorManager::PlaceQuestMonsters()
 	}
 }
 
-void ActorManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
+void ActorManager::PlaceGroup(MonsterType mtype, int num, int leaderf, Monster & leader)
 {
 	int j;
 	V2Di p, v;
 	int placed = 0;
 
-	for (int try1 = 0; try1 < 10; try1++) {
-		while (placed) {
-			nummonsters--;
-			placed--;
-			grid.at(list[nummonsters].data._m).clearMonster();
-		}
-
+	for (int try1 = 0; try1 < 10 && placed < num; try1++) {
 		if (leaderf & 1) {
 			int off = random_(92, 8);
-			v = p = list[leader].data._m + offset(Dir(off));
+			v = p = leader.data._m + offset(Dir(off));
 		} else {
 			do {
 				v.x = p.x = random_(93, 80) + 16;
 				v.y = p.y = random_(93, 80) + 16;
 			} while (!MonstPlace(p));
-		}
-
-		if (num + nummonsters > totalmonsters) {
-			num = totalmonsters - nummonsters;
 		}
 
 		j = 0;
@@ -327,38 +310,235 @@ void ActorManager::PlaceGroup(int mtype, int num, int leaderf, int leader)
 				continue;
 			}
 
-			PlaceMonster(nummonsters, mtype, p);
+			Monster & plMonst = PlaceMonster(mtype, p);
 			if (leaderf & 1) {
-				list[nummonsters].data._mmaxhp *= 2;
-				list[nummonsters].data._mhitpoints = list[nummonsters].data._mmaxhp;
-				list[nummonsters].data._mint = list[leader].data._mint;
+				plMonst.data._mmaxhp *= 2;
+				plMonst.data._mhitpoints = plMonst.data._mmaxhp;
+				plMonst.data._mint = plMonst.data._mint;
 
 				if (leaderf & 2) {
-					list[nummonsters].data.leader = leader;
-					list[nummonsters].data.leaderflag = 1;
-					list[nummonsters].data._mAi = list[leader].data._mAi;
+					plMonst.data.leader = leader.id();
+					plMonst.data.leaderflag = 1;
+					plMonst.data._mAi = plMonst.data._mAi;
 				}
 
-				if (list[nummonsters].data._mAi != MonstAi::GARG) {
-					list[nummonsters].data._mAnimData = list[nummonsters].data.MType->Anims[MonstAnim::STAND].Data[int(list[nummonsters].data._mdir)];
-					list[nummonsters].data._mAnimFrame = random_(88, list[nummonsters].data._mAnimLen - 1) + 1;
-					list[nummonsters].data._mFlags &= ~MonsterFlag::allow_special;
-					list[nummonsters].data._mmode = MonsterMode::STAND;
+				if (plMonst.data._mAi != MonstAi::GARG) {
+					plMonst.data._mAnimData = plMonst.data.MType->getAnim(MonstAnim::STAND).Data[int(plMonst.data._mdir)];
+					plMonst.data._mAnimFrame = random_(88, plMonst.data._mAnimLen - 1) + 1;
+					plMonst.data._mFlags &= ~MonsterFlag::allow_special;
+					plMonst.data._mmode = MonsterMode::STAND;
 				}
 			}
-			nummonsters++;
 			placed++;
 			j++;
-		}
-
-		if (placed >= num) {
-			break;
 		}
 	}
 
 	if (leaderf & 2) {
-		list[leader].data.packsize = placed;
+		leader.data.packsize = placed;
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+
+Monster * ActorManager::M_SpawnSkel(V2Di pos, Dir dir)
+{
+	MonsterType skeltype = beastiary.getRandomActiveSkelType(false);
+	if (skeltype != MonsterType::INVALID) return &AddMonster(skeltype, pos, dir, true);
+	return 0;
+}
+
+Monster* ActorManager::PreSpawnSkeleton()
+{
+	MonsterType skeltype = beastiary.getRandomActiveSkelType(false);
+	if (skeltype != MonsterType::INVALID) {
+		Monster& monster = AddMonster(skeltype, { 0, 0 }, Dir(0), false);
+		monster.M_StartStand(Dir(0));
+		return &monster;
+	}
+	return 0;
+}
+
+bool ActorManager::SpawnSkeleton(int ii, V2Di pos)
+{
+	V2Di d, n;
+	Dir dir;
+	int j, k, rs;
+	bool savail;
+	int monstok[3][3];
+
+	if (ii == -1) return false;
+
+	if (PosOkMonst(-1, pos)) {
+		dir = GetDirection(pos, pos); // ??? Gimmick to get random dir?
+		monsters[ii].ActivateSpawn(pos, dir);
+		return true;
+	}
+
+	savail = false;
+	n.y = 0;
+	for (j = pos.y - 1; j <= pos.y + 1; j++) {
+		n.x = 0;
+		for (k = pos.x - 1; k <= pos.x + 1; k++) {
+			monstok[n.x][n.y] = PosOkMonst(-1, { k, j });
+			savail |= monstok[n.x][n.y];
+			n.x++;
+		}
+		n.y++;
+	}
+	if (!savail) {
+		return false;
+	}
+
+	rs = random_(137, 15) + 1;
+	n = { 0, 0 };
+	while (rs > 0) {
+		if (monstok[n.x][n.y])
+			rs--;
+		if (rs > 0) {
+			n.x++;
+			if (n.x == 3) {
+				n.x = 0;
+				n.y++;
+				if (n.y == 3)
+					n.y = 0;
+			}
+		}
+	}
+
+	d = pos + n - V2Di(1, 1);
+	dir = GetDirection(d, pos);
+	monsters[ii].ActivateSpawn(d, dir);
+	return true;
+}
+
+void ActorManager::ProcessMonsters()
+{
+	for (auto & i : this->_monsters) {
+		if (!i) continue;
+		Monster& monst = *i;
+
+		bool raflag = false;
+		if (game.isMultiplayer()) {
+			SetRndSeed(monst.data._mAISeed);
+			monst.data._mAISeed = GetRndSeed();
+		}
+		if (!(monst.data._mFlags & MonsterFlag::noheal) && monst.data._mhitpoints < monst.data._mmaxhp && monst.data._mhitpoints >> 6 > 0) {
+			if (monst.data.mLevel > 1) {
+				monst.data._mhitpoints += monst.data.mLevel >> 1;
+			}
+			else {
+				monst.data._mhitpoints += monst.data.mLevel;
+			}
+		}
+		const V2Di m = monst.data._m;
+		if (grid.at(m).dFlags & DunTileFlag::VISIBLE && monst.data._msquelch == 0) {
+			if (monst.data.MType->mtype == MonsterType::CLEAVER) {
+				PlaySFX(USFX_CLEAVER);
+			}
+		}
+		Actor* enemy = this->getActor(monst.data._menemy);
+		if (!enemy) app_fatal("Illegal enemy %d for monster \"%s\"", enemy, monst.data.mName);
+		if (monst.data._mFlags & MonsterFlag::targets_monster) {
+			if (enemy->type != ActorType::monster) app_fatal("Unexpected enemy type (enemy %d for monster \"%s\")", enemy, monst.data.mName);
+			monst.data._last = static_cast<Monster *>(enemy)->data._mfut;
+			monst.data._menemypos = monst.data._last;
+		}
+		else {
+			if (enemy->type != ActorType::player) app_fatal("Unexpected enemy type (enemy %d for monster \"%s\")", enemy, monst.data.mName);
+			monst.data._menemypos = static_cast<Player*>(enemy)->futpos();
+			if (grid.at(m).dFlags & DunTileFlag::VISIBLE) {
+				monst.data._msquelch = 255;
+				monst.data._last = static_cast<Player*>(enemy)->futpos();
+			}
+			else if (monst.data._msquelch != 0 && monst.data.MType->mtype != MonsterType::DIABLO) { /// BUGFIX: change '_mAi' to 'MType->mtype'
+				monst.data._msquelch--;
+			}
+		}
+		do {
+			if (!monst.ai_Path() || !(monst.data._mFlags & MonsterFlag::search)) {
+				std::invoke(AiProc[int(monst.data._mAi)], &monst);
+				//AiProc[monst.data._mAi](monsters[mi]);
+			}
+			switch (monst.data._mmode) {
+			case MonsterMode::STAND:
+				raflag = monst.M_DoStand();
+				break;
+			case MonsterMode::WALK:
+				raflag = monst.M_DoWalk();
+				break;
+			case MonsterMode::WALK2:
+				raflag = monst.M_DoWalk2();
+				break;
+			case MonsterMode::WALK3:
+				raflag = monst.M_DoWalk3();
+				break;
+			case MonsterMode::ATTACK:
+				raflag = monst.M_DoAttack();
+				break;
+			case MonsterMode::GOTHIT:
+				raflag = monst.M_DoGotHit();
+				break;
+			case MonsterMode::DEATH:
+				raflag = monst.M_DoDeath();
+				break;
+			case MonsterMode::SATTACK:
+				raflag = monst.M_DoSAttack();
+				break;
+			case MonsterMode::FADEIN:
+				raflag = monst.M_DoFadein();
+				break;
+			case MonsterMode::FADEOUT:
+				raflag = monst.M_DoFadeout();
+				break;
+			case MonsterMode::RATTACK:
+				raflag = monst.M_DoRAttack();
+				break;
+			case MonsterMode::SPSTAND:
+				raflag = monst.M_DoSpStand();
+				break;
+			case MonsterMode::RSPATTACK:
+				raflag = monst.M_DoRSpAttack();
+				break;
+			case MonsterMode::DELAY:
+				raflag = monst.M_DoDelay();
+				break;
+			case MonsterMode::CHARGE:
+				raflag = false;
+				break;
+			case MonsterMode::STONE:
+				raflag = monst.M_DoStone();
+				break;
+			case MonsterMode::HEAL:
+				raflag = monst.M_DoHeal();
+				break;
+			case MonsterMode::TALK:
+				raflag = monst.M_DoTalk();
+				break;
+			}
+			if (raflag) {
+				monst.GroupUnity();
+			}
+		} while (raflag);
+		if (monst.data._mmode != MonsterMode::STONE) {
+			monst.data._mAnimCnt++;
+			if (!(monst.data._mFlags & MonsterFlag::allow_special) && monst.data._mAnimCnt >= monst.data._mAnimDelay) {
+				monst.data._mAnimCnt = 0;
+				if (monst.data._mFlags & MonsterFlag::lock_animation) {
+					monst.data._mAnimFrame--;
+					if (monst.data._mAnimFrame == 0) {
+						monst.data._mAnimFrame = monst.data._mAnimLen;
+					}
+				}
+				else {
+					monst.data._mAnimFrame++;
+					if (monst.data._mAnimFrame > monst.data._mAnimLen) {
+						monst.data._mAnimFrame = 1;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+}

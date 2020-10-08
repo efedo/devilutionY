@@ -14,7 +14,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include <random>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 char gbPixelCol;  // automap pixel color 8-bit (palette entry)
 bool gbRotateMap; // flip - if y < x
@@ -774,13 +774,18 @@ int random_(uint8_t idx, int v)
 	return GetRndSeed() % v;
 }
 
-// Modern 64-bit number generator
-uint64_t rand64()
+std::mt19937& randMt()
 {
 	static std::random_device rnddevice;
 	static std::mt19937 rndgenerator(rnddevice());
-	static std::uniform_int_distribution<uint64_t> rnddistribution(0, UINT64_MAX);
-	return rnddistribution(rndgenerator);
+	return rndgenerator;
+}
+
+// Modern 64-bit number generator
+uint64_t rand64()
+{
+	static std::uniform_int_distribution<uint64_t> rnddistribution(1, UINT64_MAX - 1);
+	return rnddistribution(randMt());
 }
 
 /**
@@ -823,7 +828,7 @@ void mem_free_dbg(void *p)
  * @param pdwFileLen Will be set to file size if non-NULL
  * @return Buffer with content of file
  */
-uint8_t *LoadFileInMem(const char *pszName, DWORD *pdwFileLen)
+uint8_t *LoadFileInMem(const std::string pszName, DWORD *pdwFileLen)
 {
 	HANDLE file;
 	uint8_t *buf;
@@ -852,14 +857,14 @@ uint8_t *LoadFileInMem(const char *pszName, DWORD *pdwFileLen)
  * @param p Target buffer
  * @return Size of file
  */
-DWORD LoadFileWithMem(const char *pszName, uint8_t *p)
+DWORD LoadFileWithMem(const std::string pszName, uint8_t *p)
 {
 	DWORD dwFileLen;
 	HANDLE hsFile;
 
-	assert(pszName);
+	assert(!pszName.empty());
 	if (p == NULL) {
-		app_fatal("LoadFileWithMem(NULL):\n%s", pszName);
+		app_fatal("LoadFileWithMem(NULL):\n%s", pszName.c_str());
 	}
 
 	WOpenFile(pszName, &hsFile, false);
@@ -1292,4 +1297,4 @@ void PlayInGameMovie(char *pszMovie)
 	force_redraw = 255;
 }
 
-DEVILUTION_END_NAMESPACE
+}

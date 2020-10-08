@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t *tbuff;
 
@@ -175,7 +175,7 @@ void LoadGame(bool firstflag)
 	ProcessVisionList();
 	missiles_process_charge();
 	ResetPal();
-	SetCursor_(CURSOR_HAND);
+	SetCursor_(Cursor::HAND);
 	gbProcessPlayers = true;
 }
 
@@ -510,6 +510,7 @@ void LoadMonster(int i)
 	CopyInt(tbuff, &pMonster->_mAnimFrame);
 	tbuff += 4; // Skip _meflag
 	CopyInt(tbuff, &pMonster->_mDelFlag);
+	CopyInt(tbuff, &pMonster->_mVar1_mmode);
 	CopyInt(tbuff, &pMonster->_mVar1);
 	CopyInt(tbuff, &pMonster->_mVar2);
 	CopyInt(tbuff, &pMonster->_mVar3);
@@ -1236,6 +1237,7 @@ void SaveMonster(int i)
 	CopyInt(&pMonster->_mAnimFrame, tbuff);
 	tbuff += 4; // Skip _meflag
 	CopyInt(&pMonster->_mDelFlag, tbuff);
+	CopyInt(&pMonster->_mVar1_mmode, tbuff);
 	CopyInt(&pMonster->_mVar1, tbuff);
 	CopyInt(&pMonster->_mVar2, tbuff);
 	CopyInt(&pMonster->_mVar3, tbuff);
@@ -1732,4 +1734,4 @@ void LoadLevel()
 	mem_free_dbg(LoadBuff);
 }
 
-DEVILUTION_END_NAMESPACE
+}

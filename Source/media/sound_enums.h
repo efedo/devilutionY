@@ -2,7 +2,7 @@
 #ifndef __SOUND_ENUMS_H__
 #define __SOUND_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 typedef enum _sfx_id {
 	PS_WALK1,
@@ -1139,6 +1139,6 @@ typedef enum _speech_id {
 } _speech_id;
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __SOUND_ENUMS_H__ */

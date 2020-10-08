@@ -6,7 +6,7 @@
 #include "all.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t sgbNetUpdateRate;
 DWORD gdwMsgLenTbl[MAX_PLRS];
@@ -158,7 +158,7 @@ void nthread_start(bool set_turn_upper_bit)
 	}
 	if (gdwNormalMsgSize > largestMsgSize)
 		gdwNormalMsgSize = largestMsgSize;
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		sgbThreadIsRunning = false;
 		sgMemCrit.Enter();
 		nthread_should_run = true;
@@ -228,11 +228,11 @@ bool nthread_has_500ms_passed(bool unused)
 
 	currentTickCount = SDL_GetTicks();
 	ticksElapsed = currentTickCount - last_tick;
-	if (plr.isSingleplayer() && ticksElapsed > 500) {
+	if (game.isSingleplayer() && ticksElapsed > 500) {
 		last_tick = currentTickCount;
 		ticksElapsed = 0;
 	}
 	return ticksElapsed >= 0;
 }
 
-DEVILUTION_END_NAMESPACE
+}

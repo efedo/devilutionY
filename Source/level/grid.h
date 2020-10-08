@@ -8,7 +8,7 @@
 
 #include "tile.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Grid {
 public:
@@ -30,6 +30,6 @@ private:
 
 extern Grid grid;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __GRID_H__ */

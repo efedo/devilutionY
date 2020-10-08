@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t L5dungeon[80][80];
 uint8_t L5dflags[DMAXX][DMAXY];
@@ -146,9 +146,9 @@ void LvlCathedral::LoadSetMap()
 {
 	switch (lvl.setlvlnum) {
 	case SetLvl::SkelKing:
-		if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
-			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
-			quests[Q_SKELKING]._qvar1 = 1;
+		if (quests[QuestId::skelking]._qactive == QuestState::init) {
+			quests[QuestId::skelking]._qactive = QuestState::active;
+			quests[QuestId::skelking]._qvar1 = 1;
 		}
 		LoadPreL1Dungeon("Levels\\L1Data\\SklKng1.DUN", 83, 45);
 		LoadL1Dungeon("Levels\\L1Data\\SklKng2.DUN", 83, 45);
@@ -169,10 +169,10 @@ void LvlCathedral::LoadSetMap()
 		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
 		break;
 	case SetLvl::VileBetrayer:
-		if (quests[Q_BETRAYER]._qactive == QUEST_DONE) {
-			quests[Q_BETRAYER]._qvar2 = 4;
-		} else if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
-			quests[Q_BETRAYER]._qvar2 = 3;
+		if (quests[QuestId::betrayer]._qactive == QuestState::done) {
+			quests[QuestId::betrayer]._qvar2 = 4;
+		} else if (quests[QuestId::betrayer]._qactive == QuestState::active) {
+			quests[QuestId::betrayer]._qvar2 = 3;
 		}
 		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
 		LoadL1Dungeon("Levels\\L1Data\\Vile2.DUN", 35, 36);
@@ -428,8 +428,8 @@ static int DRLG_PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int cx,
 		DRLG_MRectTrans(sx, sy + 2, sx + 5, sy + 4);
 		lvl.TransVal = t;
 
-		quests[Q_PWATER]._qt.x = 2 * sx + 21;
-		quests[Q_PWATER]._qt.y = 2 * sy + 22;
+		quests[QuestId::pwater]._qt.x = 2 * sx + 21;
+		quests[QuestId::pwater]._qt.y = 2 * sy + 22;
 	}
 
 	if (setview == true) {
@@ -519,15 +519,15 @@ void LvlCathedral::DRLG_L1Pass3()
 static void DRLG_LoadL1SP()
 {
 	L5setloadflag = false;
-	if (QuestStatus(Q_BUTCHER)) {
+	if (QuestStatus(QuestId::butcher)) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\rnd6.DUN", NULL);
 		L5setloadflag = true;
 	}
-	if (QuestStatus(Q_SKELKING) && plr.isSingleplayer()) {
+	if (QuestStatus(QuestId::skelking) && game.isSingleplayer()) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\SKngDO.DUN", NULL);
 		L5setloadflag = true;
 	}
-	if (QuestStatus(Q_LTBANNER)) {
+	if (QuestStatus(QuestId::ltbanner)) {
 		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\Banner2.DUN", NULL);
 		L5setloadflag = true;
 	}
@@ -1687,7 +1687,7 @@ static void DRLG_L5(int entry)
 
 		doneflag = true;
 
-		if (QuestStatus(Q_PWATER)) {
+		if (QuestStatus(QuestId::pwater)) {
 			if (entry == 0) {
 				if (DRLG_PlaceMiniSet(PWATERIN, 1, 1, 0, 0, 1, -1, 0) < 0)
 					doneflag = false;
@@ -1697,7 +1697,7 @@ static void DRLG_L5(int entry)
 				View.y--;
 			}
 		}
-		if (QuestStatus(Q_LTBANNER)) {
+		if (QuestStatus(QuestId::ltbanner)) {
 			if (entry == 0) {
 				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, 1, -1, 0) < 0)
 					doneflag = false;
@@ -1779,4 +1779,4 @@ void LvlCathedral::CreateL5Dungeon(DWORD rseed, int entry)
 	DRLG_SetPC();
 }
 
-DEVILUTION_END_NAMESPACE
+}

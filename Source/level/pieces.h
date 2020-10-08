@@ -8,7 +8,7 @@
 
 #include "tile.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Piece {
 public:
@@ -34,6 +34,6 @@ private:
 extern PieceInventory pieces;
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PIECES_H__ */

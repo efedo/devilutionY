@@ -329,7 +329,7 @@ void FindActor()
 		CheckTownersNearby();
 	}
 
-	if (plr.isMultiplayer()) CheckPlayerNearby();
+	if (game.isMultiplayer()) CheckPlayerNearby();
 }
 
 int pcursmissile;
@@ -377,7 +377,7 @@ void FindTrigger()
 
 		if (pcurstrig == -1) {
 			for (int i = 0; i < MAXQUESTS; i++) {
-				if (i == Q_BETRAYER || lvl.currlevel != quests[i]._qlevel || quests[i]._qslvl == SetLvl::None)
+				if (i == QuestId::betrayer || lvl.currlevel != quests[i]._qlevel || quests[i]._qslvl == SetLvl::None)
 					continue;
 				const int newDdistance = GetDistance(quests[i]._qt, 2);
 				if (newDdistance == 0)
@@ -399,15 +399,15 @@ void FindTrigger()
 void Interact()
 {
 	if (lvl.type() == DunType::town && pcursmonst != -1) {
-		NetSendCmdLocParam1(true, CMD_TALKXY, towner[pcursmonst]._t, pcursmonst);
+		NetSendCmdLocParam1(true, Cmd::TALKXY, towner[pcursmonst]._t, pcursmonst);
 	} else if (pcursmonst != -1) {
 		if (myplr().data._pwtype != PlayerWeaponType::ranged || CanTalkToMonst(pcursmonst)) {
-			NetSendCmdParam1(true, CMD_ATTACKID, pcursmonst);
+			NetSendCmdParam1(true, Cmd::ATTACKID, pcursmonst);
 		} else {
-			NetSendCmdParam1(true, CMD_RATTACKID, pcursmonst);
+			NetSendCmdParam1(true, Cmd::RATTACKID, pcursmonst);
 		}
 	} else if (lvl.type() != DunType::town && pcursplr != -1 && !FriendlyMode) {
-		NetSendCmdParam1(true, myplr().data._pwtype == PlayerWeaponType::ranged ? CMD_RATTACKPID : CMD_ATTACKPID, pcursplr);
+		NetSendCmdParam1(true, myplr().data._pwtype == PlayerWeaponType::ranged ? Cmd::RATTACKPID : Cmd::ATTACKPID, pcursplr);
 	}
 }
 
@@ -774,7 +774,7 @@ void WalkInDir(MoveDirection dir)
 
 	if (dir.x == MoveDirectionX_NONE && dir.y == MoveDirectionY_NONE) {
 		if (sgbControllerActive && !myplr().data.wkpath.empty() && myplr().data.destAction == DestinationAction::NONE)
-			NetSendCmdLoc(true, CMD_WALKXY, pos); // Stop walking
+			NetSendCmdLoc(true, Cmd::WALKXY, pos); // Stop walking
 		return;
 	}
 
@@ -785,7 +785,7 @@ void WalkInDir(MoveDirection dir)
 	if (PosOkPlayer(myplr(), dv) && IsPathBlocked(pos, pdir))
 		return; // Don't start backtrack around obstacles
 
-	NetSendCmdLoc(true, CMD_WALKXY, dv);
+	NetSendCmdLoc(true, Cmd::WALKXY, dv);
 }
 
 void Movement()
@@ -937,9 +937,9 @@ void UseBeltItem(int type)
 void PerformPrimaryAction()
 {
 	if (invflag) { // inventory is open
-		if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM) {
+		if (pcurs > Cursor::HAND && pcurs < Cursor::FIRSTITEM) {
 			TryIconCurs();
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		} else {
 			CheckInvItem();
 		}
@@ -1005,7 +1005,7 @@ bool TryDropItem()
 		cursm.y = myplr().futpos().y + 1;
 		DropItemBeforeTrig();
 	}
-	return pcurs == CURSOR_HAND;
+	return pcurs == Cursor::HAND;
 }
 
 void PerformSpellAction()
@@ -1014,19 +1014,19 @@ void PerformSpellAction()
 		return;
 
 	if (invflag) {
-		if (pcurs >= CURSOR_FIRSTITEM)
+		if (pcurs >= Cursor::FIRSTITEM)
 			TryDropItem();
-		else if (pcurs > CURSOR_HAND) {
+		else if (pcurs > Cursor::HAND) {
 			TryIconCurs();
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		}
 		return;
 	}
 
-	if (pcurs >= CURSOR_FIRSTITEM && !TryDropItem())
+	if (pcurs >= Cursor::FIRSTITEM && !TryDropItem())
 		return;
-	if (pcurs > CURSOR_HAND)
-		SetCursor_(CURSOR_HAND);
+	if (pcurs > Cursor::HAND)
+		SetCursor_(Cursor::HAND);
 
 	if (spselflag) {
 		SetSpell();
@@ -1076,15 +1076,15 @@ void PerformSecondaryAction()
 		return;
 	}
 
-	if (pcurs >= CURSOR_FIRSTITEM && !TryDropItem())
+	if (pcurs >= Cursor::FIRSTITEM && !TryDropItem())
 		return;
-	if (pcurs > CURSOR_HAND)
-		SetCursor_(CURSOR_HAND);
+	if (pcurs > Cursor::HAND)
+		SetCursor_(Cursor::HAND);
 
 	if (pcursitem != -1) {
-		NetSendCmdLocParam1(true, CMD_GOTOAGETITEM, cursm, pcursitem);
+		NetSendCmdLocParam1(true, Cmd::GOTOAGETITEM, cursm, pcursitem);
 	} else if (pcursobj != -1) {
-		NetSendCmdLocParam1(true, CMD_OPOBJXY, cursm, pcursobj);
+		NetSendCmdLocParam1(true, Cmd::OPOBJXY, cursm, pcursobj);
 	} else if (pcursmissile != -1) {
 		myplr().MakePlrPath(missile[pcursmissile]._mi, true);
 		myplr().data.destAction = DestinationAction::WALK;

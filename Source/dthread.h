@@ -6,7 +6,7 @@
 #ifndef __DTHREAD_H__
 #define __DTHREAD_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -26,6 +26,6 @@ void dthread_cleanup();
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DTHREAD_H__ */

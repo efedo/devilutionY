@@ -15,7 +15,7 @@
 #include "pathfinding/directions.h"
 #include "pathfinding/pathfinder.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Item;
 class Player;
@@ -53,7 +53,7 @@ typedef struct TSnd {
 } TSnd;
 
 typedef struct TSFX {
-	unsigned char bFlags;
+	uint8_t bFlags;
 	char *pszName;
 	TSnd *pSnd;
 } TSFX;
@@ -77,24 +77,24 @@ typedef struct PortalStruct {
 
 #pragma pack(push, 1)
 typedef struct TCmd {
-	uint8_t bCmd;
+	Cmd bCmd;
 } TCmd;
 
 typedef struct TCmdLoc {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t x;
 	uint8_t y;
 } TCmdLoc;
 
 typedef struct TCmdLocParam1 {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t x;
 	uint8_t y;
 	WORD wParam1;
 } TCmdLocParam1;
 
 typedef struct TCmdLocParam2 {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t x;
 	uint8_t y;
 	WORD wParam1;
@@ -102,7 +102,7 @@ typedef struct TCmdLocParam2 {
 } TCmdLocParam2;
 
 typedef struct TCmdLocParam3 {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t x;
 	uint8_t y;
 	WORD wParam1;
@@ -111,25 +111,25 @@ typedef struct TCmdLocParam3 {
 } TCmdLocParam3;
 
 typedef struct TCmdParam1 {
-	uint8_t bCmd;
+	Cmd bCmd;
 	WORD wParam1;
 } TCmdParam1;
 
 typedef struct TCmdParam2 {
-	uint8_t bCmd;
+	Cmd bCmd;
 	WORD wParam1;
 	WORD wParam2;
 } TCmdParam2;
 
 typedef struct TCmdParam3 {
-	uint8_t bCmd;
+	Cmd bCmd;
 	WORD wParam1;
 	WORD wParam2;
 	WORD wParam3;
 } TCmdParam3;
 
 typedef struct TCmdGolem {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t _mx;
 	uint8_t _my;
 	uint8_t _mdir;
@@ -139,7 +139,7 @@ typedef struct TCmdGolem {
 } TCmdGolem;
 
 typedef struct TCmdQuest {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t q;
 	uint8_t qstate;
 	uint8_t qlog;
@@ -147,7 +147,7 @@ typedef struct TCmdQuest {
 } TCmdQuest;
 
 typedef struct TCmdGItem {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bMaster;
 	uint8_t bPnum;
 	uint8_t bCursitem;
@@ -168,7 +168,7 @@ typedef struct TCmdGItem {
 } TCmdGItem;
 
 typedef struct TCmdPItem {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t x;
 	uint8_t y;
 	WORD wIndx;
@@ -184,7 +184,7 @@ typedef struct TCmdPItem {
 } TCmdPItem;
 
 typedef struct TCmdChItem {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bLoc;
 	WORD wIndx;
 	WORD wCI;
@@ -193,40 +193,40 @@ typedef struct TCmdChItem {
 } TCmdChItem;
 
 typedef struct TCmdDelItem {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bLoc;
 } TCmdDelItem;
 
 typedef struct TCmdDamage {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bPlr;
 	uint32_t dwDam;
 } TCmdDamage;
 
 typedef struct TCmdPlrInfoHdr {
-	uint8_t bCmd;
+	Cmd bCmd;
 	WORD wOffset;
 	WORD wBytes;
 } TCmdPlrInfoHdr;
 
 typedef struct TCmdString {
-	uint8_t bCmd;
+	Cmd bCmd;
 	char str[MAX_SEND_STR_LEN];
 } TCmdString;
 
 typedef struct TFakeCmdPlr {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bPlr;
 } TFakeCmdPlr;
 
 typedef struct TFakeDropPlr {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bPlr;
 	uint32_t dwReason;
 } TFakeDropPlr;
 
 typedef struct TSyncHeader {
-	uint8_t bCmd;
+	Cmd bCmd;
 	uint8_t bLevel;
 	WORD wLen;
 	uint8_t bObjId;
@@ -288,7 +288,7 @@ typedef struct DMonsterStr {
 } DMonsterStr;
 
 typedef struct DObjectStr {
-	uint8_t bCmd;
+	Cmd bCmd;
 } DObjectStr;
 
 typedef struct DLevel {
@@ -837,6 +837,6 @@ typedef struct TDataInfo {
 	uint32_t size;
 } TDataInfo;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __STRUCTS_H__ */

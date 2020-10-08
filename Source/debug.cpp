@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 #ifdef _DEBUG
 bool update_seed_check = false;
@@ -164,7 +164,7 @@ void PrintDebugPlayer(bool bNextPlayer)
 		NetSendCmdString(1 << myplr(), dstr);
 		sprintf(dstr, "  mode = %i : daction = %i : walk[0] = %i", plr[dbgplr].data._pmode, plr[dbgplr].data.destAction, plr[dbgplr].data.wkpath.size());
 		NetSendCmdString(1 << myplr(), dstr);
-		sprintf(dstr, "  inv = %i : hp = %i", plr[dbgplr].data._pInvincible, plr[dbgplr].data._pHitPoints);
+		sprintf(dstr, "  inv = %i : hp = %i", plr[dbgplr].data._pInvincible, plr[dbgplr]._hp);
 		NetSendCmdString(1 << myplr(), dstr);
 	}
 }
@@ -193,7 +193,7 @@ void PrintDebugMonster(int m)
 	NetSendCmdString(1 << myplr(), dstr);
 	sprintf(dstr, "Enemy = %i, HP = %i", monsters[m].data._menemy, monsters[m].data._mhitpoints);
 	NetSendCmdString(1 << myplr(), dstr);
-	sprintf(dstr, "Mode = %i, Var1 = %i", monsters[m].data._mmode, monsters[m].data._mVar1);
+	sprintf(dstr, "Mode = %i, Var1 = %i", monsters[m].data._mmode, monsters[m].data._mVar1_mmode);
 	NetSendCmdString(1 << myplr(), dstr);
 
 	bActive = false;
@@ -238,4 +238,4 @@ void NextDebugMonster()
 }
 #endif
 
-DEVILUTION_END_NAMESPACE
+}

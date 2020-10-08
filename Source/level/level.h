@@ -9,7 +9,7 @@
 //#include "../enums.h"
 //#include "../structs.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Level {
 public:
@@ -64,6 +64,6 @@ void PlrDoTrans(V2Di pos);
 
 extern Level lvl;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __LEVEL_H__ */

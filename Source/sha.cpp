@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // NOTE: Diablo's "SHA1" is different from actual SHA1 in that it uses arithmetic
 // right shifts (sign bit extension).
@@ -151,4 +151,4 @@ void SHA1Init(SHA1Context *context)
 	context->state[4] = 0xC3D2E1F0;
 }
 
-DEVILUTION_END_NAMESPACE
+}

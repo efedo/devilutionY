@@ -2,11 +2,9 @@
 #ifndef __PALETTE_H__
 #define __PALETTE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+enum class Duntype;
 
 extern SDL_Color logical_palette[256];
 extern SDL_Color system_palette[256];
@@ -31,17 +29,9 @@ void palette_update_quest_palette(int n);
 bool palette_get_color_cycling();
 bool palette_set_color_cycling(bool enabled);
 
-/* rdata */
-
-/* data */
-
-extern int gamMonstAnim::correction;
+extern int gamma_correction;
 extern bool color_cycling_enabled;
 
-//#ifdef __cplusplus
-//}
-//#endif
-
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PALETTE_H__ */

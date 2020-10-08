@@ -13,14 +13,10 @@
 #ifndef __ENGINE_H__
 #define __ENGINE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+#include <random>
+#include <string>
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
-//offset 0
-//pCelBuff->pFrameTable[0]
+namespace dvl {
 
 /** automap pixel color 8-bit (palette entry) */
 extern char gbPixelCol;
@@ -86,13 +82,14 @@ void DrawLine(V2Di p0, V2Di p1, uint8_t col);
 Dir GetDirection(V2Di t1, V2Di t2);
 void SetRndSeed(int s);
 int GetRndSeed();
+std::mt19937& randMt();
 int random_(uint8_t idx, int v);
 uint64_t rand64();
 void engine_debug_trap(bool show_cursor);
 uint8_t *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
-uint8_t *LoadFileInMem(const char *pszName, DWORD *pdwFileLen);
-DWORD LoadFileWithMem(const char *pszName, uint8_t *p);
+uint8_t *LoadFileInMem(const std::string pszName, DWORD *pdwFileLen);
+DWORD LoadFileWithMem(const std::string pszName, uint8_t *p);
 void Cl2ApplyTrans(uint8_t *p, uint8_t *ttbl, int nCel);
 void Cl2Draw(V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
 void Cl2DrawOutline(char col, V2Di s, uint8_t *pCelBuff, int nCel, int nWidth);
@@ -112,6 +109,6 @@ extern const int RndMult;
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __ENGINE_H__ */

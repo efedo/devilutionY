@@ -2,7 +2,7 @@
 #ifndef __SHA_H__
 #define __SHA_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -24,6 +24,6 @@ void SHA1Init(SHA1Context *context);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __SHA_H__ */

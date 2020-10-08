@@ -15,7 +15,7 @@
 #include "../SourceS/file_util.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Amiga cannot seekp beyond EOF.
 // See https://github.com/bebbo/libnix/issues/30
@@ -698,4 +698,4 @@ bool mpqapi_flush_and_close(const char *pszArchive, bool bFree, DWORD dwChar)
 	return cur_archive.Close(/*clear_tables=*/bFree);
 }
 
-DEVILUTION_END_NAMESPACE
+}

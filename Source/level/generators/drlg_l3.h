@@ -6,7 +6,7 @@
 #ifndef __DRLG_L3_H__
 #define __DRLG_L3_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class LvlCaves : public Level {
 	LvlCaves();
@@ -78,6 +78,6 @@ extern const uint8_t L3ANVIL[244];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DRLG_L3_H__ */

@@ -2,7 +2,7 @@
 #ifndef __OBJECTS_H__
 #define __OBJECTS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -175,6 +175,6 @@ extern int StoryText[3][3];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __OBJECTS_H__ */

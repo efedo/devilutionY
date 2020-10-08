@@ -8,7 +8,7 @@
 
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 bool lavapool;
 int abyssx;
@@ -106,8 +106,8 @@ void LvlCaves::LoadSetMap()
 {
 	switch (lvl.setlvlnum) {
 	case SetLvl::PoisonWater:
-		if (quests[Q_PWATER]._qactive == QUEST_INIT)
-			quests[Q_PWATER]._qactive = QUEST_ACTIVE;
+		if (quests[QuestId::pwater]._qactive == QuestState::init)
+			quests[QuestId::pwater]._qactive = QuestState::active;
 		LoadPreL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 19, 50);
 		LoadL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 31, 83);
 		LoadPalette("Levels\\L3Data\\L3pfoul.pal");
@@ -1590,7 +1590,7 @@ static void DRLG_L3(int entry)
 				DRLG_L3CreateBlock(x2, y1, 2, 1);
 				DRLG_L3CreateBlock(x1, y2, 2, 2);
 				DRLG_L3CreateBlock(x1, y1, 2, 3);
-				if (QuestStatus(Q_ANVIL)) {
+				if (QuestStatus(QuestId::anvil)) {
 					x1 = random_(0, 10) + 10;
 					y1 = random_(0, 10) + 10;
 					x2 = x1 + 12;
@@ -1636,7 +1636,7 @@ static void DRLG_L3(int entry)
 					}
 				}
 			}
-			if (!genok && QuestStatus(Q_ANVIL)) {
+			if (!genok && QuestStatus(QuestId::anvil)) {
 				genok = DRLG_L3Anvil();
 			}
 		} while (genok == true);
@@ -1655,7 +1655,7 @@ static void DRLG_L3(int entry)
 	FixL3HallofHeroes();
 	DRLG_L3River();
 
-	if (QuestStatus(Q_ANVIL)) {
+	if (QuestStatus(QuestId::anvil)) {
 		dgrid[lvl.getpc().x + 7][lvl.getpc().y + 5].dungeon = 7;
 		dgrid[lvl.getpc().x + 8][lvl.getpc().y + 5].dungeon = 7;
 		dgrid[lvl.getpc().x + 9][lvl.getpc().y + 5].dungeon = 7;
@@ -1881,4 +1881,4 @@ void LoadPreL3Dungeon(char *sFileName, int vx, int vy)
 	mem_free_dbg(pLevelMap);
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -7,7 +7,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 bool gbSomebodyWonGameKludge;
 TBuffer sgHiPriBuf;
@@ -570,7 +570,7 @@ void NetClose()
 	tmsg_cleanup();
 	multi_event_handler(false);
 	SNetLeaveGame(3);
-	if (plr.isMultiplayer())
+	if (game.isMultiplayer())
 		SDL_Delay(2000);
 }
 
@@ -698,7 +698,7 @@ bool NetInit(bool bSinglePlayer, bool *pfExitProgram)
 		gbSomebodyWonGameKludge = false;
 		nthread_send_and_recv_turn(0, 0);
 		SetupLocalCoords();
-		multi_send_pinfo(-2, CMD_SEND_PLRINFO);
+		multi_send_pinfo(-2, Cmd::SEND_PLRINFO);
 		gbActivePlayers = 1;
 		myplr().data.plractive = true;
 		if (sgbPlayerTurnBitTbl[myplr()] == 0 || msg_wait_resync())
@@ -751,7 +751,7 @@ int InitLevelType(int l)
 
 void SetupLocalCoords()
 {
-	if (!leveldebug || plr.isMultiplayer()) {
+	if (!leveldebug || game.isMultiplayer()) {
 		lvl.currlevel = 0;
 		lvl.setType(DunType::town);
 		lvl.setlevel = false;
@@ -870,7 +870,7 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv)
 		}
 	}
 	if (!recv && sgwPackPlrOffsetTbl[pnum] == 0) {
-		multi_send_pinfo(pnum, CMD_ACK_PLRINFO);
+		multi_send_pinfo(pnum, Cmd::ACK_PLRINFO);
 	}
 
 	memcpy((char *)&netplr[pnum] + p->wOffset, &p[1], p->wBytes); /* todo: cast? */
@@ -916,4 +916,4 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, bool recv)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

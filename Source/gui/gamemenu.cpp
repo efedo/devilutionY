@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /** Contains the game menu items of the single player menu. */
 TMenuItem sgSingleMenu[] = {
@@ -56,7 +56,7 @@ char *color_cycling_toggle_names[] = { "Color Cycling Off", "Color Cycling On" }
 
 void gamemenu_on()
 {
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		gmenu_set_items(sgSingleMenu, gamemenu_update_single);
 	} else {
 		gmenu_set_items(sgMultiMenu, gamemenu_update_multi);
@@ -128,7 +128,7 @@ void gamemenu_load_game(bool bActivate)
 {
 	WNDPROC saveProc = SetWindowProc(DisableInputWndProc);
 	gamemenu_off();
-	SetCursor_(CURSOR_NONE);
+	SetCursor_(Cursor::NONE);
 	InitDiabloMsg(EMSG_LOADING);
 	force_redraw = 255;
 	DrawAndBlit();
@@ -139,14 +139,14 @@ void gamemenu_load_game(bool bActivate)
 	force_redraw = 255;
 	DrawAndBlit();
 	PaletteFadeIn(8);
-	SetCursor_(CURSOR_HAND);
+	SetCursor_(Cursor::HAND);
 	interface_msg_pump();
 	SetWindowProc(saveProc);
 }
 
 void gamemenu_save_game(bool bActivate)
 {
-	if (pcurs != CURSOR_HAND) {
+	if (pcurs != Cursor::HAND) {
 		return;
 	}
 
@@ -156,7 +156,7 @@ void gamemenu_save_game(bool bActivate)
 	}
 
 	WNDPROC saveProc = SetWindowProc(DisableInputWndProc);
-	SetCursor_(CURSOR_NONE);
+	SetCursor_(Cursor::NONE);
 	gamemenu_off();
 	InitDiabloMsg(EMSG_SAVING);
 	force_redraw = 255;
@@ -164,14 +164,14 @@ void gamemenu_save_game(bool bActivate)
 	SaveGame();
 	ClrDiabloMsg();
 	force_redraw = 255;
-	SetCursor_(CURSOR_HAND);
+	SetCursor_(Cursor::HAND);
 	interface_msg_pump();
 	SetWindowProc(saveProc);
 }
 
 void gamemenu_restart_town(bool bActivate)
 {
-	NetSendCmd(true, CMD_RETOWN);
+	NetSendCmd(true, Cmd::RETOWN);
 }
 
 void gamemenu_options(bool bActivate)
@@ -312,4 +312,4 @@ void gamemenu_color_cycling(bool bActivate)
 	sgOptionsMenu[3].pszStr = color_cycling_toggle_names[color_cycling & 1];
 }
 
-DEVILUTION_END_NAMESPACE
+}

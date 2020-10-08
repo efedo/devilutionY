@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /** Maps from dun_object_id to object_id. */
 int ObjTypeConv[] = {
@@ -187,18 +187,18 @@ ObjDataStruct AllObjects[99] = {
 	{      2, ObjectGraphic::BURNCROS,  0,       0, DunType::town,      THEME_NONE,              -1,                 1,          0,       10,        160, true,       false,     false,           0,        0, false     },
 	{      2, ObjectGraphic::NUDE2,     0,       0, DunType::town,      THEME_NONE,              -1,                 1,          3,        6,        128, true,       false,     true,            0,        0, false     },
 	{      1, ObjectGraphic::SWITCH4,  16,      16, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       true,      true,            0,        1, true      },
-	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_NONE,              Q_BUTCHER,          0,          1,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_TORTURE,           Q_BUTCHER,          0,          2,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_TORTURE,           Q_BUTCHER,          0,          3,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_TORTURE,           Q_BUTCHER,          0,          4,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TNUDEW,   13,      16, DunType::town,      THEME_TORTURE,           Q_BUTCHER,          0,          1,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TNUDEW,   13,      16, DunType::town,      THEME_TORTURE,           Q_BUTCHER,          0,          2,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TNUDEW,   13,      16, DunType::town,      THEME_TORTURE,           Q_BUTCHER,          0,          3,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              Q_BUTCHER,          0,          1,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              Q_BUTCHER,          0,          2,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              Q_BUTCHER,          0,          3,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              Q_BUTCHER,          0,          4,        0,        128, true,       false,     true,            0,        0, false     },
-	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              Q_BUTCHER,          0,          5,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_NONE,              QuestId::butcher,          0,          1,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_TORTURE,           QuestId::butcher,          0,          2,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_TORTURE,           QuestId::butcher,          0,          3,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEM,   13,      16, DunType::town,      THEME_TORTURE,           QuestId::butcher,          0,          4,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEW,   13,      16, DunType::town,      THEME_TORTURE,           QuestId::butcher,          0,          1,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEW,   13,      16, DunType::town,      THEME_TORTURE,           QuestId::butcher,          0,          2,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TNUDEW,   13,      16, DunType::town,      THEME_TORTURE,           QuestId::butcher,          0,          3,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              QuestId::butcher,          0,          1,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              QuestId::butcher,          0,          2,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              QuestId::butcher,          0,          3,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              QuestId::butcher,          0,          4,        0,        128, true,       false,     true,            0,        0, false     },
+	{      1, ObjectGraphic::TSOUL,    13,      16, DunType::town,      THEME_NONE,              QuestId::butcher,          0,          5,        0,        128, true,       false,     true,            0,        0, false     },
 	{      1, ObjectGraphic::BOOK2,     6,       6, DunType::town,      THEME_NONE,              -1,                 0,          4,        0,         96, true,       true,      true,            0,        3, false     },
 	{      1, ObjectGraphic::L2DOORS,   5,       8, DunType::catacombs, THEME_NONE,              -1,                 0,          1,        0,         64, false,      false,     true,            0,        3, true      },
 	{      1, ObjectGraphic::L2DOORS,   5,       8, DunType::catacombs, THEME_NONE,              -1,                 0,          2,        0,         64, false,      false,     true,            0,        3, false     },
@@ -229,9 +229,9 @@ ObjDataStruct AllObjects[99] = {
 	{      1, ObjectGraphic::CHEST1,    1,      16, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       true,      true,            0,        1, true      },
 	{      1, ObjectGraphic::CHEST2,    1,      16, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       true,      true,            0,        1, true      },
 	{      1, ObjectGraphic::CHEST3,    1,      16, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       true,      true,            0,        1, true      },
-	{      1, ObjectGraphic::BOOK1,     7,       7, DunType::catacombs, THEME_NONE,              Q_BLIND,            0,          1,        0,         96, true,       true,      true,            0,        3, false     },
-	{      1, ObjectGraphic::BOOK1,     5,       5, DunType::catacombs, THEME_NONE,              Q_BLOOD,            0,          4,        0,         96, true,       true,      true,            0,        3, false     },
-	{      1, ObjectGraphic::PEDISTL,   5,       5, DunType::catacombs, THEME_NONE,              Q_BLOOD,            0,          1,        0,         96, true,       true,      true,            0,        3, false     },
+	{      1, ObjectGraphic::BOOK1,     7,       7, DunType::catacombs, THEME_NONE,              QuestId::blind,            0,          1,        0,         96, true,       true,      true,            0,        3, false     },
+	{      1, ObjectGraphic::BOOK1,     5,       5, DunType::catacombs, THEME_NONE,              QuestId::blood,            0,          4,        0,         96, true,       true,      true,            0,        3, false     },
+	{      1, ObjectGraphic::PEDISTL,   5,       5, DunType::catacombs, THEME_NONE,              QuestId::blood,            0,          1,        0,         96, true,       true,      true,            0,        3, false     },
 	{      1, ObjectGraphic::L3DOORS,   9,      12, DunType::caves,     THEME_NONE,              -1,                 0,          1,        0,         64, false,      false,     true,            0,        3, true      },
 	{      1, ObjectGraphic::L3DOORS,   9,      12, DunType::caves,     THEME_NONE,              -1,                 0,          2,        0,         64, false,      false,     true,            0,        3, true      },
 	{      3, ObjectGraphic::PFOUNTN,   0,       0, DunType::town,      THEME_PURIFYINGFOUNTAIN, -1,                 1,          2,       10,        128, true,       true,      true,            0,        3, false     },
@@ -241,19 +241,19 @@ ObjDataStruct AllObjects[99] = {
 	{      1, ObjectGraphic::CAULDREN, 13,      16, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       false,     true,            0,        3, false     },
 	{      3, ObjectGraphic::MFOUNTN,   0,       0, DunType::town,      THEME_MURKYFOUNTAIN,     -1,                 1,          2,       10,        128, true,       true,      true,            0,        3, false     },
 	{      3, ObjectGraphic::TFOUNTN,   0,       0, DunType::town,      THEME_TEARFOUNTAIN,      -1,                 1,          2,        4,        128, true,       true,      true,            0,        3, false     },
-	{      1, ObjectGraphic::ALTBOY,    0,       0, DunType::cathedral, THEME_NONE,              Q_BETRAYER,         0,          1,        0,        128, true,       true,      true,            0,        0, false     },
-	{      1, ObjectGraphic::MCIRL,     0,       0, DunType::cathedral, THEME_NONE,              Q_BETRAYER,         0,          1,        0,         96, false,      true,      true,            0,        0, false     },
-	{      1, ObjectGraphic::MCIRL,     0,       0, DunType::cathedral, THEME_NONE,              Q_BETRAYER,         0,          1,        0,         96, false,      true,      true,            0,        0, false     },
+	{      1, ObjectGraphic::ALTBOY,    0,       0, DunType::cathedral, THEME_NONE,              QuestId::betrayer,         0,          1,        0,        128, true,       true,      true,            0,        0, false     },
+	{      1, ObjectGraphic::MCIRL,     0,       0, DunType::cathedral, THEME_NONE,              QuestId::betrayer,         0,          1,        0,         96, false,      true,      true,            0,        0, false     },
+	{      1, ObjectGraphic::MCIRL,     0,       0, DunType::cathedral, THEME_NONE,              QuestId::betrayer,         0,          1,        0,         96, false,      true,      true,            0,        0, false     },
 	{      1, ObjectGraphic::BKSLBRNT,  4,      12, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       true,      true,            0,        3, false     },
-	{      1, ObjectGraphic::CANDLE2,   2,      12, DunType::town,      THEME_NONE,              Q_BETRAYER,         1,          2,        4,         96, true,       true,      true,            0,        0, false     },
-	{      1, ObjectGraphic::BOOK1,    13,      13, DunType::hell,      THEME_NONE,              Q_WARLORD,          0,          4,        0,         96, true,       true,      true,            0,        3, false     },
-	{      1, ObjectGraphic::ARMSTAND, 13,      13, DunType::town,      THEME_NONE,              Q_WARLORD,          0,          1,        0,         96, true,       false,     true,            0,        3, false     },
-	{      2, ObjectGraphic::WEAPSTND, 13,      13, DunType::town,      THEME_NONE,              Q_WARLORD,          0,          1,        0,         96, true,       false,     true,            0,        3, false     },
+	{      1, ObjectGraphic::CANDLE2,   2,      12, DunType::town,      THEME_NONE,              QuestId::betrayer,         1,          2,        4,         96, true,       true,      true,            0,        0, false     },
+	{      1, ObjectGraphic::BOOK1,    13,      13, DunType::hell,      THEME_NONE,              QuestId::warlord,          0,          4,        0,         96, true,       true,      true,            0,        3, false     },
+	{      1, ObjectGraphic::ARMSTAND, 13,      13, DunType::town,      THEME_NONE,              QuestId::warlord,          0,          1,        0,         96, true,       false,     true,            0,        3, false     },
+	{      2, ObjectGraphic::WEAPSTND, 13,      13, DunType::town,      THEME_NONE,              QuestId::warlord,          0,          1,        0,         96, true,       false,     true,            0,        3, false     },
 	{      2, ObjectGraphic::BURNCROS,  0,       0, DunType::town,      THEME_BRNCROSS,          -1,                 1,          0,       10,        160, true,       false,     false,           0,        0, false     },
 	{      2, ObjectGraphic::WEAPSTND,  0,       0, DunType::town,      THEME_WEAPONRACK,        -1,                 0,          1,        0,         96, true,       false,     true,            0,        3, false     },
 	{      2, ObjectGraphic::WEAPSTND,  0,       0, DunType::town,      THEME_WEAPONRACK,        -1,                 0,          2,        0,         96, true,       false,     true,            0,        0, false     },
-	{      2, ObjectGraphic::MUSHPTCH,  0,       0, DunType::town,      THEME_NONE,              Q_MUSHROOM,         0,          1,        0,         96, true,       true,      true,            0,        3, true      },
-	{      2, ObjectGraphic::LZSTAND,   0,       0, DunType::town,      THEME_NONE,              Q_BETRAYER,         0,          1,        0,        128, true,       false,     true,            0,        3, false     },
+	{      2, ObjectGraphic::MUSHPTCH,  0,       0, DunType::town,      THEME_NONE,              QuestId::mushroom,         0,          1,        0,         96, true,       true,      true,            0,        3, true      },
+	{      2, ObjectGraphic::LZSTAND,   0,       0, DunType::town,      THEME_NONE,              QuestId::betrayer,         0,          1,        0,        128, true,       false,     true,            0,        3, false     },
 	{      1, ObjectGraphic::DECAP,     9,       9, DunType::caves,     THEME_NONE,              -1,                 0,          2,        0,         96, true,       true,      true,            0,        1, false     },
 	{      2, ObjectGraphic::CHEST3,    0,       0, DunType::town,      THEME_NONE,              -1,                 0,          1,        0,         96, true,       true,      true,            0,        1, true      },
 	{     -1, 0,               0,       0, DunType::none,      THEME_NONE,              -1,                 0,          0,        0,          0, false,      false,     false,           0,        0, false     }
@@ -320,4 +320,4 @@ char *ObjMasterLoadList[56] = { // might be const
 	"LzStand"
 };
 
-DEVILUTION_END_NAMESPACE
+}

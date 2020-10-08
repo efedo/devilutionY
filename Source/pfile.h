@@ -2,7 +2,7 @@
 #ifndef __PFILE_H__
 #define __PFILE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -52,6 +52,6 @@ void pfile_update(bool force_save);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __PFILE_H__ */

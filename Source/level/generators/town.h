@@ -4,7 +4,7 @@
 
 #include "level/level.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class LvlTown : public Level {
 	LvlTown();
@@ -18,6 +18,6 @@ void T_FillTile(uint8_t *P3Tiles, int xx, int yy, int t);
 void T_Pass3();
 void CreateTown(int entry);
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __TOWN_H__ */

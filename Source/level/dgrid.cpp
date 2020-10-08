@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 DTile * DGrid::operator[](const size_t n)
 {
@@ -34,4 +34,4 @@ void DGrid::copytopdungeon()
 
 DGrid dgrid;
 
-DEVILUTION_END_NAMESPACE
+}

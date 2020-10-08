@@ -7,7 +7,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include <config.h>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 char sz_error_buf[256];
 /** Set to true when a fatal error is encountered and the application should shut down. */
@@ -49,7 +49,7 @@ void FreeDlg()
 	terminating = true;
 	cleanup_thread_id = SDL_GetThreadID(NULL);
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		if (SNetLeaveGame(3))
 			SDL_Delay(2000);
 	}
@@ -97,14 +97,12 @@ void ErrDlg(const char *title, const char *error, char *log_file_path, int log_l
 /**
  * @brief Terminates the game with a file not found error dialog.
  */
-void FileErrDlg(const char *error)
+void FileErrDlg(const std::string error)
 {
 	char text[1024];
 
 	FreeDlg();
 
-	if (!error)
-		error = "";
 	snprintf(
 	    text,
 	    1024,
@@ -115,7 +113,7 @@ void FileErrDlg(const char *error)
 	    "68f049866b44688a7af65ba766bef75a\n"
 	    "\n"
 	    "The problem occurred when loading:\n%s",
-	    error);
+	    error.c_str());
 
 	UiErrorOkDialog("Data File Error", text);
 	app_fatal(NULL);
@@ -152,4 +150,4 @@ void DirErrorDlg(char *error)
 	app_fatal(NULL);
 }
 
-DEVILUTION_END_NAMESPACE
+}

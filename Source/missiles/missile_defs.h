@@ -2,7 +2,7 @@
 #ifndef __MISSILE_DEFS_H__
 #define __MISSILE_DEFS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 
 //////////////////////////////////////////////////
@@ -85,6 +85,6 @@ typedef struct MissileStruct {
 } MissileStruct;
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MISSILE_DEFS_H__ */

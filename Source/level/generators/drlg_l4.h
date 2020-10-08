@@ -6,7 +6,7 @@
 #ifndef __DRLG_L4_H__
 #define __DRLG_L4_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class LvlHell : public Level {
 	LvlHell();
@@ -67,6 +67,6 @@ extern const uint8_t L4BTYPES[140];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DRLG_L4_H__ */

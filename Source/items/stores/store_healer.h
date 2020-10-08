@@ -2,7 +2,7 @@
 #ifndef __StoreTalkId::HEALER_H__
 #define __StoreTalkId::HEALER_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class StoreHealer : public Store
 {
@@ -27,6 +27,6 @@ class StoreHealer : public Store
 
 extern StoreHealer healerStore;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __StoreTalkId::HEALER_H__ */

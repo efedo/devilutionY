@@ -6,7 +6,7 @@
 #ifndef __GUI_H__
 #define __GUI_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Rename to just Gui if no collisions
 class GameGui
@@ -39,6 +39,6 @@ private:
 
 extern GameGui gui;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif  // __GUI_H__

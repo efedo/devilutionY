@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t *sgpBackCel;
 int sgdwProgress;
@@ -110,7 +110,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABNEXTLVL:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -126,7 +126,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABPREVLVL:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -143,7 +143,7 @@ void ShowProgress(unsigned int uMsg)
 	case WM_DIABSETLVL:
 		SetReturnLvlPos();
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -158,7 +158,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABRTNLVL:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -173,7 +173,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABWARPLVL:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -187,7 +187,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABTOWNWARP:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -203,7 +203,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABTWARPUP:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -219,7 +219,7 @@ void ShowProgress(unsigned int uMsg)
 		break;
 	case WM_DIABRETOWN:
 		IncProgress();
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			SaveLevel();
 		} else {
 			DeltaSaveLevel();
@@ -243,7 +243,7 @@ void ShowProgress(unsigned int uMsg)
 	saveProc = SetWindowProc(saveProc);
 	assert(saveProc == DisableInputWndProc);
 
-	NetSendCmdLocParam1(true, CMD_PLAYER_JOINLEVEL, myplr().pos(), myplr().data.plrlevel);
+	NetSendCmdLocParam1(true, Cmd::PLAYER_JOINLEVEL, myplr().pos(), myplr().data.plrlevel);
 	plrmsg_delay(false);
 	ResetPal();
 
@@ -427,4 +427,4 @@ void InitCutscene(unsigned int uMsg)
 	sgdwProgress = 0;
 }
 
-DEVILUTION_END_NAMESPACE
+}

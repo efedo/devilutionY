@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t sgbNextTalkSave;
 uint8_t sgbTalkSavePos;
@@ -198,7 +198,7 @@ RECT32 ChrBtnsRect[4] = {
 
 /** Maps from spellbook page number and position to spell_id. */
 int SpellPages[6][7] = {
-	{ SpellId::NULL, SpellId::FIREBOLT, SpellId::CBOLT, SpellId::HBOLT, SpellId::HEAL, SpellId::HEALOTHER, SpellId::FLAME },
+	{ SpellId::none, SpellId::FIREBOLT, SpellId::CBOLT, SpellId::HBOLT, SpellId::HEAL, SpellId::HEALOTHER, SpellId::FLAME },
 	{ SpellId::RESURRECT, SpellId::FIREWALL, SpellId::TELEKINESIS, SpellId::LIGHTNING, SpellId::TOWN, SpellId::FLASH, SpellId::STONE },
 	{ SpellId::RNDTELEPORT, SpellId::MANASHIELD, SpellId::ELEMENT, SpellId::FIREBALL, SpellId::WAVE, SpellId::CHAIN, SpellId::GUARDIAN },
 	{ SpellId::NOVA, SpellId::GOLEM, SpellId::TELEPORT, SpellId::APOCA, SpellId::BONESPIRIT, SpellId::FLARE, SpellId::ETHEREALIZE },
@@ -755,7 +755,7 @@ void InitControlPan()
 {
 	int i;
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		pBtmBuff = DiabloAllocPtr((PANEL_HEIGHT + 16) * PANEL_WIDTH);
 		memset(pBtmBuff, 0, (PANEL_HEIGHT + 16) * PANEL_WIDTH);
 	} else {
@@ -778,7 +778,7 @@ void InitControlPan()
 	CelBlitWidth(pManaBuff, { 0, 87 }, 88, pStatusPanel, 2, 88);
 	MemFreeDbg(pStatusPanel);
 	talkflag = false;
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		pTalkPanel = LoadFileInMem("CtrlPan\\TalkPanl.CEL", NULL);
 		CelBlitWidth(pBtmBuff, { 0, (PANEL_HEIGHT + 16) * 2 - 1 }, PANEL_WIDTH, pTalkPanel, 1, PANEL_WIDTH);
 		MemFreeDbg(pTalkPanel);
@@ -797,7 +797,7 @@ void InitControlPan()
 	for (i = 0; i < sizeof(panbtn) / sizeof(panbtn[0]); i++)
 		panbtn[i] = false;
 	panbtndown = false;
-	if (plr.isSingleplayer())
+	if (game.isSingleplayer())
 		numpanbtns = 6;
 	else
 		numpanbtns = 8;
@@ -966,7 +966,7 @@ void control_check_btn_press()
 
 void DoAutoMap()
 {
-	if (lvl.currlevel != 0 || plr.isMultiplayer()) {
+	if (lvl.currlevel != 0 || game.isMultiplayer()) {
 		if (!automap.enabled())
 			automap.start();
 		else
@@ -1204,7 +1204,7 @@ void DrawInfoBox()
 	}
 	if (spselflag || trigflag) {
 		infoclr = COL_WHITE;
-	} else if (pcurs >= CURSOR_FIRSTITEM) {
+	} else if (pcurs >= Cursor::FIRSTITEM) {
 		if (myplr().data.HoldItem._itype == ItemType::gold) {
 			nGold = myplr().data.HoldItem._ivalue;
 			sprintf(infostr, "%i gold %s", nGold, get_pieces_str(nGold));
@@ -1650,19 +1650,19 @@ void ReleaseChrBtns()
 			    && Mouse.y <= ChrBtnsRect[i].y + ChrBtnsRect[i].h) {
 				switch (i) {
 				case 0:
-					NetSendCmdParam1(true, CMD_ADDSTR, 1);
+					NetSendCmdParam1(true, Cmd::ADDSTR, 1);
 					myplr().data._pStatPts--;
 					break;
 				case 1:
-					NetSendCmdParam1(true, CMD_ADDMAG, 1);
+					NetSendCmdParam1(true, Cmd::ADDMAG, 1);
 					myplr().data._pStatPts--;
 					break;
 				case 2:
-					NetSendCmdParam1(true, CMD_ADDDEX, 1);
+					NetSendCmdParam1(true, Cmd::ADDDEX, 1);
 					myplr().data._pStatPts--;
 					break;
 				case 3:
-					NetSendCmdParam1(true, CMD_ADDVIT, 1);
+					NetSendCmdParam1(true, Cmd::ADDVIT, 1);
 					myplr().data._pStatPts--;
 					break;
 				}
@@ -2007,7 +2007,7 @@ void control_set_gold_curs(int pnum)
 	else
 		plr[pnum].data.HoldItem._iCurs = ItemCursor::GOLD_MEDIUM;
 
-	NewCursor(plr[pnum].data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+	NewCursor(plr[pnum].data.HoldItem._iCurs + Cursor::FIRSTITEM);
 }
 
 void DrawTalkPan()
@@ -2155,7 +2155,7 @@ void control_type_message()
 {
 	int i;
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		return;
 	}
 
@@ -2181,7 +2181,7 @@ bool control_talk_last_key(int vkey)
 {
 	int result;
 
-	if (plr.isSingleplayer())
+	if (game.isSingleplayer())
 		return false;
 
 	if (!talkflag)
@@ -2203,7 +2203,7 @@ bool control_presskeys(int vkey)
 	int len;
 	bool ret;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		if (!talkflag) {
 			ret = false;
 		} else {
@@ -2273,4 +2273,4 @@ void control_up_down(int v)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

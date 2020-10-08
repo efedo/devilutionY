@@ -6,8 +6,8 @@
 
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 GameGui gui;
 
-DEVILUTION_END_NAMESPACE
+}

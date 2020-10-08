@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 Level::Level()
 {
@@ -104,4 +104,4 @@ void Level::PlrDoTrans(V2Di pos)
 
 Level lvl;
 
-DEVILUTION_END_NAMESPACE
+}

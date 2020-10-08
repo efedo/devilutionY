@@ -2,7 +2,7 @@
 #ifndef __TOWNER_DEFS_H__
 #define __TOWNER_DEFS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 enum class StoreTalkId {
 	NONE = 0x0,
@@ -46,6 +46,6 @@ enum class TownerId {
 };
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __TOWNER_DEFS_H__ */

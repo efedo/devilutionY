@@ -1,5 +1,5 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
-DEVILUTION_END_NAMESPACE
+}

@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 Automap automap;
 
@@ -568,7 +568,7 @@ void Automap::drawText()
 	char desc[256];
 	int nextline = 20;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		strcat(strcpy(desc, "game: "), szPlayerName);
 		PrintGameStr({ 8, 20 }, desc, COL_GOLD);
 		nextline = 35;
@@ -674,4 +674,4 @@ void Automap::zoomReset()
 	AmLine4 = AmLine8 >> 1;
 }
 
-DEVILUTION_END_NAMESPACE
+}

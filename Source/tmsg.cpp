@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 static TMsg *sgpTimedMsgHead;
 
@@ -54,4 +54,4 @@ void tmsg_cleanup()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

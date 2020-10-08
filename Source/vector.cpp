@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 V2Di::V2Di()
 {
@@ -229,4 +229,4 @@ bool operator!=(const V2Di &lhs, const V2Di &rhs)
 //	return (!(lhs == rhs));
 //}
 
-DEVILUTION_END_NAMESPACE
+}

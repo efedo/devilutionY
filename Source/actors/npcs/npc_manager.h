@@ -5,7 +5,7 @@
 #include "npc.h"
 #include "towners.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Non-player actor
 class NpcManager
@@ -39,6 +39,6 @@ class NpcManager
 
 extern NpcManager npcs;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif __NPC_MANAGER_H__

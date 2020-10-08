@@ -6,7 +6,7 @@
 #include "all.h"
 
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 ActorManager::~ActorManager()
 {
@@ -21,41 +21,63 @@ void ActorManager::clearAll()
 	_npcs.clear();
 }
 
-Actor *ActorManager::getActor(ActorId & id)
+bool ActorManager::isActor(ActorId id) const
 {
-	if (id < _actors.size()) return _actors[id].get();
-	return 0;
+	const size_t ind = size_t(id);
+	if (ind < _actors.size() && _actors[ind].get()) return true;
+	return false;
 }
 
-Player *ActorManager::getPlayer(ActorId & id)
+bool ActorManager::isPlayer(ActorId id) const
 {
-	if (id < _actors.size() && _actors[id].get()->type == ActorType::player) {
-		return static_cast<Player *>(_actors[id].get());
-	}
-	return 0;
+	const size_t ind = size_t(id);
+	if (ind < _actors.size() && _actors[ind].get()->type == ActorType::player) return true;
+	return false;
 }
 
-Monster *ActorManager::getMonster(ActorId &id)
+bool ActorManager::isMonster(ActorId id) const
 {
-	if (id < _actors.size() && _actors.at(id).get()->type == ActorType::monster) {
-		return static_cast<Monster *>(_actors[id].get());
-	}
-	return 0;
+	const size_t ind = size_t(id);
+	if (ind < _actors.size() && _actors[ind].get()->type == ActorType::monster) return true;
+	return false;
 }
 
-Npc *ActorManager::getNpc(ActorId &id)
+bool ActorManager::isNpc(ActorId id) const
 {
-	if (id < _actors.size() && _actors.at(id).get()->type == ActorType::npc) {
-		return static_cast<Npc *>(_actors[id].get());
-	}
-	return 0;
+	const size_t ind = size_t(id);
+	if (ind < _actors.size() && _actors[ind].get()->type == ActorType::npc) return true;
+	return false;
+}
+
+Actor & ActorManager::getActor(ActorId id) const
+{
+	assert(isActor(id));
+	return *_actors[size_t(id)].get();
+}
+
+Player & ActorManager::getPlayer(ActorId id) const
+{
+	assert(isPlayer(id));
+	return *static_cast<Player*>(_actors[size_t(id)].get());
+}
+
+Monster & ActorManager::getMonster(ActorId id) const
+{
+	assert(isMonster(id));
+	return *static_cast<Monster*>(_actors[size_t(id)].get());
+}
+
+Npc & ActorManager::getNpc(ActorId id) const
+{
+	assert(isPlayer(id));
+	return *static_cast<Npc*>(_actors[size_t(id)].get());
 }
 
 // Sets _firstempty to the first empty spot
 void ActorManager::_getFirstEmpty()
 {
 	const size_t actors_size = _actors.size();
-	if (_firstempty == std::numeric_limits<ActorId>::max()) app_fatal("Too many actors");  // too many actors
+	if (_firstempty == std::numeric_limits<ActorId::BaseT>::max()) app_fatal("Too many actors");  // too many actors
 	assert(_firstempty < actors_size);
 	for (size_t i = _firstempty; i != actors_size; ++i) {
 		if (_actors[_firstempty].get() == 0) { return; }
@@ -72,7 +94,7 @@ ActorId ActorManager::_registerActor(Actor * newptr)
 	_actors[_firstempty].reset(newptr);
 
 	if (newptr->type == ActorType::player) {
-		assert(_players.size() <= _maxPlayers);
+		assert(_players.size() <= game.maxPlayers());
 		_players.insert(static_cast<Player*>(newptr));
 	} else if (newptr->type == ActorType::monster) {
 		_monsters.insert(static_cast<Monster *>(newptr));
@@ -86,8 +108,9 @@ ActorId ActorManager::_registerActor(Actor * newptr)
 
 void ActorManager::_unregisterActor(ActorId id)
 {
-	assert(id < _actors.size());
-	Actor * actor = _actors[id].get();
+	const size_t ind = size_t(id);
+	assert(ind < _actors.size());
+	Actor * actor = _actors[ind].get();
 	assert(actor);
 	if (actor->type == ActorType::player) {
 		if (!_players.count(static_cast<Player *>(actor))) return;
@@ -99,8 +122,8 @@ void ActorManager::_unregisterActor(ActorId id)
 		if (!_npcs.count(static_cast<Npc *>(actor))) return;
 		_npcs.erase(static_cast<Npc *>(actor));
 	}
-	_actors[id].reset();
-	if (id < _firstempty) _firstempty = id;
+	_actors[ind].reset();
+	if (ind < _firstempty) _firstempty = ind;
 }
 
-DEVILUTION_END_NAMESPACE
+}

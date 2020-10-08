@@ -2,7 +2,7 @@
 #ifndef __MISSILE_ENUMS_H__
 #define __MISSILE_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 enum class MissileType {
 	ARROW = 0x0,
@@ -134,6 +134,6 @@ enum class MissileResistance {
 	ACID = 4,
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MISSILE_ENUMS_H__ */

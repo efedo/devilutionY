@@ -2,7 +2,7 @@
 #ifndef __DVLVECTOR_H__
 #define __DVLVECTOR_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Lean 2D int vector
 class V2Di {
@@ -75,6 +75,6 @@ void foreach2D(V2Di start, V2Di stop, T &&lambda)
 //	Dir data = Dir::NONE;
 //};
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __DVLVECTOR_H__ */

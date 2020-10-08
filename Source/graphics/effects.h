@@ -6,7 +6,7 @@
 #ifndef __EFFECTS_H__
 #define __EFFECTS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -19,9 +19,7 @@ extern TSFX *sgpStreamSFX;
 
 bool effect_is_playing(int nSFX);
 void stream_stop();
-void InitMonsterSND(int monst);
-void FreeMonsterSnd();
-void PlayEffect(int i, int mode);
+
 bool calc_snd_position(V2Di pos, int *plVolume, int *plPan);
 void PlaySFX(int psfx);
 void PlaySFX_priv(TSFX *pSFX, bool loc, V2Di pos);
@@ -47,6 +45,6 @@ extern const char MonstSndChar[];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __EFFECTS_H__ */

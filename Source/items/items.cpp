@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 ItemTemplate itemTypes[ITEMTYPES];
 ItemManager items;
@@ -224,26 +224,26 @@ void AddInitItems()
 	V2Di pos;
 	int rnd = random_(11, 3) + 3;
 	for (int j = 0; j < rnd; j++) {
-		Item * item = items.createNewItem();
+		std::unique_ptr<Item> item = std::make_unique<Item>();
 		pos.x = random_(12, 80) + 16;
 		pos.y = random_(12, 80) + 16;
 		while (!ItemPlace(pos)) {
 			pos.x = random_(12, 80) + 16;
 			pos.y = random_(12, 80) + 16;
 		}
-		item._i = pos;
-		grid.at(pos).setItem(item.id);
-		item._iSeed = GetRndSeed();
-		SetRndSeed(item._iSeed);
+		item->_i = pos;
+		grid.at(pos).swapItem(item);
+		item->_iSeed = GetRndSeed();
+		SetRndSeed(item->_iSeed);
 		if (random_(12, 2))
-			item.loadPresetAttributes(ItemIndex::HEAL, lvl.currlevel);
+			item->loadPresetAttributes(ItemIndex::HEAL, lvl.currlevel);
 		else
-			item.loadPresetAttributes(ItemIndex::MANA, lvl.currlevel);
-		item._iCreateInfo = lvl.currlevel - 0x8000;
-		item.SetupItem();
-		item._iAnimFrame = item._iAnimLen;
-		item._iAnimFlag = false;
-		item._iSelFlag = 1;
+			item->loadPresetAttributes(ItemIndex::MANA, lvl.currlevel);
+		item->_iCreateInfo = lvl.currlevel - 0x8000;
+		item->SetupItem();
+		item->_iAnimFrame = item->_iAnimLen;
+		item->_iAnimFlag = false;
+		item->_iSelFlag = 1;
 		DeltaAddItem(item);
 	}
 }
@@ -256,9 +256,9 @@ void InitItems()
 
 	if (!lvl.setlevel) {
 		long s = GetRndSeed(); /* unused */
-		if (QuestStatus(Q_ROCK))
+		if (QuestStatus(QuestId::rock))
 			SpawnRock();
-		if (QuestStatus(Q_ANVIL))
+		if (QuestStatus(QuestId::anvil))
 			SpawnQuestItem(ItemIndex::ANVIL, { 2 * lvl.getpc().x + 27, 2 * lvl.getpc().y + 27 }, 0, 1);
 		if (lvl.currlevel > 0 && lvl.currlevel < 16)
 			AddInitItems();
@@ -435,9 +435,9 @@ int RndItem(int m)
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::RESURRECT && game.isSingleplayer())
 			ri--;
-		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && game.isSingleplayer())
 			ri--;
 	}
 
@@ -450,7 +450,7 @@ int RndUItem(int m)
 	int ril[512];
 	bool okflag;
 
-	if (m != -1 && (monsters[m].data.MData->mTreasure & 0x8000) != 0 && plr.isSingleplayer())
+	if (m != -1 && (monsters[m].data.MData->mTreasure & 0x8000) != 0 && game.isSingleplayer())
 		return -1 - (monsters[m].data.MData->mTreasure & 0xFFF);
 
 	ri = 0;
@@ -473,9 +473,9 @@ int RndUItem(int m)
 			okflag = false;
 		if (AllItemsList[i].iMiscId == MiscItemId::BOOK)
 			okflag = true;
-		if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::RESURRECT && game.isSingleplayer())
 			okflag = false;
-		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && game.isSingleplayer())
 			okflag = false;
 		if (okflag) {
 			ril[ri] = i;
@@ -500,16 +500,16 @@ int RndAllItems()
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::RESURRECT && game.isSingleplayer())
 			ri--;
-		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
+		if (AllItemsList[i].iSpell == SpellId::HEALOTHER && game.isSingleplayer())
 			ri--;
 	}
 
 	return ril[random_(26, ri)];
 }
 
-int RndTypeItems(int itype, int imid)
+int RndTypeItems(ItemType itype, int imid)
 {
 	int i, ri;
 	bool okflag;
@@ -554,14 +554,14 @@ void SpawnItem(int m, V2Di pos, bool sendmsg)
 {
 	int onlygood, idx;
 
-	if (monsters[m].data._uniqtype || ((monsters[m].data.MData->mTreasure & 0x8000) && plr.isMultiplayer())) {
+	if (monsters[m].data._uniqtype || ((monsters[m].data.MData->mTreasure & 0x8000) && game.isMultiplayer())) {
 		idx = RndUItem(m);
 		if (idx < 0) {
 			SpawnUnique(-(idx + 1), pos);
 			return;
 		}
 		onlygood = 1;
-	} else if (quests[Q_MUSHROOM]._qactive != QUEST_ACTIVE || quests[Q_MUSHROOM]._qvar1 != QS_MUSHGIVEN) {
+	} else if (quests[QuestId::mushroom]._qactive != QuestState::active || quests[QuestId::mushroom]._qvar1 != QuestMushState::mushgiven) {
 		idx = RndItem(m);
 		if (!idx)
 			return;
@@ -574,7 +574,7 @@ void SpawnItem(int m, V2Di pos, bool sendmsg)
 		}
 	} else {
 		idx = ItemIndex::BRAIN;
-		quests[Q_MUSHROOM]._qvar1 = QS_BRAINSPAWNED;
+		quests[QuestId::mushroom]._qvar1 = QuestMushState::brainspawned;
 	}
 
 	Item & item = items.createNewItem();
@@ -622,7 +622,7 @@ void CreateRndItem(V2Di pos, bool onlygood, bool sendmsg, bool delta)
 		DeltaAddItem(item);
 }
 
-void CreateTypeItem(V2Di pos, bool onlygood, int itype, int imisc, bool sendmsg, bool delta)
+void CreateTypeItem(V2Di pos, bool onlygood, ItemType itype, MiscItemId imisc, bool sendmsg, bool delta)
 {
 	int idx;
 	if (itype != ItemType::gold)
@@ -697,7 +697,7 @@ void SpawnRock()
 
 void ItemDoppel()
 {
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		for (int idoppelx = 16; idoppelx < 96; idoppelx++) {
 			if (grid[idoppelx][idoppely].isItem()) {
 				ItemStruct * i = &items.get(grid[idoppelx][idoppely].getItem());
@@ -1029,4 +1029,4 @@ void PutItemRecord(int nSeed, WORD wCI, int nIndex)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

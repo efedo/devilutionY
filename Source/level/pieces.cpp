@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 Piece &PieceInventory::operator[](const size_t n)
 {
@@ -82,4 +82,4 @@ void PieceInventory::clear()
 
 PieceInventory pieces;
 
-DEVILUTION_END_NAMESPACE
+}

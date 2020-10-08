@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /* todo: move text out of struct */
 
@@ -512,4 +512,4 @@ const TextDataStruct alltext[] = {
 /** unused */
 const DWORD gdwAllTextEntries = 259;
 
-DEVILUTION_END_NAMESPACE
+}

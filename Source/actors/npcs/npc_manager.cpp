@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 NpcManager npcs;
 
@@ -9,8 +9,8 @@ void NpcManager::InitTowners()
 	boyloadflag = false;
 	smith.Init();
 	healer.Init();
-	if (quests[Q_BUTCHER]._qactive != QUEST_NOTAVAIL &&
-	    quests[Q_BUTCHER]._qactive != QUEST_DONE)
+	if (quests[QuestId::butcher]._qactive != QuestState::not_available &&
+	    quests[QuestId::butcher]._qactive != QuestState::done)
 		deadguy.Init();
 	barowner.Init();
 	teller.Init();
@@ -76,4 +76,4 @@ void NpcManager::ProcessTowners()
 	cow[2].TownCtrlMsg();
 }
 
-DEVILUTION_END_NAMESPACE
+}

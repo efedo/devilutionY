@@ -7,7 +7,7 @@
 #ifndef __ITEM_ENUMS_H__
 #define __ITEM_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Item equip type
 enum class ItemSlot {
@@ -208,13 +208,14 @@ enum class ItemEffectType {
 	INVALID = -1,
 };
 
-enum class ItemAffixType {
-	MISC = 0x1,
-	BOW = 0x10,
-	STAFF = 0x100,
-	WEAP = 0x1000,
-	SHLD = 0x10000,
-	ARMO = 0x100000,
+using ItemAffixFlags = int;
+namespace ItemAffixFlag {
+	constexpr int MISC = 0x1;
+	constexpr int BOW = 0x10;
+	constexpr int STAFF = 0x100;
+	constexpr int WEAP = 0x1000;
+	constexpr int SHLD = 0x10000;
+	constexpr int ARMO = 0x100000;
 };
 
 /// Item graphic IDs; frame_num-11 of objcurs.cel.
@@ -516,42 +517,50 @@ enum class ItemDropRate {
 	DOUBLE = 2,
 };
 
-typedef enum ItemSpecialEffect {
-	NONE = 0x00000000,
-	INFRAVISION = 0x00000001,
-	RNDSTEALLIFE = 0x00000002,
-	RNDARROWVEL = 0x00000004,
-	FIRE_ARROWS = 0x00000008,
-	FIREDAM = 0x00000010,
-	LIGHTDAM = 0x00000020,
-	DRAINLIFE = 0x00000040,
-	UNKNOWN_1 = 0x00000080,
-	NOHEALPLR = 0x00000100,
-	UNKNOWN_2 = 0x00000200,
-	UNKNOWN_3 = 0x00000400,
-	KNOCKBACK = 0x00000800,
-	NOHEALMON = 0x00001000,
-	STEALMANA_3 = 0x00002000,
-	STEALMANA_5 = 0x00004000,
-	STEALLIFE_3 = 0x00008000,
-	STEALLIFE_5 = 0x00010000,
-	QUICKATTACK = 0x00020000,
-	FASTATTACK = 0x00040000,
-	FASTERATTACK = 0x00080000,
-	FASTESTATTACK = 0x00100000,
-	FASTRECOVER = 0x00200000,
-	FASTERRECOVER = 0x00400000,
-	FASTESTRECOVER = 0x00800000,
-	FASTBLOCK = 0x01000000,
-	LIGHT_ARROWS = 0x02000000,
-	THORNS = 0x04000000,
-	NOMANA = 0x08000000,
-	ABSHALFTRAP = 0x10000000,
-	UNKNOWN_4 = 0x20000000,
-	T3XDAMVDEM = 0x40000000,
-	ALLRESZERO = 0x80000000,
+using ItemSpecialEffectFlags = uint32_t;
+namespace ItemSpecialEffectFlag {
+	constexpr uint32_t NONE = 0x00000000;
+	constexpr uint32_t INFRAVISION = 0x00000001;
+	constexpr uint32_t RNDSTEALLIFE = 0x00000002;
+	constexpr uint32_t RNDARROWVEL = 0x00000004;
+	constexpr uint32_t FIRE_ARROWS = 0x00000008;
+	constexpr uint32_t FIREDAM = 0x00000010;
+	constexpr uint32_t LIGHTDAM = 0x00000020;
+	constexpr uint32_t DRAINLIFE = 0x00000040;
+	constexpr uint32_t UNKNOWN_1 = 0x00000080;
+	constexpr uint32_t NOHEALPLR = 0x00000100;
+	constexpr uint32_t UNKNOWN_2 = 0x00000200;
+	constexpr uint32_t UNKNOWN_3 = 0x00000400;
+	constexpr uint32_t KNOCKBACK = 0x00000800;
+	constexpr uint32_t NOHEALMON = 0x00001000;
+	constexpr uint32_t STEALMANA_3 = 0x00002000;
+	constexpr uint32_t STEALMANA_5 = 0x00004000;
+	constexpr uint32_t STEALLIFE_3 = 0x00008000;
+	constexpr uint32_t STEALLIFE_5 = 0x00010000;
+	constexpr uint32_t QUICKATTACK = 0x00020000;
+	constexpr uint32_t FASTATTACK = 0x00040000;
+	constexpr uint32_t FASTERATTACK = 0x00080000;
+	constexpr uint32_t FASTESTATTACK = 0x00100000;
+	constexpr uint32_t FASTRECOVER = 0x00200000;
+	constexpr uint32_t FASTERRECOVER = 0x00400000;
+	constexpr uint32_t FASTESTRECOVER = 0x00800000;
+	constexpr uint32_t FASTBLOCK = 0x01000000;
+	constexpr uint32_t LIGHT_ARROWS = 0x02000000;
+	constexpr uint32_t THORNS = 0x04000000;
+	constexpr uint32_t NOMANA = 0x08000000;
+	constexpr uint32_t ABSHALFTRAP = 0x10000000;
+	constexpr uint32_t UNKNOWN_4 = 0x20000000;
+	constexpr uint32_t T3XDAMVDEM = 0x40000000;
+	constexpr uint32_t ALLRESZERO = 0x80000000;
 };
 
-DEVILUTION_END_NAMESPACE
+enum class ItemColor {
+	white = PAL16_YELLOW + 5,
+	blue = PAL16_BLUE + 5,
+	red = PAL16_RED + 5,
+};
+
+
+}
 
 #endif /* __ITEM_ENUMS_H__ */

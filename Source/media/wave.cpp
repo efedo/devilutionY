@@ -1,14 +1,14 @@
 #include "all.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 void WCloseFile(HANDLE file)
 {
 	SFileCloseFile(file);
 }
 
-int32_t WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName)
+int32_t WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const std::string FileName)
 {
 	int32_t ret;
 
@@ -18,15 +18,15 @@ int32_t WGetFileSize(HANDLE hsFile, DWORD *lpFileSizeHigh, const char *FileName)
 	return ret;
 }
 
-bool WOpenFile(const char *FileName, HANDLE *phsFile, bool mayNotExist)
+bool WOpenFile(const std::string FileName, HANDLE *phsFile, bool mayNotExist)
 {
-	if (!SFileOpenFile(FileName, phsFile))
+	if (!SFileOpenFile(FileName.c_str(), phsFile))
 		FileErrDlg(FileName);
 
 	return true;
 }
 
-void WReadFile(HANDLE hsFile, LPVOID buf, DWORD to_read, const char *FileName)
+void WReadFile(HANDLE hsFile, LPVOID buf, DWORD to_read, const std::string FileName)
 {
 	if (SFileSetFilePointer(hsFile, 0, NULL, DVL_FILE_CURRENT) == -1)
 		FileErrDlg(FileName);
@@ -35,4 +35,4 @@ void WReadFile(HANDLE hsFile, LPVOID buf, DWORD to_read, const char *FileName)
 		FileErrDlg(FileName);
 }
 
-DEVILUTION_END_NAMESPACE
+}

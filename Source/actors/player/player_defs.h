@@ -9,25 +9,11 @@
 #include "vectordvl.h"
 #include "player_enums.h"
 #include "player_attribute.h"
+#include "skills/skill_enums.h"
+#include "skills/spellbook.h"
 #include <queue>
 
-DEVILUTION_BEGIN_NAMESPACE
-
-struct SpellBookEntry {
-	//SpellId id = SpellId::INVALID;
-	uint8_t ability_level = 0;
-	uint8_t memory_level = 0;
-	uint8_t scroll_level = 0;
-
-	//RSpellType _pRSplType = RSpellType::INVALID; // Just look this up from spell table
-};
-
-class SpellBook {
-public:
-	SpellBookEntry & entry(SpellId spell_id);
-private:
-	SpellBookEntry _spells[MAX_SPELLS];
-};
+namespace dvl {
 
 //////////////////////////////////////////////////
 // player
@@ -65,9 +51,7 @@ typedef struct PlayerStruct {
 	int _peflag;
 	int _plid;
 	int _pvid;
-
 	SpellBook _spellBook;
-
 	SpellId _pSpell;
 	RSpellType _pSplType;
 	char _pSplFrom;
@@ -86,7 +70,7 @@ typedef struct PlayerStruct {
 	uint8_t _pSpellFlags;
 	int _pSplHotKey[4];
 	char _pSplTHotKey[4];
-	int _pwtype;
+	PlayerWeaponType _pwtype;
 	bool _pBlockFlag;
 	bool _pInvincible; // this appears to be inversed (i.e. 0 = invincible, 1 = mortal)
 	char _pLightRad;
@@ -184,7 +168,7 @@ typedef struct PlayerStruct {
 	uint64_t _pISpells;
 	int _pIFlags;
 	int _pIGetHit;
-	char _pISplLvlAdd;
+	char _pISplLvlAdd; // bonus to all spell levels?
 	char _pISplCost;
 	int _pISplDur;
 	int _pIEnAc;
@@ -207,6 +191,6 @@ typedef struct PlayerStruct {
 } PlayerStruct;
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif  // __PLAYER_DEFS__

@@ -6,7 +6,7 @@
 #ifndef __NTHREAD_H__
 #define __NTHREAD_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -40,6 +40,6 @@ bool nthread_has_500ms_passed(bool unused);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __NTHREAD_H__ */

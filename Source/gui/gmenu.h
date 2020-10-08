@@ -6,7 +6,7 @@
 #ifndef __GMENU_H__
 #define __GMENU_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern uint8_t *optbar_cel;
 extern bool mouseNavigation;
@@ -49,6 +49,6 @@ extern const uint8_t lfontkern[];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __GMENU_H__ */

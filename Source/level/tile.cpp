@@ -6,33 +6,33 @@
 #include "all.h"
 #include <functional>
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
-void Tile::setActor(Actor & nactor)
+void Tile::setActor(ActorId id)
 {
-	actor = &nactor;  // Check that position is not blocked (or in player code?)
+	actor = id;  // Check that position is not blocked (or in player code?)
 }
 
-void Tile::setActorDraw(Actor& nactor)
+void Tile::setActorDraw(ActorId id)
 {
 	if (!this->drawActors) {
-		this->drawActors.reset(new std::set<Actor>);
+		this->drawActors.reset(new std::set<ActorId>);
 	}
-	this->drawActors->insert(nactor);
+	if (this->drawActors->count(id)) return;
+	this->drawActors->insert(id);
 }
 
-void Tile::clearActor(Actor& clactor)
+void Tile::clearActor(ActorId id)
 {
-	assert(&clactor == actor);
-	actor = 0;
+	if (actor != id) return;
+	actor.setInvalid();
 }
 
-void Tile::clearActorDraw(Actor& clactor)
+void Tile::clearActorDraw(ActorId id)
 {
 	if (!this->drawActors) return;
-
-	if (this->drawActors->count(clactor)) {
-		this->drawActors->erase(clactor);
+	if (this->drawActors->count(id)) {
+		this->drawActors->erase(id);
 	}
 
 	if (this->drawActors->empty()) {
@@ -63,20 +63,20 @@ void Tile::clearMissile()
 
 [[nodiscard]] bool Tile::isPlayer() const
 {
-	if (!actor) return false;
-	return (actor->type == ActorType::player);
+	if (!actor.isValid()) return false;
+	return (actors.getPlayer(actor));
 }
 
 [[nodiscard]] bool Tile::isMonster() const
 {
-	if (!actor) return false;
-	return (actor->type == ActorType::monster);
+	if (!actor.isValid()) return false;
+	return (actors.getMonster(actor));
 }
 
 [[nodiscard]] bool Tile::isTowner() const
 {
-	if (!actor) return false;
-	return (actor->type == ActorType::towner);
+	if (!actor.isValid()) return false;
+	return (actors.getNpc(actor));
 }
 
 [[nodiscard]] bool Tile::isActorDraw() const
@@ -86,7 +86,8 @@ void Tile::clearMissile()
 
 [[nodiscard]] bool Tile::isActor() const
 {
-	return actor;
+	return actor.isValid();
+	return (actors.getActor(actor));
 }
 
 [[nodiscard]] bool Tile::isObject() const
@@ -124,11 +125,6 @@ void Tile::setPiece(int pieceNum)
 {
 	assert(pieceNum >= 0 && pieceNum < UINT16_MAX);
 	piece = pieceNum;
-}
-
-void Tile::setActor(Actor& nactor)
-{
-	actor = &nactor;
 }
 
 void Tile::setObject(int objectNum)
@@ -211,29 +207,33 @@ void Tile::setMissile(int missileNum)
 
 [[nodiscard]] Actor& Tile::getActor() const
 {
-	assert(actor);
-	return *actor;
+	assert(actor.isValid());
+	assert(actors.getActor(actor));
+	return *actors.getActor(actor);
 }
 
 [[nodiscard]] Player & Tile::getPlayer() const
 {
-	assert(actor && actor->type == ActorType::player);
-	return * static_cast<Player *>(actor);
+	assert(actor.isValid());
+	assert(actors.getPlayer(actor));
+	return *actors.getPlayer(actor);
 }
 
 [[nodiscard]] Monster& Tile::getMonster() const
 {
-	assert(actor && actor->type == ActorType::monster);
-	return * static_cast<Monster *>(actor);
+	assert(actor.isValid());
+	assert(actors.getMonster(actor));
+	return *actors.getMonster(actor);
 }
 
 [[nodiscard]] Towner& Tile::getTowner() const
 {
-	assert(actor && actor->type == ActorType::towner);
-	return * static_cast<Towner*>(actor);
+	assert(actor.isValid());
+	assert(actors.getNpc(actor));
+	return *actors.getNpc(actor);
 }
 
-[[nodiscard]] std::set<Actor>& Tile::getActorDrawSet() const
+[[nodiscard]] const std::set<ActorId>& Tile::getActorDrawSet() const
 {
 	assert(drawActors);
 	return *drawActors;
@@ -257,4 +257,4 @@ void Tile::setMissile(int missileNum)
 	return missile;
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -6,13 +6,13 @@
 #include "towner_defs.h"
 #include "towner_enums.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class Player;
 
 class Towner : public Npc, public TownerStruct
 {
-   public:
+public:
 	Towner(int);
 	~Towner();
 	int numInstances = 0;
@@ -31,7 +31,7 @@ class Towner : public Npc, public TownerStruct
 
 class Smith : public Towner
 {
-   public:
+public:
 	Smith() : Towner(0) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -39,7 +39,7 @@ class Smith : public Towner
 
 class BarOwner : public Towner
 {
-   public:
+public:
 	BarOwner() : Towner(3) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -47,7 +47,7 @@ class BarOwner : public Towner
 
 class DeadGuy : public Towner
 {
-   public:
+public:
 	DeadGuy() : Towner(2) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -56,7 +56,7 @@ class DeadGuy : public Towner
 
 class Witch : public Towner
 {
-   public:
+public:
 	Witch() : Towner(6) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -64,7 +64,7 @@ class Witch : public Towner
 
 class Barmaid : public Towner
 {
-   public:
+public:
 	Barmaid() : Towner(7) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -72,7 +72,7 @@ class Barmaid : public Towner
 
 class Boy : public Towner
 {
-   public:
+public:
 	Boy() : Towner(8) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -80,7 +80,7 @@ class Boy : public Towner
 
 class Healer : public Towner
 {
-   public:
+public:
 	Healer() : Towner(1) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -88,7 +88,7 @@ class Healer : public Towner
 
 class Teller : public Towner
 {
-   public:
+public:
 	Teller() : Towner(4) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -96,7 +96,7 @@ class Teller : public Towner
 
 class Drunk : public Towner
 {
-   public:
+public:
 	Drunk() : Towner(5) {}
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
@@ -104,12 +104,8 @@ class Drunk : public Towner
 
 class Cow : public Towner
 {
-   public:
-	Cow() : Towner(9)
-	{
-		CowPlaying = -1;
-	}
-
+public:
+	Cow() : Towner(9) { CowPlaying = -1; }
 	void Init() final;
 	virtual void TalkToTowner(Player &player);
 	void CowSFX(Player &player);
@@ -121,12 +117,12 @@ class Cow : public Towner
 
 class Story : public Towner // virtual towner for storytelling
 {
-   public:
+public:
 	virtual void TalkToTowner(Player &player);
 };
 
 extern QuestTalkData Qtalklist[];
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __TOWNERS_H__ */

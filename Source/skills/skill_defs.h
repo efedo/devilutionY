@@ -2,7 +2,7 @@
 #ifndef __SKILL_DEFS_H__
 #define __SKILL_DEFS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //////////////////////////////////////////////////
 // spells
@@ -29,7 +29,7 @@ typedef struct SpellData {
 	int sStaffCost;
 } SpellData;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __SKILL_DEFS_H__
 

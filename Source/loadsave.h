@@ -6,7 +6,7 @@
 #ifndef __LOADSAVE_H__
 #define __LOADSAVE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -59,6 +59,6 @@ void LoadLevel();
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __LOADSAVE_H__ */

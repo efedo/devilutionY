@@ -6,7 +6,7 @@
 #ifndef __MISSILES_H__
 #define __MISSILES_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 extern int missileactive[MAXMISSILES];
 extern int missileavail[MAXMISSILES];
@@ -34,7 +34,7 @@ bool Plr2PlrMHit(int pnum, int p, int mindam, int maxdam, int dist, int mtype, b
 void CheckMissileCol(int i, int mindam, int maxdam, bool shift, V2Di m, bool nodel);
 void SetMissAnim(int mi, int animtype);
 void SetMissDir(int mi, Dir dir);
-void LoadMissileGFX(uint8_t mi);
+void LoadMissileGFX(MissileGraphic mi);
 void InitMissileGFX();
 void FreeMissileGFX(int mi);
 void FreeMissiles();
@@ -101,7 +101,7 @@ void AddTelekinesis(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int
 void AddBoneSpirit(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam);
 void AddRportal(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam);
 void AddDiabApoca(int mi, V2Di s, V2Di d, Dir midir, char mienemy, int id, int dam);
-int AddMissile(V2Di s, V2Di d, Dir midir, int mitype, char micaster, int id, int midam, int spllvl);
+int AddMissile(V2Di s, V2Di d, Dir midir, MissileType mitype, char micaster, ActorId id, int midam, int spllvl);
 int Sentfire(int i, V2Di s);
 void MI_Dummy(int i);
 void MI_Golem(int i);
@@ -153,6 +153,6 @@ void ClearMissileSpot(int mi);
 
 /* rdata */
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __MISSILES_H__ */

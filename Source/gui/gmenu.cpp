@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 uint8_t *optbar_cel;
 bool mouseNavigation;
@@ -417,4 +417,4 @@ void gmenu_slider_steps(TMenuItem *pItem, int steps)
 	pItem->dwFlags |= (steps << 12) & 0xFFF000;
 }
 
-DEVILUTION_END_NAMESPACE
+}

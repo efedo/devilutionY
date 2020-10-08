@@ -2,7 +2,9 @@
 #ifndef __TOWNER_ENUMS_H__
 #define __TOWNER_ENUMS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+#include "towner_enums.h"
+
+namespace dvl {
 
 
 //////////////////////////////////////////////////
@@ -68,6 +70,6 @@ typedef struct QuestTalkData {
 } QuestTalkData;
 
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __TOWNER_ENUMS_H__ */

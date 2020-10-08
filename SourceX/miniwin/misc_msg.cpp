@@ -320,7 +320,7 @@ void StoreSpellCoords()
  */
 bool BlurInventory()
 {
-	if (pcurs >= CURSOR_FIRSTITEM) {
+	if (pcurs >= Cursor::FIRSTITEM) {
 		if (!TryDropItem()) {
 			if (myplr().data._pClass == PlayerClass::warrior) {
 				PlaySFX(PS_WARR16); // "Where would I put this?"
@@ -334,8 +334,8 @@ bool BlurInventory()
 	}
 
 	invflag = false;
-	if (pcurs > CURSOR_HAND)
-		SetCursor_(CURSOR_HAND);
+	if (pcurs > Cursor::HAND)
+		SetCursor_(Cursor::HAND);
 	if (chrflag)
 		FocusOnCharInfo();
 
@@ -438,8 +438,8 @@ bool PeekMessage(LPMSG lpMsg)
 			if (chrflag) {
 				questlog = false;
 				spselflag = false;
-				if (pcurs == CURSOR_DISARM)
-					SetCursor_(CURSOR_HAND);
+				if (pcurs == Cursor::DISARM)
+					SetCursor_(Cursor::HAND);
 				FocusOnCharInfo();
 			}
 			break;
@@ -459,8 +459,8 @@ bool PeekMessage(LPMSG lpMsg)
 				sbookflag = false;
 				spselflag = false;
 				invflag = true;
-				if (pcurs == CURSOR_DISARM)
-					SetCursor_(CURSOR_HAND);
+				if (pcurs == Cursor::DISARM)
+					SetCursor_(Cursor::HAND);
 				FocusOnInventory();
 			}
 			break;

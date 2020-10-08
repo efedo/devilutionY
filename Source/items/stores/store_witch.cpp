@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 StoreWitch witchStore;
 
@@ -173,7 +173,7 @@ void StoreWitch::S_BuyEnter()
 			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = witchitem[idx];
-			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(myplr().data.HoldItem._iCurs + Cursor::FIRSTITEM);
 			done = false;
 
 			for (i = 0; i < 40 && !done; i++) {
@@ -186,7 +186,7 @@ void StoreWitch::S_BuyEnter()
 			else
 				StartStore(StoreTalkId::NOROOM);
 
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		}
 	}
 }
@@ -254,9 +254,9 @@ bool StoreWitch::ItemOk(int i)
 	if (AllItemsList[i].iSpell == SpellId::TOWN) rv = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::FULLHEAL) rv = false;
 	if (AllItemsList[i].iMiscId == MiscItemId::HEAL) rv = false;
-	if (AllItemsList[i].iSpell == SpellId::RESURRECT && plr.isSingleplayer())
+	if (AllItemsList[i].iSpell == SpellId::RESURRECT && game.isSingleplayer())
 		rv = false;
-	if (AllItemsList[i].iSpell == SpellId::HEALOTHER && plr.isSingleplayer())
+	if (AllItemsList[i].iSpell == SpellId::HEALOTHER && game.isSingleplayer())
 		rv = false;
 
 	return rv;
@@ -494,4 +494,4 @@ void StoreWitch::S_StartRecharge()
 
 
 
-DEVILUTION_END_NAMESPACE
+}

@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int diabquad1x;
 int diabquad1y;
@@ -419,11 +419,11 @@ static void InitL4Dungeon()
 void DRLG_LoadL4SP()
 {
 	setloadflag = false;
-	if (QuestStatus(Q_WARLORD)) {
+	if (QuestStatus(QuestId::warlord)) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 		setloadflag = true;
 	}
-	if (lvl.currlevel == 15 && plr.isMultiplayer()) {
+	if (lvl.currlevel == 15 && game.isMultiplayer()) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
 		setloadflag = true;
 	}
@@ -1395,11 +1395,11 @@ static void L4firstRoom()
 	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax, tx, ty;
 
 	if (lvl.currlevel != 16) {
-		if (lvl.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive) {
-			/// ASSERT: assert(plr.isSingleplayer());
+		if (lvl.currlevel == quests[QuestId::warlord]._qlevel && quests[QuestId::warlord]._qactive) {
+			/// ASSERT: assert(game.isSingleplayer());
 			w = 11;
 			h = 11;
-		} else if (lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+		} else if (lvl.currlevel == quests[QuestId::betrayer]._qlevel && game.isMultiplayer()) {
 			w = 11;
 			h = 11;
 		} else {
@@ -1434,7 +1434,7 @@ static void L4firstRoom()
 		l4holdx = x;
 		l4holdy = y;
 	}
-	if (QuestStatus(Q_WARLORD) || lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+	if (QuestStatus(QuestId::warlord) || lvl.currlevel == quests[QuestId::betrayer]._qlevel && game.isMultiplayer()) {
 		SP4x1 = x + 1;
 		SP4y1 = y + 1;
 		SP4x2 = SP4x1 + w;
@@ -1602,8 +1602,8 @@ static bool DRLG_L4PlaceMiniSet(const uint8_t *miniset, int tmin, int tmax, int 
 	}
 
 	if (lvl.currlevel == 15) {
-		quests[Q_BETRAYER]._qt.x = sx + 1;
-		quests[Q_BETRAYER]._qt.y = sy + 1;
+		quests[QuestId::betrayer]._qt.x = sx + 1;
+		quests[QuestId::betrayer]._qt.y = sy + 1;
 	}
 	if (setview == true) {
 		View.x = 2 * sx + 21;
@@ -1819,7 +1819,7 @@ static void DRLG_L4(int entry)
 		if (lvl.currlevel == 16) {
 			L4SaveQuads();
 		}
-		if (QuestStatus(Q_WARLORD) || lvl.currlevel == quests[Q_BETRAYER]._qlevel && plr.isMultiplayer()) {
+		if (QuestStatus(QuestId::warlord) || lvl.currlevel == quests[QuestId::betrayer]._qlevel && game.isMultiplayer()) {
 			for (spi = SP4x1; spi < SP4x2; spi++) {
 				for (spj = SP4y1; spj < SP4y2; spj++) {
 					dgrid[spi][spj].dflags = 1;
@@ -1835,7 +1835,7 @@ static void DRLG_L4(int entry)
 		if (lvl.currlevel == 16) {
 			DRLG_LoadDiabQuads(true);
 		}
-		if (QuestStatus(Q_WARLORD)) {
+		if (QuestStatus(QuestId::warlord)) {
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
 				if (doneflag && lvl.currlevel == 13) {
@@ -1889,7 +1889,7 @@ static void DRLG_L4(int entry)
 			if (entry == 0) {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 1, 0);
 				if (doneflag) {
-					if (plr.isSingleplayer() && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
+					if (game.isSingleplayer() && quests[QuestId::diablo]._qactive != QuestState::active) {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA, 1, 1, -1, -1, 0, 1);
 					} else {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, 0, 1);
@@ -1899,7 +1899,7 @@ static void DRLG_L4(int entry)
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, 0, 0);
 				if (doneflag) {
-					if (plr.isSingleplayer() && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
+					if (game.isSingleplayer() && quests[QuestId::diablo]._qactive != QuestState::active) {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA, 1, 1, -1, -1, 1, 1);
 					} else {
 						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, 1, 1);
@@ -1921,7 +1921,7 @@ static void DRLG_L4(int entry)
 	DRLG_L4Subs();
 	DRLG_Init_Globals();
 
-	if (QuestStatus(Q_WARLORD)) {
+	if (QuestStatus(QuestId::warlord)) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
 				dgrid[i][j].pdungeon = dgrid[i][j].dungeon;
@@ -2093,4 +2093,4 @@ void LoadPreL4Dungeon(char *sFileName, int vx, int vy)
 	mem_free_dbg(pLevelMap);
 }
 
-DEVILUTION_END_NAMESPACE
+}

@@ -2,7 +2,7 @@
 #ifndef __StoreTalkId::MISC_H__
 #define __StoreTalkId::MISC_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 // Misc
 void S_StartTavern();
@@ -12,6 +12,6 @@ void S_TavernEnter();
 void S_BarmaidEnter();
 void S_DrunkEnter();
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __StoreTalkId::MISC_H__ */

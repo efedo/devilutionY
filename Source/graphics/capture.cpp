@@ -9,7 +9,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include "file_util.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 /**
  * @brief Write the PCX-file header
@@ -181,4 +181,4 @@ void CaptureScreen()
 	delete out;
 }
 
-DEVILUTION_END_NAMESPACE
+}

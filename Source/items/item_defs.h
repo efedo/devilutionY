@@ -7,11 +7,18 @@
 #ifndef __ITEM_DEFS_H__
 #define __ITEM_DEFS_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+#include "item_enums.h"
+#include "vectordvl.h"
+
+namespace dvl {
 
 //////////////////////////////////////////////////
 // items
 //////////////////////////////////////////////////
+
+typedef struct TestMeStruct {
+
+} TestMeStruct;
 
 typedef struct PLStruct {
 	const char *PLName;
@@ -93,7 +100,7 @@ typedef struct ItemGetRecordStruct {
 typedef struct ItemStruct {
 	int _iSeed;
 	WORD _iCreateInfo;
-	int _itype;
+	ItemType _itype;
 	V2Di _i;
 	bool _iAnimFlag;
 	unsigned char *_iAnimData;  // PSX name -> ItemFrame
@@ -106,22 +113,22 @@ typedef struct ItemStruct {
 	char _iSelFlag;
 	bool _iPostDraw;
 	bool _iIdentified;
-	char _iMagical;
+	ItemQuality _iMagical;
 	char _iName[64];
 	char _iIName[64];
 	ItemSlot _iLoc = ItemSlot::Invalid;
 	// item_class enum
-	char _iClass;
-	int _iCurs;
+	ItemClass _iClass;
+	ItemCursor _iCurs;
 	int _ivalue;
 	int _iIvalue;
 	int _iMinDam;
 	int _iMaxDam;
 	int _iAC;
 	// item_special_effect
-	int _iFlags;
+	ItemSpecialEffectFlags _iFlags;
 	// item_misc_id
-	int _iMiscId;
+	MiscItemId _iMiscId;
 	// spell_id
 	int _iSpell;
 	int _iCharges;
@@ -151,8 +158,8 @@ typedef struct ItemStruct {
 	int _iLMinDam;
 	int _iLMaxDam;
 	int _iPLEnAc;
-	char _iPrePower;
-	char _iSufPower;
+	ItemEffectType _iPrePower;
+	ItemEffectType _iSufPower;
 	int _iVAdd1;
 	int _iVMult1;
 	int _iVAdd2;
@@ -161,11 +168,11 @@ typedef struct ItemStruct {
 	unsigned char _iMinMag;
 	char _iMinDex;
 	bool _iStatFlag;
-	int IDidx;  // Index of entry in "all items list" (list of global item data)
+	ItemIndex IDidx;  // Index of entry in "all items list" (list of global item data)
 	int offs016C;  // _oldlight or _iInvalid
 } ItemStruct;
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __ITEM_DEFS_H__
 

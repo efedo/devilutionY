@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 StoreSmith smithStore;
 
@@ -213,7 +213,7 @@ void StoreSmith::S_BuyEnter()
 			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = smithitem[idx];
-			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(myplr().data.HoldItem._iCurs + Cursor::FIRSTITEM);
 			done = false;
 
 			for (i = 0; i < 40 && !done; i++) {
@@ -224,7 +224,7 @@ void StoreSmith::S_BuyEnter()
 				StartStore(StoreTalkId::CONFIRM);
 			else
 				StartStore(StoreTalkId::NOROOM);
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		}
 	}
 }
@@ -329,7 +329,7 @@ void StoreSmith::S_PremiumBuyEnter()
 			StartStore(StoreTalkId::NOMONEY);
 		} else {
 			myplr().data.HoldItem = premiumitem[idx];
-			SetCursor_(myplr().data.HoldItem._iCurs + CURSOR_FIRSTITEM);
+			SetCursor_(myplr().data.HoldItem._iCurs + Cursor::FIRSTITEM);
 			done = false;
 			for (i = 0; i < 40 && !done; i++) {
 				done = myplr().inventory.AutoPlace(i, {cursW / 28, cursH / 28},
@@ -339,7 +339,7 @@ void StoreSmith::S_PremiumBuyEnter()
 				StartStore(StoreTalkId::CONFIRM);
 			else
 				StartStore(StoreTalkId::NOROOM);
-			SetCursor_(CURSOR_HAND);
+			SetCursor_(Cursor::HAND);
 		}
 	}
 }
@@ -434,7 +434,7 @@ bool StoreSmith::PremiumItemOk(int i)
 	if (AllItemsList[i].itype == ItemType::meat) rv = false;
 	if (AllItemsList[i].itype == ItemType::staff) rv = false;
 
-	if (plr.isMultiplayer()) {
+	if (game.isMultiplayer()) {
 		if (AllItemsList[i].itype == ItemType::ring) rv = false;
 		if (AllItemsList[i].itype == ItemType::amulet) rv = false;
 	}
@@ -689,4 +689,4 @@ void StoreSmith::S_StartRepair()
 
 
 
-DEVILUTION_END_NAMESPACE
+}

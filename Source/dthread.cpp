@@ -6,7 +6,7 @@
 #include "all.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 static CCritSect sgMemCrit;
 SDL_threadID glpDThreadId;
@@ -34,7 +34,7 @@ void dthread_send_delta(int pnum, char cmd, void *pbSrc, int dwLen)
 	TMegaPkt *pkt;
 	TMegaPkt *p;
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		return;
 	}
 
@@ -59,7 +59,7 @@ void dthread_start()
 {
 	const char *error_buf;
 
-	if (plr.isSingleplayer()) {
+	if (game.isSingleplayer()) {
 		return;
 	}
 
@@ -140,4 +140,4 @@ void dthread_cleanup()
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

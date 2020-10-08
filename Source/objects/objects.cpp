@@ -1,6 +1,6 @@
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 int trapid;
 int trapdir;
@@ -271,7 +271,7 @@ void AddTortures()
 }
 void AddCandles()
 {
-	V2Di t = quests[Q_PWATER]._qt;
+	V2Di t = quests[QuestId::pwater]._qt;
 	AddObject(ObjectType::STORYCANDLE, t.x - 2, t.y + 1);
 	AddObject(ObjectType::STORYCANDLE, t.x + 3, t.y + 1);
 	AddObject(ObjectType::STORYCANDLE, t.x - 1, t.y + 2);
@@ -300,11 +300,11 @@ void AddBookLever(V2Di /*l1*/, V2Di /*l2*/, V2Di p1, V2Di p2, int msg)
 		}
 	}
 
-	if (QuestStatus(Q_BLIND))
+	if (QuestStatus(QuestId::blind))
 		AddObject(ObjectType::BLINDBOOK, xp, yp);
-	if (QuestStatus(Q_WARLORD))
+	if (QuestStatus(QuestId::warlord))
 		AddObject(ObjectType::STEELTOME, xp, yp);
-	if (QuestStatus(Q_BLOOD)) {
+	if (QuestStatus(QuestId::blood)) {
 		xp = 2 * lvl.getpc().x + 25;
 		yp = 2 * lvl.getpc().y + 40;
 		AddObject(ObjectType::BLOODBOOK, xp, yp);
@@ -733,9 +733,9 @@ void InitObjects()
 	} else {
 		InitObjFlag = true;
 		GetRndSeed();
-		if (lvl.currlevel == 9 && plr.isSingleplayer())
+		if (lvl.currlevel == 9 && game.isSingleplayer())
 			AddSlainHero();
-		if (lvl.currlevel == quests[Q_MUSHROOM]._qlevel && quests[Q_MUSHROOM]._qactive == QUEST_INIT)
+		if (lvl.currlevel == quests[QuestId::mushroom]._qlevel && quests[QuestId::mushroom]._qactive == QuestState::init)
 			AddMushPatch();
 		if (lvl.currlevel == 4)
 			AddStoryBooks();
@@ -744,24 +744,24 @@ void InitObjects()
 		if (lvl.currlevel == 12)
 			AddStoryBooks();
 		if (lvl.type() == DunType::cathedral) {
-			if (QuestStatus(Q_BUTCHER))
+			if (QuestStatus(QuestId::butcher))
 				AddTortures();
-			if (QuestStatus(Q_PWATER))
+			if (QuestStatus(QuestId::pwater))
 				AddCandles();
-			if (QuestStatus(Q_LTBANNER))
+			if (QuestStatus(QuestId::ltbanner))
 				AddObject(ObjectType::SIGNCHEST, 2 * lvl.getpc().x + 26, 2 * lvl.getpc().y + 19);
 			InitRndLocBigObj(10, 15, ObjectType::SARC);
 			AddL1Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			InitRndBarrels();
 		}
 		if (lvl.type() == DunType::catacombs) {
-			if (QuestStatus(Q_ROCK))
+			if (QuestStatus(QuestId::rock))
 				InitRndLocObj5x5(1, 1, ObjectType::STAND);
-			if (QuestStatus(Q_SCHAMB))
+			if (QuestStatus(QuestId::schamb))
 				InitRndLocObj5x5(1, 1, ObjectType::BOOK2R);
 			AddL2Objs({ 0, 0 }, { MAXDUNX, MAXDUNY });
 			AddL2Torches();
-			if (QuestStatus(Q_BLIND)) {
+			if (QuestStatus(QuestId::blind)) {
 				if (myplr().data._pClass == PlayerClass::warrior) {
 					sp_id = TEXT_BLINDING;
 				} else if (myplr().data._pClass == PlayerClass::rogue) {
@@ -769,13 +769,13 @@ void InitObjects()
 				} else if (myplr().data._pClass == PlayerClass::sorceror) {
 					sp_id = TEXT_MBLINDING;
 				}
-				quests[Q_BLIND]._qmsg = sp_id;
+				quests[QuestId::blind]._qmsg = sp_id;
 				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { lvl.getpc().x, lvl.getpc().y }, { lvl.getpc().w + lvl.getpc().x + 1, lvl.getpc().h + lvl.getpc().y + 1 }, sp_id);
 				mem = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
 				LoadMapObjs(mem, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 				mem_free_dbg(mem);
 			}
-			if (QuestStatus(Q_BLOOD)) {
+			if (QuestStatus(QuestId::blood)) {
 				if (myplr().data._pClass == PlayerClass::warrior) {
 					sp_id = TEXT_BLOODY;
 				} else if (myplr().data._pClass == PlayerClass::rogue) {
@@ -783,7 +783,7 @@ void InitObjects()
 				} else if (myplr().data._pClass == PlayerClass::sorceror) {
 					sp_id = TEXT_MBLOODY;
 				}
-				quests[Q_BLOOD]._qmsg = sp_id;
+				quests[QuestId::blood]._qmsg = sp_id;
 				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { lvl.getpc().x, lvl.getpc().y + 3 }, { lvl.getpc().x + 2, lvl.getpc().y + 7 }, sp_id);
 				AddObject(ObjectType::PEDISTAL, 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 32);
 			}
@@ -794,7 +794,7 @@ void InitObjects()
 			InitRndBarrels();
 		}
 		if (lvl.type() == DunType::hell) {
-			if (QuestStatus(Q_WARLORD)) {
+			if (QuestStatus(QuestId::warlord)) {
 				if (myplr().data._pClass == PlayerClass::warrior) {
 					sp_id = TEXT_BLOODWAR;
 				} else if (myplr().data._pClass == PlayerClass::rogue) {
@@ -802,13 +802,13 @@ void InitObjects()
 				} else if (myplr().data._pClass == PlayerClass::sorceror) {
 					sp_id = TEXT_MBLOODWAR;
 				}
-				quests[Q_WARLORD]._qmsg = sp_id;
+				quests[QuestId::warlord]._qmsg = sp_id;
 				AddBookLever({ 0, 0 }, { MAXDUNX, MAXDUNY }, { lvl.getpc().x, lvl.getpc().y }, { lvl.getpc().x + lvl.getpc().w, lvl.getpc().y + lvl.getpc().h }, sp_id);
 				mem = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 				LoadMapObjs(mem, { 2 * lvl.getpc().x, 2 * lvl.getpc().y });
 				mem_free_dbg(mem);
 			}
-			if (QuestStatus(Q_BETRAYER) && plr.isSingleplayer())
+			if (QuestStatus(QuestId::betrayer) && game.isSingleplayer())
 				AddLazStand();
 			InitRndBarrels();
 			AddL4Goodies();
@@ -1084,10 +1084,10 @@ void AddShrine(int i)
 		} else {
 			slist[j] = 1;
 		}
-		if (plr.isMultiplayer() && shrineavail[j] == 1) {
+		if (game.isMultiplayer() && shrineavail[j] == 1) {
 			slist[j] = 0;
 		}
-		if (plr.isSingleplayer() && shrineavail[j] == 2) {
+		if (game.isSingleplayer() && shrineavail[j] == 2) {
 			slist[j] = 0;
 		}
 	}
@@ -1463,8 +1463,8 @@ void Obj_Circle(int i)
 		if (o.x == 35 && o.y == 36 && object[i]._oVar5 == 3) {
 			object[i]._oVar6 = 4;
 			ObjChangeMapResync({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
-			if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE)
-				quests[Q_BETRAYER]._qvar1 = 4;
+			if (quests[QuestId::betrayer]._qactive == QuestState::active)
+				quests[QuestId::betrayer]._qvar1 = 4;
 			AddMissile(myplr().pos(), { 35, 46 }, myplr().data._pdir, MissileType::RNDTELEPORT, 0, myplr(), 0, 0);
 			track_repeat_walk(false);
 			sgbMouseDown = 0;
@@ -1930,7 +1930,7 @@ bool _SharedDoorStart(int oi)
 void _SharedDoorOpen(int pnum, int oi, bool sendflag)
 {
 	if (pnum == myplr() && sendflag)
-		NetSendCmdParam1(true, CMD_OPENDOOR, oi);
+		NetSendCmdParam1(true, Cmd::OPENDOOR, oi);
 	if (!deltaload)
 		PlaySfxLoc(IS_DOOROPEN, object[oi]._o);
 	object[oi]._oAnimFrame += 2;
@@ -1943,7 +1943,7 @@ void _SharedDoorOpen(int pnum, int oi, bool sendflag)
 void _SharedDoorClose(int pnum, int oi, bool sendflag)
 {
 	if (pnum == myplr() && sendflag)
-		NetSendCmdParam1(true, CMD_CLOSEDOOR, oi);
+		NetSendCmdParam1(true, Cmd::CLOSEDOOR, oi);
 	object[oi]._oVar4 = 0;
 	object[oi]._oSelFlag = 3;
 	object[oi]._oAnimFrame -= 2;
@@ -2214,7 +2214,7 @@ void OperateLever(int pnum, int i)
 		if (mapflag)
 			ObjChangeMap({ object[i]._oVar1, object[i]._oVar2 }, { object[i]._oVar3, object[i]._oVar4 });
 		if (pnum == myplr())
-			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+			NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 	}
 }
 
@@ -2262,7 +2262,7 @@ void OperateBook(int pnum, int i)
 		myplr().data._pMemorySpells |= ((__int64)1 << (SpellId::GUARDIAN - 1));
 		if (plr[pnum].data._pSplLvl[SpellId::GUARDIAN] < 15)
 			myplr().data._pSplLvl[SpellId::GUARDIAN]++;
-		quests[Q_SCHAMB]._qactive = QUEST_DONE;
+		quests[QuestId::schamb]._qactive = QuestState::done;
 		if (!deltaload)
 			PlaySfxLoc(IS_QUESTDN, object[i]._o);
 		InitDiabloMsg(EMSG_BONECHAMB);
@@ -2284,24 +2284,24 @@ void OperateBookLever(int pnum, int i)
 	p.x = 2 * lvl.getpc().x + 16;
 	p.y = 2 * lvl.getpc().y + 16;
 	if (object[i]._oSelFlag != 0 && !qtextflag) {
-		if (object[i]._otype == ObjectType::BLINDBOOK && !quests[Q_BLIND]._qvar1) {
-			quests[Q_BLIND]._qactive = QUEST_ACTIVE;
-			quests[Q_BLIND]._qlog = 1;
-			quests[Q_BLIND]._qvar1 = 1;
+		if (object[i]._otype == ObjectType::BLINDBOOK && !quests[QuestId::blind]._qvar1) {
+			quests[QuestId::blind]._qactive = QuestState::active;
+			quests[QuestId::blind]._qlog = 1;
+			quests[QuestId::blind]._qvar1 = 1;
 		}
-		if (object[i]._otype == ObjectType::BLOODBOOK && !quests[Q_BLOOD]._qvar1) {
-			quests[Q_BLOOD]._qactive = QUEST_ACTIVE;
-			quests[Q_BLOOD]._qlog = 1;
-			quests[Q_BLOOD]._qvar1 = 1;
+		if (object[i]._otype == ObjectType::BLOODBOOK && !quests[QuestId::blood]._qvar1) {
+			quests[QuestId::blood]._qactive = QuestState::active;
+			quests[QuestId::blood]._qlog = 1;
+			quests[QuestId::blood]._qvar1 = 1;
 			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 19, 2 * lvl.getpc().y + 26 }, 0, 1);
 			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 31, 2 * lvl.getpc().y + 26 }, 0, 1);
 			SpawnQuestItem(ItemIndex::BLDSTONE, { 2 * lvl.getpc().x + 25, 2 * lvl.getpc().y + 33 }, 0, 1);
 		}
 		object[i]._otype = object[i]._otype;
-		if (object[i]._otype == ObjectType::STEELTOME && !quests[Q_WARLORD]._qvar1) {
-			quests[Q_WARLORD]._qactive = QUEST_ACTIVE;
-			quests[Q_WARLORD]._qlog = 1;
-			quests[Q_WARLORD]._qvar1 = 1;
+		if (object[i]._otype == ObjectType::STEELTOME && !quests[QuestId::warlord]._qvar1) {
+			quests[QuestId::warlord]._qactive = QuestState::active;
+			quests[QuestId::warlord]._qlog = 1;
+			quests[QuestId::warlord]._qvar1 = 1;
 		}
 		if (object[i]._oAnimFrame != object[i]._oVar6) {
 			if (object[i]._otype != ObjectType::BLOODBOOK)
@@ -2317,7 +2317,7 @@ void OperateBookLever(int pnum, int i)
 		object[i]._oAnimFrame = object[i]._oVar6;
 		InitQTextMsg(object[i]._oVar7);
 		if (pnum == myplr())
-			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+			NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 	}
 }
 
@@ -2332,9 +2332,9 @@ void OperateSChambBk(int pnum, int i)
 				SyncObjectAnim(objectactive[j]);
 		}
 		object[i]._oAnimFrame = object[i]._oVar6;
-		if (quests[Q_SCHAMB]._qactive == QUEST_INIT) {
-			quests[Q_SCHAMB]._qactive = QUEST_ACTIVE;
-			quests[Q_SCHAMB]._qlog = 1;
+		if (quests[QuestId::schamb]._qactive == QuestState::init) {
+			quests[QuestId::schamb]._qactive = QuestState::active;
+			quests[QuestId::schamb]._qlog = 1;
 		}
 		if (myplr().data._pClass == PlayerClass::warrior) {
 			textdef = TEXT_BONER;
@@ -2343,7 +2343,7 @@ void OperateSChambBk(int pnum, int i)
 		} else if (myplr().data._pClass == PlayerClass::sorceror) {
 			textdef = TEXT_MBONER;
 		}
-		quests[Q_SCHAMB]._qmsg = textdef;
+		quests[QuestId::schamb]._qmsg = textdef;
 		InitQTextMsg(textdef);
 	}
 }
@@ -2388,7 +2388,7 @@ void OperateChest(int pnum, int i, bool sendmsg)
 				object[i]._oTrapFlag = false;
 			}
 			if (pnum == myplr())
-				NetSendCmdParam2(false, CMD_PLROPOBJ, pnum, i);
+				NetSendCmdParam2(false, Cmd::PLROPOBJ, pnum, i);
 			return;
 		}
 	}
@@ -2397,7 +2397,7 @@ void OperateChest(int pnum, int i, bool sendmsg)
 void OperateMushPatch(int pnum, int i)
 {
 	V2Di p;
-	if (quests[Q_MUSHROOM]._qactive != QUEST_ACTIVE || quests[Q_MUSHROOM]._qvar1 < QS_TOMEGIVEN) {
+	if (quests[QuestId::mushroom]._qactive != QuestState::active || quests[QuestId::mushroom]._qvar1 < QuestMushState::tomegiven) {
 		if (!deltaload && pnum == myplr()) {
 			if (myplr().data._pClass == PlayerClass::warrior) {
 				PlaySFX(PS_WARR13);
@@ -2416,7 +2416,7 @@ void OperateMushPatch(int pnum, int i)
 			if (!deltaload) {
 				GetSuperItemLoc(object[i]._o, p);
 				SpawnQuestItem(ItemIndex::MUSHROOM, p, 0, 0);
-				quests[Q_MUSHROOM]._qvar1 = QS_MUSHSPAWNED;
+				quests[QuestId::mushroom]._qvar1 = QuestMushState::mushspawned;
 			}
 		}
 	}
@@ -2425,7 +2425,7 @@ void OperateMushPatch(int pnum, int i)
 void OperateInnSignChest(int pnum, int i)
 {
 	V2Di p;
-	if (quests[Q_LTBANNER]._qvar1 != 2) {
+	if (quests[QuestId::ltbanner]._qvar1 != 2) {
 		if (!deltaload && pnum == myplr()) {
 			if (myplr().data._pClass == PlayerClass::warrior) {
 				PlaySFX(PS_WARR24);
@@ -2465,7 +2465,7 @@ void OperateSlainHero(int pnum, int i, bool sendmsg)
 				PlaySfxLoc(PS_MAGE9, myplr().pos());
 			}
 			if (pnum == myplr())
-				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+				NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		}
 	}
 }
@@ -2517,7 +2517,7 @@ void OperateSarc(int pnum, int i, bool sendmsg)
 			if (object[i]._oVar1 >= 8)
 				SpawnSkeleton(object[i]._oVar2, object[i]._o);
 			if (pnum == myplr())
-				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+				NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		}
 	}
 }
@@ -2579,7 +2579,7 @@ void TryDisarm(int pnum, int i)
 	int j, oi, oti, trapdisper;
 	bool checkflag;
 	if (pnum == myplr())
-		SetCursor_(CURSOR_HAND);
+		SetCursor_(Cursor::HAND);
 	if (object[i]._oTrapFlag) {
 		trapdisper = 2 * plr[pnum].data._pDexterity - 5 * lvl.currlevel;
 		if (random_(154, 100) <= trapdisper) {
@@ -2643,7 +2643,7 @@ void OperateShrine(int pnum, int i, int sType)
 		object[i]._oAnimFrame = object[i]._oAnimLen;
 	}
 	switch (object[i]._oVar1) {
-	case SHRINE_MYSTERIOUS:
+	case Shrine::MYSTERIOUS:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2669,7 +2669,7 @@ void OperateShrine(int pnum, int i, int sType)
 		plr[pnum].CheckStats();
 		InitDiabloMsg(EMSG_SHRINE_MYSTERIOUS);
 		break;
-	case SHRINE_HIDDEN:
+	case Shrine::HIDDEN:
 		cnt = 0;
 		if (deltaload)
 			return;
@@ -2715,7 +2715,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_HIDDEN);
 		break;
-	case SHRINE_GLOOMY:
+	case Shrine::GLOOMY:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2764,7 +2764,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_GLOOMY);
 		break;
-	case SHRINE_WEIRD:
+	case Shrine::WEIRD:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2787,9 +2787,9 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_WEIRD);
 		break;
-	case SHRINE_MAGICAL:
+	case Shrine::MAGICAL:
 
-	case SHRINE_MAGICAL2:
+	case Shrine::MAGICAL2:
 		if (deltaload)
 			return;
 		AddMissile(
@@ -2805,7 +2805,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		InitDiabloMsg(EMSG_SHRINE_MAGICAL);
 		break;
-	case SHRINE_STONE:
+	case Shrine::STONE:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2825,7 +2825,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_STONE);
 		break;
-	case SHRINE_RELIGIOUS:
+	case Shrine::RELIGIOUS:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2839,7 +2839,7 @@ void OperateShrine(int pnum, int i, int sType)
 			plr[pnum].data.SpdList[j]._iDurability = plr[pnum].data.SpdList[j]._iMaxDur; // belt items don't have durability?
 		InitDiabloMsg(EMSG_SHRINE_RELIGIOUS);
 		break;
-	case SHRINE_ENCHANTED:
+	case Shrine::ENCHANTED:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2871,7 +2871,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_ENCHANTED);
 		break;
-	case SHRINE_THAUMATURGIC:
+	case Shrine::THAUMATURGIC:
 		for (j = 0; j < nobjects; j++) {
 			v1 = objectactive[j];
 			assert((DWORD)v1 < MAXOBJECTS);
@@ -2889,7 +2889,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum == myplr())
 			InitDiabloMsg(EMSG_SHRINE_THAUMATURGIC);
 		break;
-	case SHRINE_FASCINATING:
+	case Shrine::FASCINATING:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2917,7 +2917,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_FASCINATING);
 		break;
-	case SHRINE_CRYPTIC:
+	case Shrine::CRYPTIC:
 		if (deltaload)
 			return;
 		AddMissile(
@@ -2935,7 +2935,7 @@ void OperateShrine(int pnum, int i, int sType)
 		plr[pnum].data._pManaBase = plr[pnum].data._pMaxManaBase;
 		InitDiabloMsg(EMSG_SHRINE_CRYPTIC);
 		break;
-	case SHRINE_ELDRITCH: /// BUGFIX: change `plr[pnum].data.HoldItem` to use a temporary buffer to prevent deleting item in hand
+	case Shrine::ELDRITCH: /// BUGFIX: change `plr[pnum].data.HoldItem` to use a temporary buffer to prevent deleting item in hand
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2978,7 +2978,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_ELDRITCH);
 		break;
-	case SHRINE_EERIE:
+	case Shrine::EERIE:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -2987,7 +2987,7 @@ void OperateShrine(int pnum, int i, int sType)
 		plr[pnum].CheckStats();
 		InitDiabloMsg(EMSG_SHRINE_EERIE);
 		break;
-	case SHRINE_DIVINE:
+	case Shrine::DIVINE:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3005,7 +3005,7 @@ void OperateShrine(int pnum, int i, int sType)
 		plr[pnum].data._pHPBase = plr[pnum].data._pMaxHPBase;
 		InitDiabloMsg(EMSG_SHRINE_DIVINE);
 		break;
-	case SHRINE_HOLY:
+	case Shrine::HOLY:
 		if (deltaload)
 			return;
 		j = 0;
@@ -3022,7 +3022,7 @@ void OperateShrine(int pnum, int i, int sType)
 			return;
 		InitDiabloMsg(EMSG_SHRINE_HOLY);
 		break;
-	case SHRINE_SACRED:
+	case Shrine::SACRED:
 		if (deltaload || pnum != myplr())
 			return;
 		plr[pnum].data._pMemorySpells |= (__int64)1 << (SpellId::CBOLT - 1);
@@ -3047,7 +3047,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_SACRED);
 		break;
-	case SHRINE_SPIRITUAL:
+	case Shrine::SPIRITUAL:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3067,7 +3067,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_SPIRITUAL);
 		break;
-	case SHRINE_SPOOKY:
+	case Shrine::SPOOKY:
 		if (deltaload)
 			return;
 		if (pnum == myplr()) {
@@ -3080,7 +3080,7 @@ void OperateShrine(int pnum, int i, int sType)
 			myplr().data._pManaBase = myplr().data._pMaxManaBase;
 		}
 		break;
-	case SHRINE_ABANDONED:
+	case Shrine::ABANDONED:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3090,7 +3090,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum == myplr())
 			InitDiabloMsg(EMSG_SHRINE_ABANDONED);
 		break;
-	case SHRINE_CREEPY:
+	case Shrine::CREEPY:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3100,7 +3100,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum == myplr())
 			InitDiabloMsg(EMSG_SHRINE_CREEPY);
 		break;
-	case SHRINE_QUIET:
+	case Shrine::QUIET:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3110,7 +3110,7 @@ void OperateShrine(int pnum, int i, int sType)
 		if (pnum == myplr())
 			InitDiabloMsg(EMSG_SHRINE_QUIET);
 		break;
-	case SHRINE_SECLUDED:
+	case Shrine::SECLUDED:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3123,7 +3123,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_SECLUDED);
 		break;
-	case SHRINE_ORNATE:
+	case Shrine::ORNATE:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3150,7 +3150,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_ORNATE);
 		break;
-	case SHRINE_GLIMMERING:
+	case Shrine::GLIMMERING:
 		if (deltaload)
 			return;
 		if (pnum != myplr())
@@ -3169,7 +3169,7 @@ void OperateShrine(int pnum, int i, int sType)
 		}
 		InitDiabloMsg(EMSG_SHRINE_GLIMMERING);
 		break;
-	case SHRINE_TAINTED:
+	case Shrine::TAINTED:
 		if (deltaload)
 			return;
 		if (pnum == myplr()) {
@@ -3208,7 +3208,7 @@ void OperateShrine(int pnum, int i, int sType)
 	force_redraw = 255;
 
 	if (pnum == myplr())
-		NetSendCmdParam2(false, CMD_PLROPOBJ, pnum, i);
+		NetSendCmdParam2(false, Cmd::PLROPOBJ, pnum, i);
 }
 
 void OperateSkelBook(int pnum, int i, bool sendmsg)
@@ -3225,7 +3225,7 @@ void OperateSkelBook(int pnum, int i, bool sendmsg)
 			else
 				CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::BOOK, sendmsg, false);
 			if (pnum == myplr())
-				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+				NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		}
 	}
 }
@@ -3240,7 +3240,7 @@ void OperateBookCase(int pnum, int i, bool sendmsg)
 		if (!deltaload) {
 			SetRndSeed(object[i]._oRndSeed);
 			CreateTypeItem(object[i]._o, false, ItemType::misc, MiscItemId::BOOK, sendmsg, false);
-			if (QuestStatus(Q_ZHAR)
+			if (QuestStatus(QuestId::zhar)
 			    && monsters[MAX_PLRS].data.mName == UniqMonst[UniqueMonsterType::ZHAR].mName
 			    && monsters[MAX_PLRS].data._msquelch == UINT8_MAX
 			    && monsters[MAX_PLRS].data._mhitpoints) {
@@ -3250,7 +3250,7 @@ void OperateBookCase(int pnum, int i, bool sendmsg)
 				monsters[MAX_PLRS].data._mmode = MonsterMode::TALK;
 			}
 			if (pnum == myplr())
-				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+				NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		}
 	}
 }
@@ -3263,7 +3263,7 @@ void OperateDecap(int pnum, int i, bool sendmsg)
 			SetRndSeed(object[i]._oRndSeed);
 			CreateRndItem(object[i]._o, false, sendmsg, false);
 			if (pnum == myplr())
-				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+				NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		}
 	}
 }
@@ -3288,7 +3288,7 @@ void OperateArmorStand(int pnum, int i, bool sendmsg)
 				CreateTypeItem(object[i]._o, true, ItemType::heavy_armor, MiscItemId::NONE, sendmsg, false);
 			}
 			if (pnum == myplr())
-				NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+				NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 			return;
 		}
 	}
@@ -3307,7 +3307,7 @@ int FindValidShrine(int i)
 				done = true;
 		}
 
-		if (plr.isMultiplayer()) {
+		if (game.isMultiplayer()) {
 			if (shrineavail[rv] != 1) {
 				break;
 			}
@@ -3405,7 +3405,7 @@ bool OperateFountains(int pnum, int i)
 		    2 * int(lvl.type()));
 		applied = true;
 		if (pnum == myplr())
-			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+			NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		break;
 	case ObjectType::TEARFTN:
 		if (object[i]._oSelFlag == 0)
@@ -3450,7 +3450,7 @@ bool OperateFountains(int pnum, int i)
 		plr[pnum].CheckStats();
 		applied = true;
 		if (pnum == myplr())
-			NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+			NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 		break;
 	}
 	force_redraw = 255;
@@ -3490,7 +3490,7 @@ void OperateWeaponRack(int pnum, int i, bool sendmsg)
 	else
 		CreateTypeItem(object[i]._o, false, weaponType, MiscItemId::NONE, sendmsg, false);
 	if (pnum == myplr())
-		NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+		NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 }
 
 void OperateStoryBook(int pnum, int i)
@@ -3499,7 +3499,7 @@ void OperateStoryBook(int pnum, int i)
 		object[i]._oAnimFrame = object[i]._oVar4;
 		PlaySfxLoc(IS_ISCROL, object[i]._o);
 		InitQTextMsg(object[i]._oVar2);
-		NetSendCmdParam1(false, CMD_OPERATEOBJ, i);
+		NetSendCmdParam1(false, Cmd::OPERATEOBJ, i);
 	}
 }
 
@@ -3648,10 +3648,10 @@ void SyncOpL1Door(int pnum, int cmd, int i)
 		return;
 
 	do_sync = false;
-	if (cmd == CMD_OPENDOOR && object[i]._oVar4 == 0) {
+	if (cmd == Cmd::OPENDOOR && object[i]._oVar4 == 0) {
 		do_sync = true;
 	}
-	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
+	if (cmd == Cmd::CLOSEDOOR && object[i]._oVar4 == 1)
 		do_sync = true;
 	if (do_sync) {
 		if (object[i]._otype == ObjectType::L1LDOOR)
@@ -3669,10 +3669,10 @@ void SyncOpL2Door(int pnum, int cmd, int i)
 		return;
 
 	do_sync = false;
-	if (cmd == CMD_OPENDOOR && object[i]._oVar4 == 0) {
+	if (cmd == Cmd::OPENDOOR && object[i]._oVar4 == 0) {
 		do_sync = true;
 	}
-	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
+	if (cmd == Cmd::CLOSEDOOR && object[i]._oVar4 == 1)
 		do_sync = true;
 	if (do_sync) {
 		if (object[i]._otype == ObjectType::L2LDOOR)
@@ -3690,10 +3690,10 @@ void SyncOpL3Door(int pnum, int cmd, int i)
 		return;
 
 	do_sync = false;
-	if (cmd == CMD_OPENDOOR && object[i]._oVar4 == 0) {
+	if (cmd == Cmd::OPENDOOR && object[i]._oVar4 == 0) {
 		do_sync = true;
 	}
-	if (cmd == CMD_CLOSEDOOR && object[i]._oVar4 == 1)
+	if (cmd == Cmd::CLOSEDOOR && object[i]._oVar4 == 1)
 		do_sync = true;
 	if (do_sync) {
 		if (object[i]._otype == ObjectType::L3LDOOR)
@@ -3883,7 +3883,7 @@ void BreakBarrel(int pnum, int i, int dam, bool forcebreak, bool sendmsg)
 			SpawnSkeleton(object[i]._oVar4, object[i]._o);
 	}
 	if (pnum == myplr())
-		NetSendCmdParam2(false, CMD_BREAKOBJ, pnum, i);
+		NetSendCmdParam2(false, Cmd::BREAKOBJ, pnum, i);
 }
 
 void BreakObject(int pnum, int oi)
@@ -4227,4 +4227,4 @@ void GetObjectStr(int i)
 	}
 }
 
-DEVILUTION_END_NAMESPACE
+}

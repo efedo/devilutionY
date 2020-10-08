@@ -2,7 +2,7 @@
 #ifndef __SCROLLRT_H__
 #define __SCROLLRT_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -51,6 +51,6 @@ extern char *szPlrModeAssert[12];
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __SCROLLRT_H__ */

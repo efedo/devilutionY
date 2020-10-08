@@ -1,7 +1,7 @@
 #ifndef __RENDER_H__
 #define __RENDER_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -18,6 +18,6 @@ void trans_rect(int sx, int sy, int width, int height);
 //}
 //#endif
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif /* __RENDER_H__ */

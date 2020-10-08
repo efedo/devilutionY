@@ -5,7 +5,7 @@
  */
 #include "all.h"
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 Item::Item()
     : Item(0)
@@ -51,29 +51,25 @@ V2Di Item::getSize()
 
 bool Item::GetItemSpace(V2Di pos)
 {
-	int i, j, rs;
 	V2Di n;
-	bool savail;
-
-	n.y = 0;
-	for (j = pos.y - 1; j <= pos.y + 1; j++) {
+	for (int j = pos.y - 1; j <= pos.y + 1; j++) {
 		n.x = 0;
-		for (i = pos.x - 1; i <= pos.x + 1; i++) {
+		for (int i = pos.x - 1; i <= pos.x + 1; i++) {
 			itemhold[n.x][n.y] = ItemSpaceOk(i, j);
 			n.x++;
 		}
 		n.y++;
 	}
 
-	savail = false;
-	for (j = 0; j < 3; j++) {
-		for (i = 0; i < 3; i++) {
+	bool savail = false;
+	for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < 3; i++) {
 			if (itemhold[i][j])
 				savail = true;
 		}
 	}
 
-	rs = random_(13, 15) + 1;
+	int rs = random_(13, 15) + 1;
 	if (!savail)
 		return false;
 
@@ -100,15 +96,12 @@ bool Item::GetItemSpace(V2Di pos)
 
 void Item::GetSuperItemSpace(V2Di pos)
 {
-	int xx, yy;
-	int i, j, k;
-
 	if (!GetItemSpace(pos)) {
-		for (k = 2; k < 50; k++) {
-			for (j = -k; j <= k; j++) {
-				yy = pos.y + j;
-				for (i = -k; i <= k; i++) {
-					xx = i + pos.x;
+		for (int k = 2; k < 50; k++) {
+			for (int j = -k; j <= k; j++) {
+				const int yy = pos.y + j;
+				for (int i = -k; i <= k; i++) {
+					const int xx = i + pos.x;
 					if (ItemSpaceOk(xx, yy)) {
 						_i = { xx, yy };
 						grid[xx][yy].setItem(id);
@@ -123,16 +116,10 @@ void Item::GetSuperItemSpace(V2Di pos)
 void Item::CalcItemValue()
 {
 	int v = _iVMult1 + _iVMult2;
-	if (v > 0) {
-		v *= _ivalue;
-	}
-	if (v < 0) {
-		v = _ivalue / v;
-	}
+	if (v > 0) v *= _ivalue;
+	if (v < 0) v = _ivalue / v;
 	v = _iVAdd1 + _iVAdd2 + v;
-	if (v <= 0) {
-		v = 1;
-	}
+	if (v <= 0) v = 1;
 	_iIvalue = v;
 }
 
@@ -143,18 +130,18 @@ void Item::GetBookSpell(int lvl)
 		lvl = 1;
 	int rv = random_(14, MAX_SPELLS) + 1;
 
-	int s = SpellId::FIREBOLT;
+	SpellId s = SpellId::FIREBOLT;
 	while (rv > 0) {
 		if (spelldata[s].sBookLvl != -1 && lvl >= spelldata[s].sBookLvl) {
 			rv--;
 			bs = s;
 		}
 		s++;
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			if (s == SpellId::RESURRECT)
 				s = SpellId::TELEKINESIS;
 		}
-		if (plr.isSingleplayer()) {
+		if (game.isSingleplayer()) {
 			if (s == SpellId::HEALOTHER)
 				s = SpellId::FLARE;
 		}
@@ -188,7 +175,7 @@ void Item::GetStaffPower(int lvl, int bs, bool onlygood)
 	if (tmp == 0 || onlygood) {
 		nl = 0;
 		for (j = 0; PL_Prefix[j].PLPower != -1; j++) {
-			if (PL_Prefix[j].PLIType & ItemAffixType::STAFF && PL_Prefix[j].PLMinLvl <= lvl) {
+			if (PL_Prefix[j].PLIType & ItemAffixFlag::STAFF && PL_Prefix[j].PLMinLvl <= lvl) {
 				addok = true;
 				if (onlygood && !PL_Prefix[j].PLOk)
 					addok = false;
@@ -233,11 +220,12 @@ void Item::GetStaffPower(int lvl, int bs, bool onlygood)
 
 void Item::GetStaffSpell(int lvl, bool onlygood)
 {
-	int l, rv, s, minc, maxc, v, bs;
+	int l, rv, minc, maxc, v, bs;
 	char istr[64];
+	SpellId s;
 
 	if (!random_(17, 4)) {
-		GetItemPower(lvl >> 1, lvl, ItemAffixType::STAFF, onlygood);
+		GetItemPower(lvl >> 1, lvl, ItemAffixFlag::STAFF, onlygood);
 	} else {
 		l = lvl >> 1;
 		if (l == 0)
@@ -250,9 +238,9 @@ void Item::GetStaffSpell(int lvl, bool onlygood)
 				bs = s;
 			}
 			s++;
-			if (plr.isSingleplayer() && s == SpellId::RESURRECT)
+			if (game.isSingleplayer() && s == SpellId::RESURRECT)
 				s = SpellId::TELEKINESIS;
-			if (plr.isSingleplayer() && s == SpellId::HEALOTHER)
+			if (game.isSingleplayer() && s == SpellId::HEALOTHER)
 				s = SpellId::FLARE;
 			if (s == MAX_SPELLS)
 				s = SpellId::FIREBOLT;
@@ -277,7 +265,7 @@ void Item::GetStaffSpell(int lvl, bool onlygood)
 	}
 }
 
-void Item::loadPresetAttributes(int idata, int curlvl)
+void Item::loadPresetAttributes(ItemIndex idata, int curlvl)
 {
 	int rndv;
 
@@ -337,11 +325,11 @@ void Item::loadPresetAttributes(int idata, int curlvl)
 		GetBookSpell(curlvl);
 
 	if (_itype == ItemType::gold) {
-		if (gnDifficulty == DIFF_NORMAL)
+		if (gnDifficulty == Difficulty::NORMAL)
 			rndv = 5 * lvl.currlevel + random_(21, 10 * lvl.currlevel);
-		if (gnDifficulty == DIFF_NIGHTMARE)
+		if (gnDifficulty == Difficulty::NIGHTMARE)
 			rndv = 5 * (lvl.currlevel + 16) + random_(21, 10 * (lvl.currlevel + 16));
-		if (gnDifficulty == DIFF_HELL)
+		if (gnDifficulty == Difficulty::HELL)
 			rndv = 5 * (lvl.currlevel + 32) + random_(21, 10 * (lvl.currlevel + 32));
 		if (lvl.type() == DunType::hell)
 			rndv += rndv >> 3;
@@ -358,7 +346,7 @@ void Item::loadPresetAttributes(int idata, int curlvl)
 }
 
 
-void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxval, int multval)
+void Item::SaveItemPower(ItemEffectType power, int param1, int param2, int minval, int maxval, int multval)
 {
 	int r, r2;
 
@@ -452,12 +440,12 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		_iMaxCharges = param2;
 		break;
 	case ItemEffectType::FIREDAM:
-		_iFlags |= ItemSpecialEffect::FIREDAM;
+		_iFlags |= ItemSpecialEffectFlag::FIREDAM;
 		_iFMinDam = param1;
 		_iFMaxDam = param2;
 		break;
 	case ItemEffectType::LIGHTDAM:
-		_iFlags |= ItemSpecialEffect::LIGHTDAM;
+		_iFlags |= ItemSpecialEffectFlag::LIGHTDAM;
 		_iLMinDam = param1;
 		_iLMaxDam = param2;
 		break;
@@ -539,52 +527,52 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		_iPLLight -= param1;
 		break;
 	case ItemEffectType::FIRE_ARROWS:
-		_iFlags |= ItemSpecialEffect::FIRE_ARROWS;
+		_iFlags |= ItemSpecialEffectFlag::FIRE_ARROWS;
 		_iFMinDam = param1;
 		_iFMaxDam = param2;
 		break;
 	case ItemEffectType::LIGHT_ARROWS:
-		_iFlags |= ItemSpecialEffect::LIGHT_ARROWS;
+		_iFlags |= ItemSpecialEffectFlag::LIGHT_ARROWS;
 		_iLMinDam = param1;
 		_iLMaxDam = param2;
 		break;
 	case ItemEffectType::THORNS:
-		_iFlags |= ItemSpecialEffect::THORNS;
+		_iFlags |= ItemSpecialEffectFlag::THORNS;
 		break;
 	case ItemEffectType::NOMANA:
-		_iFlags |= ItemSpecialEffect::NOMANA;
+		_iFlags |= ItemSpecialEffectFlag::NOMANA;
 		drawmanaflag = true;
 		break;
 	case ItemEffectType::NOHEALPLR:
-		_iFlags |= ItemSpecialEffect::NOHEALPLR;
+		_iFlags |= ItemSpecialEffectFlag::NOHEALPLR;
 		break;
 	case ItemEffectType::ABSHALFTRAP:
-		_iFlags |= ItemSpecialEffect::ABSHALFTRAP;
+		_iFlags |= ItemSpecialEffectFlag::ABSHALFTRAP;
 		break;
 	case ItemEffectType::KNOCKBACK:
-		_iFlags |= ItemSpecialEffect::KNOCKBACK;
+		_iFlags |= ItemSpecialEffectFlag::KNOCKBACK;
 		break;
 	case ItemEffectType::T3XDAMVDEM:
-		_iFlags |= ItemSpecialEffect::T3XDAMVDEM;
+		_iFlags |= ItemSpecialEffectFlag::T3XDAMVDEM;
 		break;
 	case ItemEffectType::ALLRESZERO:
-		_iFlags |= ItemSpecialEffect::ALLRESZERO;
+		_iFlags |= ItemSpecialEffectFlag::ALLRESZERO;
 		break;
 	case ItemEffectType::NOHEALMON:
-		_iFlags |= ItemSpecialEffect::NOHEALMON;
+		_iFlags |= ItemSpecialEffectFlag::NOHEALMON;
 		break;
 	case ItemEffectType::STEALMANA:
 		if (param1 == 3)
-			_iFlags |= ItemSpecialEffect::STEALMANA_3;
+			_iFlags |= ItemSpecialEffectFlag::STEALMANA_3;
 		if (param1 == 5)
-			_iFlags |= ItemSpecialEffect::STEALMANA_5;
+			_iFlags |= ItemSpecialEffectFlag::STEALMANA_5;
 		drawmanaflag = true;
 		break;
 	case ItemEffectType::STEALLIFE:
 		if (param1 == 3)
-			_iFlags |= ItemSpecialEffect::STEALLIFE_3;
+			_iFlags |= ItemSpecialEffectFlag::STEALLIFE_3;
 		if (param1 == 5)
-			_iFlags |= ItemSpecialEffect::STEALLIFE_5;
+			_iFlags |= ItemSpecialEffectFlag::STEALLIFE_5;
 		redrawhpflag = true;
 		break;
 	case ItemEffectType::TARGAC:
@@ -592,30 +580,30 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		break;
 	case ItemEffectType::FASTATTACK:
 		if (param1 == 1)
-			_iFlags |= ItemSpecialEffect::QUICKATTACK;
+			_iFlags |= ItemSpecialEffectFlag::QUICKATTACK;
 		if (param1 == 2)
-			_iFlags |= ItemSpecialEffect::FASTATTACK;
+			_iFlags |= ItemSpecialEffectFlag::FASTATTACK;
 		if (param1 == 3)
-			_iFlags |= ItemSpecialEffect::FASTERATTACK;
+			_iFlags |= ItemSpecialEffectFlag::FASTERATTACK;
 		if (param1 == 4)
-			_iFlags |= ItemSpecialEffect::FASTESTATTACK;
+			_iFlags |= ItemSpecialEffectFlag::FASTESTATTACK;
 		break;
 	case ItemEffectType::FASTRECOVER:
 		if (param1 == 1)
-			_iFlags |= ItemSpecialEffect::FASTRECOVER;
+			_iFlags |= ItemSpecialEffectFlag::FASTRECOVER;
 		if (param1 == 2)
-			_iFlags |= ItemSpecialEffect::FASTERRECOVER;
+			_iFlags |= ItemSpecialEffectFlag::FASTERRECOVER;
 		if (param1 == 3)
-			_iFlags |= ItemSpecialEffect::FASTESTRECOVER;
+			_iFlags |= ItemSpecialEffectFlag::FASTESTRECOVER;
 		break;
 	case ItemEffectType::FASTBLOCK:
-		_iFlags |= ItemSpecialEffect::FASTBLOCK;
+		_iFlags |= ItemSpecialEffectFlag::FASTBLOCK;
 		break;
 	case ItemEffectType::DAMMOD:
 		_iPLDamMod += r;
 		break;
 	case ItemEffectType::RNDARROWVEL:
-		_iFlags |= ItemSpecialEffect::RNDARROWVEL;
+		_iFlags |= ItemSpecialEffectFlag::RNDARROWVEL;
 		break;
 	case ItemEffectType::SETDAM:
 		_iMinDam = param1;
@@ -626,19 +614,19 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 		_iMaxDur = param1;
 		break;
 	case ItemEffectType::FASTSWING:
-		_iFlags |= ItemSpecialEffect::FASTERATTACK;
+		_iFlags |= ItemSpecialEffectFlag::FASTERATTACK;
 		break;
 	case ItemEffectType::ONEHAND:
 		_iLoc = ItemSlot::OneHand;
 		break;
 	case ItemEffectType::DRAINLIFE:
-		_iFlags |= ItemSpecialEffect::DRAINLIFE;
+		_iFlags |= ItemSpecialEffectFlag::DRAINLIFE;
 		break;
 	case ItemEffectType::RNDSTEALLIFE:
-		_iFlags |= ItemSpecialEffect::RNDSTEALLIFE;
+		_iFlags |= ItemSpecialEffectFlag::RNDSTEALLIFE;
 		break;
 	case ItemEffectType::INFRAVISION:
-		_iFlags |= ItemSpecialEffect::INFRAVISION;
+		_iFlags |= ItemSpecialEffectFlag::INFRAVISION;
 		break;
 	case ItemEffectType::NOMINSTR:
 		_iMinStr = 0;
@@ -667,7 +655,7 @@ void Item::SaveItemPower(int power, int param1, int param2, int minval, int maxv
 	}
 }
 
-void Item::GetItemPower(int minlvl, int maxlvl, int flgs, bool onlygood)
+void Item::GetItemPower(int minlvl, int maxlvl, ItemAffixFlags flgs, bool onlygood)
 {
 	int pre, post, nt, nl, j, preidx, sufidx;
 	int l[256];
@@ -758,7 +746,7 @@ void Item::GetItemPower(int minlvl, int maxlvl, int flgs, bool onlygood)
 		CalcItemValue();
 }
 
-void Item::GetItemBonus(int idata, int minlvl, int maxlvl, bool onlygood)
+void Item::GetItemBonus(ItemIndex idata, int minlvl, int maxlvl, bool onlygood)
 {
 	if (_iClass != ItemClass::gold) {
 		if (minlvl > 25)
@@ -768,26 +756,26 @@ void Item::GetItemBonus(int idata, int minlvl, int maxlvl, bool onlygood)
 		case ItemType::sword:
 		case ItemType::axe:
 		case ItemType::mace:
-			GetItemPower(minlvl, maxlvl, ItemAffixType::WEAP, onlygood);
+			GetItemPower(minlvl, maxlvl, ItemAffixFlag::WEAP, onlygood);
 			break;
 		case ItemType::bow:
-			GetItemPower(minlvl, maxlvl, ItemAffixType::BOW, onlygood);
+			GetItemPower(minlvl, maxlvl, ItemAffixFlag::BOW, onlygood);
 			break;
 		case ItemType::shield:
-			GetItemPower(minlvl, maxlvl, ItemAffixType::SHLD, onlygood);
+			GetItemPower(minlvl, maxlvl, ItemAffixFlag::SHLD, onlygood);
 			break;
 		case ItemType::light_armor:
 		case ItemType::helm:
 		case ItemType::medium_armor:
 		case ItemType::heavy_armor:
-			GetItemPower(minlvl, maxlvl, ItemAffixType::ARMO, onlygood);
+			GetItemPower(minlvl, maxlvl, ItemAffixFlag::ARMO, onlygood);
 			break;
 		case ItemType::staff:
 			GetStaffSpell(maxlvl, onlygood);
 			break;
 		case ItemType::ring:
 		case ItemType::amulet:
-			GetItemPower(minlvl, maxlvl, ItemAffixType::MISC, onlygood);
+			GetItemPower(minlvl, maxlvl, ItemAffixFlag::MISC, onlygood);
 			break;
 		}
 	}
@@ -803,7 +791,7 @@ void Item::SetupItem()
 	_iIdentified = false;
 	_iPostDraw = false;
 
-	if (!myplr().data.pLvlLoad) {
+	if (!myplr().pLvlLoad) {
 		_iAnimFrame = 1;
 		_iAnimFlag = true;
 		_iSelFlag = 0;
@@ -815,30 +803,27 @@ void Item::SetupItem()
 }
 
 
-int Item::CheckUnique(int lvl, int uper, bool recreate)
+UniqueItemType Item::CheckUnique(int lvl, int uper, bool recreate)
 {
-	int j, idata, numu;
 	bool uok[128];
 
-	if (random_(28, 100) > uper)
-		return -1;
+	if (random_(28, 100) > uper) return -1;
 
-	numu = 0;
+	int numu = 0;
 	memset(uok, 0, sizeof(uok));
-	for (j = 0; UniqueItemList[j].UIItemId != UniqueItemType::invalid; j++) {
+	for (int j = 0; UniqueItemList[j].UIItemId != UniqueItemType::invalid; j++) {
 		if (UniqueItemList[j].UIItemId == AllItemsList[IDidx].iItemId
 		    && lvl >= UniqueItemList[j].UIMinLvl
-		    && (recreate || !UniqueItemFlag[j] || plr.isMultiplayer())) {
+		    && (recreate || !UniqueItemFlag[j] || game.isMultiplayer())) {
 			uok[j] = true;
 			numu++;
 		}
 	}
 
-	if (numu == 0)
-		return -1;
+	if (numu == 0) return -1;
 
 	random_(29, 10); /// BUGFIX: unused, last unique in array always gets chosen
-	idata = 0;
+	int idata = 0;
 	while (numu > 0) {
 		if (uok[idata])
 			numu--;
@@ -848,11 +833,10 @@ int Item::CheckUnique(int lvl, int uper, bool recreate)
 				idata = 0;
 		}
 	}
-
 	return idata;
 }
 
-void Item::GetUniqueItem(int uid)
+void Item::GetUniqueItem(UniqueItemType uid)
 {
 	UniqueItemFlag[uid] = true;
 	SaveItemPower(UniqueItemList[uid].UIPower1, UniqueItemList[uid].UIParam1, UniqueItemList[uid].UIParam2, 0, 0, 1);
@@ -871,8 +855,7 @@ void Item::GetUniqueItem(int uid)
 	strcpy(_iIName, UniqueItemList[uid].UIName);
 	_iIvalue = UniqueItemList[uid].UIValue;
 
-	if (_iMiscId == MiscItemId::UNIQUE)
-		_iSeed = uid;
+	if (_iMiscId == MiscItemId::UNIQUE) _iSeed = uid;
 
 	_iUid = uid;
 	_iMagical = ItemQuality::unique;
@@ -916,8 +899,6 @@ void Item::GetItemFrm()
 
 void Item::GetItemStr()
 {
-	int nGold;
-
 	if (_itype != ItemType::gold) {
 		if (_iIdentified)
 			strcpy(infostr, _iIName);
@@ -929,7 +910,7 @@ void Item::GetItemStr()
 		if (_iMagical == ItemQuality::unique)
 			infoclr = COL_GOLD;
 	} else {
-		nGold = _ivalue;
+		int nGold = _ivalue;
 		sprintf(infostr, "%i gold %s", nGold, get_pieces_str(nGold));
 	}
 }
@@ -940,10 +921,8 @@ void Item::ItemRndDur()
 		_iDurability = random_(0, _iMaxDur >> 1) + (_iMaxDur >> 2) + 1;
 }
 
-void Item::SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood, bool recreate, bool pregen)
+void Item::SetupAllItems(ItemIndex idx, int iseed, int lvl, int uper, int onlygood, bool recreate, bool pregen)
 {
-	int iblvl, uid;
-
 	_iSeed = iseed;
 	SetRndSeed(iseed);
 	loadPresetAttributes(idx, lvl >> 1);
@@ -960,7 +939,7 @@ void Item::SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood, bo
 		_iCreateInfo |= 0x0100;
 
 	if (_iMiscId != MiscItemId::UNIQUE) {
-		iblvl = -1;
+		int iblvl = -1;
 		if (random_(32, 100) <= 10 || random_(33, 100) <= lvl) {
 			iblvl = lvl;
 		}
@@ -978,7 +957,7 @@ void Item::SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood, bo
 		if (uper == 15)
 			iblvl = lvl + 4;
 		if (iblvl != -1) {
-			uid = CheckUnique(iblvl, uper, recreate);
+			UniqueItemType uid = CheckUnique(iblvl, uper, recreate);
 			if (uid == UniqueItemType::invalid) {
 				GetItemBonus(idx, iblvl >> 1, iblvl, onlygood);
 			} else {
@@ -1002,11 +981,9 @@ void Item::SetupAllItems(int idx, int iseed, int lvl, int uper, int onlygood, bo
 
 void Item::SetupAllUseful(int iseed, int lvl)
 {
-	int idx;
-
+	ItemIndex idx;
 	_iSeed = iseed;
 	SetRndSeed(iseed);
-
 	if (random_(34, 2))
 		idx = ItemIndex::HEAL;
 	else
@@ -1020,7 +997,7 @@ void Item::SetupAllUseful(int iseed, int lvl)
 	SetupItem();
 }
 
-void Item::RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue)
+void Item::RecreateItem(ItemIndex idx, WORD icreateinfo, int iseed, int ivalue)
 {
 	int uper, onlygood, recreate;
 	bool pregen;
@@ -1066,7 +1043,7 @@ void Item::RecreateItem(int idx, WORD icreateinfo, int iseed, int ivalue)
 	}
 }
 
-void Item::RecreateSmithItem(int idx, int lvl, int iseed)
+void Item::RecreateSmithItem(ItemIndex idx, int lvl, int iseed)
 {
 	int itype;
 
@@ -1079,7 +1056,7 @@ void Item::RecreateSmithItem(int idx, int lvl, int iseed)
 	_iIdentified = true;
 }
 
-void Item::RecreatePremiumItem(int idx, int plvl, int iseed)
+void Item::RecreatePremiumItem(ItemIndex idx, int plvl, int iseed)
 {
 	int itype;
 
@@ -1093,7 +1070,7 @@ void Item::RecreatePremiumItem(int idx, int plvl, int iseed)
 	_iIdentified = true;
 }
 
-void Item::RecreateBoyItem(int idx, int lvl, int iseed)
+void Item::RecreateBoyItem(ItemIndex idx, int lvl, int iseed)
 {
 	int itype;
 
@@ -1106,7 +1083,7 @@ void Item::RecreateBoyItem(int idx, int lvl, int iseed)
 	_iIdentified = true;
 }
 
-void Item::RecreateWitchItem(int idx, int lvl, int iseed)
+void Item::RecreateWitchItem(ItemIndex idx, int lvl, int iseed)
 {
 	int iblvl, itype;
 
@@ -1130,24 +1107,21 @@ void Item::RecreateWitchItem(int idx, int lvl, int iseed)
 	_iIdentified = true;
 }
 
-void Item::RecreateHealerItem(int idx, int lvl, int iseed)
+void Item::RecreateHealerItem(ItemIndex idx, int lvl, int iseed)
 {
-	int itype;
-
 	if (idx == ItemIndex::HEAL || idx == ItemIndex::FULLHEAL || idx == ItemIndex::RESURRECT) {
 		loadPresetAttributes(idx, lvl);
 	} else {
 		SetRndSeed(iseed);
-		itype = StoreHealer::RndItem(lvl) - 1;
+		ItemIndex itype = StoreHealer::RndItem(lvl) - 1;
 		loadPresetAttributes(itype, lvl);
 	}
-
 	_iSeed = iseed;
 	_iCreateInfo = lvl | 0x4000;
 	_iIdentified = true;
 }
 
-void Item::RecreateTownItem(int idx, WORD icreateinfo, int iseed, int ivalue)
+void Item::RecreateTownItem(ItemIndex idx, WORD icreateinfo, int iseed, int ivalue)
 {
 	if (icreateinfo & 0x400)
 		RecreateSmithItem(idx, icreateinfo & 0x3F, iseed);
@@ -1163,8 +1137,6 @@ void Item::RecreateTownItem(int idx, WORD icreateinfo, int iseed, int ivalue)
 
 void Item::Repair(int lvl)
 {
-	int rep, d;
-
 	if (_iDurability == _iMaxDur) { return; }
 
 	if (_iMaxDur <= 0) {
@@ -1172,10 +1144,10 @@ void Item::Repair(int lvl)
 		return;
 	}
 
-	rep = 0;
+	int rep = 0;
 	do {
 		rep += lvl + random_(37, lvl);
-		d = _iMaxDur / (lvl + 9);
+		int d = _iMaxDur / (lvl + 9);
 		if (d < 1) d = 1;
 		_iMaxDur = _iMaxDur - d;
 		if (!_iMaxDur) {
@@ -1328,11 +1300,11 @@ void Item::PrintDetails()
 		sprintf(tempstr, "Charges: %i/%i", _iCharges, _iMaxCharges);
 		AddPanelString(tempstr, true);
 	}
-	if (_iPrePower != -1) {
+	if (_iPrePower != ItemEffectType::INVALID) {
 		PrintPower(_iPrePower);
 		AddPanelString(tempstr, true);
 	}
-	if (_iSufPower != -1) {
+	if (_iSufPower != ItemEffectType::INVALID) {
 		PrintPower(_iSufPower);
 		AddPanelString(tempstr, true);
 	}
@@ -1398,17 +1370,14 @@ void Item::PrintDur()
 
 bool StoreStatOk(ItemStruct *h)
 {
-	bool sf;
-
-	sf = true;
-	if (myplr().data._pStrength < h->_iMinStr) sf = false;
-	if (myplr().data._pMagic < h->_iMinMag) sf = false;
-	if (myplr().data._pDexterity < h->_iMinDex) sf = false;
-
+	bool sf = true;
+	if (myplr()._strength < h->_iMinStr) sf = false;
+	if (myplr()._magic < h->_iMinMag) sf = false;
+	if (myplr()._dexterity < h->_iMinDex) sf = false;
 	return sf;
 }
 
-void Item::PrintPower(char plidx)
+void Item::PrintPower(ItemEffectType plidx)
 {
 	switch (plidx) {
 		case ItemEffectType::TOHIT:
@@ -1558,34 +1527,34 @@ void Item::PrintPower(char plidx)
 			strcpy(tempstr, "hit monster doesn't heal");
 			break;
 		case ItemEffectType::STEALMANA:
-			if (_iFlags & ItemSpecialEffect::STEALMANA_3)
+			if (_iFlags & ItemSpecialEffectFlag::STEALMANA_3)
 				strcpy(tempstr, "hit steals 3% mana");
-			if (_iFlags & ItemSpecialEffect::STEALMANA_5)
+			if (_iFlags & ItemSpecialEffectFlag::STEALMANA_5)
 				strcpy(tempstr, "hit steals 5% mana");
 			break;
 		case ItemEffectType::STEALLIFE:
-			if (_iFlags & ItemSpecialEffect::STEALLIFE_3)
+			if (_iFlags & ItemSpecialEffectFlag::STEALLIFE_3)
 				strcpy(tempstr, "hit steals 3% life");
-			if (_iFlags & ItemSpecialEffect::STEALLIFE_5)
+			if (_iFlags & ItemSpecialEffectFlag::STEALLIFE_5)
 				strcpy(tempstr, "hit steals 5% life");
 			break;
 		case ItemEffectType::TARGAC:
 			strcpy(tempstr, "damages target's armor");
 			break;
 		case ItemEffectType::FASTATTACK:
-			if (_iFlags & ItemSpecialEffect::QUICKATTACK) strcpy(tempstr, "quick attack");
-			if (_iFlags & ItemSpecialEffect::FASTATTACK) strcpy(tempstr, "fast attack");
-			if (_iFlags & ItemSpecialEffect::FASTERATTACK)
+			if (_iFlags & ItemSpecialEffectFlag::QUICKATTACK) strcpy(tempstr, "quick attack");
+			if (_iFlags & ItemSpecialEffectFlag::FASTATTACK) strcpy(tempstr, "fast attack");
+			if (_iFlags & ItemSpecialEffectFlag::FASTERATTACK)
 				strcpy(tempstr, "faster attack");
-			if (_iFlags & ItemSpecialEffect::FASTESTATTACK)
+			if (_iFlags & ItemSpecialEffectFlag::FASTESTATTACK)
 				strcpy(tempstr, "fastest attack");
 			break;
 		case ItemEffectType::FASTRECOVER:
-			if (_iFlags & ItemSpecialEffect::FASTRECOVER)
+			if (_iFlags & ItemSpecialEffectFlag::FASTRECOVER)
 				strcpy(tempstr, "fast hit recovery");
-			if (_iFlags & ItemSpecialEffect::FASTERRECOVER)
+			if (_iFlags & ItemSpecialEffectFlag::FASTERRECOVER)
 				strcpy(tempstr, "faster hit recovery");
-			if (_iFlags & ItemSpecialEffect::FASTESTRECOVER)
+			if (_iFlags & ItemSpecialEffectFlag::FASTESTRECOVER)
 				strcpy(tempstr, "fastest hit recovery");
 			break;
 		case ItemEffectType::FASTBLOCK:
@@ -1644,4 +1613,4 @@ void Item::PrintPower(char plidx)
 
 
 
-DEVILUTION_END_NAMESPACE
+}

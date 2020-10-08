@@ -6,7 +6,7 @@
 #ifndef __MONSTER_TYPE_H__
 #define __MONSTER_TYPE_H__
 
-DEVILUTION_BEGIN_NAMESPACE
+namespace dvl {
 
 class MonsterClass {
 public:
@@ -16,8 +16,18 @@ public:
 	void InitMonsterTRN(bool special);
 	void InitMonsterGFX();
 	CMonster data;
+	CMonster vdata();
+	const MonsterData cdata();
+	char animLetter(MonstAnim);
+	void InitMonsterSND();
+
+	bool IsSkel();
+	bool IsGoat();
+	void PrintMonstHistory();
+private:
+	static const char animletter[7];
 };
 
-DEVILUTION_END_NAMESPACE
+}
 
 #endif // __MONSTER_TYPE_H__
